@@ -1,13 +1,14 @@
 FROM hapiproject/hapi:v6.6.0-tomcat
 
 USER root
-RUN apt-get update && apt-get install -y curl=7.74.0-1.3+deb11u7
+RUN apt-get update && apt-get install -y curl
 
 RUN groupadd tomcat; \
     groupadd tomcat-ssl-cert -g 8443; \ 
     useradd -M -s /bin/bash -u 8443 tomcat_admin; \
     usermod -a -G tomcat,tomcat-ssl-cert tomcat_admin; \
     chown -R tomcat_admin:tomcat /opt/bitnami/tomcat; \
+    chown -R tomcat_admin:tomcat /target; \
     chmod g-w,o-rwx /opt/bitnami/tomcat; \
     chmod g-w,o-rwx /opt/bitnami/tomcat/conf; \
     chmod o-rwx /opt/bitnami/tomcat/logs; \

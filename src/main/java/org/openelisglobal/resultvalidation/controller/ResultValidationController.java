@@ -11,9 +11,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
@@ -89,10 +87,10 @@ public class ResultValidationController extends BaseResultValidationController {
     private static final String[] ALLOWED_FIELDS = new String[] { "testSectionId", "paging.currentPage", "testSection",
             "testName", "resultList*.accessionNumber", "resultList*.analysisId", "resultList*.testId",
             "resultList*.sampleId", "resultList*.resultType", "resultList*.sampleGroupingNumber", "resultList*.noteId",
-            "resultList*.resultId", "resultList*.hasQualifiedResult", "resultList*.sampleIsAccepted","resultList*.lowerCritical","resultList*.higherCritical",
-            "resultList*.sampleIsRejected", "resultList*.result", "resultList*.qualifiedResultValue",
-            "resultList*.multiSelectResultValues", "resultList*.isAccepted", "resultList*.isRejected",
-            "resultList*.note" };
+            "resultList*.resultId", "resultList*.hasQualifiedResult", "resultList*.sampleIsAccepted",
+            "resultList*.lowerCritical", "resultList*.higherCritical", "resultList*.sampleIsRejected",
+            "resultList*.result", "resultList*.qualifiedResultValue", "resultList*.multiSelectResultValues",
+            "resultList*.isAccepted", "resultList*.isRejected", "resultList*.note" };
 
     // autowiring not needed, using constructor injection
     private AnalysisService analysisService;
@@ -237,7 +235,7 @@ public class ResultValidationController extends BaseResultValidationController {
                 .getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
         List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
         if (checkResults.size() == 0) {
-            LogEvent.logDebug(this.getClass().getName(), "ResultValidation()", "Attempted save of stale page.");
+            LogEvent.logDebug(this.getClass().getSimpleName(), "ResultValidation()", "Attempted save of stale page.");
             List<AnalysisItem> staleItemList = form.getResultList();
 
             Errors staleErrors = new BaseErrors();
@@ -286,12 +284,12 @@ public class ResultValidationController extends BaseResultValidationController {
         // wrapper object for holding modifedResultSet and newResultSet
         IResultSaveService resultSaveService = new ResultValidationSaveService();
 
-//        if (testSectionName.equals("serology")) {
-//            createUpdateElisaList(resultItemList, analysisUpdateList);
-//        } else {
+        // if (testSectionName.equals("serology")) {
+        // createUpdateElisaList(resultItemList, analysisUpdateList);
+        // } else {
         createUpdateList(resultItemList, analysisUpdateList, resultUpdateList, noteUpdateList, deletableList,
                 resultSaveService, areListeners);
-//        }
+        // }
 
         try {
             resultValidationService.persistdata(deletableList, analysisUpdateList, resultUpdateList, resultItemList,
@@ -303,13 +301,13 @@ public class ResultValidationController extends BaseResultValidationController {
                 LogEvent.logError(e);
             }
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
             throw e;
         }
 
         for (IResultUpdate updater : updaters) {
 
-//            updater.postTransactionalCommitUpdate(resultSaveService);
+            // updater.postTransactionalCommitUpdate(resultSaveService);
         }
 
         // route save back to RetroC specific ResultValidationRetroCAction
@@ -347,7 +345,6 @@ public class ResultValidationController extends BaseResultValidationController {
                 String errorMsg = "errors.followingAccession";
                 errors.reject(errorMsg, new String[] { augmentedAccession.toString() }, errorMsg);
                 errors.addAllErrors(errorList);
-
             }
         }
 
@@ -370,11 +367,8 @@ public class ResultValidationController extends BaseResultValidationController {
                     && isBlankOrNull(analysisItem.getQualifiedResultValue())) {
                 errorList.reject("errors.missing.result.details", new String[] { "Result" },
                         "errors.missing.result.details");
-
             }
-
         }
-
     }
 
     private void createUpdateList(List<AnalysisItem> analysisItems, List<Analysis> analysisUpdateList,
@@ -487,7 +481,6 @@ public class ResultValidationController extends BaseResultValidationController {
                             SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected));
                     analysisUpdateList.add(analysis);
                 }
-
             }
         }
     }
@@ -511,8 +504,8 @@ public class ResultValidationController extends BaseResultValidationController {
             analysisList.add(analysis);
         }
         if (!isBlankOrNull(analysisItem.getGenscreenResult())) {
-        	analysis = getAnalysisFromId(analysisItem.getGenscreenAnalysisId());
-        	analysisList.add(analysis);
+            analysis = getAnalysisFromId(analysisItem.getGenscreenAnalysisId());
+            analysisList.add(analysis);
         }
         if (!isBlankOrNull(analysisItem.getVironostikaResult())) {
             analysis = getAnalysisFromId(analysisItem.getVironostikaAnalysisId());

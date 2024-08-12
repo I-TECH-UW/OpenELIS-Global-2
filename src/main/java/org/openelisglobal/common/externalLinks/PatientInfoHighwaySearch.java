@@ -7,7 +7,6 @@ import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.Future;
-
 import javax.xml.namespace.QName;
 import javax.xml.soap.MessageFactory;
 import javax.xml.soap.MimeHeaders;
@@ -19,7 +18,6 @@ import javax.xml.soap.SOAPEnvelope;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.soap.SOAPPart;
-
 import org.apache.commons.validator.GenericValidator;
 import org.apache.http.HttpStatus;
 import org.openelisglobal.common.log.LogEvent;
@@ -76,11 +74,10 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
         public String getFieldName() {
             return fieldName;
         }
-
     }
 
     @Override
-    synchronized public void setConnectionCredentials(String connectionString, String name, String password) {
+    public synchronized void setConnectionCredentials(String connectionString, String name, String password) {
         if (finished) {
             throw new IllegalStateException("ServiceCredentials set after ExternalPatientSearch thread was started");
         }
@@ -91,7 +88,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     }
 
     @Override
-    synchronized public void setSearchCriteria(String lastName, String firstName, String STNumber, String subjectNumber,
+    public synchronized void setSearchCriteria(String lastName, String firstName, String STNumber, String subjectNumber,
             String nationalID, String guid) throws IllegalStateException {
 
         if (finished) {
@@ -107,7 +104,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     }
 
     @Override
-    synchronized public List<ExtendedPatientSearchResults> getSearchResults() {
+    public synchronized List<ExtendedPatientSearchResults> getSearchResults() {
 
         if (!finished) {
             throw new IllegalStateException("Results requested before ExternalPatientSearch thread was finished");
@@ -165,7 +162,7 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
         try {
             callSoapWebService(connectionString, soapAction);
         } catch (SOAPException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
         setPossibleErrors();
     }
@@ -192,7 +189,6 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
                     + returnStatus);
         }
         }
-
     }
 
     private void createSoapEnvelope(SOAPMessage soapMessage) throws SOAPException {
@@ -268,12 +264,10 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
             } else {
                 returnStatus = HttpStatus.SC_OK;
                 processResponse(soapResponse);
-
             }
 
         } catch (Exception e) {
             LogEvent.logError("Error occurred while sending SOAP Request to Server!", e);
-            LogEvent.logErrorStack(e);
         } finally {
             if (soapConnection != null) {
                 soapConnection.close();
@@ -353,11 +347,11 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
             break;
         default:
             break;
-
         }
     }
 
     private void setDate(ExtendedPatientSearchResults patient, String dateString) throws ParseException {
+
         String dateFormat = "yyyy-MM-dd";
         String dateTimeFormat = "yyyy-MM-dd HH:mm:ss.S";
         SimpleDateFormat dateFormatter = new SimpleDateFormat(dateFormat);
@@ -369,11 +363,11 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
             } else if (dateString.length() == dateTimeFormat.length()) {
                 Date date = dateTimeFormatter.parse(dateString);
                 patient.setBirthdate(DateUtil.formatDateAsText(date));
-            } else {                
-                LogEvent.logWarn(this.getClass().getName(), "setDate", 
-                    "Could not parse date received from infohighway search");
+            } else {
+                LogEvent.logWarn(this.getClass().getSimpleName(), "setDate",
+                        "Could not parse date received from infohighway search");
             }
-        } 
+        }
     }
 
     private SOAPMessage createSOAPRequest(String soapAction) throws Exception {
@@ -398,5 +392,4 @@ public class PatientInfoHighwaySearch implements IExternalPatientSearch {
     public int getTimeout() {
         return timeout;
     }
-
 }

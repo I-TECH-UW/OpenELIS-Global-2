@@ -1,7 +1,6 @@
 package org.openelisglobal.patient.saving;
 
 import java.lang.reflect.InvocationTargetException;
-
 import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -15,5 +14,4 @@ public interface IAccessioner {
             InvocationTargetException, NoSuchMethodException, LIMSException;
 
     Errors getMessages();
-
 }

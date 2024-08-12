@@ -56,6 +56,9 @@ public class TestAddFormValidator implements Validator {
                 ValidationHelper.validateIdField(StringUtil.nullSafeToString(newTest.get("resultType")), "JsonWad",
                         "resultType", errors, true);
 
+                ValidationHelper.validateYNField(StringUtil.nullSafeToString(newTest.get("antimicrobialResistance")),
+                        "JsonWad", "antimicrobialResistance", errors);
+
                 ValidationHelper.validateYNField(StringUtil.nullSafeToString(newTest.get("orderable")), "JsonWad",
                         "orderable", errors);
 
@@ -149,17 +152,13 @@ public class TestAddFormValidator implements Validator {
                                     StringUtil.nullSafeToString(resultLimit.get("highNormalFemale")), "JsonWad",
                                     "result limit [" + i + "] highNormalFemale", errors, false, 255,
                                     ValidationHelper.FLOAT_REGEX);
-
                         }
-
                     }
                 }
-
             }
         } catch (ParseException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             errors.rejectValue("jsonWad", "error.field.format.json");
         }
     }
-
 }

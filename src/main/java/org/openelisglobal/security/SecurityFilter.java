@@ -3,7 +3,6 @@ package org.openelisglobal.security;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Enumeration;
-
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -12,7 +11,6 @@ import javax.servlet.ServletRequest;
 import javax.servlet.ServletResponse;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.StringUtil;
 
@@ -66,8 +64,7 @@ public class SecurityFilter implements Filter {
                 attackMessage.append(attack);
             }
             // should log suspected attempt
-            LogEvent.logWarn("SecurityFilter", "doFilter()", attackMessage.toString());
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", attackMessage.toString());
+            LogEvent.logWarn(this.getClass().getSimpleName(), "doFilter()", attackMessage.toString());
             // send to safe page
             httpResponse.sendRedirect("Dashboard");
         } else {
@@ -88,5 +85,4 @@ public class SecurityFilter implements Filter {
         // TODO Auto-generated method stub
         addExceptions();
     }
-
 }

@@ -8,7 +8,6 @@ import javax.persistence.MappedSuperclass;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.validation.Valid;
-
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection.AuthType;
 
@@ -50,5 +49,4 @@ public abstract class ExternalConnectionAuthenticationData extends BaseObject<In
     public void setId(Integer id) {
         this.id = id;
     }
-
 }

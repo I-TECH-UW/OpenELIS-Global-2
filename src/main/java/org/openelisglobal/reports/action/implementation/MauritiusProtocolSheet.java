@@ -11,17 +11,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JREmptyDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.openelisglobal.analyzer.service.AnalyzerExperimentService;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.context.i18n.LocaleContextHolder;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JREmptyDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public class MauritiusProtocolSheet extends Report implements IReportCreator {
 
@@ -138,5 +136,4 @@ public class MauritiusProtocolSheet extends Report implements IReportCreator {
     protected String reportFileName() {
         return "MauritiusProtocolSheet";
     }
-
 }

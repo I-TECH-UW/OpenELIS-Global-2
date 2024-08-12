@@ -1,11 +1,12 @@
 package org.openelisglobal.resultvalidation.controller;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.*;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
@@ -59,9 +60,9 @@ public class AccessionValidationController extends BaseController {
     }
 
     @RequestMapping(value = "/AccessionValidation", method = RequestMethod.GET)
-    public ModelAndView showAccessionValidation(HttpServletRequest request,AccessionValidationForm form)
+    public ModelAndView showAccessionValidation(HttpServletRequest request, AccessionValidationForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        //AccessionValidationForm form = new AccessionValidationForm();
+        // AccessionValidationForm form = new AccessionValidationForm();
 
         request.getSession().setAttribute(SAVE_DISABLED, TRUE);
         form.setReferralReasons(DisplayListService.getInstance().getList(DisplayListService.ListType.REFERRAL_REASONS));
@@ -79,11 +80,12 @@ public class AccessionValidationController extends BaseController {
             if (!GenericValidator.isBlankOrNull(accessionNumber)) {
                 Errors errors = new BeanPropertyBindingResult(form, "form");
                 ResultsValidationUtility resultsUtility = SpringContext.getBean(ResultsValidationUtility.class);
-//                resultsUtility.setSysUser(getSysUserId(request));
+                // resultsUtility.setSysUser(getSysUserId(request));
                 // This is for Haiti_LNSP if it gets more complicated use the status set stuff
-//                resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
+                // resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Canceled);
                 // resultsUtility.addExcludedAnalysisStatus(AnalysisStatus.Finalized);
-//                resultsUtility.setLockCurrentResults(modifyResultsRoleBased() && userNotInRole(request));
+                // resultsUtility.setLockCurrentResults(modifyResultsRoleBased() &&
+                // userNotInRole(request));
                 validateAll(request, errors, form, accessionNumber);
 
                 if (errors.hasErrors()) {
@@ -107,12 +109,12 @@ public class AccessionValidationController extends BaseController {
                     List<AnalysisItem> filteredresultList = userService.filterAnalysisResultsByLabUnitRoles(
                             getSysUserId(request), resultsAnalysises, Constants.ROLE_VALIDATION);
                     count = filteredresultList.size();
-//                    if (resultsUtility.inventoryNeeded()) {
-//                        addInventory(form);
-//                        form.setDisplayTestKit(true);
-//                    } else {
-//                        addEmptyInventoryList(form, accessionNumber);
-//                    }
+                    // if (resultsUtility.inventoryNeeded()) {
+                    // addInventory(form);
+                    // form.setDisplayTestKit(true);
+                    // } else {
+                    // addEmptyInventoryList(form, accessionNumber);
+                    // }
 
                     paging.setDatabaseResults(request, form, filteredresultList);
                 } else {
@@ -128,6 +130,17 @@ public class AccessionValidationController extends BaseController {
         request.setAttribute("analysisCount", count);
         request.setAttribute("pageSize", count);
 
+        ObjectMapper mapper = new ObjectMapper();
+        String jsonForm = "";
+        try {
+            jsonForm = mapper.writeValueAsString(form);
+        } catch (JsonProcessingException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+        System.out.println("AccessionValidationController:jsonForm:" + jsonForm);
+
         return findForward(FWD_SUCCESS, form);
     }
 
@@ -136,47 +149,51 @@ public class AccessionValidationController extends BaseController {
                 .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.roleRequiredForModifyResults));
     }
 
-//    private boolean userNotInRole(HttpServletRequest request) {
-//        if (userModuleService.isUserAdmin(request)) {
-//            return false;
-//        }
-//
-//        List<String> roleIds = userRoleService.getRoleIdsForUser(getSysUserId(request));
-//
-//        return !roleIds.contains(RESULT_EDIT_ROLE_ID);
-//    }
+    // private boolean userNotInRole(HttpServletRequest request) {
+    // if (userModuleService.isUserAdmin(request)) {
+    // return false;
+    // }
+    //
+    // List<String> roleIds =
+    // userRoleService.getRoleIdsForUser(getSysUserId(request));
+    //
+    // return !roleIds.contains(RESULT_EDIT_ROLE_ID);
+    // }
 
     private void setEmptyResults(AccessionValidationForm form, String accessionNumber)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         form.setResultList(new ArrayList<AnalysisItem>());
         form.setDisplayTestKit(false);
-//        addEmptyInventoryList(form, accessionNumber);
+        // addEmptyInventoryList(form, accessionNumber);
     }
 
-//    private void addInventory(AccessionValidationForm form)
-//            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-//
-//        List<InventoryKitItem> list = inventoryUtility.getExistingActiveInventory();
-//        List<String> hivKits = new ArrayList<>();
-//        List<String> syphilisKits = new ArrayList<>();
-//        for (InventoryKitItem item : list) {
-//            if (item.getType().equals("HIV")) {
-//                hivKits.add(item.getInventoryLocationId());
-//            } else {
-//                syphilisKits.add(item.getInventoryLocationId());
-//            }
-//        }
-//        form.setHivKits(hivKits);
-//        form.setSyphilisKits(syphilisKits);
-//        form.setInventoryItems(list);
-//    }
+    // private void addInventory(AccessionValidationForm form)
+    // throws IllegalAccessException, InvocationTargetException,
+    // NoSuchMethodException {
+    //
+    // List<InventoryKitItem> list = inventoryUtility.getExistingActiveInventory();
+    // List<String> hivKits = new ArrayList<>();
+    // List<String> syphilisKits = new ArrayList<>();
+    // for (InventoryKitItem item : list) {
+    // if (item.getType().equals("HIV")) {
+    // hivKits.add(item.getInventoryLocationId());
+    // } else {
+    // syphilisKits.add(item.getInventoryLocationId());
+    // }
+    // }
+    // form.setHivKits(hivKits);
+    // form.setSyphilisKits(syphilisKits);
+    // form.setInventoryItems(list);
+    // }
 
-//    private void addEmptyInventoryList(AccessionValidationForm form, String accessionNumber)
-//            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-//        form.setInventoryItems(new ArrayList<InventoryKitItem>());
-//        form.setHivKits(new ArrayList<String>());
-//        form.setSyphilisKits(new ArrayList<String>());
-//    }
+    // private void addEmptyInventoryList(AccessionValidationForm form, String
+    // accessionNumber)
+    // throws IllegalAccessException, InvocationTargetException,
+    // NoSuchMethodException {
+    // form.setInventoryItems(new ArrayList<InventoryKitItem>());
+    // form.setHivKits(new ArrayList<String>());
+    // form.setSyphilisKits(new ArrayList<String>());
+    // }
 
     private Errors validateAll(HttpServletRequest request, Errors errors, AccessionValidationForm form,
             String accessionNumber) {

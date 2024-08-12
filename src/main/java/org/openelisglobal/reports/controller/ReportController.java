@@ -1,5 +1,6 @@
 package org.openelisglobal.reports.controller;
 
+import com.lowagie.text.DocumentException;
 import java.io.File;
 import java.io.IOException;
 import java.io.UnsupportedEncodingException;
@@ -10,13 +11,12 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.servlet.ServletContext;
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
+import net.sf.jasperreports.engine.JRException;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -41,10 +41,6 @@ import org.springframework.web.bind.annotation.SessionAttributes;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.servlet.ModelAndView;
 
-import com.lowagie.text.DocumentException;
-
-import net.sf.jasperreports.engine.JRException;
-
 @Controller
 @SessionAttributes("form")
 public class ReportController extends BaseController {
@@ -59,8 +55,8 @@ public class ReportController extends BaseController {
     @Autowired
     private ServletContext context;
 
-    private static String reportPath = null;
-    private static String imagesPath = null;
+    private String reportPath = null;
+    private String imagesPath = null;
 
     @ModelAttribute("form")
     public BaseForm form() {
@@ -91,7 +87,7 @@ public class ReportController extends BaseController {
 
     @RequestMapping(value = "/ReportPrint", method = RequestMethod.GET)
     public ModelAndView showReportPrint(HttpServletRequest request, HttpServletResponse response,
-            @ModelAttribute("form") @Valid ReportForm form, BindingResult result, SessionStatus status)
+            @ModelAttribute("ReportPrintForm") @Valid ReportForm form, BindingResult result, SessionStatus status)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         if (result.hasErrors()) {
             saveErrors(result);
@@ -99,6 +95,14 @@ public class ReportController extends BaseController {
         }
 
         LogEvent.logTrace("ReportController", "Log GET ", request.getParameter("report"));
+        printReport(request, response, form);
+
+        // signal to remove from from session
+        status.setComplete();
+        return null;
+    }
+
+    private void printReport(HttpServletRequest request, HttpServletResponse response, ReportForm form) {
         IReportCreator reportCreator = ReportImplementationFactory.getReportCreator(request.getParameter("report"));
 
         if (reportCreator != null) {
@@ -130,18 +134,13 @@ public class ReportController extends BaseController {
                 servletOutputStream.flush();
                 servletOutputStream.close();
             } catch (IOException | SQLException | JRException | DocumentException | ParseException e) {
-                LogEvent.logErrorStack(e);
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
             }
         }
 
         if ("patient".equals(request.getParameter("type"))) {
             trackReports(reportCreator, request.getParameter("report"), ReportType.PATIENT);
         }
-
-        // signal to remove from from session
-        status.setComplete();
-        return null;
     }
 
     private void trackReports(IReportCreator reportCreator, String reportName, ReportType type) {
@@ -163,17 +162,18 @@ public class ReportController extends BaseController {
 
         if (reportPath == null) {
             // TODO csl this was added by external developer but it breaks the other reports
-//            SiteInformation reportsPath = siteInformationService.getSiteInformationByName("reportsDirectory");
-//            if (reportsPath != null) {
-//                reportPath = reportsPath.getValue();
-//                return reportPath;
-//            }
+            // SiteInformation reportsPath =
+            // siteInformationService.getSiteInformationByName("reportsDirectory");
+            // if (reportsPath != null) {
+            // reportPath = reportsPath.getValue();
+            // return reportPath;
+            // }
             ClassLoader classLoader = getClass().getClassLoader();
             reportPath = classLoader.getResource("reports").getPath();
             try {
                 reportPath = URLDecoder.decode(reportPath, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException(e);
             }
         }
@@ -186,7 +186,7 @@ public class ReportController extends BaseController {
             try {
                 imagesPath = URLDecoder.decode(imagesPath, "UTF-8");
             } catch (UnsupportedEncodingException e) {
-                LogEvent.logDebug(e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException(e);
             }
         }
@@ -213,5 +213,4 @@ public class ReportController extends BaseController {
     protected String getPageTitleKey() {
         return "reports.add.params";
     }
-
 }

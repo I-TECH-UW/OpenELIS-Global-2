@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -189,7 +187,6 @@ public class WorkPlanByTestController extends BaseWorkplanController {
 
                 workplanTestList.add(testResultItem);
             }
-
         }
 
         return workplanTestList;
@@ -224,7 +221,6 @@ public class WorkPlanByTestController extends BaseWorkplanController {
                     sampleGroupingNumber++;
                     currentAccessionNumber = analysisAccessionNumber;
                     testIdList = new ArrayList<>();
-
                 }
                 testResultItem = new TestResultItem();
                 testResultItem.setTestId(testType);
@@ -237,9 +233,7 @@ public class WorkPlanByTestController extends BaseWorkplanController {
                 if (allNFSTestsRequested(testIdList)) {
                     workplanTestList.add(testResultItem);
                 }
-
             }
-
         }
 
         return workplanTestList;
@@ -287,7 +281,6 @@ public class WorkPlanByTestController extends BaseWorkplanController {
         public int compare(IdValuePair p1, IdValuePair p2) {
             return p1.getValue().toUpperCase().compareTo(p2.getValue().toUpperCase());
         }
-
     }
 
     @Override

@@ -1,24 +1,21 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.provider.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
 import java.util.Vector;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -55,7 +52,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl getData()", e);
         }
     }
@@ -70,7 +67,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl getAllProviders()", e);
         }
 
@@ -93,7 +90,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl getPageOfProviders()", e);
         }
 
@@ -106,16 +103,14 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             provider = entityManager.unwrap(Session.class).get(Provider.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl readProvider()", e);
         }
 
         return provider;
-
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public Provider getProviderByPerson(Person person) throws LIMSRuntimeException {
         List<Provider> list = null;
@@ -126,7 +121,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl getProviderByPerson()", e);
         }
 
@@ -141,15 +136,16 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
     public int getTotalSearchedProviderCount(String parameter) {
         List<Provider> list = null;
         try {
-            String sql = "from Provider p where lower(p.person.firstName) like concat('%', lower(:searchValue), '%') "
-                    + "or lower(p.person.lastName) like concat('%', lower(:searchValue), '%') "
-                    + "or lower(concat(p.person.firstName, ' ', p.person.lastName)) like concat('%', lower(:searchValue), '%')";
+            String sql = "from Provider p where lower(p.person.firstName) like concat('%', lower(:searchValue),"
+                    + " '%') or lower(p.person.lastName) like concat('%', lower(:searchValue), '%') or"
+                    + " lower(concat(p.person.firstName, ' ', p.person.lastName)) like concat('%',"
+                    + " lower(:searchValue), '%')";
             Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
             query.setParameter("searchValue", parameter);
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl getTotalSearchedProviderCount()", e);
         }
 
@@ -163,9 +159,10 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
             // calculate maxRow to be one more than the page size
             int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
 
-            String sql = "from Provider p where lower(p.person.firstName) like concat('%', lower(:searchValue), '%') "
-                    + "or lower(p.person.lastName) like concat('%', lower(:searchValue), '%') "
-                    + "or lower(concat(p.person.firstName, ' ', p.person.lastName)) like concat('%', lower(:searchValue), '%') ORDER BY p.active DESC, p.person.lastName";
+            String sql = "from Provider p where lower(p.person.firstName) like concat('%', lower(:searchValue),"
+                    + " '%') or lower(p.person.lastName) like concat('%', lower(:searchValue), '%') or"
+                    + " lower(concat(p.person.firstName, ' ', p.person.lastName)) like concat('%',"
+                    + " lower(:searchValue), '%') ORDER BY p.active DESC, p.person.lastName";
             Query<Provider> query = entityManager.unwrap(Session.class).createQuery(sql, Provider.class);
             query.setParameter("searchValue", parameter);
             query.setFirstResult(startingRecNo - 1);
@@ -173,7 +170,7 @@ public class ProviderDAOImpl extends BaseDAOImpl<Provider, String> implements Pr
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ProviderDAOImpl getPagesOfSearchedProviders()", e);
         }
 

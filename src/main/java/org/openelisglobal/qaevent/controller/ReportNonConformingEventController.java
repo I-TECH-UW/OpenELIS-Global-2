@@ -6,10 +6,8 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
@@ -98,7 +96,6 @@ public class ReportNonConformingEventController extends BaseController {
         } else {
             return findForward(FWD_FAIL_INSERT, form);
         }
-
     }
 
     private void initForm(String labOrderNumber, String sampleItemIds, NonConformingEventForm form)
@@ -139,7 +136,6 @@ public class ReportNonConformingEventController extends BaseController {
 
         Date today = Calendar.getInstance().getTime();
         form.setReportDate(DateUtil.formatDateAsText(today));
-
     }
 
     private Sample getSampleForLabNumber(String labNumber) throws LIMSInvalidConfigurationException {

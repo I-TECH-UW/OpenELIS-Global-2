@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.ActivityReportBean;
@@ -28,8 +27,7 @@ import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.result.service.ResultServiceImpl;
 import org.openelisglobal.result.valueholder.Result;
 
-/**
- */
+/** */
 public class ActivityReportByPanel extends ActivityReport implements IReportCreator, IReportParameterSetter {
     private String panelName;
 

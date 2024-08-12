@@ -3,7 +3,6 @@ package org.openelisglobal.config;
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
 import javax.servlet.ServletRegistration;
-
 import org.openelisglobal.common.servlet.barcode.LabelMakerServlet;
 import org.openelisglobal.common.servlet.query.AjaxQueryXMLServlet;
 import org.openelisglobal.common.servlet.reports.ReportsServlet;
@@ -39,10 +38,11 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
         dispatcher.addMapping("/");
 
         // converted to controller
-//        ServletRegistration.Dynamic logoUploadServlet = servletContext.addServlet("logoUpload",
-//                LogoUploadServlet.class);
-//        logoUploadServlet.setLoadOnStartup(++startupOrder);
-//        logoUploadServlet.addMapping("/logoUpload");
+        // ServletRegistration.Dynamic logoUploadServlet =
+        // servletContext.addServlet("logoUpload",
+        // LogoUploadServlet.class);
+        // logoUploadServlet.setLoadOnStartup(++startupOrder);
+        // logoUploadServlet.addMapping("/logoUpload");
 
         ServletRegistration.Dynamic ajaxTextServlet = servletContext.addServlet("ajaxText", AjaxTextServlet.class);
         ajaxTextServlet.setLoadOnStartup(++startupOrder);
@@ -76,10 +76,11 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
         ajaxDataXMLLServlet.setLoadOnStartup(++startupOrder);
         ajaxDataXMLLServlet.addMapping("/ajaxDataXML");
 
-//        ServletRegistration.Dynamic importAnalyzerServlet = servletContext.addServlet("importAnalyzer",
-//                AnalyzerImportServlet.class);
-//        importAnalyzerServlet.setLoadOnStartup(++startupOrder);
-//        importAnalyzerServlet.addMapping("/importAnalyzer");
+        // ServletRegistration.Dynamic importAnalyzerServlet =
+        // servletContext.addServlet("importAnalyzer",
+        // AnalyzerImportServlet.class);
+        // importAnalyzerServlet.setLoadOnStartup(++startupOrder);
+        // importAnalyzerServlet.addMapping("/importAnalyzer");
 
         ServletRegistration.Dynamic metricServicesServlet = servletContext.addServlet("MetricServicesServlet",
                 MetricServicesServlet.class);
@@ -104,7 +105,5 @@ public class AnnotationWebAppInitializer implements WebApplicationInitializer {
                 LabelMakerServlet.class);
         labelMakerServlet.setLoadOnStartup(++startupOrder);
         labelMakerServlet.addMapping("/LabelMakerServlet");
-
     }
-
 }

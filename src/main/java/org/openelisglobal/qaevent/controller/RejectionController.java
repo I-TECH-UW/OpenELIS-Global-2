@@ -6,9 +6,7 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
@@ -62,211 +60,211 @@ import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 @Controller
 public class RejectionController extends BaseController {
 
-	private static final String[] ALLOWED_FIELDS = new String[] { "patientId", "receptionDateForDisplay",
-			"collectionDateForDisplay", "labNo", "projectId", "subjectNo", "doctor", "typeOfSampleId", "sectionId",
-			"comment", "biologist", "samplerName", "organizationId" };
+    private static final String[] ALLOWED_FIELDS = new String[] { "patientId", "receptionDateForDisplay",
+            "collectionDateForDisplay", "labNo", "projectId", "subjectNo", "doctor", "typeOfSampleId", "sectionId",
+            "comment", "biologist", "samplerName", "organizationId" };
 
-	@Autowired
-	private SampleService sampleService;
-	@Autowired
-	private SampleItemService sampleItemService;
-	@Autowired
-	private TypeOfSampleService typeOfSampleService;
-	@Autowired
-	private OrganizationService organizationService;
-	@Autowired
-	private SampleOrganizationService sampleOrganizationService;
-	@Autowired
-	private TestSectionService testSectionService;
-	@Autowired
-	private ProjectService projectService;
-	@Autowired
-	private SampleProjectService sampleProjectService;
-	@Autowired
-	private NCEventService ncEventService;
+    @Autowired
+    private SampleService sampleService;
+    @Autowired
+    private SampleItemService sampleItemService;
+    @Autowired
+    private TypeOfSampleService typeOfSampleService;
+    @Autowired
+    private OrganizationService organizationService;
+    @Autowired
+    private SampleOrganizationService sampleOrganizationService;
+    @Autowired
+    private TestSectionService testSectionService;
+    @Autowired
+    private ProjectService projectService;
+    @Autowired
+    private SampleProjectService sampleProjectService;
+    @Autowired
+    private NCEventService ncEventService;
 
-	@Autowired
-	private NceSpecimenService nceSpecimenService;
+    @Autowired
+    private NceSpecimenService nceSpecimenService;
 
-	@InitBinder
-	public void initBinder(WebDataBinder binder) {
-		binder.setAllowedFields(ALLOWED_FIELDS);
-	}
+    @InitBinder
+    public void initBinder(WebDataBinder binder) {
+        binder.setAllowedFields(ALLOWED_FIELDS);
+    }
 
-	@RequestMapping(value = "/SampleRejection", method = RequestMethod.GET)
-	public ModelAndView showRejectionForm(HttpServletRequest request, @Validated RejectionForm form,
-			BindingResult result) throws LIMSInvalidConfigurationException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
-		if (result.hasErrors()) {
-			saveErrors(result);
-			form = new RejectionForm();
-			return findForward(FWD_FAIL, form);
-		}
-		form = new RejectionForm();
-		setupForm(form);
-		addFlashMsgsToRequest(request);
-		request.getSession().setAttribute(SAVE_DISABLED, TRUE);
+    @RequestMapping(value = "/SampleRejection", method = RequestMethod.GET)
+    public ModelAndView showRejectionForm(HttpServletRequest request, @Validated RejectionForm form,
+            BindingResult result) throws LIMSInvalidConfigurationException, IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            form = new RejectionForm();
+            return findForward(FWD_FAIL, form);
+        }
+        form = new RejectionForm();
+        setupForm(form);
+        addFlashMsgsToRequest(request);
+        request.getSession().setAttribute(SAVE_DISABLED, TRUE);
 
-		return findForward(FWD_SUCCESS, form);
-	}
+        return findForward(FWD_SUCCESS, form);
+    }
 
-	private void setupForm(RejectionForm form) throws LIMSInvalidConfigurationException, IllegalAccessException,
-			InvocationTargetException, NoSuchMethodException {
+    private void setupForm(RejectionForm form) throws LIMSInvalidConfigurationException, IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException {
 
-		setProjectList(form);
-		form.setSections(createSectionList());
-		form.setQaEventTypes(DisplayListService.getInstance().getList(ListType.QA_EVENTS));
-		form.setTypeOfSamples(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
-		form.setSiteList(DisplayListService.getInstance().getFreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
-	}
+        setProjectList(form);
+        form.setSections(createSectionList());
+        form.setQaEventTypes(DisplayListService.getInstance().getList(ListType.QA_EVENTS));
+        form.setTypeOfSamples(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
+        form.setSiteList(DisplayListService.getInstance().getFreshList(ListType.SAMPLE_PATIENT_REFERRING_CLINIC));
+    }
 
-	private void setProjectList(RejectionForm form)
-			throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-		List<Project> projects = projectService.getAll();
-		form.setProjects(projects);
-	}
+    private void setProjectList(RejectionForm form)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        List<Project> projects = projectService.getAll();
+        form.setProjects(projects);
+    }
 
-	private void sortSections(List<TestSection> list) {
-		Collections.sort(list, new Comparator<TestSection>() {
-			@Override
-			public int compare(TestSection o1, TestSection o2) {
-				return o1.getSortOrderInt() - o2.getSortOrderInt();
-			}
-		});
-	}
+    private void sortSections(List<TestSection> list) {
+        Collections.sort(list, new Comparator<TestSection>() {
+            @Override
+            public int compare(TestSection o1, TestSection o2) {
+                return o1.getSortOrderInt() - o2.getSortOrderInt();
+            }
+        });
+    }
 
-	private List<TestSection> createSectionList() {
+    private List<TestSection> createSectionList() {
 
-		List<TestSection> sections = testSectionService.getAllActiveTestSections();
-		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.NONCONFORMITY_RECEPTION_AS_UNIT,
-				"true")) {
-			TestSection extra = new TestSection();
-			extra.setTestSectionName("Reception");
-			extra.setSortOrder("0");
-			extra.setNameKey("testSection.Reception");
-			sections.add(extra);
-		}
+        List<TestSection> sections = testSectionService.getAllActiveTestSections();
+        if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.NONCONFORMITY_RECEPTION_AS_UNIT,
+                "true")) {
+            TestSection extra = new TestSection();
+            extra.setTestSectionName("Reception");
+            extra.setSortOrder("0");
+            extra.setNameKey("testSection.Reception");
+            sections.add(extra);
+        }
 
-		if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.NONCONFORMITY_SAMPLE_COLLECTION_AS_UNIT,
-				"true")) {
-			TestSection extra = new TestSection();
-			extra.setTestSectionName("Sample Collection");
-			extra.setSortOrder("1");
-			extra.setNameKey("testSection.SampleCollection");
-			sections.add(extra);
-		}
+        if (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.NONCONFORMITY_SAMPLE_COLLECTION_AS_UNIT,
+                "true")) {
+            TestSection extra = new TestSection();
+            extra.setTestSectionName("Sample Collection");
+            extra.setSortOrder("1");
+            extra.setNameKey("testSection.SampleCollection");
+            sections.add(extra);
+        }
 
-		sortSections(sections);
-		return sections;
-	}
+        sortSections(sections);
+        return sections;
+    }
 
-	@RequestMapping(value = "/SampleRejection", method = RequestMethod.POST)
-	public ModelAndView showNonConformityUpdate(HttpServletRequest request,
-			@ModelAttribute("form") @Validated RejectionForm form, BindingResult result,
-			RedirectAttributes redirectAttributes) {
-		if (result.hasErrors()) {
-			saveErrors(result);
-			return findForward(FWD_FAIL_INSERT, form);
-		}
+    @RequestMapping(value = "/SampleRejection", method = RequestMethod.POST)
+    public ModelAndView showNonConformityUpdate(HttpServletRequest request,
+            @ModelAttribute("form") @Validated RejectionForm form, BindingResult result,
+            RedirectAttributes redirectAttributes) {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            return findForward(FWD_FAIL_INSERT, form);
+        }
 
-		Sample rejectedSample = new Sample();
-		Date today = Calendar.getInstance().getTime();
-		try {
-			IAccessionNumberGenerator accessionValidator = AccessionNumberUtil.getMainAccessionNumberGenerator();
-			if (ObjectUtils.isEmpty(form.getLabNo())) {
-				form.setLabNo(accessionValidator.getNextAvailableAccessionNumber("", true));
-			}
-			rejectedSample.setAccessionNumber(form.getLabNo());
-			rejectedSample.setCollectionDate(
-					DateUtil.convertStringDateToTruncatedTimestamp(form.getCollectionDateForDisplay()));
-			rejectedSample.setEnteredDate(DateUtil.getNowAsSqlDate());
-			rejectedSample.setPriority(OrderPriority.ROUTINE);
-			rejectedSample.setDomain(SystemConfiguration.getInstance().getHumanDomain());
-			rejectedSample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Entered));
-			rejectedSample.setReceivedTimestamp(
-					DateUtil.convertStringDateToTruncatedTimestamp(form.getReceptionDateForDisplay()));
-			rejectedSample.setSysUserId(getSysUserId(request));
-			rejectedSample = sampleService.save(rejectedSample);
+        Sample rejectedSample = new Sample();
+        Date today = Calendar.getInstance().getTime();
+        try {
+            IAccessionNumberGenerator accessionValidator = AccessionNumberUtil.getMainAccessionNumberGenerator();
+            if (ObjectUtils.isEmpty(form.getLabNo())) {
+                form.setLabNo(accessionValidator.getNextAvailableAccessionNumber("", true));
+            }
+            rejectedSample.setAccessionNumber(form.getLabNo());
+            rejectedSample.setCollectionDate(
+                    DateUtil.convertStringDateToTruncatedTimestamp(form.getCollectionDateForDisplay()));
+            rejectedSample.setEnteredDate(DateUtil.getNowAsSqlDate());
+            rejectedSample.setPriority(OrderPriority.ROUTINE);
+            rejectedSample.setDomain(SystemConfiguration.getInstance().getHumanDomain());
+            rejectedSample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Entered));
+            rejectedSample.setReceivedTimestamp(
+                    DateUtil.convertStringDateToTruncatedTimestamp(form.getReceptionDateForDisplay()));
+            rejectedSample.setSysUserId(getSysUserId(request));
+            rejectedSample = sampleService.save(rejectedSample);
 
-			TypeOfSample sampleType = typeOfSampleService.get(form.getTypeOfSampleId());
+            TypeOfSample sampleType = typeOfSampleService.get(form.getTypeOfSampleId());
 
-			// sampleProject
-			SampleProject sampProject = new SampleProject();
-			sampProject.setProjectId(form.getProjectId());
-			sampProject.setSample(rejectedSample);
-			sampProject = sampleProjectService.save(sampProject);
+            // sampleProject
+            SampleProject sampProject = new SampleProject();
+            sampProject.setProjectId(form.getProjectId());
+            sampProject.setSample(rejectedSample);
+            sampProject = sampleProjectService.save(sampProject);
 
-			// sampleOrg
-			Organization organization = ObjectUtils.isNotEmpty(form.getOrganizationId())
-					? organizationService.get(form.getOrganizationId())
-					: new Organization();
-			SampleOrganization sampOrg = new SampleOrganization();
-			sampOrg.setOrganization(organization);
-			sampOrg.setSample(rejectedSample);
-			sampOrg.setSysUserId(getSysUserId(request));
-			sampOrg = sampleOrganizationService.save(sampOrg);
+            // sampleOrg
+            Organization organization = ObjectUtils.isNotEmpty(form.getOrganizationId())
+                    ? organizationService.get(form.getOrganizationId())
+                    : new Organization();
+            SampleOrganization sampOrg = new SampleOrganization();
+            sampOrg.setOrganization(organization);
+            sampOrg.setSample(rejectedSample);
+            sampOrg.setSysUserId(getSysUserId(request));
+            sampOrg = sampleOrganizationService.save(sampOrg);
 
-			// SampleItem
-			SampleItem sampItem = new SampleItem();
-			sampItem.setSortOrder(Integer.toString(1));
-			sampItem.setCollectionDate(rejectedSample.getCollectionDate());
-			sampItem.setSample(rejectedSample);
-			sampItem.setTypeOfSample(sampleType);
-			sampItem.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.SampleRejected));
-			sampItem.setRejected(true);
-			sampItem.setRejectReasonId(form.getQaEventId());
-			sampItem = sampleItemService.save(sampItem);
+            // SampleItem
+            SampleItem sampItem = new SampleItem();
+            sampItem.setSortOrder(Integer.toString(1));
+            sampItem.setCollectionDate(rejectedSample.getCollectionDate());
+            sampItem.setSample(rejectedSample);
+            sampItem.setTypeOfSample(sampleType);
+            sampItem.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(SampleStatus.SampleRejected));
+            sampItem.setRejected(true);
+            sampItem.setRejectReasonId(form.getQaEventId());
+            sampItem = sampleItemService.save(sampItem);
 
-			// NCEvent
-			NcEvent event = new NcEvent();
-			event.setLabOrderNumber(rejectedSample.getAccessionNumber());
-			event.setComments(form.getComment());
-			event.setNameOfReporter(form.getBiologist());
-			event.setReportDate(DateUtil.convertDateTimeToSqlDate(today));
-			event.setSite(organization.getName());
-			event.setPrescriberName(form.getDoctor());
-			event.setReportingUnitId(Integer.parseInt(form.getSectionId()));
-			event.setNceTypeId(Integer.parseInt(form.getQaEventId()));
-			event = ncEventService.save(event);
+            // NCEvent
+            NcEvent event = new NcEvent();
+            event.setLabOrderNumber(rejectedSample.getAccessionNumber());
+            event.setComments(form.getComment());
+            event.setNameOfReporter(form.getBiologist());
+            event.setReportDate(DateUtil.convertDateTimeToSqlDate(today));
+            event.setSite(organization.getName());
+            event.setPrescriberName(form.getDoctor());
+            event.setReportingUnitId(Integer.parseInt(form.getSectionId()));
+            event.setNceTypeId(Integer.parseInt(form.getQaEventId()));
+            event = ncEventService.save(event);
 
-			// NCESpecimen
-			NceSpecimen nceSpecimen = new NceSpecimen();
-			nceSpecimen.setNceId(Integer.parseInt(event.getId()));
-			nceSpecimen.setSampleItemId(Integer.parseInt(sampItem.getId()));
-			nceSpecimen.setSysUserId(getSysUserId(request));
-			nceSpecimenService.save(nceSpecimen);
-			setupForm(form);
-			redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
+            // NCESpecimen
+            NceSpecimen nceSpecimen = new NceSpecimen();
+            nceSpecimen.setNceId(Integer.parseInt(event.getId()));
+            nceSpecimen.setSampleItemId(Integer.parseInt(sampItem.getId()));
+            nceSpecimen.setSysUserId(getSysUserId(request));
+            nceSpecimenService.save(nceSpecimen);
+            setupForm(form);
+            redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
 
-			return findForward(FWD_SUCCESS_INSERT, form);
-		} catch (LIMSRuntimeException | NoSuchMethodException | InvocationTargetException
-				| LIMSInvalidConfigurationException | IllegalAccessException e) {
-			return findForward(FWD_FAIL_INSERT, form);
-		}
-	}
+            return findForward(FWD_SUCCESS_INSERT, form);
+        } catch (LIMSRuntimeException | NoSuchMethodException | InvocationTargetException
+                | LIMSInvalidConfigurationException | IllegalAccessException e) {
+            return findForward(FWD_FAIL_INSERT, form);
+        }
+    }
 
-	@Override
-	protected String getPageSubtitleKey() {
-		return "qaevent.add.title";
-	}
+    @Override
+    protected String getPageSubtitleKey() {
+        return "qaevent.add.title";
+    }
 
-	@Override
-	protected String getPageTitleKey() {
-		return "qaevent.add.title";
-	}
+    @Override
+    protected String getPageTitleKey() {
+        return "qaevent.add.title";
+    }
 
-	@Override
-	protected String findLocalForward(String forward) {
-		if (FWD_SUCCESS.equals(forward)) {
-			return "sampleRejectionDefiniton";
-		} else if (FWD_FAIL.equals(forward)) {
-			return "sampleRejectionDefiniton";
-		} else if (FWD_SUCCESS_INSERT.equals(forward)) {
-			return "redirect:/SampleRejection";
-		} else if (FWD_FAIL_INSERT.equals(forward)) {
-			return "sampleRejectionDefiniton";
-		} else {
-			return "PageNotFound";
-		}
-	}
+    @Override
+    protected String findLocalForward(String forward) {
+        if (FWD_SUCCESS.equals(forward)) {
+            return "sampleRejectionDefiniton";
+        } else if (FWD_FAIL.equals(forward)) {
+            return "sampleRejectionDefiniton";
+        } else if (FWD_SUCCESS_INSERT.equals(forward)) {
+            return "redirect:/SampleRejection";
+        } else if (FWD_FAIL_INSERT.equals(forward)) {
+            return "sampleRejectionDefiniton";
+        } else {
+            return "PageNotFound";
+        }
+    }
 }

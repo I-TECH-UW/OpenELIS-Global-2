@@ -7,5 +7,4 @@ public class ViewConfigurationException extends RuntimeException {
     public ViewConfigurationException(String message) {
         super(message);
     }
-
 }

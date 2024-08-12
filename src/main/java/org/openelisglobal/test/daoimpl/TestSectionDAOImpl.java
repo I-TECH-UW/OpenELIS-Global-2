@@ -1,24 +1,21 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.test.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -55,13 +52,12 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
                 testSection.setId(null);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestSection getData()", e);
         }
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<TestSection> getAllTestSections() throws LIMSRuntimeException {
         List<TestSection> list = null;
@@ -70,7 +66,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestSection getAllTestSections()", e);
         }
         return list;
@@ -101,7 +97,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestSection getAllTestSectionsBySysUserId()", e);
         }
         return list;
@@ -124,7 +120,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestSection getPageOfTestSections()", e);
         }
 
@@ -137,7 +133,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             ts = entityManager.unwrap(Session.class).get(TestSection.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestSection readCity()", e);
         }
 
@@ -150,13 +146,14 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     public List<TestSection> getTestSections(String filter) throws LIMSRuntimeException {
         List<TestSection> list;
         try {
-            String sql = "from TestSection t where upper(t.testSectionName) like upper(:param) order by upper(t.testSectionName)";
+            String sql = "from TestSection t where upper(t.testSectionName) like upper(:param) order by"
+                    + " upper(t.testSectionName)";
             Query<TestSection> query = entityManager.unwrap(Session.class).createQuery(sql, TestSection.class);
             query.setParameter("param", filter + "%");
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestSection getTestSections(String filter)", e);
         }
 
@@ -173,7 +170,8 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
 
         try {
             if (sectionIdList.size() > 0) {
-                sql = "from TestSection t where upper(t.testSectionName) like upper(:param) and t.id in (:sectionIdList) order by upper(t.testSectionName)";
+                sql = "from TestSection t where upper(t.testSectionName) like upper(:param) and t.id in"
+                        + " (:sectionIdList) order by upper(t.testSectionName)";
             } else {
                 return list;
             }
@@ -184,7 +182,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestSection getTestSectionsBySysUserId(String filter)", e);
         }
 
@@ -192,7 +190,6 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public TestSection getTestSectionByName(TestSection testSection) throws LIMSRuntimeException {
         try {
@@ -209,7 +206,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             return null;
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestSection getTestSectionByName()", e);
         }
     }
@@ -241,7 +238,7 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
             return !list.isEmpty();
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateTestSectionExists()", e);
         }
     }
@@ -308,5 +305,4 @@ public class TestSectionDAOImpl extends BaseDAOImpl<TestSection, String> impleme
         }
         return null;
     }
-
 }

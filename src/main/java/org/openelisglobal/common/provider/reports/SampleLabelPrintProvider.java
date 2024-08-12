@@ -1,23 +1,20 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.common.provider.reports;
 
 import java.io.IOException;
 import java.util.Map;
-
 import javax.print.Doc;
 import javax.print.DocFlavor;
 import javax.print.DocPrintJob;
@@ -34,7 +31,6 @@ import javax.print.event.PrintJobListener;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.openelisglobal.common.exception.LIMSInvalidPrinterException;
 import org.openelisglobal.common.exception.LIMSPrintException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -71,7 +67,8 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
             String validPrintersMessage = "";
             for (int i = 0; i < services.length; i++) {
                 printer = services[i].getName();
-                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is one of
+                // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "This is
+                // one of
                 // the printers " + printer);
                 // bugzilla 2380 this is for error message to list valid printers in ActionError
                 if (i == 0) {
@@ -82,7 +79,8 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
                 // bugzilla 2380: name must match - not start with
                 if (printer.equalsIgnoreCase(SystemConfiguration.getInstance().getLabelPrinterName())) {
                     printerName = new PrinterName(printer, null);
-                    // LogEvent.logInfo(this.getClass().getName(), "method unkown", "This is the
+                    // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "This is
+                    // the
                     // printer I will use "
                     // + printerName);
                     ps = services[i];
@@ -91,7 +89,8 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
                 }
             }
 
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Printer is
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Printer
+            // is
             // found " + printer);
             if (printerName == null) {
                 throw new LIMSInvalidPrinterException(validPrintersMessage);
@@ -105,7 +104,7 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
                 numberOfLabelCopies = Integer.parseInt(numberOfLabelCopiesString);
             } catch (NumberFormatException e) {
                 // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
             }
 
             String accessionNumber = (String) parameters.get("Accession_Number");
@@ -131,9 +130,9 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
             job.print(doc, aset);
 
         } catch (RuntimeException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleLabelPrintProvider processRequest()", e);
         }
-
     }
 
     class MyPrintJobListener implements PrintJobListener {
@@ -145,19 +144,22 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
 
         @Override
         public void printJobCanceled(PrintJobEvent pje) {
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "The print job
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "The print
+            // job
             // was cancelled");
         }
 
         @Override
         public void printJobCompleted(PrintJobEvent pje) {
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "The print job
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "The print
+            // job
             // was completed");
         }
 
         @Override
         public void printJobFailed(PrintJobEvent pje) {
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "The print job
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "The print
+            // job
             // has failed");
         }
 
@@ -182,5 +184,4 @@ public class SampleLabelPrintProvider extends BasePrintProvider {
             // cause this event to be fired.
         }
     }
-
 }

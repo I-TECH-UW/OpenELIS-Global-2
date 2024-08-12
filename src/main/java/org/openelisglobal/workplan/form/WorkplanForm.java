@@ -1,27 +1,30 @@
 package org.openelisglobal.workplan.form;
 
 import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.form.IPagingForm;
+import org.openelisglobal.common.paging.PagingBean;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.validation.annotations.ValidDate;
 
-public class WorkplanForm extends BaseForm {
+public class WorkplanForm extends BaseForm implements IPagingForm {
     public interface PrintWorkplan {
     }
 
     @ValidDate(relative = DateRelation.TODAY, groups = { PrintWorkplan.class })
     private String currentDate = "";
+
+    // for display
+    private PagingBean paging;
 
     // for display
     private String searchLabel;
@@ -199,5 +202,15 @@ public class WorkplanForm extends BaseForm {
 
     public void setPriorityList(List<IdValuePair> priorityList) {
         this.priorityList = priorityList;
+    }
+
+    @Override
+    public void setPaging(PagingBean paging) {
+        this.paging = paging;
+    }
+
+    @Override
+    public PagingBean getPaging() {
+        return paging;
     }
 }

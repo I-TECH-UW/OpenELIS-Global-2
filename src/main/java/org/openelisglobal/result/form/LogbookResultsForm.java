@@ -1,17 +1,16 @@
 package org.openelisglobal.result.form;
 
 import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.paging.PagingBean;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.validation.annotations.ValidDate;
@@ -25,6 +24,8 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
     private PagingBean paging;
 
     private String accessionNumber;
+
+    private Patient patient;
 
     @NotNull(groups = { LogbookResults.class })
     private Boolean singlePatient = false;
@@ -254,6 +255,14 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
         this.accessionNumber = accessionNumber;
     }
 
+    public Patient getPatient() {
+        return patient;
+    }
+
+    public void setPatient(Patient patient) {
+        this.patient = patient;
+    }
+
     public boolean getSearchByRange() {
         return searchByRange;
     }
@@ -301,5 +310,4 @@ public class LogbookResultsForm extends BaseForm implements ResultsPagingForm {
     public void setDisplayMethods(Boolean displayMethods) {
         this.displayMethods = displayMethods;
     }
-
 }

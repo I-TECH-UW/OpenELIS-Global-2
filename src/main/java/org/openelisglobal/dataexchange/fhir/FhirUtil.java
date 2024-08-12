@@ -1,28 +1,24 @@
 package org.openelisglobal.dataexchange.fhir;
 
-import java.io.IOException;
-import java.nio.charset.StandardCharsets;
-
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.ObjectMapper;
-
-import org.apache.commons.validator.GenericValidator;
-import org.apache.http.client.methods.CloseableHttpResponse;
-import org.apache.http.client.methods.HttpPost;
-import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.util.EntityUtils;
-import org.itech.fhir.dataexport.core.service.FhirClientFetcher;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
-
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.parser.IParser;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
 import ca.uhn.fhir.rest.client.interceptor.BearerTokenAuthInterceptor;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import org.apache.commons.validator.GenericValidator;
+import org.apache.http.client.methods.CloseableHttpResponse;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.util.EntityUtils;
+import org.itech.fhir.dataexport.core.service.FhirClientFetcher;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
 @Component
 public class FhirUtil implements FhirClientFetcher {
@@ -59,6 +55,13 @@ public class FhirUtil implements FhirClientFetcher {
     public IGenericClient getFhirClient(String fhirStorePath, String token) {
         IGenericClient fhirClient = fhirContext.newRestfulGenericClient(fhirStorePath);
         BearerTokenAuthInterceptor authInterceptor = new BearerTokenAuthInterceptor(token);
+        fhirClient.registerInterceptor(authInterceptor);
+        return fhirClient;
+    }
+
+    public IGenericClient getFhirClient(String fhirStorePath, String username, String password) {
+        IGenericClient fhirClient = fhirContext.newRestfulGenericClient(fhirStorePath);
+        BasicAuthInterceptor authInterceptor = new BasicAuthInterceptor(username, password);
         fhirClient.registerInterceptor(authInterceptor);
         return fhirClient;
     }

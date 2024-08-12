@@ -1,12 +1,10 @@
 package org.openelisglobal.testconfiguration.form;
 
 import java.util.List;
-
 import javax.validation.constraints.NotBlank;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class TestSectionCreateForm extends BaseForm {
     // for display

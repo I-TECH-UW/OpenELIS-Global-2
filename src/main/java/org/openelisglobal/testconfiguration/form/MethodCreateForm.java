@@ -1,12 +1,10 @@
 package org.openelisglobal.testconfiguration.form;
 
 import java.util.List;
-
 import javax.validation.constraints.NotBlank;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class MethodCreateForm extends BaseForm {
     // for display
@@ -80,5 +78,4 @@ public class MethodCreateForm extends BaseForm {
     public void setMethodFrenchName(String methodFrenchName) {
         this.methodFrenchName = methodFrenchName;
     }
-
 }

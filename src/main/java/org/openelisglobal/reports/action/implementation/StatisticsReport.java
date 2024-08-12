@@ -12,15 +12,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import org.openelisglobal.analysis.service.AnalysisService;
+import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.StatisticsReportData;
 import org.openelisglobal.reports.form.ReportForm;
@@ -30,12 +33,6 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
-
-import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.analysis.valueholder.Analysis;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public class StatisticsReport extends IndicatorReport implements IReportCreator, IReportParameterSetter {
 
@@ -142,7 +139,6 @@ public class StatisticsReport extends IndicatorReport implements IReportCreator,
                                     .filter(analysis -> checkOutOfWorkingTimeRange(analysis.getEnteredDate()))
                                     .collect(Collectors.toList());
                         }
-
                     }
                 }
             }

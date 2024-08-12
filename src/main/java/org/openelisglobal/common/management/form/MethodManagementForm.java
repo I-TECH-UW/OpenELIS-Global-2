@@ -6,5 +6,4 @@ public class MethodManagementForm extends BaseForm {
     public MethodManagementForm() {
         setFormName("methodManagementForm");
     }
-
 }

@@ -4,11 +4,13 @@ import java.io.File;
 import java.io.IOException;
 import java.util.HashMap;
 import java.util.List;
-
 import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.JRException;
+import net.sf.jasperreports.engine.JasperRunManager;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.test.service.TestServiceImpl;
@@ -25,11 +27,6 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.JRException;
-import net.sf.jasperreports.engine.JasperRunManager;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @Controller
 public class PrintWorkplanReportController extends BaseController {
@@ -99,7 +96,7 @@ public class PrintWorkplanReportController extends BaseController {
             servletOutputStream.close();
 
         } catch (JRException | IOException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             result.reject("error.jasper", "error.jasper");
         }
         if (result.hasErrors()) {
@@ -124,8 +121,8 @@ public class PrintWorkplanReportController extends BaseController {
 
         if ("test".equals(testType)) {
             workplan = new TestWorkplanReport(name);
-//        } else if ("Serology".equals(testType)) {
-//            workplan = new ElisaWorkplanReport(name);
+            // } else if ("Serology".equals(testType)) {
+            // workplan = new ElisaWorkplanReport(name);
         } else {
             workplan = new TestSectionWorkplanReport(name);
         }

@@ -4,12 +4,10 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
-
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.openelisglobal.common.controller.BaseController;
@@ -336,7 +334,7 @@ public class SiteInformationController extends BaseController {
             }
         } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (e.getException() instanceof StaleObjectStateException) {
+            if (e.getCause() instanceof StaleObjectStateException) {
 
                 errorMsg = "errors.OptimisticLockException";
 
@@ -351,7 +349,6 @@ public class SiteInformationController extends BaseController {
             request.setAttribute(PREVIOUS_DISABLED, TRUE);
             request.setAttribute(NEXT_DISABLED, TRUE);
             forward = FWD_FAIL_INSERT;
-
         }
         return forward;
     }
@@ -485,5 +482,4 @@ public class SiteInformationController extends BaseController {
     protected String getPageSubtitleKey() {
         return (String) request.getAttribute("key");
     }
-
 }

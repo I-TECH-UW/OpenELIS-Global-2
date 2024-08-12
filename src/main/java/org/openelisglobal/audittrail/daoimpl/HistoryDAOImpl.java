@@ -1,7 +1,6 @@
 package org.openelisglobal.audittrail.daoimpl;
 
 import java.util.List;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -36,13 +35,14 @@ public class HistoryDAOImpl extends BaseDAOImpl<History, String> implements Hist
         List<History> list;
 
         try {
-            String sql = "from History h where h.referenceId = :refId and h.referenceTable = :tableId order by h.timestamp desc, h.activity desc";
+            String sql = "from History h where h.referenceId = :refId and h.referenceTable = :tableId order by"
+                    + " h.timestamp desc, h.activity desc";
             Query<History> query = entityManager.unwrap(Session.class).createQuery(sql, History.class);
             query.setParameter("refId", Integer.parseInt(refId));
             query.setParameter("tableId", Integer.parseInt(tableId));
             list = query.list();
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in AuditTrail getHistoryByRefIdAndRefTableId()", e);
         }
         return list;

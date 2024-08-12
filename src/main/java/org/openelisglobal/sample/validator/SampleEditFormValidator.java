@@ -1,7 +1,6 @@
 package org.openelisglobal.sample.validator;
 
 import java.util.Iterator;
-
 import org.apache.commons.validator.GenericValidator;
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -57,7 +56,6 @@ public class SampleEditFormValidator implements Validator {
 
         ValidationHelper.validateFieldMinMax(form.getMaxAccessionLength(), "maxAccessionLength", errors,
                 changeableLength + invariantLength, changeableLength + invariantLength);
-
     }
 
     @SuppressWarnings("unchecked")
@@ -84,7 +82,6 @@ public class SampleEditFormValidator implements Validator {
             if (errors.hasErrors()) {
                 return;
             }
-
         } // validate panel ids
         String[] panelIDs = sampleItem.attributeValue("panels").split(",");
         for (int j = 0; j < panelIDs.length; ++j) {
@@ -111,7 +108,5 @@ public class SampleEditFormValidator implements Validator {
         // validate sample id
         String sampleId = sampleItem.attributeValue("sampleID");
         ValidationHelper.validateIdField(sampleId, "sampleXML", "sampleXML sampleID", errors, true);
-
     }
-
 }

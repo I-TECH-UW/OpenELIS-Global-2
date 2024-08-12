@@ -1,7 +1,6 @@
 package org.openelisglobal.admin.controller;
 
 import java.io.IOException;
-
 import org.openelisglobal.dataexchange.fhir.exception.FhirGeneralException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.organization.service.OrganizationImportService;
@@ -30,5 +29,4 @@ public class ImportController {
     public void importProviders() throws FhirLocalPersistingException, FhirGeneralException, IOException {
         SpringContext.getBean(ProviderImportService.class).importPractitionerList();
     }
-
 }

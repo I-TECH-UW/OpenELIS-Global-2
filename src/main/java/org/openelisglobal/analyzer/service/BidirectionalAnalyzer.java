@@ -58,5 +58,4 @@ public interface BidirectionalAnalyzer {
             this.displayNames = displayNames;
         }
     }
-
 }

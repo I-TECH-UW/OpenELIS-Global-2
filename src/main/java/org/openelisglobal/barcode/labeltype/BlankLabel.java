@@ -1,15 +1,13 @@
 package org.openelisglobal.barcode.labeltype;
 
 import java.util.ArrayList;
-
 import org.openelisglobal.barcode.LabelField;
 import org.openelisglobal.internationalization.MessageUtil;
 
 /**
  * Stores Formatting for a Blank Order label
- * 
- * @author Caleb
  *
+ * @author Caleb
  */
 public class BlankLabel extends Label {
 
@@ -52,5 +50,4 @@ public class BlankLabel extends Label {
     public int getMaxNumLabels() {
         return 10;
     }
-
 }

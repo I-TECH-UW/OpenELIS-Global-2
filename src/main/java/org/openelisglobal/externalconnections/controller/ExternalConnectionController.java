@@ -12,9 +12,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.validation.Valid;
-
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -66,16 +64,16 @@ public class ExternalConnectionController extends BaseController {
             "certificateAuthenticationData.lastupdated",
             //
             "basicAuthenticationData.username", "basicAuthenticationData.password", "basicAuthenticationData.id",
-            "basicAuthenticationData.lastupdated",
-
-    };
+            "basicAuthenticationData.lastupdated", };
 
     @Autowired
     private ExternalConnectionService externalConnectionService;
     @Autowired
     private ExternalConnectionContactService externalConnectionContactService;
+
     @Autowired
     private ExternalConnectionAuthenticationDataService externalConnectionAuthenticationDataService;
+
     @Autowired
     private TruststoreService truststoreService;
 
@@ -159,7 +157,6 @@ public class ExternalConnectionController extends BaseController {
         form.setBasicAuthenticationData((BasicAuthenticationData) externalConnectionAuthData.get(AuthType.BASIC));
         form.setCertificateAuthenticationData(
                 (CertificateAuthenticationData) externalConnectionAuthData.get(AuthType.CERTIFICATE));
-
     }
 
     private void prepareEmptyForm(ExternalConnectionForm form) {
@@ -195,5 +192,4 @@ public class ExternalConnectionController extends BaseController {
         // TODO Auto-generated method stub
         return null;
     }
-
 }

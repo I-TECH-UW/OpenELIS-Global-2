@@ -4,9 +4,7 @@ import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Locale;
-
 import javax.annotation.PostConstruct;
-
 import org.openelisglobal.common.formfields.AdminFormFields;
 import org.openelisglobal.common.formfields.AdminFormFields.Field;
 import org.openelisglobal.common.util.ConfigurationListener;
@@ -22,7 +20,7 @@ public class AdminMenuItemServiceImpl implements AdminMenuItemService, Configura
     List<AdminMenuItem> adminMenuItems;
 
     @PostConstruct
-    public void createActiveList() {
+    public synchronized void createActiveList() {
         adminMenuItems = new ArrayList<>();
         String permissionBase = SystemConfiguration.getInstance().getPermissionAgent();
         AdminFormFields adminFields = AdminFormFields.getInstance();
@@ -200,7 +198,6 @@ public class AdminMenuItemServiceImpl implements AdminMenuItemService, Configura
                 return MessageUtil.getMessage(arg0.getMessageKey(), Locale.ENGLISH)
                         .compareTo(MessageUtil.getMessage(arg1.getMessageKey(), Locale.ENGLISH));
             }
-
         });
         return sortedMenuItems;
     }
@@ -209,5 +206,4 @@ public class AdminMenuItemServiceImpl implements AdminMenuItemService, Configura
     public void refreshConfiguration() {
         createActiveList();
     }
-
 }

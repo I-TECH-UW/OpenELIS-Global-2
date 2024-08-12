@@ -1,26 +1,23 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*
-* Contributor(s): CIRG, University of Washington, Seattle WA.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ *
+ * <p>Contributor(s): CIRG, University of Washington, Seattle WA.
+ */
 package org.openelisglobal.systemusermodule.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigInteger;
 import java.util.List;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -36,9 +33,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
-/**
- *
- */
+/** */
 @Component
 @Transactional
 @Qualifier("RoleModuleDAO")
@@ -60,7 +55,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
                 systemUserModule.setId(null);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in RoleModule getData()", e);
         }
     }
@@ -74,7 +69,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             Query<RoleModule> query = entityManager.unwrap(Session.class).createQuery(sql, RoleModule.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in RoleModule getAllSystemModules()", e);
         }
 
@@ -91,7 +86,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             query.setParameter("param", systemUserId);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in RoleModule getAllRoleModulesBySystemUserId()", e);
         }
 
@@ -113,7 +108,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in RoleModule getPageOfRoleModules()", e);
         }
 
@@ -125,7 +120,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
         try {
             sysUserModule = entityManager.unwrap(Session.class).get(RoleModule.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Gender readRoleModule(idString)", e);
         }
 
@@ -163,7 +158,8 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
 
             List<RoleModule> list;
 
-            String sql = "from RoleModule s where s.role.id = :param and s.systemModule.id = :param2 and s.id != :param3";
+            String sql = "from RoleModule s where s.role.id = :param and s.systemModule.id = :param2 and s.id !="
+                    + " :param3";
             Query<RoleModule> query = entityManager.unwrap(Session.class).createQuery(sql, RoleModule.class);
             query.setParameter("param", Integer.parseInt(roleModule.getRole().getId()));
             query.setParameter("param2", Integer.parseInt(roleModule.getSystemModule().getId()));
@@ -179,7 +175,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             return list.size() > 0;
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateRoleModuleExists()", e);
         }
     }
@@ -194,7 +190,7 @@ public class RoleModuleDAOImpl extends BaseDAOImpl<RoleModule, String> implement
             int roleCount = ((BigInteger) query.uniqueResult()).intValue();
             return roleCount > 0;
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in doesUserHaveAnyModules(int)", e);
         }
     }

@@ -1,18 +1,16 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.common.util.validator;
 
 import java.text.DateFormat;
@@ -22,7 +20,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
-
 import org.apache.commons.validator.routines.DateValidator;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.log.LogEvent;
@@ -44,9 +41,7 @@ public class CustomDateValidator extends DateValidator {
         return SingletonHelper.INSTANCE;
     }
 
-    /**
-     * Protected constructor for subclasses to use.
-     */
+    /** Protected constructor for subclasses to use. */
     protected CustomDateValidator() {
         super();
     }
@@ -73,7 +68,7 @@ public class CustomDateValidator extends DateValidator {
             formatter.parse(value);
         } catch (ParseException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             return false;
         }
         if (strict && (datePattern.length() != value.length())) {
@@ -109,7 +104,7 @@ public class CustomDateValidator extends DateValidator {
             formatter.parse(value);
         } catch (ParseException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             return false;
         }
         return true;
@@ -162,5 +157,4 @@ public class CustomDateValidator extends DateValidator {
     public boolean validate24HourTime(String time) {
         return time.matches("([01]?[0-9]|2[0-3]):[0-5][0-9]");
     }
-
 }

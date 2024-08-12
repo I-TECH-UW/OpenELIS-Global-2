@@ -1,13 +1,15 @@
 package org.openelisglobal.config.task;
 
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.parser.DataFormatException;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import javax.annotation.PostConstruct;
-
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
@@ -32,11 +34,6 @@ import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
-
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.parser.DataFormatException;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 
 @Component
 public class RegisterFhirHooksTask {
@@ -99,11 +96,10 @@ public class RegisterFhirHooksTask {
                     ResourceType.Subscription.name() + "/" + createSubscriptionIdForResourceType(resourceType)));
 
             subscriptionBundle.addEntry(bundleEntry);
-
         }
         try {
             Bundle returnedBundle = fhirClient.transaction().withBundle(subscriptionBundle).encodedJson().execute();
-            LogEvent.logDebug(this.getClass().getName(), "startTask", "subscription bundle returned:\n"
+            LogEvent.logDebug(this.getClass().getSimpleName(), "startTask", "subscription bundle returned:\n"
                     + fhirContext.newJsonParser().encodeResourceToString(returnedBundle));
         } catch (UnprocessableEntityException | DataFormatException e) {
             LogEvent.logError("error while communicating subscription bundle to " + localFhirStorePath + " for "
@@ -143,9 +139,8 @@ public class RegisterFhirHooksTask {
             }
         }
         Bundle returnedBundle = fhirClient.transaction().withBundle(deleteTransactionBundle).encodedJson().execute();
-        LogEvent.logDebug(this.getClass().getName(), "removeOldSubscription",
+        LogEvent.logTrace(this.getClass().getSimpleName(), "removeOldSubscription",
                 "delete old bundle returned:\n" + fhirContext.newJsonParser().encodeResourceToString(returnedBundle));
-
     }
 
     private String createSubscriptionIdForResourceType(ResourceType resourceType) {
@@ -173,5 +168,4 @@ public class RegisterFhirHooksTask {
     private String createCriteriaString(ResourceType resourceType) {
         return resourceType.name() + "?";
     }
-
 }

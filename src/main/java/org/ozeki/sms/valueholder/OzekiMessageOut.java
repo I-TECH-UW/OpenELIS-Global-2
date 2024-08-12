@@ -6,7 +6,7 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 
-//this class is made to work with ozeki SMS gateway using the database send mechanism
+// this class is made to work with ozeki SMS gateway using the database send mechanism
 @Entity
 @Table(name = "ozekimessageout")
 public class OzekiMessageOut {
@@ -114,5 +114,4 @@ public class OzekiMessageOut {
     public void setErrormsg(String errormsg) {
         this.errormsg = errormsg;
     }
-
 }

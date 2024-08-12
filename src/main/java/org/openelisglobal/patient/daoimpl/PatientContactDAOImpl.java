@@ -1,7 +1,6 @@
 package org.openelisglobal.patient.daoimpl;
 
 import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
@@ -30,10 +29,9 @@ public class PatientContactDAOImpl extends BaseDAOImpl<PatientContact, String> i
             query.setParameter("patientId", Integer.parseInt(patientId));
             patients = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PatientContactDAOImpl getForPatient() ", e);
         }
         return patients;
     }
-
 }

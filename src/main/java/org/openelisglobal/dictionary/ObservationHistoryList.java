@@ -1,20 +1,20 @@
 /*
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*
-* Contributor(s): CIRG, University of Washington, Seattle WA.
-*/
+ * The contents of this file are subject to the Mozilla Public License
+ * Version 1.1 (the "License"); you may not use this file except in
+ * compliance with the License. You may obtain a copy of the License at
+ * http://www.mozilla.org/MPL/
+ *
+ * Software distributed under the License is distributed on an "AS IS"
+ * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
+ * License for the specific language governing rights and limitations under
+ * the License.
+ *
+ * The Original Code is OpenELIS code.
+ *
+ * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+ *
+ * Contributor(s): CIRG, University of Washington, Seattle WA.
+ */
 
 package org.openelisglobal.dictionary;
 
@@ -22,7 +22,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang3.ObjectUtils;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.dictionary.service.DictionaryService;
@@ -40,7 +39,6 @@ import org.openelisglobal.spring.util.SpringContext;
  * @since 2010-04-14
  */
 public enum ObservationHistoryList {
-
     EDUCATION_LEVELS("Education Level"), MARITAL_STATUSES("Marital Status"), NATIONALITIES("Nationality"),
     SIMPLIFIED_NATIONALITIES("Simplified Nationality"), YES_NO_UNKNOWN("Yes No Unknown"), YES_NO_NA("Yes No NA"),
     YES_NO("Yes No"), YES_NO_UNKNOWN_NA(YES_NO_NA, "Unknown", true),
@@ -64,10 +62,7 @@ public enum ObservationHistoryList {
 
     SPECIAL_REQUEST_REASONS("Special Request Reason"),
 
-    REC_STATUS("REC_STATUS"),
-    HPV_SAMPLING_METHOD("HPV Sampling Method"),
-
-    ;
+    REC_STATUS("REC_STATUS"), HPV_SAMPLING_METHOD("HPV Sampling Method"),;
 
     private DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
@@ -83,8 +78,8 @@ public enum ObservationHistoryList {
 
     private static List<Dictionary> copyListAndAddEntry(List<Dictionary> oldList, Dictionary entryToAdd) {
         List<Dictionary> newList = new ArrayList<>(oldList);
-        if(ObjectUtils.isNotEmpty(entryToAdd)) {
-        	newList.add(entryToAdd);
+        if (ObjectUtils.isNotEmpty(entryToAdd)) {
+            newList.add(entryToAdd);
         }
         return newList;
     }
@@ -94,37 +89,31 @@ public enum ObservationHistoryList {
      * so that on a JSP page, the caller can use: dropDowns.AIDS_STAGES.list
      */
     public static final Map<String, ObservationHistoryList> MAP = new HashMap<>();
+
     static {
         for (ObservationHistoryList ds : ObservationHistoryList.values()) {
-        	if(ObjectUtils.isNotEmpty(ds)) {
-        		MAP.put(ds.name(), ds);
-        	}
+            if (ObjectUtils.isNotEmpty(ds)) {
+                MAP.put(ds.name(), ds);
+            }
         }
     }
 
-    /**
-     * The dictionary_category.category_name
-     */
+    /** The dictionary_category.category_name */
     private String listName;
 
-    /**
-     * The cached list
-     */
+    /** The cached list */
     private List<Dictionary> list;
 
-    /**
-     * need to re-order in memory
-     */
+    /** need to re-order in memory */
     private boolean orderByMessageResource;
+
     private List<String> idToIndex;
     /**
      * Deriving one list from another involves dropping or adding one entry. This is
      * the name (local_abbrev, but check the code below) of that entry.
      */
     private String entryTag = null;
-    /**
-     * T = Add the entry named or F= drop the entry named
-     */
+    /** T = Add the entry named or F= drop the entry named */
     private boolean add;
 
     /**

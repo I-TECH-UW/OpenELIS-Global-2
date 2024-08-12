@@ -1,18 +1,15 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
- *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
  */
 package org.openelisglobal.reports.action.implementation;
 
@@ -26,7 +23,6 @@ import java.text.ParseException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
-
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -36,7 +32,6 @@ import org.openelisglobal.reports.action.implementation.reportBeans.ARVFollowupC
 import org.openelisglobal.reports.action.implementation.reportBeans.ARVInitialColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.CIColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder;
-import org.openelisglobal.reports.action.implementation.reportBeans.HPVColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.HPVColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.RTNColumnBuilder;
 import org.openelisglobal.reports.action.implementation.reportBeans.RTRIColumnBuilder;
@@ -102,9 +97,7 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
         createReportItems();
     }
 
-    /**
-     * check everything
-     */
+    /** check everything */
     private boolean validateSubmitParameters() {
         return dateRange.validateHighLowDate("report.error.message.date.received.missing") && validateProject();
     }
@@ -126,9 +119,7 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
         return true;
     }
 
-    /**
-     * creating the list for generation to the report
-     */
+    /** creating the list for generation to the report */
     private void createReportItems() {
         try {
             csvColumnBuilder = getColumnBuilder(projectStr);
@@ -195,13 +186,13 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
             return new StudyEIDColumnBuilder(dateRange, projectStr, dateType);
         } else if (projectTag.equalsIgnoreCase("VLS")) {
             return new StudyVLColumnBuilder(dateRange, projectStr, dateType);
-        }else if (projectTag.equalsIgnoreCase("RTN")) {
+        } else if (projectTag.equalsIgnoreCase("RTN")) {
             return new RTNColumnBuilder(dateRange, projectStr);
         } else if (projectTag.equalsIgnoreCase("IND")) {
             return new RTNColumnBuilder(dateRange, projectStr);
-        }else if (projectTag.equalsIgnoreCase("RTRI")) {
+        } else if (projectTag.equalsIgnoreCase("RTRI")) {
             return new RTRIColumnBuilder(dateRange, projectStr, dateType);
-        }else if (projectTag.equalsIgnoreCase("HPV")) {
+        } else if (projectTag.equalsIgnoreCase("HPV")) {
             return new HPVColumnBuilder(dateRange, projectStr, dateType);
         }
         throw new IllegalArgumentException();
@@ -231,5 +222,4 @@ public class ExportStudyProjectByDate extends CSVSampleExportReport implements I
         projects.removeIf(Objects::isNull);
         return projects;
     }
-
 }

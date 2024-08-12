@@ -1,18 +1,15 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
- *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
  */
 package org.openelisglobal.reports.action.implementation;
 
@@ -26,7 +23,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.validator.GenericValidator;
 import org.jfree.util.Log;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -69,7 +65,8 @@ public class ExportTrendsByDate extends CSVSampleExportReport implements IReport
     }
 
     protected String getReportNameForParameterPage() {
-        return MessageUtil.getMessage("reports.label.project.export") + " " + MessageUtil.getMessage("sample.export.releasedDate");
+        return MessageUtil.getMessage("reports.label.project.export") + " "
+                + MessageUtil.getMessage("sample.export.releasedDate");
     }
 
     @Override
@@ -103,9 +100,7 @@ public class ExportTrendsByDate extends CSVSampleExportReport implements IReport
         createReportItems();
     }
 
-    /**
-     * check everything
-     */
+    /** check everything */
     private boolean validateSubmitParameters() {
         return dateRange.validateHighLowDate("report.error.message.date.received.missing") && validateProject();
     }
@@ -127,9 +122,7 @@ public class ExportTrendsByDate extends CSVSampleExportReport implements IReport
         return true;
     }
 
-    /**
-     * creating the list for generation to the report
-     */
+    /** creating the list for generation to the report */
     private void createReportItems() {
         try {
             csvColumnBuilder = getColumnBuilder(projectStr);
@@ -172,22 +165,24 @@ public class ExportTrendsByDate extends CSVSampleExportReport implements IReport
         String[] splitLine = indicStr.split(":");
         String indic = splitLine[1];
         if (indic.equals("Unsuppressed VL")) {
-        	try {
-	            return workingResult.contains("Log7") || !workingResult.contains("L") && !workingResult.contains("X")
-	                    && !workingResult.contains("<") && workingResult.length() > 0
-	                    && (workingResult.replaceAll("[^0-9]", "").length()>0 ? Double.parseDouble(workingResult.replaceAll("[^0-9]", "")) >= 1000 : false);
-        	}catch (Exception e) {
-        		return false;
-			}
+            try {
+                return workingResult.contains("Log7") || !workingResult.contains("L") && !workingResult.contains("X")
+                        && !workingResult.contains("<") && workingResult.length() > 0
+                        && (workingResult.replaceAll("[^0-9]", "").length() > 0
+                                ? Double.parseDouble(workingResult.replaceAll("[^0-9]", "")) >= 1000
+                                : false);
+            } catch (Exception e) {
+                return false;
+            }
         } else if (indic.equals("Suppressed VL")) {
-        	try {
-	            return workingResult.contains("L") || workingResult.contains("<")
-	                    || (workingResult.length() > 0 && !workingResult.toUpperCase().contains("X")
-	                            && !workingResult.toLowerCase().contains("invalid")
-	                            && Double.parseDouble(workingResult.replaceAll("[^0-9]", "")) < 1000);
-        	}catch(Exception e) {
-        		return false;
-        	}
+            try {
+                return workingResult.contains("L") || workingResult.contains("<")
+                        || (workingResult.length() > 0 && !workingResult.toUpperCase().contains("X")
+                                && !workingResult.toLowerCase().contains("invalid")
+                                && Double.parseDouble(workingResult.replaceAll("[^0-9]", "")) < 1000);
+            } catch (Exception e) {
+                return false;
+            }
         }
 
         return false;
@@ -219,7 +214,6 @@ public class ExportTrendsByDate extends CSVSampleExportReport implements IReport
     private CSVColumnBuilder getColumnBuilder(String projectId) {
         // String projectTag = CIColumnBuilder.translateProjectId(projectId);
         return new TrendsColumnBuilder(dateRange, projectStr);
-
     }
 
     /*
@@ -243,7 +237,7 @@ public class ExportTrendsByDate extends CSVSampleExportReport implements IReport
      *
      * @return a list of the correct projects for display
      */
-    protected List<Project> getProjectList() {
+    public List<Project> getProjectList() {
         List<Project> projects = new ArrayList<>();
         Project project = new Project();
         /*
@@ -271,5 +265,4 @@ public class ExportTrendsByDate extends CSVSampleExportReport implements IReport
 
         return projects;
     }
-
 }

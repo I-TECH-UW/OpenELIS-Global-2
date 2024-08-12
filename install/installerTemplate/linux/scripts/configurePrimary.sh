@@ -15,7 +15,7 @@ if [[ -n "$SECONDARY_IP" ]]; then
   CONFIGURE_SECONDARY=true
   read -p "Enter secondary server's user: " SECONDARY_USER
   read -sp "Enter secondary server's user password: " SECONDARY_PASSWORD
-else 
+else
   CONFIGURE_SECONDARY=false
 fi
 
@@ -37,8 +37,8 @@ rm /var/lib/openelis-global/data/standby.signal
 docker stop external-fhir-api openelisglobal-webapp autoheal-oe openelisglobal-database
 docker start openelisglobal-database
 echo "waiting for DB container to start..."
-until [ "`docker inspect -f {{.State.Health.Status}} openelisglobal-database`"=="healthy" ]; do 
-	sleep 2; 
+until [ "`docker inspect -f {{.State.Health.Status}} openelisglobal-database`"=="healthy" ]; do
+    sleep 2;
 done;
 echo "docker DB container started"
 
@@ -71,9 +71,9 @@ if [[ "$CONFIGURE_SECONDARY" = true ]]; then
 
   #on the secondary server unpack the same configuration and copy it to the required location being mindful of owner
   sshpass -p "${SECONDARY_PASSWORD}" ssh -o StrictHostKeyChecking=no -o UserKnownHostsFile=/dev/null -q ${SECONDARY_USER}@${SECONDARY_IP} << EOF
-	export 
-	echo ${SECONDARY_PASSWORD} | sudo -S ./configureSecondary.sh ${PRIMARY_IP} ${SECONDARY_IP} ${SECONDARY_USER} ${SECONDARY_PASSWORD}
-	exit
+    export
+    echo ${SECONDARY_PASSWORD} | sudo -S ./configureSecondary.sh ${PRIMARY_IP} ${SECONDARY_IP} ${SECONDARY_USER} ${SECONDARY_PASSWORD}
+    exit
   EOF
 fi
 

@@ -13,15 +13,16 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.validator.GenericValidator;
 import org.jasypt.util.text.AES256TextEncryptor;
 import org.jasypt.util.text.TextEncryptor;
 import org.openelisglobal.config.condition.ConditionalOnProperty;
 import org.openelisglobal.security.KeystoreUtil.KeyCertPair;
+import org.openelisglobal.security.login.BasicAuthFilter;
+import org.openelisglobal.security.login.CustomAuthenticationFailureHandler;
+import org.openelisglobal.security.login.CustomFormAuthenticationSuccessHandler;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -70,18 +71,21 @@ public class SecurityConfig {
     // TODO should we move these to the properties files?
     // pages that have special security constraints
     public static final String[] OPEN_PAGES = { "/pluginServlet/**", "/ChangePasswordLogin",
-            "/UpdateLoginChangePassword", "/health/**" };
-    public static final String[] LOGIN_PAGES = { "/LoginPage", "/ValidateLogin" };
+            "/UpdateLoginChangePassword", "/health/**", "/rest/open-configuration-properties" };
+    public static final String[] LOGIN_PAGES = { "/LoginPage", "/ValidateLogin", "/session" };
+
     public static final String[] AUTH_OPEN_PAGES = { "/Home", "/Dashboard", "/Logout", "/MasterListsPage",
             "/analyzer/runAction/**" };
     public static final String[] RESOURCE_PAGES = { "/fontawesome-free-5.13.1-web/**", "/select2/**", "/css/**",
             "/favicon/**", "/images/**", "/documentation/**", "/scripts/**", "/jsp/**" };
-//    public static final String[] HTTP_BASIC_SERVLET_PAGES = { "/pluginServlet/**", "/importAnalyzer", "/fhir/**" };
-    public static final String[] AJAX_CALLS_TO_CONTROLLERS = { "/Provider/**" };
-//    public static final String[] CLIENT_CERTIFICATE_PAGES = {};
+    // public static final String[] HTTP_BASIC_SERVLET_PAGES = {
+    // "/pluginServlet/**",
+    // "/importAnalyzer", "/fhir/**" };
+    public static final String[] REST_CONTROLLERS = { "/Provider/**", "/rest/**" };
+    // public static final String[] CLIENT_CERTIFICATE_PAGES = {};
 
     private static final String CONTENT_SECURITY_POLICY = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval';"
-            + " connect-src 'self'; img-src 'self'; style-src 'self' 'unsafe-inline';"
+            + " connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';"
             + " frame-src *.openlmis.org 'self'; object-src 'self';";
 
     @Value("${encryption.general.password:dev}")
@@ -114,7 +118,6 @@ public class SecurityConfig {
                     .csrf().disable().headers().frameOptions().sameOrigin()
                     .contentSecurityPolicy(CONTENT_SECURITY_POLICY);
         }
-
     }
 
     @Configuration
@@ -138,12 +141,11 @@ public class SecurityConfig {
                     // ensure they authenticate with http basic
                     .httpBasic().and()
                     // disable csrf as it is not needed for httpBasic
-                    .csrf().disable()//
+                    .csrf().disable() //
                     .addFilterAt(SpringContext.getBean(BasicAuthFilter.class), BasicAuthenticationFilter.class)
                     // add security headers
                     .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
         }
-
     }
 
     @Configuration
@@ -153,11 +155,13 @@ public class SecurityConfig {
 
         @Value("${org.itech.login.saml.registrationId:keycloak}")
         private String registrationId;
+
         @Value("${org.itech.login.saml.entityId:OpenELIS-Global_saml}")
         private String entityId;
 
         @Value("${server.ssl.key-store}")
         private Resource keyStore;
+
         @Value("${server.ssl.key-store-password}")
         private String keyStorePassword;
 
@@ -166,8 +170,10 @@ public class SecurityConfig {
 
         @Value("${org.itech.login.saml.idpEntityId:}")
         private String idpEntityId;
+
         @Value("${org.itech.login.saml.webSSOEndpoint:}")
         private String webSSOEndpoint;
+
         @Value("${org.itech.login.saml.idpVerificationCertificateLocation:/run/secrets/samlIDP.crt}")
         private String idpVerificationCertificateLocation;
 
@@ -190,22 +196,22 @@ public class SecurityConfig {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
-                relyingPartyRegistration = RelyingPartyRegistration.withRegistrationId(registrationId)//
-                        .assertionConsumerServiceLocation(acsUrlTemplate)//
-                        .signingX509Credentials(e -> e.add(credential))//
-                        .assertingPartyDetails(config -> config.entityId(idpEntityId)//
-                                .singleSignOnServiceLocation(webSSOEndpoint)//
-                                .singleLogoutServiceLocation(webSSOEndpoint)//
-                                .wantAuthnRequestsSigned(true)//
-                                .verificationX509Credentials(c -> c.add(idpVerificationCertificate)))//
-                        .entityId(entityId)//
+                relyingPartyRegistration = RelyingPartyRegistration.withRegistrationId(registrationId) //
+                        .assertionConsumerServiceLocation(acsUrlTemplate) //
+                        .signingX509Credentials(e -> e.add(credential)) //
+                        .assertingPartyDetails(config -> config.entityId(idpEntityId) //
+                                .singleSignOnServiceLocation(webSSOEndpoint) //
+                                .singleLogoutServiceLocation(webSSOEndpoint) //
+                                .wantAuthnRequestsSigned(true) //
+                                .verificationX509Credentials(c -> c.add(idpVerificationCertificate))) //
+                        .entityId(entityId) //
                         .build();
             } else {
-                relyingPartyRegistration = RelyingPartyRegistrations.fromMetadataLocation(metadata)//
-                        .registrationId(registrationId)//
-                        .assertionConsumerServiceLocation(acsUrlTemplate)//
-                        .signingX509Credentials(e -> e.add(credential))//
-                        .entityId(entityId)//
+                relyingPartyRegistration = RelyingPartyRegistrations.fromMetadataLocation(metadata) //
+                        .registrationId(registrationId) //
+                        .assertionConsumerServiceLocation(acsUrlTemplate) //
+                        .signingX509Credentials(e -> e.add(credential)) //
+                        .entityId(entityId) //
                         .build();
             }
 
@@ -225,13 +231,19 @@ public class SecurityConfig {
             http.addFilterBefore(multipartFilter, CsrfFilter.class);
 
             http.requestMatcher(new SamlRequestedMatcher()).authorizeRequests().anyRequest().authenticated().and()
-                    .saml2Logout().and().saml2Login().successHandler(customAuthenticationSuccessHandler())
+                    .saml2Logout().and().saml2Login().failureHandler(customAuthenticationFailureHandler())
+                    .successHandler(customAuthenticationSuccessHandler())
                     .relyingPartyRegistrationRepository(relyingPartyRegistrationRepository());
         }
 
         @Bean("samlAuthenticationSuccessHandler")
         public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
             return new CustomFormAuthenticationSuccessHandler();
+        }
+
+        @Bean("samlAuthenticationFailureHandler")
+        public AuthenticationFailureHandler customAuthenticationFailureHandler() {
+            return new CustomAuthenticationFailureHandler();
         }
     }
 
@@ -242,8 +254,10 @@ public class SecurityConfig {
 
         @Value("${org.itech.login.oauth.config:}")
         private String config;
+
         @Value("${org.itech.login.oauth.clientID:OpenELIS-Global_oauth}")
         private String clientID;
+
         @Value("${org.itech.login.oauth.clientSecret:}")
         private String clientSecret;
 
@@ -274,9 +288,10 @@ public class SecurityConfig {
             // for all requests going to a http basic page, use this security configuration
             http.requestMatcher(new OAuthRequestedMatcher()).authorizeRequests().anyRequest()
                     // ensure they are authenticated
-                    .authenticated().and()//
-                    .oauth2Login().clientRegistrationRepository(clientRegistrationRepository())//
+                    .authenticated().and() //
+                    .oauth2Login().clientRegistrationRepository(clientRegistrationRepository()) //
                     .authorizedClientService(authorizedClientService())
+                    .failureHandler(customAuthenticationFailureHandler())
                     .successHandler(customAuthenticationSuccessHandler()).and()
                     .logout(logout -> logout.logoutSuccessHandler(oidcLogoutSuccessHandler()))
                     // add security headers
@@ -286,10 +301,6 @@ public class SecurityConfig {
         private LogoutSuccessHandler oidcLogoutSuccessHandler() {
             OidcClientInitiatedLogoutSuccessHandler oidcLogoutSuccessHandler = new OidcClientInitiatedLogoutSuccessHandler(
                     clientRegistrationRepository());
-
-//            oidcLogoutSuccessHandler..setPostLogoutRedirectUri(
-//              URI.create("http://localhost:8081/home"));
-
             return oidcLogoutSuccessHandler;
         }
 
@@ -303,6 +314,10 @@ public class SecurityConfig {
             return new CustomFormAuthenticationSuccessHandler();
         }
 
+        @Bean("oauthAuthenticationFailureHandler")
+        public AuthenticationFailureHandler customAuthenticationFailureHandler() {
+            return new CustomAuthenticationFailureHandler();
+        }
     }
 
     @Configuration
@@ -337,7 +352,6 @@ public class SecurityConfig {
             MultipartFilter multipartFilter = new MultipartFilter();
             multipartFilter.setServletContext(SpringContext.getBean(ServletContext.class));
             http.addFilterBefore(multipartFilter, CsrfFilter.class);
-
             http.authorizeRequests()
                     // allow all users to access these pages no matter authentication status
                     .antMatchers(LOGIN_PAGES).permitAll().antMatchers(RESOURCE_PAGES).permitAll()
@@ -351,7 +365,7 @@ public class SecurityConfig {
                     // setup logout
                     .logout().logoutUrl("/Logout").logoutSuccessUrl("/LoginPage").invalidateHttpSession(true).and()
                     .sessionManagement().invalidSessionUrl("/LoginPage").sessionFixation().migrateSession().and().csrf()
-                    .and()
+                    .ignoringAntMatchers("/ValidateLogin").and()
                     // add security headers
                     .headers().frameOptions().sameOrigin().contentSecurityPolicy(CONTENT_SECURITY_POLICY);
         }
@@ -372,26 +386,27 @@ public class SecurityConfig {
                 throws Exception {
             return authenticationConfiguration.getAuthenticationManager();
         }
-
     }
 
-//    @Bean
-//    public static UserDetailsService allowAllUserDetailsService() {
-//        return new UserDetailsService() {
-//            @Override
-//            public UserDetails loadUserByUsername(String username) {
-//                return new User("falseIdol", "", new ArrayList<>());
-//            }
-//        };
-//    }
+    // @Bean
+    // public static UserDetailsService allowAllUserDetailsService() {
+    // return new UserDetailsService() {
+    // @Override
+    // public UserDetails loadUserByUsername(String username) {
+    // return new User("falseIdol", "", new ArrayList<>());
+    // }
+    // };
+    // }
 
-//    @Bean
-//    @ConditionalOnProperty(property = "org.itech.authProvider.useADLDAP", havingValue = "true")
-//    public AuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
-//        LdapAuthenticationProvider adProvider = new LdapAuthenticationProvider(new LdapAuthenticator()
-//
-//        return adProvider;
-//    }
+    // @Bean
+    // @ConditionalOnProperty(property = "org.itech.authProvider.useADLDAP",
+    // havingValue = "true")
+    // public AuthenticationProvider activeDirectoryLdapAuthenticationProvider() {
+    // LdapAuthenticationProvider adProvider = new LdapAuthenticationProvider(new
+    // LdapAuthenticator()
+    //
+    // return adProvider;
+    // }
 
     @Bean
     public PasswordEncoder passwordEncoder() {
@@ -417,6 +432,12 @@ public class SecurityConfig {
         textEncryptor.setPassword(encryptionPassword);
         return textEncryptor;
     }
+
+    // @Bean
+    // public AuthenticationEventPublisher authenticationEventPublisher
+    // (ApplicationEventPublisher applicationEventPublisher) {
+    // return new DefaultAuthenticationEventPublisher(applicationEventPublisher);
+    // }
 
     private static class OAuthRequestedMatcher implements RequestMatcher {
         @Override

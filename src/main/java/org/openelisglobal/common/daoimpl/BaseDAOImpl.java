@@ -1,17 +1,15 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
  */
 package org.openelisglobal.common.daoimpl;
 
@@ -22,7 +20,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
 import javax.persistence.TypedQuery;
@@ -36,13 +33,13 @@ import javax.persistence.criteria.Order;
 import javax.persistence.criteria.Path;
 import javax.persistence.criteria.Predicate;
 import javax.persistence.criteria.Root;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.persister.entity.AbstractEntityPersister;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -51,8 +48,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * @author Caleb
- *
- *
  * @param <T>
  */
 @Component
@@ -83,6 +78,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             T object = entityManager.find(classType, id);
             return Optional.ofNullable(object);
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "get", e);
         }
     }
@@ -99,7 +95,6 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
         this.addWhere(criteriaBuilder, criteriaQuery, root, whereComparisonOperations);
 
         return entityManager.createQuery(criteriaQuery).getResultList();
-
     }
 
     @Override
@@ -219,6 +214,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             // }
             // return criteria.list();
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in " + this.getClass().getSimpleName() + " " + "getAllMatchingOrdered", e);
         }
@@ -291,6 +287,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             // }
             // return criteria.list();
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getAllLikeOrdered",
                     e);
         }
@@ -418,6 +415,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             // criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
             // return criteria.list();
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in " + this.getClass().getSimpleName() + " " + "getMatchingOrderedPage", e);
         }
@@ -497,6 +495,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             // criteria.setMaxResults(DEFAULT_PAGE_SIZE + 1);
             // return criteria.list();
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getLikeOrderedPage",
                     e);
         }
@@ -512,6 +511,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             // PK id = (PK) session.save(object);
             // session.flush();
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "insert", e);
         }
     }
@@ -527,6 +527,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             // session.flush();
             // return dbObject;
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "save", e);
         }
     }
@@ -540,6 +541,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             // session.delete(object);
             // session.flush();
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "delete", e);
         }
     }
@@ -568,6 +570,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
             // }
             // return rowCount;
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getCount", e);
         }
     }
@@ -597,9 +600,9 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
                 return Optional.of(list.get(0));
             }
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getNext", e);
         }
-
     }
 
     @Override
@@ -627,6 +630,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
                 return Optional.of(list.get(0));
             }
         } catch (HibernateException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + "getPrevious", e);
         }
     }
@@ -754,7 +758,7 @@ public abstract class BaseDAOImpl<T extends BaseObject<PK>, PK extends Serializa
     }
 
     protected void handleException(Exception e, String method) throws LIMSRuntimeException {
-        // LogEvent.logErrorStack(this.getClass().getSimpleName(), method, e);
+        LogEvent.logError(e);
         throw new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + method, e);
     }
 

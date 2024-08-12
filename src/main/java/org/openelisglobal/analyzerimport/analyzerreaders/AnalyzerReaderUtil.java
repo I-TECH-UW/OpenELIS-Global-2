@@ -2,7 +2,6 @@ package org.openelisglobal.analyzerimport.analyzerreaders;
 
 import java.sql.Timestamp;
 import java.util.List;
-
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
@@ -16,9 +15,9 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
 
 public class AnalyzerReaderUtil {
-//	private SampleDAO sampleDAO = new SampleDAOImpl();
-//	private AnalysisDAO analysisDAO = new AnalysisDAOImpl();
-//	private ResultDAO resultDAO = new ResultDAOImpl();
+    // private SampleDAO sampleDAO = new SampleDAOImpl();
+    // private AnalysisDAO analysisDAO = new AnalysisDAOImpl();
+    // private ResultDAO resultDAO = new ResultDAOImpl();
 
     protected SampleService sampleService = SpringContext.getBean(SampleService.class);
     protected AnalysisService analysisService = SpringContext.getBean(AnalysisService.class);
@@ -55,5 +54,4 @@ public class AnalyzerReaderUtil {
         }
         return null;
     }
-
 }

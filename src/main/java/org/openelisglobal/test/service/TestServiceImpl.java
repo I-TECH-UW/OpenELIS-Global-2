@@ -8,15 +8,13 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Vector;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
-
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.LocaleChangeListener;
 import org.openelisglobal.common.util.SystemConfiguration;
@@ -48,7 +46,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> implements TestService, LocaleChangeListener {
+public class TestServiceImpl extends AuditableBaseObjectServiceImpl<Test, String>
+        implements TestService, LocaleChangeListener {
 
     public enum Entity {
         TEST_NAME, TEST_AUGMENTED_NAME, TEST_REPORTING_NAME
@@ -57,8 +56,8 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
     public static final String HIV_TYPE = "HIV_TEST_KIT";
     public static final String SYPHILIS_TYPE = "SYPHILIS_TEST_KIT";
     private static String VARIABLE_TYPE_OF_SAMPLE_ID;
-//    private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
-//            .getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
+    // private static String LANGUAGE_LOCALE = ConfigurationProperties.getInstance()
+    // .getPropertyValue(ConfigurationProperties.Property.DEFAULT_LANG_LOCALE);
     private static Map<Entity, Map<String, String>> entityToMap;
 
     protected static TestDAO baseObjectDAO = SpringContext.getBean(TestDAO.class);
@@ -92,7 +91,6 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
         entityToMap.put(Entity.TEST_NAME, createTestIdToNameMap());
         entityToMap.put(Entity.TEST_AUGMENTED_NAME, createTestIdToAugmentedNameMap());
         entityToMap.put(Entity.TEST_REPORTING_NAME, createTestIdToReportingNameMap());
-
     }
 
     public TestServiceImpl() {
@@ -111,7 +109,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
 
     @Override
     public void localeChanged(String locale) {
-//        LANGUAGE_LOCALE = locale;
+        // LANGUAGE_LOCALE = locale;
         refreshTestNames();
     }
 
@@ -191,13 +189,13 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             return null;
         }
 
-        TypeOfSampleTest typeOfSampleTest = typeOfSampleTestService.getTypeOfSampleTestForTest(test.getId());
+        List<TypeOfSampleTest> typeOfSampleTests = typeOfSampleTestService.getTypeOfSampleTestsForTest(test.getId());
 
-        if (typeOfSampleTest == null) {
+        if (typeOfSampleTests == null || typeOfSampleTests.isEmpty()) {
             return null;
         }
 
-        String typeOfSampleId = typeOfSampleTest.getTypeOfSampleId();
+        String typeOfSampleId = typeOfSampleTests.get(0).getTypeOfSampleId();
 
         return typeOfSampleService.getTypeOfSampleById(typeOfSampleId);
     }
@@ -318,7 +316,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             // return localization.getEnglish();
             // }
         } catch (RuntimeException e) {
-            LogEvent.logInfo("TestServiceImpl", "method unkown", "buildTestName caught LAZY");
+            LogEvent.logInfo("TestServiceImpl", "buildTestName", "buildTestName caught LAZY");
             return "ts:btn:284:name";
         }
     }
@@ -362,7 +360,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             // return localization.getEnglish();
             // }
         } catch (RuntimeException e) {
-            LogEvent.logInfo("TestServiceImpl", "method unkown", "reporting caught LAZY");
+            LogEvent.logInfo("TestServiceImpl", "buildReportingTestName", "reporting caught LAZY");
             return "ts:brtn:322:name";
         }
     }
@@ -391,7 +389,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             // // return "ts:batn:342:name:" + test.getDescription();
             // }
         } catch (RuntimeException e) {
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", "augmented caught LAZY");
+            LogEvent.logInfo(this.getClass().getSimpleName(), "buildAugmentedTestName", "augmented caught LAZY");
             return "ts:batn:345:name:" + test.getDescription();
         }
     }
@@ -400,7 +398,6 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
     @Transactional(readOnly = true)
     public void getData(Test test) {
         getBaseObjectDAO().getData(test);
-
     }
 
     @Override
@@ -538,7 +535,7 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
             return result;
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in isTestFullySetup()", e);
         }
     }
@@ -694,10 +691,10 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
     public List<Test> getActiveTestByName(String testName) {
         return getBaseObjectDAO().getActiveTestsByName(testName);
     }
-    
+
     @Override
     public List<Test> getActiveTestsByPanel(String panelName) {
-    	return getBaseObjectDAO().getActiveTestsByPanelName(panelName);
+        return getBaseObjectDAO().getActiveTestsByPanelName(panelName);
     }
 
     @Override
@@ -726,19 +723,23 @@ public class TestServiceImpl extends BaseObjectServiceImpl<Test, String> impleme
         activateTests(testNames);
     }
 
-	@Override
-	public List<Test> getTbTestByMethod(String method) {
-		return getBaseObjectDAO().getTbTestByMethod(method);
-	}
-	
-	@Override
-	public List<Test> getTbTest() {
-		return getBaseObjectDAO().getTbTest();
-	}
-	
-	@Override
-	public List<Panel> getTbPanelsByMethod(String method) {
-		return getBaseObjectDAO().getTbPanelsByMethod(method);
-	}
+    @Override
+    public List<Test> getTestsByTestSectionIds(List<Integer> ids) {
+        return getBaseObjectDAO().getTestsByTestSectionIds(ids);
+    }
 
+    @Override
+    public List<Test> getTbTestByMethod(String method) {
+        return getBaseObjectDAO().getTbTestByMethod(method);
+    }
+
+    @Override
+    public List<Test> getTbTest() {
+        return getBaseObjectDAO().getTbTest();
+    }
+
+    @Override
+    public List<Panel> getTbPanelsByMethod(String method) {
+        return getBaseObjectDAO().getTbPanelsByMethod(method);
+    }
 }

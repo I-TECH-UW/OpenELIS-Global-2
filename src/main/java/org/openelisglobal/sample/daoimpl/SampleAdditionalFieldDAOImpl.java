@@ -2,7 +2,6 @@ package org.openelisglobal.sample.daoimpl;
 
 import java.util.List;
 import java.util.Optional;
-
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
@@ -32,7 +31,7 @@ public class SampleAdditionalFieldDAOImpl extends BaseDAOImpl<SampleAdditionalFi
 
     @Override
     public Optional<SampleAdditionalField> getFieldForSample(AdditionalFieldName fieldName, String sampleId) {
-        String sql = "from SampleAdditionalField s where s.sample.id = :sampleId AND s.id.fieldName = :fieldName";
+        String sql = "from SampleAdditionalField s where s.sample.id = :sampleId AND s.id.fieldName =" + " :fieldName";
         Query<SampleAdditionalField> query = entityManager.unwrap(Session.class).createQuery(sql,
                 SampleAdditionalField.class);
         query.setParameter("sampleId", Integer.parseInt(sampleId));
@@ -44,5 +43,4 @@ public class SampleAdditionalFieldDAOImpl extends BaseDAOImpl<SampleAdditionalFi
             return Optional.of(field);
         }
     }
-
 }

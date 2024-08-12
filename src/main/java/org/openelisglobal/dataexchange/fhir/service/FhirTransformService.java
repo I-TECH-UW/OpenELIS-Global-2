@@ -3,7 +3,6 @@ package org.openelisglobal.dataexchange.fhir.service;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
-
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Practitioner;
@@ -27,7 +26,10 @@ import org.openelisglobal.sample.valueholder.Sample;
 
 public interface FhirTransformService {
 
-    void transformPersistPatient(PatientManagementInfo patientInfo)
+    void transformPersistPatient(PatientManagementInfo patientInfo, boolean isCreate)
+            throws FhirTransformationException, FhirPersistanceException;
+
+    void transformPersistOrganization(Organization organization)
             throws FhirTransformationException, FhirPersistanceException;
 
     void transformPersistOrderEntryFhirObjects(SamplePatientUpdateData updateData, PatientManagementInfo patientInfo,
@@ -68,5 +70,4 @@ public interface FhirTransformService {
     Practitioner transformProviderToPractitioner(Provider provider);
 
     Provider transformToProvider(Practitioner practitioner);
-
 }

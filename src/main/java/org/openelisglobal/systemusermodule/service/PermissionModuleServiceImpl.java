@@ -4,7 +4,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
-
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.rolemodule.service.RoleModuleService;
 import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
@@ -223,7 +222,6 @@ public class PermissionModuleServiceImpl implements PermissionModuleService<Perm
     @Transactional
     public PermissionModule update(PermissionModule baseObject) {
         return (PermissionModule) getActivePermissionModule().update(baseObject);
-
     }
 
     @SuppressWarnings("unchecked")
@@ -327,7 +325,6 @@ public class PermissionModuleServiceImpl implements PermissionModuleService<Perm
     @Transactional(readOnly = true)
     public void getData(PermissionModule permissionModule) {
         getActivePermissionModule().getData(permissionModule);
-
     }
 
     @Override

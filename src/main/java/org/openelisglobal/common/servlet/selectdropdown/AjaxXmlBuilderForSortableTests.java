@@ -1,18 +1,16 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.common.servlet.selectdropdown;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +18,6 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
-
 import org.apache.commons.beanutils.BeanUtils;
 import org.openelisglobal.common.util.XMLUtil;
 import org.owasp.encoder.Encode;
@@ -29,7 +26,7 @@ import org.owasp.encoder.Encode;
  * Helper class to build valid XML typically returned in a response to the
  * client.
  *
- *
+ * <p>
  * author: benzd1 bugzilla 1844: extending AjaxXmlBuilder for testsection->test
  * select making extended version of AjaxJspTag.Select sortable (toggle between
  * sorting by 2 different properties, toggling label value between 2 different
@@ -119,7 +116,6 @@ public class AjaxXmlBuilderForSortableTests extends org.ajaxtags.helpers.AjaxXml
                 items.add(new SortableTestItem(name, value, sortFieldA, sortFieldB, alternateLabel, false));
             } else {
                 items.add(new SortableTestItem(name, value, sortFieldA, sortFieldB, alternateLabel, true));
-
             }
         }
         return this;
@@ -215,7 +211,5 @@ public class AjaxXmlBuilderForSortableTests extends org.ajaxtags.helpers.AjaxXml
         xml.append("</ajax-response>");
 
         return xml.toString();
-
     }
-
 }

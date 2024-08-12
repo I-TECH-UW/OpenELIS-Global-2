@@ -1,12 +1,10 @@
 package org.openelisglobal.externalconnections.valueholder;
 
 import java.util.Base64;
-
 import javax.persistence.Column;
 import javax.persistence.Convert;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection.AuthType;
 import org.openelisglobal.security.converter.EncryptionConverter;
 
@@ -53,5 +51,4 @@ public class BasicAuthenticationData extends ExternalConnectionAuthenticationDat
     public void setPassword(String password) {
         this.password = password;
     }
-
 }

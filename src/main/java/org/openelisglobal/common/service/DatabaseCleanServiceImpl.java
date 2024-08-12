@@ -2,10 +2,8 @@ package org.openelisglobal.common.service;
 
 import java.sql.Connection;
 import java.sql.SQLException;
-
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-
 import org.hibernate.Session;
 import org.hibernate.jdbc.Work;
 import org.springframework.stereotype.Service;
@@ -43,7 +41,6 @@ public class DatabaseCleanServiceImpl implements DatabaseCleanService {
             public void execute(Connection connection) throws SQLException {
                 connection.prepareStatement(CLEAN_SQL).execute();
             }
-
         });
     }
 }

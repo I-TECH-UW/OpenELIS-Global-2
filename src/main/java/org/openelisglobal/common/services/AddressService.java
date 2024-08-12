@@ -16,8 +16,8 @@
 
 package org.openelisglobal.common.services;
 
-import org.springframework.stereotype.Service;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.springframework.stereotype.Service;
 
 @Service
 public class AddressService {

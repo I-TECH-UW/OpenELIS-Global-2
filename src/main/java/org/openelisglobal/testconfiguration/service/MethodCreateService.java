@@ -10,5 +10,4 @@ public interface MethodCreateService {
     void insertMethod(Localization localization, Method method, SystemModule workplanModule, SystemModule resultModule,
             SystemModule validationModule, RoleModule workplanResultModule, RoleModule resultResultModule,
             RoleModule validationValidationModule);
-
 }

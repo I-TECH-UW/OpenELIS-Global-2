@@ -1,8 +1,9 @@
 package org.openelisglobal.notification.valueholder;
 
+import com.fasterxml.jackson.annotation.JsonGetter;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.FetchType;
@@ -17,14 +18,10 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
-
 import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationMethod;
 import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationNature;
 import org.openelisglobal.notification.valueholder.NotificationConfigOption.NotificationPersonType;
 import org.openelisglobal.test.valueholder.Test;
-
-import com.fasterxml.jackson.annotation.JsonGetter;
-import com.fasterxml.jackson.annotation.JsonIgnore;
 
 @Entity
 @Table(name = "test_notification_config")
@@ -51,17 +48,25 @@ public class TestNotificationConfig extends NotificationConfig<Test> {
 
     // could implement defaults for individual method types and person types types
     // as well
-//    @OneToMany
-//    @JoinTable(name = "test_notification_default_method", joinColumns = @JoinColumn(name = "test_notification_config_id"), //
-//            inverseJoinColumns = @JoinColumn(name = "notification_payload_template_id")) //
-//    @MapKeyColumn(name = "notification_method")
-//    private Map<NotificationMethod, NotificationPayloadTemplate> defaultMethodPayloadTemplate;
-//
-//    @OneToMany
-//    @JoinTable(name = "test_notification_default_person_type", joinColumns = @JoinColumn(name = "test_notification_config_id"), //
-//            inverseJoinColumns = @JoinColumn(name = "notification_payload_template_id")) //
-//    @MapKeyColumn(name = "notification_person_type")
-//    private Map<NotificationPersonType, NotificationPayloadTemplate> defaultPersonPayloadTemplate;
+    // @OneToMany
+    // @JoinTable(name = "test_notification_default_method", joinColumns =
+    // @JoinColumn(name =
+    // "test_notification_config_id"), //
+    // inverseJoinColumns = @JoinColumn(name = "notification_payload_template_id"))
+    // //
+    // @MapKeyColumn(name = "notification_method")
+    // private Map<NotificationMethod, NotificationPayloadTemplate>
+    // defaultMethodPayloadTemplate;
+    //
+    // @OneToMany
+    // @JoinTable(name = "test_notification_default_person_type", joinColumns =
+    // @JoinColumn(name =
+    // "test_notification_config_id"), //
+    // inverseJoinColumns = @JoinColumn(name = "notification_payload_template_id"))
+    // //
+    // @MapKeyColumn(name = "notification_person_type")
+    // private Map<NotificationPersonType, NotificationPayloadTemplate>
+    // defaultPersonPayloadTemplate;
 
     @Valid
     @OneToMany(cascade = { CascadeType.ALL }, fetch = FetchType.EAGER)
@@ -119,7 +124,6 @@ public class TestNotificationConfig extends NotificationConfig<Test> {
         return options.stream().filter(opt -> opt.getNotificationMethod().equals(methodType)
                 && opt.getNotificationPersonType().equals(personType) && opt.getNotificationNature().equals(nature))
                 .findAny().orElseGet(() -> getAndAddNewConfigOption(nature, methodType, personType));
-
     }
 
     private NotificationConfigOption getAndAddNewConfigOption(NotificationNature nature, NotificationMethod methodType,
@@ -152,5 +156,4 @@ public class TestNotificationConfig extends NotificationConfig<Test> {
         return getOptionFor(NotificationNature.RESULT_VALIDATION, NotificationMethod.SMS,
                 NotificationPersonType.PROVIDER);
     }
-
 }

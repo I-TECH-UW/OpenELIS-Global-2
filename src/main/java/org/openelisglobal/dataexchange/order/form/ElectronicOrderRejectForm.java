@@ -1,7 +1,6 @@
 package org.openelisglobal.dataexchange.order.form;
 
 import java.util.List;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 
@@ -9,16 +8,15 @@ public class ElectronicOrderRejectForm extends BaseForm {
 
     private static final long serialVersionUID = 1L;
 
-	public enum SearchType {
+    public enum SearchType {
         IDENTIFIER, DATE_STATUS
     }
 
     private SearchType searchType;
 
     private String qaEventId;
-    
-    private String externalOrderId;
 
+    private String externalOrderId;
 
     private String qaAuthorizer;
 
@@ -69,12 +67,11 @@ public class ElectronicOrderRejectForm extends BaseForm {
         this.qaEventId = qaEventId;
     }
 
-	public String getExternalOrderId() {
-		return externalOrderId;
-	}
+    public String getExternalOrderId() {
+        return externalOrderId;
+    }
 
-	public void setExternalOrderId(String externalOrderId) {
-		this.externalOrderId = externalOrderId;
-	}
-    
+    public void setExternalOrderId(String externalOrderId) {
+        this.externalOrderId = externalOrderId;
+    }
 }

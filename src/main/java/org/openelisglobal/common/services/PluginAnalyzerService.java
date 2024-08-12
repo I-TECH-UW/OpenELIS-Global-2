@@ -21,9 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import javax.annotation.PostConstruct;
-
 import org.openelisglobal.analyzer.service.AnalyzerService;
 import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.analyzerimport.service.AnalyzerTestMappingService;
@@ -110,7 +108,7 @@ public class PluginAnalyzerService {
             analyzerService.persistData(analyzer, testMappings, existingMappings);
             registerAanlyzerInCache(name, analyzer.getId());
         } catch (RuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
         return analyzer.getId();
     }
@@ -143,7 +141,7 @@ public class PluginAnalyzerService {
             analyzerService.persistData(analyzer, testMappings, existingMappings);
             registerAanlyzerInCache(name, analyzer.getId());
         } catch (RuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
         return analyzer.getId();
     }
@@ -159,7 +157,6 @@ public class PluginAnalyzerService {
                     testMappings.add(createAnalyzerTestMapping(names, test.getId()));
                 }
             }
-
         }
         return testMappings;
     }
@@ -180,7 +177,7 @@ public class PluginAnalyzerService {
                 return test.getId();
             }
         }
-        LogEvent.logError(this.getClass().getName(), "getIdForTestName",
+        LogEvent.logError(this.getClass().getSimpleName(), "getIdForTestName",
                 "Unable to find test " + dbbTestName + " in test catalog");
         return null;
     }
@@ -218,5 +215,4 @@ public class PluginAnalyzerService {
             return dbbTestLoincCode;
         }
     }
-
 }

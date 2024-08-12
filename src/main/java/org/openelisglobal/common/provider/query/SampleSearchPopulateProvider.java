@@ -23,11 +23,9 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -42,7 +40,6 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
-import org.openelisglobal.sampleorganization.valueholder.SampleOrganization;
 import org.openelisglobal.spring.util.SpringContext;
 
 /**
@@ -103,7 +100,6 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
         }
 
         ajaxServlet.sendData(xml.toString(), result, request, response);
-
     }
 
     private Sample getSampleByAccessionNumberAndTestId(String accessionNo, String testId, boolean unvalidatedTestOnly) {
@@ -198,7 +194,7 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
      * @return first organization, if any of this sample
      */
     private Organization getOrganizationForSample(Sample sample) {
-    	return sampleOrganizationService.getDataBySample(sample).getOrganization();
+        return sampleOrganizationService.getDataBySample(sample).getOrganization();
     }
 
     private Sample getSampleForPatientIdAndLoinc(String patientId, String loinc, boolean unvalidatedTestOnly) {
@@ -259,5 +255,4 @@ public class SampleSearchPopulateProvider extends BaseQueryProvider {
         }
         return best;
     }
-
 }

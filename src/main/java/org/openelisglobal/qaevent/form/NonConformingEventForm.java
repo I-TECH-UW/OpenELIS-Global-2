@@ -1,14 +1,13 @@
 package org.openelisglobal.qaevent.form;
 
 import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.patient.action.bean.PatientSearch;
+import org.openelisglobal.qaevent.valueholder.NcEvent;
 import org.openelisglobal.qaevent.valueholder.NceActionLog;
 import org.openelisglobal.qaevent.valueholder.NceCategory;
 import org.openelisglobal.qaevent.valueholder.NceType;
@@ -71,7 +70,7 @@ public class NonConformingEventForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX)
     private String specimenId;
 
-    /// for display
+    /// for displayNcEvent
     private PatientSearch patientSearch;
 
     private String laboratoryComponent;
@@ -117,6 +116,8 @@ public class NonConformingEventForm extends BaseForm {
     private List<IdValuePair> severityRecurrenceList;
 
     private List<IdValuePair> actionTypeList;
+
+    private List<NcEvent> nceEventsSearchResults;
 
     public String getId() {
         return id;
@@ -444,5 +445,13 @@ public class NonConformingEventForm extends BaseForm {
 
     public void setSpecimenId(String specimenId) {
         this.specimenId = specimenId;
+    }
+
+    public List<NcEvent> getnceEventsSearchResults() {
+        return nceEventsSearchResults;
+    }
+
+    public void setnceEventsSearchResults(List<NcEvent> nceEventsSearchResults) {
+        this.nceEventsSearchResults = nceEventsSearchResults;
     }
 }

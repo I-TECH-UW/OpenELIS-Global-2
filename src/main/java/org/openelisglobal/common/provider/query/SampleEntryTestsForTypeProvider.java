@@ -1,18 +1,15 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
- *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
  */
 package org.openelisglobal.common.provider.query;
 
@@ -23,11 +20,9 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
@@ -96,7 +91,6 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
         String result = createSearchResultXML(sampleType, xml, testUnitIds);
 
         ajaxServlet.sendData(xml.toString(), result, request, response);
-
     }
 
     private String createSearchResultXML(String sampleType, StringBuilder xml, List<String> testUnitIds) {
@@ -130,7 +124,6 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
                     return TestServiceImpl.getUserLocalizedTestName(t1)
                             .compareTo(TestServiceImpl.getUserLocalizedTestName(t2));
                 }
-
             }
         });
 
@@ -171,6 +164,9 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
 
     private void addVariableSampleTypes(Test test, StringBuilder xml) {
         TestDictionary testDictionary = testDictionaryService.getTestDictionaryForTestId(test.getId());
+        if (testDictionary == null) {
+            return;
+        }
         List<IdValuePair> pairs = DisplayListService.getInstance()
                 .getDictionaryListByCategory(testDictionary.getDictionaryCategory().getCategoryName());
         xml.append("<variableSampleTypes ");
@@ -308,5 +304,4 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
             return panelOrder;
         }
     }
-
 }

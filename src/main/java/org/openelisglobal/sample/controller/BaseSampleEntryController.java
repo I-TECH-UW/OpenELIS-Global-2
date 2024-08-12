@@ -2,9 +2,7 @@ package org.openelisglobal.sample.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSException;
@@ -48,18 +46,19 @@ public abstract class BaseSampleEntryController extends BaseController {
                 ConfigurationProperties.getInstance().getPropertyValue(Property.BILLING_REFERENCE_NUMBER_LABEL)));
     }
 
-//    protected void addGenderList(BaseForm form)
-//            throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-//
-//        List genders = genderService.getAll();
-//        form.setGenders(genders);
-//    }
+    // protected void addGenderList(BaseForm form)
+    // throws LIMSRuntimeException, IllegalAccessException,
+    // InvocationTargetException,
+    // NoSuchMethodException {
+    //
+    // List genders = genderService.getAll();
+    // form.setGenders(genders);
+    // }
 
     /**
      * various maps full of a various lists used by the entry form (typically for
-     * drop downs) and other forms who want to do patient entry.
-     *
-     * @ all from setProperty problems caused by developer mistakes.
+     * drop downs) and other forms who want to do patient entry. @ all from
+     * setProperty problems caused by developer mistakes.
      */
     protected void addProjectList(SamplePatientEntryForm form)
             throws LIMSRuntimeException, IllegalAccessException, InvocationTargetException, NoSuchMethodException {
@@ -68,16 +67,16 @@ public abstract class BaseSampleEntryController extends BaseController {
         form.setProjects(projects);
     }
 
-//    public void addAllPatientFormLists(BaseForm form)  {
-//        Map<String, Object> resultMap = new HashMap<>();
-//        resultMap.put("GENDERS", PatientUtil.findGenders());
-//
-//        form.setFormLists(resultMap);
-//        form.setDictionaryLists(ObservationHistoryList.MAP);
-//        form.setOrganizationTypeLists(OrganizationTypeList.MAP);
-//
-//        return;
-//    }
+    // public void addAllPatientFormLists(BaseForm form) {
+    // Map<String, Object> resultMap = new HashMap<>();
+    // resultMap.put("GENDERS", PatientUtil.findGenders());
+    //
+    // form.setFormLists(resultMap);
+    // form.setDictionaryLists(ObservationHistoryList.MAP);
+    // form.setOrganizationTypeLists(OrganizationTypeList.MAP);
+    //
+    // return;
+    // }
 
     /**
      * @param requestTypeStr
@@ -111,10 +110,12 @@ public abstract class BaseSampleEntryController extends BaseController {
      * @param projectFormName @ all from property utils if we've coded things wrong
      *                        in the form def or in this class.
      */
-//    protected void setProjectFormName(BaseForm form, String projectFormName)
-//            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-//        ((ObservationData) (PropertyUtils.getProperty(form, "observations"))).setProjectFormName(projectFormName);
-//    }
+    // protected void setProjectFormName(BaseForm form, String projectFormName)
+    // throws IllegalAccessException, InvocationTargetException,
+    // NoSuchMethodException {
+    // ((ObservationData) (PropertyUtils.getProperty(form,
+    // "observations"))).setProjectFormName(projectFormName);
+    // }
 
     /**
      * This method captures how we deal with the curious accession objects I
@@ -146,7 +147,7 @@ public abstract class BaseSampleEntryController extends BaseController {
      * global message.
      */
     protected void logAndAddMessage(HttpServletRequest request, String methodName, String messageKey) {
-        LogEvent.logError(this.getClass().getName(), methodName, "Unable to enter sample into system");
+        LogEvent.logError(this.getClass().getSimpleName(), methodName, "Unable to enter sample into system");
         Errors errors = new BaseErrors();
         errors.reject(messageKey, messageKey);
         addErrors(request, errors);
@@ -160,5 +161,4 @@ public abstract class BaseSampleEntryController extends BaseController {
     private void addErrors(HttpServletRequest request, Errors errors) {
         saveErrors(errors);
     }
-
 }

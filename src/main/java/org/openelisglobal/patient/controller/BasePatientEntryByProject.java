@@ -6,10 +6,8 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import javax.servlet.http.HttpServletRequest;
-
-import org.apache.commons.httpclient.NameValuePair;
+import org.apache.commons.lang3.tuple.Pair;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.log.LogEvent;
@@ -23,7 +21,6 @@ import org.openelisglobal.organization.util.OrganizationTypeList;
 import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.openelisglobal.patient.saving.IAccessioner;
 import org.openelisglobal.patient.saving.RequestType;
-import org.openelisglobal.patient.util.PatientUtil;
 import org.openelisglobal.patient.valueholder.ObservationData;
 import org.openelisglobal.sample.form.ProjectData;
 import org.springframework.validation.Errors;
@@ -32,7 +29,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
 
     private static final String[] BASE_ALLOWED_FIELDS = new String[] { "patientUpdateStatus", "patientPK", "samplePK",
             "receivedDateForDisplay", "receivedTimeForDisplay", "interviewDate", "interviewTime", "subjectNumber",
-            "siteSubjectNumber", "labNo", "centerName", "centerCode", "lastName", "firstName", "gender","upidCode",
+            "siteSubjectNumber", "labNo", "centerName", "centerCode", "lastName", "firstName", "gender", "upidCode",
             "birthDateForDisplay", "observations.projectFormName", "observations.hivStatus",
             "observations.educationLevel", "observations.maritalStatus", "observations.nationality",
             "observations.nationalityOther", "observations.legalResidence", "observations.nameOfDoctor",
@@ -40,10 +37,10 @@ public abstract class BasePatientEntryByProject extends BaseController {
             "observations.arvProphylaxisBenefit", "observations.arvProphylaxis", "observations.currentARVTreatment",
             "observations.priorARVTreatment", "observations.priorARVTreatmentINNsList*",
             "observations.cotrimoxazoleTreatment", "observations.aidsStage", "observations.anyCurrentDiseases",
-            "ProjectData.dbsTaken","ProjectData.dbsvlTaken", "ProjectData.pscvlTaken","ProjectData.edtaTubeTaken","ProjectData.viralLoadTest", 
-            "observations.currentDiseases", "observations.currentDiseasesValue", "observations.currentOITreatment",
-            "observations.patientWeight", "observations.karnofskyScore", "observations.underInvestigation",
-            "projectData.underInvestigationNote",
+            "ProjectData.dbsTaken", "ProjectData.dbsvlTaken", "ProjectData.pscvlTaken", "ProjectData.edtaTubeTaken",
+            "ProjectData.viralLoadTest", "observations.currentDiseases", "observations.currentDiseasesValue",
+            "observations.currentOITreatment", "observations.patientWeight", "observations.karnofskyScore",
+            "observations.underInvestigation", "projectData.underInvestigationNote",
             //
             "observations.cd4Count", "observations.cd4Percent", "observations.priorCd4Date",
             "observations.antiTbTreatment", "observations.interruptedARVTreatment",
@@ -70,31 +67,30 @@ public abstract class BasePatientEntryByProject extends BaseController {
             "observations.priorVLValue", "observations.priorVLDate",
             //
             "observations.service", "observations.hospitalPatient", "observations.reason", "ProjectData.asanteTest",
-			"ProjectData.plasmaTaken", "ProjectData.serumTaken" };
+            "ProjectData.plasmaTaken", "ProjectData.serumTaken" };
 
     protected List<String> getBasePatientEntryByProjectFields() {
         List<String> allowedFields = new ArrayList<>();
         allowedFields.addAll(Arrays.asList(BASE_ALLOWED_FIELDS));
 
         ObservationData observationData = new ObservationData();
-        List<NameValuePair> priorDiseasesList = observationData.getPriorDiseasesList();
-        for (NameValuePair priorDisease : priorDiseasesList) {
-            allowedFields.add("observations." + priorDisease.getName());
+        List<Pair<String, String>> priorDiseasesList = observationData.getPriorDiseasesList();
+        for (Pair<String, String> priorDisease : priorDiseasesList) {
+            allowedFields.add("observations." + priorDisease.getKey());
         }
-        List<NameValuePair> currentDiseasesList = observationData.getCurrentDiseasesList();
-        for (NameValuePair currentDisease : currentDiseasesList) {
-            allowedFields.add("observations." + currentDisease.getName());
+        List<Pair<String, String>> currentDiseasesList = observationData.getCurrentDiseasesList();
+        for (Pair<String, String> currentDisease : currentDiseasesList) {
+            allowedFields.add("observations." + currentDisease.getKey());
         }
-        List<NameValuePair> priorRTNDiseasesList = observationData.getRtnPriorDiseasesList();
-        for (NameValuePair priorDisease : priorRTNDiseasesList) {
-            allowedFields.add("observations." + priorDisease.getName());
+        List<Pair<String, String>> priorRTNDiseasesList = observationData.getRtnPriorDiseasesList();
+        for (Pair<String, String> priorDisease : priorRTNDiseasesList) {
+            allowedFields.add("observations." + priorDisease.getKey());
         }
-        List<NameValuePair> currentRTNDiseasesList = observationData.getRtnCurrentDiseasesList();
-        for (NameValuePair currentDisease : currentRTNDiseasesList) {
-            allowedFields.add("observations." + currentDisease.getName());
+        List<Pair<String, String>> currentRTNDiseasesList = observationData.getRtnCurrentDiseasesList();
+        for (Pair<String, String> currentDisease : currentRTNDiseasesList) {
+            allowedFields.add("observations." + currentDisease.getKey());
         }
         return allowedFields;
-
     }
 
     public BasePatientEntryByProject() {
@@ -113,7 +109,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
             } catch (IllegalArgumentException e) {
                 LogEvent.logWarn("BasePatientEntryByProject", "getRequestType",
                         "request type '" + requestTypeStr + "' invalid");
-                LogEvent.logDebug(e);
+                LogEvent.logWarn(e);
                 return RequestType.UNKNOWN;
             }
         }
@@ -139,8 +135,8 @@ public abstract class BasePatientEntryByProject extends BaseController {
             form.setObservations(observations);
         }
         if (projectData == null) {
-        	projectData = new ProjectData();
-        	form.setProjectData(projectData);
+            projectData = new ProjectData();
+            form.setProjectData(projectData);
         }
         observations.setProjectFormName(projectFormName);
     }
@@ -175,7 +171,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
      * global message.
      */
     protected void logAndAddMessage(HttpServletRequest request, String methodName, String messageKey) {
-        LogEvent.logError(this.getClass().getName(), methodName, "Unable to enter patient into system");
+        LogEvent.logError(this.getClass().getSimpleName(), methodName, "Unable to enter patient into system");
         Errors errors = new BaseErrors();
         errors.reject(messageKey, messageKey);
         saveErrors(errors);
@@ -188,14 +184,14 @@ public abstract class BasePatientEntryByProject extends BaseController {
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      * @throws IllegalAccessException
-     *
      */
     public static Map<String, Object> addAllPatientFormLists(PatientEntryByProjectForm form)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         Map<String, Object> resultMap = new HashMap<>();
-        //resultMap.put("GENDERS", PatientUtil.findGenders());
+        // resultMap.put("GENDERS", PatientUtil.findGenders());
 
-        //below is more suitable for genders select forms as it is the one used in others forms
+        // below is more suitable for genders select forms as it is the one used in
+        // others forms
         List<Dictionary> listOfDictionary = new ArrayList<>();
         List<IdValuePair> genders = DisplayListService.getInstance().getList(ListType.GENDERS);
         for (IdValuePair i : genders) {
@@ -205,7 +201,7 @@ public abstract class BasePatientEntryByProject extends BaseController {
             listOfDictionary.add(dictionary);
         }
         resultMap.put("GENDERS", listOfDictionary);
-        
+
         form.setFormLists(resultMap);
         form.setDictionaryLists(ObservationHistoryList.MAP);
         form.setOrganizationTypeLists(OrganizationTypeList.MAP);

@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
-
 import javax.servlet.http.HttpServletResponse;
-
 import org.hl7.fhir.r4.model.Bundle;
 import org.itech.fhir.dataexport.api.service.DataExportService;
 import org.itech.fhir.dataexport.core.model.DataExportTask;
@@ -22,6 +20,7 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -42,6 +41,11 @@ public class FhirTransformationController extends BaseController {
 
     private static boolean running = false;
 
+    @Scheduled(initialDelay = 10 * 1000, fixedRate = Long.MAX_VALUE)
+    private void transformOEObjectsOnBoot() {
+        transformPersistFhirObjects(false, 100, 1);
+    }
+
     @GetMapping("/PatientToFhir")
     public void transformPersistFhirPatients(@RequestParam(defaultValue = "false") Boolean checkAll,
             @RequestParam(defaultValue = "100") int batchSize, @RequestParam(defaultValue = "1") int threads,
@@ -55,14 +59,14 @@ public class FhirTransformationController extends BaseController {
         } else {
             patients = sampleHumanService.getAllPatientsWithSampleEnteredMissingFhirUuid();
         }
-        LogEvent.logDebug(this.getClass().getName(), "transformPersistFhirPatients",
+        LogEvent.logDebug(this.getClass().getSimpleName(), "transformPersistFhirPatients",
                 "patients to convert: " + patients.size());
         List<String> patientIds = new ArrayList<>();
         List<Future<Bundle>> promises = new ArrayList<>();
         for (int i = 0; i < patients.size(); ++i) {
             patientIds.add(patients.get(i).getId());
             if (i % batchSize == batchSize - 1 || i + 1 == patients.size()) {
-                LogEvent.logDebug(this.getClass().getName(), "",
+                LogEvent.logDebug(this.getClass().getSimpleName(), "",
                         "persisting batch " + (i - batchSize + 1) + "-" + i + " of " + patients.size());
                 try {
                     promises.add(fhirTransformService.transformPersistPatients(patientIds));
@@ -75,12 +79,12 @@ public class FhirTransformationController extends BaseController {
                 } catch (FhirPersistanceException e) {
                     ++batchFailure;
                     LogEvent.logError(e);
-                    LogEvent.logError(this.getClass().getName(), "transformPersistFhirPatients",
+                    LogEvent.logError(this.getClass().getSimpleName(), "transformPersistFhirPatients",
                             "error persisting batch " + (i - batchSize + 1) + "-" + i);
                 } catch (Exception e) {
                     ++batchFailure;
                     LogEvent.logError(e);
-                    LogEvent.logError(this.getClass().getName(), "transformPersistFhirPatients",
+                    LogEvent.logError(this.getClass().getSimpleName(), "transformPersistFhirPatients",
                             "error with batch " + (i - batchSize + 1) + "-" + i);
                 } finally {
                     if (promises.size() >= threads || i + 1 == patients.size()) {
@@ -89,7 +93,7 @@ public class FhirTransformationController extends BaseController {
                 }
             }
         }
-        LogEvent.logDebug(this.getClass().getName(), "transformPersistFhirPatients", "finished all batches");
+        LogEvent.logDebug(this.getClass().getSimpleName(), "transformPersistFhirPatients", "finished all batches");
 
         response.getWriter().println("patient batches total: " + batches);
         response.getWriter().println("patient batches failed: " + batchFailure);
@@ -101,11 +105,19 @@ public class FhirTransformationController extends BaseController {
             HttpServletResponse response) throws FhirLocalPersistingException, IOException {
 
         if (inProcess()) {
-            LogEvent.logWarn(this.getClass().getName(), "transformPersistMissingFhirObjects",
+            LogEvent.logWarn(this.getClass().getSimpleName(), "transformPersistMissingFhirObjects",
                     "processs already running");
             response.getWriter().println("processs already running");
             return;
         }
+        BatchResult result = transformPersistFhirObjects(checkAll, batchSize, threads);
+
+        response.getWriter().println("sample batches total: " + result.batches);
+        response.getWriter().println("sample batches failed: " + result.batchFailure);
+
+    }
+
+    private BatchResult transformPersistFhirObjects(Boolean checkAll, int batchSize, int threads) {
         try {
             List<Patient> patients;
             if (checkAll) {
@@ -113,14 +125,14 @@ public class FhirTransformationController extends BaseController {
             } else {
                 patients = sampleHumanService.getAllPatientsWithSampleEnteredMissingFhirUuid();
             }
-            LogEvent.logDebug(this.getClass().getName(), "transformPersistMissingFhirObjects",
+            LogEvent.logDebug(this.getClass().getSimpleName(), "transformPersistMissingFhirObjects",
                     "patients to convert: " + patients.size());
             List<String> patientIds = new ArrayList<>();
             List<Future<Bundle>> promises = new ArrayList<>();
             for (int i = 0; i < patients.size(); ++i) {
                 patientIds.add(patients.get(i).getId());
                 if (i % batchSize == batchSize - 1 || i + 1 == patients.size()) {
-                    LogEvent.logDebug(this.getClass().getName(), "",
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "",
                             "persisting batch " + (i - batchSize + 1) + "-" + i + " of " + patients.size());
                     try {
                         promises.add(fhirTransformService.transformPersistPatients(patientIds));
@@ -130,11 +142,11 @@ public class FhirTransformationController extends BaseController {
                         }
                     } catch (FhirPersistanceException e) {
                         LogEvent.logError(e);
-                        LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
+                        LogEvent.logError(this.getClass().getSimpleName(), "transformPersistMissingFhirObjects",
                                 "error persisting batch " + (i - batchSize + 1) + "-" + i);
                     } catch (Exception e) {
                         LogEvent.logError(e);
-                        LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
+                        LogEvent.logError(this.getClass().getSimpleName(), "transformPersistMissingFhirObjects",
                                 "error with batch " + (i - batchSize + 1) + "-" + i);
                     }
                 }
@@ -146,7 +158,7 @@ public class FhirTransformationController extends BaseController {
             } else {
                 samples = sampleService.getAllMissingFhirUuid();
             }
-            LogEvent.logDebug(this.getClass().getName(), "transformPersistMissingFhirObjects",
+            LogEvent.logDebug(this.getClass().getSimpleName(), "transformPersistMissingFhirObjects",
                     "samples to convert: " + samples.size());
 
             int batches = 0;
@@ -156,7 +168,7 @@ public class FhirTransformationController extends BaseController {
             for (int i = 0; i < samples.size(); ++i) {
                 sampleIds.add(samples.get(i).getId());
                 if (i % batchSize == batchSize - 1 || i + 1 == samples.size()) {
-                    LogEvent.logDebug(this.getClass().getName(), "",
+                    LogEvent.logDebug(this.getClass().getSimpleName(), "",
                             "persisting batch " + (i - batchSize + 1) + "-" + i + " of " + samples.size());
                     try {
                         promises.add(fhirTransformService.transformPersistObjectsUnderSamples(sampleIds));
@@ -167,21 +179,24 @@ public class FhirTransformationController extends BaseController {
                         }
                     } catch (FhirPersistanceException e) {
                         ++batchFailure;
-                        LogEvent.logErrorStack(e);
-                        LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
+                        LogEvent.logError(e);
+                        LogEvent.logError(this.getClass().getSimpleName(), "transformPersistMissingFhirObjects",
                                 "error persisting batch " + (i - batchSize + 1) + "-" + i);
                     } catch (Exception e) {
                         ++batchFailure;
-                        LogEvent.logErrorStack(e);
-                        LogEvent.logError(this.getClass().getName(), "transformPersistMissingFhirObjects",
+                        LogEvent.logError(e);
+                        LogEvent.logError(this.getClass().getSimpleName(), "transformPersistMissingFhirObjects",
                                 "error with batch " + (i - batchSize + 1) + "-" + i);
                     }
                 }
             }
-            LogEvent.logDebug(this.getClass().getName(), "transformPersistMissingFhirObjects", "finished all batches");
+            LogEvent.logDebug(this.getClass().getSimpleName(), "transformPersistMissingFhirObjects",
+                    "finished all batches");
 
-            response.getWriter().println("sample batches total: " + batches);
-            response.getWriter().println("sample batches failed: " + batchFailure);
+            BatchResult result = new BatchResult();
+            result.batchFailure = batchFailure;
+            result.batches = batches;
+            return result;
         } catch (RuntimeException e) {
             throw e;
         } finally {
@@ -195,14 +210,13 @@ public class FhirTransformationController extends BaseController {
                 promises.remove(i).get();
             } catch (InterruptedException | ExecutionException e) {
                 LogEvent.logError(e);
-                LogEvent.logError(this.getClass().getName(), "waitForResults", "Error getting value from thread");
+                LogEvent.logError(this.getClass().getSimpleName(), "waitForResults", "Error getting value from thread");
                 throw new Exception();
             }
         }
         // done so if there is a lot of data being processed, we backup to the CS in
         // tandem
         runExportTasks();
-
     }
 
     private void runExportTasks() {
@@ -241,4 +255,8 @@ public class FhirTransformationController extends BaseController {
         running = false;
     }
 
+    class BatchResult {
+        public int batches;
+        public int batchFailure;
+    }
 }

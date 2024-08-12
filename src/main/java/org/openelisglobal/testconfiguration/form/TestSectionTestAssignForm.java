@@ -2,10 +2,8 @@ package org.openelisglobal.testconfiguration.form;
 
 import java.util.LinkedHashMap;
 import java.util.List;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 

@@ -3,11 +3,9 @@ package org.openelisglobal.provider.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
-
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -166,10 +164,10 @@ public class ProviderMenuController extends BaseMenuController<Provider> {
             providerService.deactivateProviders(providers);
         } catch (LIMSRuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
 
             String errorMsg;
-            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
                 errorMsg = "errors.DeleteException";
@@ -177,7 +175,6 @@ public class ProviderMenuController extends BaseMenuController<Provider> {
             result.reject(errorMsg);
             redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
             return findForward(FWD_FAIL_DELETE, form);
-
         }
         redirectAttributes.addAttribute(FWD_SUCCESS, true);
         return findForward(FWD_SUCCESS_DELETE, form);
@@ -207,5 +204,4 @@ public class ProviderMenuController extends BaseMenuController<Provider> {
     protected String getPageSubtitleKey() {
         return "provider.browse.title";
     }
-
 }

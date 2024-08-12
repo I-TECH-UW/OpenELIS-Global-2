@@ -15,5 +15,4 @@ public class StringToIntegerConverter implements AttributeConverter<String, Inte
     public String convertToEntityAttribute(Integer dbData) {
         return dbData.toString();
     }
-
 }

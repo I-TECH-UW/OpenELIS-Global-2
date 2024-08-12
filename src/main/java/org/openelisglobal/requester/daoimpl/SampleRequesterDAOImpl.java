@@ -1,23 +1,19 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
-*
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
+ */
 package org.openelisglobal.requester.daoimpl;
 
 import java.util.List;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -64,7 +60,8 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 
     @Override
     public List<SampleRequester> getRequestersForRequesterId(String requesterId, String requesterTypeId) {
-        String hql = "From SampleRequester sr where sr.requester_id = :requesterId and sr.requester_type_id = :requesterTypeId";
+        String hql = "From SampleRequester sr where sr.requester_id = :requesterId and sr.requester_type_id ="
+                + " :requesterTypeId";
 
         try {
             Query<SampleRequester> query = entityManager.unwrap(Session.class).createQuery(hql, SampleRequester.class);
@@ -81,7 +78,8 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
     }
 
     public SampleRequester readOld(long sampleId, long requesterTypeId) {
-        String sql = "From SampleRequester sr where sr.sampleId = :sampleId and sr.requesterTypeId = :requesterTypeId";
+        String sql = "From SampleRequester sr where sr.sampleId = :sampleId and sr.requesterTypeId ="
+                + " :requesterTypeId";
         try {
             Query<SampleRequester> query = entityManager.unwrap(Session.class).createQuery(sql, SampleRequester.class);
             query.setParameter("sampleId", sampleId);
@@ -90,7 +88,7 @@ public class SampleRequesterDAOImpl extends BaseDAOImpl<SampleRequester, String>
 
             return requester;
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SampleRequester readOld()", e);
         }
     }

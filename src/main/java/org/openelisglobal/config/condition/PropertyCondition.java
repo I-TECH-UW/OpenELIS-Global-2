@@ -1,7 +1,6 @@
 package org.openelisglobal.config.condition;
 
 import java.util.Map;
-
 import org.springframework.context.annotation.ConditionContext;
 import org.springframework.context.annotation.ConfigurationCondition;
 import org.springframework.core.type.AnnotatedTypeMetadata;
@@ -24,5 +23,4 @@ public class PropertyCondition implements ConfigurationCondition {
     public ConfigurationPhase getConfigurationPhase() {
         return ConfigurationPhase.REGISTER_BEAN;
     }
-
 }

@@ -1,26 +1,23 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*
-* Contributor(s): CIRG, University of Washington, Seattle WA.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ *
+ * <p>Contributor(s): CIRG, University of Washington, Seattle WA.
+ */
 package org.openelisglobal.result.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -54,13 +51,12 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
                 resultSignature.setId(null);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultSignature getData()", e);
         }
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<ResultSignature> getResultSignaturesByResult(Result result) throws LIMSRuntimeException {
         List<ResultSignature> resultSignatures = null;
@@ -74,7 +70,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
             return resultSignatures;
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureResult()", e);
         }
     }
@@ -84,7 +80,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
         try {
             data = entityManager.unwrap(Session.class).get(ResultSignature.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultSignature readResultSignature()", e);
         }
 
@@ -99,7 +95,7 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
                     resultSignature.getId());
             return re;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultSignature getResultSignatureById()", e);
         }
     }
@@ -128,5 +124,4 @@ public class ResultSignatureDAOImpl extends BaseDAOImpl<ResultSignature, String>
         }
         return null;
     }
-
 }

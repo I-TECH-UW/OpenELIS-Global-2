@@ -2,7 +2,6 @@ package org.openelisglobal.validation.constraintvalidator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
 import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.validation.annotations.Password;

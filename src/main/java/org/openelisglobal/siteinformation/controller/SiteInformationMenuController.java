@@ -2,10 +2,8 @@ package org.openelisglobal.siteinformation.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseMenuController;
@@ -172,7 +170,6 @@ public class SiteInformationMenuController extends BaseMenuController<SiteInform
                 siteInformation.setValue(siteInformation.getValue().replaceAll(".", "*"));
             }
         }
-
     }
 
     @Override
@@ -207,7 +204,7 @@ public class SiteInformationMenuController extends BaseMenuController<SiteInform
 
         } catch (LIMSRuntimeException e) {
             String errorMsg;
-            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
                 errorMsg = "errors.OptimisticLockException";
             } else {
                 errorMsg = "errors.DeleteException";
@@ -215,7 +212,6 @@ public class SiteInformationMenuController extends BaseMenuController<SiteInform
             result.reject(errorMsg);
             redirectAttributes.addFlashAttribute(Constants.REQUEST_ERRORS, result);
             return findForward(FWD_FAIL_DELETE, form);
-
         }
 
         ConfigurationProperties.forceReload();

@@ -2,25 +2,22 @@ package org.openelisglobal.testconfiguration.controller;
 
 import java.util.List;
 import java.util.Locale;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.method.service.MethodService;
+import org.openelisglobal.method.valueholder.Method;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.role.valueholder.Role;
-import org.openelisglobal.method.valueholder.Method;
 import org.openelisglobal.systemmodule.valueholder.SystemModule;
 import org.openelisglobal.systemusermodule.valueholder.RoleModule;
 import org.openelisglobal.testconfiguration.form.MethodCreateForm;
 import org.openelisglobal.testconfiguration.service.MethodCreateService;
-import org.openelisglobal.method.service.MethodService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
@@ -188,5 +185,4 @@ public class MethodCreateController extends BaseController {
     protected String getPageSubtitleKey() {
         return null;
     }
-
 }

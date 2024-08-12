@@ -2,11 +2,10 @@ package org.openelisglobal.sample.bean;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.groups.Default;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.sample.form.SampleEditForm;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidTime;
 
@@ -54,6 +53,9 @@ public class SampleEditItem {
 
     private boolean hasResults = false;
 
+    // for display in the react Data table. set as the testId
+    private String id;
+
     public String getAccessionNumber() {
         return accessionNumber;
     }
@@ -92,6 +94,7 @@ public class SampleEditItem {
 
     public void setTestId(String testId) {
         this.testId = testId;
+        this.id = testId;
     }
 
     public boolean isCanCancel() {
@@ -188,5 +191,13 @@ public class SampleEditItem {
 
     public void setHasResults(boolean hasResults) {
         this.hasResults = hasResults;
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 }

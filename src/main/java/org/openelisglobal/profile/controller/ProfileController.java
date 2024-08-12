@@ -2,7 +2,6 @@ package org.openelisglobal.profile.controller;
 
 import java.io.IOException;
 import java.util.Arrays;
-
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.profile.form.ProfileForm;
@@ -96,5 +95,4 @@ public class ProfileController extends BaseController {
         // TODO Auto-generated method stub
         return null;
     }
-
 }

@@ -11,7 +11,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
-
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.person.valueholder.Person;
 
@@ -61,5 +60,4 @@ public class ExternalConnectionContact extends BaseObject<Integer> {
     public void setPerson(Person person) {
         this.person = person;
     }
-
 }

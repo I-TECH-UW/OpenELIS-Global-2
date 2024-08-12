@@ -4,12 +4,10 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.lang.StringUtils;
 import org.openelisglobal.barcode.BarcodeLabelMaker;
 import org.openelisglobal.common.action.IActionConstants;
@@ -39,7 +37,6 @@ import org.springframework.validation.ObjectError;
  * returns override page
  *
  * @author Caleb
- *
  */
 public class LabelMakerServlet extends HttpServlet implements IActionConstants {
 
@@ -59,13 +56,14 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             response.getWriter().println(MessageUtil.getMessage("message.error.unauthorized"));
             return;
         }
-
-        if ("true".equalsIgnoreCase(request.getParameter("prePrinting"))) {
+        if ("block".equals(request.getParameter("labelType")) || "slide".equals(request.getParameter("labelType"))) {
+            printPathologyBarcodeLabel(request, response);
+        } else if ("true".equalsIgnoreCase(request.getParameter("prePrinting"))) {
             // writes to response
             try {
                 prePrintLabels(request, response);
             } catch (NumberFormatException | LIMSInvalidConfigurationException e) {
-                LogEvent.logError(this.getClass().getName(), "doGet",
+                LogEvent.logError(this.getClass().getSimpleName(), "doGet",
                         "invalid configuration, could not generate a pre-printed accession number");
                 response.setStatus(HttpServletResponse.SC_INTERNAL_SERVER_ERROR);
                 response.setContentType("text/html; charset=utf-8");
@@ -76,7 +74,24 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             // writes to response
             printExistingOrder(request, response);
         }
+    }
 
+    private void printPathologyBarcodeLabel(HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
+        // create requested labels as pdf stream
+        BarcodeLabelMaker labelMaker = new BarcodeLabelMaker();
+        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
+        labelMaker.setSysUserId(String.valueOf(usd.getSystemUserId()));
+
+        labelMaker.generateGenericBarcodeLabel(request.getParameter("code"), request.getParameter("labelType"));
+        ByteArrayOutputStream labelAsOutputStream = labelMaker.createLabelsAsStream();
+
+        response.setContentType("application/pdf");
+        response.addHeader("Content-Disposition", "inline; filename=" + "barcode.pdf");
+        response.setContentLength(labelAsOutputStream.size());
+        labelAsOutputStream.writeTo(response.getOutputStream());
+        response.getOutputStream().flush();
+        response.getOutputStream().close();
     }
 
     private void prePrintLabels(HttpServletRequest request, HttpServletResponse response)
@@ -99,13 +114,12 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
         if (GenericValidator.isBlankOrNull(startingAt) || startingAt.trim().equals("null")
                 || startingAt.trim().equals("undefined")) {
             startingAt = "";
-
         }
         labelMaker.generatePrePrintLabels(Integer.parseInt(request.getParameter("numSetsOfLabels")),
                 Integer.parseInt(request.getParameter("numOrderLabelsPerSet")),
                 Integer.parseInt(request.getParameter("numSpecimenLabelsPerSet")), request.getParameter("facilityName"),
                 tests, startingAt);
-        ByteArrayOutputStream labelAsOutputStream = labelMaker.createPrePrintedLabelsAsStream();
+        ByteArrayOutputStream labelAsOutputStream = labelMaker.createLabelsAsStream();
 
         // if empty stream, assume at max printing
         response.setContentType("application/pdf");
@@ -163,7 +177,7 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
         labelMaker.setOverride(override);
         labelMaker.setSysUserId(String.valueOf(usd.getSystemUserId()));
         labelMaker.generateLabels(labNo, type, quantity, override);
-        ByteArrayOutputStream labelAsOutputStream = labelMaker.createLabelsAsStream();
+        ByteArrayOutputStream labelAsOutputStream = labelMaker.createLabelsAsStreamWithMaximumPrints();
 
         // if empty stream, assume at max printing
         if (labelAsOutputStream.size() == 0) {
@@ -220,13 +234,13 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
             IAccessionNumberValidator accessionNumberValidator = AccessionNumberUtil
                     .getGeneralAccessionNumberValidator();
             String accessionNumber;
-//        String sampleItemNumber;
+            // String sampleItemNumber;
             if (labNo.indexOf(".") > 0) {
                 accessionNumber = labNo.substring(0, labNo.indexOf("."));
-//            sampleItemNumber = labNo.substring(labNo.indexOf(".") + 1);
+                // sampleItemNumber = labNo.substring(labNo.indexOf(".") + 1);
             } else {
                 accessionNumber = labNo;
-//            sampleItemNumber = "0";
+                // sampleItemNumber = "0";
             }
             if (!(IAccessionNumberValidator.ValidationResults.SUCCESS == accessionNumberValidator
                     .validFormat(accessionNumber, false))) {
@@ -247,5 +261,4 @@ public class LabelMakerServlet extends HttpServlet implements IActionConstants {
 
         return errors;
     }
-
 }

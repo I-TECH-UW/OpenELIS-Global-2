@@ -32,7 +32,7 @@ public class LogoUploadServiceImpl implements LogoUploadService {
             // The reason the old image is deleted and a new one added is because updating
             // the image doesn't work.
             image.setId(imageId);
-        	imageService.delete(image);
+            imageService.delete(image);
         }
         Image savedImage = imageService.save(image);
 
@@ -40,5 +40,4 @@ public class LogoUploadServiceImpl implements LogoUploadService {
         logoInformation.setSysUserId("1");
         siteInformationService.update(logoInformation);
     }
-
 }

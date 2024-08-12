@@ -168,7 +168,8 @@
 
 				jQuery("#notifyResults").prop('checked', jQuery(elem).attr('fNotifyResults') === 'true');
 				jQuery("#inLabOnly").prop('checked', jQuery(elem).attr('fInLabOnly') === 'true');
-				
+				jQuery("#antimicrobialResistance").prop('checked', jQuery(elem).attr('fantimicrobialResistance') === 'true');
+
 				jQuery("#panelSelection").change();
 							
         	}
@@ -1514,6 +1515,7 @@
         jQuery("#orderableRO").text(jQuery("#orderable").attr("checked") ? "Y" : "N");
         jQuery("#notifyResultsRO").text(jQuery("#notifyResults").attr("checked") ? "Y" : "N");
         jQuery("#inLabOnlyRO").text(jQuery("#inLabOnly").attr("checked") ? "Y" : "N");
+		jQuery("#antimicrobialResistanceRO").text(jQuery("#antimicrobialResistance").attr("checked") ? "Y" : "N");
     }
 
     function createJSON() {
@@ -1533,7 +1535,8 @@
         jsonObj.notifyResults = jQuery("#notifyResults").attr("checked") ? 'Y' : 'N';
         jsonObj.inLabOnly = jQuery("#inLabOnly").attr("checked") ? 'Y' : 'N';
         jsonObj.active = jQuery("#active").attr("checked") ? 'Y' : 'N';
-        
+		jsonObj.antimicrobialResistance = jQuery("#antimicrobialResistance").attr("checked") ? 'Y' : 'N';
+
         jQuery(".resultClass").each(function (i,elem) {
         	jsonObj.testId = jQuery(elem).attr('fTestId');
             console.log("createJSON: " + jQuery(elem).attr('fTestId') + ":" + jQuery(elem).attr('fResultType'));
@@ -1878,6 +1881,7 @@ td {
 					fReferenceId='<%=bean.getReferenceId()%>'
 					fNotifyResults='<%=bean.getNotifyResults()%>'
 					fInLabOnly='<%=bean.getInLabOnly()%>'
+					fantimicrobialResistance='<%=bean.getAntimicrobialResistance()%>'
 				class='resultClass'>
 				
 				<tr>
@@ -1917,6 +1921,7 @@ td {
 				%>
 				<tr>
 					<td><b><%=bean.getActive()%></b></td>
+					<td><b><%=bean.getAntimicrobialResistance()%></b></td>
 					<td><b><%=bean.getOrderable()%></b></td>
 					<%if (bean.getNotifyResults()) { %><td><b><spring:message code="test.notifyResults"/></b></td><%} %>
 					<%if (bean.getInLabOnly()) { %><td><b><spring:message code="test.inLabOnly"/></b></td><%} %>
@@ -2187,8 +2192,10 @@ td {
 				<br />
 				<br />
 				<br />
-				<br /> 
-				<label for="orderable"><spring:message code="test.isActive" /></label> 
+				<br />
+					<label for="antimicrobialResistance"><spring:message code="test.antimicrobialResistance"/></label>
+					<input type="checkbox" id="antimicrobialResistance" /><br/>
+				<label for="orderable"><spring:message code="test.isActive" /></label>
 				<input type="checkbox" id="active"checked="checked" /><br />
 				<label for="orderable"><spring:message code="label.orderable" /></label>
 				<input type="checkbox" id="orderable" checked="checked" /><br/>
@@ -2234,6 +2241,10 @@ td {
 			<spring:message code="result.resultType" />
 			<div class="tab" id="resultTypeRO"></div>
 			<br />
+
+			<spring:message code="test.antimicrobialResistance"/>
+			<div class="tab" id="antimicrobialResistanceRO"></div>
+			<br/>
 			<spring:message code="test.isActive" />
 			<div class="tab" id="activeRO"></div>
 			<br />

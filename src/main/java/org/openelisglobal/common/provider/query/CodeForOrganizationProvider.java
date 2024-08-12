@@ -18,11 +18,9 @@
 package org.openelisglobal.common.provider.query;
 
 import java.io.IOException;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.util.XMLUtil;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -58,5 +56,4 @@ public class CodeForOrganizationProvider extends BaseQueryProvider {
         XMLUtil.appendAttributeKeyValue("value", code, xml);
         xml.append(" />");
     }
-
 }

@@ -26,8 +26,6 @@ public class ResultLimitBean {
     private String reportingRange;
     private String criticalRange;
 
-
-
     public String getGender() {
         return gender;
     }
@@ -75,6 +73,4 @@ public class ResultLimitBean {
     public void setCriticalRange(String criticalRange) {
         this.criticalRange = criticalRange;
     }
-
-   
 }

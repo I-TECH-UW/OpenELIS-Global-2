@@ -6,10 +6,8 @@ import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
 import org.json.simple.JSONArray;
@@ -91,8 +89,7 @@ public class TestAddController extends BaseController {
 
     @RequestMapping(value = "/TestAdd", method = RequestMethod.GET)
     public ModelAndView showTestAdd(HttpServletRequest request) {
-
-        LogEvent.logInfo(this.getClass().getName(), "method unkown",
+        LogEvent.logTrace(this.getClass().getSimpleName(), "showTestAdd",
                 "Hibernate Version: " + org.hibernate.Version.getVersionString());
 
         TestAddForm form = new TestAddForm();
@@ -130,7 +127,7 @@ public class TestAddController extends BaseController {
 
         String currentUserId = getSysUserId(request);
         String jsonString = (form.getJsonWad());
-       
+
         JSONParser parser = new JSONParser();
 
         JSONObject obj = null;
@@ -234,6 +231,7 @@ public class TestAddController extends BaseController {
             test.setOrderable("Y".equals(testAddParams.orderable));
             test.setNotifyResults("Y".equals(testAddParams.notifyResults));
             test.setInLabOnly("Y".equals(testAddParams.inLabOnly));
+            test.setAntimicrobialResistance("Y".equals(testAddParams.antimicrobialResistance));
             test.setIsReportable("N");
             test.setTestSection(testSection);
             test.setGuid(String.valueOf(UUID.randomUUID()));
@@ -282,7 +280,7 @@ public class TestAddController extends BaseController {
     }
 
     private ArrayList<ResultLimit> createResultLimits(Double lowValid, Double highValid, Double lowReportingRange,
-            Double highReportingRange, TestAddParams testAddParams,Double highCritical,Double lowCritical) {
+            Double highReportingRange, TestAddParams testAddParams, Double highCritical, Double lowCritical) {
         ArrayList<ResultLimit> resultLimits = new ArrayList<>();
         for (ResultLimitParams params : testAddParams.limits) {
             ResultLimit limit = new ResultLimit();
@@ -299,7 +297,7 @@ public class TestAddController extends BaseController {
                 limit.setHighReportingRange(highReportingRange);
                 limit.setLowCritical(lowCritical);
                 limit.setHighCritical(highCritical);
-             }
+            }
             resultLimits.add(limit);
         }
 
@@ -362,6 +360,7 @@ public class TestAddController extends BaseController {
             testAddParams.orderable = (String) obj.get("orderable");
             testAddParams.notifyResults = (String) obj.get("notifyResults");
             testAddParams.inLabOnly = (String) obj.get("inLabOnly");
+            testAddParams.antimicrobialResistance = (String) obj.get("antimicrobialResistance");
             if (TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId)) {
                 testAddParams.lowValid = (String) obj.get("lowValid");
                 testAddParams.highValid = (String) obj.get("highValid");
@@ -405,7 +404,7 @@ public class TestAddController extends BaseController {
             params.lowNormalLimit = (String) (((JSONObject) limitArray.get(i)).get("lowNormal"));
             params.highNormalLimit = (String) (((JSONObject) limitArray.get(i)).get("highNormal"));
             params.lowCritical = (String) (((JSONObject) limitArray.get(i)).get("lowCritical"));
-            params.highCritical = (String) (((JSONObject) limitArray.get(i)).get("highCritical"));            
+            params.highCritical = (String) (((JSONObject) limitArray.get(i)).get("highCritical"));
             params.lowAge = lowAge;
             params.highAge = highAge;
             testAddParams.limits.add(params);
@@ -431,7 +430,6 @@ public class TestAddController extends BaseController {
         for (int i = 0; i < panelArray.size(); i++) {
             testAddParams.panelList.add((String) (((JSONObject) panelArray.get(i)).get("id")));
         }
-
     }
 
     private void extractSampleTypes(JSONObject obj, JSONParser parser, TestAddParams testAddParams)
@@ -564,6 +562,7 @@ public class TestAddController extends BaseController {
         String orderable;
         String notifyResults;
         String inLabOnly;
+        String antimicrobialResistance;
         String lowValid;
         String highValid;
         String lowReportingRange;

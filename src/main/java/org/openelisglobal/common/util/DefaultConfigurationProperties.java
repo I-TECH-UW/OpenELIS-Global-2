@@ -1,19 +1,16 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
-*
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
+ */
 package org.openelisglobal.common.util;
 
 import java.io.IOException;
@@ -22,7 +19,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
-
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.externalconnections.service.BasicAuthenticationDataService;
@@ -42,6 +38,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
     protected static Map<String, ConfigurationProperties.Property> dbNamePropertiesMap;
 
     private boolean databaseLoaded = false;
+
     {
         // config from SystemConfiguration.properties
         propertiesFileMap = new HashMap<>();
@@ -51,7 +48,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                 new KeyDefaultPair("organization.reference.lab.parent", null));
         propertiesFileMap.put(Property.resultsResendTime, new KeyDefaultPair("results.send.retry.time", "30"));
 
-//		propertiesFileMap.put(Property. , new KeyDefaultPair() );
+        // propertiesFileMap.put(Property. , new KeyDefaultPair() );
 
         // config from site_information table
         dbNamePropertiesMap = new HashMap<>();
@@ -105,8 +102,8 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.StatusRules, Property.StatusRules.getName(), "CI");
         setDBPropertyMappingAndDefault(Property.ReflexAction, Property.ReflexAction.getName(), "Haiti");
         setDBPropertyMappingAndDefault(Property.AccessionFormat, Property.AccessionFormat.getName(), "SITEYEARNUM"); // spelled
-                                                                                                                     // wrong
-                                                                                                                     // in
+        // wrong
+        // in
         // DB
         setDBPropertyMappingAndDefault(Property.TRACK_PATIENT_PAYMENT, Property.TRACK_PATIENT_PAYMENT.getName(),
                 "false");
@@ -185,6 +182,10 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                 "25.4");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_BARCODE_WIDTH, Property.SPECIMEN_BARCODE_WIDTH.getName(),
                 "76.2");
+        setDBPropertyMappingAndDefault(Property.BLOCK_BARCODE_HEIGHT, Property.BLOCK_BARCODE_HEIGHT.getName(), "25.4");
+        setDBPropertyMappingAndDefault(Property.BLOCK_BARCODE_WIDTH, Property.BLOCK_BARCODE_WIDTH.getName(), "76.2");
+        setDBPropertyMappingAndDefault(Property.SLIDE_BARCODE_HEIGHT, Property.SLIDE_BARCODE_HEIGHT.getName(), "25.4");
+        setDBPropertyMappingAndDefault(Property.SLIDE_BARCODE_WIDTH, Property.SLIDE_BARCODE_WIDTH.getName(), "76.2");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_DATE, Property.SPECIMEN_FIELD_DATE.getName(), "true");
         setDBPropertyMappingAndDefault(Property.SPECIMEN_FIELD_COLLECTED_BY,
                 Property.SPECIMEN_FIELD_COLLECTED_BY.getName(), "true");
@@ -199,10 +200,18 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         setDBPropertyMappingAndDefault(Property.LAB_DIRECTOR_TITLE, Property.LAB_DIRECTOR_TITLE.getName(), "");
         setDBPropertyMappingAndDefault(Property.CONTACT_TRACING, Property.CONTACT_TRACING.getName(), "false");
         // these are set through external connection now
-//        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ADDRESS, Property.INFO_HIGHWAY_ADDRESS.getName(), "");
-//        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_USERNAME, Property.INFO_HIGHWAY_USERNAME.getName(), "");
-//        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_PASSWORD, Property.INFO_HIGHWAY_PASSWORD.getName(), "");
-//        setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ENABLED, Property.INFO_HIGHWAY_ENABLED.getName(), "");
+        // setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ADDRESS,
+        // Property.INFO_HIGHWAY_ADDRESS.getName(), "");
+        // setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_USERNAME,
+        // Property.INFO_HIGHWAY_USERNAME.getName(), "");
+        // setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_PASSWORD,
+        // Property.INFO_HIGHWAY_PASSWORD.getName(), "");
+        // setDBPropertyMappingAndDefault(Property.INFO_HIGHWAY_ENABLED,
+        // Property.INFO_HIGHWAY_ENABLED.getName(), "");
+        setDBPropertyMappingAndDefault(Property.ALPHANUM_ACCESSION_PREFIX, Property.ALPHANUM_ACCESSION_PREFIX.getName(),
+                "");
+        setDBPropertyMappingAndDefault(Property.USE_ALPHANUM_ACCESSION_PREFIX,
+                Property.USE_ALPHANUM_ACCESSION_PREFIX.getName(), "false");
     }
 
     private void setDBPropertyMappingAndDefault(Property property, String dbName, String defaultValue) {
@@ -243,7 +252,6 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                             infoHighwayConnection.get().getActive().toString());
                 }
             }
-
         }
         Optional<ExternalConnection> smtpConnection = externalConnectionsService.getMatch("programmedConnection",
                 ProgrammedConnection.SMTP_SERVER.name());
@@ -256,7 +264,6 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
             if (basicAuthData.isPresent()) {
                 propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_USERNAME, basicAuthData.get().getUsername());
                 propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_PASSWORD, basicAuthData.get().getPassword());
-
             }
             if (smtpConnection.get().getActive() != null) {
                 propertiesValueMap.put(Property.PATIENT_RESULTS_SMTP_ENABLED,
@@ -276,7 +283,6 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
             if (basicAuthData.isPresent()) {
                 propertiesValueMap.put(Property.PATIENT_RESULTS_BMP_SMS_USERNAME, basicAuthData.get().getUsername());
                 propertiesValueMap.put(Property.PATIENT_RESULTS_BMP_SMS_PASSWORD, basicAuthData.get().getPassword());
-
             }
             if (bmpSmsConnection.get().getActive() != null) {
                 propertiesValueMap.put(Property.PATIENT_RESULTS_BMP_SMS_ENABLED,
@@ -296,7 +302,6 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
             if (basicAuthData.isPresent()) {
                 propertiesValueMap.put(Property.PATIENT_RESULTS_SMPP_SMS_USERNAME, basicAuthData.get().getUsername());
                 propertiesValueMap.put(Property.PATIENT_RESULTS_SMPP_SMS_PASSWORD, basicAuthData.get().getPassword());
-
             }
             if (smppSmsConnection.get().getActive() != null) {
                 propertiesValueMap.put(Property.PATIENT_RESULTS_SMPP_SMS_ENABLED,
@@ -304,23 +309,29 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
             }
         }
 
-//        Optional<ExternalConnection> clinicConnection = externalConnectionsService.getMatch("programmedConnection",
-//                ProgrammedConnection.CLINIC_SEARCH.name());
-//        if (clinicConnection.isPresent()) {
-//            Optional<BasicAuthenticationData> basicAuthData = basicAuthenticationDataService
-//                    .getByExternalConnection(clinicConnection.get().getId());
-//            if (basicAuthData.isPresent()) {
-//                propertiesValueMap.put(Property.PatientSearchURL, clinicConnection.get().getUri().toString());
-//                propertiesValueMap.put(Property.PatientSearchUserName, basicAuthData.get().getUsername());
-//                propertiesValueMap.put(Property.PatientSearchPassword, basicAuthData.get().getPassword());
-//                if (clinicConnection.get().getActive() != null) {
-//                    propertiesValueMap.put(Property.PatientSearchEnabled,
-//                            clinicConnection.get().getActive().toString());
-//                } else {
-//                    propertiesValueMap.put(Property.PatientSearchEnabled, Boolean.FALSE.toString());
-//                }
-//            }
-//        }
+        // Optional<ExternalConnection> clinicConnection =
+        // externalConnectionsService.getMatch("programmedConnection",
+        // ProgrammedConnection.CLINIC_SEARCH.name());
+        // if (clinicConnection.isPresent()) {
+        // Optional<BasicAuthenticationData> basicAuthData =
+        // basicAuthenticationDataService
+        // .getByExternalConnection(clinicConnection.get().getId());
+        // if (basicAuthData.isPresent()) {
+        // propertiesValueMap.put(Property.PatientSearchURL,
+        // clinicConnection.get().getUri().toString());
+        // propertiesValueMap.put(Property.PatientSearchUserName,
+        // basicAuthData.get().getUsername());
+        // propertiesValueMap.put(Property.PatientSearchPassword,
+        // basicAuthData.get().getPassword());
+        // if (clinicConnection.get().getActive() != null) {
+        // propertiesValueMap.put(Property.PatientSearchEnabled,
+        // clinicConnection.get().getActive().toString());
+        // } else {
+        // propertiesValueMap.put(Property.PatientSearchEnabled,
+        // Boolean.FALSE.toString());
+        // }
+        // }
+        // }
 
     }
 
@@ -352,16 +363,15 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
             properties.load(propertyStream);
 
         } catch (IOException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
                 } catch (IOException e) {
-                    LogEvent.logError(e.toString(), e);
+                    LogEvent.logError(e);
                 }
             }
-
         }
 
         for (Property property : propertiesFileMap.keySet()) {

@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -147,7 +145,6 @@ public class WorkplanByPanelController extends BaseWorkplanController {
                 public int compare(TestResultItem o1, TestResultItem o2) {
                     return o1.getAccessionNumber().compareTo(o2.getAccessionNumber());
                 }
-
             });
 
             String currentAccessionNumber = null;
@@ -174,7 +171,6 @@ public class WorkplanByPanelController extends BaseWorkplanController {
                 testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
                 newIndex++;
             }
-
         }
 
         return workplanTestList;
@@ -191,7 +187,6 @@ public class WorkplanByPanelController extends BaseWorkplanController {
         testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
         testResultItem.setServingAsTestGroupIdentifier(true);
         workplanTestList.add(insertPosition, testResultItem);
-
     }
 
     private boolean isPatientNameAdded() {
@@ -199,7 +194,7 @@ public class WorkplanByPanelController extends BaseWorkplanController {
     }
 
     private String getPanelName(String panelId) {
-        return panelService.get(panelId).getLocalizedName();// getName();
+        return panelService.get(panelId).getLocalizedName(); // getName();
     }
 
     private boolean getQaEventByTestSection(Analysis analysis) {

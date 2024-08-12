@@ -3,15 +3,14 @@ package org.openelisglobal.sample.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.Map;
 import java.util.UUID;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.constraints.Pattern;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.StaleObjectStateException;
 import org.hl7.fhir.r4.model.Enumerations.ResourceType;
 import org.hl7.fhir.r4.model.Reference;
+import org.hl7.fhir.r4.model.Task;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
@@ -23,11 +22,14 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.validator.BaseErrors;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
+import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
@@ -59,20 +61,16 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
 import org.springframework.web.servlet.support.RequestContextUtils;
-import org.hl7.fhir.r4.model.Task;
-import org.openelisglobal.dataexchange.fhir.FhirUtil;
-import org.openelisglobal.organization.service.OrganizationService;
-import org.openelisglobal.organization.valueholder.Organization;
 
 @Controller
 public class SamplePatientEntryController extends BaseSampleEntryController {
 
-//    @Value("${org.openelisglobal.requester.lastName:}")
-//    private String requesterLastName;
-//    @Value("${org.openelisglobal.requester.firstName:}")
-//    private String requesterFirstName;
-//  @Value("${org.openelisglobal.requester.phone:}")
-//  private String requesterPhone;
+    // @Value("${org.openelisglobal.requester.lastName:}")
+    // private String requesterLastName;
+    // @Value("${org.openelisglobal.requester.firstName:}")
+    // private String requesterFirstName;
+    // @Value("${org.openelisglobal.requester.phone:}")
+    // private String requesterPhone;
     @Value("${org.openelisglobal.requester.identifier:}")
     private String requestFhirUuid;
 
@@ -146,6 +144,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
     private ElectronicOrderService electronicOrderService;
     @Autowired
     private OrganizationService organizationService;
+
     @Autowired
     private FhirUtil fhirUtil;
 
@@ -265,7 +264,7 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
             // patientUpdate, patientInfo, form, request);
         } catch (LIMSRuntimeException e) {
             // ActionError error;
-            if (e.getException() instanceof StaleObjectStateException) {
+            if (e.getCause() instanceof StaleObjectStateException) {
                 // error = new ActionError("errors.OptimisticLockException", null, null);
                 result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
@@ -273,14 +272,13 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
                 // error = new ActionError("errors.UpdateException", null, null);
                 result.reject("errors.UpdateException", "errors.UpdateException");
             }
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", result.toString());
+            LogEvent.logInfo(this.getClass().getSimpleName(), "showSamplePatientEntrySave", result.toString());
 
             // errors.add(ActionMessages.GLOBAL_MESSAGE, error);
             saveErrors(result);
             setupForm(form, request, "");
             request.setAttribute(ALLOW_EDITS_KEY, "false");
             return findForward(FWD_FAIL_INSERT, form);
-
         }
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
@@ -353,7 +351,8 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
 
         setupReferralOption(form);
         // for (Object program : form.getSampleOrderItems().getProgramList()) {
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", ((IdValuePair)
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
+        // ((IdValuePair)
         // program).getValue());
         // }
 
@@ -367,7 +366,6 @@ public class SamplePatientEntryController extends BaseSampleEntryController {
         if (FormFields.getInstance().useField(FormFields.Field.SampleNature)) {
             form.setSampleNatureList(DisplayListService.getInstance().getList(ListType.SAMPLE_NATURE));
         }
-
     }
 
     private void setContactTracingInfo(SamplePatientUpdateData updateData, SampleOrderItem sampleOrder) {

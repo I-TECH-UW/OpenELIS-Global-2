@@ -6,53 +6,53 @@ import org.openelisglobal.sample.form.ProjectData;
 
 public interface IProjectForm {
 
-	ProjectData getProjectData();
+    ProjectData getProjectData();
 
-	void setProjectData(ProjectData projectData);
+    void setProjectData(ProjectData projectData);
 
-	ObservationData getObservations();
+    ObservationData getObservations();
 
-	void setObservations(ObservationData observationData);
+    void setObservations(ObservationData observationData);
 
-	String getBirthDateForDisplay();
+    String getBirthDateForDisplay();
 
-	void setBirthDateForDisplay(String birthDateForDisplay);
+    void setBirthDateForDisplay(String birthDateForDisplay);
 
-	String getSiteSubjectNumber();
+    String getSiteSubjectNumber();
 
-	void setSiteSubjectNumber(String siteSubjectNumber);
+    void setSiteSubjectNumber(String siteSubjectNumber);
 
-	String getSubjectNumber();
+    String getSubjectNumber();
 
-	void setSubjectNumber(String subjectNumber);
+    void setSubjectNumber(String subjectNumber);
 
-	String getInterviewDate();
+    String getInterviewDate();
 
-	String getReceivedDateForDisplay();
+    String getReceivedDateForDisplay();
 
-	String getInterviewTime();
+    String getInterviewTime();
 
-	String getReceivedTimeForDisplay();
+    String getReceivedTimeForDisplay();
 
-	Integer getCenterCode();
+    Integer getCenterCode();
 
-	String getPatientPK();
+    String getPatientPK();
 
-	String getSamplePK();
+    String getSamplePK();
 
-	String getLabNo();
+    String getLabNo();
 
-	void setLabNo(String labNo);
+    void setLabNo(String labNo);
 
-	ElectronicOrder getElectronicOrder();
+    ElectronicOrder getElectronicOrder();
 
-	void setElectronicOrder(ElectronicOrder electronicOrder);
+    void setElectronicOrder(ElectronicOrder electronicOrder);
 
-	String getPatientFhirUuid();
+    String getPatientFhirUuid();
 
-	void setPatientFhirUuid(String patientFhirUuid);
+    void setPatientFhirUuid(String patientFhirUuid);
 
-	String getUpidCode();
+    String getUpidCode();
 
-	void setUpidCode(String upidCode);
+    void setUpidCode(String upidCode);
 }

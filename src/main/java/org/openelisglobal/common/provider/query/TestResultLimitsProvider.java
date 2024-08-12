@@ -20,11 +20,9 @@ import java.io.StringWriter;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
@@ -71,7 +69,6 @@ public class TestResultLimitsProvider extends BaseQueryProvider {
             }
         }
         ajaxServlet.sendData(Encode.forXmlContent(jString), Encode.forXmlContent(jResult), request, response);
-
     }
 
     @SuppressWarnings("unchecked")
@@ -129,5 +126,4 @@ public class TestResultLimitsProvider extends BaseQueryProvider {
     public AjaxServlet getServlet() {
         return ajaxServlet;
     }
-
 }

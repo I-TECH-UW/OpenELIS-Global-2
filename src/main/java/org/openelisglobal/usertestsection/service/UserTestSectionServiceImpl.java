@@ -2,9 +2,7 @@ package org.openelisglobal.usertestsection.service;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
@@ -51,85 +49,100 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
             }
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAllUserTestSectionsByName()", e);
         }
         return list;
     }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public List getPageOfTestsBySysUserId(HttpServletRequest request, int startingRecNo, String doingSearch,
-//            String searchStr) throws LIMSRuntimeException {
-//
-//        List list = new ArrayList();
-//        TestService testService = SpringContext.getBean(TestService.class);
-//
-//        try {
-//            if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(IActionConstants.NO)) {
-//
-//                if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(IActionConstants.YES)) {
-//                    list = testService.getPageOfSearchedTests(startingRecNo, searchStr);
-//                } else {
-//                    list = testService.getPageOfTests(startingRecNo);
-//                }
-//            } else {
-//                UserSessionData usd = (UserSessionData) request.getSession()
-//                        .getAttribute(IActionConstants.USER_SESSION_DATA);
-//                // bugzilla 2160
-//                UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-//                if (!userModuleService.isUserAdmin(request)) {
-//                    if (!StringUtil.isNullorNill(doingSearch) && doingSearch.equals(IActionConstants.YES)) {
-//
-//                        list = testService.getPageOfSearchedTestsBySysUserId(startingRecNo, usd.getSystemUserId(),
-//                                searchStr);
-//                    } else {
-//                        list = testService.getPageOfTestsBySysUserId(startingRecNo, usd.getSystemUserId());
-//                    }
-//                } else {
-//
-//                    if (!StringUtil.isNullorNill(searchStr)) {
-//                        list = testService.getPageOfSearchedTests(startingRecNo, searchStr);
-//                    } else {
-//                        list = testService.getPageOfTests(startingRecNo);
-//                    }
-//
-//                }
-//                // end if bugzilla 2371
-//            }
-//        } catch (RuntimeException e) {
-//            // bugzilla 2154
-//            LogEvent.logError(e.toString(), e);
-//            throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getPageOfTestsBySysUserId()", e);
-//        }
-//        return list;
-//    }
+    // @Override
+    // @Transactional(readOnly = true)
+    // public List getPageOfTestsBySysUserId(HttpServletRequest request, int
+    // startingRecNo, String
+    // doingSearch,
+    // String searchStr) throws LIMSRuntimeException {
+    //
+    // List list = new ArrayList();
+    // TestService testService = SpringContext.getBean(TestService.class);
+    //
+    // try {
+    // if
+    // (SystemConfiguration.getInstance().getEnableUserTestSection().equals(IActionConstants.NO))
+    // {
+    //
+    // if (!StringUtil.isNullorNill(doingSearch) &&
+    // doingSearch.equals(IActionConstants.YES)) {
+    // list = testService.getPageOfSearchedTests(startingRecNo, searchStr);
+    // } else {
+    // list = testService.getPageOfTests(startingRecNo);
+    // }
+    // } else {
+    // UserSessionData usd = (UserSessionData) request.getSession()
+    // .getAttribute(IActionConstants.USER_SESSION_DATA);
+    // // bugzilla 2160
+    // UserModuleService userModuleService =
+    // SpringContext.getBean(UserModuleService.class);
+    // if (!userModuleService.isUserAdmin(request)) {
+    // if (!StringUtil.isNullorNill(doingSearch) &&
+    // doingSearch.equals(IActionConstants.YES)) {
+    //
+    // list = testService.getPageOfSearchedTestsBySysUserId(startingRecNo,
+    // usd.getSystemUserId(),
+    // searchStr);
+    // } else {
+    // list = testService.getPageOfTestsBySysUserId(startingRecNo,
+    // usd.getSystemUserId());
+    // }
+    // } else {
+    //
+    // if (!StringUtil.isNullorNill(searchStr)) {
+    // list = testService.getPageOfSearchedTests(startingRecNo, searchStr);
+    // } else {
+    // list = testService.getPageOfTests(startingRecNo);
+    // }
+    //
+    // }
+    // // end if bugzilla 2371
+    // }
+    // } catch (RuntimeException e) {
+    // // bugzilla 2154
+    // LogEvent.logError(e);
+    // throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl
+    // getPageOfTestsBySysUserId()", e);
+    // }
+    // return list;
+    // }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public List getAllUserTestSections(HttpServletRequest request) throws LIMSRuntimeException {
-//
-//        List list = new ArrayList();
-//        try {
-//            if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(IActionConstants.NO)) {
-//                list = testSectionService.getAllTestSections();
-//            } else {
-//                UserSessionData usd = (UserSessionData) request.getSession()
-//                        .getAttribute(IActionConstants.USER_SESSION_DATA);
-//                // bugzilla 2160
-//                if (!userModuleService.isUserAdmin(request)) {
-//                    list = testSectionService.getAllTestSectionsBySysUserId(usd.getSystemUserId());
-//                } else {
-//                    list = testSectionService.getAllTestSections();
-//                }
-//            }
-//        } catch (RuntimeException e) {
-//            // bugzilla 2154
-//            LogEvent.logError(e.toString(), e);
-//            throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAllUserTestSections()", e);
-//        }
-//        return list;
-//    }
+    // @Override
+    // @Transactional(readOnly = true)
+    // public List getAllUserTestSections(HttpServletRequest request) throws
+    // LIMSRuntimeException {
+    //
+    // List list = new ArrayList();
+    // try {
+    // if
+    // (SystemConfiguration.getInstance().getEnableUserTestSection().equals(IActionConstants.NO))
+    // {
+    // list = testSectionService.getAllTestSections();
+    // } else {
+    // UserSessionData usd = (UserSessionData) request.getSession()
+    // .getAttribute(IActionConstants.USER_SESSION_DATA);
+    // // bugzilla 2160
+    // if (!userModuleService.isUserAdmin(request)) {
+    // list =
+    // testSectionService.getAllTestSectionsBySysUserId(usd.getSystemUserId());
+    // } else {
+    // list = testSectionService.getAllTestSections();
+    // }
+    // }
+    // } catch (RuntimeException e) {
+    // // bugzilla 2154
+    // LogEvent.logError(e);
+    // throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl
+    // getAllUserTestSections()", e);
+    // }
+    // return list;
+    // }
 
     @Override
     @Transactional(readOnly = true)
@@ -154,7 +167,7 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
             }
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAllUserTests()", e);
         }
         return list;
@@ -200,81 +213,94 @@ public class UserTestSectionServiceImpl implements UserTestSectionService {
     // return sample_Tas;
     // }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public List getSamplePdfList(HttpServletRequest request, Locale locale, String sampStatus, String humanDomain)
-//            throws LIMSRuntimeException {
-//
-//        List samplePdfList = new java.util.ArrayList();
-//
-//        try {
-//            List statuses = new ArrayList();
-//            statuses.add(sampStatus);
-//            // bugzilla 2437: made getSamplesByStatusAndDomain more generic to take in list
-//            // of statuses of samples to retrieve
-//            List sampleList = sampleService.getSamplesByStatusAndDomain(statuses, humanDomain);
-//            FileValidationProvider fvp = new FileValidationProvider();
-//
-//            String pdfMsg = MessageUtil.getMessage("human.sample.pdf.message");
-//            // ResourceLocator.getInstance().getMessageResources().getMessage(locale,
-//            // "human.sample.pdf.message");
-//
-//            for (int i = 0; i < sampleList.size(); i++) {
-//                Sample sam = (Sample) sampleList.get(i);
-//                String msg = fvp.validate(sam.getAccessionNumber());
-//                LabelValuePair lvp = new LabelValuePair();
-//                lvp.setValue(sam.getAccessionNumber());
-//                if (msg.equals(IActionConstants.VALID)) {
-//                    lvp.setLabel(sam.getAccessionNumber() + " - " + pdfMsg);
-//                } else {
-//                    lvp.setLabel(sam.getAccessionNumber());
-//                }
-//
-//                samplePdfList.add(lvp);
-//            }
-//        } catch (RuntimeException e) {
-//            // bugzilla 2154
-//            LogEvent.logError(e.toString(), e);
-//            throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getSamplePdfList()", e);
-//        }
-//        return samplePdfList;
-//    }
+    // @Override
+    // @Transactional(readOnly = true)
+    // public List getSamplePdfList(HttpServletRequest request, Locale locale,
+    // String sampStatus,
+    // String humanDomain)
+    // throws LIMSRuntimeException {
+    //
+    // List samplePdfList = new java.util.ArrayList();
+    //
+    // try {
+    // List statuses = new ArrayList();
+    // statuses.add(sampStatus);
+    // // bugzilla 2437: made getSamplesByStatusAndDomain more generic to take in
+    // list
+    // // of statuses of samples to retrieve
+    // List sampleList = sampleService.getSamplesByStatusAndDomain(statuses,
+    // humanDomain);
+    // FileValidationProvider fvp = new FileValidationProvider();
+    //
+    // String pdfMsg = MessageUtil.getMessage("human.sample.pdf.message");
+    // // ResourceLocator.getInstance().getMessageResources().getMessage(locale,
+    // // "human.sample.pdf.message");
+    //
+    // for (int i = 0; i < sampleList.size(); i++) {
+    // Sample sam = (Sample) sampleList.get(i);
+    // String msg = fvp.validate(sam.getAccessionNumber());
+    // LabelValuePair lvp = new LabelValuePair();
+    // lvp.setValue(sam.getAccessionNumber());
+    // if (msg.equals(IActionConstants.VALID)) {
+    // lvp.setLabel(sam.getAccessionNumber() + " - " + pdfMsg);
+    // } else {
+    // lvp.setLabel(sam.getAccessionNumber());
+    // }
+    //
+    // samplePdfList.add(lvp);
+    // }
+    // } catch (RuntimeException e) {
+    // // bugzilla 2154
+    // LogEvent.logError(e);
+    // throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl
+    // getSamplePdfList()", e);
+    // }
+    // return samplePdfList;
+    // }
 
-//    @Override
-//    @Transactional(readOnly = true)
-//    public List getAnalyses(HttpServletRequest request, List analyses, List testSections) throws LIMSRuntimeException {
-//
-//        List newAnalyses = new ArrayList();
-//        try {
-//            if (SystemConfiguration.getInstance().getEnableUserTestSection().equals(IActionConstants.NO)) {
-//                return newAnalyses;
-//            } else {
-//                UserModuleService userModuleService = SpringContext.getBean(UserModuleService.class);
-//                if (!userModuleService.isUserAdmin(request)) {
-//                    newAnalyses = new ArrayList();
-//                    for (int i = 0; i < analyses.size(); i++) {
-//                        org.openelisglobal.analysis.valueholder.Analysis analysis = (org.openelisglobal.analysis.valueholder.Analysis) analyses
-//                                .get(i);
-//                        for (int j = 0; j < testSections.size(); j++) {
-//                            TestSection testSection = (TestSection) testSections.get(j);
-//                            if (analysis.getTestSection().getId().equals(testSection.getId())) {
-//                                newAnalyses.add(analysis);
-//                            }
-//                        }
-//                    }
-//                } else {
-//                    return analyses;
-//                }
-//            }
-//
-//        } catch (RuntimeException e) {
-//            // bugzilla 2154
-//            LogEvent.logError(e.toString(), e);
-//            throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl getAnalyses()", e);
-//        }
-//        return newAnalyses;
-//
-//    }
+    // @Override
+    // @Transactional(readOnly = true)
+    // public List getAnalyses(HttpServletRequest request, List analyses, List
+    // testSections) throws
+    // LIMSRuntimeException {
+    //
+    // List newAnalyses = new ArrayList();
+    // try {
+    // if
+    // (SystemConfiguration.getInstance().getEnableUserTestSection().equals(IActionConstants.NO))
+    // {
+    // return newAnalyses;
+    // } else {
+    // UserModuleService userModuleService =
+    // SpringContext.getBean(UserModuleService.class);
+    // if (!userModuleService.isUserAdmin(request)) {
+    // newAnalyses = new ArrayList();
+    // for (int i = 0; i < analyses.size(); i++) {
+    // org.openelisglobal.analysis.valueholder.Analysis analysis =
+    // (org.openelisglobal.analysis.valueholder.Analysis) analyses
+    // .get(i);
+    // for (int j = 0; j < testSections.size(); j++) {
+    // TestSection testSection = (TestSection) testSections.get(j);
+    // if (analysis.getTestSection().getId().equals(testSection.getId())) {
+    // newAnalyses.add(analysis);
+    // }
+    // }
+    // }
+    // } else {
+    // return analyses;
+    // }
+    // }
+    //
+    // } catch (RuntimeException e) {
+    // // bugzilla 2154
+    // LogEvent.logError(e);
+    // throw new LIMSRuntimeException("Error in UserTestSectionServiceImpl
+    // getAnalyses()",
+    // e);
+    // }
+    // return newAnalyses;
+    //
+    // }
 
     // @Override
     // @Transactional(readOnly = true)

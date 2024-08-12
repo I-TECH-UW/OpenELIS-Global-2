@@ -2,10 +2,8 @@ package org.openelisglobal.internationalization;
 
 import java.util.Locale;
 import java.util.TimeZone;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.SystemConfiguration;
@@ -73,7 +71,6 @@ public class GlobalLocaleResolver extends AbstractLocaleContextResolver {
             locale = localeContext.getLocale();
         }
         currentLocale = locale;
-
     }
 
     public Locale determineDefaultLocale() {
@@ -83,6 +80,7 @@ public class GlobalLocaleResolver extends AbstractLocaleContextResolver {
     /**
      * Determine the default time zone for the given request, Called if no TimeZone
      * session attribute has been found.
+     *
      * <p>
      * The default implementation returns the specified default time zone, if any,
      * or {@code null} otherwise.
@@ -95,5 +93,4 @@ public class GlobalLocaleResolver extends AbstractLocaleContextResolver {
     protected TimeZone determineDefaultTimeZone(HttpServletRequest request) {
         return getDefaultTimeZone();
     }
-
 }

@@ -1,18 +1,16 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.sample.valueholder;
 
 import java.sql.Date;
@@ -20,7 +18,6 @@ import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
@@ -272,7 +269,6 @@ public class Sample extends EnumValueItemImpl implements NoteObject {
     public void setEnteredDateForDisplay(String enteredDateForDisplay) {
         this.enteredDateForDisplay = enteredDateForDisplay;
         enteredDate = DateUtil.convertStringDateToSqlDate(enteredDateForDisplay);
-
     }
 
     public String getReceivedDateForDisplay() {
@@ -298,7 +294,6 @@ public class Sample extends EnumValueItemImpl implements NoteObject {
         // also update the java.sql.Date
         String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
         releasedDate = DateUtil.convertStringDateToSqlDate(releasedDateForDisplay, locale);
-
     }
 
     public String getTransmissionDateForDisplay() {
@@ -313,7 +308,6 @@ public class Sample extends EnumValueItemImpl implements NoteObject {
         // also update the java.sql.Date
         String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
         transmissionDate = DateUtil.convertStringDateToSqlDate(transmissionDateForDisplay, locale);
-
     }
 
     public void setCollectionTimeForDisplay(String collectionTimeForDisplay) {

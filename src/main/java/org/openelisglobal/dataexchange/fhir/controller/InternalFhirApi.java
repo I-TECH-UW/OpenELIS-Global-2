@@ -32,11 +32,10 @@ public class InternalFhirApi {
 
     @PutMapping(value = "/{resourceType}/**")
     public ResponseEntity<String> receiveFhirRequest(@PathVariable("resourceType") ResourceType resourceType) {
-        LogEvent.logDebug(this.getClass().getName(), "receiveFhirRequest",
+        LogEvent.logDebug(this.getClass().getSimpleName(), "receiveFhirRequest",
                 "received notification for resource of type: " + resourceType);
         fhirApiWorkflowService.processWorkflow(resourceType);
 
         return ResponseEntity.ok("");
     }
-
 }

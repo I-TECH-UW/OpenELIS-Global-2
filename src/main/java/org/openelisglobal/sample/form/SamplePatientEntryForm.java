@@ -1,11 +1,10 @@
 package org.openelisglobal.sample.form;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
@@ -20,10 +19,10 @@ import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.validation.annotations.ValidDate;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class SamplePatientEntryForm extends BaseForm {
 
     public interface SamplePatientEntryBatch {
-
     }
 
     public interface SamplePatientEntry {

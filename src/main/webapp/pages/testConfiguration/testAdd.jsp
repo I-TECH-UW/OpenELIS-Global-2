@@ -872,6 +872,7 @@
         jQuery("#orderableRO").text(jQuery("#orderable").attr("checked") ? "Y" : "N");
         jQuery("#notifyResultsRO").text(jQuery("#notifyResults").attr("checked") ? "Y" : "N");
         jQuery("#inLabOnlyRO").text(jQuery("#inLabOnly").attr("checked") ? "Y" : "N");
+        jQuery("#antimicrobialResistanceRO").text(jQuery("#antimicrobialResistance").attr("checked") ? "Y" : "N");
     }
 
     function createJSON() {
@@ -890,6 +891,7 @@
         jsonObj.orderable = jQuery("#orderable").attr("checked") ? 'Y' : 'N';
         jsonObj.notifyResults = jQuery("#notifyResults").attr("checked") ? 'Y' : 'N';
         jsonObj.inLabOnly = jQuery("#inLabOnly").attr("checked") ? 'Y' : 'N';
+        jsonObj.antimicrobialResistance = jQuery("#antimicrobialResistance").attr("checked") ? 'Y' : 'N';
         jsonObj.active = jQuery("#active").attr("checked") ? 'Y' : 'N';
         jsonObj.sampleTypes = [];
         addJsonSortingOrder(jsonObj);
@@ -1211,6 +1213,8 @@ td {
 					onchange="checkReadyForNextStep()" />
 					<br/>
                     <br/><br/>
+                    <label for="antimicrobialResistance"><spring:message code="test.antimicrobialResistance"/></label>
+                    <input type="checkbox" id="antimicrobialResistance" /><br/>
                     <label for="orderable"><spring:message code="test.isActive"/></label>
                     <input type="checkbox" id="active" checked="checked"/><br/>
                     <label for="orderable"><spring:message code="label.orderable"/></label>
@@ -1252,6 +1256,11 @@ td {
             <spring:message code="result.resultType"/>
             <div class="tab" id="resultTypeRO"></div>
             <br/>
+
+            <spring:message code="test.antimicrobialResistance"/>
+            <div class="tab" id="antimicrobialResistanceRO"></div>
+            <br/>
+
             <spring:message code="test.isActive"/>
             <div class="tab" id="activeRO"></div>
             <br/>

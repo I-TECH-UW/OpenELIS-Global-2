@@ -1,29 +1,25 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.common.provider.selectdropdown;
 
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.dictionary.service.DictionaryService;
@@ -38,9 +34,9 @@ import org.openelisglobal.testresult.valueholder.TestResultComparator;
 /**
  * An example servlet that responds to an ajax:autocomplete tag action. This
  * servlet would be referenced by the baseUrl attribute of the JSP tag.
+ *
  * <p>
  * This servlet should generate XML in the following format:
- * </p>
  * <code><![CDATA[<?xml version="1.0"?>
  * <list>
  *   <item value="Item1">First Item</item>
@@ -79,14 +75,17 @@ public class TestAnalyteTestResultSelectDropDownProvider extends BaseSelectDropD
             listOfTestResults = testResultService.getTestResultsByTestAndResultGroup(testAnalyte);
         }
 
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Returning from
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Returning
+        // from
         // Running getTestResultsByTestAndResultGr
         // ");
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "size ofo list "
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "size ofo
+        // list "
         // + listOfTestResults.size());
         if (listOfTestResults != null && listOfTestResults.size() > 0) {
             for (int i = 0; i < listOfTestResults.size(); i++) {
-                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "one elem " +
+                // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "one elem
+                // " +
                 // listOfTestResults.get(i));
             }
         }
@@ -101,12 +100,11 @@ public class TestAnalyteTestResultSelectDropDownProvider extends BaseSelectDropD
                     Dictionary dictionary = new Dictionary();
                     dictionary.setId(tr.getValue());
                     dictionaryService.getData(dictionary);
-                    // LogEvent.logInfo(this.getClass().getName(), "method unkown", "setting
+                    // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "setting
                     // dictEntry "
                     // + dictionary.getDictEntry());
                     // bugzilla 1847: use dictEntryDisplayValue
                     tr.setValue(dictionary.getDictEntryDisplayValue());
-
                 }
                 list.add(tr);
             }
@@ -116,5 +114,4 @@ public class TestAnalyteTestResultSelectDropDownProvider extends BaseSelectDropD
 
         return list;
     }
-
 }

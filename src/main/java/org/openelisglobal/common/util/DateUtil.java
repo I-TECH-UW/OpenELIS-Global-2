@@ -1,18 +1,15 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
- *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
  */
 package org.openelisglobal.common.util;
 
@@ -24,13 +21,13 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.Period;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.TimeZone;
 import java.util.regex.Pattern;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
@@ -71,7 +68,6 @@ public class DateUtil {
     public static String formatDateAsText(Date date) {
         SimpleDateFormat format = new SimpleDateFormat(getDateFormat());
         return format.format(date);
-
     }
 
     public static java.sql.Date convertStringDateToSqlDate(String date) {
@@ -107,12 +103,11 @@ public class DateUtil {
             try {
                 returnDate = new java.sql.Date(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
         return returnDate;
-
     }
 
     public static java.sql.Date convertStringDateTimeToSqlDate(String date) throws LIMSRuntimeException {
@@ -122,12 +117,11 @@ public class DateUtil {
             try {
                 returnDate = new java.sql.Date(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
         return returnDate;
-
     }
 
     public static Timestamp convertStringDateToTruncatedTimestamp(String date) throws LIMSRuntimeException {
@@ -138,12 +132,11 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
         return returnTimestamp;
-
     }
 
     public static Timestamp convertStringDateToTimestamp(String date) throws LIMSRuntimeException {
@@ -154,12 +147,11 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
         return returnTimestamp;
-
     }
 
     public static Timestamp convertStringDateToTimestampWithPatternNoLocale(String date, String pattern)
@@ -171,12 +163,11 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
         return returnTimestamp;
-
     }
 
     public static Timestamp convertStringDateToTimestampWithPattern(String date, String pattern)
@@ -189,12 +180,11 @@ public class DateUtil {
             try {
                 returnTimestamp = new Timestamp(format.parse(date).getTime());
             } catch (ParseException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error parsing date", e);
             }
         }
         return returnTimestamp;
-
     }
 
     // TIMESTAMP
@@ -207,7 +197,6 @@ public class DateUtil {
             date = new Timestamp(cal.getTimeInMillis());
         }
         return date;
-
     }
 
     public static String convertSqlDateToStringDate(java.sql.Date date) throws LIMSRuntimeException {
@@ -217,7 +206,7 @@ public class DateUtil {
             try {
                 returnDate = format.format(date);
             } catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
         }
@@ -250,7 +239,7 @@ public class DateUtil {
             returnDate = format.format(date);
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error converting date", e);
         }
 
@@ -281,7 +270,7 @@ public class DateUtil {
 
                 returnTime = hours + ":" + minutes;
             } catch (RuntimeException e) {
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
         }
@@ -293,7 +282,8 @@ public class DateUtil {
     // since midnight.
     public static synchronized int decodeTime(String s) throws LIMSException {
         SimpleDateFormat f = new SimpleDateFormat("HH:mm:ss");
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Passed in this
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Passed in
+        // this
         // time " +s);
         TimeZone utcTimeZone = TimeZone.getTimeZone("UTC");
         f.setTimeZone(utcTimeZone);
@@ -328,7 +318,7 @@ public class DateUtil {
                 tsToReturn = new Timestamp(date.getTime());
             } catch (ParseException e) {
                 // bugzilla 2154
-                LogEvent.logError(e.toString(), e);
+                LogEvent.logError(e);
                 throw new LIMSRuntimeException("Error converting date", e);
             }
         }
@@ -396,7 +386,6 @@ public class DateUtil {
             } else {
                 return replaceValue + "/" + replaceValue + "/" + date.split("/")[2];
             }
-
         }
     }
 
@@ -405,7 +394,7 @@ public class DateUtil {
     }
 
     public static String getCurrentAgeForDate(Timestamp birthDate, Timestamp endDate) {
-        if (birthDate != null) {
+        if (birthDate != null && endDate != null) {
             Period period = Period.between(birthDate.toLocalDateTime().toLocalDate(),
                     endDate.toLocalDateTime().toLocalDate());
             return String.valueOf(period.getYears());
@@ -422,9 +411,11 @@ public class DateUtil {
     }
 
     public static int getDaysInPastForDate(Date date) {
+        if (date == null) {
+            return 0;
+        }
         long age = new Date().getTime() - date.getTime();
         return (int) Math.floor(age / DAY_IN_MILLSEC);
-
     }
 
     public static String getCurrentDateAsText() {
@@ -438,7 +429,6 @@ public class DateUtil {
 
         SimpleDateFormat format = new SimpleDateFormat(pattern);
         return format.format(new Date());
-
     }
 
     public static String getCurrentTimeAsText() {
@@ -625,7 +615,6 @@ public class DateUtil {
             return null;
         }
         return convertStringDateToTimestamp(date);
-
     }
 
     /**
@@ -662,7 +651,6 @@ public class DateUtil {
         String dayRepresentation = MessageUtil.getMessage("date.format.display.day");
         return MessageUtil.getMessage("sample.date.format", new String[] { dayRepresentation, yearRepresentation },
                 locale);
-
     }
 
     public static String getDateFormat() {
@@ -723,5 +711,32 @@ public class DateUtil {
             returnDate = new java.sql.Date(date.getTime());
         }
         return returnDate;
+    }
+
+    public static String formatStringDate(String dateStr, String outputFormat) {
+        // Define the input date formats
+        DateTimeFormatter formatter1 = DateTimeFormatter.ofPattern("MM/dd/yyyy");
+        DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        LocalDate date = null;
+
+        // Attempt to parse with the first format
+        try {
+            date = LocalDate.parse(dateStr, formatter1);
+        } catch (DateTimeParseException e) {
+            // Attempt to parse with the second format
+            try {
+                date = LocalDate.parse(dateStr, formatter2);
+            } catch (DateTimeParseException ex) {
+                // Handle invalid date format
+                return "Invalid date format: " + dateStr;
+            }
+        }
+
+        // Define the output date format
+        DateTimeFormatter outputFormatter = DateTimeFormatter.ofPattern(outputFormat);
+
+        // Format the parsed date to the desired output format
+        return date.format(outputFormatter);
     }
 }

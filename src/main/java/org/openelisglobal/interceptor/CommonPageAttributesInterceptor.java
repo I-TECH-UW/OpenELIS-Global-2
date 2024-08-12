@@ -2,7 +2,6 @@ package org.openelisglobal.interceptor;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.form.BaseForm;
@@ -44,11 +43,10 @@ public class CommonPageAttributesInterceptor implements HandlerInterceptor {
                     String actionName = name.substring(1, name.length() - 4);
                     actionName = name.substring(0, 1).toUpperCase() + actionName;
                     request.setAttribute(IActionConstants.ACTION_KEY, actionName);
-                    LogEvent.logInfo("PageAttributesInterceptor", "postHandle()",
+                    LogEvent.logDebug("PageAttributesInterceptor", "postHandle()",
                             "PageAttributesInterceptor formName = " + name + " actionName " + actionName);
                 }
             }
         }
     }
-
 }

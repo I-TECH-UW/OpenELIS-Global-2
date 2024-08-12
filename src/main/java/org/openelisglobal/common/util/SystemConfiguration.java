@@ -1,19 +1,17 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
  *
- * Contributor(s): CIRG, University of Washington, Seattle WA.
+ * <p>Contributor(s): CIRG, University of Washington, Seattle WA.
  */
 package org.openelisglobal.common.util;
 
@@ -25,17 +23,12 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.internationalization.MessageUtil;
 
-/**
- * This class represents the configuration properties of the application
- *
- */
-
+/** This class represents the configuration properties of the application */
 public class SystemConfiguration {
 
     private static final String propertyFile = "/SystemConfiguration.properties";
@@ -62,19 +55,17 @@ public class SystemConfiguration {
 
         } catch (IOException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         } finally {
             if (null != propertyStream) {
                 try {
                     propertyStream.close();
                 } catch (IOException e) {
                     // bugzilla 2154
-                    LogEvent.logError(e.toString(), e);
+                    LogEvent.logError(e);
                 }
             }
-
         }
-
     }
 
     public static SystemConfiguration getInstance() {
@@ -664,7 +655,8 @@ public class SystemConfiguration {
     // 1742 openreports static ids (tests, projects etc.)
     public String getStaticIdByName(String name) {
         String testId = properties.getProperty(name);
-        // LogEvent.logInfo(this.getClass().getName(), "method unkown", "SystemConfig
+        // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
+        // "SystemConfig
         // getting test by name " + name);
         if (testId != null) {
             return testId;

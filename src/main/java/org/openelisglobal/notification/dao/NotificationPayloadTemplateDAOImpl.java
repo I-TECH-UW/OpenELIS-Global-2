@@ -1,7 +1,6 @@
 package org.openelisglobal.notification.dao;
 
 import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
@@ -31,7 +30,7 @@ public class NotificationPayloadTemplateDAOImpl extends BaseDAOImpl<Notification
             query.setMaxResults(1);
             data = query.getResultList();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Error in TestNotificationConfigDAOImpl getTestNotificationConfigForTestId()", e);
         }
@@ -42,5 +41,4 @@ public class NotificationPayloadTemplateDAOImpl extends BaseDAOImpl<Notification
             return data.get(0);
         }
     }
-
 }

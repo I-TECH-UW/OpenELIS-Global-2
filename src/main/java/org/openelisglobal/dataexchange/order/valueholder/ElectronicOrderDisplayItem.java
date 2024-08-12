@@ -1,36 +1,31 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
- *
+ * <p>Copyright (C) ITECH, University of Washington, Seattle WA. All Rights Reserved.
  */
-
 package org.openelisglobal.dataexchange.order.valueholder;
 
-import org.openelisglobal.sample.valueholder.OrderPriority;
-
 import java.util.List;
+import org.openelisglobal.sample.valueholder.OrderPriority;
 
 public class ElectronicOrderDisplayItem {
 
     private String electronicOrderId;
 
     private String externalOrderId;
-    
+
     private String patientUpid;
 
     private String requestDateDisplay;
-    
+
     private String collectionDateDisplay;
 
     private String patientLastName;
@@ -56,7 +51,7 @@ public class ElectronicOrderDisplayItem {
     private String birthDate;
 
     private String gender;
-    
+
     private String qaEventId;
 
     public String getBirthDate() {
@@ -199,28 +194,27 @@ public class ElectronicOrderDisplayItem {
         this.priority = priority;
     }
 
-	public String getPatientUpid() {
-		return patientUpid;
-	}
+    public String getPatientUpid() {
+        return patientUpid;
+    }
 
-	public void setPatientUpid(String patientUpid) {
-		this.patientUpid = patientUpid;
-	}
+    public void setPatientUpid(String patientUpid) {
+        this.patientUpid = patientUpid;
+    }
 
-	public String getCollectionDateDisplay() {
-		return collectionDateDisplay;
-	}
+    public String getCollectionDateDisplay() {
+        return collectionDateDisplay;
+    }
 
-	public void setCollectionDateDisplay(String collectionDateDisplay) {
-		this.collectionDateDisplay = collectionDateDisplay;
-	}
+    public void setCollectionDateDisplay(String collectionDateDisplay) {
+        this.collectionDateDisplay = collectionDateDisplay;
+    }
 
-	public String getQaEventId() {
-		return qaEventId;
-	}
+    public String getQaEventId() {
+        return qaEventId;
+    }
 
-	public void setQaEventId(String qaEventId) {
-		this.qaEventId = qaEventId;
-	}
-	
+    public void setQaEventId(String qaEventId) {
+        this.qaEventId = qaEventId;
+    }
 }

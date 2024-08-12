@@ -1,10 +1,11 @@
 package org.openelisglobal.barcode.labeltype;
 
 import java.util.ArrayList;
-
 import org.apache.commons.lang.StringUtils;
 import org.openelisglobal.barcode.LabelField;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.services.SampleOrderService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -21,7 +22,6 @@ import org.openelisglobal.spring.util.SpringContext;
  * Stores values and formatting for Order Labels
  *
  * @author Caleb
- *
  */
 public class OrderLabel extends Label {
 
@@ -54,6 +54,10 @@ public class OrderLabel extends Label {
         aboveFields.add(siteField);
 
         // adding bar code
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            setCodeLabel(AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(labNo));
+        }
         setCode(labNo);
     }
 
@@ -91,6 +95,10 @@ public class OrderLabel extends Label {
         aboveFields.add(siteField);
 
         // adding bar code
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            setCodeLabel(AlphanumAccessionValidator.convertAlphaNumLabNumForDisplay(labNo));
+        }
         setCode(labNo);
     }
 
@@ -175,9 +183,8 @@ public class OrderLabel extends Label {
         try {
             max = Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_ORDER_PRINTED));
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
         }
         return max;
     }
-
 }

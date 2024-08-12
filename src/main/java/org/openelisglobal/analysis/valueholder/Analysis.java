@@ -1,28 +1,24 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*
-*
-* Contributor(s): CIRG, University of Washington, Seattle WA.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ *
+ * <p>Contributor(s): CIRG, University of Washington, Seattle WA.
+ */
 package org.openelisglobal.analysis.valueholder;
 
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.UUID;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisServiceImpl;
 import org.openelisglobal.common.util.DateUtil;
@@ -78,6 +74,7 @@ public class Analysis extends BaseObject<String> implements NoteObject {
     private ValueHolderInterface parentResult;
     private ValueHolderInterface panel;
     private Boolean triggeredReflex = false;
+    private Boolean resultCalculated = false;
     private String statusId;
     private String assignedSortedTestTreeDisplayValue;
     private boolean referredOut = false;
@@ -424,6 +421,14 @@ public class Analysis extends BaseObject<String> implements NoteObject {
 
     public Boolean getTriggeredReflex() {
         return triggeredReflex;
+    }
+
+    public Boolean getResultCalculated() {
+        return resultCalculated;
+    }
+
+    public void setResultCalculated(Boolean resultCalculated) {
+        this.resultCalculated = resultCalculated;
     }
 
     public void setStatusId(String statusId) {

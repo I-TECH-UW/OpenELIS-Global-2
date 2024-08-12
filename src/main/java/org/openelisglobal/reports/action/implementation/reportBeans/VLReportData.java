@@ -1,18 +1,15 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
- *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
  */
 package org.openelisglobal.reports.action.implementation.reportBeans;
 
@@ -20,7 +17,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
@@ -138,7 +134,7 @@ public class VLReportData {
         return accession_number;
     }
 
-    public void setAccession_number(String accessionNumber) {
+    public void setAccessionNumber(String accessionNumber) {
         accession_number = accessionNumber;
     }
 
@@ -326,12 +322,9 @@ public class VLReportData {
                     String sampleType = (sampleItem == null) ? "-1" : sampleItem.getTypeOfSample().getNameKey();
                     allQaEvents = allQaEvents == null ? sampleType + ":" + qa.getQAEvent().getNameKey()
                             : allQaEvents + ";" + sampleType + ":" + qa.getQAEvent().getNameKey();
-
                 }
             }
-
         }
-
     }
 
     public void getSampleQaEvents(Sample sample) {
@@ -349,12 +342,11 @@ public class VLReportData {
         }
     }
 
-	public String getReleasedate() {
-		return releasedate;
-	}
+    public String getReleasedate() {
+        return releasedate;
+    }
 
-	public void setReleasedate(String releasedate) {
-		this.releasedate = releasedate;
-	}
-
+    public void setReleasedate(String releasedate) {
+        this.releasedate = releasedate;
+    }
 }

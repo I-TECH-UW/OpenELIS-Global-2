@@ -1,18 +1,14 @@
 package org.openelisglobal.organization.form;
 
 import java.util.List;
-
 import javax.validation.constraints.Pattern;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.organization.valueholder.Organization;
+import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class OrganizationMenuForm extends AdminOptionMenuForm<Organization> {
-    /**
-     *
-     */
+    /** */
     private static final long serialVersionUID = 3849998051592681962L;
 
     // for display
