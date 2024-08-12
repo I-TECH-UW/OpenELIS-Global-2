@@ -1,11 +1,8 @@
 package org.openelisglobal.hibernate.search.massindexer;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceContext;
-import javax.transaction.Transactional;
-import org.hibernate.search.mapper.orm.Search;
-import org.hibernate.search.mapper.orm.session.SearchSession;
-import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -14,17 +11,17 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/rest")
 public class MassIndexerRestController {
 
-    @PersistenceContext
-    EntityManager entityManager;
+    @Autowired
+    MassIndexerService massIndexerService;
 
     @GetMapping("/reindex")
-    @Transactional
-    public void reindex() {
-        SearchSession searchSession = Search.session(entityManager);
+    public ResponseEntity<String> reindex() {
         try {
-            searchSession.massIndexer().startAndWait();
-        } catch (InterruptedException e) {
-            throw new LIMSRuntimeException("Error reindexing entities", e);
+            massIndexerService.reindex();
+            return ResponseEntity.ok("Reindexing completed successfully.");
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Error occurred during reindexing: " + e.getMessage());
         }
     }
 }
