@@ -51,9 +51,15 @@ describe("Batch Order Entry On Demand", function () {
 
   it("Should Validate Fields And Generate BarCode", function () {
     cy.fixture("BatchOrder").then((batchOrderData) => {
-      batchOrder.validateField(":nth-child(1) > .cds--subgrid > :nth-child(8)", batchOrderData.sampleType);
+      batchOrder.validateField(
+        ":nth-child(1) > .cds--subgrid > :nth-child(8)",
+        batchOrderData.sampleType,
+      );
       batchOrder.validateField(".cds--lg\\:col-span-12", batchOrderData.panel);
-      batchOrder.validateField(":nth-child(1) > .cds--subgrid > :nth-child(13)", batchOrderData.facility);
+      batchOrder.validateField(
+        ":nth-child(1) > .cds--subgrid > :nth-child(13)",
+        batchOrderData.facility,
+      );
       batchOrder.checkNextLabel().should("be.disabled");
       batchOrder.clickGenerateAndSaveBarcode();
       batchOrder.checkNextLabel().should("be.visible");
@@ -95,9 +101,15 @@ describe("Batch Order Entry Pre Printed", function () {
 
   it("Should Validate Fields", function () {
     cy.fixture("BatchOrder").then((batchOrderData) => {
-      batchOrder.validateField(":nth-child(1) > .cds--subgrid > :nth-child(8)", batchOrderData.sampleType);
+      batchOrder.validateField(
+        ":nth-child(1) > .cds--subgrid > :nth-child(8)",
+        batchOrderData.sampleType,
+      );
       batchOrder.validateField(".cds--lg\\:col-span-12", batchOrderData.panel);
-      batchOrder.validateField(":nth-child(1) > .cds--subgrid > :nth-child(13)", batchOrderData.facility);
+      batchOrder.validateField(
+        ":nth-child(1) > .cds--subgrid > :nth-child(13)",
+        batchOrderData.facility,
+      );
     });
   });
 
