@@ -54,7 +54,7 @@ function BatchTestReassignmentAndCancelation() {
   const [saveButton, setSaveButton] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   const [currentTest, setCurrentTest] = useState(true);
-  const [replaceWith, setReplaceWith] = useState(false);
+  const [replaceWith, setReplaceWith] = useState(true);
   const [batchTestGet, setBatchTestGet] = useState(null);
   const [batchTestPost, setBatchTestPost] = useState(null);
   const [sampleTypeListShow, setSampleTypeListShow] = useState([]);
@@ -81,7 +81,6 @@ function BatchTestReassignmentAndCancelation() {
     noChangeTechReject: [],
     noChangeBioReject: [],
     noChangeNotValidated: [],
-    replace: "",
   });
   const [changesToShow, setChangesToShow] = useState(false);
 
@@ -346,7 +345,7 @@ function BatchTestReassignmentAndCancelation() {
       setSampleTestTypeToGetTagList(updatedList);
     }
 
-    const updatedReplace = updatedList.map((item) => item.id).join(",");
+    const updatedReplace = updatedList.map((item) => item.id);
     setJsonWad((prevJsonWad) => ({
       ...prevJsonWad,
       replace: updatedReplace,
@@ -359,7 +358,7 @@ function BatchTestReassignmentAndCancelation() {
         (_, index) => index !== indexToRemove,
       );
 
-      const updatedReplace = updatedTags.map((item) => item.id).join(",");
+      const updatedReplace = updatedTags.map((item) => item.id);
       setJsonWad((prevJsonWad) => ({
         ...prevJsonWad,
         replace: updatedReplace,
@@ -517,7 +516,7 @@ function BatchTestReassignmentAndCancelation() {
                   if (replaceWith) {
                     setJsonWad((prevJsonWad) => ({
                       ...prevJsonWad,
-                      replace: "",
+                      replace: [],
                     }));
                   } else {
                     const selectedTestIds = sampleTestTypeToGetTagList
@@ -1006,62 +1005,6 @@ function BatchTestReassignmentAndCancelation() {
             <></>
           )}
         </div>
-        <button
-          onClick={() => {
-            console.log(batchTestGet.sampleList);
-          }}
-        >
-          batchTestGet.sampleList
-        </button>
-        <button
-          onClick={() => {
-            console.log(batchTestPost);
-          }}
-        >
-          batchTestPost
-        </button>
-        <button
-          onClick={() => {
-            console.log(sampleTypeToGetId);
-          }}
-        >
-          sampleTypeToGetId
-        </button>
-        <button
-          onClick={() => {
-            console.log(sampleTypeToGetIdData);
-          }}
-        >
-          sampleTypeToGetIdData
-        </button>
-        <button
-          onClick={() => {
-            console.log(sampleTypeToGetIdDataTag);
-          }}
-        >
-          sampleTypeToGetIdDataTag
-        </button>
-        <button
-          onClick={() => {
-            console.log(sampleTypeTestIdToGetIdPendingData);
-          }}
-        >
-          sampleTypeTestIdToGetIdPendingData
-        </button>
-        <button
-          onClick={() => {
-            console.log(jsonWad);
-          }}
-        >
-          jsonWad
-        </button>
-        <button
-          onClick={() => {
-            console.log(sampleTestTypeToGetTagList);
-          }}
-        >
-          sampleTestTypeToGetTagList
-        </button>
       </div>
     </>
   );

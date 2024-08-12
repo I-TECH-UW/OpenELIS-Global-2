@@ -115,14 +115,14 @@ public class BatchTestReassignmentRestController extends BaseController {
         try {
             JSONObject obj = (JSONObject) parser.parse(jsonString);
             List<Test> newTests = getNewTestsFromJson(obj, parser);
-            List<Analysis> changedNotStarted = getAnalysisFromJson((String) obj.get("changeNotStarted"), parser);
-            List<Analysis> noChangedNotStarted = getAnalysisFromJson((String) obj.get("noChangeNotStarted"), parser);
-            List<Analysis> changeTechReject = getAnalysisFromJson((String) obj.get("changeTechReject"), parser);
-            List<Analysis> noChangeTechReject = getAnalysisFromJson((String) obj.get("noChangeTechReject"), parser);
-            List<Analysis> changeBioReject = getAnalysisFromJson((String) obj.get("changeBioReject"), parser);
-            List<Analysis> noChangeBioReject = getAnalysisFromJson((String) obj.get("noChangeBioReject"), parser);
-            List<Analysis> changeNotValidated = getAnalysisFromJson((String) obj.get("changeNotValidated"), parser);
-            List<Analysis> noChangeNotValidated = getAnalysisFromJson((String) obj.get("noChangeNotValidated"), parser);
+            List<Analysis> changedNotStarted = getAnalysisFromJson(obj.get("changeNotStarted"), parser);
+            List<Analysis> noChangedNotStarted = getAnalysisFromJson(obj.get("noChangeNotStarted"), parser);
+            List<Analysis> changeTechReject = getAnalysisFromJson(obj.get("changeTechReject"), parser);
+            List<Analysis> noChangeTechReject = getAnalysisFromJson(obj.get("noChangeTechReject"), parser);
+            List<Analysis> changeBioReject = getAnalysisFromJson(obj.get("changeBioReject"), parser);
+            List<Analysis> noChangeBioReject = getAnalysisFromJson(obj.get("noChangeBioReject"), parser);
+            List<Analysis> changeNotValidated = getAnalysisFromJson(obj.get("changeNotValidated"), parser);
+            List<Analysis> noChangeNotValidated = getAnalysisFromJson(obj.get("noChangeNotValidated"), parser);
 
             verifyStatusNotChanged(changedNotStarted, noChangedNotStarted, StatusService.AnalysisStatus.NotStarted,
                     changeBeans);
@@ -236,27 +236,20 @@ public class BatchTestReassignmentRestController extends BaseController {
     private List<Test> getNewTestsFromJson(JSONObject obj, JSONParser parser) {
         List<Test> replacementTestList = new ArrayList<>();
 
-        String replacementTests = (String) obj.get("replace");
-        if (replacementTests == null) {
-            return replacementTestList;
-        }
-
-        JSONArray replacementTestArray;
-        try {
-            replacementTestArray = (JSONArray) parser.parse(replacementTests);
-        } catch (ParseException e) {
-            LogEvent.logDebug(e);
+        JSONArray replacementTestArray = (JSONArray) obj.get("replace");
+        if (replacementTestArray == null) {
             return replacementTestList;
         }
 
         for (Object testIdObject : replacementTestArray) {
-            replacementTestList.add(SpringContext.getBean(TestService.class).get((String) testIdObject));
+            String testId = (String) testIdObject;
+            replacementTestList.add(SpringContext.getBean(TestService.class).get((String) testId));
         }
 
         return replacementTestList;
     }
 
-    private List<Analysis> getAnalysisFromJson(String sampleIdList, JSONParser parser) {
+    private List<Analysis> getAnalysisFromJson(Object sampleIdList, JSONParser parser) {
         List<Analysis> analysisList = new ArrayList<>();
 
         if (sampleIdList == null) {
@@ -264,10 +257,16 @@ public class BatchTestReassignmentRestController extends BaseController {
         }
 
         JSONArray modifyAnalysisArray;
-        try {
-            modifyAnalysisArray = (JSONArray) parser.parse(sampleIdList);
-        } catch (ParseException e) {
-            LogEvent.logDebug(e);
+        if (sampleIdList instanceof String) {
+            try {
+                modifyAnalysisArray = (JSONArray) parser.parse((String) sampleIdList);
+            } catch (ParseException e) {
+                LogEvent.logDebug(e);
+                return analysisList;
+            }
+        } else if (sampleIdList instanceof JSONArray) {
+            modifyAnalysisArray = (JSONArray) sampleIdList;
+        } else {
             return analysisList;
         }
 
