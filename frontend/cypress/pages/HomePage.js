@@ -5,6 +5,7 @@ import ModifyOrderPage from "./ModifyOrderPage";
 import WorkPlan from "./WorkPlan";
 import NonConform from "./NonConformPage";
 import BatchOrderEntry from "./BatchOrderEntryPage";
+import ReportPage from "./ReportPage";
 
 class HomePage {
   constructor() {}
@@ -96,6 +97,18 @@ class HomePage {
     cy.get("#menu_nonconformity").click();
     cy.get("#menu_non_conforming_corrective_actions").click();
     return new NonConform();
+  }
+  goToRoutineReports() {
+    this.openNavigationMenu();
+    cy.get('#menu_reports').click();
+    cy.get('#menu_reports_routine').click();
+    return new ReportPage();
+  }
+  goToStudyReports() {
+    this.openNavigationMenu();
+    cy.get('#menu_reports').click();
+    cy.get('#menu_reports_study').click();
+    return new ReportPage();
   }
 }
 
