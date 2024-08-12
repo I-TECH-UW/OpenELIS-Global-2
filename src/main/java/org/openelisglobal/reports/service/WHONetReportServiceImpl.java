@@ -10,7 +10,6 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
@@ -131,8 +130,9 @@ public class WHONetReportServiceImpl implements WHONetReportService {
 
                         // find the analysis that was triggered by the trigger test
                         for (Analysis potentialReflexAnalysis : analysises) {
-                            if (testReflexUtil.isTestTriggeredByResult(potentialReflexAnalysis.getTest(), triggerResult)) {
-                                Analysis reflexAnalysis =  potentialReflexAnalysis;
+                            if (testReflexUtil.isTestTriggeredByResult(potentialReflexAnalysis.getTest(),
+                                    triggerResult)) {
+                                Analysis reflexAnalysis = potentialReflexAnalysis;
                                 // get the results from the the reflex test
                                 List<Result> reflexResults = resultService.getResultsByAnalysis(reflexAnalysis);
                                 if (reflexResults.size() == 0) {
@@ -149,10 +149,10 @@ public class WHONetReportServiceImpl implements WHONetReportService {
                                 } else {
                                     // else add the info of both tests/results
                                     for (Result reflexResult : reflexResults) {
-                                        rows.add(new WHONetRow(patient.getNationalId(), patient.getPerson().getFirstName(),
-                                                patient.getPerson().getLastName(), patient.getGender(),
-                                                patient.getBirthDateForDisplay(), sample.getEnteredDateForDisplay(),
-                                                sample.getAccessionNumber(),
+                                        rows.add(new WHONetRow(patient.getNationalId(),
+                                                patient.getPerson().getFirstName(), patient.getPerson().getLastName(),
+                                                patient.getGender(), patient.getBirthDateForDisplay(),
+                                                sample.getEnteredDateForDisplay(), sample.getAccessionNumber(),
                                                 DateUtil.convertTimestampToStringDate(sampleItem.getCollectionDate()),
                                                 sampleItem.getTypeOfSample().getDescription(),
                                                 reflexAnalysis.getTest().getName(),

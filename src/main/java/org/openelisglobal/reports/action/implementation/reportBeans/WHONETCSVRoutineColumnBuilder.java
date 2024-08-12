@@ -185,7 +185,6 @@ public abstract class WHONETCSVRoutineColumnBuilder {
      * @return one string with all names.
      */
     public String getColumnNamesLine() {
-
         return new StringBuilder()
                 .append(new WHONetRow("NATIONAL ID", "FIRST NAME", "LAST NAME", "SEX", "BIRTHDATE", "DATE ENTERED",
                         "LABNO", "DATE COLLECTED", "SPECIMEN TYPE", "ANTIBIOTIC", "ORGANISM", "RESULT").getRow())
