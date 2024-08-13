@@ -331,20 +331,15 @@ public class TestReflexUtil {
             return new ArrayList<>();
         }
         String resultType = testService.getResultType(reflexBean.getResult().getTestResult().getTest());
-        List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
+        List<TestReflex> reflexesForResult;
         if (resultType.equals("D")) {
-            reflexesForResult = applyDictionaryRelationRulesForReflex(reflexBean.getResult());
-        } else if (!resultType.equals("D")) {
-            if (resultType.equals("N")) {
-                reflexesForResult = reflexesForResult.stream()
-                        .filter(test -> applyNumericRelationRulesForReflex(test, reflexBean.getResult()))
-                        .collect(Collectors.toList());
-            } else {
-                reflexesForResult = reflexesForResult.stream()
-                        .filter(test -> applyTextRelationRulesForReflex(test, reflexBean.getResult()))
-                        .collect(Collectors.toList());
-            }
+            reflexesForResult = reflexResolver.getTestReflexsByAnalyteAndTest(reflexBean.getResult());
+        } else {
+            reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
         }
+        reflexesForResult = reflexesForResult.stream()
+                .filter(e -> isTestTriggeredByResult(e.getAddedTest(), reflexBean.getResult()))
+                .collect(Collectors.toList());
         return reflexesForResult;
     }
 
@@ -895,13 +890,13 @@ public class TestReflexUtil {
 
     private boolean doesNumericRulesForReflexApply(Test potentialReflexTest, Result potentialTriggerResult) {
         List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(potentialTriggerResult);
-        return reflexesForResult.stream().anyMatch(test -> test.getAddedTest().equals(potentialReflexTest)
+        return reflexesForResult.stream().anyMatch(test -> test.getAddedTest().getId().equals(potentialReflexTest.getId())
                 && applyNumericRelationRulesForReflex(test, potentialTriggerResult));
     }
 
     private boolean doesGenericRulesForReflexApply(Test potentialReflexTest, Result potentialTriggerResult) {
         List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(potentialTriggerResult);
-        return reflexesForResult.stream().anyMatch(test -> test.getAddedTest().equals(potentialReflexTest)
+        return reflexesForResult.stream().anyMatch(test -> test.getAddedTest().getId().equals(potentialReflexTest.getId())
                 && applyTextRelationRulesForReflex(test, potentialTriggerResult));
     }
 }
