@@ -1220,7 +1220,6 @@ public class AnalysisDAOImpl extends BaseDAOImpl<Analysis, String> implements An
             String sql = "from Analysis a where a.test.id IN (:testList) and a.statusId IN (:analysisStatusList)"
                     + " and a.sampleItem.sample.statusId IN (:sampleStatusList) and a.completedDate"
                     + " BETWEEN :lowDate AND :highDate order by a.sampleItem.sample.accessionNumber";
-
             for (Integer testId : testIdList) {
                 testList.add(testId);
             }

@@ -132,4 +132,6 @@ public interface TestService extends BaseObjectService<Test, String> {
     void activateTests(List<String> testNames);
 
     void activateTestsAndDeactivateOthers(List<String> asList);
+
+    List<Test> getTriggeringAntimicrobialResistanceTests();
 }
