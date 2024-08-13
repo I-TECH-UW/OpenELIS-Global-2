@@ -331,15 +331,20 @@ public class TestReflexUtil {
             return new ArrayList<>();
         }
         String resultType = testService.getResultType(reflexBean.getResult().getTestResult().getTest());
-        List<TestReflex> reflexesForResult;
+        List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
         if (resultType.equals("D")) {
-            reflexesForResult = reflexResolver.getTestReflexsByAnalyteAndTest(reflexBean.getResult());
-        } else {
-            reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
+            reflexesForResult = applyDictionaryRelationRulesForReflex(reflexBean.getResult());
+        } else if (!resultType.equals("D")) {
+            if (resultType.equals("N")) {
+                reflexesForResult = reflexesForResult.stream()
+                        .filter(test -> applyNumericRelationRulesForReflex(test, reflexBean.getResult()))
+                        .collect(Collectors.toList());
+            } else {
+                reflexesForResult = reflexesForResult.stream()
+                        .filter(test -> applyTextRelationRulesForReflex(test, reflexBean.getResult()))
+                        .collect(Collectors.toList());
+            }
         }
-        reflexesForResult = reflexesForResult.stream()
-                .filter(e -> isTestTriggeredByResult(e.getAddedTest(), reflexBean.getResult()))
-                .collect(Collectors.toList());
         return reflexesForResult;
     }
 
