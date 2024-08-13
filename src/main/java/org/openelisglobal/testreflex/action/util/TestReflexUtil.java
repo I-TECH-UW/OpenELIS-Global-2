@@ -330,7 +330,13 @@ public class TestReflexUtil {
         if (reflexBean.getResult().getTestResult() == null) {
             return new ArrayList<>();
         }
-        List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
+        String resultType = testService.getResultType(reflexBean.getResult().getTestResult().getTest());
+        List<TestReflex> reflexesForResult;
+        if (resultType.equals("D")) {
+            reflexesForResult = reflexResolver.getTestReflexsByAnalyteAndTest(reflexBean.getResult());
+        } else {
+            reflexesForResult = reflexResolver.getTestReflexesForResult(reflexBean.getResult());
+        }
         reflexesForResult = reflexesForResult.stream()
                 .filter(e -> isTestTriggeredByResult(e.getAddedTest(), reflexBean.getResult()))
                 .collect(Collectors.toList());
@@ -876,6 +882,7 @@ public class TestReflexUtil {
                     }
                 }
             }
+
             return false;
 
         });
