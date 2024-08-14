@@ -42,10 +42,6 @@ import PageBreadCrumb from "../common/PageBreadCrumb";
 // import PathologyCaseView from "../PathologyCaseView";
 // import {conclusions,pathologySampleInfo, conclusion} from "./PathologyCase View";
 
-
-
-
-
 let breadcrumbs = [
   { label: "home.label", link: "/" },
   {
@@ -655,44 +651,40 @@ function ImmunohistochemistryCaseView() {
           </>
         );
 
-
-
-
-        
       case "IMMUNOHISTOCHEMISTRY":
         return (
           <>
-      
             <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={3} md={8} sm={4}>
                   <FormattedMessage id="immunohistochemistry.label.conclusion" />
-                    </Column>
-                      <Column lg={13} md={8} sm={4}>
-                      
+                </Column>
+                <Column lg={13} md={8} sm={4}>
+                  {/* This one is for the Dropdown Conclusion   */}
 
-                    {/* This one is for the Dropdown Conclusion   */}
+                  <Select>
+                    <SelectItem
+                      disabled
+                      value="placeholder"
+                      text="Select an option"
+                    />
+                    {/* i changed the molecularSubTypeList.map to pathologySampleInfo.conclusions.map */}
 
-                <Select>
-                <SelectItem disabled value="placeholder" text="Select an option" />
-                {/* i changed the molecularSubTypeList.map to pathologySampleInfo.conclusions.map */}
-                
-                {molecularSubTypeList.map((status, index) => (
-                  <SelectItem
-                    key={index}
-                    text={status.value}
-                    value={status.value}
-                  />
-                ))}
-              </Select>
+                    {molecularSubTypeList.map((status, index) => (
+                      <SelectItem
+                        key={index}
+                        text={status.value}
+                        value={status.value}
+                      />
+                    ))}
+                  </Select>
 
-                    {/* This one is for the Dropdown Conclusion   */}
-                
+                  {/* This one is for the Dropdown Conclusion   */}
                 </Column>
               </Grid>
             </Column>
 
-                    {/* This one for the Textbox Conclusion */}
+            {/* This one for the Textbox Conclusion */}
 
             <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
@@ -700,7 +692,7 @@ function ImmunohistochemistryCaseView() {
                   <FormattedMessage id="immunohistochemistry.label.textconclusion" />
                 </Column>
                 <Column lg={13} md={8} sm={4}>
-                <TextArea
+                  <TextArea
                     id={"conclusion_" + index}
                     labelText=""
                     hideLabel={true}
@@ -713,20 +705,16 @@ function ImmunohistochemistryCaseView() {
                       params[index].conclusion = e.target.value;
                       setReportParams(params);
                     }}
-                  />     
+                  />
                 </Column>
               </Grid>
             </Column>
 
-                    {/* This one for the Textbox Conclusion */}
-          </>   
-      );
+            {/* This one for the Textbox Conclusion */}
+          </>
+        );
     }
-  }
-
-
-
-
+  };
 
   const setResultsWithId = (results) => {
     if (results) {
@@ -836,9 +824,6 @@ function ImmunohistochemistryCaseView() {
       setMolecularSubTypeList,
     );
 
-
-
-
     //TODO make conclusions list instead of reusing pathrequest
     getFromOpenElisServer("/rest/users", setTechnicianUsers);
     getFromOpenElisServer("/rest/users/Pathologist", setPathologistUsers);
@@ -846,11 +831,6 @@ function ImmunohistochemistryCaseView() {
       "/rest/immunohistochemistry/caseView/" + immunohistochemistrySampleId,
       setInitialImmunohistochemistrySampleInfo,
     );
-    
-
-
-
-
 
     return () => {
       componentMounted.current = false;

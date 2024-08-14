@@ -22,7 +22,6 @@
   border: 2px solid #110f74;
 }
 
-
 .patients {
   overflow-y: auto;
   width: 700px;
@@ -62,8 +61,6 @@
   .search-input {
     width: 100%;
   }
-
-  
 }
 
 @media (min-width: 769px) and (max-width: 1024px) {

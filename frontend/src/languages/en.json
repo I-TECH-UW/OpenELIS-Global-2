@@ -166,9 +166,6 @@
   "pathology.label.grossexam": "Gross Exam",
   "pathology.label.microexam": "Microscopy Exam",
   "pathology.label.conclusion": "Conclusion",
-  
-  
-
 
   "pathology.label.textconclusion": "Text Conclusion",
   "pathology.label.release": "Ready For release",
@@ -183,10 +180,8 @@
   "immunohistochemistry.label.addreport": "Add Report",
   "immunohistochemistry.label.review": "Awaiting Immunohistochemistry Review",
 
-
   "immunohistochemistry.label.conclusion": "Conclusion",
   "immunohistochemistry.label.textconclusion": "Text Conclusion",
-
 
   "cytology.label.title": "Cytology",
   "cytology.label.specimen": "Specimen Adequacy",
