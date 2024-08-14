@@ -38,11 +38,12 @@ import QuestionnaireResponse from "../common/QuestionnaireResponse";
 import "./../pathology/PathologyDashboard.css";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 
-//import the page PathologyCaseViews to this project
-import {pathologySampleInfo, conclusions,setPathologySampleInfo }from "../pathology/PathologyCaseView";
+//import the page & function for PathologyCaseViews to this project
+// import PathologyCaseView from "../PathologyCaseView";
+// import {conclusions,pathologySampleInfo, conclusion} from "./PathologyCase View";
 
-//declaration du conclusion 
-// const [conclusions, setConclusions] = useState([]);
+
+
 
 
 let breadcrumbs = [
@@ -658,52 +659,41 @@ function ImmunohistochemistryCaseView() {
 
 
         
-
       case "IMMUNOHISTOCHEMISTRY":
         return (
           <>
-            
-            
+      
             <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={3} md={8} sm={4}>
                   <FormattedMessage id="immunohistochemistry.label.conclusion" />
                     </Column>
                       <Column lg={13} md={8} sm={4}>
-
-
-                      <Select
-                      //     items = {conclusions}
-                      //     itemToString={(item) => (item ? item.value : "")}
-                      //     initialSelectedItems={immunohistochemistrySampleInfo.conclusions}
-                      // onChange={(changes) => {
-                      //   set.immunohistochemistrySampleInfo({
-                      //     ...immunohistochemistrySampleInfo,
-                      //     conclusions: changes.selectedItems,
-                      //   })}}
-                        >
-                          
-                          <SelectItem value="" text="" />
-                    {molecularSubTypeList.map((status, index) => {
-                      return (
-                        <SelectItem
-                          key={index}
-                          text={status.value}
-                          value={status.value}
-                        />
-                        
-                          
-                          
-            
-                      );
                       
-                  })}
-                  
-                      </Select>
 
+                    {/* This one is for the Dropdown Conclusion   */}
+
+                <Select>
+                <SelectItem disabled value="placeholder" text="Select an option" />
+                {/* i changed the molecularSubTypeList.map to pathologySampleInfo.conclusions.map */}
+                
+                {molecularSubTypeList.map((status, index) => (
+                  <SelectItem
+                    key={index}
+                    text={status.value}
+                    value={status.value}
+                  />
+                ))}
+              </Select>
+
+                    {/* This one is for the Dropdown Conclusion   */}
+                
                 </Column>
               </Grid>
             </Column>
+
+                    {/* This one for the Textbox Conclusion */}
+
             <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={3} md={8} sm={4}>
@@ -727,6 +717,8 @@ function ImmunohistochemistryCaseView() {
                 </Column>
               </Grid>
             </Column>
+
+                    {/* This one for the Textbox Conclusion */}
           </>   
       );
     }
