@@ -20,8 +20,8 @@ class HomePage {
 
   goToOrderPage() {
     this.openNavigationMenu();
-    cy.get("#menu_sample").click();
-    cy.get("#menu_sample_add").click();
+    cy.get("#menu_sample_dropdown").click();
+    cy.get("#menu_sample_add_nav").click();
     return new OrderEntityPage();
   }
 
@@ -33,69 +33,69 @@ class HomePage {
 
   goToBatchOrderEntry() {
     this.openNavigationMenu();
-    cy.get("#menu_sample").click();
-    cy.get("#menu_sample_batch_entry").click();
+    cy.get("#menu_sample_dropdown").click();
+    cy.get("#menu_sample_batch_entry_nav").click();
     return new BatchOrderEntry();
   }
 
   goToPatientEntry() {
     this.openNavigationMenu();
-    cy.get("#menu_patient").click();
-    cy.get("#menu_patient_add_or_edit").click();
+    cy.get("#menu_patient_dropdown").click();
+    cy.get("#menu_patient_add_or_edit_nav").click();
     return new PatientEntryPage();
   }
 
   goToModifyOrderPage() {
     this.openNavigationMenu();
-    cy.get("#menu_sample").click();
-    cy.get("#menu_sample_edit").click();
+    cy.get("#menu_sample_dropdown").click();
+    cy.get("#menu_sample_edit_nav").click();
     return new ModifyOrderPage();
   }
   goToWorkPlanPlanByTest() {
     this.openNavigationMenu();
-    cy.get("#menu_workplan").click();
-    cy.get("#menu_workplan_test").click();
+    cy.get("#menu_workplan_dropdown").click();
+    cy.get("#menu_workplan_test_nav").click();
     return new WorkPlan();
   }
 
   goToWorkPlanPlanByPanel() {
     this.openNavigationMenu();
-    cy.get("#menu_workplan").click();
-    cy.get("#menu_workplan_panel").click();
+    cy.get("#menu_workplan_dropdown").click();
+    cy.get("#menu_workplan_panel_nav").click();
     return new WorkPlan();
   }
 
   goToWorkPlanPlanByUnit() {
     this.openNavigationMenu();
-    cy.get("#menu_workplan").click();
-    cy.get("#menu_workplan_bench").click();
+    cy.get("#menu_workplan_dropdown").click();
+    cy.get("#menu_workplan_bench_nav").click();
     return new WorkPlan();
   }
 
   goToWorkPlanPlanByPriority() {
     this.openNavigationMenu();
-    cy.get("#menu_workplan").click();
-    cy.get("#menu_workplan_priority").click();
+    cy.get("#menu_workplan_dropdown").click();
+    cy.get("#menu_workplan_priority_nav").click();
     return new WorkPlan();
   }
 
   goToReportNCE() {
     this.openNavigationMenu();
-    cy.get("#menu_nonconformity").click();
-    cy.get("#menu_non_conforming_report").click();
+    cy.get("#menu_nonconformity_dropdown").click();
+    cy.get("#menu_non_conforming_report_nav").click();
     return new NonConform();
   }
 
   goToViewNCE() {
     this.openNavigationMenu();
-    cy.get("#menu_nonconformity").click();
-    cy.get("#menu_non_conforming_view").click();
+    cy.get("#menu_nonconformity_dropdown").click();
+    cy.get("#menu_non_conforming_view_nav").click();
     return new NonConform();
   }
   goToCorrectiveActions() {
     this.openNavigationMenu();
-    cy.get("#menu_nonconformity").click();
-    cy.get("#menu_non_conforming_corrective_actions").click();
+    cy.get("#menu_nonconformity_dropdown").click();
+    cy.get("#menu_non_conforming_corrective_actions_nav").click();
     return new NonConform();
   }
   goToRoutineReports() {
