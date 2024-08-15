@@ -57,7 +57,7 @@ class DashBoardPage {
     cy.get(":nth-child(1) > .tile-value").should("have.text", "0");
     cy.get(`:nth-child(${childIndex}) > .tile-value`).should("have.text", "1");
     cy.get("#statusFilter").select("Completed");
-    cy.get("tbody > tr > :nth-child(7)").should("have.text", orderNumber);
+    cy.get("tbody > tr > :nth-child(4)").should("have.text", "John");
   }
 
   validatePreStatus(order) {
