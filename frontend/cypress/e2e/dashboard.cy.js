@@ -15,7 +15,6 @@ describe("Pathology Dashboard", function () {
     dashboard = homePage.goToPathologyDashboard();
 
     dashboard.checkForHeader("Pathology");
-   
   });
 
   it("User adds a new Pathology order", function () {

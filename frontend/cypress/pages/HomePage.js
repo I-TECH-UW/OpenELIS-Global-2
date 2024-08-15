@@ -99,18 +99,17 @@ class HomePage {
     return new NonConform();
   }
 
-
-  goToPathologyDashboard(){
+  goToPathologyDashboard() {
     this.openNavigationMenu();
-    cy.get('#menu_pathology_dropdown').click();
-    cy.get('#menu_pathologydashboard_nav').click();
+    cy.get("#menu_pathology_dropdown").click();
+    cy.get("#menu_pathologydashboard_nav").click();
     return new DashBoardPage();
   }
 
-  goToImmunoChemistryDashboard(){
+  goToImmunoChemistryDashboard() {
     this.openNavigationMenu();
-    cy.get('#menu_immunochem_dropdown').click();
-    cy.get('#menu_immunochemdashboard_nav').click();
+    cy.get("#menu_immunochem_dropdown").click();
+    cy.get("#menu_immunochemdashboard_nav").click();
     return new DashBoardPage();
   }
 }

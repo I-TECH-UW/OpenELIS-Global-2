@@ -60,9 +60,9 @@ class DashBoardPage {
     cy.get("tbody > tr > :nth-child(7)").should("have.text", orderNumber);
   }
 
-  validatePreStatus(labNo) {
+  validatePreStatus(order) {
     cy.get(":nth-child(1) > .tile-value").should("have.text", "1");
-    cy.get("tbody > tr > :nth-child(7)").should("have.text", labNo);
+    cy.get("tbody > tr > :nth-child(4)").should("have.text", "John");
     cy.get("tbody > tr > :nth-child(6)").click();
   }
 
