@@ -12,11 +12,11 @@
   <packaging>war</packaging>
   <properties>
     <maven.java.release>11</maven.java.release>
-    <major.version>2</major.version>
-    <minor.version>8</minor.version>
-    <state.version>1</state.version>
+    <major.version>3</major.version>
+    <minor.version>0</minor.version>
+    <state.version>2</state.version>
     <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-    <fix.version>39</fix.version>
+    <fix.version>1</fix.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <liquibase.propertyFile>${project.basedir}/liquibase/liquibase.properties</liquibase.propertyFile>
     <castor.version>1.4.1</castor.version>
