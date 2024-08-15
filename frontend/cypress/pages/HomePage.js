@@ -5,7 +5,8 @@ import ModifyOrderPage from "./ModifyOrderPage";
 import WorkPlan from "./WorkPlan";
 import NonConform from "./NonConformPage";
 import BatchOrderEntry from "./BatchOrderEntryPage";
-import ReportPage from "./ReportPage";
+import RoutineReportPage from "./RoutineReportPage";
+import StudyReportPage from "./StudyReportPage";
 
 class HomePage {
   constructor() {}
@@ -101,14 +102,14 @@ class HomePage {
   goToRoutineReports() {
     this.openNavigationMenu();
     cy.get('#menu_reports').click();
-    cy.get('#menu_reports_routine').click();
-    return new ReportPage();
+    cy.get('#menu_reports_routine_nav').click();
+    return new RoutineReportPage();
   }
   goToStudyReports() {
     this.openNavigationMenu();
     cy.get('#menu_reports').click();
-    cy.get('#menu_reports_study').click();
-    return new ReportPage();
+    cy.get('#menu_reports_study_nav').click();
+    return new StudyReportPage();
   }
 }
 
