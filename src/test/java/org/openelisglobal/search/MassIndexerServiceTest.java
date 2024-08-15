@@ -59,8 +59,7 @@ public class MassIndexerServiceTest extends BaseWebContextSensitiveTest {
         patientService.insert(pat);
 
         SearchSession searchSession = Search.session(entityManager);
-        // remove all entities of Patient type from the Lucene index but not from the
-        // database
+        // remove all entities from the Lucene index but not from the database
         searchSession.workspace(Object.class).purge();
         long totalHitCount = searchSession.search(Patient.class).where(f -> f.matchAll()).fetchTotalHitCount();
         Assert.assertEquals(0, totalHitCount);
