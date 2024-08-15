@@ -65,7 +65,8 @@ public class MassIndexerServiceTest extends BaseWebContextSensitiveTest {
         Assert.assertEquals(0, totalHitCount);
 
         massIndexerService.reindex();
-        Assert.assertEquals(1, patientService.getAllPatients().size());
+        totalHitCount = searchSession.search(Patient.class).where(f -> f.matchAll()).fetchTotalHitCount();
+        Assert.assertEquals(1, totalHitCount);
 
     }
 
