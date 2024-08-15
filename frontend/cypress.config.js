@@ -15,6 +15,8 @@ module.exports = defineConfig({
         "cypress/e2e/nonConform.cy.js",
         "cypress/e2e/modifyOrder.cy.js",
         "cypress/e2e/batchOrderEntry.cy.js",
+        "cypress/e2e/dashboard.cy.js",
+
       ];
       return config;
     },
