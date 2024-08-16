@@ -3,14 +3,12 @@ package org.openelisglobal.common.rest.provider;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IOperationUntypedWithInputAndPartialOutput;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
-import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Objects;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -39,6 +37,8 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.search.service.SearchResultsService;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.stereotype.Controller;
@@ -68,6 +68,8 @@ public class PatientSearchRestController extends BaseRestController {
     @Autowired
     SearchResultsService searchResultsService;
 
+    private static final Logger log = LoggerFactory.getLogger(PatientSearchRestController.class);
+
     @GetMapping(value = "patient-search-results", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public PatientSearchResultsForm getPatientResults(HttpServletRequest request,
@@ -82,10 +84,10 @@ public class PatientSearchRestController extends BaseRestController {
         PatientSearchResultsForm form = new PatientSearchResultsForm();
 
         String requestedPage = request.getParameter("page");
-        Patient patient = getPatientForLabNumber(labNumber);
         if (GenericValidator.isBlankOrNull(requestedPage)) {
             List<PatientSearchResults> results = new ArrayList<>();
             if (!GenericValidator.isBlankOrNull(labNumber)) {
+                Patient patient = getPatientForLabNumber(labNumber);
                 if (patient == null || GenericValidator.isBlankOrNull(patient.getId())) {
                     form.setPatientSearchResults(results);
                     return form;
@@ -103,60 +105,19 @@ public class PatientSearchRestController extends BaseRestController {
                     form.setPatientSearchResults(results);
                     return form;
                 }
-
-                if (request.getParameter("crResult").contains("true")) {
-                    if (isClientRegistryConfigInvalid()) {
-                        return null;
-                    }
-
-                    IGenericClient clientRegistry = fhirUtil.getFhirClient(fhirConfig.getClientRegistryServerUrl(),
-                            fhirConfig.getClientRegistryUserName(), fhirConfig.getClientRegistryPassword());
-
-                    List<String> targetSystems = new ArrayList<>();
-                    IOperationUntypedWithInputAndPartialOutput<Parameters> identifiersRequest = clientRegistry
-                            .operation().onType("Patient").named("$ihe-pix")
-                            .withSearchParameter(Parameters.class, "sourceIdentifier",
-                                    new TokenParam("http://openelis-global.org/pat_uuid",
-                                            patient.getFhirUuidAsString()))
-                            .andSearchParameter("targetSystem", new StringParam(String.join(",", targetSystems)));
-
-                    Parameters crMatchingParams = identifiersRequest.useHttpGet().execute();
-                    List<String> crIdentifiers = crMatchingParams.getParameter().stream()
-                            .filter(param -> Objects.equals(param.getName(), "targetId"))
-                            .map(param -> param.getValue().toString()).collect(Collectors.toList());
-
-                    if (crIdentifiers.isEmpty()) {
-                        return null;
-                    }
-
-                    Bundle patientBundle = clientRegistry.search().forResource(org.hl7.fhir.r4.model.Patient.class)
-                            .where(new StringClientParam(org.hl7.fhir.r4.model.Patient.SP_RES_ID).matches()
-                                    .values(crIdentifiers))
-                            .returnBundle(Bundle.class).execute();
-
-                    List<org.hl7.fhir.r4.model.Patient> externalPatients = parseCRPatientSearchResults(patientBundle);
-
-                    for (org.hl7.fhir.r4.model.Patient externalPatient : externalPatients) {
-                        Patient openElisPatient = transformFhirPatientObjectToOpenElisPatientObject(patient,
-                                externalPatient);
-                        PatientSearchResults searchResult = getSearchResultsForPatient(openElisPatient, null);
-                        searchResult.setDataSourceName(MessageUtil.getMessage("patient.cr.source"));
-                        results.add(searchResult);
-                    }
-                }
             }
+
+            if (request.getParameter("crResult") != null && request.getParameter("crResult").contains("true")) {
+                List<PatientSearchResults> fhirResults = searchPatientInClientRegistry(nationalID);
+                results.addAll(fhirResults);
+            }
+
             paging.setDatabaseResults(request, form, results);
         } else {
             int requestedPageNumber = Integer.parseInt(requestedPage);
             paging.page(request, form, requestedPageNumber);
         }
         return form;
-    }
-
-    private boolean isClientRegistryConfigInvalid() {
-        return GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryServerUrl())
-                || GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryUserName())
-                || GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryPassword());
     }
 
     private Patient getPatientForLabNumber(String labNumber) {
@@ -272,6 +233,57 @@ public class PatientSearchRestController extends BaseRestController {
         }
 
         return openELISPatient;
+    }
+
+    private List<PatientSearchResults> searchPatientInClientRegistry(String nationalID) {
+        if (isClientRegistryConfigInvalid()) {
+            return new ArrayList<>();
+        }
+
+        IGenericClient clientRegistry = fhirUtil.getFhirClient(fhirConfig.getClientRegistryServerUrl(),
+                fhirConfig.getClientRegistryUserName(), fhirConfig.getClientRegistryPassword());
+
+        Patient patient = patientService.getPatientByNationalId(nationalID);
+        log.info("patient identifier: " + patient.getFhirUuidAsString());
+        log.info("patient firstname: " + patient.getEpiFirstName());
+        log.info("patient lastname: " + patient.getEpiLastName());
+        IOperationUntypedWithInputAndPartialOutput<Parameters> identifiersRequest = clientRegistry.operation()
+                .onType("Patient").named("$ihe-pix").withSearchParameter(Parameters.class, "sourceIdentifier",
+                        new TokenParam("http://openelis-global.org/pat_uuid", patient.getFhirUuidAsString()));
+
+        Parameters crMatchingParams = identifiersRequest.useHttpGet().execute();
+        List<String> crIdentifiers = crMatchingParams.getParameter().stream()
+                .filter(param -> param.getValue() instanceof Reference).map(param -> param.getValue().toString())
+                .collect(Collectors.toList());
+
+        if (crIdentifiers.isEmpty()) {
+            return new ArrayList<>();
+        }
+
+        Bundle patientBundle = clientRegistry.search().forResource(org.hl7.fhir.r4.model.Patient.class)
+                .where(new StringClientParam(org.hl7.fhir.r4.model.Patient.SP_RES_ID).matches().values(crIdentifiers))
+                .returnBundle(Bundle.class).execute();
+        log.info("fhir patient bundle: " + patientBundle);
+
+        List<org.hl7.fhir.r4.model.Patient> externalPatients = parseCRPatientSearchResults(patientBundle);
+        log.info("external Patients: " + externalPatients);
+        List<PatientSearchResults> results = new ArrayList<>();
+
+        for (org.hl7.fhir.r4.model.Patient externalPatient : externalPatients) {
+            Patient openElisPatient = transformFhirPatientObjectToOpenElisPatientObject(patient, externalPatient);
+            PatientSearchResults searchResult = getSearchResultsForPatient(openElisPatient, null);
+            searchResult.setDataSourceName(MessageUtil.getMessage("patient.cr.source"));
+            log.info("searchResult: " + searchResult);
+            results.add(searchResult);
+        }
+
+        return results;
+    }
+
+    private boolean isClientRegistryConfigInvalid() {
+        return GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryServerUrl())
+                || GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryUserName())
+                || GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryPassword());
     }
 
 }
