@@ -67,7 +67,6 @@ public abstract class WHONETCSVRoutineSampleExportReport extends WHONETCSVRoutin
         buffer.write(WHONETcsvRoutineColumnBuilder.getColumnNamesLine().getBytes("windows-1252"));
 
         writeResultsToBuffer(buffer);
-        WHONETcsvRoutineColumnBuilder.closeResultSet();
 
         return buffer.toByteArray();
     }
