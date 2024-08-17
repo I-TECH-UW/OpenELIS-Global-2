@@ -55,6 +55,7 @@ function SelectListRenameEntry() {
   const [displayValueList, setDisplayValueList] = useState([]);
   const [selectListRenamePost, setSelectListRenamePost] = useState({});
   const [selectedItem, setSelectedItem] = useState({});
+  const [selectedItemChange, setSelectedItemChange] = useState({});
 
   useEffect(() => {
     componentMounted.current = true;
@@ -124,6 +125,7 @@ function SelectListRenameEntry() {
     setConfirmationStep(false);
     setIsAddModalOpen(true);
     setSelectedItem(item);
+    setSelectedItemChange(item);
   };
 
   const onInputChangeEn = (e, index) => {
@@ -133,7 +135,11 @@ function SelectListRenameEntry() {
         i === index ? { ...item, displayValueEnglish: updatedValue } : item,
       ),
     );
-    setSelectedItem((prev) => ({ ...prev, displayValueEnglish: updatedValue }));
+    // setSelectedItem((prev) => ({ ...prev, displayValueEnglish: updatedValue }));
+    setSelectedItemChange((prev) => ({
+      ...prev,
+      displayValueEnglish: updatedValue,
+    }));
     setInputError(false);
   };
 
@@ -144,20 +150,24 @@ function SelectListRenameEntry() {
         i === index ? { ...item, displayValueFrench: updatedValue } : item,
       ),
     );
-    setSelectedItem((prev) => ({ ...prev, displayValueFrench: updatedValue }));
+    // setSelectedItem((prev) => ({ ...prev, displayValueFrench: updatedValue }));
+    setSelectedItemChange((prev) => ({
+      ...prev,
+      displayValueFrench: updatedValue,
+    }));
     setInputError(false);
   };
 
   useEffect(() => {
-    if (selectedItem) {
+    if (selectedItemChange) {
       setSelectListRenamePost((prev) => ({
         ...prev,
-        resultSelectOptionId: selectedItem.id,
-        nameEnglish: selectedItem.displayValueEnglish,
-        nameFrench: selectedItem.displayValueFrench,
+        resultSelectOptionId: selectedItemChange.id,
+        nameEnglish: selectedItemChange.displayValueEnglish,
+        nameFrench: selectedItemChange.displayValueFrench,
       }));
     }
-  }, [selectedItem]);
+  }, [selectedItemChange]);
 
   const closeAddModal = () => {
     setIsAddModalOpen(false);
@@ -275,7 +285,7 @@ function SelectListRenameEntry() {
                             id={`eng-${index}`}
                             labelText=""
                             hideLabel
-                            value={selectedItem.displayValueEnglish || ""}
+                            value={selectedItemChange.displayValueEnglish || ""}
                             onChange={(e) => {
                               onInputChangeEn(e, index);
                             }}
@@ -296,7 +306,7 @@ function SelectListRenameEntry() {
                             id={`fr-${index}`}
                             labelText=""
                             hideLabel
-                            value={selectedItem.displayValueFrench || ""}
+                            value={selectedItemChange.displayValueFrench || ""}
                             onChange={(e) => {
                               onInputChangeFr(e, index);
                             }}
