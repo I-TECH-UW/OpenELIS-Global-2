@@ -262,15 +262,9 @@ public class PatientSearchRestController extends BaseRestController {
         }
 
         Parameters crMatchingParams = identifiersRequest.useHttpGet().execute();
-        List<String> crIdentifiers = new ArrayList<>();
-        crMatchingParams.getParameter().forEach(param -> {
-            if ("targetId".equals(param.getName()) && param.getValue() != null && !param.getValue().isEmpty()) {
-                crIdentifiers.add(param.getValue().toString());
-            } else if ("targetIdentifier".equals(param.getName()) && param.getValue() instanceof Identifier) {
-                Identifier identifier = (Identifier) param.getValue();
-                crIdentifiers.add(identifier.getValue());
-            }
-        });
+        List<String> crIdentifiers = crMatchingParams.getParameter().stream()
+                .filter(param -> Objects.equals(param.getName(), "targetId")).map(param -> param.getValue().toString())
+                .collect(Collectors.toList());
 
         if (crIdentifiers.isEmpty()) {
             return new ArrayList<>();
