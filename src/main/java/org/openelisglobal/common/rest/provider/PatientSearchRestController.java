@@ -3,13 +3,13 @@ package org.openelisglobal.common.rest.provider;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IOperationUntypedWithInputAndPartialOutput;
 import ca.uhn.fhir.rest.gclient.StringClientParam;
+import ca.uhn.fhir.rest.param.StringOrListParam;
+import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.Timestamp;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
@@ -67,6 +67,8 @@ public class PatientSearchRestController extends BaseRestController {
     SampleHumanService sampleHumanService;
     @Autowired
     SearchResultsService searchResultsService;
+
+    StringOrListParam targetSystemsParam;
 
     private static final Logger log = LoggerFactory.getLogger(PatientSearchRestController.class);
 
@@ -171,7 +173,7 @@ public class PatientSearchRestController extends BaseRestController {
 
     public Patient transformFhirPatientObjectToOpenElisPatientObject(Patient openELISPatient,
             org.hl7.fhir.r4.model.Patient fhirPatient) {
-        for (org.hl7.fhir.r4.model.Identifier identifier : fhirPatient.getIdentifier()) {
+        for (Identifier identifier : fhirPatient.getIdentifier()) {
             String system = identifier.getSystem();
             String value = identifier.getValue();
             if ("http://openelis-global.org/pat_nationalId".equals(system)) {
@@ -244,17 +246,31 @@ public class PatientSearchRestController extends BaseRestController {
                 fhirConfig.getClientRegistryUserName(), fhirConfig.getClientRegistryPassword());
 
         Patient patient = patientService.getPatientByNationalId(nationalID);
-        log.info("patient identifier: " + patient.getFhirUuidAsString());
-        log.info("patient firstname: " + patient.getEpiFirstName());
-        log.info("patient lastname: " + patient.getEpiLastName());
+        log.info("patient identifier: {}", patient.getFhirUuidAsString());
+
+        List<String> targetSystems = targetSystemsParam == null ? Collections.emptyList()
+                : targetSystemsParam.getValuesAsQueryTokens().stream().filter(Objects::nonNull)
+                        .map(StringParam::getValue).collect(Collectors.toList());
+
+        // construct request to external fhir client
         IOperationUntypedWithInputAndPartialOutput<Parameters> identifiersRequest = clientRegistry.operation()
                 .onType("Patient").named("$ihe-pix").withSearchParameter(Parameters.class, "sourceIdentifier",
-                        new TokenParam("http://openelis-global.org/pat_uuid", patient.getFhirUuidAsString()));
+                        new TokenParam("http://openelis-global.org/pat_nationalId", patient.getNationalId()));
+
+        if (!targetSystems.isEmpty()) {
+            identifiersRequest.andSearchParameter("targetSystem", new StringParam(String.join(",", targetSystems)));
+        }
 
         Parameters crMatchingParams = identifiersRequest.useHttpGet().execute();
-        List<String> crIdentifiers = crMatchingParams.getParameter().stream()
-                .filter(param -> param.getValue() instanceof Reference).map(param -> param.getValue().toString())
-                .collect(Collectors.toList());
+        List<String> crIdentifiers = new ArrayList<>();
+        crMatchingParams.getParameter().forEach(param -> {
+            if ("targetId".equals(param.getName()) && param.getValue() != null && !param.getValue().isEmpty()) {
+                crIdentifiers.add(param.getValue().toString());
+            } else if ("targetIdentifier".equals(param.getName()) && param.getValue() instanceof Identifier) {
+                Identifier identifier = (Identifier) param.getValue();
+                crIdentifiers.add(identifier.getValue());
+            }
+        });
 
         if (crIdentifiers.isEmpty()) {
             return new ArrayList<>();
@@ -263,7 +279,7 @@ public class PatientSearchRestController extends BaseRestController {
         Bundle patientBundle = clientRegistry.search().forResource(org.hl7.fhir.r4.model.Patient.class)
                 .where(new StringClientParam(org.hl7.fhir.r4.model.Patient.SP_RES_ID).matches().values(crIdentifiers))
                 .returnBundle(Bundle.class).execute();
-        log.info("fhir patient bundle: " + patientBundle);
+        log.info("fhir patient bundle: {}", patientBundle);
 
         List<org.hl7.fhir.r4.model.Patient> externalPatients = parseCRPatientSearchResults(patientBundle);
         log.info("external Patients: " + externalPatients);
