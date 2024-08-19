@@ -772,4 +772,9 @@ public class AnalysisServiceImpl extends AuditableBaseObjectServiceImpl<Analysis
     public List<Analysis> getAnalysesResultEnteredOnExcludedByStatusId(Date completedDate, Set<Integer> statusIds) {
         return baseObjectDAO.getAnalysesResultEnteredOnExcludedByStatusId(completedDate, statusIds);
     }
+
+    @Override
+    public String getMethodId(Analysis analysis) {
+        return analysis == null ? "" : analysis.getMethod() == null ? "" : analysis.getMethod().getId();
+    }
 }

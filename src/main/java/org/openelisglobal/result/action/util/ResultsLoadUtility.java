@@ -703,8 +703,8 @@ public class ResultsLoadUtility {
         testItem.setUnitsOfMeasure(uom);
         testItem.setTestDate(testDate);
         testItem.setResultDisplayType(resultDisplayType);
-        testItem.setTestMethod(testMethodName);
         testItem.setAnalysisMethod(analysisService.getAnalysisType(analysis));
+        testItem.setTestMethod(analysisService.getMethodId(analysis));
         testItem.setResult(result);
         testItem.setResultValue(getFormattedResultValue(result));
         testItem.setMultiSelectResultValues(analysisService.getJSONMultiSelectResults(analysis));
