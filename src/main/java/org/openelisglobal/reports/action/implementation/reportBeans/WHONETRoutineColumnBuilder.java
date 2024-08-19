@@ -26,17 +26,19 @@ import org.openelisglobal.spring.util.SpringContext;
  * @author pahill (pahill@uw.edu)
  * @since May 18, 2011
  */
-public class WHONETRoutineColumnBuilder extends WHONETCIRoutineColumnBuilder {
+public class WHONETRoutineColumnBuilder extends WHONETCSVRoutineColumnBuilder {
+
+    private DateRange dateRange;
 
     /**
      * @param dateRange
      * @param projectStr
      */
     public WHONETRoutineColumnBuilder(DateRange dateRange) {
-        super(dateRange);
+
+        this.dateRange = dateRange;
     }
 
-    @Override
     public void searchForWHONetResults() {
         WHONetReportService reportService = SpringContext.getBean(WHONetReportService.class);
         Date lowDate = dateRange.getLowDate();

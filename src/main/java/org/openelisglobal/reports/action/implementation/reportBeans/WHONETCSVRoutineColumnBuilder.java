@@ -23,9 +23,7 @@ import java.text.SimpleDateFormat;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
-import org.openelisglobal.analyte.service.AnalyteService;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeService;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
@@ -50,12 +48,13 @@ public abstract class WHONETCSVRoutineColumnBuilder {
         private String antibiotic;
         private String organism;
         private String result;
+        private String method;
 
         private String delimeter = "\t";
 
         public WHONetRow(String nationalId, String firstName, String lastName, String sex, String birthdate,
                 String enteredDate, String labNo, String collectionDate, String sampleType, String antibiotic,
-                String organism, String result) {
+                String organism, String result, String method) {
             this.nationalId = nationalId;
             this.firstName = firstName;
             this.lastName = lastName;
@@ -68,11 +67,12 @@ public abstract class WHONETCSVRoutineColumnBuilder {
             this.antibiotic = antibiotic;
             this.organism = organism;
             this.result = result;
+            this.method = method;
         }
 
         public String getRow() {
             List<String> rowValues = Arrays.asList(nationalId, firstName, lastName, sex, birthdate, enteredDate, labNo,
-                    collectionDate, sampleType, antibiotic, organism, result);
+                    collectionDate, sampleType, antibiotic, organism, result, method);
             return String.join(delimeter, rowValues);
         }
     }
@@ -105,8 +105,6 @@ public abstract class WHONETCSVRoutineColumnBuilder {
     protected String eol = System.getProperty("line.separator");
 
     protected ResultService resultService = SpringContext.getBean(ResultService.class);
-    private ObservationHistoryTypeService ohtService = SpringContext.getBean(ObservationHistoryTypeService.class);
-    private AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
     protected TestService testService = SpringContext.getBean(TestService.class);
     protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
 
@@ -185,9 +183,9 @@ public abstract class WHONETCSVRoutineColumnBuilder {
      * @return one string with all names.
      */
     public String getColumnNamesLine() {
-        return new StringBuilder()
-                .append(new WHONetRow("NATIONAL ID", "FIRST NAME", "LAST NAME", "SEX", "BIRTHDATE", "DATE ENTERED",
-                        "LABNO", "DATE COLLECTED", "SPECIMEN TYPE", "ANTIBIOTIC", "ORGANISM", "RESULT").getRow())
+        return new StringBuilder().append(
+                new WHONetRow("NATIONAL ID", "FIRST NAME", "LAST NAME", "SEX", "BIRTHDATE", "DATE ENTERED", "LABNO",
+                        "DATE COLLECTED", "SPECIMEN TYPE", "ANTIBIOTIC", "ORGANISM", "RESULT", "METHOD").getRow())
                 .append(eol).toString();
     }
 
