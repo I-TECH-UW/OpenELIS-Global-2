@@ -848,13 +848,15 @@ public class TestReflexUtil {
 
     private boolean doesNumericRulesForReflexApply(Test potentialReflexTest, Result potentialTriggerResult) {
         List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(potentialTriggerResult);
-        return reflexesForResult.stream().anyMatch(test -> test.getAddedTest().equals(potentialReflexTest)
-                && applyNumericRelationRulesForReflex(test, potentialTriggerResult));
+        return reflexesForResult.stream()
+                .anyMatch(test -> test.getAddedTest().getId().equals(potentialReflexTest.getId())
+                        && applyNumericRelationRulesForReflex(test, potentialTriggerResult));
     }
 
     private boolean doesGenericRulesForReflexApply(Test potentialReflexTest, Result potentialTriggerResult) {
         List<TestReflex> reflexesForResult = reflexResolver.getTestReflexesForResult(potentialTriggerResult);
-        return reflexesForResult.stream().anyMatch(test -> test.getAddedTest().equals(potentialReflexTest)
-                && applyTextRelationRulesForReflex(test, potentialTriggerResult));
+        return reflexesForResult.stream()
+                .anyMatch(test -> test.getAddedTest().getId().equals(potentialReflexTest.getId())
+                        && applyTextRelationRulesForReflex(test, potentialTriggerResult));
     }
 }
