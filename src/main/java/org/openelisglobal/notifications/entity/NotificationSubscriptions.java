@@ -25,6 +25,13 @@ public class NotificationSubscriptions {
     @JoinColumn(name = "user_id", nullable = false)
     private SystemUser user;
 
+    // Transient fields
+    @Transient
+    private String title;
+
+    @Transient
+    private String message;
+
     public Long getId() {
         return id;
     }
@@ -65,12 +72,32 @@ public class NotificationSubscriptions {
         this.pfAuth = pfAuth;
     }
 
- 
+    public String getTitle() {
+        return title;
+    }
+
+    public void setTitle(String title) {
+        this.title = title;
+    }
+
+    public String getMessage() {
+        return message;
+    }
+
+    public void setMessage(String message) {
+        this.message = message;
+    }
 
     @Override
     public String toString() {
-        return "NotificationSubscription{" + "userId="  + ", pfEndpoint='" + pfEndpoint + '\'' + ", pfP256dh='"
-                + pfP256dh + '\'' + ", pfAuth='" + pfAuth + '\'' + ", user=" + (user != null ? user.toString() : "null")
-                + '}';
+        return "NotificationSubscription{" +
+                "userId=" + (user != null ? user.getId() : "null") +
+                ", pfEndpoint='" + pfEndpoint + '\'' +
+                ", pfP256dh='" + pfP256dh + '\'' +
+                ", pfAuth='" + pfAuth + '\'' +
+                ", user=" + (user != null ? user.toString() : "null") +
+                ", title='" + title + '\'' +
+                ", message='" + message + '\'' +
+                '}';
     }
 }

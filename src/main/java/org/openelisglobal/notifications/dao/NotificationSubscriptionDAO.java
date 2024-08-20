@@ -6,7 +6,7 @@ public interface NotificationSubscriptionDAO {
 
     void save(NotificationSubscriptions notificationSubscription);
 
-    NotificationSubscriptions getNotificationSubscriptionById(Long id);
+    NotificationSubscriptions getNotificationSubscriptionByUserId(Long id);
 
     void updateNotificationSubscription(NotificationSubscriptions notificationSubscription);
 
