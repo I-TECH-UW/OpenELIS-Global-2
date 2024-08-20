@@ -1,12 +1,13 @@
 package org.openelisglobal.notifications.rest;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.security.Security;
 import java.time.OffsetDateTime;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
-
+import nl.martijndwars.webpush.PushService;
 import org.apache.http.HttpResponse;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.openelisglobal.login.valueholder.UserSessionData;
@@ -27,9 +28,6 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
-import nl.martijndwars.webpush.PushService;
-
-import com.fasterxml.jackson.databind.ObjectMapper;
 
 @RequestMapping("/rest")
 @RestController
@@ -83,10 +81,8 @@ public class NotificationRestController {
 
         try {
             // Configure PushService with VAPID keys
-            PushService pushService = new PushService(
-                    env.getProperty("vapid.public.key"),
-                    env.getProperty("vapid.private.key"),
-                    "mailto:your-email@example.com");
+            PushService pushService = new PushService(env.getProperty("vapid.public.key"),
+                    env.getProperty("vapid.private.key"), "mailto:your-email@example.com");
 
             String title = "OpenELIS Global Notification";
             String body = notification.getMessage();
@@ -103,10 +99,7 @@ public class NotificationRestController {
 
             // Use fully qualified name for web push Notification
             nl.martijndwars.webpush.Notification webPushNotification = new nl.martijndwars.webpush.Notification(
-                    ns.getPfEndpoint(),
-                    ns.getPfP256dh(),
-                    ns.getPfAuth(),
-                    payloadJson);
+                    ns.getPfEndpoint(), ns.getPfP256dh(), ns.getPfAuth(), payloadJson);
 
             HttpResponse response = pushService.send(webPushNotification);
 

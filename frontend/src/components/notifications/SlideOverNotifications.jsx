@@ -1,9 +1,14 @@
 import { Renew, NotificationFilled, Email, Filter } from "@carbon/icons-react";
-import { formatTimestamp, getFromOpenElisServer, getFromOpenElisServerV2, postToOpenElisServer } from "../utils/Utils";
+import {
+  formatTimestamp,
+  getFromOpenElisServer,
+  getFromOpenElisServerV2,
+  postToOpenElisServer,
+} from "../utils/Utils";
 import Spinner from "../common/Sprinner";
 import { FormattedMessage, useIntl } from "react-intl";
 import { useState } from "react";
- 
+
 export default function SlideOverNotifications(props) {
   const intl = useIntl();
   const [iconLoading, setIconLoading] = useState({
@@ -15,88 +20,105 @@ export default function SlideOverNotifications(props) {
     try {
       // Set the loading state
       setIconLoading({ icon: "NOTIFICATION", loading: true });
-  
+
       // Check if service workers are supported
-      if (!('serviceWorker' in navigator)) {
+      if (!("serviceWorker" in navigator)) {
         throw new Error("Service workers are not supported in this browser.");
       }
-  
+
       // Check if push messaging is supported
-      if (!('PushManager' in window)) {
+      if (!("PushManager" in window)) {
         throw new Error("Push messaging is not supported in this browser.");
       }
-  
+
       // Register the service worker if not already registered
-      const registration = await navigator.serviceWorker.register('/service-worker.js').catch(error => {
-        throw new Error("Service worker registration failed: " + error.message);
-      });
-  
+      const registration = await navigator.serviceWorker
+        .register("/service-worker.js")
+        .catch((error) => {
+          throw new Error(
+            "Service worker registration failed: " + error.message,
+          );
+        });
+
       // Ensure the service worker is ready
       const sw = await navigator.serviceWorker.ready;
-  
+
       // Attempt to retrieve the public key from the server
-      let pbKeyData = await getFromOpenElisServerV2("/rest/notification/public_key").catch(error => {
-        throw new Error("Failed to retrieve public key from server: " + error.message);
+      let pbKeyData = await getFromOpenElisServerV2(
+        "/rest/notification/public_key",
+      ).catch((error) => {
+        throw new Error(
+          "Failed to retrieve public key from server: " + error.message,
+        );
       });
-  
+
       // Convert the public key to a Uint8Array
       const applicationServerKey = urlBase64ToUint8Array(pbKeyData.publicKey);
-  
+
       // Attempt to subscribe to push notifications
-      const push = await sw.pushManager.subscribe({
-        userVisibleOnly: true,
-        applicationServerKey,
-      }).catch(error => {
-        throw new Error("Push subscription failed: " + error.message);
-      });
-  
+      const push = await sw.pushManager
+        .subscribe({
+          userVisibleOnly: true,
+          applicationServerKey,
+        })
+        .catch((error) => {
+          throw new Error("Push subscription failed: " + error.message);
+        });
+
       // Encode the subscription keys
-      const p256dh = btoa(String.fromCharCode.apply(null, new Uint8Array(push.getKey("p256dh"))));
-      const auth = btoa(String.fromCharCode.apply(null, new Uint8Array(push.getKey("auth"))));
-  
+      const p256dh = btoa(
+        String.fromCharCode.apply(null, new Uint8Array(push.getKey("p256dh"))),
+      );
+      const auth = btoa(
+        String.fromCharCode.apply(null, new Uint8Array(push.getKey("auth"))),
+      );
+
       // Construct the data object
       const data = {
         pfEndpoint: push.endpoint,
         pfP256dh: p256dh,
         pfAuth: auth,
       };
-  
+
       console.log("data", data);
-  
+
       // Send the subscription data to the server
-      postToOpenElisServer("/rest/notification/subscribe", JSON.stringify(data), (res) => {
-        console.log("res", res);
-      });
-  
+      postToOpenElisServer(
+        "/rest/notification/subscribe",
+        JSON.stringify(data),
+        (res) => {
+          console.log("res", res);
+        },
+      );
+
       // Set the loading state to false
       setIconLoading({ icon: null, loading: false });
     } catch (error) {
       // Handle any errors that occurred during the process
-      console.error("An error occurred during the subscription process:", error);
+      console.error(
+        "An error occurred during the subscription process:",
+        error,
+      );
       setIconLoading({ icon: null, loading: false });
       // Optionally set an error state here or provide user feedback
     }
   }
 
- 
-  
   // Helper function to convert a URL-safe base64 string to a Uint8Array
   function urlBase64ToUint8Array(base64String) {
-    const padding = '='.repeat((4 - base64String.length % 4) % 4);
+    const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
     const base64 = (base64String + padding)
-      .replace(/-/g, '+')
-      .replace(/_/g, '/');
-  
+      .replace(/-/g, "+")
+      .replace(/_/g, "/");
+
     const rawData = window.atob(base64);
     const outputArray = new Uint8Array(rawData.length);
-  
+
     for (let i = 0; i < rawData.length; ++i) {
       outputArray[i] = rawData.charCodeAt(i);
     }
     return outputArray;
   }
-  
-  
 
   const {
     loading,
@@ -150,9 +172,8 @@ export default function SlideOverNotifications(props) {
       }}
     >
       <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
- 
-      <br />
-      
+        <br />
+
         <div
           style={{
             display: "flex",
@@ -162,7 +183,12 @@ export default function SlideOverNotifications(props) {
         >
           {[
             {
-              icon: iconLoading.loading == true && iconLoading.icon =="RELOAD" ? <Spinner/>:<Renew />,
+              icon:
+                iconLoading.loading == true && iconLoading.icon == "RELOAD" ? (
+                  <Spinner />
+                ) : (
+                  <Renew />
+                ),
               label: intl.formatMessage({
                 id: "notification.slideover.button.reload",
               }),
@@ -170,26 +196,34 @@ export default function SlideOverNotifications(props) {
                 setIconLoading({ icon: "RELOAD", loading: true });
                 await getNotifications();
                 setIconLoading({ icon: null, loading: false });
-
               },
             },
             {
-              icon: iconLoading.loading == true && iconLoading.icon =="NOTIFICATION" ? <Spinner/>:<NotificationFilled />,
+              icon:
+                iconLoading.loading == true &&
+                iconLoading.icon == "NOTIFICATION" ? (
+                  <Spinner />
+                ) : (
+                  <NotificationFilled />
+                ),
               label: intl.formatMessage({
                 id: "notification.slideover.button.subscribe",
               }),
               onClick: async () => {
-
-                await subscribe()
-
-              }
+                await subscribe();
+              },
             },
             {
-              icon: iconLoading.loading == true && iconLoading.icon =="EMAIL" ? <Spinner/>:<Email />,
+              icon:
+                iconLoading.loading == true && iconLoading.icon == "EMAIL" ? (
+                  <Spinner />
+                ) : (
+                  <Email />
+                ),
               label: intl.formatMessage({
                 id: "notification.slideover.button.markallasread",
               }),
-              onClick:async () => {
+              onClick: async () => {
                 setIconLoading({ icon: "EMAIL", loading: true });
                 await markAllNotificationsAsRead();
                 setIconLoading({ icon: null, loading: false });
@@ -213,7 +247,6 @@ export default function SlideOverNotifications(props) {
               label={label}
               onClick={onClick}
             />
-
           ))}
         </div>
       </div>

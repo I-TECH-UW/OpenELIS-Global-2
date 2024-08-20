@@ -1,52 +1,55 @@
 // Define a cache name for versioning your cache
-const CACHE_NAME = 'my-cache-v1';
+const CACHE_NAME = "my-cache-v1";
 
 // Cache assets during the install phase
-self.addEventListener('install', (event) => {
-  console.log('[Service Worker] Install');
+self.addEventListener("install", (event) => {
+  console.log("[Service Worker] Install");
   event.waitUntil(
-    caches.open(CACHE_NAME).then((cache) => {
-      return cache.addAll([
-        '/',
-        '/index.html',
-        '/styles.css',
-      ]);
-    }).then(() => self.skipWaiting()) // Skip waiting to activate new service worker immediately
+    caches
+      .open(CACHE_NAME)
+      .then((cache) => {
+        return cache.addAll(["/", "/index.html", "/styles.css"]);
+      })
+      .then(() => self.skipWaiting()), // Skip waiting to activate new service worker immediately
   );
 });
 
 // Clean up old caches during the activate phase
-self.addEventListener('activate', (event) => {
-  console.log('[Service Worker] Activate');
+self.addEventListener("activate", (event) => {
+  console.log("[Service Worker] Activate");
   event.waitUntil(
-    caches.keys().then((cacheNames) => {
-      return Promise.all(
-        cacheNames.map((cacheName) => {
-          if (cacheName !== CACHE_NAME) {
-            console.log('[Service Worker] Deleting old cache:', cacheName);
-            return caches.delete(cacheName);
-          }
-        })
-      );
-    }).then(() => self.clients.claim()) // Take control of all clients as soon as active
+    caches
+      .keys()
+      .then((cacheNames) => {
+        return Promise.all(
+          cacheNames.map((cacheName) => {
+            if (cacheName !== CACHE_NAME) {
+              console.log("[Service Worker] Deleting old cache:", cacheName);
+              return caches.delete(cacheName);
+            }
+          }),
+        );
+      })
+      .then(() => self.clients.claim()), // Take control of all clients as soon as active
   );
 });
 
- 
-
 // Listen for push events and display notifications
-self.addEventListener('push', (event) => {
-  console.log('[Service Worker] Push Received', event);
+self.addEventListener("push", (event) => {
+  console.log("[Service Worker] Push Received", event);
   if (event.data) {
     const data = event.data.json();
     const notificationOptions = {
-      body:data.body || 'Message Received from OpenELIS',
-      tag: data.external_id || 'default-tag',
-      icon: 'images/openelis_logo.png',  
+      body: data.body || "Message Received from OpenELIS",
+      tag: data.external_id || "default-tag",
+      icon: "images/openelis_logo.png",
     };
 
     event.waitUntil(
-      self.registration.showNotification('OpenELIS Test Message Received', notificationOptions)
+      self.registration.showNotification(
+        "OpenELIS Test Message Received",
+        notificationOptions,
+      ),
     );
   }
 });
@@ -74,11 +77,9 @@ self.addEventListener('push', (event) => {
 //   );
 // });
 
-
-
 // Handle messages from clients
-self.addEventListener('message', (event) => {
-  if (event.data && event.data.type === 'SKIP_WAITING') {
+self.addEventListener("message", (event) => {
+  if (event.data && event.data.type === "SKIP_WAITING") {
     self.skipWaiting();
   }
 });

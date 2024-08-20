@@ -217,8 +217,6 @@ export const hasRole = (userSessionDetails, role) => {
 // this is complicated to enable it to format "smartly" as a person types
 // possible rework could allow it to only format completed numbers
 
-
-
 export const getFromOpenElisServerV2 = (url) => {
   return new Promise((resolve, reject) => {
     // Simulating the original callback-based function
@@ -226,12 +224,11 @@ export const getFromOpenElisServerV2 = (url) => {
       if (res) {
         resolve(res);
       } else {
-        reject(new Error('Failed to fetch data'));
+        reject(new Error("Failed to fetch data"));
       }
     });
   });
 };
-
 
 export const convertAlphaNumLabNumForDisplay = (labNumber) => {
   if (!labNumber) {

@@ -90,14 +90,9 @@ public class NotificationSubscriptions {
 
     @Override
     public String toString() {
-        return "NotificationSubscription{" +
-                "userId=" + (user != null ? user.getId() : "null") +
-                ", pfEndpoint='" + pfEndpoint + '\'' +
-                ", pfP256dh='" + pfP256dh + '\'' +
-                ", pfAuth='" + pfAuth + '\'' +
-                ", user=" + (user != null ? user.toString() : "null") +
-                ", title='" + title + '\'' +
-                ", message='" + message + '\'' +
-                '}';
+        return "NotificationSubscription{" + "userId=" + (user != null ? user.getId() : "null") + ", pfEndpoint='"
+                + pfEndpoint + '\'' + ", pfP256dh='" + pfP256dh + '\'' + ", pfAuth='" + pfAuth + '\'' + ", user="
+                + (user != null ? user.toString() : "null") + ", title='" + title + '\'' + ", message='" + message
+                + '\'' + '}';
     }
 }
