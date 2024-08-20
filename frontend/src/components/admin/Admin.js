@@ -28,6 +28,7 @@ import {
   Report,
   Bullhorn,
   User,
+  BatchJob,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -52,6 +53,7 @@ import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModif
 import UserManagement from "./userManagement/UserManagement";
 import UserAddModify from "./userManagement/UserAddModify";
 import ManageMethod from "./testManagement/ManageMethod.js";
+import BatchTestReassignmentAndCancelation from "./BatchTestReassignmentAndCancellation/BatchTestReassignmentAndCancelation.js";
 
 function Admin() {
   const intl = useIntl();
@@ -122,6 +124,9 @@ function Admin() {
           </SideNavLink>
           <SideNavLink renderIcon={User} href="#userManagement">
             <FormattedMessage id="unifiedSystemUser.browser.title" />
+          </SideNavLink>
+          <SideNavLink renderIcon={BatchJob} href="#batchTestReassignment">
+            <FormattedMessage id="configuration.batch.test.reassignment" />
           </SideNavLink>
           <SideNavMenu
             title={intl.formatMessage({ id: "sidenav.label.admin.menu" })}
@@ -240,6 +245,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#userManagement">
         <UserManagement />
+      </PathRoute>
+      <PathRoute path="#batchTestReassignment">
+        <BatchTestReassignmentAndCancelation />
       </PathRoute>
       <PathRoute path="#userEdit">
         <UserAddModify />
