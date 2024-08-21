@@ -1314,5 +1314,10 @@
   "label.orderable": "Orderable",
   "test.notifyResults": "Notify Patient Of Results",
   "test.inLabOnly": "In Lab Only",
-  "label.test.display.order": "Test display order"
+  "label.test.display.order": "Test display order",
+  "label.sex.dependent": "Sex dependent",
+  "label.critical.range": "Critical range",
+  "label.reporting.range": "Reporting range",
+  "sample.type.and.test.sort.order": "Sample type and test sort order",
+  "label.existing.test.sets": "Existing test sets"
 }

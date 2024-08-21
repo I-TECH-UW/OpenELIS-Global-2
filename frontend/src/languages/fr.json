@@ -1218,5 +1218,10 @@
   "label.orderable": "Commandable",
   "test.notifyResults": "Notifier le patient des résultats",
   "test.inLabOnly": "Uniquement en laboratoire",
-  "label.test.display.order": "Ordre d'affichage du test"
+  "label.test.display.order": "Ordre d'affichage du test",
+  "label.sex.dependent": "Dépendant du sexe",
+  "label.critical.range": "Plage critique",
+  "label.reporting.range": "Plage de rapport",
+  "sample.type.and.test.sort.order": "Ordre de tri des types d'échantillons et des tests",
+  "label.existing.test.sets": "Ensembles de tests existants"
 }
