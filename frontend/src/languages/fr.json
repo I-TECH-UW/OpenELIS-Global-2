@@ -1138,5 +1138,6 @@
   "label.test.batch.cancel.start": "Vous avez choisi d'annuler le test",
   "label.test.batch.cancel.finish": "Cette action est irréversible.",
   "label.test.batch.replace.start": "Les tests suivants",
-  "label.test.batch.no.change.finish": "ne seront pas modifiés."
+  "label.test.batch.no.change.finish": "ne seront pas modifiés.",
+  "notification.slideover.button.unsubscribe": "Se désabonner"
 }

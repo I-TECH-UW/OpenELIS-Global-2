@@ -47,7 +47,7 @@ self.addEventListener("push", (event) => {
 
     event.waitUntil(
       self.registration.showNotification(
-        "OpenELIS Test Message Received",
+        "OpenELIS Message Received",
         notificationOptions,
       ),
     );

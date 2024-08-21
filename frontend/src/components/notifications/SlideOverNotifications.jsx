@@ -1,4 +1,10 @@
-import { Renew, NotificationFilled, Email, Filter } from "@carbon/icons-react";
+import {
+  Renew,
+  NotificationFilled,
+  Email,
+  Filter,
+  NotificationOff,
+} from "@carbon/icons-react";
 import {
   formatTimestamp,
   getFromOpenElisServer,
@@ -7,7 +13,7 @@ import {
 } from "../utils/Utils";
 import Spinner from "../common/Sprinner";
 import { FormattedMessage, useIntl } from "react-intl";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function SlideOverNotifications(props) {
   const intl = useIntl();
@@ -16,6 +22,34 @@ export default function SlideOverNotifications(props) {
     loading: false,
   });
 
+  const [subscriptionState, setSubscriptionState] = useState(null);
+
+  const intialSubscriptionState = async () => {
+    try {
+      const res = await getFromOpenElisServerV2("/rest/notification/pnconfig");
+      const reg = await navigator.serviceWorker.ready;
+      const subscription = await reg.pushManager.getSubscription();
+      if (!subscription && !res?.pf_endpoint) {
+        setSubscriptionState("NotSubscribed");
+        console.log("NotSubscribed");
+      } else if (subscription?.endpoint === res?.pfEndpoint) {
+        setSubscriptionState("SubscribedOnThisDevice");
+        console.log("SubscribedOnThisDevice");
+      } else {
+        console.log("subscription?.endpoint", subscription?.endpoint);
+
+        setSubscriptionState("SubscribedOnAnotherDevice");
+        console.log("SubscribedOnAnotherDevice");
+      }
+    } catch (error) {
+      console.error("Error checking subscription status:", error);
+      setIsSubscribed("Error");
+    }
+  };
+
+  useEffect(() => {
+    intialSubscriptionState();
+  }, []);
   async function subscribe() {
     try {
       // Set the loading state
@@ -203,12 +237,20 @@ export default function SlideOverNotifications(props) {
                 iconLoading.loading == true &&
                 iconLoading.icon == "NOTIFICATION" ? (
                   <Spinner />
+                ) : subscriptionState == "SubscribedOnThisDevice" ? (
+                  <NotificationOff />
                 ) : (
                   <NotificationFilled />
                 ),
-              label: intl.formatMessage({
-                id: "notification.slideover.button.subscribe",
-              }),
+              label:
+                subscriptionState &&
+                subscriptionState == "SubscribedOnThisDevice"
+                  ? intl.formatMessage({
+                      id: "notification.slideover.button.unsubscribe",
+                    })
+                  : intl.formatMessage({
+                      id: "notification.slideover.button.subscribe",
+                    }),
               onClick: async () => {
                 await subscribe();
               },
