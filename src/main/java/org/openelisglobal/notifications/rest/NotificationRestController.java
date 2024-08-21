@@ -112,25 +112,19 @@ public class NotificationRestController {
 
     }
 
-    // @GetMapping("/notification/testpush")
-    // public ResponseEntity<?> testPushNotification() {
+    @GetMapping("/notification/pnconfig")
+    public ResponseEntity<?> getSubscriptionDetails(HttpServletRequest request) {
+        String sysUserId = getSysUserId(request);
+        NotificationSubscriptions ns = notificationSubscriptionDAO
+                .getNotificationSubscriptionByUserId(Long.valueOf(sysUserId));
 
-    // // Fetch user and subscription
-    // SystemUser user = systemUserService.getUserById("111");
-    // NotificationSubscriptions ns =
-    // notificationSubscriptionDAO.getNotificationSubscriptionByUserId(Long.valueOf(111));
+        if (ns == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subscription not found");
+        }
 
-    // String title = "Test Notification";
-    // String body = "This is a test notification";
-    // String url = "https://example.com";
+        return ResponseEntity.ok().body(ns);
 
-    // if (ns.getPfAuth() == null || ns.getPfP256dh() == null || ns.getPfEndpoint()
-    // == null) {
-    // return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subscription not
-    // found");
-    // }
-
-    // }
+    }
 
     @PutMapping("/notification/markasread/{id}")
     public ResponseEntity<?> markNotificationAsRead(@PathVariable String id) {
@@ -178,10 +172,6 @@ public class NotificationRestController {
 
         // Set the user entity directly
         notificationSubscription.setUser(user);
-
-        System.out.println("userId 1 " + sysUserId);
-        System.out.println("User ID 3 " + user.getId());
-        System.out.println("User ID 4 from notification " + notificationSubscription.getUser().getId());
 
         notificationSubscriptionDAO.saveOrUpdate(notificationSubscription);
 
