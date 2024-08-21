@@ -24,6 +24,11 @@ import {
   Stack,
   TextInput,
   Checkbox,
+  Row,
+  FlexGrid,
+  Tag,
+  UnorderedList,
+  ListItem,
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
@@ -99,11 +104,17 @@ function TestAdd() {
       value: "",
     },
   ]);
+  const [sampleTestTypeToGetTagList, setSampleTestTypeToGetTagList] = useState(
+    [],
+  );
   const [selectedSampleType, setSelectedSampleType] = useState([{}]);
   const [selectedSampleTypeResp, setSelectedSampleTypeResp] = useState([{}]);
-  const [sampleTypeConfirmationPage, setSampleTypeConfirmationPage] =
-    useState(true);
+  const [groupedDictionaryList, setGroupedDictionaryList] = useState([]);
+  const [dictionaryList, setDictionaryList] = useState([]);
+  const [sampleTypeSetupPage, setSampleTypeSetupPage] = useState(true);
   const [rangeSetupPage, setRangeSetupPage] = useState(true);
+  const [existingTestSetupPage, setExistingTestSetupPage] = useState(true);
+  const [finalSaveConfirmation, setFinalSaveConfirmation] = useState(true);
   const [jsonWad, setJsonWad] = useState(
     // {
     //   testNameEnglish: "aasdf",
@@ -111,7 +122,7 @@ function TestAdd() {
     //   testReportNameEnglish: "aasdf",
     //   testReportNameFrench: "asdf",
     //   testSection: "56",
-    //   panels: "[]",
+    //   panels: [{ id: "1" }, { id: "2" }],
     //   uom: "1",
     //   loinc: "asdf",
     //   resultType: "4",
@@ -131,6 +142,10 @@ function TestAdd() {
     //   significantDigits: "",
     //   resultLimits:
     //     '[{"highAgeRange": "30", "gender": false, "lowNormal": "-Infinity", "highNormal": "Infinity"}, {"highAgeRange": "365", "gender": false, "lowNormal": "-Infinity", "highNormal": "Infinity"}, {"highAgeRange": "1825", "gender": false, "lowNormal": "-Infinity", "highNormal": "Infinity"}, {"highAgeRange": "5110", "gender": false, "lowNormal": "-Infinity", "highNormal": "Infinity"}, {"highAgeRange": "Infinity", "gender": false, "lowNormal": "-Infinity", "highNormal": "Infinity"}]',
+    //   dictionary:
+    //     '[{"value": "824", "qualified": "N"}, {"value": "826", "qualified": "N"}, {"value": "825", "qualified": "N"}, {"value": "822", "qualified": "N"}, {"value": "829", "qualified": "N"}, {"value": "821", "qualified": "N"}]',
+    //   dictionaryReference: "824",
+    //   defaultTestResult: "825",
     // },
     {
       testNameEnglish: "",
@@ -142,12 +157,21 @@ function TestAdd() {
       uom: "",
       loinc: "",
       resultType: "",
-      orderable: "",
+      orderable: "Y",
       notifyResults: "",
       inLabOnly: "",
       antimicrobialResistance: "",
-      active: "",
+      active: "Y",
       sampleTypes: [],
+      lowValid: "",
+      highValid: "",
+      lowReportingRange: "",
+      highReportingRange: "",
+      lowCritical: "",
+      highCritical: "",
+      significantDigits: "",
+      resultLimits:
+        '[{"highAgeRange": "30", "gender": false, "lowNormal": "-Infinity", "highNormal": "Infinity"}, {"highAgeRange": "365", "gender": false, "lowNormal": "-Infinity", "highNormal": "Infinity"}, {"highAgeRange": "1825", "gender": false, "lowNormal": "-Infinity", "highNormal": "Infinity"}, {"highAgeRange": "5110", "gender": false, "lowNormal": "-Infinity", "highNormal": "Infinity"}, {"highAgeRange": "Infinity", "gender": false, "lowNormal": "-Infinity", "highNormal": "Infinity"}]',
     },
   );
 
@@ -186,6 +210,14 @@ function TestAdd() {
       setSampleTypeList([
         { id: "0", value: "Select Multiple" },
         ...(testAdd.sampleTypeList || []),
+      ]);
+      setGroupedDictionaryList([
+        // { id: "0", value: "Select Multiple" },
+        ...(testAdd.groupedDictionaryList || []),
+      ]);
+      setDictionaryList([
+        // { id: "0", value: "Select Multiple" },
+        ...(testAdd.dictionaryList || []),
       ]);
     }
   }, [testAdd]);
@@ -270,34 +302,179 @@ function TestAdd() {
   }
 
   function handleAntimicrobialResistance(e) {
-    setJsonWad((prev) => ({ ...prev, antimicrobialResistance: "" }));
+    setJsonWad((prev) => ({
+      ...prev,
+      antimicrobialResistance: e.target.checked ? "Y" : "N",
+    }));
   }
   function handleIsActive(e) {
-    setJsonWad((prev) => ({ ...prev, active: "" }));
+    setJsonWad((prev) => ({ ...prev, active: e.target.checked ? "Y" : "N" }));
   }
   function handleOrderable(e) {
-    setJsonWad((prev) => ({ ...prev, orderable: "" }));
+    setJsonWad((prev) => ({
+      ...prev,
+      orderable: e.target.checked ? "Y" : "N",
+    }));
   }
   function handleNotifyPatientofResults(e) {
-    setJsonWad((prev) => ({ ...prev, notifyResults: "" }));
+    setJsonWad((prev) => ({
+      ...prev,
+      notifyResults: e.target.checked ? "Y" : "N",
+    }));
   }
   function handleInLabOnly(e) {
-    setJsonWad((prev) => ({ ...prev, inLabOnly: "" }));
+    setJsonWad((prev) => ({
+      ...prev,
+      inLabOnly: e.target.checked ? "Y" : "N",
+    }));
   }
 
   function nextButton() {
-    setSampleTypeConfirmationPage(true);
+    setSampleTypeSetupPage(true);
   }
 
   function finalButton() {
     setRangeSetupPage(true);
   }
 
-  // const handelPanelSelectSetTag = (e) => {
-  //   setPanelListTag((prev)=>([..prev,
-  //     index : e.target.value
-  //   ]))
-  // }
+  const handelPanelSelectSetTag = (e) => {
+    const selectedId = e.target.value;
+    const selectedValue = e.target.options[e.target.selectedIndex].text;
+
+    setPanelListTag((prevTags) => {
+      const isTagPresent = prevTags.some((tag) => tag.id === selectedId);
+      if (isTagPresent) return prevTags;
+
+      const newTag = { id: selectedId, value: selectedValue };
+      const updatedTags = [...prevTags, newTag];
+
+      const updatedPanels = [...updatedTags.map((tag) => ({ id: tag.id }))];
+      setJsonWad((prevJsonWad) => ({
+        ...prevJsonWad,
+        panels: updatedPanels,
+      }));
+
+      return updatedTags;
+    });
+  };
+
+  const handlePanelRemoveTag = (idToRemove) => {
+    setPanelListTag((prevTags) => {
+      const updatedTags = prevTags.filter((tag) => tag.id !== idToRemove);
+
+      const updatedPanels = [...updatedTags.map((tag) => ({ id: tag.id }))];
+      setJsonWad((prevJsonWad) => ({
+        ...prevJsonWad,
+        panels: updatedPanels,
+      }));
+
+      return updatedTags;
+    });
+  };
+
+  // const handleSampleTypeListSelectIdTestTag = (e) => {
+  //   const selectedTestId = e.target.value;
+  //   const testName = e.target.options[e.target.selectedIndex].text;
+
+  //   const existingIndex = sampleTestTypeToGetTagList.findIndex(
+  //     (item) => item.id === selectedTestId,
+  //   );
+
+  //   let updatedList;
+  //   if (existingIndex !== -1) {
+  //     updatedList = [...sampleTestTypeToGetTagList];
+  //     updatedList.splice(existingIndex, 1);
+  //     setSampleTestTypeToGetTagList(updatedList);
+  //   } else {
+  //     const selectedTest = {
+  //       id: selectedTestId,
+  //       name: testName,
+  //     };
+  //     updatedList = [...sampleTestTypeToGetTagList, selectedTest];
+  //     setSampleTestTypeToGetTagList(updatedList);
+  //   }
+
+  //   const updatedReplace = updatedList.map((item) => item.id);
+  //   setJsonWad((prevJsonWad) => ({
+  //     ...prevJsonWad,
+  //     replace: updatedReplace,
+  //   }));
+  // };
+
+  const handleSampleTypeListSelectIdTestTag = (e) => {
+    const selectedId = e.target.value;
+    const selectedSampleType = sampleTypeList.find(
+      (type) => type.id === selectedId,
+    );
+
+    if (selectedSampleType) {
+      setSelectedSampleTypeList([
+        ...selectedSampleTypeList,
+        selectedSampleType,
+      ]);
+
+      setSampleTestTypeToGetTagList([
+        ...sampleTestTypeToGetTagList,
+        selectedSampleType,
+      ]);
+    }
+  };
+
+  function handleRemoveSampleTypeListSelectIdTestTag(indexToRemove) {
+    setSampleTestTypeToGetTagList((prevTags) => {
+      const updatedTags = prevTags.filter(
+        (_, index) => index !== indexToRemove,
+      );
+
+      const updatedReplace = updatedTags.map((item) => item.id);
+      setJsonWad((prevJsonWad) => ({
+        ...prevJsonWad,
+        replace: updatedReplace,
+      }));
+
+      return updatedTags;
+    });
+  }
+
+  function testAddPostCall() {
+    setIsLoading(true);
+    postToOpenElisServerJsonResponse(
+      `/rest/TestAdd`,
+      JSON.stringify(jsonWad),
+      (res) => {
+        testAddPostCallback(res);
+      },
+    );
+  }
+
+  function testAddPostCallback(res) {
+    if (res) {
+      setIsLoading(false);
+      addNotification({
+        title: intl.formatMessage({
+          id: "notification.title",
+        }),
+        message: intl.formatMessage({
+          id: "notification.user.post.save.success",
+        }),
+        kind: NotificationKinds.success,
+      });
+      setNotificationVisible(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 200);
+    } else {
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "server.error.msg" }),
+      });
+      setNotificationVisible(true);
+      setTimeout(() => {
+        window.location.reload();
+      }, 200);
+    }
+  }
 
   if (!isLoading) {
     return (
@@ -354,6 +531,7 @@ function TestAdd() {
                 <FormattedMessage id="english.label" />
                 <br />
                 <TextInput
+                  labelText=""
                   id="testNameEn"
                   value={jsonWad?.testNameEnglish}
                   onChange={testNameEn}
@@ -363,6 +541,7 @@ function TestAdd() {
                 <FormattedMessage id="french.label" />
                 <br />
                 <TextInput
+                  labelText=""
                   id="testNameFr"
                   value={jsonWad?.testNameFrench}
                   onChange={testNameFr}
@@ -389,6 +568,7 @@ function TestAdd() {
                 <FormattedMessage id="english.label" />
                 <br />
                 <TextInput
+                  labelText=""
                   id="reportingTestNameEn"
                   value={jsonWad?.reportingTestNameEn}
                   required
@@ -398,6 +578,7 @@ function TestAdd() {
                 <FormattedMessage id="french.label" />
                 <br />
                 <TextInput
+                  labelText=""
                   id="reportingTestNameFr"
                   value={jsonWad?.reportingTestNameFr}
                   required
@@ -409,8 +590,8 @@ function TestAdd() {
               <FormattedMessage id="field.panel" />
               <Select
                 id={`select-panel`}
-                onClick={() => {
-                  handelPanelSelectSetTag;
+                onChange={(e) => {
+                  handelPanelSelectSetTag(e);
                 }}
                 hideLabel
                 required
@@ -423,31 +604,28 @@ function TestAdd() {
                   />
                 ))}
               </Select>
-              {/* <div
+              <div
                 className={"select-panel"}
                 style={{ marginBottom: "1.188rem" }}
               >
-                {sampleTestTypeToGetTagList &&
-                sampleTestTypeToGetTagList.length ? (
+                {panelListTag && panelListTag.length ? (
                   <>
-                    {sampleTestTypeToGetTagList.map((section, index) => (
+                    {panelListTag.map((panel) => (
                       <Tag
                         filter
-                        key={`testTags_` + index}
-                        onClose={() =>
-                          handleRemoveSampleTypeListSelectIdTestTag(index)
-                        }
+                        key={`panelTags_${panel.id}`}
+                        onClose={() => handlePanelRemoveTag(panel.id)}
                         style={{ marginRight: "0.5rem" }}
                         type={"red"}
                       >
-                        {section.name}
+                        {panel.value}
                       </Tag>
                     ))}
                   </>
                 ) : (
                   <></>
                 )}
-              </div> */}
+              </div>
               <br />
               <FormattedMessage id="field.uom" />
               <Select
@@ -486,7 +664,12 @@ function TestAdd() {
               <div>
                 <FormattedMessage id="label.loinc" />
                 <br />
-                <TextInput required id="loinc" onChange={handelLonicChange} />
+                <TextInput
+                  labelText=""
+                  required
+                  id="loinc"
+                  onChange={handelLonicChange}
+                />
               </div>
               <br />
               <div>
@@ -495,24 +678,34 @@ function TestAdd() {
                     <FormattedMessage id="test.antimicrobialResistance" />
                   }
                   id="antimicrobial-resistance"
+                  onChange={handleAntimicrobialResistance}
+                  checked={jsonWad?.antimicrobialResistance === "Y"}
                 />
                 <Checkbox
                   labelText={
                     <FormattedMessage id="dictionary.category.isActive" />
                   }
                   id="is-active"
+                  onChange={handleIsActive}
+                  checked={jsonWad?.active === "Y"}
                 />
                 <Checkbox
                   labelText={<FormattedMessage id="label.orderable" />}
                   id="orderable"
+                  onChange={handleOrderable}
+                  checked={jsonWad?.orderable === "Y"}
                 />
                 <Checkbox
                   labelText={<FormattedMessage id="test.notifyResults" />}
                   id="notify-patient-of-results"
+                  onChange={handleNotifyPatientofResults}
+                  checked={jsonWad?.notifyResults === "Y"}
                 />
                 <Checkbox
                   labelText={<FormattedMessage id="test.inLabOnly" />}
                   id="in-lab-only"
+                  onChange={handleInLabOnly}
+                  checked={jsonWad?.inLabOnly === "Y"}
                 />
               </div>
             </Column>
@@ -538,64 +731,18 @@ function TestAdd() {
           <br />
           <hr />
           <br />
-          {sampleTypeConfirmationPage ? (
+          {sampleTypeSetupPage ? (
             <>
               <Grid fullWidth={true}>
-                <Column lg={4} md={8} sm={4}>
-                  <FormattedMessage id="sample.entry.project.testName" />
-                  <br />
-                  <FormattedMessage id="english.label" />
-                  {" : "}
-                  {jsonWad?.testNameEnglish}
-                  <br />
-                  <FormattedMessage id="french.label" />
-                  {" : "}
-                  {jsonWad?.testNameFrench}
-                  <br />
-                  <FormattedMessage id="reporting.label.testName" />
-                  <br />
-                  <FormattedMessage id="english.label" />
-                  {" : "}
-                  {jsonWad?.reportingTestNameEn}
-                  <br />
-                  <FormattedMessage id="french.label" />
-                  {" : "}
-                  {jsonWad?.reportingTestNameFr}
-                  <br />
-                  <FormattedMessage id="test.section.label" />
-                  {selectedLabUnitList?.value}
-                  <br />
-                  <FormattedMessage id="field.panel" />
-                  {/* map the  {panelList[0].value} in and there values in line*/}
-                  <br />
-                  <FormattedMessage id="field.uom" />
-                  {selectedUomList?.value}
-                  <br />
-                  <FormattedMessage id="label.loinc" />
-                  {jsonWad?.loinc}
-                  <br />
-                  <FormattedMessage id="field.resultType" />
-                  {selectedResultTypeList.value}
-                  <br />
-                  <FormattedMessage id="test.antimicrobialResistance" />
-                  {jsonWad?.antimicrobialResistance}
-                  <br />
-                  <FormattedMessage id="dictionary.category.isActive" />
-                  {jsonWad?.active}
-                  <br />
-                  <FormattedMessage id="label.orderable" />
-                  {jsonWad?.orderable}
-                  <br />
-                  <FormattedMessage id="test.notifyResults" />
-                  {jsonWad?.notifyResults}
-                  <br />
-                  <FormattedMessage id="test.inLabOnly" />
-                  {jsonWad?.inLabOnly}
-                </Column>
-                <Column lg={4} md={8} sm={4}>
+                <Column lg={6} md={8} sm={4}>
                   <FormattedMessage id="sample.type" />
                   <br />
-                  <Select id={`select-sample-type`} hideLabel required>
+                  <Select
+                    id={`select-sample-type`}
+                    hideLabel
+                    required
+                    onChange={(e) => handleSampleTypeListSelectIdTestTag(e)}
+                  >
                     {sampleTypeList?.map((test) => (
                       <SelectItem
                         key={test.id}
@@ -605,7 +752,7 @@ function TestAdd() {
                     ))}
                   </Select>
                   <br />
-                  {/* <div
+                  <div
                     className={"select-sample-type"}
                     style={{ marginBottom: "1.188rem" }}
                   >
@@ -615,7 +762,7 @@ function TestAdd() {
                         {sampleTestTypeToGetTagList.map((section, index) => (
                           <Tag
                             filter
-                            key={`testTags_` + index}
+                            key={`testTags_${index}`}
                             onClose={() =>
                               handleRemoveSampleTypeListSelectIdTestTag(index)
                             }
@@ -629,14 +776,16 @@ function TestAdd() {
                     ) : (
                       <></>
                     )}
-                  </div> */}
+                  </div>
                 </Column>
-                <Column lg={8} md={8} sm={4}>
+                <Column lg={10} md={8} sm={4}>
                   <Section>
                     <Section>
-                      <Heading>
-                        <FormattedMessage id="label.test.display.order" />
-                      </Heading>
+                      <Section>
+                        <Heading>
+                          <FormattedMessage id="label.test.display.order" />
+                        </Heading>
+                      </Section>
                     </Section>
                   </Section>
                   <br />
@@ -659,29 +808,281 @@ function TestAdd() {
                   </Button>
                 </Column>
               </Grid>
+              <br />
+              <hr />
+              <br />
             </>
           ) : (
             <></>
           )}
-          <br />
-          <hr />
-          <br />
           {rangeSetupPage ? (
             <>
               <Grid fullWidth={true}>
-                <Column lg={16} md={8} sm={4}></Column>
+                <Column lg={16} md={8} sm={4}>
+                  <Section>
+                    <Section>
+                      <Section>
+                        <Heading>
+                          <FormattedMessage id="label.button.range" />
+                        </Heading>
+                      </Section>
+                    </Section>
+                  </Section>
+                </Column>
+              </Grid>
+              <br />
+              <hr />
+              <br />
+              <Grid fullWidth={true} className="gridBoundary">
+                <Column lg={16} md={8} sm={4}>
+                  <FormattedMessage id="field.ageRange" />
+                  <hr />
+                </Column>
+                <Column lg={8} md={4} sm={4}>
+                  <FormattedMessage id="field.normalRange" />
+                  <hr />
+                  <div style={{ display: "flex", gap: "4px" }}>
+                    <TextInput
+                      id="field.normalRange0"
+                      labelText=""
+                      hideLabel
+                      required
+                    />
+                    <TextInput
+                      id="field.normalRange1"
+                      labelText=""
+                      hideLabel
+                      required
+                    />
+                  </div>
+                </Column>
+                <Column lg={8} md={4} sm={4}>
+                  <FormattedMessage id="label.reporting.range" />
+                  <hr />
+                  <div style={{ display: "flex", gap: "4px" }}>
+                    <TextInput
+                      id="label.reporting.range0"
+                      labelText=""
+                      hideLabel
+                      required
+                    />
+                    <TextInput
+                      id="label.reporting.range1"
+                      labelText=""
+                      hideLabel
+                      required
+                    />
+                  </div>
+                </Column>
+                <Column lg={8} md={4} sm={4}>
+                  <FormattedMessage id="field.validRange" />
+                  <hr />
+                  <div style={{ display: "flex", gap: "4px" }}>
+                    <TextInput
+                      id="field.validRange0"
+                      labelText=""
+                      hideLabel
+                      required
+                    />
+                    <TextInput
+                      id="field.validRange1"
+                      labelText=""
+                      hideLabel
+                      required
+                    />
+                  </div>
+                </Column>
+                <Column lg={8} md={4} sm={4}>
+                  <FormattedMessage id="label.critical.range" />
+                  <hr />
+                  <div style={{ display: "flex", gap: "4px" }}>
+                    <TextInput
+                      id="label.critical.range0"
+                      labelText=""
+                      hideLabel
+                      required
+                    />
+                    <TextInput
+                      id="label.critical.range1"
+                      labelText=""
+                      hideLabel
+                      required
+                    />
+                  </div>
+                </Column>
+              </Grid>
+              <br />
+              <hr />
+              <br />
+            </>
+          ) : (
+            <></>
+          )}
+          {existingTestSetupPage ? (
+            <>
+              <Grid fullWidth={true}>
+                <Column lg={16} md={8} sm={4}>
+                  <Section>
+                    <Section>
+                      <Section>
+                        <Heading>
+                          <FormattedMessage id="label.existing.test.sets" />
+                        </Heading>
+                      </Section>
+                    </Section>
+                  </Section>
+                  <br />
+                  <hr />
+                  <br />
+                </Column>
+                <Column lg={16} md={8} sm={4}>
+                
+                </Column>
               </Grid>
             </>
           ) : (
             <></>
           )}
-          <br />
+          {finalSaveConfirmation ? (
+            <>
+              <Grid fullWidth={true}>
+                <Column lg={6} md={8} sm={4}>
+                  <FormattedMessage id="sample.entry.project.testName" />
+                  <br />
+                  <FormattedMessage id="english.label" />
+                  {" : "}
+                  {jsonWad?.testNameEnglish}
+                  <br />
+                  <FormattedMessage id="french.label" />
+                  {" : "}
+                  {jsonWad?.testNameFrench}
+                  <br />
+                  <FormattedMessage id="reporting.label.testName" />
+                  <br />
+                  <FormattedMessage id="english.label" />
+                  {" : "}
+                  {jsonWad?.reportingTestNameEn}
+                  <br />
+                  <FormattedMessage id="french.label" />
+                  {" : "}
+                  {jsonWad?.reportingTestNameFr}
+                  <br />
+                  <FormattedMessage id="test.section.label" />
+                  {" : "}
+                  {selectedLabUnitList?.value}
+                  <br />
+                  <FormattedMessage id="field.panel" />
+                  {" : "}
+                  {/* map the  {panelList[0].value} in and there values in line*/}
+                  {panelListTag.length > 0 ? (
+                    <UnorderedList>
+                      {panelListTag.map((tag) => (
+                        <div
+                          key={tag.id}
+                          //  style={{ marginRight: "0.5rem" }}
+                        >
+                          <ListItem>{tag.value}</ListItem>
+                        </div>
+                      ))}
+                    </UnorderedList>
+                  ) : (
+                    <></>
+                  )}
+                  <br />
+                  <FormattedMessage id="field.uom" />
+                  {" : "}
+                  {selectedUomList?.value}
+                  <br />
+                  <FormattedMessage id="label.loinc" />
+                  {" : "}
+                  {jsonWad?.loinc}
+                  <br />
+                  <FormattedMessage id="field.resultType" />
+                  {" : "}
+                  {selectedResultTypeList.value}
+                  <br />
+                  <FormattedMessage id="test.antimicrobialResistance" />
+                  {" : "}
+                  {jsonWad?.antimicrobialResistance}
+                  <br />
+                  <FormattedMessage id="dictionary.category.isActive" />
+                  {" : "}
+                  {jsonWad?.active}
+                  <br />
+                  <FormattedMessage id="label.orderable" />
+                  {" : "}
+                  {jsonWad?.orderable}
+                  <br />
+                  <FormattedMessage id="test.notifyResults" />
+                  {" : "}
+                  {jsonWad?.notifyResults}
+                  <br />
+                  <FormattedMessage id="test.inLabOnly" />
+                  {" : "}
+                  {jsonWad?.inLabOnly}
+                </Column>
+                <Column lg={10} md={8} sm={4}>
+                  <FormattedMessage id="sample.type.and.test.sort.order" />
+                  {/* Mapp the combbination of the selecte[sampleType] & tests of [sampleType] in sorted order */}
+                  <br />
+                  {selectedSampleTypeList.length > 0 ? (
+                    <UnorderedList>
+                      {selectedSampleTypeList.map((type, index) => (
+                        <div key={`selectedSampleType_${index}`}>
+                          <ListItem>{type.value}</ListItem>
+                        </div>
+                      ))}
+                    </UnorderedList>
+                  ) : (
+                    <></>
+                  )}
+                </Column>
+              </Grid>
+              <br />
+              <hr />
+              <br />
+            </>
+          ) : (
+            <></>
+          )}
+          <Grid fullWidth={true}>
+            <Column lg={16} md={8} sm={4}>
+              <Button
+                disabled={!finalSaveConfirmation}
+                onClick={() => {
+                  setJsonWad(JSON.stringify(jsonWad));
+                  testAddPostCall();
+                }}
+                type="button"
+              >
+                <FormattedMessage id="label.button.submit" />
+              </Button>{" "}
+              <Button
+                onClick={() =>
+                  window.location.assign(
+                    "/MasterListsPage#testManagementConfigMenu",
+                  )
+                }
+                kind="tertiary"
+                type="button"
+              >
+                <FormattedMessage id="label.button.cancel" />
+              </Button>
+            </Column>
+          </Grid>
           <button
             onClick={() => {
               console.log(testAdd);
             }}
           >
             testAdd
+          </button>
+          <button
+            onClick={() => {
+              console.log(jsonWad);
+            }}
+          >
+            jsonWad
           </button>
         </div>
       </div>
