@@ -43,7 +43,8 @@ export default function SlideOverNotifications(props) {
       }
     } catch (error) {
       console.error("Error checking subscription status:", error);
-      setIsSubscribed("Error");
+      setSubscriptionState("NotSubscribed")
+    
     }
   };
 
