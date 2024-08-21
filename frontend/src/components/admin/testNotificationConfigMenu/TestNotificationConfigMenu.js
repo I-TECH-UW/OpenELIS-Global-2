@@ -105,6 +105,9 @@ function TestNotificationConfigMenu() {
       setTestNotificationConfigMenuDataPost((prevTestNotificationDataPost) => ({
         ...prevTestNotificationDataPost,
         formMethod: testNotificationConfigMenuData.formMethod,
+        // formAction: testNotificationConfigMenuData.formAction,
+        // formName: testNotificationConfigMenuData.formName,
+        // config: testNotificationConfigMenuData.config,
         cancelAction: testNotificationConfigMenuData.cancelAction,
         submitOnCancel: testNotificationConfigMenuData.submitOnCancel,
         cancelMethod: testNotificationConfigMenuData.cancelMethod,
@@ -135,8 +138,8 @@ function TestNotificationConfigMenu() {
   function testNotificationConfigMenuSavePostCall() {
     setLoading(true);
     postToOpenElisServerJsonResponse(
-      `/rest/TestNotificationConfig`,
-      JSON.stringify(testNotificationConfigMenuDataPost),
+      `/rest/TestNotificationConfigMenu`,
+      JSON.stringify(testNotificationConfigMenuDataPost.menuList),
       (res) => {
         testNotificationConfigMenuSavePostCallBack(res);
       },

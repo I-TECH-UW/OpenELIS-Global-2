@@ -53,8 +53,9 @@ public class TestNotificationConfigMenuRestController extends BaseMenuController
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
         TestNotificationConfigMenuForm form = new TestNotificationConfigMenuForm();
         // request.setAttribute("menuDefinition", "TestNotificationMenuDefinition");
-        String forward = performMenuAction(form, request);
+        // String forward = performMenuAction(form, request);
         // return findForward(forward, form);
+        form.setMenuList(createMenuList(form, request));
         return form;
     }
 
