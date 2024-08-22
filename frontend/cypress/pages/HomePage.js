@@ -161,7 +161,7 @@ class HomePage {
     cy.get("#menu_resultvalidation").click();
     cy.get('#menu_accession_validation_range ').click();
     return new Validation();
-    
+  }  
   goToPathologyDashboard() {
     this.openNavigationMenu();
     cy.get("#menu_pathology_dropdown").click();
