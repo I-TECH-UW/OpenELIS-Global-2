@@ -93,13 +93,11 @@ export default function SlideOverNotifications(props) {
       // Check if service workers are supported
       if (!("serviceWorker" in navigator)) {
         throw new Error("Service workers are not supported in this browser.");
-        return;
       }
 
       // Check if push messaging is supported
       if (!("PushManager" in window)) {
         throw new Error("Push messaging is not supported in this browser.");
-        return;
       }
 
       // Register the service worker if not already registered
@@ -121,7 +119,6 @@ export default function SlideOverNotifications(props) {
         throw new Error(
           "Failed to retrieve public key from server: " + error.message,
         );
-        return;
       });
 
       // Convert the public key to a Uint8Array
@@ -135,7 +132,6 @@ export default function SlideOverNotifications(props) {
         })
         .catch((error) => {
           throw new Error("Push subscription failed: " + error.message);
-          return;
         });
 
       // Encode the subscription keys
