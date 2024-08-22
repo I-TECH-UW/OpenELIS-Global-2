@@ -28,13 +28,10 @@ public class RegionServiceTest extends BaseWebContextSensitiveTest {
     public void createRegion_shouldCreateNewRegion() throws Exception {
         String regionName = "Midwest";
         String regionId = "1";
-
         Region region = createRegion(regionName, regionId);
-
         Assert.assertEquals(0, regionService.getAll().size());
         String savedRegionId = regionService.insert(region);
         Region savedRegion = regionService.get(savedRegionId);
-
         Assert.assertEquals(1, regionService.getAll().size());
         Assert.assertEquals(regionName, savedRegion.getRegion());
         Assert.assertNotNull(savedRegion.getId());
@@ -44,16 +41,12 @@ public class RegionServiceTest extends BaseWebContextSensitiveTest {
     public void updateRegion_shouldUpdateRegionInformation() throws Exception {
         String regionName = "Northeast";
         String regionId = "2";
-
         Region region = createRegion(regionName, regionId);
         String savedRegionId = regionService.insert(region);
         Region savedRegion = regionService.get(savedRegionId);
-
         savedRegion.setRegion("Southeast");
         regionService.update(savedRegion);
-
         Region updatedRegion = regionService.get(savedRegionId);
-
         Assert.assertEquals("Southeast", updatedRegion.getRegion());
     }
 
@@ -62,7 +55,6 @@ public class RegionServiceTest extends BaseWebContextSensitiveTest {
         Region region = new Region();
         region.setRegion("Southwest");
         regionService.insert(region);
-
         Assert.assertEquals(1, regionService.getAll().size());
     }
 
@@ -71,11 +63,8 @@ public class RegionServiceTest extends BaseWebContextSensitiveTest {
         Region region = new Region();
         region.setRegion("Northwest");
         regionService.insert(region);
-
         Assert.assertEquals(1, regionService.getAll().size());
-
         regionService.delete(region);
-
         Assert.assertEquals(0, regionService.getAll().size());
     }
 
