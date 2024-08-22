@@ -1234,5 +1234,10 @@
   "label.test.batch.cancel.start": "You have selected to cancel the test",
   "label.test.batch.cancel.finish": "This is non-reversible.",
   "label.test.batch.replace.start": "The following",
-  "label.test.batch.no.change.finish": "tests will not be changed."
+  "label.test.batch.no.change.finish": "tests will not be changed.",
+  "notification.slideover.button.unsubscribe": "Unsubscribe",
+  "notification.slideover.button.unsubscribe.success": "Unsubscribed successfully",
+  "notification.slideover.button.unsubscribe.fail": "Unsubscribe failed",
+  "notification.slideover.button.subscribe.success": "Subscribed successfully",
+  "notification.slideover.button.subscribe.fail": "Subscribe failed"
 }

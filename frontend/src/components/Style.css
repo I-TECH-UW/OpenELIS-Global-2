@@ -508,7 +508,7 @@ button {
 }
 
 #mainHeader .cds--side-nav__link {
-  pointer-events: none
+  pointer-events: none;
 }
 
 @media screen and (max-width: 792px) {
