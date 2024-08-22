@@ -34,9 +34,7 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
         Menu menu = new Menu();
         menu.setElementId("testElement");
         menuItem.setMenu(menu);
-
         MenuItem savedItem = menuService.save(menuItem);
-
         Assert.assertNotNull(savedItem);
     }
 
@@ -47,16 +45,12 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
         Menu menu1 = new Menu();
         menu1.setElementId("testElement1");
         menuItem1.setMenu(menu1);
-
         MenuItem menuItem2 = new MenuItem();
         Menu menu2 = new Menu();
         menu2.setElementId("testElement2");
         menuItem2.setMenu(menu2);
-
         List<MenuItem> menuItems = List.of(menuItem1, menuItem2);
-
         List<MenuItem> savedItems = menuService.save(menuItems);
-
         Assert.assertNotNull(savedItems);
         Assert.assertEquals(2, savedItems.size());
     }
@@ -70,16 +64,13 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
         activeMenu.setIsActive(true);
         activeItem.setMenu(activeMenu);
         menuService.save(activeItem);
-
         MenuItem inactiveItem = new MenuItem();
         Menu inactiveMenu = new Menu();
         inactiveMenu.setElementId("inactiveElement");
         inactiveMenu.setIsActive(false);
         inactiveItem.setMenu(inactiveMenu);
         menuService.save(inactiveItem);
-
         List<Menu> activeMenus = menuService.getAllActiveMenus();
-
         Assert.assertNotNull(activeMenus);
         Assert.assertFalse(activeMenus.isEmpty());
         Assert.assertTrue(activeMenus.stream().allMatch(Menu::getIsActive));
@@ -88,7 +79,6 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
     @Test
     public void getAdminMenuItems_shouldReturnAdminMenuItems() {
         AdminMenuForm form = new AdminMenuForm();
-
         List<AdminMenuItem> adminMenuItems = new ArrayList<>();
         AdminMenuItem item1 = new AdminMenuItem();
         item1.setPath("/path1");
@@ -96,9 +86,7 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
         item2.setPath("/path2");
         adminMenuItems.add(item1);
         adminMenuItems.add(item2);
-
         form.setAdminMenuItems(adminMenuItems);
-
         List<AdminMenuItem> result = form.getAdminMenuItems();
         Assert.assertNotNull(result);
         Assert.assertEquals(2, result.size());
@@ -146,7 +134,6 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
     public void getLocalizedTitle_shouldReturnLocalizedTitle() {
         Menu menu = new Menu();
         menu.setDisplayKey("testDisplayKey");
-
         String title = menu.getLocalizedTitle();
         Assert.assertNotNull(title);
     }
@@ -155,7 +142,6 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
     public void getLocalizedTooltip_shouldReturnLocalizedTooltip() {
         Menu menu = new Menu();
         menu.setToolTipKey("testToolTipKey");
-
         String tooltip = menu.getLocalizedTooltip();
         Assert.assertNotNull(tooltip);
     }
