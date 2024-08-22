@@ -26,6 +26,7 @@ import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.common.valueholder.ValueHolderInterface;
+import org.openelisglobal.method.valueholder.Method;
 import org.openelisglobal.note.service.NoteObject;
 import org.openelisglobal.note.service.NoteServiceImpl.BoundTo;
 import org.openelisglobal.panel.valueholder.Panel;
@@ -81,6 +82,7 @@ public class Analysis extends BaseObject<String> implements NoteObject {
     private String sampleTypeName;
     private List<Analysis> children;
     private boolean correctedSincePatientReport;
+    private ValueHolderInterface method;
 
     public Analysis() {
         super();
@@ -90,6 +92,7 @@ public class Analysis extends BaseObject<String> implements NoteObject {
         parentAnalysis = new ValueHolder();
         parentResult = new ValueHolder();
         panel = new ValueHolder();
+        method = new ValueHolder();
     }
 
     @Override
@@ -496,5 +499,13 @@ public class Analysis extends BaseObject<String> implements NoteObject {
 
     public void setFhirUuid(UUID fhirUuid) {
         this.fhirUuid = fhirUuid;
+    }
+
+    public Method getMethod() {
+        return (Method) method.getValue();
+    }
+
+    public void setMethod(Method method) {
+        this.method.setValue(method);
     }
 }

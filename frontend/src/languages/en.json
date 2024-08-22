@@ -1229,5 +1229,20 @@
   "notification.invalid.loginName": "Please enter AlphaNumeric values without spaces only.",
   "notification.invalid.password": "Please enter password according to instructions.",
   "notification.invalid.confirm.password": "Your entered password is not same as above password.",
-  "notification.invalid.name": "Please enter Alphanumeric values only."
+  "notification.invalid.name": "Please enter Alphanumeric values only.",
+  "configuration.batch.test.reassignment": "Batch test reassignment and cancelation",
+  "label.button.ok": "Ok",
+  "label.currentTest": "Current test",
+  "label.replaceWith": "Replace with",
+  "label.includeInactiveTests": "Include inactive tests",
+  "label.cancel.test.no.replace": "Cancel test for lab numbers selected, do not assign a new test",
+  "label.checkedWillBeModified": "Checked lab no. will be modified",
+  "label.analysisNotStarted": "Analysis not started",
+  "label.rejectedByBiologist": "Rejected by biologist",
+  "label.rejectedByTechnician": "Rejected by technician",
+  "label.notValidated": "Not validated",
+  "label.test.batch.cancel.start": "You have selected to cancel the test",
+  "label.test.batch.cancel.finish": "This is non-reversible.",
+  "label.test.batch.replace.start": "The following",
+  "label.test.batch.no.change.finish": "tests will not be changed."
 }
