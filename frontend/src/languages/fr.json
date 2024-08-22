@@ -204,6 +204,7 @@
   "header.label.version": "Version:",
   "header.label.logout": "Déconnexion",
   "header.label.selectlocale": "Sélectionner la Langue",
+  "header.label.selectLab": "Sélectionner la Lab",
   "header.label.ARV": "ARV-initial",
   "header.label.followup": "ARV-suivi",
   "header.label.intialFollowup": "ARV -->Suivi initial-VL",

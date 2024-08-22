@@ -194,6 +194,7 @@
   "header.label.version": "Version:",
   "header.label.logout": "Logout",
   "header.label.selectlocale": "Select Locale",
+  "header.label.changeLab": "Select Lab",
   "banner.menu.home": "Home",
   "banner.menu.help": "Help",
   "banner.menu.reports": "Reports",
