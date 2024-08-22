@@ -18,24 +18,18 @@ import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.reports.action.implementation.reportBeans.WHONETCSVRoutineColumnBuilder.WHONetRow;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
-import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testreflex.action.util.TestReflexUtil;
-import org.openelisglobal.testreflex.service.TestReflexService;
-import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
 public class WHONetReportServiceImpl implements WHONetReportService {
 
-    @Autowired
-    private SampleService sampleService;
     @Autowired
     private AnalysisService analysisService;
     @Autowired
@@ -45,13 +39,7 @@ public class WHONetReportServiceImpl implements WHONetReportService {
     @Autowired
     private TestService testService;
     @Autowired
-    private TypeOfSampleService sampleTypeService;
-    @Autowired
-    private SampleItemService sampleItemService;
-    @Autowired
     private IStatusService statusService;
-    @Autowired
-    private TestReflexService testReflexService;
 
     private List<Integer> ANALYSIS_STATUS_IDS;
     private List<Integer> SAMPLE_STATUS_IDS;
@@ -112,20 +100,12 @@ public class WHONetReportServiceImpl implements WHONetReportService {
 
             // for every analysis in the sampleItem, find any that are a triggering
             // antimicrobial resistance analysis
-            System.out.println("analysises"
-                    + String.join(", ", analysises.stream().map(e -> e.getId()).collect(Collectors.toList())));
-
             for (Analysis potentialTriggerAnalysis : analysises) {
                 if (triggerTestIds.contains(potentialTriggerAnalysis.getTest().getId())) {
                     Analysis triggerAnalysis = potentialTriggerAnalysis;
                     // find the exact result that triggers further analysis
                     List<Result> results = resultService.getResultsByAnalysis(triggerAnalysis);
-                    System.out.println("results"
-                            + String.join(", ", results.stream().map(e -> e.getId()).collect(Collectors.toList())));
                     for (Result triggerResult : results) {
-                        System.out.println("triggerResult" + triggerResult.getId());
-                        System.out.println("testResult" + triggerResult.getTestResult().getId());
-
                         TestReflexUtil testReflexUtil = new TestReflexUtil();
 
                         // find the analysis that was triggered by the trigger test
@@ -145,7 +125,9 @@ public class WHONetReportServiceImpl implements WHONetReportService {
                                             DateUtil.convertTimestampToStringDate(sampleItem.getCollectionDate()),
                                             sampleItem.getTypeOfSample().getDescription(),
                                             reflexAnalysis.getTest().getName(),
-                                            resultService.getSimpleResultValue(triggerResult), ""));
+                                            resultService.getSimpleResultValue(triggerResult), "",
+                                            reflexAnalysis.getMethod() == null ? ""
+                                                    : reflexAnalysis.getMethod().getLocalizedValue()));
                                 } else {
                                     // else add the info of both tests/results
                                     for (Result reflexResult : reflexResults) {
@@ -157,7 +139,9 @@ public class WHONetReportServiceImpl implements WHONetReportService {
                                                 sampleItem.getTypeOfSample().getDescription(),
                                                 reflexAnalysis.getTest().getName(),
                                                 resultService.getSimpleResultValue(triggerResult),
-                                                resultService.getSimpleResultValue(reflexResult)));
+                                                resultService.getSimpleResultValue(reflexResult),
+                                                reflexAnalysis.getMethod() == null ? ""
+                                                        : reflexAnalysis.getMethod().getLocalizedValue()));
                                     }
                                 }
                             }
