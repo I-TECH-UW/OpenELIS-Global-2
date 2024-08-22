@@ -5,6 +5,7 @@ import ModifyOrderPage from "./ModifyOrderPage";
 import WorkPlan from "./WorkPlan";
 import NonConform from "./NonConformPage";
 import BatchOrderEntry from "./BatchOrderEntryPage";
+import DashBoardPage from "./DashBoard";
 
 class HomePage {
   constructor() {}
@@ -96,6 +97,20 @@ class HomePage {
     cy.get("#menu_nonconformity_dropdown").click();
     cy.get("#menu_non_conforming_corrective_actions_nav").click();
     return new NonConform();
+  }
+
+  goToPathologyDashboard() {
+    this.openNavigationMenu();
+    cy.get("#menu_pathology_dropdown").click();
+    cy.get("#menu_pathologydashboard_nav").click();
+    return new DashBoardPage();
+  }
+
+  goToImmunoChemistryDashboard() {
+    this.openNavigationMenu();
+    cy.get("#menu_immunochem_dropdown").click();
+    cy.get("#menu_immunochemdashboard_nav").click();
+    return new DashBoardPage();
   }
 }
 
