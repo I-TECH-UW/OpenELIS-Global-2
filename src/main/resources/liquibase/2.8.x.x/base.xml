@@ -20,6 +20,7 @@
   <include relativeToChangelogFile="true" file="loinc.xml" />
   <include relativeToChangelogFile="true" file="notifications.xml" />
   <include relativeToChangelogFile="true" file="sample_program_audit_trail.xml" />
+  <include relativeToChangelogFile="true" file="notification_subscriptions.xml" />
   <include relativeToChangelogFile="true" file="method.xml" />
 
 </databaseChangeLog>
