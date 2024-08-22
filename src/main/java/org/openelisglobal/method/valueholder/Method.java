@@ -135,4 +135,12 @@ public class Method extends EnumValueItemImpl {
     public void setLocalization(Localization localization) {
         this.localization.setValue(localization);
     }
+
+    public String getLocalizedValue() {
+        if (getLocalization() == null) {
+            return methodName;
+        } else {
+            return getLocalization().getLocalizedValue();
+        }
+    }
 }

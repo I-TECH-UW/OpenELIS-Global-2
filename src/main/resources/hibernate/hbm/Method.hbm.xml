@@ -1,6 +1,5 @@
 <?xml version="1.0"?>
-<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN"
-"http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
+<!DOCTYPE hibernate-mapping PUBLIC "-//Hibernate/Hibernate Mapping DTD 3.0//EN" "http://www.hibernate.org/dtd/hibernate-mapping-3.0.dtd">
 
 <hibernate-mapping>
     <class name="org.openelisglobal.method.valueholder.Method"
@@ -41,11 +40,14 @@
         </many-to-one>
 
         <!-- <set name="instrumentAnalytes" inverse="true"> <key> <column name="METHOD_ID"
-            precision="10" scale="0" /> </key> <one-to-many class="org.openelisglobal.instrumentanalyte.valueholder.InstrumentAnalyte"
+            precision="10" scale="0" /> </key> <one-to-many
+        class="org.openelisglobal.instrumentanalyte.valueholder.InstrumentAnalyte"
             /> </set> <set name="methodResults" inverse="true"> <key> <column name="METHOD_ID"
-            precision="10" scale="0" /> </key> <one-to-many class="org.openelisglobal.methodresult.valueholder.MethodResult"
+            precision="10" scale="0" /> </key> <one-to-many
+        class="org.openelisglobal.methodresult.valueholder.MethodResult"
             /> </set> <set name="methodAnalytes" inverse="true"> <key> <column name="METHOD_ID"
-            precision="10" scale="0" /> </key> <one-to-many class="org.openelisglobal.methodanalyte.valueholder.MethodAnalyte"
+            precision="10" scale="0" /> </key> <one-to-many
+        class="org.openelisglobal.methodanalyte.valueholder.MethodAnalyte"
             /> </set> <set name="tests" inverse="true"> <key> <column name="METHOD_ID"
             precision="10" scale="0" /> </key> <one-to-many class="org.openelisglobal.test.valueholder.Test"
             /> </set> -->
