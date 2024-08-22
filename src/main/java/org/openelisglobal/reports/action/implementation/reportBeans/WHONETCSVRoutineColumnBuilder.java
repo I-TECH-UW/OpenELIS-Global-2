@@ -17,25 +17,20 @@
  */
 package org.openelisglobal.reports.action.implementation.reportBeans;
 
+import java.sql.Date;
 import java.sql.SQLException;
 import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.Arrays;
-import java.util.Date;
 import java.util.List;
-import org.openelisglobal.analyte.service.AnalyteService;
-import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.observationhistorytype.service.ObservationHistoryTypeService;
-import org.openelisglobal.result.service.ResultService;
+import org.openelisglobal.reports.action.implementation.Report.DateRange;
+import org.openelisglobal.reports.service.WHONetReportService;
 import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.test.service.TestService;
-import org.openelisglobal.testresult.service.TestResultService;
 
 /**
  * @author pahill (pahill@uw.edu)
  * @since Mar 18, 2011
  */
-public abstract class WHONETCSVRoutineColumnBuilder {
+public class WHONETCSVRoutineColumnBuilder {
 
     public static class WHONetRow {
         private String nationalId;
@@ -50,12 +45,13 @@ public abstract class WHONETCSVRoutineColumnBuilder {
         private String antibiotic;
         private String organism;
         private String result;
+        private String method;
 
         private String delimeter = "\t";
 
         public WHONetRow(String nationalId, String firstName, String lastName, String sex, String birthdate,
                 String enteredDate, String labNo, String collectionDate, String sampleType, String antibiotic,
-                String organism, String result) {
+                String organism, String result, String method) {
             this.nationalId = nationalId;
             this.firstName = firstName;
             this.lastName = lastName;
@@ -68,115 +64,41 @@ public abstract class WHONETCSVRoutineColumnBuilder {
             this.antibiotic = antibiotic;
             this.organism = organism;
             this.result = result;
+            this.method = method;
         }
 
         public String getRow() {
             List<String> rowValues = Arrays.asList(nationalId, firstName, lastName, sex, birthdate, enteredDate, labNo,
-                    collectionDate, sampleType, antibiotic, organism, result);
+                    collectionDate, sampleType, antibiotic, organism, result, method);
             return String.join(delimeter, rowValues);
         }
     }
 
-    // these are used so we are not passing around strings in the methods that are
-    // appended to sql
-    // this is to cover any potential sql injection that could be introduced by a
-    // developer
-    protected enum SQLConstant {
-        DEMO("demo"), RESULT("result");
+    private List<WHONetRow> rows;
+    private int index = -1;
 
-        private final String nameInSql;
-
-        private SQLConstant(String name) {
-            nameInSql = name;
-        }
-
-        @Override
-        public String toString() {
-            return nameInSql;
-        }
-    }
-
-    protected static final SimpleDateFormat postgresDateFormat = new SimpleDateFormat("yyyy-MM-dd");
-    private static final SimpleDateFormat postgresDateTime = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
-
-    protected List<WHONetRow> rows;
-    protected int index = -1;
-
-    protected String eol = System.getProperty("line.separator");
-
-    protected ResultService resultService = SpringContext.getBean(ResultService.class);
-    private ObservationHistoryTypeService ohtService = SpringContext.getBean(ObservationHistoryTypeService.class);
-    private AnalyteService analyteService = SpringContext.getBean(AnalyteService.class);
-    protected TestService testService = SpringContext.getBean(TestService.class);
-    protected TestResultService testResultService = SpringContext.getBean(TestResultService.class);
+    private String eol = System.getProperty("line.separator");
+    private DateRange dateRange;
 
     /**
-     * The various ways that columns are converted for CSV export
-     *
-     * @author Paul A. Hill (pahill@uw.edu)
-     * @since Feb 1, 2011
+     * @param dateRange
+     * @param projectStr
      */
-    public enum Strategy {
-        DICT, // dictionary localized value
-        DICT_PLUS, // dictionary localized value or a string constant
-        DICT_RAW, // dictionary localized value, no attempts at trimming to show just code number.
-        DATE, // date (i.e. 01/01/2013)
-        DATE_TIME, // date with time (i.e. 01/01/2013 12:12:00)
-        NONE, GENDER, DROP_ZERO, TEST_RESULT, GEND_CD4, SAMPLE_STATUS, PROJECT, PROGRAM, // program defined in routine
-        // order.
-        LOG, // results is a real number, but display the log of it.
-        AGE_YEARS, AGE_MONTHS, AGE_WEEKS, DEBUG, CUSTOM, // special handling which is encapsulated in an instance of
-        // ICSVColumnCustomStrategy
-        BLANK // Will always be an empty string. Used when column is wanted but data is not
+    public WHONETCSVRoutineColumnBuilder(DateRange dateRange) {
+        this.dateRange = dateRange;
+    }
+
+    public void searchForWHONetResults() {
+        WHONetReportService reportService = SpringContext.getBean(WHONetReportService.class);
+        Date lowDate = dateRange.getLowDate();
+        Date highDate = dateRange.getHighDate();
+        rows = reportService.getWHONetRows(lowDate, highDate);
+        return;
     }
 
     public void buildDataSource() throws SQLException {
-        buildResultSet();
-    }
-
-    protected void buildResultSet() throws SQLException {
         searchForWHONetResults();
     }
-
-    protected synchronized String formatDateForDatabaseSql(Date date) {
-        // SimpleDateFormat is not thread safe
-        return postgresDateFormat.format(date);
-    }
-
-    protected synchronized Date parseDateForDatabaseSql(String date) throws ParseException {
-        // SimpleDateFormat is not thread safe
-        return postgresDateFormat.parse(date);
-    }
-
-    private synchronized Date parseDateTimeForDatabaseSql(String date) throws ParseException {
-        // SimpleDateFormat is not thread safe
-        return postgresDateTime.parse(date);
-    }
-
-    /**
-     * @param value
-     * @return
-     */
-    protected String datetimeToLocalDate(String value) {
-        try {
-            Date parsed = parseDateTimeForDatabaseSql(value);
-            java.sql.Date date = new java.sql.Date(parsed.getTime());
-            return DateUtil.convertSqlDateToStringDate(date);
-        } catch (ParseException e) {
-            return value;
-        }
-    }
-
-    protected String datetimeToLocalDateTime(String value) {
-        try {
-            Date parsed = parseDateTimeForDatabaseSql(value);
-            return DateUtil.formatDateTimeAsText(parsed);
-        } catch (ParseException e) {
-            return value;
-        }
-    }
-
-    public abstract void searchForWHONetResults();
 
     /**
      * Useful for the 1st line of a CSV files. This produces a completely escaped
@@ -185,9 +107,9 @@ public abstract class WHONETCSVRoutineColumnBuilder {
      * @return one string with all names.
      */
     public String getColumnNamesLine() {
-        return new StringBuilder()
-                .append(new WHONetRow("NATIONAL ID", "FIRST NAME", "LAST NAME", "SEX", "BIRTHDATE", "DATE ENTERED",
-                        "LABNO", "DATE COLLECTED", "SPECIMEN TYPE", "ANTIBIOTIC", "ORGANISM", "RESULT").getRow())
+        return new StringBuilder().append(
+                new WHONetRow("NATIONAL ID", "FIRST NAME", "LAST NAME", "SEX", "BIRTHDATE", "DATE ENTERED", "LABNO",
+                        "DATE COLLECTED", "SPECIMEN TYPE", "ANTIBIOTIC", "ORGANISM", "RESULT", "METHOD").getRow())
                 .append(eol).toString();
     }
 
