@@ -4,15 +4,10 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IQuery;
-
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -90,9 +85,8 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     private List<String> remoteStoreIdentifier;
 
     @Override
-    @Scheduled(initialDelay = 10 * 1000, fixedRateString="${org.openelisglobal.remote.poll.frequency:120000}")
+    @Scheduled(initialDelay = 10 * 1000, fixedRateString = "${org.openelisglobal.remote.poll.frequency:120000}")
     public void pollForRemoteTasks() {
-        System.out.println(System.currentTimeMillis());
         processWorkflow(ResourceType.Task);
     }
 
@@ -481,7 +475,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 remoteTask.setStatus(taskStatus);
                 sourceFhirClient.update().resource(remoteTask).execute();
             }
-            IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+            IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
             localFhirClient.update().resource(localObjects.task).execute();
             // taskBasedOnRemoteTask.setStatus(taskStatus);
             // localFhirClient.update().resource(taskBasedOnRemoteTask).execute();
