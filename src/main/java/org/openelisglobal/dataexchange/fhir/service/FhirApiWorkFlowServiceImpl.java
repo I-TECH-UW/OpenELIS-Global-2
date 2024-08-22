@@ -4,10 +4,15 @@ import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.gclient.IQuery;
+
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Optional;
@@ -84,9 +89,10 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     @Value("${org.openelisglobal.remote.source.identifier:}#{T(java.util.Collections).emptyList()}")
     private List<String> remoteStoreIdentifier;
 
-    @Scheduled(initialDelay = 10 * 1000, fixedRate = 2 * 60 * 1000)
     @Override
+    @Scheduled(initialDelay = 10 * 1000, fixedRateString="${org.openelisglobal.remote.poll.frequency:120000}")
     public void pollForRemoteTasks() {
+        System.out.println(System.currentTimeMillis());
         processWorkflow(ResourceType.Task);
     }
 
