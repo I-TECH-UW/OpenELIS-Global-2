@@ -81,8 +81,11 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     @Value("${org.openelisglobal.remote.source.updateStatus}")
     private Optional<Boolean> remoteStoreUpdateStatus;
 
-    @Scheduled(initialDelay = 10 * 1000, fixedRate = 2 * 60 * 1000)
+    @Value("${org.openelisglobal.remote.source.identifier:}#{T(java.util.Collections).emptyList()}")
+    private List<String> remoteStoreIdentifier;
+
     @Override
+    @Scheduled(initialDelay = 10 * 1000, fixedRateString = "${org.openelisglobal.remote.poll.frequency:120000}")
     public void pollForRemoteTasks() {
         processWorkflow(ResourceType.Task);
     }
@@ -472,7 +475,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 remoteTask.setStatus(taskStatus);
                 sourceFhirClient.update().resource(remoteTask).execute();
             }
-            IGenericClient localFhirClient = fhirContext.newRestfulGenericClient(localFhirStorePath);
+            IGenericClient localFhirClient = fhirUtil.getFhirClient(localFhirStorePath);
             localFhirClient.update().resource(localObjects.task).execute();
             // taskBasedOnRemoteTask.setStatus(taskStatus);
             // localFhirClient.update().resource(taskBasedOnRemoteTask).execute();
