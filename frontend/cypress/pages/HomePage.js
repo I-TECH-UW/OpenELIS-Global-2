@@ -116,7 +116,7 @@ class HomePage {
     cy.get("#menu_reports_study_nav").click();
     return new StudyReportPage();
 
-
+  }
   goToPathologyDashboard() {
     this.openNavigationMenu();
     cy.get("#menu_pathology_dropdown").click();
