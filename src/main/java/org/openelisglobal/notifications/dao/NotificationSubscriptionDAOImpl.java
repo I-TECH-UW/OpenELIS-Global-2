@@ -36,7 +36,22 @@ public class NotificationSubscriptionDAOImpl implements NotificationSubscription
         entityManager.merge(notificationSubscription);
     }
 
+    @Override
+    @Transactional
+    public void delete(NotificationSubscriptions ns) {
+        // Reattach the entity to the current session
+        NotificationSubscriptions attachedEntity = entityManager.find(NotificationSubscriptions.class, ns.getId());
+
+        if (attachedEntity != null) {
+            // Now remove the attached entity
+            entityManager.remove(attachedEntity);
+        } else {
+            throw new IllegalArgumentException("Subscription not found or already deleted");
+        }
+    }
+
     // Update saveOrUpdate method
+
     @Transactional
     public void saveOrUpdate(NotificationSubscriptions notificationSubscription) {
 

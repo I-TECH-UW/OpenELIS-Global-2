@@ -178,6 +178,21 @@ public class NotificationRestController {
         return ResponseEntity.ok().body("Subscribed successfully");
     }
 
+    @PutMapping("/notification/unsubscribe")
+    public ResponseEntity<?> unsubscribe(HttpServletRequest request) {
+        String sysUserId = getSysUserId(request);
+        NotificationSubscriptions ns = notificationSubscriptionDAO
+                .getNotificationSubscriptionByUserId(Long.valueOf(sysUserId));
+
+        if (ns == null) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subscription not found");
+        }
+
+        notificationSubscriptionDAO.delete(ns);
+
+        return ResponseEntity.ok().body("Unsubscribed successfully");
+    }
+
     protected String getSysUserId(HttpServletRequest request) {
         UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
         if (usd == null) {
