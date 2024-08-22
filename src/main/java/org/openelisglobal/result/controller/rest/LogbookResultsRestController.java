@@ -47,6 +47,7 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.method.service.MethodService;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.note.valueholder.Note;
@@ -168,6 +169,8 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
     private UserRoleService userRoleService;
     @Autowired
     private SampleHumanService sampleHumanService;
+    @Autowired
+    private MethodService methodService;
 
     private final String RESULT_SUBJECT = "Result Note";
     private final String REFERRAL_CONFORMATION_ID;
@@ -512,6 +515,9 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
             if (testResultItem.getAnalysisMethod() != null) {
                 analysis.setAnalysisType(testResultItem.getAnalysisMethod());
             }
+            if (!GenericValidator.isBlankOrNull(testResultItem.getTestMethod())) {
+                analysis.setMethod(methodService.get(testResultItem.getTestMethod()));
+            }
             actionDataSet.getModifiedAnalysis().add(analysis);
         }
     }
@@ -524,6 +530,9 @@ public class LogbookResultsRestController extends LogbookResultsBaseController {
             Analysis analysis = analysisService.get(testResultItem.getAnalysisId());
             analysis.setStatusId(getStatusForTestResult(testResultItem, alwaysValidate));
             analysis.setSysUserId(getSysUserId(request));
+            if (!GenericValidator.isBlankOrNull(testResultItem.getTestMethod())) {
+                analysis.setMethod(methodService.get(testResultItem.getTestMethod()));
+            }
             actionDataSet.getModifiedAnalysis().add(analysis);
 
             actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL,
