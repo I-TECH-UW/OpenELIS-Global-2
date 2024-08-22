@@ -127,7 +127,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     }
 
     private void beginTaskCheckIfAcceptedPath(String remoteStorePath) throws FhirLocalPersistingException {
-        if (remoteStoreIdentifier.isEmpty()) {
+        if (fhirConfig.getRemoteStoreIdentifier().isEmpty()) {
             return;
         }
 
@@ -208,7 +208,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     }
 
     private void beginTaskImportResultsPath(String remoteStorePath) {
-        if (remoteStoreIdentifier.isEmpty()) {
+        if (fhirConfig.getRemoteStoreIdentifier().isEmpty()) {
             return;
         }
 
@@ -369,7 +369,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
     }
 
     private void beginTaskImportOrderPath(String remoteStorePath) {
-        if (remoteStoreIdentifier.isEmpty()) {
+        if (fhirConfig.getRemoteStoreIdentifier().isEmpty()) {
             return;
         }
 
@@ -383,7 +383,7 @@ public class FhirApiWorkFlowServiceImpl implements FhirApiWorkflowService {
                 // .include(Task.INCLUDE_PATIENT)//
                 // .include(Task.INCLUDE_BASED_ON)//
                 .where(Task.STATUS.exactly().code(TaskStatus.REQUESTED.toCode())) //
-                .where(Task.OWNER.hasAnyOfIds(remoteStoreIdentifier));
+                .where(Task.OWNER.hasAnyOfIds(fhirConfig.getRemoteStoreIdentifier()));
         Bundle importBundle = searchQuery.execute();
         importBundles.add(importBundle);
         if (importBundle.hasEntry()) {
