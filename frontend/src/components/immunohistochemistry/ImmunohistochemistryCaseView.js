@@ -19,6 +19,7 @@ import {
   InlineLoading,
   Toggle,
   TextArea,
+  FilterableMultiSelect,
 } from "@carbon/react";
 import { Launch, Subtract } from "@carbon/react/icons";
 import {
@@ -57,6 +58,10 @@ function ImmunohistochemistryCaseView() {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const [immunohistochemistrySampleInfo, setImmunohistochemistrySampleInfo] =
     useState({ labNumber: "" });
+
+  const [pathologySampleInfo, setPathologySampleInfo] = useState({});
+  const [conclusions, setConclusions] = useState([]);
+
   const [statuses, setStatuses] = useState([]);
   const [reportTypes, setReportTypes] = useState([]);
   const [technicianUsers, setTechnicianUsers] = useState([]);
@@ -174,6 +179,20 @@ function ImmunohistochemistryCaseView() {
     params[index]["toggled"] = e;
     setReportParams(params);
   };
+
+  useEffect(() => {
+    componentMounted.current = true;
+
+    getFromOpenElisServer(
+      "/rest/displayList/PATHOLOGIST_CONCLUSIONS",
+      setConclusions,
+    );
+
+    return () => {
+      componentMounted.current = false;
+    };
+  }, []);
+
   const createReportParams = (reportType, index) => {
     switch (reportType) {
       case "BREAST_CANCER_HORMONE_RECEPTOR":
@@ -650,6 +669,46 @@ function ImmunohistochemistryCaseView() {
           <>
             <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
+                <Column lg={16} md={8} sm={4}>
+                  <Grid fullWidth={true} className="gridBoundary">
+                    <Column lg={4} md={8} sm={4}>
+                      <FilterableMultiSelect
+                        id="conclusion"
+                        titleText={
+                          <FormattedMessage id="pathology.label.conclusion" />
+                        }
+                        items={conclusions}
+                        itemToString={(item) => (item ? item.value : "")}
+                        initialSelectedItems={pathologySampleInfo.conclusions}
+                        onChange={(changes) => {
+                          setPathologySampleInfo({
+                            ...pathologySampleInfo,
+                            conclusions: changes.selectedItems,
+                          });
+                        }}
+                        selectionFeedback="top-after-reopen"
+                      />
+                    </Column>
+                    <Column lg={12} md={8} sm={4}>
+                      {pathologySampleInfo.conclusions &&
+                        pathologySampleInfo.conclusions.map(
+                          (conclusion, index) => (
+                            <Tag
+                              key={index}
+                              filter
+                              onClose={() => {
+                                var info = { ...pathologySampleInfo };
+                                info["conclusions"].splice(index, 1);
+                                setPathologySampleInfo(info);
+                              }}
+                            >
+                              {conclusion.value}
+                            </Tag>
+                          ),
+                        )}
+                    </Column>
+                  </Grid>
+                </Column>
                 <Column lg={3} md={8} sm={4}>
                   <FormattedMessage id="pathology.label.conclusion" />
                 </Column>
