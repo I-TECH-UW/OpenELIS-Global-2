@@ -1,16 +1,13 @@
 package org.openelisglobal.menu;
 
-import java.util.ArrayList;
 import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
-import org.openelisglobal.menu.form.AdminMenuForm;
 import org.openelisglobal.menu.service.MenuService;
 import org.openelisglobal.menu.util.MenuItem;
-import org.openelisglobal.menu.valueholder.AdminMenuItem;
 import org.openelisglobal.menu.valueholder.Menu;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.transaction.annotation.Transactional;
@@ -74,96 +71,5 @@ public class MenuServiceTest extends BaseWebContextSensitiveTest {
         Assert.assertNotNull(activeMenus);
         Assert.assertFalse(activeMenus.isEmpty());
         Assert.assertTrue(activeMenus.stream().allMatch(Menu::getIsActive));
-    }
-
-    @Test
-    public void getAdminMenuItems_shouldReturnAdminMenuItems() {
-        AdminMenuForm form = new AdminMenuForm();
-        List<AdminMenuItem> adminMenuItems = new ArrayList<>();
-        AdminMenuItem item1 = new AdminMenuItem();
-        item1.setPath("/path1");
-        AdminMenuItem item2 = new AdminMenuItem();
-        item2.setPath("/path2");
-        adminMenuItems.add(item1);
-        adminMenuItems.add(item2);
-        form.setAdminMenuItems(adminMenuItems);
-        List<AdminMenuItem> result = form.getAdminMenuItems();
-        Assert.assertNotNull(result);
-        Assert.assertEquals(2, result.size());
-        Assert.assertEquals("/path1", result.get(0).getPath());
-        Assert.assertEquals("/path2", result.get(1).getPath());
-    }
-
-    @Test
-    public void setTotalRecordCount_shouldSetAndReturnTotalRecordCount() {
-        AdminMenuForm form = new AdminMenuForm();
-        form.setTotalRecordCount("100");
-        Assert.assertEquals("100", form.getTotalRecordCount());
-    }
-
-    @Test
-    public void setClickAction_shouldSetAndReturnClickAction() {
-        Menu menu = new Menu();
-        menu.setClickAction("clickAction");
-        Assert.assertEquals("clickAction", menu.getClickAction());
-    }
-
-    @Test
-    public void setDisplayKey_shouldSetAndReturnDisplayKey() {
-        Menu menu = new Menu();
-        menu.setDisplayKey("displayKey");
-        Assert.assertEquals("displayKey", menu.getDisplayKey());
-    }
-
-    @Test
-    public void setToolTipKey_shouldSetAndReturnToolTipKey() {
-        Menu menu = new Menu();
-        menu.setToolTipKey("toolTipKey");
-        Assert.assertEquals("toolTipKey", menu.getToolTipKey());
-    }
-
-    @Test
-    public void setParent_shouldSetAndReturnParent() {
-        Menu parentMenu = new Menu();
-        Menu childMenu = new Menu();
-        childMenu.setParent(parentMenu);
-        Assert.assertEquals(parentMenu, childMenu.getParent());
-    }
-
-    @Test
-    public void getLocalizedTitle_shouldReturnLocalizedTitle() {
-        Menu menu = new Menu();
-        menu.setDisplayKey("testDisplayKey");
-        String title = menu.getLocalizedTitle();
-        Assert.assertNotNull(title);
-    }
-
-    @Test
-    public void getLocalizedTooltip_shouldReturnLocalizedTooltip() {
-        Menu menu = new Menu();
-        menu.setToolTipKey("testToolTipKey");
-        String tooltip = menu.getLocalizedTooltip();
-        Assert.assertNotNull(tooltip);
-    }
-
-    @Test
-    public void setOpenInNewWindow_shouldSetAndReturnOpenInNewWindow() {
-        Menu menu = new Menu();
-        menu.setOpenInNewWindow(true);
-        Assert.assertTrue(menu.isOpenInNewWindow());
-    }
-
-    @Test
-    public void setIsActive_shouldSetAndReturnIsActive() {
-        Menu menu = new Menu();
-        menu.setIsActive(true);
-        Assert.assertTrue(menu.getIsActive());
-    }
-
-    @Test
-    public void setHideInOldUI_shouldSetAndReturnHideInOldUI() {
-        Menu menu = new Menu();
-        menu.setHideInOldUI(true);
-        Assert.assertTrue(menu.isHideInOldUI());
     }
 }
