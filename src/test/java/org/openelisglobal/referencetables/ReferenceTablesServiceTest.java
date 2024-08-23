@@ -1,5 +1,6 @@
 package org.openelisglobal.referencetables;
 
+import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -60,4 +61,35 @@ public class ReferenceTablesServiceTest extends BaseWebContextSensitiveTest {
         return refTable;
     }
 
+    @Test
+    public void updateReferenceTable_shouldUpdateCorrectly() throws Exception {
+        ReferenceTables refTable = createReferenceTable("UpdateTestTable");
+        referenceTablesService.insert(refTable);
+        refTable.setKeepHistory("N");
+        referenceTablesService.update(refTable);
+        ReferenceTables updatedTable = referenceTablesService.getReferenceTableByName("UpdateTestTable");
+        Assert.assertEquals("N", updatedTable.getKeepHistory());
+    }
+
+    @Test
+    public void insertReferenceTable_shouldInsertCorrectly() throws Exception {
+        ReferenceTables refTable = createReferenceTable("InsertTestTable");
+        referenceTablesService.insert(refTable);
+        ReferenceTables retrievedTable = referenceTablesService.getReferenceTableByName("InsertTestTable");
+        Assert.assertNotNull(retrievedTable);
+        Assert.assertEquals("InsertTestTable", retrievedTable.getTableName());
+    }
+
+    @Test
+    public void getAllReferenceTables_shouldReturnAllTables() throws Exception {
+        int initialCount = referenceTablesService.getAllReferenceTables().size();
+
+        ReferenceTables refTable1 = createReferenceTable("Table1");
+        ReferenceTables refTable2 = createReferenceTable("Table2");
+        referenceTablesService.insert(refTable1);
+        referenceTablesService.insert(refTable2);
+
+        List<ReferenceTables> allTables = referenceTablesService.getAllReferenceTables();
+        Assert.assertEquals(initialCount + 2, allTables.size());
+    }
 }
