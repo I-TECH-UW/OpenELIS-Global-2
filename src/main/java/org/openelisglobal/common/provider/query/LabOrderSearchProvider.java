@@ -231,18 +231,36 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                 }
             }
 
-            if (!GenericValidator.isBlankOrNull(serviceRequest.getRequester().getReferenceElement().getIdPart())
-                    && serviceRequest.getRequester().getReference().contains(ResourceType.Practitioner.toString())) {
+            if (!GenericValidator.isBlankOrNull(task.getOwner().getReferenceElement().getIdPart())
+                    && task.getOwner().getReference().contains(ResourceType.Practitioner.toString())) {
                 try {
                     requesterPerson = localFhirClient.read() //
                             .resource(Practitioner.class) //
-                            .withId(serviceRequest.getRequester().getReferenceElement().getIdPart()) //
+                            .withId(task.getOwner().getReferenceElement().getIdPart()) //
                             .execute();
                     LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest",
                             "found matching requester " + requesterPerson.getIdElement().getIdPart());
                 } catch (ResourceNotFoundException e) {
                     LogEvent.logWarn(this.getClass().getSimpleName(), "processRequest", "no matching requester");
                 }
+            }
+
+            if (requesterPerson == null) {
+                if (!GenericValidator.isBlankOrNull(serviceRequest.getRequester().getReferenceElement().getIdPart())
+                        && serviceRequest.getRequester().getReference()
+                                .contains(ResourceType.Practitioner.toString())) {
+                    try {
+                        requesterPerson = localFhirClient.read() //
+                                .resource(Practitioner.class) //
+                                .withId(serviceRequest.getRequester().getReferenceElement().getIdPart()) //
+                                .execute();
+                        LogEvent.logDebug(this.getClass().getSimpleName(), "processRequest",
+                                "found matching requester " + requesterPerson.getIdElement().getIdPart());
+                    } catch (ResourceNotFoundException e) {
+                        LogEvent.logWarn(this.getClass().getSimpleName(), "processRequest", "no matching requester");
+                    }
+                }
+
             }
 
             if (specimen != null && !GenericValidator
@@ -389,6 +407,14 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
             }
             requesterValuesMap.put(PROVIDER_LAST_NAME, requesterPerson.getNameFirstRep().getFamily());
             requesterValuesMap.put(PROVIDER_FIRST_NAME, requesterPerson.getNameFirstRep().getGivenAsSingleString());
+        } else {
+            Provider provider = providerService
+                    .getProviderByFhirId(UUID.fromString(task.getOwner().getReferenceElement().getIdPart()));
+            if (provider != null) {
+                requesterValuesMap.put(PROVIDER_ID, provider.getId());
+                requesterValuesMap.put(PROVIDER_PERSON_ID, provider.getPerson().getId());
+            }
+
         }
         xml.append("<requester>");
         XMLUtil.appendKeyValue(PROVIDER_ID, requesterValuesMap.get(PROVIDER_ID), xml);
