@@ -118,7 +118,6 @@ code {
   overflow: hidden;
   box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   height: 100%;
-  /* Take full height of the container */
 }
 
 .slide-over-header {
@@ -147,7 +146,6 @@ code {
   margin: 1px;
   overflow-y: auto;
   flex-grow: 1;
-  /* Allow the body to take remaining height */
 }
 
 @keyframes pulse {

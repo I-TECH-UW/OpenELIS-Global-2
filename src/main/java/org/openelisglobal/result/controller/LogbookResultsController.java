@@ -1,6 +1,5 @@
 package org.openelisglobal.result.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Timestamp;
 import java.util.ArrayList;
@@ -47,6 +46,7 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.inventory.action.InventoryUtility;
 import org.openelisglobal.inventory.form.InventoryKitItem;
+import org.openelisglobal.method.service.MethodService;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.note.valueholder.Note;
@@ -143,6 +143,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private UserService userService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private MethodService methodService;
 
     private final String RESULT_SUBJECT = "Result Note";
     private final String REFERRAL_CONFORMATION_ID;
@@ -335,10 +337,6 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         boolean supportReferrals = FormFields.getInstance().useField(Field.ResultsReferral);
         String statusRuleSet = ConfigurationProperties.getInstance().getPropertyValueUpperCase(Property.StatusRules);
 
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonForm = "";
-        List<TestResultItem> testResultItemList = form.getTestResult();
-
         // load testSections for drop down
         String resultsRoleId = roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
         List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
@@ -455,6 +453,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             if (testResultItem.getAnalysisMethod() != null) {
                 analysis.setAnalysisType(testResultItem.getAnalysisMethod());
             }
+            if (!GenericValidator.isBlankOrNull(testResultItem.getTestMethod())) {
+                analysis.setMethod(methodService.get(testResultItem.getTestMethod()));
+            }
             actionDataSet.getModifiedAnalysis().add(analysis);
         }
     }
@@ -467,6 +468,9 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             Analysis analysis = analysisService.get(testResultItem.getAnalysisId());
             analysis.setStatusId(getStatusForTestResult(testResultItem, alwaysValidate));
             analysis.setSysUserId(getSysUserId(request));
+            if (!GenericValidator.isBlankOrNull(testResultItem.getTestMethod())) {
+                analysis.setMethod(methodService.get(testResultItem.getTestMethod()));
+            }
             actionDataSet.getModifiedAnalysis().add(analysis);
 
             actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL,
