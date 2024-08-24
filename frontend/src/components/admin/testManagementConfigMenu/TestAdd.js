@@ -73,30 +73,13 @@ function TestAdd() {
   const [lonic, setLonic] = useState("");
   const [testAdd, setTestAdd] = useState({});
   const [labUnitList, setLabUnitList] = useState([]);
-  const [selectedLabUnitList, setSelectedLabUnitList] = useState({
-    id: "",
-    value: "",
-  });
+  const [selectedLabUnitList, setSelectedLabUnitList] = useState({});
   const [panelList, setPanelList] = useState([]);
-  const [selectedPanelList, setSelectedPanelList] = useState({
-    id: "",
-    value: "",
-  });
   const [panelListTag, setPanelListTag] = useState([]);
-  const [selectedPanelListTag, setSelectedPanelListTag] = useState({
-    id: "",
-    value: "",
-  });
   const [uomList, setUomList] = useState([]);
-  const [selectedUomList, setSelectedUomList] = useState({
-    id: "",
-    value: "",
-  });
+  const [selectedUomList, setSelectedUomList] = useState({});
   const [resultTypeList, setResultTypeList] = useState([]);
-  const [selectedResultTypeList, setSelectedResultTypeList] = useState({
-    id: "",
-    value: "",
-  });
+  const [selectedResultTypeList, setSelectedResultTypeList] = useState({});
   const [sampleTypeList, setSampleTypeList] = useState([]);
   const [selectedSampleTypeList, setSelectedSampleTypeList] = useState([
     {
@@ -110,9 +93,21 @@ function TestAdd() {
   const [selectedSampleType, setSelectedSampleType] = useState([{}]);
   const [selectedSampleTypeResp, setSelectedSampleTypeResp] = useState([{}]);
   const [groupedDictionaryList, setGroupedDictionaryList] = useState([]);
+  const [selectedGroupedDictionaryList, setSelectedGroupedDictionaryList] =
+    useState([]);
   const [dictionaryList, setDictionaryList] = useState([]);
+  const [dictionaryListTag, setDictionaryListTag] = useState([]);
+  const [singleSelectDictionaryList, setSingleSelectDictionaryList] = useState(
+    [],
+  );
+  const [multiSelectDictionaryList, setMultiSelectDictionaryList] = useState([
+    { id: "0", value: "Multiple" },
+  ]);
+  const [multiSelectDictionaryListTag, setMultiSelectDictionaryListTag] =
+    useState([]);
   const [sampleTypeSetupPage, setSampleTypeSetupPage] = useState(true);
   const [rangeSetupPage, setRangeSetupPage] = useState(true);
+  const [onResultType, setOnResultType] = useState(true);
   const [existingTestSetupPage, setExistingTestSetupPage] = useState(true);
   const [finalSaveConfirmation, setFinalSaveConfirmation] = useState(true);
   const [jsonWad, setJsonWad] = useState(
@@ -216,7 +211,7 @@ function TestAdd() {
         ...(testAdd.groupedDictionaryList || []),
       ]);
       setDictionaryList([
-        // { id: "0", value: "Select Multiple" },
+        { id: "0", value: "Select Multiple" },
         ...(testAdd.dictionaryList || []),
       ]);
     }
@@ -256,22 +251,22 @@ function TestAdd() {
   function reportingTestNameEn(e) {
     setJsonWad((prev) => ({
       ...prev,
-      reportingTestNameEn: e.target.value,
+      testReportNameEnglish: e.target.value,
     }));
   }
 
   function reportingTestNameFr(e) {
     setJsonWad((prev) => ({
       ...prev,
-      reportingTestNameFr: e.target.value,
+      testReportNameFrench: e.target.value,
     }));
   }
 
   function copyInputValuesFromTestNameEnFr() {
     setJsonWad((prev) => ({
       ...prev,
-      reportingTestNameEn: prev.testNameEnglish,
-      reportingTestNameFr: prev.testNameFrench,
+      testReportNameEnglish: prev.testNameEnglish,
+      testReportNameFrench: prev.testNameFrench,
     }));
   }
 
@@ -280,6 +275,14 @@ function TestAdd() {
       ...prev,
       testSection: e.target.value,
     }));
+
+    const selectedLabUnitObject = labUnitList.find(
+      (item) => item.id === e.target.value,
+    );
+
+    if (selectedLabUnitObject) {
+      setSelectedLabUnitList(selectedLabUnitObject);
+    }
   }
 
   function handelPanelListSelect(e) {
@@ -291,14 +294,48 @@ function TestAdd() {
 
   function handelUomSelect(e) {
     setJsonWad((prev) => ({ ...prev, uom: e.target.value }));
+
+    const selectedUomObject = uomList.find(
+      (item) => item.id === e.target.value,
+    );
+
+    if (selectedUomObject) {
+      setSelectedUomList(selectedUomObject);
+    }
   }
 
   function handelLonicChange(e) {
-    setJsonWad((prev) => ({ ...prev, uom: e.target.value }));
+    const regex = /^(?!-)(?:\d+-)*\d*$/;
+
+    const value = e.target.value;
+
+    if (regex.test(value)) {
+      setLonic(value);
+      setJsonWad((prev) => ({ ...prev, loinc: value }));
+    } else {
+      addNotification({
+        title: intl.formatMessage({
+          id: "notification.title",
+        }),
+        message: intl.formatMessage({
+          id: "notification.user.post.save.success",
+        }),
+        kind: NotificationKinds.error,
+      });
+      setNotificationVisible(true);
+    }
   }
 
   function handelResultType(e) {
     setJsonWad((prev) => ({ ...prev, resultType: e.target.value }));
+
+    const selectedResultTypeObject = resultTypeList.find(
+      (item) => item.id == e.target.value,
+    );
+
+    if (selectedResultTypeObject) {
+      setSelectedResultTypeList(selectedResultTypeObject);
+    }
   }
 
   function handleAntimicrobialResistance(e) {
@@ -362,7 +399,7 @@ function TestAdd() {
     setPanelListTag((prevTags) => {
       const updatedTags = prevTags.filter((tag) => tag.id !== idToRemove);
 
-      const updatedPanels = [...updatedTags.map((tag) => ({ id: tag.id }))];
+      const updatedPanels = updatedTags.map((tag) => ({ id: tag.id }));
       setJsonWad((prevJsonWad) => ({
         ...prevJsonWad,
         panels: updatedPanels,
@@ -476,6 +513,43 @@ function TestAdd() {
     }
   }
 
+  const handelSelectListOptions = (e) => {
+    const selectedId = e.target.value;
+
+    const selectedObject = dictionaryList.find(
+      (item) => item.id === selectedId,
+    );
+
+    if (selectedObject) {
+      setSingleSelectDictionaryList((prev) => [...prev, selectedObject]);
+      setMultiSelectDictionaryList((prev) => [...prev, selectedObject]);
+
+      setDictionaryListTag((prev) => [...prev, selectedObject]);
+    }
+
+    //set the data object in jsonWad
+  };
+
+  const handleSelectQualifiersTag = (e) => {
+    const selectedId = e.target.value;
+
+    const selectedObject = multiSelectDictionaryList.find(
+      (item) => item.id === selectedId,
+    );
+
+    if (selectedObject) {
+      setMultiSelectDictionaryListTag((prev) => [...prev, selectedObject]);
+    }
+
+    //set the data object in jsonWad
+  };
+
+  const handleLabUnitSelect = (e) => {
+    const selectedLabUnitId = e.target.value;
+
+    setJsonWad((prev) => ({ ...prev, testSection: selectedLabUnitId }));
+  };
+
   if (!isLoading) {
     return (
       <>
@@ -510,7 +584,14 @@ function TestAdd() {
                   <span style={{ color: "red" }}>*</span>
                 </>
                 <br />
-                <Select id={`select-test-section`} hideLabel required>
+                <Select
+                  id={`select-test-section`}
+                  hideLabel
+                  required
+                  onChange={(e) => {
+                    handelTestSectionSelect(e);
+                  }}
+                >
                   {labUnitList?.map((test) => (
                     <SelectItem
                       key={test.id}
@@ -604,11 +685,12 @@ function TestAdd() {
                   />
                 ))}
               </Select>
-              <div
-                className={"select-panel"}
-                style={{ marginBottom: "1.188rem" }}
-              >
-                {panelListTag && panelListTag.length ? (
+              <br />
+              {panelListTag && panelListTag.length ? (
+                <div
+                  className={"select-panel"}
+                  style={{ marginBottom: "1.188rem" }}
+                >
                   <>
                     {panelListTag.map((panel) => (
                       <Tag
@@ -616,20 +698,22 @@ function TestAdd() {
                         key={`panelTags_${panel.id}`}
                         onClose={() => handlePanelRemoveTag(panel.id)}
                         style={{ marginRight: "0.5rem" }}
-                        type={"red"}
+                        type={"green"}
                       >
                         {panel.value}
                       </Tag>
                     ))}
                   </>
-                ) : (
-                  <></>
-                )}
-              </div>
+                </div>
+              ) : (
+                <></>
+              )}
               <br />
               <FormattedMessage id="field.uom" />
               <Select
-                // onChange={}
+                onChange={(e) => {
+                  handelUomSelect(e);
+                }}
                 id={`select-uom`}
                 hideLabel
                 required
@@ -650,7 +734,14 @@ function TestAdd() {
                   <span style={{ color: "red" }}>*</span>
                 </>
                 <br />
-                <Select id={`select-result-type`} hideLabel required>
+                <Select
+                  id={`select-result-type`}
+                  hideLabel
+                  required
+                  onChange={(e) => {
+                    handelResultType(e);
+                  }}
+                >
                   {resultTypeList?.map((test) => (
                     <SelectItem
                       key={test.id}
@@ -668,7 +759,10 @@ function TestAdd() {
                   labelText=""
                   required
                   id="loinc"
-                  onChange={handelLonicChange}
+                  value={lonic}
+                  onChange={(e) => {
+                    handelLonicChange(e);
+                  }}
                 />
               </div>
               <br />
@@ -752,12 +846,12 @@ function TestAdd() {
                     ))}
                   </Select>
                   <br />
-                  <div
-                    className={"select-sample-type"}
-                    style={{ marginBottom: "1.188rem" }}
-                  >
-                    {sampleTestTypeToGetTagList &&
-                    sampleTestTypeToGetTagList.length ? (
+                  {sampleTestTypeToGetTagList &&
+                  sampleTestTypeToGetTagList.length ? (
+                    <div
+                      className={"select-sample-type"}
+                      style={{ marginBottom: "1.188rem" }}
+                    >
                       <>
                         {sampleTestTypeToGetTagList.map((section, index) => (
                           <Tag
@@ -767,16 +861,17 @@ function TestAdd() {
                               handleRemoveSampleTypeListSelectIdTestTag(index)
                             }
                             style={{ marginRight: "0.5rem" }}
-                            type={"red"}
+                            type={"green"}
                           >
-                            {section.name}
+                            {section.value}
                           </Tag>
                         ))}
                       </>
-                    ) : (
-                      <></>
-                    )}
-                  </div>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                  <br />
                 </Column>
                 <Column lg={10} md={8} sm={4}>
                   <Section>
@@ -806,6 +901,160 @@ function TestAdd() {
                   >
                     <FormattedMessage id="label.button.cancel" />
                   </Button>
+                </Column>
+              </Grid>
+              <br />
+              <hr />
+              <br />
+            </>
+          ) : (
+            <></>
+          )}
+          {onResultType ? (
+            <>
+              <Grid>
+                <Column lg={8} md={8} sm={4}>
+                  <FormattedMessage id="label.select.list.options" />
+                  {/* map the Select list options */}
+                  <br />
+                  <Select
+                    id={`select-list-options`}
+                    hideLabel
+                    required
+                    onChange={(e) => handelSelectListOptions(e)} // need a fix
+                  >
+                    {dictionaryList?.map((test) => (
+                      <SelectItem
+                        key={test.id}
+                        value={test.id}
+                        text={`${test.value}`}
+                      />
+                    ))}
+                  </Select>
+                  {/* tags need to display */}
+                  <br />
+                  {/* need to add tags */}
+                  {dictionaryListTag && dictionaryListTag.length ? (
+                    <div
+                      className={"select-list-options-tag"}
+                      style={{ marginBottom: "1.188rem" }}
+                    >
+                      <>
+                        {dictionaryListTag.map((dict, index) => (
+                          <Tag
+                            filter
+                            key={`list-options_${index}`}
+                            // onClose={() =>
+                            //   handleRemoveSampleTypeListSelectIdTestTag(index)
+                            // }
+                            style={{ marginRight: "0.5rem" }}
+                            type={"green"}
+                          >
+                            {dict.value}
+                          </Tag>
+                        ))}
+                      </>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                  <br />
+                </Column>
+                <Column lg={8} md={8} sm={4}>
+                  <Section>
+                    <Section>
+                      <Section>
+                        <Heading>
+                          <FormattedMessage id="label.result.order" />
+                        </Heading>
+                      </Section>
+                    </Section>
+                  </Section>
+                  {/* remeder dragable & Select list options */}
+                  <br />
+                  <br />
+                  <FormattedMessage id="label.reference.value" />
+                  <br />
+                  {/* single Select */}
+                  <Select
+                    id={`select-reference-value`}
+                    hideLabel
+                    required
+                    // onChange={(e) => handleSampleTypeListSelectIdTestTag(e)} // need to fix
+                  >
+                    {singleSelectDictionaryList?.map((test) => (
+                      <SelectItem
+                        key={test.id}
+                        value={test.id}
+                        text={`${test.value}`}
+                      />
+                    ))}
+                  </Select>
+                  <br />
+                  <br />
+                  <FormattedMessage id="label.default.result" />
+                  <br />
+                  {/* single Select */}
+                  <Select
+                    id={`select-default-result`}
+                    hideLabel
+                    required
+                    // onChange={(e) => handleSampleTypeListSelectIdTestTag(e)} // need to fix
+                  >
+                    {singleSelectDictionaryList?.map((test) => (
+                      <SelectItem
+                        key={test.id}
+                        value={test.id}
+                        text={`${test.value}`}
+                      />
+                    ))}
+                  </Select>
+                  <br />
+                  <br />
+                  <FormattedMessage id="label.qualifiers" />
+                  <br />
+                  <Select
+                    id={`select-qualifiers`}
+                    hideLabel
+                    required
+                    onChange={(e) => handleSelectQualifiersTag(e)} // need to fix
+                  >
+                    {multiSelectDictionaryList?.map((test) => (
+                      <SelectItem
+                        key={test.id}
+                        value={test.id}
+                        text={`${test.value}`}
+                      />
+                    ))}
+                  </Select>
+                  <br />
+                  {/* need to add tags */}
+                  {multiSelectDictionaryListTag &&
+                  multiSelectDictionaryListTag.length ? (
+                    <div
+                      className={"select-qualifiers-tag"}
+                      style={{ marginBottom: "1.188rem" }}
+                    >
+                      <>
+                        {multiSelectDictionaryListTag.map((dict, index) => (
+                          <Tag
+                            filter
+                            key={`qualifiers_${index}`}
+                            // onClose={() =>
+                            //   handleRemoveSampleTypeListSelectIdTestTag(index)
+                            // }
+                            style={{ marginRight: "0.5rem" }}
+                            type={"green"}
+                          >
+                            {dict.value}
+                          </Tag>
+                        ))}
+                      </>
+                    </div>
+                  ) : (
+                    <></>
+                  )}
+                  <br />
                 </Column>
               </Grid>
               <br />
@@ -931,14 +1180,39 @@ function TestAdd() {
                       </Section>
                     </Section>
                   </Section>
-                  <br />
-                  <hr />
-                  <br />
-                </Column>
-                <Column lg={16} md={8} sm={4}>
-                
                 </Column>
               </Grid>
+              <br />
+              <hr />
+              <br />
+              <Grid fullWidth={true}>
+                {groupedDictionaryList.map((innerArray, outerIndex) => (
+                  <Column
+                    key={`list-${outerIndex}`}
+                    lg={4}
+                    md={4}
+                    sm={4}
+                    onClick={() => {
+                      setSelectedGroupedDictionaryList([
+                        ...selectedGroupedDictionaryList,
+                        innerArray,
+                      ]);
+                    }}
+                  >
+                    <UnorderedList>
+                      {innerArray.map((item) => (
+                        <ListItem key={`item-${outerIndex}-${item.id}`}>
+                          {item.value}
+                        </ListItem>
+                      ))}
+                    </UnorderedList>
+                    <br />
+                  </Column>
+                ))}
+              </Grid>
+              <br />
+              <hr />
+              <br />
             </>
           ) : (
             <></>
@@ -1083,6 +1357,13 @@ function TestAdd() {
             }}
           >
             jsonWad
+          </button>
+          <button
+            onClick={() => {
+              console.log(sampleTestTypeToGetTagList);
+            }}
+          >
+            sampleTestTypeToGetTagList
           </button>
         </div>
       </div>
