@@ -1319,5 +1319,10 @@
   "label.critical.range": "Critical range",
   "label.reporting.range": "Reporting range",
   "sample.type.and.test.sort.order": "Sample type and test sort order",
-  "label.existing.test.sets": "Existing test sets"
+  "label.existing.test.sets": "Existing test sets",
+  "label.select.list.options": "Select list options",
+  "label.result.order": "Result order",
+  "label.reference.value": "Reference value",
+  "label.default.result": "Default result",
+  "label.qualifiers": "Qualifiers"
 }
