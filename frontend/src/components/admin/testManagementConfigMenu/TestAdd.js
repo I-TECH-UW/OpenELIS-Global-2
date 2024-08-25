@@ -81,17 +81,12 @@ function TestAdd() {
   const [resultTypeList, setResultTypeList] = useState([]);
   const [selectedResultTypeList, setSelectedResultTypeList] = useState({});
   const [sampleTypeList, setSampleTypeList] = useState([]);
-  const [selectedSampleTypeList, setSelectedSampleTypeList] = useState([
-    {
-      id: "",
-      value: "",
-    },
-  ]);
+  const [selectedSampleTypeList, setSelectedSampleTypeList] = useState([]);
   const [sampleTestTypeToGetTagList, setSampleTestTypeToGetTagList] = useState(
     [],
   );
-  const [selectedSampleType, setSelectedSampleType] = useState([{}]);
-  const [selectedSampleTypeResp, setSelectedSampleTypeResp] = useState([{}]);
+  const [selectedSampleType, setSelectedSampleType] = useState([]);
+  const [selectedSampleTypeResp, setSelectedSampleTypeResp] = useState([]);
   const [groupedDictionaryList, setGroupedDictionaryList] = useState([]);
   const [selectedGroupedDictionaryList, setSelectedGroupedDictionaryList] =
     useState([]);
@@ -218,20 +213,64 @@ function TestAdd() {
   }, [testAdd]);
 
   useEffect(() => {
-    getFromOpenElisServer(
-      `rest/sample-type-tests?sampleType=${selectedSampleType}`,
-      (res) => {
-        handleSampleType(res);
-      },
-    );
+    if (selectedSampleType.length === 0) return;
+
+    const fetchSampleTypeData = async (id) => {
+      return new Promise((resolve, reject) => {
+        try {
+          getFromOpenElisServer(
+            `/rest/sample-type-tests?sampleType=${id}`,
+            (res) => {
+              if (res) {
+                handleSampleType(res);
+                resolve(res);
+              } else {
+                reject(new Error("No response received"));
+              }
+            },
+          );
+        } catch (error) {
+          console.error(`Error fetching data for sample type ${id}:`, error);
+          reject(error);
+        }
+      });
+    };
+
+    const fetchAllSampleTypesData = async () => {
+      try {
+        await Promise.all(
+          selectedSampleType.map((sampleType) =>
+            fetchSampleTypeData(sampleType.id),
+          ),
+        );
+      } catch (error) {
+        console.error("Error fetching all sample types:", error);
+      }
+    };
+
+    fetchAllSampleTypesData();
   }, [selectedSampleType]);
 
   function handleSampleType(res) {
-    if (!res) {
-      setIsLoading(true);
-    } else {
-      setSelectedSampleTypeResp(res);
-    }
+    setSelectedSampleTypeResp((prev) => {
+      const selectedSampleTypeIds = selectedSampleType.map((type) => type.id);
+
+      const isInSelectedSampleType = selectedSampleTypeIds.includes(
+        res.sampleTypeId,
+      );
+
+      if (isInSelectedSampleType) {
+        const isAlreadyPresent = prev.some(
+          (item) => item.sampleTypeId === res.sampleTypeId,
+        );
+        if (!isAlreadyPresent) {
+          return [...prev, res];
+        }
+      } else {
+        return prev.filter((item) => item.sampleTypeId !== res.sampleTypeId);
+      }
+      return prev;
+    });
   }
 
   function testNameEn(e) {
@@ -440,20 +479,28 @@ function TestAdd() {
 
   const handleSampleTypeListSelectIdTestTag = (e) => {
     const selectedId = e.target.value;
-    const selectedSampleType = sampleTypeList.find(
+    const selectedSampleTypeObject = sampleTypeList.find(
       (type) => type.id === selectedId,
     );
 
-    if (selectedSampleType) {
-      setSelectedSampleTypeList([
-        ...selectedSampleTypeList,
-        selectedSampleType,
-      ]);
+    if (selectedSampleTypeObject) {
+      const isAlreadySelected = selectedSampleType.some(
+        (type) => type.id === selectedSampleTypeObject.id,
+      );
 
-      setSampleTestTypeToGetTagList([
-        ...sampleTestTypeToGetTagList,
-        selectedSampleType,
-      ]);
+      if (!isAlreadySelected) {
+        setSelectedSampleTypeList([
+          ...selectedSampleTypeList,
+          selectedSampleTypeObject,
+        ]);
+
+        setSampleTestTypeToGetTagList([
+          ...sampleTestTypeToGetTagList,
+          selectedSampleTypeObject,
+        ]);
+
+        setSelectedSampleType((prev) => [...prev, selectedSampleTypeObject]);
+      }
     }
   };
 
@@ -471,6 +518,24 @@ function TestAdd() {
 
       return updatedTags;
     });
+
+    setSelectedSampleTypeList((prevList) => {
+      const updatedList = prevList.filter(
+        (_, index) => index !== indexToRemove,
+      );
+      return updatedList;
+    });
+
+    setSelectedSampleType((prevList) => {
+      const updatedList = prevList.filter(
+        (_, index) => index !== indexToRemove,
+      );
+      return updatedList;
+    });
+
+    setSelectedSampleTypeResp((prevState) =>
+      prevState.filter((_, index) => index !== indexToRemove),
+    );
   }
 
   function testAddPostCall() {
@@ -828,7 +893,7 @@ function TestAdd() {
           {sampleTypeSetupPage ? (
             <>
               <Grid fullWidth={true}>
-                <Column lg={6} md={8} sm={4}>
+                <Column lg={6} md={2} sm={4}>
                   <FormattedMessage id="sample.type" />
                   <br />
                   <Select
@@ -873,7 +938,7 @@ function TestAdd() {
                   )}
                   <br />
                 </Column>
-                <Column lg={10} md={8} sm={4}>
+                <Column lg={10} md={6} sm={4}>
                   <Section>
                     <Section>
                       <Section>
@@ -884,7 +949,24 @@ function TestAdd() {
                     </Section>
                   </Section>
                   <br />
-                  {/* map the selectedSampleTypeResp[0].value */}
+                  {selectedSampleTypeResp.length > 0 ? (
+                    selectedSampleTypeResp.map((item, index) => (
+                      <>
+                        <div className="gridBoundary">
+                          <Section key={index}>
+                            <UnorderedList>
+                              {item.tests.map((test) => (
+                                <ListItem key={test.id}>{test.name}</ListItem>
+                              ))}
+                            </UnorderedList>
+                          </Section>
+                        </div>
+                        <br />
+                      </>
+                    ))
+                  ) : (
+                    <></>
+                  )}
                 </Column>
                 <br />
                 <br />
@@ -1187,27 +1269,32 @@ function TestAdd() {
               <br />
               <Grid fullWidth={true}>
                 {groupedDictionaryList.map((innerArray, outerIndex) => (
-                  <Column
-                    key={`list-${outerIndex}`}
-                    lg={4}
-                    md={4}
-                    sm={4}
-                    onClick={() => {
-                      setSelectedGroupedDictionaryList([
-                        ...selectedGroupedDictionaryList,
-                        innerArray,
-                      ]);
-                    }}
-                  >
-                    <UnorderedList>
-                      {innerArray.map((item) => (
-                        <ListItem key={`item-${outerIndex}-${item.id}`}>
-                          {item.value}
-                        </ListItem>
-                      ))}
-                    </UnorderedList>
-                    <br />
-                  </Column>
+                  <>
+                    <Column
+                      key={`list-${outerIndex}`}
+                      lg={4}
+                      md={4}
+                      sm={4}
+                      onClick={() => {
+                        setSelectedGroupedDictionaryList([
+                          ...selectedGroupedDictionaryList,
+                          innerArray,
+                        ]);
+                      }}
+                    >
+                      <Section>
+                        <UnorderedList>
+                          {innerArray.map((item) => (
+                            <ListItem key={`listItem-${outerIndex}-${item.id}`}>
+                              {item.value}
+                            </ListItem>
+                          ))}
+                          {/* need to fix console log here */}
+                        </UnorderedList>
+                      </Section>
+                      <br />
+                    </Column>
+                  </>
                 ))}
               </Grid>
               <br />
@@ -1300,10 +1387,29 @@ function TestAdd() {
                   {/* Mapp the combbination of the selecte[sampleType] & tests of [sampleType] in sorted order */}
                   <br />
                   {selectedSampleTypeList.length > 0 ? (
-                    <UnorderedList>
+                    <UnorderedList nested={true}>
                       {selectedSampleTypeList.map((type, index) => (
                         <div key={`selectedSampleType_${index}`}>
                           <ListItem>{type.value}</ListItem>
+                          <br />
+                          {selectedSampleTypeResp
+                            .filter((resp) => resp.sampleTypeId === type.id)
+                            .map((item, respIndex) => (
+                              <div
+                                key={`selectedSampleTypeResp_${respIndex}`}
+                                className="gridBoundary"
+                              >
+                                <Section>
+                                  <UnorderedList nested>
+                                    {item.tests.map((test) => (
+                                      <ListItem key={`test_${test.id}`}>
+                                        {test.name}
+                                      </ListItem>
+                                    ))}
+                                  </UnorderedList>
+                                </Section>
+                              </div>
+                            ))}
                         </div>
                       ))}
                     </UnorderedList>
@@ -1364,6 +1470,20 @@ function TestAdd() {
             }}
           >
             sampleTestTypeToGetTagList
+          </button>
+          <button
+            onClick={() => {
+              console.log(selectedSampleType);
+            }}
+          >
+            selectedSampleType
+          </button>
+          <button
+            onClick={() => {
+              console.log(selectedSampleTypeResp);
+            }}
+          >
+            selectedSampleTypeResp
           </button>
         </div>
       </div>
