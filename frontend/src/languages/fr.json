@@ -49,7 +49,7 @@
   "patient.label.info": "Informations sur les patients",
   "breadcrumb.home": "Domicile",
   "admin.legacy": "Précédent Admin",
-  "admin.formEntryConfig": "Configurations de formulaire",
+  "admin.formEntryConfig": "Configurations générales",
   "admin.page.configuration.formEntryConfigMenu.name": "Nom",
   "admin.page.configuration.formEntryConfigMenu.description": "Description",
   "admin.page.configuration.formEntryConfigMenu.select": "Sélectionner",

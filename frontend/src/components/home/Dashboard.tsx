@@ -155,9 +155,12 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
   }, [selectedTile]);
 
   useEffect(() => {
-    getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
-      fetchTestSections(fetchedTestSections);
-    });
+    getFromOpenElisServer(
+      "/rest/user-test-sections/ALL",
+      (fetchedTestSections) => {
+        fetchTestSections(fetchedTestSections);
+      },
+    );
     return () => {
       componentMounted.current = false;
     };

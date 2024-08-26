@@ -39,6 +39,7 @@ import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.reports.action.implementation.ExportTrendsByDate;
 import org.openelisglobal.role.service.RoleService;
+import org.openelisglobal.role.valueholder.Role;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.openelisglobal.spring.util.SpringContext;
@@ -363,6 +364,8 @@ public class DisplayListController extends BaseRestController {
                 ConfigurationProperties.getInstance().getPropertyValue(Property.NEXT_VISIT_DATE_ON_WORKPLAN));
         configs.put(Property.configurationName.toString(),
                 ConfigurationProperties.getInstance().getPropertyValue(Property.configurationName));
+        configs.put(Property.REQUIRE_LAB_UNIT_AT_LOGIN.toString(),
+                ConfigurationProperties.getInstance().getPropertyValue(Property.REQUIRE_LAB_UNIT_AT_LOGIN));
         return configs;
     }
 
@@ -408,11 +411,19 @@ public class DisplayListController extends BaseRestController {
         return DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE);
     }
 
-    @GetMapping(value = "user-test-sections", produces = MediaType.APPLICATION_JSON_VALUE)
+    @GetMapping(value = "user-test-sections/{roleName}", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    private List<IdValuePair> createUserTestSectionsList(HttpServletRequest request) {
-        String resultsRoleId = roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
-        return userService.getUserTestSections(getSysUserId(request), resultsRoleId);
+    private List<IdValuePair> createUserTestSectionsList(HttpServletRequest request, @PathVariable String roleName) {
+        if (roleName.equals("ALL")) {
+            return userService.getAllUserTestSections(getSysUserId(request));
+        } else {
+            Role role = roleService.getRoleByName(roleName);
+            if (role == null) {
+                return new ArrayList<>();
+            }
+            String resultsRoleId = role.getId();
+            return userService.getUserTestSections(getSysUserId(request), resultsRoleId);
+        }
     }
 
     @GetMapping(value = "analysis-status-types", produces = MediaType.APPLICATION_JSON_VALUE)

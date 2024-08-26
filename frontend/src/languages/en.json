@@ -44,7 +44,7 @@
   "patient.label.info": "Patient Information",
   "breadcrumb.home": "Home",
   "admin.legacy": "Legacy Admin",
-  "admin.formEntryConfig": "Form Configurations",
+  "admin.formEntryConfig": "General Configurations",
   "admin.page.configuration.formEntryConfigMenu.name": "Name",
   "admin.page.configuration.formEntryConfigMenu.description": "Description",
   "admin.page.configuration.formEntryConfigMenu.select": "Select",

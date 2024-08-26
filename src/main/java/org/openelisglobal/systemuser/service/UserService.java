@@ -25,6 +25,8 @@ public interface UserService {
 
     List<IdValuePair> getUserTestSections(String systemUserId, String userRole);
 
+    List<IdValuePair> getAllUserTestSections(String systemUserId);
+
     List<IdValuePair> getUserSampleTypes(String systemUserId, String userRole);
 
     List<IdValuePair> getAllDisplayUserTestsByLabUnit(String SystemUserId, String roleName);

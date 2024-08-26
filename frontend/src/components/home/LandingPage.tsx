@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useContext } from "react";
 import {
   Grid,
   Column,
@@ -9,19 +9,44 @@ import {
   Form,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { getFromOpenElisServer } from "../utils/Utils";
+import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
+import { ConfigurationContext } from "../layout/Layout";
+import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 
 const LandingPage: React.FC = () => {
   const intl = useIntl();
   const [departments, setDepartments] = useState([]);
   const [filteredDepartments, setFilteredDepartments] = useState([]);
   const [selectedDepartment, setSelectedDepartment] = useState("");
-  const [selectedLabUnits, setSelectedLabUnits] = useState([]);
   const [rememberChoice, setRememberChoice] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
+  const { configurationProperties } =
+    useContext<ConfigurationContext>(ConfigurationContext);
+  const { userSessionDetails } = useContext<UserSessionDetailsContext>(
+    UserSessionDetailsContext,
+  );
+
+  interface UserSessionDetailsContext {
+    userSessionDetails: any;
+  }
+
+  interface ConfigurationContext {
+    configurationProperties: any;
+  }
 
   useEffect(() => {
-    getFromOpenElisServer("/rest/user-test-sections", (response) => {
+    if (
+      configurationProperties.REQUIRE_LAB_UNIT_AT_LOGIN === "false" ||
+      userSessionDetails.loginLabUnit
+    ) {
+      const refererUrl = document.referrer;
+      if (refererUrl.endsWith("/landing")) {
+        window.location.href = "/";
+      } else {
+        window.location.href = refererUrl;
+      }
+    }
+    getFromOpenElisServer("/rest/user-test-sections/ALL", (response) => {
       setDepartments(response);
       setFilteredDepartments(response);
     });
@@ -31,31 +56,34 @@ const LandingPage: React.FC = () => {
     const term = event.target.value.toLowerCase();
     setSearchTerm(term);
     setFilteredDepartments(
-      departments.filter((dept) =>
-        dept.value.toLowerCase().includes(term)
-      )
+      departments.filter((dept) => dept.value.toLowerCase().includes(term)),
     );
   };
 
   const handleDepartmentSelect = (departmentId) => {
     setSelectedDepartment(departmentId);
-    setSelectedLabUnits([]);
   };
-
 
   const handleContinue = () => {
-    if (rememberChoice) {
-      if (selectedDepartment) {
-        localStorage.setItem("selectedDepartment", selectedDepartment);
-      } else if (selectedLabUnits.length > 0) {
-        localStorage.setItem(
-          "selectedLabUnits",
-          JSON.stringify(selectedLabUnits)
-        );
-      }
+    if (selectedDepartment) {
+      // if(rememberChoice){
+      //   localStorage.setItem("selectedDepartment", selectedDepartment);
+      // }
+      postToOpenElisServer(
+        "/rest/setUserLoginLabUnit/" + selectedDepartment,
+        {},
+        handlePostLabUbit,
+      );
     }
-    window.location.href = "/dashboard";
+    const refererUrl = document.referrer;
+    if (refererUrl.endsWith("/landing")) {
+      window.location.href = "/";
+    } else {
+      window.location.href = refererUrl;
+    }
   };
+
+  const handlePostLabUbit = (status) => {};
 
   return (
     <Grid
@@ -118,7 +146,7 @@ const LandingPage: React.FC = () => {
                 backgroundColor: "#f9f9f9",
               }}
             >
-              {filteredDepartments.map((dept) => (
+              {filteredDepartments?.map((dept) => (
                 <div
                   key={dept.id}
                   className={`department-item ${
@@ -132,7 +160,9 @@ const LandingPage: React.FC = () => {
                     backgroundColor:
                       selectedDepartment === dept.id ? "#c6c6c6" : "inherit",
                     borderColor:
-                      selectedDepartment === dept.id ? "#0f62fe" : "transparent",
+                      selectedDepartment === dept.id
+                        ? "#0f62fe"
+                        : "transparent",
                     transition: "background-color 0.3s, border-color 0.3s",
                   }}
                   onClick={() => handleDepartmentSelect(dept.id)}
@@ -141,16 +171,16 @@ const LandingPage: React.FC = () => {
                 </div>
               ))}
             </div>
-            <Checkbox
+            {/* <Checkbox
               id="remember-choice"
               labelText="Remember my choice"
               checked={rememberChoice}
               onChange={(e) => setRememberChoice(e.target.checked)}
-            />
+            /> */}
             <Button
               onClick={handleContinue}
-              disabled={!selectedDepartment && selectedLabUnits.length === 0}
-              style={{ marginTop: "1rem", width: "100%", maxWidth:'100%' }}
+              disabled={!selectedDepartment}
+              style={{ marginTop: "1rem", width: "100%", maxWidth: "100%" }}
             >
               Continue
             </Button>
