@@ -29,6 +29,9 @@ import {
   Tag,
   UnorderedList,
   ListItem,
+  NumberInput,
+  RadioButtonGroup,
+  RadioButton,
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
@@ -72,6 +75,8 @@ function TestAdd() {
   const [isLoading, setIsLoading] = useState(false);
   const [lonic, setLonic] = useState("");
   const [testAdd, setTestAdd] = useState({});
+  const [ageRangeList, setAgeRangeList] = useState([]);
+  const [gotSelectedAgeRangeList, setGotSelectedAgeRangeList] = useState([]);
   const [labUnitList, setLabUnitList] = useState([]);
   const [selectedLabUnitList, setSelectedLabUnitList] = useState({});
   const [panelList, setPanelList] = useState([]);
@@ -209,6 +214,10 @@ function TestAdd() {
         { id: "0", value: "Select Multiple" },
         ...(testAdd.dictionaryList || []),
       ]);
+      setAgeRangeList([
+        { id: "0", value: "" },
+        ...(testAdd.ageRangeList || []),
+      ]);
     }
   }, [testAdd]);
 
@@ -324,13 +333,6 @@ function TestAdd() {
     }
   }
 
-  function handelPanelListSelect(e) {
-    setJsonWad((prev) => ({
-      ...prev,
-      panels: [...prev.panels, e.target.value],
-    }));
-  }
-
   function handelUomSelect(e) {
     setJsonWad((prev) => ({ ...prev, uom: e.target.value }));
 
@@ -405,12 +407,24 @@ function TestAdd() {
     }));
   }
 
-  function nextButton() {
+  function handleSampleTypeSetup() {
     setSampleTypeSetupPage(true);
   }
 
-  function finalButton() {
+  function handleRangeSetup() {
     setRangeSetupPage(true);
+  }
+
+  function handleOnResultType() {
+    setOnResultType(true);
+  }
+
+  function handleExistingTestSetup() {
+    setExistingTestSetupPage(true);
+  }
+
+  function handleFinalSaveConfirmation() {
+    setFinalSaveConfirmation(true);
   }
 
   const handelPanelSelectSetTag = (e) => {
@@ -871,7 +885,7 @@ function TestAdd() {
             <br />
             <br />
             <Column lg={16} md={8} sm={4}>
-              <Button onClick={nextButton} type="button">
+              <Button onClick={handleSampleTypeSetup} type="button">
                 <FormattedMessage id="next.action.button" />
               </Button>{" "}
               <Button
@@ -971,7 +985,7 @@ function TestAdd() {
                 <br />
                 <br />
                 <Column lg={16} md={8} sm={4}>
-                  <Button onClick={finalButton} type="button">
+                  <Button onClick={handleRangeSetup} type="button">
                     <FormattedMessage id="next.action.button" />
                   </Button>{" "}
                   <Button
@@ -1138,6 +1152,24 @@ function TestAdd() {
                   )}
                   <br />
                 </Column>
+                <br />
+                <br />
+                <Column lg={16} md={8} sm={4}>
+                  <Button onClick={handleOnResultType} type="button">
+                    <FormattedMessage id="next.action.button" />
+                  </Button>{" "}
+                  <Button
+                    onClick={() => {
+                      window.location.assign(
+                        "/MasterListsPage#testManagementConfigMenu",
+                      );
+                    }}
+                    kind="tertiary"
+                    type="button"
+                  >
+                    <FormattedMessage id="back.action.button" />
+                  </Button>
+                </Column>
               </Grid>
               <br />
               <hr />
@@ -1168,6 +1200,42 @@ function TestAdd() {
                 <Column lg={16} md={8} sm={4}>
                   <FormattedMessage id="field.ageRange" />
                   <hr />
+                  <div style={{ display: "flex", gap: "4px" }}>
+                    <Checkbox
+                      id={"gender"}
+                      labelText={<FormattedMessage id="label.sex.dependent" />}
+                      // onChange={() => {}}
+                    />
+                    {/* render male & female on checkbox*/}
+                    <RadioButtonGroup name={"fieldAgeRangeRadioGroup"}>
+                      <RadioButton labelText={"Y"} />
+                      <RadioButton labelText={"M"} />
+                      <RadioButton labelText={"D"} />
+                    </RadioButtonGroup>
+                    <TextInput
+                      id="field.ageRange0"
+                      labelText=""
+                      hideLabel
+                      required
+                    />
+                    <Select
+                      id="field.ageRange1"
+                      labelText=""
+                      hideLabel
+                      required
+                    >
+                      {/* map agerangeList values from objects inside array */}
+                      {ageRangeList.map((age) => (
+                        <SelectItem
+                          key={age.id}
+                          value={age.id}
+                          text={`${age.value}`}
+                        />
+                      ))}
+                    </Select>
+                  </div>
+                  <hr />
+                  <br />
                 </Column>
                 <Column lg={8} md={4} sm={4}>
                   <FormattedMessage id="field.normalRange" />
@@ -1185,6 +1253,7 @@ function TestAdd() {
                       hideLabel
                       required
                     />
+                    {/* render  two extra fields for TextInput on Click of Check box */}
                   </div>
                 </Column>
                 <Column lg={8} md={4} sm={4}>
@@ -1243,6 +1312,51 @@ function TestAdd() {
                 </Column>
               </Grid>
               <br />
+              <FlexGrid fullWidth={true}>
+                <Row>
+                  <Column lg={4} md={4} sm={4}>
+                    <Section>
+                      <Section>
+                        <Section>
+                          <Heading>
+                            <FormattedMessage id="field.significantDigits" />
+                            {" : "}
+                          </Heading>
+                        </Section>
+                      </Section>
+                    </Section>
+                  </Column>
+                  <Column lg={4} md={4} sm={4}>
+                    <NumberInput
+                      id={"significant_digits_num_input"}
+                      max={99}
+                      min={0}
+                      size={"md"}
+                      allowEmpty={true}
+                    />
+                  </Column>
+                </Row>
+              </FlexGrid>
+              <br />
+              <Grid fullWidth={true}>
+                <Column lg={16} md={8} sm={4}>
+                  <Button onClick={handleExistingTestSetup} type="button">
+                    <FormattedMessage id="next.action.button" />
+                  </Button>{" "}
+                  <Button
+                    onClick={() => {
+                      window.location.assign(
+                        "/MasterListsPage#testManagementConfigMenu",
+                      );
+                    }}
+                    kind="tertiary"
+                    type="button"
+                  >
+                    <FormattedMessage id="back.action.button" />
+                  </Button>
+                </Column>
+              </Grid>
+              <br />
               <hr />
               <br />
             </>
@@ -1298,6 +1412,25 @@ function TestAdd() {
                 ))}
               </Grid>
               <br />
+              <Grid fullWidth={true}>
+                <Column lg={16} md={8} sm={4}>
+                  <Button onClick={handleFinalSaveConfirmation} type="button">
+                    <FormattedMessage id="next.action.button" />
+                  </Button>{" "}
+                  <Button
+                    onClick={() => {
+                      window.location.assign(
+                        "/MasterListsPage#testManagementConfigMenu",
+                      );
+                    }}
+                    kind="tertiary"
+                    type="button"
+                  >
+                    <FormattedMessage id="back.action.button" />
+                  </Button>
+                </Column>
+              </Grid>
+              <br />
               <hr />
               <br />
             </>
@@ -1318,6 +1451,7 @@ function TestAdd() {
                   {" : "}
                   {jsonWad?.testNameFrench}
                   <br />
+                  <br />
                   <FormattedMessage id="reporting.label.testName" />
                   <br />
                   <FormattedMessage id="english.label" />
@@ -1328,9 +1462,11 @@ function TestAdd() {
                   {" : "}
                   {jsonWad?.reportingTestNameFr}
                   <br />
+                  <br />
                   <FormattedMessage id="test.section.label" />
                   {" : "}
                   {selectedLabUnitList?.value}
+                  <br />
                   <br />
                   <FormattedMessage id="field.panel" />
                   {" : "}
@@ -1338,10 +1474,7 @@ function TestAdd() {
                   {panelListTag.length > 0 ? (
                     <UnorderedList>
                       {panelListTag.map((tag) => (
-                        <div
-                          key={tag.id}
-                          //  style={{ marginRight: "0.5rem" }}
-                        >
+                        <div key={tag.id} style={{ marginRight: "0.5rem" }}>
                           <ListItem>{tag.value}</ListItem>
                         </div>
                       ))}
@@ -1350,37 +1483,46 @@ function TestAdd() {
                     <></>
                   )}
                   <br />
+                  <br />
                   <FormattedMessage id="field.uom" />
                   {" : "}
                   {selectedUomList?.value}
+                  <br />
                   <br />
                   <FormattedMessage id="label.loinc" />
                   {" : "}
                   {jsonWad?.loinc}
                   <br />
+                  <br />
                   <FormattedMessage id="field.resultType" />
                   {" : "}
                   {selectedResultTypeList.value}
+                  <br />
                   <br />
                   <FormattedMessage id="test.antimicrobialResistance" />
                   {" : "}
                   {jsonWad?.antimicrobialResistance}
                   <br />
+                  <br />
                   <FormattedMessage id="dictionary.category.isActive" />
                   {" : "}
                   {jsonWad?.active}
+                  <br />
                   <br />
                   <FormattedMessage id="label.orderable" />
                   {" : "}
                   {jsonWad?.orderable}
                   <br />
+                  <br />
                   <FormattedMessage id="test.notifyResults" />
                   {" : "}
                   {jsonWad?.notifyResults}
                   <br />
+                  <br />
                   <FormattedMessage id="test.inLabOnly" />
                   {" : "}
                   {jsonWad?.inLabOnly}
+                  <br />
                 </Column>
                 <Column lg={10} md={8} sm={4}>
                   <FormattedMessage id="sample.type.and.test.sort.order" />
