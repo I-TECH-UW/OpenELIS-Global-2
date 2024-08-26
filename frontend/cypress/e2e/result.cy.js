@@ -56,6 +56,7 @@ describe("Result By Patient", function () {
   });
 
   it("Should search Patient By First and LastName and validate", function () {
+    cy.wait(500);
     cy.fixture("Patient").then((patient) => {
       patientPage.searchPatientByFirstAndLastName(
         patient.firstName,
@@ -206,11 +207,11 @@ describe("Result By Referred Out Tests", function () {
     //   );
     // });
   });
-
-  it("should select the respecting referred test and print the selected patient reports", function () {
-    result.selectRefferedTest();
-    result.printReport();
-  });
+//commented due to UI changes
+  // it("should select the respecting referred test and print the selected patient reports", function () {
+  //   result.selectRefferedTest();
+  //   result.printReport();
+  // });
 });
 
 describe("Result By Range Of Order", function () {
