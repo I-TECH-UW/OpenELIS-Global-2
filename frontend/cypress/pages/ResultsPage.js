@@ -38,12 +38,8 @@ class Result {
   }
 
   validatePatientResult(patient) {
-    cy.get(
-      ".gridBoundary > .cds--sm\\:col-span-4 > .cds--data-table-container > .cds--data-table-content > .cds--data-table > tbody > tr > :nth-child(6)",
-    ).should("contain.text", patient.lastName);
-    cy.get(
-      ".gridBoundary > .cds--sm\\:col-span-4 > .cds--data-table-container > .cds--data-table-content > .cds--data-table > tbody > tr > :nth-child(7)",
-    ).should("contain.text", patient.firstName);
+    cy.get('tbody > :nth-child(1) > :nth-child(2)').should("contain.text", patient.lastName);
+    cy.get('tbody > :nth-child(1) > :nth-child(3)').should("contain.text", patient.firstName);
   }
 
   referSample(index = 0, reason, institute) {
