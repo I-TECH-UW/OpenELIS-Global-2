@@ -21,7 +21,7 @@ import java.text.ParseException;
 import java.util.List;
 import javax.xml.ws.Response;
 import net.sf.jasperreports.engine.JRException;
-import org.openelisglobal.reports.action.implementation.reportBeans.WHONETRoutineColumnBuilder;
+import org.openelisglobal.reports.action.implementation.reportBeans.WHONETCSVRoutineColumnBuilder;
 
 public abstract class WHONETCSVRoutineSampleExportReport extends WHONETCSVRoutineExportReport {
 
@@ -30,7 +30,7 @@ public abstract class WHONETCSVRoutineSampleExportReport extends WHONETCSVRoutin
     protected List<Object> reportItems;
     protected int iReportItem = -1;
 
-    protected WHONETRoutineColumnBuilder WHONETcsvRoutineColumnBuilder;
+    protected WHONETCSVRoutineColumnBuilder WHONETcsvRoutineColumnBuilder;
     protected DateRange dateRange;
 
     @Override

@@ -15,6 +15,7 @@ public class UserSession {
     private Set<String> roles;
     private Map<String, List<String>> userLabRolesMap;
     private String CSRF;
+    private String loginLabUnit;
 
     public Boolean getAuthenticated() {
         return authenticated;
@@ -86,5 +87,13 @@ public class UserSession {
 
     public void setUserLabRolesMap(Map<String, List<String>> userLabRolesMap) {
         this.userLabRolesMap = userLabRolesMap;
+    }
+
+    public String getLoginLabUnit() {
+        return loginLabUnit;
+    }
+
+    public void setLoginLabUnit(String loginLabUnit) {
+        this.loginLabUnit = loginLabUnit;
     }
 }

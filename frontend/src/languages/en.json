@@ -44,7 +44,7 @@
   "patient.label.info": "Patient Information",
   "breadcrumb.home": "Home",
   "admin.legacy": "Legacy Admin",
-  "admin.formEntryConfig": "Form Configurations",
+  "admin.formEntryConfig": "General Configurations",
   "admin.page.configuration.formEntryConfigMenu.name": "Name",
   "admin.page.configuration.formEntryConfigMenu.description": "Description",
   "admin.page.configuration.formEntryConfigMenu.select": "Select",
@@ -194,6 +194,7 @@
   "header.label.version": "Version:",
   "header.label.logout": "Logout",
   "header.label.selectlocale": "Select Locale",
+  "header.label.changeLab": "Select Lab",
   "banner.menu.home": "Home",
   "banner.menu.help": "Help",
   "banner.menu.reports": "Reports",
@@ -1234,5 +1235,10 @@
   "label.test.batch.cancel.start": "You have selected to cancel the test",
   "label.test.batch.cancel.finish": "This is non-reversible.",
   "label.test.batch.replace.start": "The following",
-  "label.test.batch.no.change.finish": "tests will not be changed."
+  "label.test.batch.no.change.finish": "tests will not be changed.",
+  "notification.slideover.button.unsubscribe": "Unsubscribe",
+  "notification.slideover.button.unsubscribe.success": "Unsubscribed successfully",
+  "notification.slideover.button.unsubscribe.fail": "Unsubscribe failed",
+  "notification.slideover.button.subscribe.success": "Subscribed successfully",
+  "notification.slideover.button.subscribe.fail": "Subscribe failed"
 }
