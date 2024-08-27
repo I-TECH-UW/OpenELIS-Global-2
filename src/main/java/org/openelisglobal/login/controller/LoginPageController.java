@@ -9,16 +9,21 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.login.bean.UserSession;
 import org.openelisglobal.login.form.LoginForm;
+import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.service.TestSectionService;
+import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.openelisglobal.userrole.valueholder.LabUnitRoleMap;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
@@ -34,6 +39,8 @@ import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -126,14 +133,37 @@ public class LoginPageController extends BaseController {
             session.setFirstName(user.getFirstName());
             session.setLastName(user.getLastName());
             session.setCSRF(token.getToken());
+            UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
+            if (usd.getLoginLabUnit() != 0) {
+                TestSection testSection = testSectionService.getTestSectionById(String.valueOf(usd.getLoginLabUnit()));
+                if (testSection != null) {
+                    session.setLoginLabUnit(testSection.getLocalizedName());
+                }
+            }
             setLabunitRolesForExistingUser(session);
             Set<String> roles = new HashSet<>();
             for (String roleId : userRoleService.getRoleIdsForUser(user.getId())) {
                 roles.add(roleService.getRoleById(roleId).getName().trim());
             }
             session.setRoles(roles);
+
         }
         return session;
+    }
+
+    @PostMapping(value = "/rest/setUserLoginLabUnit/{labUnitId}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public void setUserLoginLabUnit(@PathVariable String labUnitId) {
+        if (ConfigurationProperties.getInstance().getPropertyValue(Property.REQUIRE_LAB_UNIT_AT_LOGIN).equals("true")) {
+            UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
+            Integer loginLabUnit = Integer.valueOf(labUnitId);
+            TestSection testSection = testSectionService.getTestSectionById(labUnitId);
+            if (testSection != null) {
+                usd.setLoginLabUnit(loginLabUnit);
+            }
+            request.setAttribute(IActionConstants.USER_SESSION_DATA, usd);
+            request.getSession().setAttribute(IActionConstants.USER_SESSION_DATA, usd);
+        }
     }
 
     private void setLabunitRolesForExistingUser(UserSession session) {
