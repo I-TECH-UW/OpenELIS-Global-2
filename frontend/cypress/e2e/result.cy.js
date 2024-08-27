@@ -56,7 +56,7 @@ describe("Result By Patient", function () {
   });
 
   it("Should search Patient By First and LastName and validate", function () {
-    cy.wait(500);
+    cy.wait(1000);
     cy.fixture("Patient").then((patient) => {
       patientPage.searchPatientByFirstAndLastName(
         patient.firstName,
@@ -75,6 +75,7 @@ describe("Result By Patient", function () {
   });
 
   it("should search patient By PatientId and validate", function () {
+    cy.wait(500);
     cy.fixture("Patient").then((patient) => {
       patientPage.searchPatientByPatientId(patient.nationalId);
       patientPage.clickSearchPatientButton();
@@ -87,6 +88,7 @@ describe("Result By Patient", function () {
   });
 
   it("should search patient By Lab Number and validate", function () {
+    cy.wait(500);
     cy.fixture("EnteredOrder").then((patient) => {
       cy.get("#labNumber").type(patient.labNo);
       patientPage.clickSearchPatientButton();
