@@ -7,6 +7,7 @@ import {
   Notification,
   Search,
   UserAvatarFilledAlt,
+  LocationFilled,
 } from "@carbon/icons-react";
 import { Select, SelectItem } from "@carbon/react";
 import React, {
@@ -522,6 +523,15 @@ function OEHeader(props) {
                             {userSessionDetails.firstName}{" "}
                             {userSessionDetails.lastName}
                           </li>
+                          {userSessionDetails.loginLabUnit && (
+                            <li className="userDetails">
+                              <LocationFilled
+                                size={18}
+                                style={{ marginRight: "4px" }}
+                              />
+                              {userSessionDetails.loginLabUnit}{" "}
+                            </li>
+                          )}
                           <li
                             className="userDetails clickableUserDetails"
                             onClick={logout}

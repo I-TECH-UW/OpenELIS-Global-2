@@ -18,7 +18,7 @@ import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Formik, Field } from "formik";
 import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSearchFormValues";
-import { getFromOpenElisServer } from "../utils/Utils";
+import { getFromOpenElisServer, Roles } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
 import { NotificationKinds } from "../common/CustomNotification";
 import { format } from "date-fns";
@@ -191,7 +191,7 @@ const SearchForm = (props) => {
         );
         testSectionId = testSectionId ? testSectionId : "";
         getFromOpenElisServer(
-          "/rest/user-test-sections",
+          "/rest/user-test-sections/" + Roles.VALIDATION,
           (fetchedTestSections) => {
             let testSection = fetchedTestSections.find(
               (testSection) => testSection.id === testSectionId,

@@ -198,6 +198,8 @@ public class ReportForm extends BaseForm {
 
     private String numberOfcancerNuclei;
 
+    private List<String> codedConclusions;
+
     // for display
     private List<IdValuePair> priorityList;
 
@@ -846,4 +848,13 @@ public class ReportForm extends BaseForm {
     public void setArvOrganizationList(List<Organization> arvOrganizationList) {
         this.arvOrganizationList = arvOrganizationList;
     }
+
+    public List<String> getCodedConclusions() {
+        return codedConclusions;
+    }
+
+    public void setCodedConclusions(List<String> codedConclusions) {
+        this.codedConclusions = codedConclusions;
+    }
+
 }

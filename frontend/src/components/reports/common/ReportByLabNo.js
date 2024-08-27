@@ -26,6 +26,8 @@ function ReportByLabNo(props) {
     window.open(url, "_blank");
   };
 
+  const isButtonDisabled = !values.from && !values.to;
+
   return (
     <>
       <Form onSubmit={handleSubmit}>
@@ -82,7 +84,7 @@ function ReportByLabNo(props) {
         <Grid fullWidth={true}>
           <Column lg={16} md={8} sm={4}>
             <Section>
-              <Button type="submit">
+              <Button type="submit" disabled={isButtonDisabled}>
                 <FormattedMessage id="label.button.generatePrintableVersion" />
               </Button>
             </Section>

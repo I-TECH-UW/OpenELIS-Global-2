@@ -5,6 +5,7 @@ import {
   getFromOpenElisServer,
   postToOpenElisServerJsonResponse,
   convertAlphaNumLabNumForDisplay,
+  Roles,
 } from "../utils/Utils";
 import {
   Form,
@@ -312,15 +313,18 @@ export function SearchResultForm(props) {
       "testSectionId",
     );
     testSectionId = testSectionId ? testSectionId : "";
-    getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
-      let testSection = fetchedTestSections.find(
-        (testSection) => testSection.id === testSectionId,
-      );
-      let testSectionLabel = testSection ? testSection.value : "";
-      setDefaultTestSectionId(testSectionId);
-      setDefaultTestSectionLabel(testSectionLabel);
-      fetchTestSections(fetchedTestSections);
-    });
+    getFromOpenElisServer(
+      "/rest/user-test-sections/" + Roles.RESULTS,
+      (fetchedTestSections) => {
+        let testSection = fetchedTestSections.find(
+          (testSection) => testSection.id === testSectionId,
+        );
+        let testSectionLabel = testSection ? testSection.value : "";
+        setDefaultTestSectionId(testSectionId);
+        setDefaultTestSectionLabel(testSectionLabel);
+        fetchTestSections(fetchedTestSections);
+      },
+    );
     if (testSectionId) {
       let values = { unitType: testSectionId };
       querySearch(values);
