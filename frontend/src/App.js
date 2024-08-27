@@ -88,7 +88,6 @@ export default function App() {
           );
         }
       } catch (error) {
-        console.log(er);
         console.error(error);
         if (counter === 10) {
           const options = {
