@@ -356,3 +356,14 @@ export function urlBase64ToUint8Array(base64String) {
   }
   return outputArray;
 }
+
+export const Roles = {
+  GLOBAL_ADMIN: "Global Administrator",
+  USER_ACCOUNT_ADMIN: "User Account Administrator",
+  AUDIT_TRAIL: "Audit Trail",
+  RECEPTION: "Reception",
+  RESULTS: "Results",
+  VALIDATION: "Validation",
+  REPORTS: "Reports",
+  PATHOLOGIST: "Pathologist",
+};

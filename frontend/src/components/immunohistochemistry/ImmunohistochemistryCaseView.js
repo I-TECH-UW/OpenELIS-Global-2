@@ -19,6 +19,7 @@ import {
   InlineLoading,
   Toggle,
   TextArea,
+  FilterableMultiSelect,
 } from "@carbon/react";
 import { Launch, Subtract } from "@carbon/react/icons";
 import {
@@ -57,6 +58,9 @@ function ImmunohistochemistryCaseView() {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const [immunohistochemistrySampleInfo, setImmunohistochemistrySampleInfo] =
     useState({ labNumber: "" });
+
+  const [conclusions, setConclusions] = useState([]);
+
   const [statuses, setStatuses] = useState([]);
   const [reportTypes, setReportTypes] = useState([]);
   const [technicianUsers, setTechnicianUsers] = useState([]);
@@ -83,6 +87,7 @@ function ImmunohistochemistryCaseView() {
       diagnosis: "",
       molecularSubType: "",
       conclusion: "",
+      codedConclusions: [],
       ihcScore: "",
       ihcRatio: "",
       averageChrom: "",
@@ -174,6 +179,20 @@ function ImmunohistochemistryCaseView() {
     params[index]["toggled"] = e;
     setReportParams(params);
   };
+
+  useEffect(() => {
+    componentMounted.current = true;
+
+    getFromOpenElisServer(
+      "/rest/displayList/PATHOLOGIST_CONCLUSIONS",
+      setConclusions,
+    );
+
+    return () => {
+      componentMounted.current = false;
+    };
+  }, []);
+
   const createReportParams = (reportType, index) => {
     switch (reportType) {
       case "BREAST_CANCER_HORMONE_RECEPTOR":
@@ -650,8 +669,57 @@ function ImmunohistochemistryCaseView() {
           <>
             <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
+                <Column lg={16} md={8} sm={4}>
+                  <Grid fullWidth={true} className="gridBoundary">
+                    <Column lg={3} md={8} sm={4}>
+                      <FormattedMessage id="pathology.label.conclusion" />
+                    </Column>
+                    <Column lg={4} md={8} sm={4}>
+                      <FilterableMultiSelect
+                        id="conclusion"
+                        titleText=""
+                        items={conclusions}
+                        itemToString={(item) => (item ? item.value : "")}
+                        initialSelectedItems={
+                          reportParams[index]?.codedConclusions
+                        }
+                        onChange={(changes) => {
+                          var params = { ...reportParams };
+                          if (!params[index]) {
+                            params[index] = {};
+                          }
+                          params[index].codedConclusions =
+                            changes.selectedItems;
+                          setReportParams(params);
+                        }}
+                        selectionFeedback="top-after-reopen"
+                      />
+                    </Column>
+                    <Column lg={8} md={8} sm={4}>
+                      {reportParams[index] &&
+                        reportParams[index]?.codedConclusions.map(
+                          (conclusion, conclusionIndex) => (
+                            <Tag
+                              key={conclusionIndex}
+                              filter
+                              onClose={() => {
+                                var params = { ...reportParams };
+                                params[index]["codedConclusions"].splice(
+                                  conclusionIndex,
+                                  1,
+                                );
+                                setReportParams(params);
+                              }}
+                            >
+                              {conclusion.value}
+                            </Tag>
+                          ),
+                        )}
+                    </Column>
+                  </Grid>
+                </Column>
                 <Column lg={3} md={8} sm={4}>
-                  <FormattedMessage id="pathology.label.conclusion" />
+                  <FormattedMessage id="pathology.label.textconclusion" />
                 </Column>
                 <Column lg={13} md={8} sm={4}>
                   <TextArea
@@ -1156,6 +1224,11 @@ function ImmunohistochemistryCaseView() {
                               averageHer2: reportParams[index]?.averageHer2,
                               numberOfcancerNuclei:
                                 reportParams[index]?.numberOfcancerNuclei,
+                              codedConclusions: reportParams[
+                                index
+                              ]?.codedConclusions.map(
+                                (conclusion) => conclusion.id,
+                              ),
                             };
                             postToOpenElisServerForPDF(
                               "/rest/ReportPrint",
