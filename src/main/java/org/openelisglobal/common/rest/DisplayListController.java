@@ -415,7 +415,7 @@ public class DisplayListController extends BaseRestController {
     @ResponseBody
     private List<IdValuePair> createUserTestSectionsList(HttpServletRequest request, @PathVariable String roleName) {
         if (roleName.equals("ALL")) {
-            return userService.getAllUserTestSections(getSysUserId(request));
+            return userService.getUserTestSections(getSysUserId(request), null);
         } else {
             Role role = roleService.getRoleByName(roleName);
             if (role == null) {

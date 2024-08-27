@@ -170,60 +170,34 @@ public class UserServiceImpl implements UserService {
         if (requireLabUnitAtLogin) {
             if (usd.getLoginLabUnit() != 0) {
                 logintestSection = testSectionService.getTestSectionById(String.valueOf(usd.getLoginLabUnit()));
-            }
-
-        }
-
-        List<String> userLabUnits = new ArrayList<>();
-        UserLabUnitRoles userLabRoles = getUserLabUnitRoles(systemUserId);
-        if (userLabRoles != null) {
-            for (LabUnitRoleMap labRole : userLabRoles.getLabUnitRoleMap()) {
-                if (labRole.getRoles().contains(roleId)) {
-                    if (requireLabUnitAtLogin) {
-                        if (logintestSection != null) {
-                            if (labRole.getLabUnit().equals(logintestSection.getId())) {
-                                userLabUnits.add(labRole.getLabUnit());
-                            }
-                        }
-                    } else {
-                        userLabUnits.add(labRole.getLabUnit());
-                    }
-                }
-            }
-            ;
-        }
-        List<IdValuePair> allTestSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE);
-        if (userLabUnits.contains(UnifiedSystemUserController.ALL_LAB_UNITS)) {
-            if (requireLabUnitAtLogin) {
                 if (logintestSection != null) {
                     userTestSections
                             .add(new IdValuePair(logintestSection.getId(), logintestSection.getLocalizedName()));
+                    return userTestSections;
                 }
-            } else {
-                userTestSections = allTestSections;
             }
-        } else {
-            userTestSections = allTestSections.stream()
-                    .filter(testSection -> userLabUnits.contains(testSection.getId())).collect(Collectors.toList());
+
         }
 
-        return userTestSections;
-    }
-
-    @Override
-    public List<IdValuePair> getAllUserTestSections(String systemUserId) {
         List<String> userLabUnits = new ArrayList<>();
         UserLabUnitRoles userLabRoles = getUserLabUnitRoles(systemUserId);
         if (userLabRoles != null) {
             userLabRoles.getLabUnitRoleMap().forEach(roles -> {
-                userLabUnits.add(roles.getLabUnit());
+                if (roleId == null) {
+                    userLabUnits.add(roles.getLabUnit());
+                } else {
+                    if (roles.getRoles().contains(roleId)) {
+                        userLabUnits.add(roles.getLabUnit());
+                    }
+                }
+
             });
         }
         List<IdValuePair> allTestSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE);
         if (userLabUnits.contains(UnifiedSystemUserController.ALL_LAB_UNITS)) {
             return allTestSections;
         } else {
-            List<IdValuePair> userTestSections = allTestSections.stream()
+            userTestSections = allTestSections.stream()
                     .filter(testSection -> userLabUnits.contains(testSection.getId())).collect(Collectors.toList());
             return userTestSections;
         }
