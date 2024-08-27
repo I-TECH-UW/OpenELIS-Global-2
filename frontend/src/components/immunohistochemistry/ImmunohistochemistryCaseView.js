@@ -59,7 +59,6 @@ function ImmunohistochemistryCaseView() {
   const [immunohistochemistrySampleInfo, setImmunohistochemistrySampleInfo] =
     useState({ labNumber: "" });
 
-  const [pathologySampleInfo, setPathologySampleInfo] = useState({});
   const [conclusions, setConclusions] = useState([]);
 
   const [statuses, setStatuses] = useState([]);
@@ -88,6 +87,7 @@ function ImmunohistochemistryCaseView() {
       diagnosis: "",
       molecularSubType: "",
       conclusion: "",
+      codedConclusions: [],
       ihcScore: "",
       ihcRatio: "",
       averageChrom: "",
@@ -671,35 +671,44 @@ function ImmunohistochemistryCaseView() {
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={16} md={8} sm={4}>
                   <Grid fullWidth={true} className="gridBoundary">
+                    <Column lg={3} md={8} sm={4}>
+                      <FormattedMessage id="pathology.label.conclusion" />
+                    </Column>
                     <Column lg={4} md={8} sm={4}>
                       <FilterableMultiSelect
                         id="conclusion"
-                        titleText={
-                          <FormattedMessage id="pathology.label.conclusion" />
-                        }
+                        titleText=""
                         items={conclusions}
                         itemToString={(item) => (item ? item.value : "")}
-                        initialSelectedItems={pathologySampleInfo.conclusions}
+                        initialSelectedItems={
+                          reportParams[index]?.codedConclusions
+                        }
                         onChange={(changes) => {
-                          setPathologySampleInfo({
-                            ...pathologySampleInfo,
-                            conclusions: changes.selectedItems,
-                          });
+                          var params = { ...reportParams };
+                          if (!params[index]) {
+                            params[index] = {};
+                          }
+                          params[index].codedConclusions =
+                            changes.selectedItems;
+                          setReportParams(params);
                         }}
                         selectionFeedback="top-after-reopen"
                       />
                     </Column>
-                    <Column lg={12} md={8} sm={4}>
-                      {pathologySampleInfo.conclusions &&
-                        pathologySampleInfo.conclusions.map(
-                          (conclusion, index) => (
+                    <Column lg={8} md={8} sm={4}>
+                      {reportParams[index] &&
+                        reportParams[index]?.codedConclusions.map(
+                          (conclusion, conclusionIndex) => (
                             <Tag
-                              key={index}
+                              key={conclusionIndex}
                               filter
                               onClose={() => {
-                                var info = { ...pathologySampleInfo };
-                                info["conclusions"].splice(index, 1);
-                                setPathologySampleInfo(info);
+                                var params = { ...reportParams };
+                                params[index]["codedConclusions"].splice(
+                                  conclusionIndex,
+                                  1,
+                                );
+                                setReportParams(params);
                               }}
                             >
                               {conclusion.value}
@@ -710,7 +719,7 @@ function ImmunohistochemistryCaseView() {
                   </Grid>
                 </Column>
                 <Column lg={3} md={8} sm={4}>
-                  <FormattedMessage id="pathology.label.conclusion" />
+                  <FormattedMessage id="pathology.label.textconclusion" />
                 </Column>
                 <Column lg={13} md={8} sm={4}>
                   <TextArea
@@ -1215,6 +1224,7 @@ function ImmunohistochemistryCaseView() {
                               averageHer2: reportParams[index]?.averageHer2,
                               numberOfcancerNuclei:
                                 reportParams[index]?.numberOfcancerNuclei,
+                              codedConclusions : reportParams[index]?.codedConclusions.map(conclusion => conclusion.id)
                             };
                             postToOpenElisServerForPDF(
                               "/rest/ReportPrint",
