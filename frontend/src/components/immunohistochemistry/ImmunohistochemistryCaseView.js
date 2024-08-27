@@ -1224,7 +1224,11 @@ function ImmunohistochemistryCaseView() {
                               averageHer2: reportParams[index]?.averageHer2,
                               numberOfcancerNuclei:
                                 reportParams[index]?.numberOfcancerNuclei,
-                              codedConclusions : reportParams[index]?.codedConclusions.map(conclusion => conclusion.id)
+                              codedConclusions: reportParams[
+                                index
+                              ]?.codedConclusions.map(
+                                (conclusion) => conclusion.id,
+                              ),
                             };
                             postToOpenElisServerForPDF(
                               "/rest/ReportPrint",
