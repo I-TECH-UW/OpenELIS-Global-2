@@ -1,6 +1,9 @@
 package org.openelisglobal.common.provider.query;
 
 import java.util.List;
+
+import lombok.Getter;
+import lombok.Setter;
 import org.openelisglobal.common.form.IPagingForm;
 import org.openelisglobal.common.paging.PagingBean;
 
@@ -8,15 +11,13 @@ public class PatientSearchResultsForm implements IPagingForm {
 
     private PagingBean paging;
 
+    @Getter
+    @Setter
     private List<PatientSearchResults> patientSearchResults;
 
-    public List<PatientSearchResults> getPatientSearchResults() {
-        return patientSearchResults;
-    }
-
-    public void setPatientSearchResults(List<PatientSearchResults> patientSearchResults) {
-        this.patientSearchResults = patientSearchResults;
-    }
+    @Setter
+    @Getter
+    private List<PatientSearchResults> externalSearchResults;
 
     @Override
     public void setPaging(PagingBean pagingBean) {

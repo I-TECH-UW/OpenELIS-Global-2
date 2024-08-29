@@ -112,6 +112,7 @@ public class PatientSearchRestController extends BaseRestController {
             if (request.getParameter("crResult") != null && request.getParameter("crResult").contains("true")) {
                 List<PatientSearchResults> fhirResults = searchPatientInClientRegistry(nationalID);
                 results.addAll(fhirResults);
+                form.setExternalSearchResults(fhirResults);
             }
 
             paging.setDatabaseResults(request, form, results);
@@ -167,8 +168,10 @@ public class PatientSearchRestController extends BaseRestController {
     }
 
     private List<org.hl7.fhir.r4.model.Patient> parseCRPatientSearchResults(Bundle patientBundle) {
-        return patientBundle.getEntry().stream().filter(entry -> entry.hasType("Patient"))
-                .map(entry -> (org.hl7.fhir.r4.model.Patient) entry.getResource()).collect(Collectors.toList());
+        return patientBundle.getEntry().stream()
+                .filter(entry -> entry.getResource() instanceof org.hl7.fhir.r4.model.Patient)
+                .map(entry -> (org.hl7.fhir.r4.model.Patient) entry.getResource())
+                .collect(Collectors.toList());
     }
 
     public Patient transformFhirPatientObjectToOpenElisPatientObject(Patient openELISPatient,
@@ -246,8 +249,6 @@ public class PatientSearchRestController extends BaseRestController {
                 fhirConfig.getClientRegistryUserName(), fhirConfig.getClientRegistryPassword());
 
         Patient patient = patientService.getPatientByNationalId(nationalID);
-        log.info("patient identifier: {}", patient.getFhirUuidAsString());
-
         List<String> targetSystems = targetSystemsParam == null ? Collections.emptyList()
                 : targetSystemsParam.getValuesAsQueryTokens().stream().filter(Objects::nonNull)
                         .map(StringParam::getValue).collect(Collectors.toList());
@@ -263,9 +264,10 @@ public class PatientSearchRestController extends BaseRestController {
 
         Parameters crMatchingParams = identifiersRequest.useHttpGet().execute();
         List<String> crIdentifiers = crMatchingParams.getParameter().stream()
-                .filter(param -> Objects.equals(param.getName(), "targetId")).map(param -> param.getValue().toString())
-                .collect(Collectors.toList());
-
+        .filter(param -> Objects.equals(param.getName(), "targetId"))
+        .map(param -> ((Reference) param.getValue()).getReference())
+        .collect(Collectors.toList());
+    
         if (crIdentifiers.isEmpty()) {
             return new ArrayList<>();
         }
@@ -273,17 +275,14 @@ public class PatientSearchRestController extends BaseRestController {
         Bundle patientBundle = clientRegistry.search().forResource(org.hl7.fhir.r4.model.Patient.class)
                 .where(new StringClientParam(org.hl7.fhir.r4.model.Patient.SP_RES_ID).matches().values(crIdentifiers))
                 .returnBundle(Bundle.class).execute();
-        log.info("fhir patient bundle: {}", patientBundle);
 
         List<org.hl7.fhir.r4.model.Patient> externalPatients = parseCRPatientSearchResults(patientBundle);
-        log.info("external Patients: " + externalPatients);
         List<PatientSearchResults> results = new ArrayList<>();
 
         for (org.hl7.fhir.r4.model.Patient externalPatient : externalPatients) {
             Patient openElisPatient = transformFhirPatientObjectToOpenElisPatientObject(patient, externalPatient);
             PatientSearchResults searchResult = getSearchResultsForPatient(openElisPatient, null);
             searchResult.setDataSourceName(MessageUtil.getMessage("patient.cr.source"));
-            log.info("searchResult: " + searchResult);
             results.add(searchResult);
         }
 
