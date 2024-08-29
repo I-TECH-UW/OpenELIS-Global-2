@@ -103,7 +103,6 @@ public class DisplayListController extends BaseRestController {
     @Autowired
     DictionaryService dictionaryService;
 
-
     private static boolean HAS_NFS_PANEL = false;
 
     static {
@@ -550,10 +549,10 @@ public class DisplayListController extends BaseRestController {
 
     }
 
-
     @GetMapping(value = "systemroles", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     public List<LabelValuePair> getRoles(@RequestParam(required = false) String sampleType) {
-        return  roleService.getAllActiveRoles().stream().map(r -> new LabelValuePair(r.getDescription() ,r.getName())).collect(Collectors.toList());
+        return roleService.getAllActiveRoles().stream().filter(r -> !r.getGroupingRole())
+                .map(r -> new LabelValuePair(r.getDescription(), r.getName())).collect(Collectors.toList());
     }
 }

@@ -245,7 +245,13 @@ const ReportByDate = (props) => {
                 </div>
               )}
 
-              <Button type="button" onClick={handleSubmit}  disabled={!reportFormValues.startDate && !reportFormValues.endDate}>
+              <Button
+                type="button"
+                onClick={handleSubmit}
+                disabled={
+                  !reportFormValues.startDate && !reportFormValues.endDate
+                }
+              >
                 <FormattedMessage
                   id="label.button.generatePrintableVersion"
                   defaultMessage="Generate printable version"
