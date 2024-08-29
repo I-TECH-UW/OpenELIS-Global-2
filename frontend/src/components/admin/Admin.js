@@ -40,7 +40,7 @@ import {
   SideNavMenuItem,
 } from "@carbon/react";
 import { CommonProperties } from "./menu/CommonProperties";
-import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
+import ConfigMenuDisplay from "./generalConfig/common/ConfigMenuDisplay";
 import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
 import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";

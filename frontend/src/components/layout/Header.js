@@ -102,7 +102,7 @@ function OEHeader(props) {
       getFromOpenElisServer("/rest/notifications", (data) => {
         setReadNotifications([]);
         setUnReadNotifications([]);
-        data.forEach((element) => {
+        data?.forEach((element) => {
           if (element.readAt) {
             setReadNotifications((prev) => [...prev, element]);
           } else {

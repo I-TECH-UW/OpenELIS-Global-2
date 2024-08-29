@@ -25,6 +25,7 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.common.util.LabelValuePair;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -546,5 +547,12 @@ public class DisplayListController extends BaseRestController {
         }
         return testItems;
 
+    }
+
+    @GetMapping(value = "systemroles", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<LabelValuePair> getRoles(@RequestParam(required = false) String sampleType) {
+        return roleService.getAllActiveRoles().stream().filter(r -> !r.getGroupingRole())
+                .map(r -> new LabelValuePair(r.getDescription(), r.getName())).collect(Collectors.toList());
     }
 }

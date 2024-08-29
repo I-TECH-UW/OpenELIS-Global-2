@@ -11,7 +11,6 @@ import StudyReportPage from "./StudyReportPage";
 
 import DashBoardPage from "./DashBoard";
 
-
 class HomePage {
   constructor() {}
 
@@ -115,7 +114,6 @@ class HomePage {
     cy.get("#menu_reports").click();
     cy.get("#menu_reports_study_nav").click();
     return new StudyReportPage();
-
   }
   goToPathologyDashboard() {
     this.openNavigationMenu();
@@ -129,7 +127,6 @@ class HomePage {
     cy.get("#menu_immunochem_dropdown").click();
     cy.get("#menu_immunochemdashboard_nav").click();
     return new DashBoardPage();
-
   }
 }
 
