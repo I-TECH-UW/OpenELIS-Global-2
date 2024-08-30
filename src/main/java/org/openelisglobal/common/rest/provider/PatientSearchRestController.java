@@ -170,8 +170,7 @@ public class PatientSearchRestController extends BaseRestController {
     private List<org.hl7.fhir.r4.model.Patient> parseCRPatientSearchResults(Bundle patientBundle) {
         return patientBundle.getEntry().stream()
                 .filter(entry -> entry.getResource() instanceof org.hl7.fhir.r4.model.Patient)
-                .map(entry -> (org.hl7.fhir.r4.model.Patient) entry.getResource())
-                .collect(Collectors.toList());
+                .map(entry -> (org.hl7.fhir.r4.model.Patient) entry.getResource()).collect(Collectors.toList());
     }
 
     public Patient transformFhirPatientObjectToOpenElisPatientObject(Patient openELISPatient,
@@ -264,10 +263,9 @@ public class PatientSearchRestController extends BaseRestController {
 
         Parameters crMatchingParams = identifiersRequest.useHttpGet().execute();
         List<String> crIdentifiers = crMatchingParams.getParameter().stream()
-        .filter(param -> Objects.equals(param.getName(), "targetId"))
-        .map(param -> ((Reference) param.getValue()).getReference())
-        .collect(Collectors.toList());
-    
+                .filter(param -> Objects.equals(param.getName(), "targetId"))
+                .map(param -> ((Reference) param.getValue()).getReference()).collect(Collectors.toList());
+
         if (crIdentifiers.isEmpty()) {
             return new ArrayList<>();
         }

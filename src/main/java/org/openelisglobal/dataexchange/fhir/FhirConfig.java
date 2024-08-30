@@ -7,10 +7,10 @@ import ca.uhn.fhir.rest.client.apache.ApacheRestfulClientFactory;
 import ca.uhn.fhir.rest.client.api.IClientInterceptor;
 import ca.uhn.fhir.rest.client.api.IGenericClient;
 import ca.uhn.fhir.rest.client.api.IRestfulClientFactory;
-import lombok.Getter;
 import ca.uhn.fhir.rest.client.interceptor.BasicAuthInterceptor;
 import java.util.ArrayList;
 import java.util.List;
+import lombok.Getter;
 import org.apache.commons.validator.GenericValidator;
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
@@ -77,7 +77,6 @@ public class FhirConfig {
         clientFactory.setHttpClient(httpClient);
         fhirContext.setRestfulClientFactory(clientFactory);
     }
-
 
     public List<String> getRemoteStoreIdentifier() {
 

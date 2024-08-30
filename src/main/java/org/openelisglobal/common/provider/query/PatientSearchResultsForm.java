@@ -1,7 +1,6 @@
 package org.openelisglobal.common.provider.query;
 
 import java.util.List;
-
 import lombok.Getter;
 import lombok.Setter;
 import org.openelisglobal.common.form.IPagingForm;
