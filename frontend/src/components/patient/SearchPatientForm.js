@@ -45,6 +45,7 @@ function SearchPatientForm(props) {
   const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(false);
   const [nextPage, setNextPage] = useState(null);
+  const [isToggled, setIsToggled] = useState(false);
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
   const [url, setUrl] = useState("");
@@ -54,7 +55,7 @@ function SearchPatientForm(props) {
   const handleSubmit = (values) => {
     setLoading(true);
     values.dateOfBirth = dob;
-    const searchEndPoint =
+    let searchEndPoint =
       "/rest/patient-search-results?" +
       "lastName=" +
       values.lastName +
@@ -75,9 +76,12 @@ function SearchPatientForm(props) {
       "&gender=" +
       values.gender +
       "&suppressExternalSearch=" +
-      values.suppressExternalSearch +
-      "&crResult=" +
-      values.crResult;
+      values.suppressExternalSearch;
+
+    if (values.crResult === true) {
+      searchEndPoint += "&crResult=true";
+    }
+
     getFromOpenElisServer(searchEndPoint, fetchPatientResults);
     setUrl(searchEndPoint);
   };
@@ -89,6 +93,10 @@ function SearchPatientForm(props) {
   const loadPreviousResultsPage = () => {
     setLoading(true);
     getFromOpenElisServer(url + "&page=" + previousPage, fetchPatientResults);
+  };
+
+  const toggle = () => {
+    setIsToggled((prev) => !prev);
   };
 
   const fetchPatientResults = (res) => {
@@ -307,7 +315,11 @@ function SearchPatientForm(props) {
                   labelA="false"
                   labelB="true"
                   id="toggle-cr"
-                  onClick={() => setFieldValue("crResult", true)}
+                  toggled={isToggled}
+                  onClick={() => {
+                    toggle();
+                    setFieldValue("crResult", !isToggled);
+                  }}
                 />
               </Column>
               <Column lg={8} md={4} sm={4}>
