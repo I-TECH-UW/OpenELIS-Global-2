@@ -300,7 +300,8 @@ function SearchPatientForm(props) {
                       disallowFutureDate={true}
                     />
                   )}
-                </Field>
+                </Field>{" "}
+                <br />{" "}
                 <Toggle
                   labelText="crResult"
                   labelA="false"
@@ -444,9 +445,7 @@ function SearchPatientForm(props) {
                         <TableCell key={cell.id}>
                           {cell.info.header === "dataSourceName" ? (
                             <Tag
-                              type={
-                                cell.value === "OpenELIS" ? "red" : "magenta"
-                              }
+                              type={cell.value === "OpenElis" ? "red" : "green"}
                             >
                               {cell.value}
                             </Tag>
