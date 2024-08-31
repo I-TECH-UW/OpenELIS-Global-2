@@ -20,6 +20,8 @@ import {
   TableCell,
   Pagination,
   Loading,
+  Toggle,
+  Tag,
 } from "@carbon/react";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import { patientSearchHeaderData } from "../data/PatientResultsTableHeaders";
@@ -73,7 +75,9 @@ function SearchPatientForm(props) {
       "&gender=" +
       values.gender +
       "&suppressExternalSearch=" +
-      values.suppressExternalSearch;
+      values.suppressExternalSearch +
+      "&crResult=" +
+      values.crResult;
     getFromOpenElisServer(searchEndPoint, fetchPatientResults);
     setUrl(searchEndPoint);
   };
@@ -90,8 +94,17 @@ function SearchPatientForm(props) {
   const fetchPatientResults = (res) => {
     let patientsResults = res.patientSearchResults;
     if (patientsResults.length > 0) {
-      patientsResults.forEach((item) => (item.id = item.patientID));
-      setPatientSearchResults(patientsResults);
+      const openClientRegistryResults = patientsResults.filter(
+        (item) => item.dataSourceName === "Open Client Registry",
+      );
+
+      if (openClientRegistryResults.length > 0) {
+        openClientRegistryResults.forEach((item) => (item.id = item.patientID));
+        setPatientSearchResults(openClientRegistryResults);
+      } else {
+        patientsResults.forEach((item) => (item.id = item.patientID));
+        setPatientSearchResults(patientsResults);
+      }
     } else {
       setPatientSearchResults([]);
       addNotification({
@@ -288,6 +301,13 @@ function SearchPatientForm(props) {
                     />
                   )}
                 </Field>
+                <Toggle
+                  labelText="crResult"
+                  labelA="false"
+                  labelB="true"
+                  id="toggle-cr"
+                  onClick={() => setFieldValue("crResult", true)}
+                />
               </Column>
               <Column lg={8} md={4} sm={4}>
                 <Field name="gender">
@@ -408,27 +428,35 @@ function SearchPatientForm(props) {
                 </TableRow>
               </TableHead>
               <TableBody>
-                <>
-                  {rows
-                    .slice((page - 1) * pageSize)
-                    .slice(0, pageSize)
-                    .map((row) => (
-                      <TableRow key={row.id}>
-                        <TableCell>
-                          {" "}
-                          <RadioButton
-                            name="radio-group"
-                            onClick={patientSelected}
-                            labelText=""
-                            id={row.id}
-                          />
+                {rows
+                  .slice((page - 1) * pageSize, page * pageSize)
+                  .map((row) => (
+                    <TableRow key={row.id}>
+                      <TableCell>
+                        <RadioButton
+                          name="radio-group"
+                          onClick={patientSelected}
+                          labelText=""
+                          id={row.id}
+                        />
+                      </TableCell>
+                      {row.cells.map((cell) => (
+                        <TableCell key={cell.id}>
+                          {cell.info.header === "dataSourceName" ? (
+                            <Tag
+                              type={
+                                cell.value === "OpenELIS" ? "red" : "magenta"
+                              }
+                            >
+                              {cell.value}
+                            </Tag>
+                          ) : (
+                            cell.value
+                          )}
                         </TableCell>
-                        {row.cells.map((cell) => (
-                          <TableCell key={cell.id}>{cell.value}</TableCell>
-                        ))}
-                      </TableRow>
-                    ))}
-                </>
+                      ))}
+                    </TableRow>
+                  ))}
               </TableBody>
             </Table>
           </TableContainer>

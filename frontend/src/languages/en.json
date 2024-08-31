@@ -541,6 +541,7 @@
   "search.label.sample": "Select Sample Status",
   "pathology.label.report": "Pathology Report",
   "patient.natioanalid": "National ID",
+  "patient.dataSourceName":"Data Source Name",
   "patient.label.additionalInfo": "Additional Information",
   "sample.entry.available.tests": "Available Tests",
   "sample.entry.panels": "Panels",
