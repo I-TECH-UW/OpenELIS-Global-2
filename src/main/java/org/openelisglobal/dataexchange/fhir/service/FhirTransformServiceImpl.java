@@ -721,15 +721,15 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         }
 
         switch (fhirPatient.getGender()) {
-            case MALE:
-                openELISPatient.setGender("M");
-                break;
-            case FEMALE:
-                openELISPatient.setGender("F");
-                break;
-            default:
-                openELISPatient.setGender(null);
-                break;
+        case MALE:
+            openELISPatient.setGender("M");
+            break;
+        case FEMALE:
+            openELISPatient.setGender("F");
+            break;
+        default:
+            openELISPatient.setGender(null);
+            break;
         }
 
         if (fhirPatient.getBirthDate() != null) {
