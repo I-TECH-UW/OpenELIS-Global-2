@@ -8,7 +8,6 @@ import ca.uhn.fhir.rest.param.StringParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
-import java.sql.Timestamp;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
@@ -23,20 +22,20 @@ import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.common.rest.util.PatientSearchResultsPaging;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
-import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.search.service.SearchResultsService;
+import org.openelisglobal.spring.util.SpringContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -112,7 +111,6 @@ public class PatientSearchRestController extends BaseRestController {
             if (request.getParameter("crResult") != null && request.getParameter("crResult").contains("true")) {
                 List<PatientSearchResults> fhirResults = searchPatientInClientRegistry(nationalID);
                 results.addAll(fhirResults);
-                form.setExternalSearchResults(fhirResults);
             }
 
             paging.setDatabaseResults(request, form, results);
@@ -173,72 +171,6 @@ public class PatientSearchRestController extends BaseRestController {
                 .map(entry -> (org.hl7.fhir.r4.model.Patient) entry.getResource()).collect(Collectors.toList());
     }
 
-    public Patient transformFhirPatientObjectToOpenElisPatientObject(Patient openELISPatient,
-            org.hl7.fhir.r4.model.Patient fhirPatient) {
-        for (Identifier identifier : fhirPatient.getIdentifier()) {
-            String system = identifier.getSystem();
-            String value = identifier.getValue();
-            if ("http://openelis-global.org/pat_nationalId".equals(system)) {
-                openELISPatient.setNationalId(value);
-            } else if ("http://openelis-global.org/pat_guid".equals(system)) {
-                openELISPatient.setExternalId(value);
-            } else if ("http://openelis-global.org/pat_uuid".equals(system)) {
-                openELISPatient.setFhirUuid(UUID.fromString(value));
-            }
-        }
-
-        if (!fhirPatient.getName().isEmpty()) {
-            HumanName name = fhirPatient.getNameFirstRep();
-            openELISPatient.setEpiFirstName(name.getGivenAsSingleString());
-            openELISPatient.setEpiLastName(name.getFamily());
-        }
-
-        if (!fhirPatient.getTelecom().isEmpty()) {
-            ContactPoint telecom = fhirPatient.getTelecomFirstRep();
-            if (ContactPoint.ContactPointSystem.PHONE.equals(telecom.getSystem())) {
-                Person person = openELISPatient.getPerson();
-                if (person == null) {
-                    person = new Person();
-                    openELISPatient.setPerson(person);
-                }
-                person.setPrimaryPhone(telecom.getValue());
-            }
-        }
-
-        switch (fhirPatient.getGender()) {
-        case MALE:
-            openELISPatient.setGender("M");
-            break;
-        case FEMALE:
-            openELISPatient.setGender("F");
-            break;
-        default:
-            openELISPatient.setGender(null);
-            break;
-        }
-
-        if (fhirPatient.getBirthDate() != null) {
-            openELISPatient.setBirthDate(new Timestamp(fhirPatient.getBirthDate().getTime()));
-            openELISPatient.setBirthDateForDisplay(
-                    DateUtil.convertTimestampToStringDate(new Timestamp(fhirPatient.getBirthDate().getTime())));
-        }
-
-        if (!fhirPatient.getAddress().isEmpty()) {
-            Address fhirAddress = fhirPatient.getAddressFirstRep();
-            Person person = openELISPatient.getPerson();
-            if (person == null) {
-                person = new Person();
-                openELISPatient.setPerson(person);
-            }
-            person.setStreetAddress(fhirAddress.getLine().isEmpty() ? null : fhirAddress.getLine().get(0).toString());
-            person.setCity(fhirAddress.getCity());
-            person.setState(fhirAddress.getState());
-            person.setCountry(fhirAddress.getCountry());
-        }
-
-        return openELISPatient;
-    }
-
     private List<PatientSearchResults> searchPatientInClientRegistry(String nationalID) {
         if (isClientRegistryConfigInvalid()) {
             return new ArrayList<>();
@@ -278,7 +210,7 @@ public class PatientSearchRestController extends BaseRestController {
         List<PatientSearchResults> results = new ArrayList<>();
 
         for (org.hl7.fhir.r4.model.Patient externalPatient : externalPatients) {
-            Patient openElisPatient = transformFhirPatientObjectToOpenElisPatientObject(patient, externalPatient);
+            Patient openElisPatient = SpringContext.getBean(FhirTransformService.class).transformToOpenElisPatient(patient, externalPatient);
             PatientSearchResults searchResult = getSearchResultsForPatient(openElisPatient, null);
             searchResult.setDataSourceName(MessageUtil.getMessage("patient.cr.source"));
             results.add(searchResult);

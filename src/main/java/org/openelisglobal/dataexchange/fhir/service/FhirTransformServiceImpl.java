@@ -688,6 +688,72 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         return fhirPatient;
     }
 
+    @Override
+    public Patient transformToOpenElisPatient(Patient openELISPatient, org.hl7.fhir.r4.model.Patient fhirPatient) {
+        for (Identifier identifier : fhirPatient.getIdentifier()) {
+            String system = identifier.getSystem();
+            String value = identifier.getValue();
+            if ("http://openelis-global.org/pat_nationalId".equals(system)) {
+                openELISPatient.setNationalId(value);
+            } else if ("http://openelis-global.org/pat_guid".equals(system)) {
+                openELISPatient.setExternalId(value);
+            } else if ("http://openelis-global.org/pat_uuid".equals(system)) {
+                openELISPatient.setFhirUuid(UUID.fromString(value));
+            }
+        }
+
+        if (!fhirPatient.getName().isEmpty()) {
+            HumanName name = fhirPatient.getNameFirstRep();
+            openELISPatient.setEpiFirstName(name.getGivenAsSingleString());
+            openELISPatient.setEpiLastName(name.getFamily());
+        }
+
+        if (!fhirPatient.getTelecom().isEmpty()) {
+            ContactPoint telecom = fhirPatient.getTelecomFirstRep();
+            if (ContactPoint.ContactPointSystem.PHONE.equals(telecom.getSystem())) {
+                Person person = openELISPatient.getPerson();
+                if (person == null) {
+                    person = new Person();
+                    openELISPatient.setPerson(person);
+                }
+                person.setPrimaryPhone(telecom.getValue());
+            }
+        }
+
+        switch (fhirPatient.getGender()) {
+            case MALE:
+                openELISPatient.setGender("M");
+                break;
+            case FEMALE:
+                openELISPatient.setGender("F");
+                break;
+            default:
+                openELISPatient.setGender(null);
+                break;
+        }
+
+        if (fhirPatient.getBirthDate() != null) {
+            openELISPatient.setBirthDate(new Timestamp(fhirPatient.getBirthDate().getTime()));
+            openELISPatient.setBirthDateForDisplay(
+                    DateUtil.convertTimestampToStringDate(new Timestamp(fhirPatient.getBirthDate().getTime())));
+        }
+
+        if (!fhirPatient.getAddress().isEmpty()) {
+            Address fhirAddress = fhirPatient.getAddressFirstRep();
+            Person person = openELISPatient.getPerson();
+            if (person == null) {
+                person = new Person();
+                openELISPatient.setPerson(person);
+            }
+            person.setStreetAddress(fhirAddress.getLine().isEmpty() ? null : fhirAddress.getLine().get(0).toString());
+            person.setCity(fhirAddress.getCity());
+            person.setState(fhirAddress.getState());
+            person.setCountry(fhirAddress.getCountry());
+        }
+
+        return openELISPatient;
+    }
+
     private Address transformToAddress(Person person) {
         @SuppressWarnings("unused")
         PersonAddress village = null;

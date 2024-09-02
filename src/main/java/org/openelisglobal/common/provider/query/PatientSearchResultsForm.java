@@ -14,10 +14,6 @@ public class PatientSearchResultsForm implements IPagingForm {
     @Setter
     private List<PatientSearchResults> patientSearchResults;
 
-    @Setter
-    @Getter
-    private List<PatientSearchResults> externalSearchResults;
-
     @Override
     public void setPaging(PagingBean pagingBean) {
         this.paging = pagingBean;
