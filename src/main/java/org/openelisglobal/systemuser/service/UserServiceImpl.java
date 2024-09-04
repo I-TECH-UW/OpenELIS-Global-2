@@ -6,14 +6,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.login.service.LoginUserService;
 import org.openelisglobal.login.valueholder.LoginUser;
+import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.program.service.ProgramService;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 import org.openelisglobal.role.service.RoleService;
@@ -53,6 +57,8 @@ public class UserServiceImpl implements UserService {
     private TestService testService;
     @Autowired
     private TestSectionService testSectionService;
+    @Autowired
+    private HttpSession session;
 
     @Override
     @Transactional
@@ -156,20 +162,42 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<IdValuePair> getUserTestSections(String systemUserId, String roleId) {
+        List<IdValuePair> userTestSections = new ArrayList();
+        Boolean requireLabUnitAtLogin = ConfigurationProperties.getInstance()
+                .getPropertyValue(Property.REQUIRE_LAB_UNIT_AT_LOGIN).equals("true");
+        UserSessionData usd = (UserSessionData) session.getAttribute("userSessionData");
+        TestSection logintestSection = null;
+        if (requireLabUnitAtLogin) {
+            if (usd.getLoginLabUnit() != 0) {
+                logintestSection = testSectionService.getTestSectionById(String.valueOf(usd.getLoginLabUnit()));
+                if (logintestSection != null) {
+                    userTestSections
+                            .add(new IdValuePair(logintestSection.getId(), logintestSection.getLocalizedName()));
+                    return userTestSections;
+                }
+            }
+
+        }
+
         List<String> userLabUnits = new ArrayList<>();
         UserLabUnitRoles userLabRoles = getUserLabUnitRoles(systemUserId);
         if (userLabRoles != null) {
             userLabRoles.getLabUnitRoleMap().forEach(roles -> {
-                if (roles.getRoles().contains(roleId)) {
+                if (roleId == null) {
                     userLabUnits.add(roles.getLabUnit());
+                } else {
+                    if (roles.getRoles().contains(roleId)) {
+                        userLabUnits.add(roles.getLabUnit());
+                    }
                 }
+
             });
         }
         List<IdValuePair> allTestSections = DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE);
         if (userLabUnits.contains(UnifiedSystemUserController.ALL_LAB_UNITS)) {
             return allTestSections;
         } else {
-            List<IdValuePair> userTestSections = allTestSections.stream()
+            userTestSections = allTestSections.stream()
                     .filter(testSection -> userLabUnits.contains(testSection.getId())).collect(Collectors.toList());
             return userTestSections;
         }
@@ -343,4 +371,5 @@ public class UserServiceImpl implements UserService {
                         || testUnitIds.contains(programService.get(p.getId()).getTestSection().getId()))
                 .collect(Collectors.toList());
     }
+
 }
