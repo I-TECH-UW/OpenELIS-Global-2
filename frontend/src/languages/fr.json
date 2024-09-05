@@ -49,7 +49,7 @@
   "patient.label.info": "Informations sur les patients",
   "breadcrumb.home": "Domicile",
   "admin.legacy": "Précédent Admin",
-  "admin.formEntryConfig": "Configurations de formulaire",
+  "admin.formEntryConfig": "Configurations générales",
   "admin.page.configuration.formEntryConfigMenu.name": "Nom",
   "admin.page.configuration.formEntryConfigMenu.description": "Description",
   "admin.page.configuration.formEntryConfigMenu.select": "Sélectionner",
@@ -204,6 +204,7 @@
   "header.label.version": "Version:",
   "header.label.logout": "Déconnexion",
   "header.label.selectlocale": "Sélectionner la Langue",
+  "header.label.selectLab": "Sélectionner la Lab",
   "header.label.ARV": "ARV-initial",
   "header.label.followup": "ARV-suivi",
   "header.label.intialFollowup": "ARV -->Suivi initial-VL",
@@ -1138,5 +1139,10 @@
   "label.test.batch.cancel.start": "Vous avez choisi d'annuler le test",
   "label.test.batch.cancel.finish": "Cette action est irréversible.",
   "label.test.batch.replace.start": "Les tests suivants",
-  "label.test.batch.no.change.finish": "ne seront pas modifiés."
+  "label.test.batch.no.change.finish": "ne seront pas modifiés.",
+  "notification.slideover.button.unsubscribe": "Se désabonner",
+  "notification.slideover.button.unsubscribe.success": "Désabonnement réussi",
+  "notification.slideover.button.unsubscribe.fail": "Échec de l'annulation de l'abonnement",
+  "notification.slideover.button.subscribe.success": "Abonnement réussi",
+  "notification.slideover.button.subscribe.fail": "Échec de l'abonnement"
 }

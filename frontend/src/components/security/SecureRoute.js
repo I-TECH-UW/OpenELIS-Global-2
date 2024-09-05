@@ -1,5 +1,6 @@
 import React, { useState, useContext, useEffect, useRef } from "react";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
+import { ConfigurationContext } from "../layout/Layout";
 import { Route } from "react-router-dom";
 import { useIdleTimer } from "react-idle-timer";
 import { confirmAlert } from "react-confirm-alert";
@@ -26,12 +27,20 @@ function SecureRoute(props) {
     logout,
   } = useContext(UserSessionDetailsContext);
 
+  const { configurationProperties } = useContext(ConfigurationContext);
+
   useEffect(() => {
     setLoading(!errorLoadingSessionDetails && isCheckingLogin());
     if (userSessionDetails.authenticated) {
       console.info("Authenticated");
       if (hasPermission(userSessionDetails)) {
         console.info("Access Allowed");
+        if (
+          configurationProperties.REQUIRE_LAB_UNIT_AT_LOGIN === "true" &&
+          !userSessionDetails.loginLabUnit
+        ) {
+          window.location.href = "/landing";
+        }
       } else {
         const options = {
           title: intl.formatMessage({ id: "accessDenied.title" }),

@@ -98,7 +98,8 @@ const GenericConfigEdit = ({ menuType, ID }) => {
     setTextInputEnglishValue(newValue);
     updateFormEntryConfig({
       localization: {
-        ...FormEntryConfig.localization,
+        id: FormEntryConfig.localization.id,
+        description: FormEntryConfig.localization.description,
         localeValues: {
           ...FormEntryConfig.localization.localeValues,
           en: newValue,
@@ -112,7 +113,8 @@ const GenericConfigEdit = ({ menuType, ID }) => {
     setTextInputFrenchValue(newValue);
     updateFormEntryConfig({
       localization: {
-        ...FormEntryConfig.localization,
+        id: FormEntryConfig.localization.id,
+        description: FormEntryConfig.localization.description,
         localeValues: {
           ...FormEntryConfig.localization.localeValues,
           fr: newValue,
@@ -332,7 +334,7 @@ const GenericConfigEdit = ({ menuType, ID }) => {
                       </h4>
                     </Column>
                     {!FormEntryConfig.tag && (
-                      <Column lg={3}>
+                      <Column lg={8}>
                         <TextInput
                           id="textInput"
                           value={textInputValue}
@@ -345,7 +347,7 @@ const GenericConfigEdit = ({ menuType, ID }) => {
                     <>
                       <br />
                       <Grid>
-                        <Column lg={3}>
+                        <Column lg={8}>
                           <TextInput
                             id="myInputEnglish"
                             labelText={<FormattedMessage id="english.label" />}
@@ -353,7 +355,7 @@ const GenericConfigEdit = ({ menuType, ID }) => {
                             onChange={handleInputEnglishChange}
                           />
                         </Column>
-                        <Column lg={3}>
+                        <Column lg={8}>
                           <TextInput
                             id="myInputFrench"
                             labelText={<FormattedMessage id="french.label" />}

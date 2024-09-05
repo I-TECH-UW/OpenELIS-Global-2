@@ -5,6 +5,10 @@ import ModifyOrderPage from "./ModifyOrderPage";
 import WorkPlan from "./WorkPlan";
 import NonConform from "./NonConformPage";
 import BatchOrderEntry from "./BatchOrderEntryPage";
+
+import RoutineReportPage from "./RoutineReportPage";
+import StudyReportPage from "./StudyReportPage";
+
 import DashBoardPage from "./DashBoard";
 
 class HomePage {
@@ -99,6 +103,18 @@ class HomePage {
     return new NonConform();
   }
 
+  goToRoutineReports() {
+    this.openNavigationMenu();
+    cy.get("#menu_reports").click();
+    cy.get("#menu_reports_routine_nav").click();
+    return new RoutineReportPage();
+  }
+  goToStudyReports() {
+    this.openNavigationMenu();
+    cy.get("#menu_reports").click();
+    cy.get("#menu_reports_study_nav").click();
+    return new StudyReportPage();
+  }
   goToPathologyDashboard() {
     this.openNavigationMenu();
     cy.get("#menu_pathology_dropdown").click();
