@@ -7,6 +7,7 @@ import { confirmAlert } from "react-confirm-alert";
 import "react-confirm-alert/src/react-confirm-alert.css"; // Import css
 import { Loading, Modal } from "@carbon/react/";
 import config from "../../config.json";
+import { Roles } from "../utils/Utils";
 import { FormattedMessage, useIntl } from "react-intl";
 
 const idleTimeout = 1000 * 60 * 30; // milliseconds until idle warning will appear
@@ -37,7 +38,8 @@ function SecureRoute(props) {
         console.info("Access Allowed");
         if (
           configurationProperties.REQUIRE_LAB_UNIT_AT_LOGIN === "true" &&
-          !userSessionDetails.loginLabUnit
+          !userSessionDetails.loginLabUnit &&
+          !userSessionDetails.roles.includes(Roles.GLOBAL_ADMIN)
         ) {
           window.location.href = "/landing";
         }
