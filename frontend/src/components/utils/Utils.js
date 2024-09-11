@@ -224,7 +224,7 @@ export const getFromOpenElisServerV2 = (url) => {
       if (res) {
         resolve(res);
       } else {
-        reject(new Error("Failed to fetch data"));
+        reject("Failed to fetch Subscription data");
       }
     });
   });
@@ -356,3 +356,14 @@ export function urlBase64ToUint8Array(base64String) {
   }
   return outputArray;
 }
+
+export const Roles = {
+  GLOBAL_ADMIN: "Global Administrator",
+  USER_ACCOUNT_ADMIN: "User Account Administrator",
+  AUDIT_TRAIL: "Audit Trail",
+  RECEPTION: "Reception",
+  RESULTS: "Results",
+  VALIDATION: "Validation",
+  REPORTS: "Reports",
+  PATHOLOGIST: "Pathologist",
+};
