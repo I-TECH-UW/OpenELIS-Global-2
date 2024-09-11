@@ -33,6 +33,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -168,6 +169,9 @@ public class UserModuleServiceImpl implements UserModuleService, IActionConstant
                 } else if (principal instanceof DefaultSaml2AuthenticatedPrincipal) {
                     DefaultSaml2AuthenticatedPrincipal samlUser = (DefaultSaml2AuthenticatedPrincipal) principal;
                     login = loginService.getUserProfile(samlUser.getName());
+                } else if (principal instanceof DefaultOAuth2User) {
+                    DefaultOAuth2User oauthUser = (DefaultOAuth2User) principal;
+                    login = loginService.getUserProfile(oauthUser.getName());
                 }
             }
         } catch (LIMSRuntimeException e) {

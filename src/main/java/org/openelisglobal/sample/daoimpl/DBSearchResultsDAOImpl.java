@@ -166,24 +166,6 @@ public class DBSearchResultsDAOImpl implements SearchResultsDAO {
                     "SearchResultsDAOImp:getSearchResults:query:guid: " + guid);
             LogEvent.logTrace(this.getClass().getSimpleName(), "getSearchResults",
                     "SearchResultsDAOImp:getSearchResults:query: " + query.getQueryString());
-            // String[] dArray = { " ", " ", subjectNumber, nationalID, gender, " ", " ", "
-            // "};
-            // String[] sArray = query.getNamedParameters();
-            // for (int i = 0; i < sArray.length; i++) {
-            // System.out.println(">>>: " + sArray[i] + ":" + dArray[i] );
-            // }
-            // System.out.println("SearchResultsDAOImp:getSearchResults:query: " +
-            // "lastName" + lastName + ':' +
-            // "firstName " + firstName + ':' +
-            // "STNumber " + STNumber + ':' +
-            // "subjectNumber " + subjectNumber + ':' +
-            // "nationalID " + nationalID + ':' +
-            // "externalID " + externalID + ':' +
-            // "patientID " + patientID + ':' +
-            // "guid " + guid + ':' +
-            // "dateOfBirth " + dateOfBirth + ':' +
-            // "gender " + gender
-            // );
 
             queryResults = query.list();
         } catch (RuntimeException e) {

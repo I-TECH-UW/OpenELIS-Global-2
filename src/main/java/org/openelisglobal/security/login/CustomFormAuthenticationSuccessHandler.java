@@ -29,8 +29,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
-import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.security.web.authentication.SavedRequestAwareAuthenticationSuccessHandler;
 import org.springframework.stereotype.Component;
@@ -84,16 +82,6 @@ public class CustomFormAuthenticationSuccessHandler extends SavedRequestAwareAut
             if (principal instanceof UserDetails) {
                 UserDetails user = (UserDetails) principal;
                 loginInfo = loginService.getUserProfile(user.getUsername());
-            } else if (principal instanceof DefaultSaml2AuthenticatedPrincipal) {
-                DefaultSaml2AuthenticatedPrincipal samlUser = (DefaultSaml2AuthenticatedPrincipal) principal;
-                loginInfo = loginService.getUserProfile(samlUser.getName());
-                request.getSession().setAttribute("samlSession", true);
-                samlLogin = true;
-            } else if (principal instanceof DefaultOAuth2User) {
-                DefaultOAuth2User oauthUser = (DefaultOAuth2User) principal;
-                loginInfo = loginService.getUserProfile(oauthUser.getAttribute("preferred_username"));
-                request.getSession().setAttribute("oauthSession", true);
-                oauthLogin = true;
             }
         }
         try {

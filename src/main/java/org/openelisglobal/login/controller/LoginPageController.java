@@ -2,6 +2,7 @@ package org.openelisglobal.login.controller;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -26,6 +27,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.web.csrf.CsrfToken;
@@ -125,8 +128,10 @@ public class LoginPageController extends BaseController {
             session.setLoginName(user.getLoginName());
             session.setFirstName(user.getFirstName());
             session.setLastName(user.getLastName());
-            session.setCSRF(token.getToken());
-            setLabunitRolesForExistingUser(session);
+            if (token != null) {
+                session.setCSRF(token.getToken());
+            }
+            setLabunitRolesForExistingUser(request, session);
             Set<String> roles = new HashSet<>();
             for (String roleId : userRoleService.getRoleIdsForUser(user.getId())) {
                 roles.add(roleService.getRoleById(roleId).getName().trim());
@@ -136,7 +141,37 @@ public class LoginPageController extends BaseController {
         return session;
     }
 
-    private void setLabunitRolesForExistingUser(UserSession session) {
+    private void setLabunitRolesForExistingUser(HttpServletRequest request, UserSession session) {
+        String loginMethod = (String) request.getSession().getAttribute("login_method");
+        // TODO get roles to be loaded as granted authorities on form login so we can
+        // unify this approach
+        if ("form".equals(loginMethod)) {
+            setLabunitRolesForExistingUserFromDB(session);
+        } else if ("samlLogin".equals(loginMethod)) {
+            setLabunitRolesForExistingUserFromGrantedAuthorities(session);
+        } else if ("oauthLogin".equals(loginMethod)) {
+            setLabunitRolesForExistingUserFromGrantedAuthorities(session);
+        }
+
+    }
+
+    private void setLabunitRolesForExistingUserFromGrantedAuthorities(UserSession session) {
+        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication()
+                .getAuthorities();
+        Map<String, List<String>> userLabRolesMap = new HashMap<>();
+        for (GrantedAuthority authority : authorities) {
+            String[] authorityExplode = authority.getAuthority().split("-");
+            if (authorityExplode.length == 3) {
+                List<String> roles = userLabRolesMap.getOrDefault(authorityExplode[2], new ArrayList<>());
+                roles.add(authorityExplode[1]);
+                userLabRolesMap.put(authorityExplode[2], roles);
+            }
+        }
+
+        session.setUserLabRolesMap(userLabRolesMap);
+    }
+
+    private void setLabunitRolesForExistingUserFromDB(UserSession session) {
         UserLabUnitRoles roles = userService.getUserLabUnitRoles(session.getUserId());
         if (roles != null) {
             Set<LabUnitRoleMap> roleMaps = roles.getLabUnitRoleMap();

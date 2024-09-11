@@ -161,7 +161,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
     public SystemUser getDataForLoginUser(String userName) throws LIMSRuntimeException {
         List<SystemUser> list;
         try {
-            String sql = "from SystemUser where login_name = :name";
+            String sql = "from SystemUser where loginName = :name";
             Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
             query.setParameter("name", userName);
             list = query.list();
