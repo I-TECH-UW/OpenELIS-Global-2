@@ -78,8 +78,8 @@ function SearchPatientForm(props) {
       "&suppressExternalSearch=" +
       values.suppressExternalSearch;
 
-    if (values.crResult === true) {
-      searchEndPoint += "&crResult=true";
+    if (values.crSearch === true) {
+      searchEndPoint += "&crSearch=true";
     }
 
     getFromOpenElisServer(searchEndPoint, fetchPatientResults);
@@ -308,19 +308,7 @@ function SearchPatientForm(props) {
                       disallowFutureDate={true}
                     />
                   )}
-                </Field>{" "}
-                <br />{" "}
-                <Toggle
-                  labelText="crResult"
-                  labelA="false"
-                  labelB="true"
-                  id="toggle-cr"
-                  toggled={isToggled}
-                  onClick={() => {
-                    toggle();
-                    setFieldValue("crResult", !isToggled);
-                  }}
-                />
+                </Field>
               </Column>
               <Column lg={8} md={4} sm={4}>
                 <Field name="gender">
@@ -383,6 +371,19 @@ function SearchPatientForm(props) {
                     defaultMessage="External Search"
                   />
                 </Button>
+              </Column>
+              <Column lg={4} md={4} sm={2}>
+              <Toggle
+                  labelText="Client Registry Search"
+                  labelA="false"
+                  labelB="true"
+                  id="toggle-cr"
+                  toggled={isToggled}
+                  onClick={() => {
+                    toggle();
+                    setFieldValue("crSearch", !isToggled);
+                  }}
+                />
               </Column>
             </Grid>
           </Form>
