@@ -81,8 +81,9 @@ public class FhirConfig {
     }
 
     public List<String> getRemoteStoreIdentifier() {
-        if (remoteStoreIdentifier.get(0).equals(ResourceType.Practitioner + "/*")) {
-            remoteStoreIdentifier = new ArrayList<>();
+
+        if (remoteStoreIdentifier.contains(ResourceType.Practitioner + "/*")) {
+            List<String> fetchedIdentifiers = new ArrayList<>();
             for (String remoteStorePath : getRemoteStorePaths()) {
                 IGenericClient fhirClient = fhirContext().newRestfulGenericClient(remoteStorePath);
                 if (!GenericValidator.isBlankOrNull(getUsername())
@@ -105,14 +106,17 @@ public class FhirConfig {
                         if (bundleComponent.hasResource()
                                 && ResourceType.Practitioner.equals(bundleComponent.getResource().getResourceType())) {
 
-                            remoteStoreIdentifier.add(ResourceType.Practitioner + "/"
+                            fetchedIdentifiers.add(ResourceType.Practitioner + "/"
                                     + bundleComponent.getResource().getIdElement().getIdPart());
                         }
                     }
                 }
             }
+            return fetchedIdentifiers;
+        } else {
+            return remoteStoreIdentifier;
         }
-        return remoteStoreIdentifier;
+
     }
 
 }
