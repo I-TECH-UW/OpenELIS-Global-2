@@ -376,6 +376,7 @@ function PatientStatusReport(props) {
                       <Column lg={4} md={8} sm={4}>
                         <Dropdown
                           id="dateType"
+                          data-cy="dateTypeDropdown"
                           name="dateType"
                           titleText="Date Type"
                           initialSelectedItem={itemList.find(
