@@ -32,10 +32,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
@@ -158,22 +162,23 @@ public class LoginPageController extends BaseController {
     }
 
     private void setLabunitRolesForExistingUser(HttpServletRequest request, UserSession session) {
-        String loginMethod = (String) request.getSession().getAttribute("login_method");
-        // TODO get roles to be loaded as granted authorities on form login so we can
-        // unify this approach
-        if ("form".equals(loginMethod)) {
-            setLabunitRolesForExistingUserFromDB(session);
-        } else if ("samlLogin".equals(loginMethod)) {
-            setLabunitRolesForExistingUserFromGrantedAuthorities(session);
-        } else if ("oauthLogin".equals(loginMethod)) {
-            setLabunitRolesForExistingUserFromGrantedAuthorities(session);
-        }
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
 
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                setLabunitRolesForExistingUserFromDB(session);
+            } else if (principal instanceof DefaultSaml2AuthenticatedPrincipal) {
+                setLabunitRolesForExistingUserFromGrantedAuthorities(session, authentication);
+            } else if (principal instanceof DefaultOAuth2User) {
+                setLabunitRolesForExistingUserFromGrantedAuthorities(session, authentication);
+            }
+        }
     }
 
-    private void setLabunitRolesForExistingUserFromGrantedAuthorities(UserSession session) {
-        Collection<? extends GrantedAuthority> authorities = SecurityContextHolder.getContext().getAuthentication()
-                .getAuthorities();
+    private void setLabunitRolesForExistingUserFromGrantedAuthorities(UserSession session,
+            Authentication authentication) {
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Map<String, List<String>> userLabRolesMap = new HashMap<>();
         for (GrantedAuthority authority : authorities) {
             String[] authorityExplode = authority.getAuthority().split("-");

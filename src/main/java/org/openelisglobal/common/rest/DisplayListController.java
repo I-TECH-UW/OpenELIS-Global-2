@@ -45,10 +45,13 @@ import org.openelisglobal.role.valueholder.Role;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.controller.UnifiedSystemUserController;
 import org.openelisglobal.systemuser.service.UserService;
+import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
@@ -94,6 +97,9 @@ public class DisplayListController extends BaseRestController {
 
     @Autowired
     TypeOfSampleService typeOfSampleService;
+
+    @Autowired
+    TestSectionService testSectionService;
 
     @Autowired
     private LocalizationService localizationService;
@@ -578,5 +584,31 @@ public class DisplayListController extends BaseRestController {
     public List<LabelValuePair> getRoles(@RequestParam(required = false) String sampleType) {
         return roleService.getAllActiveRoles().stream().filter(r -> !r.getGroupingRole())
                 .map(r -> new LabelValuePair(r.getDescription(), r.getName())).collect(Collectors.toList());
+    }
+
+    @GetMapping(value = "systemroles-testsections", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<LabelValuePair> getRolesWithTestSections() {
+        List<LabelValuePair> rolesWithTestSections = new ArrayList<>();
+        String globalParentRoleId = roleService.getRoleByName(Constants.GLOBAL_ROLES_GROUP).getId();
+        String labUnitRoleId = roleService.getRoleByName(Constants.LAB_ROLES_GROUP).getId();
+        List<TestSection> testSections = testSectionService.getAllActiveTestSections();
+
+        List<Role> roles = roleService.getAllActiveRoles();
+        List<Role> globalRoles = roles.stream().filter(role -> globalParentRoleId.equals(role.getGroupingParent()))
+                .collect(Collectors.toList());
+        List<Role> labUnitRoles = roles.stream().filter(role -> labUnitRoleId.equals(role.getGroupingParent()))
+                .collect(Collectors.toList());
+        rolesWithTestSections.addAll(globalRoles.stream()
+                .map(r -> new LabelValuePair(r.getDescription(), "oeg-" + r.getName().trim())).collect(Collectors.toList()));
+
+        rolesWithTestSections.addAll(labUnitRoles.stream()
+                .map(r -> new LabelValuePair(r.getDescription(),
+                        "oeg-" + r.getName().trim() + "-" + UnifiedSystemUserController.ALL_LAB_UNITS))
+                .collect(Collectors.toList()));
+        testSections.forEach(e -> rolesWithTestSections.addAll(
+            labUnitRoles.stream().map(r -> new LabelValuePair(r.getDescription(), "oeg-" + r.getName().trim() + "-" + e.getTestSectionName().trim()))
+            .collect(Collectors.toList())));
+        return rolesWithTestSections;
     }
 }

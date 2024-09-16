@@ -90,8 +90,11 @@ public class CustomSSOAuthenticationSuccessHandler extends SavedRequestAwareAuth
         boolean apiLogin = "true".equals(request.getParameter("apiCall"));
         boolean samlLogin = false;
         boolean oauthLogin = false;
+
+        SecurityContextHolder.getContext().setAuthentication(authentication);
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
+
             if (principal instanceof DefaultSaml2AuthenticatedPrincipal) {
                 DefaultSaml2AuthenticatedPrincipal samlUser = (DefaultSaml2AuthenticatedPrincipal) principal;
                 // loginInfo = loginService.getUserProfile(samlUser.getName());

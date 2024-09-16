@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
@@ -23,7 +24,6 @@ import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.program.service.ProgramService;
 import org.openelisglobal.resultvalidation.bean.AnalysisItem;
 import org.openelisglobal.role.service.RoleService;
-import org.openelisglobal.role.valueholder.Role;
 import org.openelisglobal.systemuser.controller.UnifiedSystemUserController;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.beanItems.TestResultItem;
@@ -40,12 +40,16 @@ import org.openelisglobal.userrole.valueholder.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
+import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.context.request.RequestAttributes;
+import org.springframework.web.context.request.RequestContextHolder;
+import org.springframework.web.context.request.ServletRequestAttributes;
 
 @Service
 public class UserServiceImpl implements UserService {
@@ -171,9 +175,21 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<IdValuePair> getUserTestSections(String systemUserId, String roleId) {
-        Role role = roleService.get(roleId);
+        // Authentication authentication2 =
+        // SecurityContextHolder.getContext().getAuthentication();
+        // TODO workaround for Security Context authentication is null
+        RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        HttpServletRequest request = null;
+        if (requestAttributes instanceof ServletRequestAttributes) {
+            request = ((ServletRequestAttributes) requestAttributes).getRequest();
+        }
+        Object sc = request.getSession().getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+        if (!(sc instanceof SecurityContext)) {
+            LogEvent.logWarn(this.getClass().getSimpleName(), "getUserLogin",
+                    "security context is not of type SecurityContext");
+        }
+        Authentication authentication = ((SecurityContext) sc).getAuthentication();
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserDetails) {
@@ -246,7 +262,7 @@ public class UserServiceImpl implements UserService {
                 for (GrantedAuthority authority : authentication.getAuthorities()) {
                     String[] authorityExplode = authority.getAuthority().split("-");
                     if (authorityExplode.length == 3) {
-                        if (role.getName().trim().equals(authorityExplode[1])) {
+                        if (roleId == null || roleService.get(roleId).getName().trim().equals(authorityExplode[1])) {
                             List<IdValuePair> allTestSections = DisplayListService.getInstance()
                                     .getList(ListType.TEST_SECTION_ACTIVE);
                             if (UnifiedSystemUserController.ALL_LAB_UNITS.equals(authorityExplode[2])) {

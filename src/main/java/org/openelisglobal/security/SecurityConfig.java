@@ -296,6 +296,7 @@ public class SecurityConfig {
         private String config;
 
         @Value("${org.itech.login.oauth.clientID:OpenELIS-Global_oauth}")
+
         private String clientID;
 
         @Value("${org.itech.login.oauth.clientSecret:}")
