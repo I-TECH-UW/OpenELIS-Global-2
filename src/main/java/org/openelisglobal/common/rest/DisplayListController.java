@@ -599,16 +599,18 @@ public class DisplayListController extends BaseRestController {
                 .collect(Collectors.toList());
         List<Role> labUnitRoles = roles.stream().filter(role -> labUnitRoleId.equals(role.getGroupingParent()))
                 .collect(Collectors.toList());
-        rolesWithTestSections.addAll(globalRoles.stream()
-                .map(r -> new LabelValuePair(r.getDescription(), "oeg-" + r.getName().trim())).collect(Collectors.toList()));
+        rolesWithTestSections.addAll(
+                globalRoles.stream().map(r -> new LabelValuePair(r.getDescription(), "oeg-" + r.getName().trim()))
+                        .collect(Collectors.toList()));
 
         rolesWithTestSections.addAll(labUnitRoles.stream()
                 .map(r -> new LabelValuePair(r.getDescription(),
                         "oeg-" + r.getName().trim() + "-" + UnifiedSystemUserController.ALL_LAB_UNITS))
                 .collect(Collectors.toList()));
-        testSections.forEach(e -> rolesWithTestSections.addAll(
-            labUnitRoles.stream().map(r -> new LabelValuePair(r.getDescription(), "oeg-" + r.getName().trim() + "-" + e.getTestSectionName().trim()))
-            .collect(Collectors.toList())));
+        testSections.forEach(e -> rolesWithTestSections.addAll(labUnitRoles.stream()
+                .map(r -> new LabelValuePair(r.getDescription(),
+                        "oeg-" + r.getName().trim() + "-" + e.getTestSectionName().trim()))
+                .collect(Collectors.toList())));
         return rolesWithTestSections;
     }
 }
