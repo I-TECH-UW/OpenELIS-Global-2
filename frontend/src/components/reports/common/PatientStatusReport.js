@@ -65,7 +65,7 @@ function PatientStatusReport(props) {
 // function to handle csv report start
 
 const handleCSVReport = () => {
-  const url = `${config.serverBaseUrl}/api/patientStatus`; 
+  const url = `${config.serverBaseUrl}/patientStatus`; 
 
   // URL parameters
   const params = new URLSearchParams({
