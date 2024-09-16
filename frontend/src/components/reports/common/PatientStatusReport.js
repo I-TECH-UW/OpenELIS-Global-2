@@ -24,6 +24,7 @@ import { ConfigurationContext } from "../../layout/Layout";
 import { Formik, Field } from "formik";
 import PatientStatusReportFormValues from "../../formModel/innitialValues/PatientStatusReportFormValues";
 import SearchPatientForm from "../../patient/SearchPatientForm";
+// import config from "../../../config.json";
 
 import { encodeDate } from "../../utils/Utils";
 
@@ -60,6 +61,46 @@ function PatientStatusReport(props) {
       selectedPatientId: patient.patientPK,
     });
   };
+
+// function to handle csv report start
+
+const handleCSVReport = () => {
+  const url = `${config.serverBaseUrl}/api/patientStatus`; 
+
+  // URL parameters
+  const params = new URLSearchParams({
+    lowerDateRange: reportFormValues.startDate,
+    upperDateRange: reportFormValues.endDate,
+    patientId: reportFormValues.selectedPatientId,
+    referringSiteId: reportFormValues.referringSiteId,
+    referringSiteDepartmentId: reportFormValues.referringSiteDepartmentId,
+    onlyResults: result,
+    dateType: items,
+  }).toString();
+
+  fetch(`${url}?${params}`, { method: 'GET' }) 
+    .then(response => {
+      if (!response.ok) {
+        throw new Error('Network response was not ok');
+      }
+      return response.blob();
+    })
+    .then(blob => {
+      const csvUrl = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.style.display = 'none';
+      a.href = csvUrl;
+      a.download = 'PatientStatusReport.csv';
+      document.body.appendChild(a);
+      a.click();
+      window.URL.revokeObjectURL(csvUrl);
+    })
+    .catch(error => {
+      console.error('Error:', error);
+    });
+};
+
+  // function to handle csv ends
 
   const handleReportPrint = () => {
     let barcodesPdf =
@@ -438,6 +479,20 @@ function PatientStatusReport(props) {
                     <Button type="button" onClick={handleReportPrint}>
                       <FormattedMessage id="label.button.generatePrintableVersion" />
                     </Button>
+                    
+                  </Column>
+                </Grid>
+{/* CSV button */}
+                <Grid>
+                  <Column lg={16} md={8} sm={4}>
+                    <br />
+                    <br />
+                  </Column>
+                  <Column lg={16} md={8} sm={4}>
+                    <Button type="button" onClick={handleCSVReport}>
+                      <FormattedMessage id="label.button.generateCSVVersion" />
+                    </Button>
+                    
                   </Column>
                 </Grid>
               </Form>

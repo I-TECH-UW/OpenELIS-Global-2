@@ -108,6 +108,23 @@ public class RejectionController extends BaseController {
         return findForward(FWD_SUCCESS, form);
     }
 
+    @RequestMapping(value = "/patientStatus", method = RequestMethod.GET)
+    public ModelAndView showPatientStatusForm(HttpServletRequest request, @Validated RejectionForm form,
+                                              BindingResult result) throws LIMSInvalidConfigurationException, IllegalAccessException,
+            InvocationTargetException, NoSuchMethodException {
+        if (result.hasErrors()) {
+            saveErrors(result);
+            form = new RejectionForm();
+            return findForward(FWD_FAIL, form);
+        }
+        form = new RejectionForm();
+        setupForm(form);
+        addFlashMsgsToRequest(request);
+        request.getSession().setAttribute(SAVE_DISABLED, TRUE);
+
+        return findForward(FWD_SUCCESS, form);
+    }
+
     private void setupForm(RejectionForm form) throws LIMSInvalidConfigurationException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
 
