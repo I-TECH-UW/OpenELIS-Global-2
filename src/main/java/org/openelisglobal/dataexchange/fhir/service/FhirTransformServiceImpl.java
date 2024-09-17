@@ -693,29 +693,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Override
     public Patient transformToOpenElisPatient(org.hl7.fhir.r4.model.Patient fhirPatient) {
         Patient openelispatient = new Patient();
-        Person person = openelispatient.getPerson();
-        if (person == null) {
-            person = new Person();
-            String sysUserId = "1";
-            person.setSysUserId(sysUserId);
-            SpringContext.getBean(PersonService.class).insert(person);
-            if (!fhirPatient.getTelecom().isEmpty()) {
-                ContactPoint telecom = fhirPatient.getTelecomFirstRep();
-                if (ContactPointSystem.PHONE.equals(telecom.getSystem())) {
-                    person.setPrimaryPhone(telecom.getValue());
-                }
-            }
-
-            if (!fhirPatient.getAddress().isEmpty()) {
-                Address fhirAddress = fhirPatient.getAddressFirstRep();
-                person.setStreetAddress(fhirAddress.getLine().isEmpty() ? null : fhirAddress.getLine().get(0).toString());
-                person.setCity(fhirAddress.getCity());
-                person.setState(fhirAddress.getState());
-                person.setCountry(fhirAddress.getCountry());
-            }
-
-            openelispatient.setPerson(person);
-        }
+        Person person = transformToOpenelisPerson(fhirPatient);
+        openelispatient.setPerson(person);
 
         for (Identifier identifier : fhirPatient.getIdentifier()) {
             String system = identifier.getSystem();
@@ -757,6 +736,36 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         openelispatient.setSysUserId("1");
         patientService.insert(openelispatient);
         return openelispatient;
+    }
+
+    private Person transformToOpenelisPerson(org.hl7.fhir.r4.model.Patient fhirPatient) {
+        Person person = new Person();
+        String sysUserId = "1";
+        person.setSysUserId(sysUserId);
+
+        if (!fhirPatient.getTelecom().isEmpty()) {
+            ContactPoint telecom = fhirPatient.getTelecomFirstRep();
+            if (ContactPointSystem.PHONE.equals(telecom.getSystem())) {
+                person.setPrimaryPhone(telecom.getValue());
+            }
+        }
+
+        if (!fhirPatient.getName().isEmpty()) {
+            HumanName name = fhirPatient.getNameFirstRep();
+            person.setFirstName(name.getGivenAsSingleString());
+            person.setLastName(name.getFamily());
+        }
+
+        if (!fhirPatient.getAddress().isEmpty()) {
+            Address fhirAddress = fhirPatient.getAddressFirstRep();
+            person.setStreetAddress(fhirAddress.getLine().isEmpty() ? null : fhirAddress.getLine().get(0).toString());
+            person.setCity(fhirAddress.getCity());
+            person.setState(fhirAddress.getState());
+            person.setCountry(fhirAddress.getCountry());
+        }
+
+        SpringContext.getBean(PersonService.class).insert(person);
+        return person;
     }
 
     private Address transformToAddress(Person person) {

@@ -1,16 +1,11 @@
 package org.openelisglobal.common.rest.provider;
 
 import ca.uhn.fhir.rest.client.api.IGenericClient;
-import ca.uhn.fhir.rest.gclient.IOperationUntypedWithInputAndPartialOutput;
 import ca.uhn.fhir.rest.gclient.IQuery;
-import ca.uhn.fhir.rest.gclient.StringClientParam;
 import ca.uhn.fhir.rest.param.StringOrListParam;
-import ca.uhn.fhir.rest.param.StringParam;
-import ca.uhn.fhir.rest.param.TokenParam;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.util.*;
-import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
@@ -114,7 +109,7 @@ public class PatientSearchRestController extends BaseRestController {
             if (request.getParameter("crSearch") != null && request.getParameter("crSearch").contains("true")) {
                 List<PatientSearchResults> fhirResults = searchPatientInClientRegistry(lastName, firstName, STNumber,
                         subjectNumber, nationalID, null, guid, dateOfBirth, gender);
-                LogEvent.logWarn("PatientSearchRestController", "getPatientResults()","final results have been added");
+                LogEvent.logWarn("PatientSearchRestController", "getPatientResults()", "final results have been added");
                 results.addAll(fhirResults);
             }
 
@@ -149,17 +144,6 @@ public class PatientSearchRestController extends BaseRestController {
                                 patientService.getPatientId(patient)));
     }
 
-//    private PatientSearchResults getSearchResultsForExternalPatient(Patient patient, String referringSitePatientId) {
-//        return new PatientSearchResults(BigDecimal.valueOf(Long.parseLong(patient.getId())),
-//                patientService.getFirstName(patient), patientService.getLastName(patient),
-//                patientService.getGender(patient), patientService.getEnteredDOB(patient),
-//                patientService.getNationalId(patient), patient.getExternalId(), patientService.getSTNumber(patient),
-//                patientService.getSubjectNumber(patient), patientService.getGUID(patient),
-//                referringSitePatientId != null ? referringSitePatientId
-//                        : observationHistoryService.getMostRecentValueForPatient(ObservationType.REFERRERS_PATIENT_ID,
-//                        patientService.getPatientId(patient)));
-//    }
-
     private PatientSearchWorker getAppropriateWorker(HttpServletRequest request, boolean suppressExternalSearch) {
 
         if (ConfigurationProperties.getInstance().isCaseInsensitivePropertyValueEqual(Property.UseExternalPatientInfo,
@@ -181,47 +165,39 @@ public class PatientSearchRestController extends BaseRestController {
                 externalID, patientID, guid, dateOfBirth, gender);
     }
 
-    private List<org.hl7.fhir.r4.model.Patient> parseCRPatientSearchResults(Bundle patientBundle) {
-        return patientBundle.getEntry().stream()
-                .filter(entry -> entry.getResource() instanceof org.hl7.fhir.r4.model.Patient)
-                .map(entry -> (org.hl7.fhir.r4.model.Patient) entry.getResource()).collect(Collectors.toList());
-    }
-
     private List<PatientSearchResults> searchPatientInClientRegistry(String lastName, String firstName, String STNumber,
             String subjectNumber, String nationalID, String patientID, String guid, String dateOfBirth, String gender) {
-        LogEvent.logWarn("PatientSearchRestController", "searchPatientInClientRegistry()","searchPatientInClientRegistry method has been reached");
+        LogEvent.logWarn("PatientSearchRestController", "searchPatientInClientRegistry()",
+                "searchPatientInClientRegistry method has been reached");
         if (isClientRegistryConfigInvalid()) {
             return new ArrayList<>();
         }
 
         IGenericClient clientRegistry = fhirUtil.getFhirClient(fhirConfig.getClientRegistryServerUrl(),
                 fhirConfig.getClientRegistryUserName(), fhirConfig.getClientRegistryPassword());
-        LogEvent.logWarn("PatientSearchRestController", "searchPatientInClientRegistry()","ClientRegistry connected successfully");
+        LogEvent.logWarn("PatientSearchRestController", "searchPatientInClientRegistry()",
+                "ClientRegistry connected successfully");
 
-        IQuery<IBaseBundle> query = buildPatientSearchQuery(clientRegistry, lastName, firstName, STNumber, subjectNumber,
-                nationalID, patientID, guid, dateOfBirth, gender);
-        log.info("query has been built with the following parameters: {}", query);
+        IQuery<IBaseBundle> query = buildPatientSearchQuery(clientRegistry, lastName, firstName, STNumber,
+                subjectNumber, nationalID, patientID, guid, dateOfBirth, gender);
 
         Bundle bundle = query.returnBundle(Bundle.class).execute();
         List<org.hl7.fhir.r4.model.Patient> externalPatients = new ArrayList<>();
-        log.info("get the bundle fullurl: {}", bundle.getEntry().get(0).getFullUrl());
         if (bundle.hasEntry()) {
             for (Bundle.BundleEntryComponent entry : bundle.getEntry()) {
                 if (entry.getResource() instanceof org.hl7.fhir.r4.model.Patient) {
                     externalPatients.add((org.hl7.fhir.r4.model.Patient) entry.getResource());
-                    LogEvent.logWarn("PatientSearchRestController", "searchPatientInClientRegistry()","externalPatients have been added");
+                    LogEvent.logWarn("PatientSearchRestController", "searchPatientInClientRegistry()",
+                            "externalPatients have been added");
                 }
             }
         }
 
         List<PatientSearchResults> finalResults = new ArrayList<>();
         for (org.hl7.fhir.r4.model.Patient externalPatient : externalPatients) {
-            log.info("extracted fhir object: {}", externalPatient.getBirthDate());
-            Patient transformedPatient = SpringContext.getBean(FhirTransformService.class).transformToOpenElisPatient(externalPatient);
-            log.info("id of the patient: {}", transformedPatient.getId());
-            log.info("id of the person: {}", transformedPatient.getPerson().getId());
+            Patient transformedPatient = SpringContext.getBean(FhirTransformService.class)
+                    .transformToOpenElisPatient(externalPatient);
             PatientSearchResults searchResult = getSearchResultsForPatient(transformedPatient, null);
-            log.info("search result openelis: {}", searchResult);
             searchResult.setDataSourceName(MessageUtil.getMessage("patient.cr.source"));
             finalResults.add(searchResult);
         }
@@ -235,24 +211,22 @@ public class PatientSearchRestController extends BaseRestController {
                 || GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryPassword());
     }
 
-    public IQuery<IBaseBundle> buildPatientSearchQuery(IGenericClient clientRegistry, String lastName, String firstName, String STNumber,
-                                                       String subjectNumber, String nationalID, String patientID, String guid,
-                                                       String dateOfBirth, String gender) {
-        LogEvent.logWarn("PatientSearchRestController", "buildPatientSearchQuery()","build query reached");
-
+    public IQuery<IBaseBundle> buildPatientSearchQuery(IGenericClient clientRegistry, String lastName, String firstName,
+            String STNumber, String subjectNumber, String nationalID, String patientID, String guid, String dateOfBirth,
+            String gender) {
         IQuery<IBaseBundle> query = clientRegistry.search().forResource(org.hl7.fhir.r4.model.Patient.class);
-
         if (!GenericValidator.isBlankOrNull(lastName)) {
             query = query.where(org.hl7.fhir.r4.model.Patient.FAMILY.matches().value(lastName));
-            LogEvent.logWarn("PatientSearchRestController", "buildPatientSearchQuery()","lastname added to query");
+            LogEvent.logWarn("PatientSearchRestController", "buildPatientSearchQuery()", "lastname added to query");
         }
 
         if (!GenericValidator.isBlankOrNull(firstName)) {
             query = query.where(org.hl7.fhir.r4.model.Patient.GIVEN.matches().value(firstName));
-            LogEvent.logWarn("PatientSearchRestController", "buildPatientSearchQuery()","first name added to query");
+            LogEvent.logWarn("PatientSearchRestController", "buildPatientSearchQuery()", "first name added to query");
         }
 
-        // Map for identifier-based queries (STNumber, SubjectNumber, NationalId, PatientID, GUID)
+        // Map for identifier-based queries (STNumber, SubjectNumber, NationalId,
+        // PatientID, GUID)
         Map<String, String> identifierMappings = new HashMap<>();
 
         // Add non-null identifiers to the map
@@ -285,45 +259,14 @@ public class PatientSearchRestController extends BaseRestController {
 
         if (!GenericValidator.isBlankOrNull(dateOfBirth)) {
             query = query.where(org.hl7.fhir.r4.model.Patient.BIRTHDATE.exactly().day(dateOfBirth));
-            LogEvent.logWarn("PatientSearchRestController", "buildPatientSearchQuery()","dob added to query");
+            LogEvent.logWarn("PatientSearchRestController", "buildPatientSearchQuery()", "dob added to query");
         }
 
         if (!GenericValidator.isBlankOrNull(gender)) {
             query = query.where(org.hl7.fhir.r4.model.Patient.GENDER.exactly().code(gender));
-            LogEvent.logWarn("PatientSearchRestController", "buildPatientSearchQuery()","gender added to query");
+            LogEvent.logWarn("PatientSearchRestController", "buildPatientSearchQuery()", "gender added to query");
         }
 
         return query;
     }
-
-    private List<String> getPatientByPIX(IGenericClient clientRegistry, PatientSearchResults patientSearchResult) {
-        List<String> targetSystems = targetSystemsParam == null ? Collections.emptyList()
-                : targetSystemsParam.getValuesAsQueryTokens().stream().filter(Objects::nonNull)
-                .map(StringParam::getValue).collect(Collectors.toList());
-
-        // Construct request to external FHIR client
-        IOperationUntypedWithInputAndPartialOutput<Parameters> identifiersRequest = clientRegistry.operation()
-                .onType("Patient").named("$ihe-pix").withSearchParameter(Parameters.class, "sourceIdentifier",
-                        new TokenParam("http://openelis-global.org/pat_nationalId",
-                                patientSearchResult.getNationalId()));
-
-        if (!targetSystems.isEmpty()) {
-            identifiersRequest.andSearchParameter("targetSystem", new StringParam(String.join(",", targetSystems)));
-        }
-
-        Parameters crMatchingParams = identifiersRequest.useHttpGet().execute();
-
-        return crMatchingParams.getParameter().stream().filter(param -> Objects.equals(param.getName(), "targetId"))
-                .map(param -> ((Reference) param.getValue()).getReference()).collect(Collectors.toList());
-    }
-
-    private List<org.hl7.fhir.r4.model.Patient> getPatientByCRIdentifiers(IGenericClient clientRegistry,
-                                                                      List<String> crIdentifiers) {
-        Bundle patientBundle = clientRegistry.search().forResource(org.hl7.fhir.r4.model.Patient.class)
-                .where(new StringClientParam(org.hl7.fhir.r4.model.Patient.SP_RES_ID).matches().values(crIdentifiers))
-                .returnBundle(Bundle.class).execute();
-
-        return parseCRPatientSearchResults(patientBundle);
-    }
-
 }
