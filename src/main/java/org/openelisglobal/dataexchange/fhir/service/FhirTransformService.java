@@ -72,5 +72,5 @@ public interface FhirTransformService {
 
     Provider transformToProvider(Practitioner practitioner);
 
-    Patient transformToOpenElisPatient(Patient patient, org.hl7.fhir.r4.model.Patient externalPatient);
+    Patient transformToOpenElisPatient(org.hl7.fhir.r4.model.Patient externalPatient);
 }

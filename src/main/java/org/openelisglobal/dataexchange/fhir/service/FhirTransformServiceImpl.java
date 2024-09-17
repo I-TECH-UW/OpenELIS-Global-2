@@ -93,6 +93,7 @@ import org.openelisglobal.patient.action.IPatientUpdate;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.person.service.PersonService;
 import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
@@ -109,6 +110,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
@@ -689,69 +691,72 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     @Override
-    public Patient transformToOpenElisPatient(Patient openELISPatient, org.hl7.fhir.r4.model.Patient fhirPatient) {
+    public Patient transformToOpenElisPatient(org.hl7.fhir.r4.model.Patient fhirPatient) {
+        Patient openelispatient = new Patient();
+        Person person = openelispatient.getPerson();
+        if (person == null) {
+            person = new Person();
+            String sysUserId = "1";
+            person.setSysUserId(sysUserId);
+            SpringContext.getBean(PersonService.class).insert(person);
+            if (!fhirPatient.getTelecom().isEmpty()) {
+                ContactPoint telecom = fhirPatient.getTelecomFirstRep();
+                if (ContactPointSystem.PHONE.equals(telecom.getSystem())) {
+                    person.setPrimaryPhone(telecom.getValue());
+                }
+            }
+
+            if (!fhirPatient.getAddress().isEmpty()) {
+                Address fhirAddress = fhirPatient.getAddressFirstRep();
+                person.setStreetAddress(fhirAddress.getLine().isEmpty() ? null : fhirAddress.getLine().get(0).toString());
+                person.setCity(fhirAddress.getCity());
+                person.setState(fhirAddress.getState());
+                person.setCountry(fhirAddress.getCountry());
+            }
+
+            openelispatient.setPerson(person);
+        }
+
         for (Identifier identifier : fhirPatient.getIdentifier()) {
             String system = identifier.getSystem();
             String value = identifier.getValue();
+
             if ("http://openelis-global.org/pat_nationalId".equals(system)) {
-                openELISPatient.setNationalId(value);
+                openelispatient.setNationalId(value);
             } else if ("http://openelis-global.org/pat_guid".equals(system)) {
-                openELISPatient.setExternalId(value);
+                openelispatient.setExternalId(value);
             } else if ("http://openelis-global.org/pat_uuid".equals(system)) {
-                openELISPatient.setFhirUuid(UUID.fromString(value));
+                openelispatient.setFhirUuid(UUID.fromString(value));
             }
         }
 
         if (!fhirPatient.getName().isEmpty()) {
             HumanName name = fhirPatient.getNameFirstRep();
-            openELISPatient.setEpiFirstName(name.getGivenAsSingleString());
-            openELISPatient.setEpiLastName(name.getFamily());
-        }
-
-        if (!fhirPatient.getTelecom().isEmpty()) {
-            ContactPoint telecom = fhirPatient.getTelecomFirstRep();
-            if (ContactPoint.ContactPointSystem.PHONE.equals(telecom.getSystem())) {
-                Person person = openELISPatient.getPerson();
-                if (person == null) {
-                    person = new Person();
-                    openELISPatient.setPerson(person);
-                }
-                person.setPrimaryPhone(telecom.getValue());
-            }
+            openelispatient.setEpiFirstName(name.getGivenAsSingleString());
+            openelispatient.setEpiLastName(name.getFamily());
         }
 
         switch (fhirPatient.getGender()) {
         case MALE:
-            openELISPatient.setGender("M");
+            openelispatient.setGender("M");
             break;
         case FEMALE:
-            openELISPatient.setGender("F");
+            openelispatient.setGender("F");
             break;
         default:
-            openELISPatient.setGender(null);
+            openelispatient.setGender(null);
             break;
         }
 
         if (fhirPatient.getBirthDate() != null) {
-            openELISPatient.setBirthDate(new Timestamp(fhirPatient.getBirthDate().getTime()));
-            openELISPatient.setBirthDateForDisplay(
+            openelispatient.setBirthDate(new Timestamp(fhirPatient.getBirthDate().getTime()));
+            openelispatient.setBirthDateForDisplay(
                     DateUtil.convertTimestampToStringDate(new Timestamp(fhirPatient.getBirthDate().getTime())));
         }
 
-        if (!fhirPatient.getAddress().isEmpty()) {
-            Address fhirAddress = fhirPatient.getAddressFirstRep();
-            Person person = openELISPatient.getPerson();
-            if (person == null) {
-                person = new Person();
-                openELISPatient.setPerson(person);
-            }
-            person.setStreetAddress(fhirAddress.getLine().isEmpty() ? null : fhirAddress.getLine().get(0).toString());
-            person.setCity(fhirAddress.getCity());
-            person.setState(fhirAddress.getState());
-            person.setCountry(fhirAddress.getCountry());
-        }
-
-        return openELISPatient;
+        openelispatient.setSysUserId("1");
+        patientService.insert(openelispatient);
+        return openelispatient;
     }
 
     private Address transformToAddress(Person person) {
