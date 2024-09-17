@@ -17,7 +17,6 @@ import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.ReportSpecificationParameters.Parameter;
 
-
 public class ReportImplementationFactory {
     private static final boolean isLNSP = true;
 
@@ -144,11 +143,9 @@ public class ReportImplementationFactory {
                 return new CovidResultsReport();
             } else if (report.equals("statisticsReport")) {
                 return new StatisticsReport();
-            }
-            else if (report.equals("patientReport")) {
+            } else if (report.equals("patientReport")) {
                 return new CSVPatientStatusReport();
-            }
-            else if (report.equals("sampleRejectionReport")) {
+            } else if (report.equals("sampleRejectionReport")) {
                 return new CSVSampleRejectionReport();
             }
         }
@@ -288,10 +285,9 @@ public class ReportImplementationFactory {
                 return new StatisticsReport();
             } else if (report.equals("sampleRejectionReport")) {
                 return new CSVSampleRejectionReport();
-            }
-            else if (report.equals("CSVPatientStatusReport")) {
+            } else if (report.equals("CSVPatientStatusReport")) {
                 return new CSVPatientStatusReport();
-            }else if (report.equals("PatientPathologyReport")) {
+            } else if (report.equals("PatientPathologyReport")) {
                 return new PatientPathologyReport();
             } else if (report.equals("PatientCytologyReport")) {
                 return new PatientCytologyReport();

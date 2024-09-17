@@ -143,8 +143,6 @@ public class ReportController extends BaseController {
         }
     }
 
-
-
     private void trackReports(IReportCreator reportCreator, String reportName, ReportType type) {
         List<String> refIds = reportCreator.getReportedOrders() != null ? reportCreator.getReportedOrders()
                 : new ArrayList<>();

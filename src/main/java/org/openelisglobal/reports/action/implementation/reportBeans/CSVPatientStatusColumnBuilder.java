@@ -1,12 +1,11 @@
 package org.openelisglobal.reports.action.implementation.reportBeans;
 
-import org.openelisglobal.common.services.StatusService;
-import org.openelisglobal.reports.action.implementation.Report.DateRange;
-
-import java.sql.Date;
-
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.DATE_TIME;
 import static org.openelisglobal.reports.action.implementation.reportBeans.CSVColumnBuilder.Strategy.NONE;
+
+import java.sql.Date;
+import org.openelisglobal.common.services.StatusService;
+import org.openelisglobal.reports.action.implementation.Report.DateRange;
 
 public class CSVPatientStatusColumnBuilder extends CSVColumnBuilder {
     protected DateRange dateRange;

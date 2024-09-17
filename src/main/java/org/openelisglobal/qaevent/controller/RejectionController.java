@@ -110,7 +110,7 @@ public class RejectionController extends BaseController {
 
     @RequestMapping(value = "/patientStatus", method = RequestMethod.GET)
     public ModelAndView showPatientStatusForm(HttpServletRequest request, @Validated RejectionForm form,
-                                              BindingResult result) throws LIMSInvalidConfigurationException, IllegalAccessException,
+            BindingResult result) throws LIMSInvalidConfigurationException, IllegalAccessException,
             InvocationTargetException, NoSuchMethodException {
         if (result.hasErrors()) {
             saveErrors(result);

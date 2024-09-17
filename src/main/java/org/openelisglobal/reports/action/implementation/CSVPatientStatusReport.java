@@ -1,11 +1,10 @@
 package org.openelisglobal.reports.action.implementation;
 
+import java.sql.SQLException;
 import org.jfree.util.Log;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.CSVSampleRejectionColumnBuilder;
 import org.openelisglobal.reports.form.ReportForm;
-
-import java.sql.SQLException;
 
 public class CSVPatientStatusReport extends CSVSampleExportReport implements IReportParameterSetter, IReportCreator {
 
