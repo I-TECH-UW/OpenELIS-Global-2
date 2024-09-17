@@ -224,7 +224,7 @@ export const getFromOpenElisServerV2 = (url) => {
       if (res) {
         resolve(res);
       } else {
-        reject(new Error("Failed to fetch data"));
+        reject("Failed to fetch Subscription data");
       }
     });
   });

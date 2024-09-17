@@ -29,7 +29,7 @@ describe("Routine Reports", function () {
     reportPage.toggleAccordion(3);
 
     reportPage.toggleAccordion(6);
-    reportPage.validateFieldVisibility("#downshift-1-toggle-button");
+    reportPage.validateFieldVisibility('[data-cy="dateTypeDropdown"]');
     reportPage.validateFieldVisibility(
       ".cds--date-picker-input__wrapper > #startDate",
     );

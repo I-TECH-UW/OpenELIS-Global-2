@@ -10,6 +10,7 @@ import javax.servlet.http.HttpSession;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.ConfigurationProperties;
@@ -166,8 +167,10 @@ public class UserServiceImpl implements UserService {
         Boolean requireLabUnitAtLogin = ConfigurationProperties.getInstance()
                 .getPropertyValue(Property.REQUIRE_LAB_UNIT_AT_LOGIN).equals("true");
         UserSessionData usd = (UserSessionData) session.getAttribute("userSessionData");
+        String adminRoleId = roleService.getRoleByName(Constants.ROLE_GLOBAL_ADMIN).getId();
+        Boolean isadmin = userRoleService.getRoleIdsForUser(systemUserId).contains(adminRoleId);
         TestSection logintestSection = null;
-        if (requireLabUnitAtLogin) {
+        if (requireLabUnitAtLogin && !isadmin) {
             if (usd.getLoginLabUnit() != 0) {
                 logintestSection = testSectionService.getTestSectionById(String.valueOf(usd.getLoginLabUnit()));
                 if (logintestSection != null) {
