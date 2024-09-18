@@ -29,7 +29,7 @@ const AddOrder = (props) => {
 
   const componentMounted = useRef(false);
 
-  const { orderFormValues, setOrderFormValues, samples, error, isModifyOrder } =
+  const { orderFormValues, setHasInteracted, setOrderFormValues, samples, error, isModifyOrder } =
     props;
   const [otherSamplingVisible, setOtherSamplingVisible] = useState(false);
   const [providers, setProviders] = useState([]);
@@ -79,6 +79,7 @@ const AddOrder = (props) => {
         paymentOptionSelection: e.target.value,
       },
     });
+    setHasInteracted(true);
   }
 
   function handleBillReferenceNo(e) {
@@ -89,6 +90,7 @@ const AddOrder = (props) => {
         billingReferenceNumber: e.target.value,
       },
     });
+    setHasInteracted(true);
   }
 
   function handleRequesterFax(e) {
@@ -99,6 +101,7 @@ const AddOrder = (props) => {
         providerFax: e.target.value,
       },
     });
+    setHasInteracted(true);
   }
 
   function handleRequesterEmail(e) {
@@ -109,6 +112,7 @@ const AddOrder = (props) => {
         providerEmail: e.target.value,
       },
     });
+    setHasInteracted(true);
   }
 
   function handleRequesterWorkPhone(e) {
@@ -120,6 +124,7 @@ const AddOrder = (props) => {
       },
     });
     setNotificationVisible(false);
+    setHasInteracted(true);
   }
 
   function handleRequesterFirstName(e) {
@@ -130,6 +135,7 @@ const AddOrder = (props) => {
         providerFirstName: e.target.value,
       },
     });
+    setHasInteracted(true);
   }
 
   function handleRequesterLastName(e) {
@@ -140,6 +146,7 @@ const AddOrder = (props) => {
         providerLastName: e.target.value,
       },
     });
+    setHasInteracted(true);
   }
 
   const handleSamplingPerformed = (e) => {
@@ -156,6 +163,7 @@ const AddOrder = (props) => {
         testLocationCode: value,
       },
     });
+    setHasInteracted(true);
   };
 
   function handleOtherLocationCode(e) {
@@ -166,6 +174,7 @@ const AddOrder = (props) => {
         otherLocationCode: e.target.value,
       },
     });
+    setHasInteracted(true);
   }
 
   function handleReceivedTime(e) {
@@ -176,6 +185,7 @@ const AddOrder = (props) => {
         receivedTime: e.target.value,
       },
     });
+    setHasInteracted(true);
   }
 
   const handleLabNoGeneration = (e) => {
@@ -207,6 +217,7 @@ const AddOrder = (props) => {
         providerPersonId: providerId,
       },
     });
+    setHasInteracted(true);
 
     getFromOpenElisServer(
       "/rest/practitioner?providerId=" + providerId,
@@ -240,6 +251,7 @@ const AddOrder = (props) => {
         referringSiteName: "",
       },
     });
+    setHasInteracted(true);
   }
 
   function handleSiteName(e) {
@@ -252,6 +264,7 @@ const AddOrder = (props) => {
         referringSiteDepartmentId: "",
       },
     });
+    setHasInteracted(true);
   }
 
   function clearProviderId(e) {
@@ -265,6 +278,7 @@ const AddOrder = (props) => {
         },
       });
     }
+    setHasInteracted(true);
   }
 
   function handleAutoCompleteSiteName(siteId) {
@@ -277,6 +291,7 @@ const AddOrder = (props) => {
         referringSiteDepartmentId: "",
       },
     });
+    setHasInteracted(true);
   }
   const loadDepartments = (data) => {
     setDepartments(data);
@@ -299,6 +314,7 @@ const AddOrder = (props) => {
     }
     handleLabNoValidationOnChange(e?.target?.value);
     setNotificationVisible(false);
+    setHasInteracted(true);
   }
 
   const handleLabNoValidation = () => {
@@ -356,6 +372,7 @@ const AddOrder = (props) => {
       ...orderFormValues,
       rememberSiteAndRequester: checked,
     });
+    setHasInteracted(true);
   }
 
   useEffect(() => {
@@ -392,6 +409,7 @@ const AddOrder = (props) => {
         priority: e.target.value,
       },
     });
+    setHasInteracted(true);
   }
 
   function fetchGeneratedAccessionNo(res) {
