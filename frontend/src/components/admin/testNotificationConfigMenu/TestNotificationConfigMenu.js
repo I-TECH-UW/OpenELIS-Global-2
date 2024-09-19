@@ -72,28 +72,26 @@ function TestNotificationConfigMenu() {
 
   const handleMenuItems = (res) => {
     if (!res) {
-      setLoading(true);
     } else {
+      setLoading(false);
       setTestNotificationConfigMenuData(res);
     }
   };
 
   const handleTestNamesList = (res) => {
     if (!res) {
-      setLoading(true);
     } else {
+      setLoading(false);
       setTestNamesList(res);
     }
   };
 
   useEffect(() => {
     componentMounted.current = true;
-    setLoading(true);
     getFromOpenElisServer(`/rest/TestNotificationConfigMenu`, handleMenuItems);
     getFromOpenElisServer(`/rest/test-list`, handleTestNamesList);
     return () => {
       componentMounted.current = false;
-      setLoading(false);
     };
   }, []);
 
@@ -139,7 +137,7 @@ function TestNotificationConfigMenu() {
     setLoading(true);
     postToOpenElisServerJsonResponse(
       `/rest/TestNotificationConfigMenu`,
-      JSON.stringify(testNotificationConfigMenuDataPost.menuList),
+      JSON.stringify(testNotificationConfigMenuDataPost),
       (res) => {
         testNotificationConfigMenuSavePostCallBack(res);
       },
@@ -148,7 +146,6 @@ function TestNotificationConfigMenu() {
 
   function testNotificationConfigMenuSavePostCallBack(res) {
     if (res) {
-      setLoading(false);
       addNotification({
         title: intl.formatMessage({
           id: "notification.title",
@@ -159,9 +156,6 @@ function TestNotificationConfigMenu() {
         kind: NotificationKinds.success,
       });
       setNotificationVisible(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
     } else {
       addNotification({
         kind: NotificationKinds.error,
@@ -169,10 +163,8 @@ function TestNotificationConfigMenu() {
         message: intl.formatMessage({ id: "server.error.msg" }),
       });
       setNotificationVisible(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
     }
+    setLoading(false);
   }
 
   const handleCheckboxChange = (e, rowId, header) => {
@@ -222,26 +214,6 @@ function TestNotificationConfigMenu() {
   };
 
   const renderCell = (cell, row) => {
-    // if (cell.info.header === "id") {
-    //   return (
-    //     <TableSelectRow
-    //       key={cell.id}
-    //       id={cell.id}
-    //       // checked={selectedRowIds.includes(row.id)}
-    //       name="selectRowCheckbox"
-    //       ariaLabel="selectRows"
-    //       // onSelect={() => {
-    //       //   setDeactivateButton(false);
-    //       //   if (selectedRowIds.includes(row.id)) {
-    //       //     setSelectedRowIds(selectedRowIds.filter((id) => id !== row.id));
-    //       //   } else {
-    //       //     setSelectedRowIds([...selectedRowIds, row.id]);
-    //       //   }
-    //       // }}
-    //     />
-    //   );
-    // } else
-
     if (cell.info.header === "testId") {
       return <TableCell key={cell.id}>{cell.value}</TableCell>;
     } else if (cell.info.header === "testName") {
@@ -284,17 +256,10 @@ function TestNotificationConfigMenu() {
     }
   };
 
-  if (!loading) {
-    return (
-      <>
-        <Loading />
-      </>
-    );
-  }
-
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
+      {loading && <Loading></Loading>}
       <div className="adminPageContent">
         <PageBreadCrumb breadcrumbs={breadcrumbs} />
         <Grid fullWidth={true}>
@@ -337,10 +302,6 @@ function TestNotificationConfigMenu() {
             <Column lg={16} md={8} sm={4}>
               <br />
               <DataTable
-                // rows={testNamesList.slice(
-                //   (page - 1) * pageSize,
-                //   page * pageSize,
-                // )}
                 rows={
                   testNotificationConfigMenuDataPost?.menuList
                     ?.slice((page - 1) * pageSize, page * pageSize)
@@ -412,49 +373,6 @@ function TestNotificationConfigMenu() {
                     <Table {...getTableProps()}>
                       <TableHead>
                         <TableRow>
-                          {/* <TableSelectAll
-                            id="table-select-all"
-                            {...getSelectionProps()}
-                            checked={
-                              selectedRowIds.length === pageSize &&
-                              searchedUserManagementListShow
-                                .slice((page - 1) * pageSize, page * pageSize)
-                                .filter(
-                                  (row) =>
-                                    !row.disabled &&
-                                    selectedRowIds.includes(row.id),
-                                ).length === pageSize
-                            }
-                            indeterminate={
-                              selectedRowIds.length > 0 &&
-                              selectedRowIds.length <
-                                searchedUserManagementListShow
-                                  .slice((page - 1) * pageSize, page * pageSize)
-                                  .filter((row) => !row.disabled).length
-                            }
-                            onSelect={() => {
-                              setDeactivateButton(false);
-                              const currentPageIds =
-                                searchedUserManagementListShow
-                                  .slice((page - 1) * pageSize, page * pageSize)
-                                  .filter((row) => !row.disabled)
-                                  .map((row) => row.id);
-                              if (
-                                selectedRowIds.length === pageSize &&
-                                currentPageIds.every((id) =>
-                                  selectedRowIds.includes(id),
-                                )
-                              ) {
-                                setSelectedRowIds([]);
-                              } else {
-                                setSelectedRowIds(
-                                  currentPageIds.filter(
-                                    (id) => !selectedRowIds.includes(id),
-                                  ),
-                                );
-                              }
-                            }}
-                          /> */}
                           {headers.map((header) => (
                             // header.key !== "id" &&
                             <TableHeader
@@ -469,23 +387,7 @@ function TestNotificationConfigMenu() {
                       <TableBody>
                         <>
                           {rows.map((row) => (
-                            <TableRow
-                              key={row.id}
-                              // onClick={() => {
-                              //   const id = row.id;
-                              //   const CombinedUserID = row.combinedUserID;
-                              //   const isSelected = selectedRowIds.includes(id);
-                              //   if (isSelected) {
-                              //     setSelectedRowIds(
-                              //       selectedRowIds.filter(
-                              //         (selectedId) => selectedId !== id,
-                              //       ),
-                              //     );
-                              //   } else {
-                              //     setSelectedRowIds([...selectedRowIds, id]);
-                              //   }
-                              // }}
-                            >
+                            <TableRow key={row.id}>
                               {row.cells.map((cell) => renderCell(cell, row))}
                             </TableRow>
                           ))}
@@ -564,27 +466,6 @@ function TestNotificationConfigMenu() {
               </Button>
             </Column>
           </Grid>
-          <button
-            onClick={() => {
-              console.log(testNotificationConfigMenuData);
-            }}
-          >
-            testNotificationConfigMenuData
-          </button>
-          <button
-            onClick={() => {
-              console.log(testNotificationConfigMenuDataPost);
-            }}
-          >
-            testNotificationConfigMenuDataPost
-          </button>
-          <button
-            onClick={() => {
-              console.log(testNamesList);
-            }}
-          >
-            testNamesList
-          </button>
         </div>
       </div>
     </>

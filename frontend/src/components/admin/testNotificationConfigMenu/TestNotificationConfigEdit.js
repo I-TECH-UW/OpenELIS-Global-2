@@ -69,7 +69,7 @@ function TestNotificationConfigEdit() {
 
   const componentMounted = useRef(false);
   const [indMsg, setIndMsg] = useState("0");
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
   const [saveButton, setSaveButton] = useState(false);
   const [sysDefaultMsg, setSysDefaultMsg] = useState(true);
   const [testNotificationConfigEditData, setTestNotificationConfigEditData] =
@@ -105,23 +105,22 @@ function TestNotificationConfigEdit() {
 
   const handleMenuItems = (res) => {
     if (!res) {
-      setLoading(true);
     } else {
       setTestNotificationConfigEditData(res);
+      setLoading(false);
     }
   };
 
   const handleTestNamesList = (res) => {
     if (!res) {
-      setLoading(true);
     } else {
       setTestNamesList(res);
+      setLoading(false);
     }
   };
 
   useEffect(() => {
     componentMounted.current = true;
-    setLoading(true);
     getFromOpenElisServer(
       `/rest/TestNotificationConfig?testId=${ID}`,
       handleMenuItems,
@@ -129,7 +128,6 @@ function TestNotificationConfigEdit() {
     getFromOpenElisServer(`/rest/test-list`, handleTestNamesList);
     return () => {
       componentMounted.current = false;
-      setLoading(false);
     };
   }, [ID]);
 
@@ -214,7 +212,6 @@ function TestNotificationConfigEdit() {
 
   function testNotificationConfigEditSavePostCallBack(res) {
     if (res) {
-      setLoading(false);
       addNotification({
         title: intl.formatMessage({
           id: "notification.title",
@@ -225,9 +222,6 @@ function TestNotificationConfigEdit() {
         kind: NotificationKinds.success,
       });
       setNotificationVisible(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
     } else {
       addNotification({
         kind: NotificationKinds.error,
@@ -235,22 +229,14 @@ function TestNotificationConfigEdit() {
         message: intl.formatMessage({ id: "server.error.msg" }),
       });
       setNotificationVisible(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
     }
-  }
-
-  if (!loading) {
-    return (
-      <>
-        <Loading />
-      </>
-    );
+    setLoading(false);
   }
 
   return (
     <>
+      {notificationVisible === true ? <AlertDialog /> : ""}
+      {loading && <Loading></Loading>}
       <div className="adminPageContent">
         <PageBreadCrumb breadcrumbs={breadcrumbs} />
         <Grid fullWidth={true}>
@@ -811,41 +797,6 @@ function TestNotificationConfigEdit() {
             </Grid>
           </div>
         </div>
-        <button
-          onClick={() => {
-            console.log(testNamesList);
-          }}
-        >
-          testNamesList
-        </button>
-        <button
-          onClick={() => {
-            console.log(testNotificationConfigEditData);
-          }}
-        >
-          testNotificationConfigEditData
-        </button>
-        <button
-          onClick={() => {
-            console.log(testNotificationConfigEditDataPost);
-          }}
-        >
-          testNotificationConfigEditDataPost
-        </button>
-        <button
-          onClick={() => {
-            console.log(testNotificationConfigMenuList);
-          }}
-        >
-          testNotificationConfigMenuList
-        </button>
-        <button
-          onClick={() => {
-            console.log(testName);
-          }}
-        >
-          testName
-        </button>
       </div>
     </>
   );
