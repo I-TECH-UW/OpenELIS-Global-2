@@ -45,9 +45,7 @@ const Index = () => {
   const [orderFormValues, setOrderFormValues] = useState(SampleOrderFormValues);
   const [samples, setSamples] = useState([sampleObject]);
   const [errors, setErrors] = useState([]);
-   const [hasInteracted, setHasInteracted] = useState(false);
-  //  console.log(hasInteracted);
-
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   let SampleTypes = [];
   let sampleTypeMap = {};
@@ -597,8 +595,6 @@ const Index = () => {
   }, [page]);
 
   useEffect(() => {
-    console.log(hasInteracted);
-
      if (hasInteracted) {
 
     OrderEntryValidationSchema.validate(orderFormValues, { abortEarly: false })
