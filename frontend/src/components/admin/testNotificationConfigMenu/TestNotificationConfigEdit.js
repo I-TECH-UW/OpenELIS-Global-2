@@ -104,19 +104,17 @@ function TestNotificationConfigEdit() {
   }, [testNotificationConfigEditData]);
 
   const handleMenuItems = (res) => {
-    if (!res) {
-    } else {
+    if (res) {
       setTestNotificationConfigEditData(res);
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   const handleTestNamesList = (res) => {
-    if (!res) {
-    } else {
+    if (res) {
       setTestNamesList(res);
-      setLoading(false);
     }
+    setLoading(false);
   };
 
   useEffect(() => {

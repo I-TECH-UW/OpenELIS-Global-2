@@ -71,19 +71,17 @@ function TestNotificationConfigMenu() {
   const [testNamesMap, setTestNamesMap] = useState({});
 
   const handleMenuItems = (res) => {
-    if (!res) {
-    } else {
-      setLoading(false);
+    if (res) {
       setTestNotificationConfigMenuData(res);
     }
+    setLoading(false);
   };
 
   const handleTestNamesList = (res) => {
-    if (!res) {
-    } else {
-      setLoading(false);
+    if (res) {
       setTestNamesList(res);
     }
+    setLoading(false);
   };
 
   useEffect(() => {
