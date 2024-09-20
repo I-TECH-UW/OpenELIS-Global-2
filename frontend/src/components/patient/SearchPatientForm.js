@@ -23,6 +23,7 @@ import {
   Toggle,
   Tag,
 } from "@carbon/react";
+import { Person } from "@carbon/react/icons";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import { patientSearchHeaderData } from "../data/PatientResultsTableHeaders";
 import { Formik, Field } from "formik";
@@ -373,7 +374,7 @@ function SearchPatientForm(props) {
                 </Button>
               </Column>
               <Column lg={4} md={4} sm={2}>
-              <Toggle
+                <Toggle
                   labelText="Client Registry Search"
                   labelA="false"
                   labelB="true"
@@ -430,45 +431,64 @@ function SearchPatientForm(props) {
             <Table {...getTableProps()}>
               <TableHead>
                 <TableRow>
-                  <TableHeader></TableHeader>
+                  <TableHeader />
                   {headers.map((header) => (
-                    <TableHeader
-                      key={header.key}
-                      {...getHeaderProps({ header })}
-                    >
+                    <TableHeader key={header.key} {...getHeaderProps({ header })}>
                       {header.header}
                     </TableHeader>
                   ))}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows
-                  .slice((page - 1) * pageSize, page * pageSize)
-                  .map((row) => (
+                {rows.slice((page - 1) * pageSize, page * pageSize).map((row) => {
+                  const dataSourceName = row.cells.find(
+                    (cell) => cell.info.header === "dataSourceName"
+                  )?.value;
+
+                  return (
                     <TableRow key={row.id}>
                       <TableCell>
-                        <RadioButton
-                          name="radio-group"
-                          onClick={patientSelected}
-                          labelText=""
-                          id={row.id}
-                        />
+                        {dataSourceName === "OpenElis" ? (
+                          <RadioButton
+                            name="radio-group"
+                            onClick={patientSelected}
+                            labelText=""
+                            id={row.id}
+                          />
+                        ) : (
+                          <span></span>
+                        )}
                       </TableCell>
+
                       {row.cells.map((cell) => (
                         <TableCell key={cell.id}>
                           {cell.info.header === "dataSourceName" ? (
                             <Tag
-                              type={cell.value === "OpenElis" ? "red" : "green"}
+                              type={
+                                cell.value === "OpenElis" ? "red" : cell.value === "Open Client Registry" ? "green" : "gray"
+                              }
                             >
                               {cell.value}
                             </Tag>
                           ) : (
                             cell.value
                           )}
+                          {cell.info.header === "importButton" &&
+                            dataSourceName === "Open Client Registry" ? (
+                            <Button
+                              kind="tertiary"
+                              onClick={() => importPatient(row.id)}
+                              size="md"
+                            >
+                              <Person size={16} />
+                              <span>&nbsp;&nbsp;Import Patient Record</span>
+                            </Button>
+                          ) : (<span></span>)}
                         </TableCell>
                       ))}
                     </TableRow>
-                  ))}
+                  );
+                })}
               </TableBody>
             </Table>
           </TableContainer>

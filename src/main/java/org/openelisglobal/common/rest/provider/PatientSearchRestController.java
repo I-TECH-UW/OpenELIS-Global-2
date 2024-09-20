@@ -195,11 +195,13 @@ public class PatientSearchRestController extends BaseRestController {
 
         List<PatientSearchResults> finalResults = new ArrayList<>();
         for (org.hl7.fhir.r4.model.Patient externalPatient : externalPatients) {
-            Patient transformedPatient = SpringContext.getBean(FhirTransformService.class)
-                    .transformToOpenElisPatient(externalPatient);
-            PatientSearchResults searchResult = getSearchResultsForPatient(transformedPatient, null);
-            searchResult.setDataSourceName(MessageUtil.getMessage("patient.cr.source"));
-            finalResults.add(searchResult);
+            // convert fhir object to patient search result
+            // create a rest endpoint to handle import
+            // create a patient search result
+            PatientSearchResults transformedPatientSearchResult = SpringContext.getBean(FhirTransformService.class)
+                    .transformToOpenElisPatientSearchResults(externalPatient);
+            transformedPatientSearchResult.setDataSourceName(MessageUtil.getMessage("patient.cr.source"));
+            finalResults.add(transformedPatientSearchResult);
         }
 
         return finalResults;

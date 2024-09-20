@@ -10,6 +10,7 @@ import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ResourceType;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
@@ -72,5 +73,5 @@ public interface FhirTransformService {
 
     Provider transformToProvider(Practitioner practitioner);
 
-    Patient transformToOpenElisPatient(org.hl7.fhir.r4.model.Patient externalPatient);
+    PatientSearchResults transformToOpenElisPatientSearchResults(org.hl7.fhir.r4.model.Patient externalPatient);
 }
