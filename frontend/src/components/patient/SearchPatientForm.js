@@ -433,63 +433,75 @@ function SearchPatientForm(props) {
                 <TableRow>
                   <TableHeader />
                   {headers.map((header) => (
-                    <TableHeader key={header.key} {...getHeaderProps({ header })}>
+                    <TableHeader
+                      key={header.key}
+                      {...getHeaderProps({ header })}
+                    >
                       {header.header}
                     </TableHeader>
                   ))}
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.slice((page - 1) * pageSize, page * pageSize).map((row) => {
-                  const dataSourceName = row.cells.find(
-                    (cell) => cell.info.header === "dataSourceName"
-                  )?.value;
+                {rows
+                  .slice((page - 1) * pageSize, page * pageSize)
+                  .map((row) => {
+                    const dataSourceName = row.cells.find(
+                      (cell) => cell.info.header === "dataSourceName",
+                    )?.value;
 
-                  return (
-                    <TableRow key={row.id}>
-                      <TableCell>
-                        {dataSourceName === "OpenElis" ? (
-                          <RadioButton
-                            name="radio-group"
-                            onClick={patientSelected}
-                            labelText=""
-                            id={row.id}
-                          />
-                        ) : (
-                          <span></span>
-                        )}
-                      </TableCell>
-
-                      {row.cells.map((cell) => (
-                        <TableCell key={cell.id}>
-                          {cell.info.header === "dataSourceName" ? (
-                            <><Tag
-                              type={cell.value === "OpenElis" ? "red" : cell.value === "Open Client Registry" ? "green" : "gray"}
-                            >
-                              {cell.value}
-                            </Tag>
-                              &nbsp;&nbsp;
-                              &nbsp;&nbsp;
-                              &nbsp;&nbsp;
-                              {dataSourceName === "Open Client Registry" ? (
-                                <Button
-                                  kind="tertiary"
-                                  onClick={() => importPatient(row.id)}
-                                  size="md"
-                                >
-                                  <Person size={16} />
-                                  <span>&nbsp;&nbsp;Import Patient</span>
-                                </Button>
-                              ) : (<span></span>)}
-                            </>
+                    return (
+                      <TableRow key={row.id}>
+                        <TableCell>
+                          {dataSourceName === "OpenElis" ? (
+                            <RadioButton
+                              name="radio-group"
+                              onClick={patientSelected}
+                              labelText=""
+                              id={row.id}
+                            />
                           ) : (
-                            cell.value
+                            <span></span>
                           )}
                         </TableCell>
-                      ))}
-                    </TableRow>
-                  );
-                })}
+
+                        {row.cells.map((cell) => (
+                          <TableCell key={cell.id}>
+                            {cell.info.header === "dataSourceName" ? (
+                              <>
+                                <Tag
+                                  type={
+                                    cell.value === "OpenElis"
+                                      ? "red"
+                                      : cell.value === "Open Client Registry"
+                                        ? "green"
+                                        : "gray"
+                                  }
+                                >
+                                  {cell.value}
+                                </Tag>
+                                &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
+                                {dataSourceName === "Open Client Registry" ? (
+                                  <Button
+                                    kind="tertiary"
+                                    onClick={() => importPatient(row.id)}
+                                    size="md"
+                                  >
+                                    <Person size={16} />
+                                    <span>&nbsp;&nbsp;Import Patient</span>
+                                  </Button>
+                                ) : (
+                                  <span></span>
+                                )}
+                              </>
+                            ) : (
+                              cell.value
+                            )}
+                          </TableCell>
+                        ))}
+                      </TableRow>
+                    );
+                  })}
               </TableBody>
             </Table>
           </TableContainer>
