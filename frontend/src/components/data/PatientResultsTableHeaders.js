@@ -29,8 +29,4 @@ export const patientSearchHeaderData = [
     key: "dataSourceName",
     header: <FormattedMessage id="patient.dataSourceName" />,
   },
-  {
-    key: "importButton",
-    header: "Import Patient"
-  },
 ];

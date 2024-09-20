@@ -463,27 +463,28 @@ function SearchPatientForm(props) {
                       {row.cells.map((cell) => (
                         <TableCell key={cell.id}>
                           {cell.info.header === "dataSourceName" ? (
-                            <Tag
-                              type={
-                                cell.value === "OpenElis" ? "red" : cell.value === "Open Client Registry" ? "green" : "gray"
-                              }
+                            <><Tag
+                              type={cell.value === "OpenElis" ? "red" : cell.value === "Open Client Registry" ? "green" : "gray"}
                             >
                               {cell.value}
                             </Tag>
+                              &nbsp;&nbsp;
+                              &nbsp;&nbsp;
+                              &nbsp;&nbsp;
+                              {dataSourceName === "Open Client Registry" ? (
+                                <Button
+                                  kind="ghost"
+                                  onClick={() => importPatient(row.id)}
+                                  size="md"
+                                >
+                                  <Person size={16} />
+                                  <span>&nbsp;&nbsp;Import Patient</span>
+                                </Button>
+                              ) : (<span></span>)}
+                            </>
                           ) : (
                             cell.value
                           )}
-                          {cell.info.header === "importButton" &&
-                            dataSourceName === "Open Client Registry" ? (
-                            <Button
-                              kind="tertiary"
-                              onClick={() => importPatient(row.id)}
-                              size="md"
-                            >
-                              <Person size={16} />
-                              <span>&nbsp;&nbsp;Import Patient Record</span>
-                            </Button>
-                          ) : (<span></span>)}
                         </TableCell>
                       ))}
                     </TableRow>
