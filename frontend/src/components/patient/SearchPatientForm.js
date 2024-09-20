@@ -473,7 +473,7 @@ function SearchPatientForm(props) {
                               &nbsp;&nbsp;
                               {dataSourceName === "Open Client Registry" ? (
                                 <Button
-                                  kind="ghost"
+                                  kind="tertiary"
                                   onClick={() => importPatient(row.id)}
                                   size="md"
                                 >
