@@ -1,7 +1,7 @@
 import React, { useContext, useState, useEffect } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
-import { getFromOpenElisServer } from "../utils/Utils";
+import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
 import {
   Form,
   TextInput,
@@ -32,6 +32,7 @@ import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import CustomDatePicker from "../common/CustomDatePicker";
 import { ConfigurationContext } from "../layout/Layout";
+import CreatePatientFormValues from "../formModel/innitialValues/CreatePatientFormValues";
 
 function SearchPatientForm(props) {
   const { notificationVisible, setNotificationVisible, addNotification } =
@@ -42,6 +43,7 @@ function SearchPatientForm(props) {
 
   const [dob, setDob] = useState("");
   const [patientSearchResults, setPatientSearchResults] = useState([]);
+  const [importStatus, setImportStatus] = useState({});
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(5);
   const [loading, setLoading] = useState(false);
@@ -53,6 +55,85 @@ function SearchPatientForm(props) {
   const [searchFormValues, setSearchFormValues] = useState(
     SearchPatientFormValues,
   );
+
+  const handlePatientImport = (patientId) => {
+    console.log("Import button clicked, patientId:", patientId);
+
+    const patientSelected = patientSearchResults.find(
+      (patient) => patient.patientID === patientId,
+    );
+    console.log("Patient selected:", patientSelected);
+
+    if (!patientSelected) {
+      addNotification({
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.no.patient.data" }),
+        kind: NotificationKinds.error,
+      });
+      return;
+    }
+
+    const dataToSend = {
+      ...CreatePatientFormValues,
+      patientPK: "",
+      nationalId: patientSelected.nationalId || "",
+      subjectNumber: "",
+      lastName: patientSelected.lastName || "",
+      firstName: patientSelected.firstName || "",
+      streetAddress: patientSelected.address?.street || "",
+      city: patientSelected.address?.city || "",
+      primaryPhone: patientSelected.contactPhone || "",
+      gender: patientSelected.gender || "",
+      birthDateForDisplay: patientSelected.birthdate || "",
+      commune: patientSelected.commune || "",
+      education: patientSelected.education || "",
+      maritialStatus: patientSelected.maritalStatus || "",
+      nationality: patientSelected.nationality || "",
+      healthDistrict: patientSelected.healthDistrict || "",
+      healthRegion: patientSelected.healthRegion || "",
+      otherNationality: patientSelected.otherNationality || "",
+      patientContact: {
+        person: {
+          firstName: patientSelected.contact?.firstName || "",
+          lastName: patientSelected.contact?.lastName || "",
+          primaryPhone: patientSelected.contact?.primaryPhone || "",
+          email: patientSelected.contact?.email || "",
+        },
+      },
+    };
+
+    console.log("Data to send:", dataToSend);
+
+    postToOpenElisServer(
+      "/rest/patient-management",
+      JSON.stringify(dataToSend),
+      (status) => {
+        handlePost(status, patientId);
+      },
+    );
+  };
+
+  const handlePost = (status, patientId) => {
+    setNotificationVisible(true);
+    if (status === 200) {
+      addNotification({
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "success.import.patient" }),
+        kind: NotificationKinds.success,
+      });
+      setImportStatus((prevStatus) => ({
+        ...prevStatus,
+        [patientId]: true,
+      }));
+    } else {
+      addNotification({
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "error.import.patient" }),
+        kind: NotificationKinds.error,
+      });
+    }
+  };
+
   const handleSubmit = (values) => {
     setLoading(true);
     values.dateOfBirth = dob;
@@ -483,12 +564,21 @@ function SearchPatientForm(props) {
                                 &nbsp;&nbsp; &nbsp;&nbsp; &nbsp;&nbsp;
                                 {dataSourceName === "Open Client Registry" ? (
                                   <Button
+                                    id={row.id}
                                     kind="tertiary"
-                                    onClick={() => importPatient(row.id)}
+                                    onClick={() => handlePatientImport(row.id)}
                                     size="md"
+                                    disabled={importStatus[row.id]}
                                   >
                                     <Person size={16} />
-                                    <span>&nbsp;&nbsp;Import Patient</span>
+                                    {importStatus[row.id] ? (
+                                      <span>
+                                        &nbsp;&nbsp;Patient Imported
+                                        Successfully
+                                      </span>
+                                    ) : (
+                                      <span>&nbsp;&nbsp;Import Patient</span>
+                                    )}
                                   </Button>
                                 ) : (
                                   <span></span>

@@ -694,7 +694,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         PatientSearchResults patientSearchResults = new PatientSearchResults();
 
         if (fhirPatient.hasId()) {
-            patientSearchResults.setPatientID(fhirPatient.getId());
+            patientSearchResults.setPatientID(fhirPatient.getIdElement().getIdPart());
         }
 
         for (Identifier identifier : fhirPatient.getIdentifier()) {
