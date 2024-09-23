@@ -160,7 +160,7 @@ public class BarcodeConfigurationRestController extends BaseController {
         } catch (LIMSRuntimeException e) {
             result.reject("barcode.config.error.insert");
         } finally {
-            ConfigurationProperties.forceReload();
+            ConfigurationProperties.loadDBValuesIntoConfiguration();
         }
 
         if (result.hasErrors()) {

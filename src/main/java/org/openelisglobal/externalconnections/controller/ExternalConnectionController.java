@@ -129,7 +129,7 @@ public class ExternalConnectionController extends BaseController {
             externalConnectionService.updateExternalConnection(externalConnectionAuthData, externalConnectionContacts,
                     externalConnection);
         }
-        ConfigurationProperties.forceReload();
+        ConfigurationProperties.loadDBValuesIntoConfiguration();
         return findForward(FWD_SUCCESS_INSERT, form);
     }
 

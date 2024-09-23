@@ -4,8 +4,6 @@ import java.util.Locale;
 import java.util.TimeZone;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.SystemConfiguration;
 import org.springframework.context.i18n.LocaleContext;
 import org.springframework.context.i18n.TimeZoneAwareLocaleContext;
@@ -14,8 +12,7 @@ import org.springframework.web.servlet.i18n.AbstractLocaleContextResolver;
 
 public class GlobalLocaleResolver extends AbstractLocaleContextResolver {
 
-    private Locale defaultLocale = Locale
-            .forLanguageTag(ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE));
+    private Locale defaultLocale;
     private Locale currentLocale;
     private TimeZone timeZone;
 

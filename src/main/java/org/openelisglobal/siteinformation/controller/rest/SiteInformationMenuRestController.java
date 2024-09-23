@@ -217,7 +217,7 @@ public class SiteInformationMenuRestController extends BaseMenuController<SiteIn
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(result.getAllErrors());
         }
 
-        ConfigurationProperties.forceReload();
+        ConfigurationProperties.loadDBValuesIntoConfiguration();
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         return ResponseEntity.ok().body("Delete successful");

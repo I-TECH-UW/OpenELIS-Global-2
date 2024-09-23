@@ -214,7 +214,7 @@ public class SiteInformationMenuController extends BaseMenuController<SiteInform
             return findForward(FWD_FAIL_DELETE, form);
         }
 
-        ConfigurationProperties.forceReload();
+        ConfigurationProperties.loadDBValuesIntoConfiguration();
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         return findForward(FWD_SUCCESS_DELETE, form);

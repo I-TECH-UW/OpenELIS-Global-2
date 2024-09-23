@@ -352,8 +352,6 @@ public class DisplayListController extends BaseRestController {
     @GetMapping(value = "open-configuration-properties", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
     private Map<String, Object> getOpenConfigurationProperties() {
-        ConfigurationProperties.forceReload();
-
         Map<String, Object> configs = new HashMap<>();
         configs.put(Property.restrictFreeTextProviderEntry.toString(),
                 ConfigurationProperties.getInstance().getPropertyValue(Property.restrictFreeTextProviderEntry));
