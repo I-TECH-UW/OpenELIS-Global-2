@@ -38,8 +38,14 @@ class Result {
   }
 
   validatePatientResult(patient) {
-    cy.get('tbody > :nth-child(1) > :nth-child(2)').should("contain.text", patient.lastName);
-    cy.get('tbody > :nth-child(1) > :nth-child(3)').should("contain.text", patient.firstName);
+    cy.get("tbody > :nth-child(1) > :nth-child(2)").should(
+      "contain.text",
+      patient.lastName,
+    );
+    cy.get("tbody > :nth-child(1) > :nth-child(3)").should(
+      "contain.text",
+      patient.firstName,
+    );
   }
 
   referSample(index = 0, reason, institute) {

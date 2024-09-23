@@ -105,7 +105,6 @@ class HomePage {
     return new NonConform();
   }
 
-
   goToResultsByUnit() {
     this.openNavigationMenu();
     cy.get("#menu_results").click();
@@ -150,22 +149,22 @@ class HomePage {
 
   goToValidationByRoutine() {
     this.openNavigationMenu();
-    cy.get('#menu_resultvalidation').click();
-    cy.get('#menu_resultvalidation_routine ').click();
+    cy.get("#menu_resultvalidation").click();
+    cy.get("#menu_resultvalidation_routine ").click();
     return new Validation();
   }
   goToValidationByOrder() {
     this.openNavigationMenu();
     cy.get("#menu_resultvalidation").click();
-    cy.get('#menu_accession_validation ').click();
+    cy.get("#menu_accession_validation ").click();
     return new Validation();
   }
   goToValidationByRangeOrder() {
     this.openNavigationMenu();
     cy.get("#menu_resultvalidation").click();
-    cy.get('#menu_accession_validation_range ').click();
+    cy.get("#menu_accession_validation_range ").click();
     return new Validation();
-  }  
+  }
 
   goToRoutineReports() {
     this.openNavigationMenu();
