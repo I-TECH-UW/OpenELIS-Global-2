@@ -62,8 +62,6 @@ function PatientStatusReport(props) {
     });
   };
 
-  
-
   const handleReportPrint = () => {
     let barcodesPdf =
       config.serverBaseUrl +
