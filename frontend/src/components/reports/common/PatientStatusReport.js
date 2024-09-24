@@ -24,7 +24,6 @@ import { ConfigurationContext } from "../../layout/Layout";
 import { Formik, Field } from "formik";
 import PatientStatusReportFormValues from "../../formModel/innitialValues/PatientStatusReportFormValues";
 import SearchPatientForm from "../../patient/SearchPatientForm";
-// import config from "../../../config.json";
 
 import { encodeDate } from "../../utils/Utils";
 
