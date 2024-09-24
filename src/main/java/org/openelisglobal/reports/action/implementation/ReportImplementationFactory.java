@@ -143,7 +143,7 @@ public class ReportImplementationFactory {
                 return new CovidResultsReport();
             } else if (report.equals("statisticsReport")) {
                 return new StatisticsReport();
-            } else if (report.equals("patientReport")) {
+            } else if (report.equals("CSVPatientStatusReport")) {
                 return new CSVPatientStatusReport();
             } else if (report.equals("sampleRejectionReport")) {
                 return new CSVSampleRejectionReport();

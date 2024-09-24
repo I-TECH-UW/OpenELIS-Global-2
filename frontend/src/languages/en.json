@@ -299,6 +299,7 @@
   "sidenav.label.admin.Listplugin": "List Plugins",
   "sidenav.title.statusreport": "Patient Status Report",
   "sidenav.label.statusreport": "Patient Status Report",
+  "sidenav.label.statusreport.csv" : "Patient Status CSV Report",
   "sidenav.title.aggregatereport": "Aggregate Reports",
   "sidenav.label.statisticsreport": "Statistics Report",
   "sideNav.title.rejectionreport": "Rejection Report",
