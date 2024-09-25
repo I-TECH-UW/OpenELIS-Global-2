@@ -7,6 +7,7 @@ import {
   Notification,
   Search,
   UserAvatarFilledAlt,
+  LocationFilled,
 } from "@carbon/icons-react";
 import { Select, SelectItem } from "@carbon/react";
 import React, {
@@ -101,7 +102,7 @@ function OEHeader(props) {
       getFromOpenElisServer("/rest/notifications", (data) => {
         setReadNotifications([]);
         setUnReadNotifications([]);
-        data.forEach((element) => {
+        data?.forEach((element) => {
           if (element.readAt) {
             setReadNotifications((prev) => [...prev, element]);
           } else {
@@ -184,14 +185,15 @@ function OEHeader(props) {
     if (menuItem.menu.isActive) {
       if (level === 0 && menuItem.childMenus.length > 0) {
         return (
-          <React.Fragment key={path}>
+          <span id={menuItem.menu.elementId} key={path}>
             <span
-              id={menuItem.menu.elementId}
+              id={menuItem.menu.elementId + "_dropdown"}
               onClick={(e) => {
                 setMenuItemExpanded(e, menuItem, path);
               }}
             >
               <SideNavMenu
+                className="top-level-menu-item"
                 aria-label={intl.formatMessage({
                   id: menuItem.menu.displayKey,
                 })}
@@ -200,38 +202,52 @@ function OEHeader(props) {
                 })}
                 key={"menu_" + index + "_" + level}
                 defaultExpanded={menuItem.expanded}
-                onClick={(e) => {
-                  setMenuItemExpanded(e, menuItem, path);
-                }}
+                // onClick={(e) => { // not supported yet, but if it becomes so we can simplify the functionality here by having this here and not have a span around it
+                //   setMenuItemExpanded(e, menuItem, path);
+                // }}
               >
-                {menuItem.childMenus.map((childMenuItem, index) => {
-                  return generateMenuItems(
-                    childMenuItem,
-                    index,
-                    level + 1,
-                    path + ".childMenus[" + index + "]",
-                  );
-                })}
+                <span
+                  onClick={(e) => {
+                    e.preventDefault();
+                    e.stopPropagation();
+                  }}
+                >
+                  {menuItem.childMenus.map((childMenuItem, index) => {
+                    return generateMenuItems(
+                      childMenuItem,
+                      index,
+                      level + 1,
+                      path + ".childMenus[" + index + "]",
+                    );
+                  })}
+                </span>
               </SideNavMenu>
             </span>
-          </React.Fragment>
+          </span>
         );
       } else if (level === 0) {
         return (
-          <React.Fragment key={path}>
+          <span key={path} id={menuItem.menu.elementId}>
             <SideNavMenuItem
-              id={menuItem.menu.elementId}
+              id={menuItem.menu.elementId + "_nav"}
               href={menuItem.menu.actionURL}
               target={menuItem.menu.openInNewWindow ? "_blank" : ""}
+              className="top-level-menu-item"
             >
               {renderSideNavMenuItemLabel(menuItem, level)}
             </SideNavMenuItem>
-          </React.Fragment>
+          </span>
         );
       } else {
         return (
-          <React.Fragment key={path}>
-            <SideNavMenuItem className="reduced-padding-nav-menu-item">
+          <span id={menuItem.menu.elementId} key={path}>
+            <SideNavMenuItem
+              className="reduced-padding-nav-menu-item"
+              href={menuItem.menu.actionURL}
+              target={menuItem.menu.openInNewWindow ? "_blank" : ""}
+              style={{ width: "100%" }}
+              rel="noreferrer"
+            >
               <span style={{ display: "flex", width: "100%" }}>
                 {!menuItem.menu.actionURL &&
                   !hasActiveChildMenu(menuItem) &&
@@ -261,7 +277,7 @@ function OEHeader(props) {
                 </span>
               );
             })}
-          </React.Fragment>
+          </span>
         );
       }
     } else {
@@ -284,27 +300,20 @@ function OEHeader(props) {
   const renderSingleNavButton = (menuItem, index, level, path) => {
     const marginValue = (level - 1) * 0.5 + "rem";
     return (
-      <a
-        id={menuItem.menu.elementId}
-        href={menuItem.menu.actionURL}
-        target={menuItem.menu.openInNewWindow ? "_blank" : ""}
-        style={{ width: "100%" }}
-        rel="noreferrer"
+      <button
+        className={"custom-sidenav-button"}
+        style={{ width: "100%", marginLeft: marginValue }}
+        id={menuItem.menu.elementId + "_nav"}
+        onClick={() => {
+          if (menuItem.menu.openInNewWindow) {
+            window.open(menuItem.menu.actionURL);
+          } else {
+            window.location.href = menuItem.menu.actionURL;
+          }
+        }}
       >
-        <button
-          className={"custom-sidenav-button"}
-          style={{ marginLeft: marginValue }}
-          onClick={() => {
-            if (menuItem.menu.openInNewWindow) {
-              window.open(menuItem.menu.actionURL);
-            } else {
-              window.location.href = menuItem.menu.actionURL;
-            }
-          }}
-        >
-          {renderSideNavMenuItemLabel(menuItem, level)}
-        </button>
-      </a>
+        {renderSideNavMenuItemLabel(menuItem, level)}
+      </button>
     );
   };
 
@@ -329,31 +338,24 @@ function OEHeader(props) {
     const marginValue = (level - 1) * 0.5 + "rem";
     return (
       <>
-        <a
-          id={menuItem.menu.elementId}
-          href={menuItem.menu.actionURL}
-          target={menuItem.menu.openInNewWindow ? "_blank" : ""}
-          style={{ width: "100%" }}
-          rel="noreferrer"
-        >
-          <button
-            className={
-              menuItem.menu.actionURL
-                ? "custom-sidenav-button"
-                : "custom-sidenav-button-unclickable"
+        <button
+          id={menuItem.menu.elementId + "_nav"}
+          className={
+            menuItem.menu.actionURL
+              ? "custom-sidenav-button"
+              : "custom-sidenav-button-unclickable"
+          }
+          style={{ marginLeft: marginValue }}
+          onClick={() => {
+            if (menuItem.menu.openInNewWindow) {
+              window.open(menuItem.menu.actionURL);
+            } else {
+              window.location.href = menuItem.menu.actionURL;
             }
-            style={{ marginLeft: marginValue }}
-            onClick={() => {
-              if (menuItem.menu.openInNewWindow) {
-                window.open(menuItem.menu.actionURL);
-              } else {
-                window.location.href = menuItem.menu.actionURL;
-              }
-            }}
-          >
-            {renderSideNavMenuItemLabel(menuItem, level)}
-          </button>
-        </a>
+          }}
+        >
+          {renderSideNavMenuItemLabel(menuItem, level)}
+        </button>
         {menuItem.childMenus.length > 0 && (
           <button
             id={menuItem.menu.displayKey + "_dropdown"}
@@ -521,6 +523,15 @@ function OEHeader(props) {
                             {userSessionDetails.firstName}{" "}
                             {userSessionDetails.lastName}
                           </li>
+                          {userSessionDetails.loginLabUnit && (
+                            <li className="userDetails">
+                              <LocationFilled
+                                size={18}
+                                style={{ marginRight: "4px" }}
+                              />
+                              {userSessionDetails.loginLabUnit}{" "}
+                            </li>
+                          )}
                           <li
                             className="userDetails clickableUserDetails"
                             onClick={logout}

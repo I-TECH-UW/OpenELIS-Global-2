@@ -12,11 +12,11 @@
   <packaging>war</packaging>
   <properties>
     <maven.java.release>11</maven.java.release>
-    <major.version>2</major.version>
-    <minor.version>8</minor.version>
-    <state.version>1</state.version>
+    <major.version>3</major.version>
+    <minor.version>0</minor.version>
+    <state.version>3</state.version>
     <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-    <fix.version>38</fix.version>
+    <fix.version>2</fix.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <liquibase.propertyFile>${project.basedir}/liquibase/liquibase.properties</liquibase.propertyFile>
     <castor.version>1.4.1</castor.version>
@@ -84,10 +84,10 @@
       <version>2.12.0</version>
     </dependency>
     <dependency>
-            <groupId>com.fasterxml.jackson.datatype</groupId>
-            <artifactId>jackson-datatype-jsr310</artifactId>
-            <version>2.12.3</version>
-        </dependency>
+      <groupId>com.fasterxml.jackson.datatype</groupId>
+      <artifactId>jackson-datatype-jsr310</artifactId>
+      <version>2.12.3</version>
+    </dependency>
     <!-- APACHE ASSORTED DEPENDENCIES -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
@@ -193,6 +193,17 @@
       <artifactId>hibernate-search-backend-lucene</artifactId>
       <version>${hibernate-search.version}</version>
     </dependency>
+    <!-- WEB PUSH DEPENDENCIES -->
+    <dependency>
+      <groupId>nl.martijndwars</groupId>
+      <artifactId>web-push</artifactId>
+      <version>5.1.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.bouncycastle</groupId>
+      <artifactId>bcpkix-jdk18on</artifactId>
+      <version>1.78</version>
+  </dependency>
     <!-- JAVAX DEPENDENCIES -->
     <dependency>
       <groupId>javax.annotation</groupId>

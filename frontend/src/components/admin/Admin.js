@@ -28,6 +28,8 @@ import {
   Report,
   Bullhorn,
   User,
+  BatchJob,
+  Popup,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -39,7 +41,7 @@ import {
   SideNavMenuItem,
 } from "@carbon/react";
 import { CommonProperties } from "./menu/CommonProperties";
-import ConfigMenuDisplay from "./formEntry/common/ConfigMenuDisplay";
+import ConfigMenuDisplay from "./generalConfig/common/ConfigMenuDisplay";
 import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import BarcodeConfiguration from "./barcodeConfiguration/BarcodeConfiguration";
 import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName.js";
@@ -52,6 +54,9 @@ import OrganizationAddModify from "./OrganizationManagement/OrganizationAddModif
 import UserManagement from "./userManagement/UserManagement";
 import UserAddModify from "./userManagement/UserAddModify";
 import ManageMethod from "./testManagement/ManageMethod.js";
+import BatchTestReassignmentAndCancelation from "./BatchTestReassignmentAndCancellation/BatchTestReassignmentAndCancelation.js";
+import TestNotificationConfigMenu from "./testNotificationConfigMenu/TestNotificationConfigMenu.js";
+import TestNotificationConfigEdit from "./testNotificationConfigMenu/TestNotificationConfigEdit.js";
 
 function Admin() {
   const intl = useIntl();
@@ -123,6 +128,9 @@ function Admin() {
           <SideNavLink renderIcon={User} href="#userManagement">
             <FormattedMessage id="unifiedSystemUser.browser.title" />
           </SideNavLink>
+          <SideNavLink renderIcon={BatchJob} href="#batchTestReassignment">
+            <FormattedMessage id="configuration.batch.test.reassignment" />
+          </SideNavLink>
           <SideNavMenu
             title={intl.formatMessage({ id: "sidenav.label.admin.menu" })}
             renderIcon={TableOfContents}
@@ -183,6 +191,9 @@ function Admin() {
               defaultMessage={"Common Properties"}
             />
           </SideNavLink>
+          <SideNavLink href="#testNotificationConfigMenu" renderIcon={Popup}>
+            <FormattedMessage id="testnotificationconfig.browse.title" />
+          </SideNavLink>
           <SideNavLink href="#DictionaryMenu" renderIcon={CharacterWholeNumber}>
             <FormattedMessage id="dictionary.label.modify" />
           </SideNavLink>
@@ -240,6 +251,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#userManagement">
         <UserManagement />
+      </PathRoute>
+      <PathRoute path="#batchTestReassignment">
+        <BatchTestReassignmentAndCancelation />
       </PathRoute>
       <PathRoute path="#userEdit">
         <UserAddModify />
@@ -316,6 +330,12 @@ function Admin() {
           menuType="PrintedReportsConfigurationMenu"
           id="sidenav.label.admin.formEntry.PrintedReportsconfig"
         />
+      </PathRoute>
+      <PathRoute path="#testNotificationConfigMenu">
+        <TestNotificationConfigMenu />
+      </PathRoute>
+      <PathRoute path="#testNotificationConfig">
+        <TestNotificationConfigEdit />
       </PathRoute>
       <PathRoute path="#DictionaryMenu">
         <DictionaryManagement />
