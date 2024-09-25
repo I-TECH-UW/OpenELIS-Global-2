@@ -27,8 +27,8 @@ export const RoutineReports = (props) => {
           id={"sidenav.label.statusreport.csv"}
         />
       )}
-      {type === "patient" && report === "referredOut" && <ReferredOut />}
-
+      {type === "patient" && report === "referredOut" && <ReferredOut />
+      }
       {type === "patient" && report === "haitiNonConformityBySectionReason" && (
         <ReportByDate
           report={"haitiNonConformityBySectionReason"}
@@ -56,9 +56,21 @@ export const RoutineReports = (props) => {
           report === "activityReportByTestSection") && (
           <ReportByDate report={report} />
         )}
+         {type === "indicator" &&
+        (report === "activityReportByTest" ||
+          report === "activityReportByPanel" ||
+          report === "activityReportByTestSection") && (
+          <ReportByDate report={report} />
+        )}
+
 
       {type === "indicator" && report === "statisticsReport" && (
         <StatisticsReport />
+      )}
+      {type === "indicator" && report === "CSVStatisticsReport" && (
+        <StatisticsReport report={"CSVPatientStatusReport"}
+          id={"sidenav.label.statisticsreport.csv"}/>
+        
       )}
 
       {type === "indicator" && report === "indicatorHaitiLNSPAllTests" && (
