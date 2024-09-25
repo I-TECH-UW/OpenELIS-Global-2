@@ -285,7 +285,7 @@ public class ReportImplementationFactory {
                 return new StatisticsReport();
             } else if (report.equals("sampleRejectionReport")) {
                 return new CSVSampleRejectionReport();
-            // New Changes start
+                // New Changes start
             } else if (report.equals("CSVPatientStatusReport")) {
                 return new CSVPatientStatusReport();
             } else if (report.equals("CSVStatisticsReport")) {
@@ -308,7 +308,7 @@ public class ReportImplementationFactory {
                 return new CSVHIVTestSummaryreport();
             } else if (report.equals("CSVNonConformityByUnitReport")) {
                 return new CSVNonConformityByUnitReport();
-                 // New Changes ends
+                // New Changes ends
             } else if (report.equals("PatientPathologyReport")) {
                 return new PatientPathologyReport();
             } else if (report.equals("PatientCytologyReport")) {

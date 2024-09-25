@@ -6,7 +6,8 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.action.implementation.reportBeans.CSVSampleRejectionColumnBuilder;
 import org.openelisglobal.reports.form.ReportForm;
 
-public class CSVNonConformityByUnitReport extends CSVSampleExportReport implements IReportParameterSetter, IReportCreator {
+public class CSVNonConformityByUnitReport extends CSVSampleExportReport
+        implements IReportParameterSetter, IReportCreator {
 
     @Override
     public void setRequestParameters(ReportForm form) {
