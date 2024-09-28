@@ -5,6 +5,7 @@ import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.param.StringOrListParam;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
@@ -196,15 +197,42 @@ public class PatientSearchRestController extends BaseRestController {
         List<PatientSearchResults> finalResults = new ArrayList<>();
         for (org.hl7.fhir.r4.model.Patient externalPatient : externalPatients) {
             // convert fhir object to patient search result
-            // create a rest endpoint to handle import
-            // create a patient search result
             PatientSearchResults transformedPatientSearchResult = SpringContext.getBean(FhirTransformService.class)
                     .transformToOpenElisPatientSearchResults(externalPatient);
+            // in case the patient object has no NationalId ,
+            // we can construct a dynamic National ID like "NID-{gender}-{dob}-{initials}"
+            if (transformedPatientSearchResult.getNationalId() == null || transformedPatientSearchResult.getNationalId().isEmpty()) {
+                String formattedDob = transformedPatientSearchResult.getBirthdate() != null || !transformedPatientSearchResult.getBirthdate().isEmpty() ? String.format(String.valueOf(DateTimeFormatter.ofPattern("yyyyMMdd"))) : "00000000";
+                String nationalId = generateDynamicID(transformedPatientSearchResult, formattedDob);
+                log.info("dynamic national id: {}",nationalId);
+                transformedPatientSearchResult.setNationalId(nationalId);
+            }
+
             transformedPatientSearchResult.setDataSourceName(MessageUtil.getMessage("patient.cr.source"));
             finalResults.add(transformedPatientSearchResult);
         }
 
         return finalResults;
+    }
+
+    private static String generateDynamicID(PatientSearchResults transformedPatientSearchResult, String formattedDob) {
+        String genderOfTransformedPatient = transformedPatientSearchResult.getGender() != null ||
+                        !transformedPatientSearchResult.getGender().isEmpty()
+                        ? transformedPatientSearchResult.getGender().toUpperCase()
+                        : "UNK";
+
+        String initials = "";
+        if (transformedPatientSearchResult.getFirstName() != null || !transformedPatientSearchResult.getFirstName().isEmpty()) {
+            initials = transformedPatientSearchResult.getFirstName().substring(0, 1).toUpperCase();
+        }
+        if (transformedPatientSearchResult.getLastName() != null || !transformedPatientSearchResult.getLastName().isEmpty()) {
+            initials += transformedPatientSearchResult.getLastName().substring(0, 1).toUpperCase();
+        }
+        if (initials.isEmpty()) {
+            initials = "NAN";  // Fallback if no initials can be determined
+        }
+
+        return "NID-" + genderOfTransformedPatient + "-" + formattedDob + "-" + initials;
     }
 
     private boolean isClientRegistryConfigInvalid() {
