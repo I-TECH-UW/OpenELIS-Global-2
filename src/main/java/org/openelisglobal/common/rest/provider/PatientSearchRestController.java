@@ -5,7 +5,9 @@ import ca.uhn.fhir.rest.gclient.IQuery;
 import ca.uhn.fhir.rest.param.StringOrListParam;
 import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
@@ -208,11 +210,7 @@ public class PatientSearchRestController extends BaseRestController {
             // we can construct a dynamic National ID like "NID-{gender}-{dob}-{initials}"
             if (transformedPatientSearchResult.getNationalId() == null
                     || transformedPatientSearchResult.getNationalId().isEmpty()) {
-                String formattedDob = transformedPatientSearchResult.getBirthdate() != null
-                        || !transformedPatientSearchResult.getBirthdate().isEmpty()
-                                ? String.format(String.valueOf(DateTimeFormatter.ofPattern("yyyyMMdd")))
-                                : "00000000";
-                String nationalId = generateDynamicID(transformedPatientSearchResult, formattedDob);
+                String nationalId = generateDynamicID(transformedPatientSearchResult);
                 log.info("dynamic national id: {}", nationalId);
                 transformedPatientSearchResult.setNationalId(nationalId);
             }
@@ -225,27 +223,51 @@ public class PatientSearchRestController extends BaseRestController {
     }
 
     // FIXME: get better fallback initials and gender
-    private static String generateDynamicID(PatientSearchResults transformedPatientSearchResult, String formattedDob) {
+    private static String generateDynamicID(PatientSearchResults transformedPatientSearchResult) {
         String genderOfTransformedPatient = transformedPatientSearchResult.getGender() != null
-                || !transformedPatientSearchResult.getGender().isEmpty()
+                && !transformedPatientSearchResult.getGender().isEmpty()
                         ? transformedPatientSearchResult.getGender().toUpperCase()
                         : "UNK";
 
+        String initials = getInitials(transformedPatientSearchResult);
+
+        String formattedDob = "00000000";
+        if (transformedPatientSearchResult.getBirthdate() != null
+                && !transformedPatientSearchResult.getBirthdate().isEmpty()) {
+            try {
+                // Try to parse with "dd/MM/yyyy" format first
+                DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+                LocalDate birthdate = LocalDate.parse(transformedPatientSearchResult.getBirthdate(), dateFormatter);
+                formattedDob = birthdate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+            } catch (DateTimeParseException e1) {
+                try {
+                    LocalDate birthdate = LocalDate.parse(transformedPatientSearchResult.getBirthdate(),
+                            DateTimeFormatter.ISO_DATE);
+                    formattedDob = birthdate.format(DateTimeFormatter.ofPattern("yyyyMMdd"));
+                } catch (DateTimeParseException e2) {
+                    LogEvent.logError(e2);
+                }
+            }
+        }
+
+        return String.format("NID-%s-%s-%s", genderOfTransformedPatient, formattedDob, initials);
+    }
+
+    private static String getInitials(PatientSearchResults transformedPatientSearchResult) {
         String initials = "";
         if (transformedPatientSearchResult.getFirstName() != null
-                || !transformedPatientSearchResult.getFirstName().isEmpty()) {
+                && !transformedPatientSearchResult.getFirstName().isEmpty()) {
             initials = transformedPatientSearchResult.getFirstName().substring(0, 1).toUpperCase();
         }
         if (transformedPatientSearchResult.getLastName() != null
-                || !transformedPatientSearchResult.getLastName().isEmpty()) {
+                && !transformedPatientSearchResult.getLastName().isEmpty()) {
             initials += transformedPatientSearchResult.getLastName().substring(0, 1).toUpperCase();
         }
+
         if (initials.isEmpty()) {
-            // Fallback if no initials can be determined
-            // hope we don't get this scenario
             initials = "NAN";
         }
-        return "NID-" + genderOfTransformedPatient + "-" + formattedDob + "-" + initials;
+        return initials;
     }
 
     private boolean isClientRegistryConfigInvalid() {
