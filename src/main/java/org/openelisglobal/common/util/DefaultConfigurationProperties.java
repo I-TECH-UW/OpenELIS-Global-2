@@ -214,6 +214,8 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                 Property.USE_ALPHANUM_ACCESSION_PREFIX.getName(), "false");
         setDBPropertyMappingAndDefault(Property.REQUIRE_LAB_UNIT_AT_LOGIN, Property.REQUIRE_LAB_UNIT_AT_LOGIN.getName(),
                 "false");
+        setDBPropertyMappingAndDefault(Property.MAKE_CLIENT_REGISTRY_CONFIGURABLE,
+                Property.MAKE_CLIENT_REGISTRY_CONFIGURABLE.getName(), "false");
     }
 
     private void setDBPropertyMappingAndDefault(Property property, String dbName, String defaultValue) {

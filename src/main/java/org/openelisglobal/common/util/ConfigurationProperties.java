@@ -196,7 +196,8 @@ public abstract class ConfigurationProperties {
         PATIENT_RESULTS_SMTP_ADDRESS("patientresultssmtp.uri"), //
         PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"), //
         CONTACT_TRACING("contactTracingEnabled"), //
-        REQUIRE_LAB_UNIT_AT_LOGIN("requireLabUnitAtLogin");
+        REQUIRE_LAB_UNIT_AT_LOGIN("requireLabUnitAtLogin"), //
+        MAKE_CLIENT_REGISTRY_CONFIGURABLE("clientRegistryConfigurable");
 
         private String name;
 

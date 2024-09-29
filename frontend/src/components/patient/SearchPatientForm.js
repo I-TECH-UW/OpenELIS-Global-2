@@ -167,6 +167,7 @@ function SearchPatientForm(props) {
     getFromOpenElisServer(searchEndPoint, fetchPatientResults);
     setUrl(searchEndPoint);
   };
+
   const loadNextResultsPage = () => {
     setLoading(true);
     getFromOpenElisServer(url + "&page=" + nextPage, fetchPatientResults);
@@ -454,19 +455,22 @@ function SearchPatientForm(props) {
                   />
                 </Button>
               </Column>
-              <Column lg={4} md={4} sm={2}>
-                <Toggle
-                  labelText="Client Registry Search"
-                  labelA="false"
-                  labelB="true"
-                  id="toggle-cr"
-                  toggled={isToggled}
-                  onClick={() => {
-                    toggle();
-                    setFieldValue("crSearch", !isToggled);
-                  }}
-                />
-              </Column>
+              {configurationProperties.MAKE_CLIENT_REGISTRY_CONFIGURABLE ===
+                "true" && (
+                <Column lg={4} md={4} sm={2}>
+                  <Toggle
+                    labelText="Client Registry Search"
+                    labelA="false"
+                    labelB="true"
+                    id="toggle-cr"
+                    toggled={isToggled}
+                    onClick={() => {
+                      toggle();
+                      setFieldValue("crSearch", !isToggled);
+                    }}
+                  />
+                </Column>
+              )}
             </Grid>
           </Form>
         )}

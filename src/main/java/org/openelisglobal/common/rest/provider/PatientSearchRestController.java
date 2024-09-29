@@ -107,14 +107,19 @@ public class PatientSearchRestController extends BaseRestController {
                 }
             }
 
-            if (request.getParameter("crSearch") != null && request.getParameter("crSearch").contains("true")) {
-                List<PatientSearchResults> fhirResults = searchPatientInClientRegistry(lastName, firstName, STNumber,
-                        subjectNumber, nationalID, null, guid, dateOfBirth, gender);
-                LogEvent.logWarn("PatientSearchRestController", "getPatientResults()", "final results have been added");
-                results.addAll(fhirResults);
-            }
+            if (ConfigurationProperties.getInstance().getPropertyValue(Property.MAKE_CLIENT_REGISTRY_CONFIGURABLE)
+                    .equals("true")) {
+                String crSearchParam = request.getParameter("crSearch");
+                if (crSearchParam != null && crSearchParam.contains("true")) {
+                    List<PatientSearchResults> fhirResults = searchPatientInClientRegistry(lastName, firstName,
+                            STNumber, subjectNumber, nationalID, null, guid, dateOfBirth, gender);
+                    LogEvent.logWarn("PatientSearchRestController", "getPatientResults()",
+                            "final results have been added");
+                    results.addAll(fhirResults);
+                }
 
-            paging.setDatabaseResults(request, form, results);
+                paging.setDatabaseResults(request, form, results);
+            }
         } else {
             int requestedPageNumber = Integer.parseInt(requestedPage);
             paging.page(request, form, requestedPageNumber);
@@ -201,10 +206,14 @@ public class PatientSearchRestController extends BaseRestController {
                     .transformToOpenElisPatientSearchResults(externalPatient);
             // in case the patient object has no NationalId ,
             // we can construct a dynamic National ID like "NID-{gender}-{dob}-{initials}"
-            if (transformedPatientSearchResult.getNationalId() == null || transformedPatientSearchResult.getNationalId().isEmpty()) {
-                String formattedDob = transformedPatientSearchResult.getBirthdate() != null || !transformedPatientSearchResult.getBirthdate().isEmpty() ? String.format(String.valueOf(DateTimeFormatter.ofPattern("yyyyMMdd"))) : "00000000";
+            if (transformedPatientSearchResult.getNationalId() == null
+                    || transformedPatientSearchResult.getNationalId().isEmpty()) {
+                String formattedDob = transformedPatientSearchResult.getBirthdate() != null
+                        || !transformedPatientSearchResult.getBirthdate().isEmpty()
+                                ? String.format(String.valueOf(DateTimeFormatter.ofPattern("yyyyMMdd")))
+                                : "00000000";
                 String nationalId = generateDynamicID(transformedPatientSearchResult, formattedDob);
-                log.info("dynamic national id: {}",nationalId);
+                log.info("dynamic national id: {}", nationalId);
                 transformedPatientSearchResult.setNationalId(nationalId);
             }
 
@@ -215,23 +224,27 @@ public class PatientSearchRestController extends BaseRestController {
         return finalResults;
     }
 
+    // FIXME: get better fallback initials and gender
     private static String generateDynamicID(PatientSearchResults transformedPatientSearchResult, String formattedDob) {
-        String genderOfTransformedPatient = transformedPatientSearchResult.getGender() != null ||
-                        !transformedPatientSearchResult.getGender().isEmpty()
+        String genderOfTransformedPatient = transformedPatientSearchResult.getGender() != null
+                || !transformedPatientSearchResult.getGender().isEmpty()
                         ? transformedPatientSearchResult.getGender().toUpperCase()
                         : "UNK";
 
         String initials = "";
-        if (transformedPatientSearchResult.getFirstName() != null || !transformedPatientSearchResult.getFirstName().isEmpty()) {
+        if (transformedPatientSearchResult.getFirstName() != null
+                || !transformedPatientSearchResult.getFirstName().isEmpty()) {
             initials = transformedPatientSearchResult.getFirstName().substring(0, 1).toUpperCase();
         }
-        if (transformedPatientSearchResult.getLastName() != null || !transformedPatientSearchResult.getLastName().isEmpty()) {
+        if (transformedPatientSearchResult.getLastName() != null
+                || !transformedPatientSearchResult.getLastName().isEmpty()) {
             initials += transformedPatientSearchResult.getLastName().substring(0, 1).toUpperCase();
         }
         if (initials.isEmpty()) {
-            initials = "NAN";  // Fallback if no initials can be determined
+            // Fallback if no initials can be determined
+            // hope we don't get this scenario
+            initials = "NAN";
         }
-
         return "NID-" + genderOfTransformedPatient + "-" + formattedDob + "-" + initials;
     }
 
