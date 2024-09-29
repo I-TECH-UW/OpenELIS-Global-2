@@ -1,13 +1,11 @@
-package org.openelisglobal.common.rest;
+package org.openelisglobal.SysUserId;
 
 import javax.servlet.http.HttpServletRequest;
+
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.login.valueholder.UserSessionData;
-import org.springframework.stereotype.Component;
 
-@Component
-public class BaseRestController implements IActionConstants {
-
+public class SysUserId implements IActionConstants{
     protected String getSysUserId(HttpServletRequest request) {
         UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
         if (usd == null) {

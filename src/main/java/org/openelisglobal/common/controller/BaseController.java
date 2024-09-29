@@ -1,5 +1,6 @@
 package org.openelisglobal.common.controller;
 
+import org.openelisglobal.SysUserId.*;
 import java.io.IOException;
 import java.util.HashSet;
 import java.util.List;
@@ -23,12 +24,12 @@ import org.springframework.stereotype.Component;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
-import org.springframework.validation.ObjectError;
+import org.springframework.validation.ObjectError; 
 import org.springframework.web.servlet.ModelAndView;
-import org.springframework.web.servlet.support.RequestContextUtils;
+import org.springframework.web.servlet.support.RequestContextUtils; 
 
 @Component
-public abstract class BaseController implements IActionConstants {
+public abstract class BaseController extends SysUserId  {
 
     // Request being autowired appears to be threadsafe because of how Spring
     // handles autowiring, despite all controllers being singletons
@@ -181,17 +182,6 @@ public abstract class BaseController implements IActionConstants {
         if (null != pageSubtitle) {
             request.setAttribute(PAGE_SUBTITLE_KEY, pageSubtitle);
         }
-    }
-
-    protected String getSysUserId(HttpServletRequest request) {
-        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-        if (usd == null) {
-            usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
-            if (usd == null) {
-                return null;
-            }
-        }
-        return String.valueOf(usd.getSystemUserId());
     }
 
     protected void setSuccessFlag(HttpServletRequest request, boolean success) {

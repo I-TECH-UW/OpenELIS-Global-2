@@ -9,6 +9,7 @@ import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.SysUserId.SysUserId;
 import org.openelisglobal.address.service.AddressPartService;
 import org.openelisglobal.address.service.PersonAddressService;
 import org.openelisglobal.address.valueholder.AddressPart;
@@ -39,7 +40,7 @@ import org.springframework.validation.Errors;
 
 @Service
 @Scope("prototype")
-public class PatientManagementUpdate implements IPatientUpdate {
+public class PatientManagementUpdate extends SysUserId implements IPatientUpdate {
 
     private String currentUserId;
     protected Patient patient;
@@ -76,11 +77,6 @@ public class PatientManagementUpdate implements IPatientUpdate {
                 ADDRESS_PART_VILLAGE_ID = addressPart.getId();
             }
         }
-    }
-
-    protected String getSysUserId(HttpServletRequest request) {
-        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
-        return String.valueOf(usd.getSystemUserId());
     }
 
     public void setSysUserIdFromRequest(HttpServletRequest request) {

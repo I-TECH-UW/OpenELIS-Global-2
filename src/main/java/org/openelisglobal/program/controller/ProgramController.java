@@ -6,7 +6,7 @@ import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Questionnaire;
-import org.openelisglobal.common.rest.BaseRestController;
+import org.openelisglobal.SysUserId.SysUserId;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/rest")
-public class ProgramController extends BaseRestController {
+public class ProgramController extends SysUserId {
 
     @Autowired
     private FhirPersistanceService fhirPersistanceService;

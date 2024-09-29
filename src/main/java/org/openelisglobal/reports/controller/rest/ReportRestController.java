@@ -14,9 +14,10 @@ import javax.servlet.ServletOutputStream;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import net.sf.jasperreports.engine.JRException;
+
+import org.openelisglobal.SysUserId.SysUserId;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.reports.action.implementation.IReportCreator;
 import org.openelisglobal.reports.action.implementation.ReportImplementationFactory;
@@ -30,7 +31,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/rest/")
-public class ReportRestController extends BaseRestController {
+public class ReportRestController extends SysUserId {
 
     @Autowired
     private ServletContext context;

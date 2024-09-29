@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.openelisglobal.SysUserId.SysUserId;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.rest.provider.bean.TestDisplayBean;
@@ -63,7 +64,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/rest/")
-public class DisplayListController extends BaseRestController {
+public class DisplayListController extends SysUserId {
     @Value("${org.itech.login.saml:false}")
     private Boolean useSAML;
 

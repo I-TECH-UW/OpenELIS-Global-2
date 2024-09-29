@@ -20,10 +20,10 @@ import java.util.List;
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONArray;
 import org.json.simple.JSONObject;
+import org.openelisglobal.SysUserId.SysUserId;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/rest")
-public class PendingAnalysisForTestProviderRestController extends BaseRestController {
+public class PendingAnalysisForTestProviderRestController extends SysUserId {
 
     private static final List<Integer> NOT_STARTED;
     private static final List<Integer> TECH_REJECT;

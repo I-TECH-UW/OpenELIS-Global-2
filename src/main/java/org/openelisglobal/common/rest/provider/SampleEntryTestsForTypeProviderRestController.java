@@ -11,9 +11,9 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.SysUserId.SysUserId;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
-import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.login.valueholder.UserSessionData;
@@ -38,7 +38,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/rest/")
-public class SampleEntryTestsForTypeProviderRestController extends BaseRestController {
+public class SampleEntryTestsForTypeProviderRestController extends SysUserId {
 
     private static String USER_TEST_SECTION_ID;
 
