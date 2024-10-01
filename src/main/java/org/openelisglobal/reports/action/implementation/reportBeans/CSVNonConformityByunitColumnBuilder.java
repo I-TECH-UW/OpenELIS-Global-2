@@ -5,13 +5,12 @@ import static org.openelisglobal.reports.action.implementation.reportBeans.CSVCo
 
 import java.sql.Date;
 import org.openelisglobal.common.services.StatusService;
-import org.openelisglobal.reports.action.implementation.Report;
 import org.openelisglobal.reports.action.implementation.Report.DateRange;
 
 public class CSVNonConformityByunitColumnBuilder extends CSVColumnBuilder {
     protected DateRange dateRange;
 
-    public CSVNonConformityByunitColumnBuilder (DateRange dateRange) {
+    public CSVNonConformityByunitColumnBuilder(DateRange dateRange) {
         super(StatusService.AnalysisStatus.SampleRejected);
         this.dateRange = dateRange;
         defineAllReportColumns();
