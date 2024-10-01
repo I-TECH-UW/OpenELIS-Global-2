@@ -62,8 +62,9 @@ public class LuceneSearchResultsDAOImpl implements SearchResultsDAO {
         List<Long> longHits = hits.stream().map(Long::parseLong).collect(Collectors.toList());
         // 'IN' predicate requires the list to contain at least one value
         longHits.add(-1L);
+        int hitsCount = longHits.size();
 
-        String sqlString = buildQueryString(nationalID, externalID, STNumber, subjectNumber, guid);
+        String sqlString = buildQueryString(nationalID, externalID, STNumber, subjectNumber, guid, hitsCount);
         Query query = entityManager.unwrap(Session.class).createNativeQuery(sqlString);
         query.setParameter(ID_TYPE_FOR_ST, Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("ST")));
         query.setParameter(ID_TYPE_FOR_SUBJECT_NUMBER,
@@ -86,7 +87,9 @@ public class LuceneSearchResultsDAOImpl implements SearchResultsDAO {
         if (!GenericValidator.isBlankOrNull(guid)) {
             query.setParameter(GUID, guid);
         }
-        query.setParameter("idList", longHits);
+        if (hitsCount > 1) {
+            query.setParameter("idList", longHits);
+        }
 
         List<Object[]> queryResults = query.list();
 
@@ -148,8 +151,9 @@ public class LuceneSearchResultsDAOImpl implements SearchResultsDAO {
         List<Long> longHits = hits.stream().map(Long::parseLong).collect(Collectors.toList());
         // 'IN' predicate requires the list to contain at least one value
         longHits.add(-1L);
+        int hitsCount = longHits.size();
 
-        String sqlString = buildQueryString(nationalID, externalID, STNumber, subjectNumber, guid);
+        String sqlString = buildQueryString(nationalID, externalID, STNumber, subjectNumber, guid, hitsCount);
         Query query = entityManager.unwrap(Session.class).createNativeQuery(sqlString);
         query.setParameter(ID_TYPE_FOR_ST, Integer.valueOf(PatientIdentityTypeMap.getInstance().getIDForType("ST")));
         query.setParameter(ID_TYPE_FOR_SUBJECT_NUMBER,
@@ -172,7 +176,9 @@ public class LuceneSearchResultsDAOImpl implements SearchResultsDAO {
         if (!GenericValidator.isBlankOrNull(guid)) {
             query.setParameter(GUID, guid);
         }
-        query.setParameter("idList", longHits);
+        if (hitsCount > 1) {
+            query.setParameter("idList", longHits);
+        }
 
         List<Object[]> queryResults = query.list();
 
@@ -190,7 +196,7 @@ public class LuceneSearchResultsDAOImpl implements SearchResultsDAO {
     }
 
     private String buildQueryString(String nationalID, String externalID, String STNumber, String subjectNumber,
-            String guid) {
+            String guid, int hitsCount) {
 
         StringBuilder queryBuilder = new StringBuilder();
         queryBuilder.append("select p.id, pr.first_name, pr.last_name, p.gender, p.entered_birth_date, p.national_id,"
@@ -246,8 +252,19 @@ public class LuceneSearchResultsDAOImpl implements SearchResultsDAO {
 
         // idList contains patient IDs from Lucene search results matching the fields
         // id, person.firstName, person.lastName, birthDateForDisplay and gender
-        queryBuilder.append("p.id in :idList");
+        if (hitsCount > 1) {
+            queryBuilder.append("p.id in :idList").append(" and ");
+        }
 
+        // No matter which was added last there is one dangling AND to remove.
+        lastAndIndex = queryBuilder.lastIndexOf("and");
+        lastOrIndex = queryBuilder.lastIndexOf("or");
+
+        if (lastAndIndex > lastOrIndex) {
+            queryBuilder.delete(lastAndIndex, queryBuilder.length());
+        } else if (lastOrIndex > lastAndIndex) {
+            queryBuilder.delete(lastOrIndex, queryBuilder.length());
+        }
         return queryBuilder.toString();
     }
 }
