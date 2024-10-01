@@ -8,16 +8,16 @@
 
     <changeSet author="mherman22" id="1">
         <preConditions onFail="MARK_RAN">
-            <sqlCheck expectedResult="0">select count(*) from clinlims.site_information where name = 'clientRegistryConfigurable'; </sqlCheck>
+            <sqlCheck expectedResult="0">select count(*) from clinlims.site_information where name = 'Enable Client Registry'; </sqlCheck>
         </preConditions>
-        <comment>add Config to make client registry search configurable</comment>
+        <comment>add Config to enable client registry search</comment>
         <insert schemaName="clinlims" tableName="site_information">
             <column name="id" valueSequenceNext="site_information_seq" />
-            <column name="name" value="clientRegistryConfigurable" />
+            <column name="name" value="Enable Client Registry" />
             <column name="lastupdated" valueComputed="${now}" />
             <column name="description" value="Enable Client Registry Search" />
             <column name="encrypted" value="false" />
-            <column name="domain_id" valueComputed="(SELECT id FROM site_information_domain WHERE name = 'siteIdentity')" />
+            <column name="domain_id" valueComputed="(SELECT id FROM site_information_domain WHERE name = 'patientEntryConfig')" />
             <column name="value_type" value="boolean" />
             <column name="value" value="false" />
             <column name="group" value="0" />

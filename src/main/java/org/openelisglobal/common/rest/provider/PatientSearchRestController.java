@@ -109,7 +109,7 @@ public class PatientSearchRestController extends BaseRestController {
                 }
             }
 
-            if (ConfigurationProperties.getInstance().getPropertyValue(Property.MAKE_CLIENT_REGISTRY_CONFIGURABLE)
+            if (ConfigurationProperties.getInstance().getPropertyValue(Property.ENABLE_CLIENT_REGISTRY)
                     .equals("true")) {
                 String crSearchParam = request.getParameter("crSearch");
                 if (crSearchParam != null && crSearchParam.contains("true")) {

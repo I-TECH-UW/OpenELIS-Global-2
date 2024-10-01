@@ -367,8 +367,8 @@ public class DisplayListController extends BaseRestController {
                 ConfigurationProperties.getInstance().getPropertyValue(Property.configurationName));
         configs.put(Property.REQUIRE_LAB_UNIT_AT_LOGIN.toString(),
                 ConfigurationProperties.getInstance().getPropertyValue(Property.REQUIRE_LAB_UNIT_AT_LOGIN));
-        configs.put(Property.MAKE_CLIENT_REGISTRY_CONFIGURABLE.toString(),
-                ConfigurationProperties.getInstance().getPropertyValue(Property.MAKE_CLIENT_REGISTRY_CONFIGURABLE));
+        configs.put(Property.ENABLE_CLIENT_REGISTRY.toString(),
+                ConfigurationProperties.getInstance().getPropertyValue(Property.ENABLE_CLIENT_REGISTRY));
         return configs;
     }
 

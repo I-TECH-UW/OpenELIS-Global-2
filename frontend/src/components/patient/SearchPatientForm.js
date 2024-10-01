@@ -455,8 +455,7 @@ function SearchPatientForm(props) {
                   />
                 </Button>
               </Column>
-              {configurationProperties.MAKE_CLIENT_REGISTRY_CONFIGURABLE ===
-                "true" && (
+              {configurationProperties.ENABLE_CLIENT_REGISTRY === "true" && (
                 <Column lg={4} md={4} sm={2}>
                   <Toggle
                     labelText="Client Registry Search"

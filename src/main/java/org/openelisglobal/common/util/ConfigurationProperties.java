@@ -197,7 +197,8 @@ public abstract class ConfigurationProperties {
         PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled"), //
         CONTACT_TRACING("contactTracingEnabled"), //
         REQUIRE_LAB_UNIT_AT_LOGIN("requireLabUnitAtLogin"), //
-        MAKE_CLIENT_REGISTRY_CONFIGURABLE("clientRegistryConfigurable");
+        ENABLE_CLIENT_REGISTRY("Enable Client Registry"); // if true, then client registry search option is visible on
+                                                          // the ui
 
         private String name;
 
