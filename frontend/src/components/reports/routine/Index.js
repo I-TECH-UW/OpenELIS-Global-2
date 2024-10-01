@@ -61,8 +61,9 @@ export const RoutineReports = (props) => {
       {type === "indicator" && report === "statisticsReport" && (
         <StatisticsReport />
       )}
+      {/* it return pdf format */}
       {type === "indicator" && report === "CSVStatisticsReport" && (
-        <StatisticsReport report={"CSVPatientStatusReport"}
+        <StatisticsReport report={"CSVStatisticsReport"}
           id={"sidenav.label.statisticsreport.csv"}/>
         
       )}

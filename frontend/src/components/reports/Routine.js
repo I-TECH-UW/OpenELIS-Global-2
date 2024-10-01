@@ -60,7 +60,7 @@ export const RoutineReportsMenu = {
           label: <FormattedMessage id="sidenav.label.statisticsreport.csv" />,
         },
         {
-          //When i try to change it =CSVSummaryOfAllTest it appear nothing
+          //When i try to change it CSVSummaryOfAllTest it appear nothing
           link: "/RoutineReport?type=indicator&report=indicatorHaitiLNSPAllTests",
           label: <FormattedMessage id="sidenav.label.testsummary.csv" />,
         },
