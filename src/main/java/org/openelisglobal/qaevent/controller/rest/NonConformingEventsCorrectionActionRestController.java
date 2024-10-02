@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.SysUserId.SysUserId;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.patient.action.bean.PatientSearch;
@@ -26,7 +27,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping(value = "/rest")
-public class NonConformingEventsCorrectionActionRestController {
+public class NonConformingEventsCorrectionActionRestController extends SysUserId {
 
     private NCEventService ncEventService = SpringContext.getBean(NCEventService.class);
 
@@ -91,14 +92,4 @@ public class NonConformingEventsCorrectionActionRestController {
         }
     }
 
-    protected String getSysUserId(HttpServletRequest request) {
-        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-        if (usd == null) {
-            usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
-            if (usd == null) {
-                return null;
-            }
-        }
-        return String.valueOf(usd.getSystemUserId());
-    }
 }

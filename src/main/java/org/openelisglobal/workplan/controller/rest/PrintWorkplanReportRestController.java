@@ -13,9 +13,10 @@ import net.sf.jasperreports.engine.JRDataSource;
 import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import org.openelisglobal.SysUserId.SysUserId;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.workplan.form.WorkplanForm;
 import org.openelisglobal.workplan.form.WorkplanForm.PrintWorkplan;
@@ -29,7 +30,7 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController("PrintWorkplanReportRestController")
-public class PrintWorkplanReportRestController extends BaseRestController {
+public class PrintWorkplanReportRestController extends SysUserId {
 
     private String reportPath = null;
 

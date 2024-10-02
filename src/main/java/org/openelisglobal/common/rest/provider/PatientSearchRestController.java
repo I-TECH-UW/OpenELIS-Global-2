@@ -11,15 +11,18 @@ import java.time.format.DateTimeParseException;
 import java.util.*;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.validator.GenericValidator;
+<<<<<<< HEAD
+import org.openelisglobal.SysUserId.SysUserId;
+=======
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r4.model.*;
 import org.openelisglobal.common.log.LogEvent;
+>>>>>>> 2cf3d051cb68252dcd606a0b01f856f518020be6
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.provider.query.PatientSearchResultsForm;
 import org.openelisglobal.common.provider.query.workerObjects.PatientSearchLocalAndExternalWorker;
 import org.openelisglobal.common.provider.query.workerObjects.PatientSearchLocalWorker;
 import org.openelisglobal.common.provider.query.workerObjects.PatientSearchWorker;
-import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.common.rest.util.PatientSearchResultsPaging;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
@@ -49,7 +52,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/rest/")
-public class PatientSearchRestController extends BaseRestController {
+public class PatientSearchRestController extends SysUserId {
 
     @Autowired
     private FhirConfig fhirConfig;

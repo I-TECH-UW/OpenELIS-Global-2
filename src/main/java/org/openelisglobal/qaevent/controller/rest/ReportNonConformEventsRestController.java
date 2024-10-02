@@ -3,6 +3,8 @@ package org.openelisglobal.qaevent.controller.rest;
 import java.util.*;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
+
+import org.openelisglobal.SysUserId.SysUserId;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.rest.bean.NceSampleInfo;
@@ -33,7 +35,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ReportNonConformEventsRestController {
+public class ReportNonConformEventsRestController  extends SysUserId {
 
     private final SampleService sampleService;
     private final SampleItemService sampleItemService;
@@ -171,20 +173,10 @@ public class ReportNonConformEventsRestController {
             sampleItemsList.add(sampleItemInfo);
         }
 
-        sampleInfo.setSampleItems(sampleItemsList);
+        sampleInfo.setSampleItems(sampleItemsList); 
         return sampleInfo;
     }
 
-    protected String getSysUserId(HttpServletRequest request) {
-        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-        if (usd == null) {
-            usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
-            if (usd == null) {
-                return null;
-            }
-        }
-        return String.valueOf(usd.getSystemUserId());
-    }
 
     private Sample getSampleForLabNumber(String labNumber) throws LIMSInvalidConfigurationException {
         return sampleService.getSampleByAccessionNumber(labNumber);

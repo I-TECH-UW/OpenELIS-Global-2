@@ -7,7 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-import org.openelisglobal.common.rest.BaseRestController;
+
+import org.openelisglobal.SysUserId.SysUserId;
 import org.openelisglobal.program.bean.CytologyDashBoardCount;
 import org.openelisglobal.program.service.cytology.CytologyDisplayService;
 import org.openelisglobal.program.service.cytology.CytologySampleService;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class CytologyController extends BaseRestController {
+public class CytologyController extends SysUserId {
 
     @Autowired
     private CytologySampleService cytologySampleService;
