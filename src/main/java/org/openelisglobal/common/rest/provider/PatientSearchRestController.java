@@ -117,11 +117,10 @@ public class PatientSearchRestController extends BaseRestController {
                             STNumber, subjectNumber, nationalID, null, guid, dateOfBirth, gender);
                     LogEvent.logWarn("PatientSearchRestController", "getPatientResults()",
                             "final results have been added");
-                    results.addAll(fhirResults);
+                    results = fhirResults;
                 }
-
-                paging.setDatabaseResults(request, form, results);
             }
+            paging.setDatabaseResults(request, form, results);
         } else {
             int requestedPageNumber = Integer.parseInt(requestedPage);
             paging.page(request, form, requestedPageNumber);

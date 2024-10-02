@@ -69,6 +69,8 @@ import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.TableIdService;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
@@ -388,21 +390,23 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
         this.addToOperations(fhirOperations, tempIdGenerator, patient);
 
-        if (!GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryServerUrl())
-                && !GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryUserName())
-                && !GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryPassword())) {
-            IGenericClient clientRegistry = fhirUtil.getFhirClient(fhirConfig.getClientRegistryServerUrl(),
-                    fhirConfig.getClientRegistryUserName(), fhirConfig.getClientRegistryPassword());
-            try {
-                if (isCreate) {
-                    clientRegistry.create().resource(patient).execute();
-                } else {
-                    clientRegistry.update().resource(patient).execute();
+        if (ConfigurationProperties.getInstance().getPropertyValue(Property.ENABLE_CLIENT_REGISTRY).equals("true")) {
+            if (!GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryServerUrl())
+                    && !GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryUserName())
+                    && !GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryPassword())) {
+                IGenericClient clientRegistry = fhirUtil.getFhirClient(fhirConfig.getClientRegistryServerUrl(),
+                        fhirConfig.getClientRegistryUserName(), fhirConfig.getClientRegistryPassword());
+                try {
+                    if (isCreate) {
+                        clientRegistry.create().resource(patient).execute();
+                    } else {
+                        clientRegistry.update().resource(patient).execute();
+                    }
+                } catch (FhirClientConnectionException e) {
+                    handleException(e, patientInfo.getPatientUpdateStatus());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (FhirClientConnectionException e) {
-                handleException(e, patientInfo.getPatientUpdateStatus());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
             }
         }
 

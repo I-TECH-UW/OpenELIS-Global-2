@@ -185,17 +185,8 @@ function SearchPatientForm(props) {
   const fetchPatientResults = (res) => {
     let patientsResults = res.patientSearchResults;
     if (patientsResults.length > 0) {
-      const openClientRegistryResults = patientsResults.filter(
-        (item) => item.dataSourceName === "Open Client Registry",
-      );
-
-      if (openClientRegistryResults.length > 0) {
-        openClientRegistryResults.forEach((item) => (item.id = item.patientID));
-        setPatientSearchResults(openClientRegistryResults);
-      } else {
-        patientsResults.forEach((item) => (item.id = item.patientID));
-        setPatientSearchResults(patientsResults);
-      }
+      patientsResults.forEach((item) => (item.id = item.patientID));
+      setPatientSearchResults(patientsResults);
     } else {
       setPatientSearchResults([]);
       addNotification({
