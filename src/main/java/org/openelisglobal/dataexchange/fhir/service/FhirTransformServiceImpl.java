@@ -63,11 +63,14 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.TableIdService;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
@@ -115,7 +118,6 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -123,13 +125,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FhirTransformServiceImpl implements FhirTransformService {
-
-    @Value("${org.openelisglobal.crserver.uri:}")
-    private String clientRegistryServerUrl;
-    @Value("${org.openelisglobal.crserver.username:}")
-    private String clientRegistryUserName;
-    @Value("${org.openelisglobal.crserver.password:}")
-    private String clientRegistryPassword;
 
     @Autowired
     private FhirConfig fhirConfig;
@@ -173,7 +168,6 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private AddressPartService addressPartService;
     @Autowired
     private OrganizationService organizationService;
-
     @Autowired
     private FhirUtil fhirUtil;
 
@@ -396,21 +390,23 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
         this.addToOperations(fhirOperations, tempIdGenerator, patient);
 
-        if (!GenericValidator.isBlankOrNull(clientRegistryServerUrl)
-                && !GenericValidator.isBlankOrNull(clientRegistryUserName)
-                && !GenericValidator.isBlankOrNull(clientRegistryPassword)) {
-            IGenericClient clientRegistry = fhirUtil.getFhirClient(clientRegistryServerUrl, clientRegistryUserName,
-                    clientRegistryPassword);
-            try {
-                if (isCreate) {
-                    clientRegistry.create().resource(patient).execute();
-                } else {
-                    clientRegistry.update().resource(patient).execute();
+        if (ConfigurationProperties.getInstance().getPropertyValue(Property.ENABLE_CLIENT_REGISTRY).equals("true")) {
+            if (!GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryServerUrl())
+                    && !GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryUserName())
+                    && !GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryPassword())) {
+                IGenericClient clientRegistry = fhirUtil.getFhirClient(fhirConfig.getClientRegistryServerUrl(),
+                        fhirConfig.getClientRegistryUserName(), fhirConfig.getClientRegistryPassword());
+                try {
+                    if (isCreate) {
+                        clientRegistry.create().resource(patient).execute();
+                    } else {
+                        clientRegistry.update().resource(patient).execute();
+                    }
+                } catch (FhirClientConnectionException e) {
+                    handleException(e, patientInfo.getPatientUpdateStatus());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (FhirClientConnectionException e) {
-                handleException(e, patientInfo.getPatientUpdateStatus());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
             }
         }
 
@@ -695,6 +691,64 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         fhirPatient.addAddress(transformToAddress(patient.getPerson()));
 
         return fhirPatient;
+    }
+
+    @Override
+    public PatientSearchResults transformToOpenElisPatientSearchResults(org.hl7.fhir.r4.model.Patient fhirPatient) {
+        PatientSearchResults patientSearchResults = new PatientSearchResults();
+
+        if (fhirPatient.hasId()) {
+            patientSearchResults.setPatientID(fhirPatient.getIdElement().getIdPart());
+        }
+
+        for (Identifier identifier : fhirPatient.getIdentifier()) {
+            String system = identifier.getSystem();
+            String value = identifier.getValue();
+
+            if ("http://openelis-global.org/pat_nationalId".equals(system)) {
+                patientSearchResults.setNationalId(value);
+            } else if ("http://openelis-global.org/pat_guid".equals(system)) {
+                patientSearchResults.setExternalId(value);
+            } else if ("http://openelis-global.org/pat_uuid".equals(system)) {
+                patientSearchResults.setGUID(value);
+            }
+        }
+
+        if (!fhirPatient.getName().isEmpty()) {
+            HumanName name = fhirPatient.getNameFirstRep();
+            patientSearchResults.setFirstName(name.getGivenAsSingleString());
+            patientSearchResults.setLastName(name.getFamily());
+        }
+
+        switch (fhirPatient.getGender()) {
+        case MALE:
+            patientSearchResults.setGender("M");
+            break;
+        case FEMALE:
+            patientSearchResults.setGender("F");
+            break;
+        default:
+            patientSearchResults.setGender(null);
+            break;
+        }
+
+        if (fhirPatient.getBirthDate() != null) {
+            patientSearchResults.setBirthdate(
+                    DateUtil.convertTimestampToStringDate(new Timestamp(fhirPatient.getBirthDate().getTime())));
+        }
+
+        if (!fhirPatient.getTelecom().isEmpty()) {
+            ContactPoint telecom = fhirPatient.getTelecomFirstRep();
+            if (ContactPointSystem.PHONE.equals(telecom.getSystem())) {
+                patientSearchResults.setContactPhone(telecom.getValue());
+            }
+
+            if (ContactPointSystem.EMAIL.equals(telecom.getSystem())) {
+                patientSearchResults.setContactEmail(telecom.getValue());
+            }
+        }
+
+        return patientSearchResults;
     }
 
     private Address transformToAddress(Person person) {

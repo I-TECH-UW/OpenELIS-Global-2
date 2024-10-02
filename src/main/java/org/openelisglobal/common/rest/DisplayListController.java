@@ -368,6 +368,8 @@ public class DisplayListController extends SysUserId {
                 ConfigurationProperties.getInstance().getPropertyValue(Property.configurationName));
         configs.put(Property.REQUIRE_LAB_UNIT_AT_LOGIN.toString(),
                 ConfigurationProperties.getInstance().getPropertyValue(Property.REQUIRE_LAB_UNIT_AT_LOGIN));
+        configs.put(Property.ENABLE_CLIENT_REGISTRY.toString(),
+                ConfigurationProperties.getInstance().getPropertyValue(Property.ENABLE_CLIENT_REGISTRY));
         return configs;
     }
 

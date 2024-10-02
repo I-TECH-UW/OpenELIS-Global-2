@@ -664,6 +664,7 @@
                 <exclude>tools/Liquibase-Outdated/**</exclude>
                 <exclude>dataexport/**</exclude>
                 <exclude>plugins/**</exclude>
+                <exclude>frontend/**</exclude>
               </excludes>
               <prettier>
                 <!-- Formatter that Spotless supports and can format Markdown:
