@@ -204,7 +204,7 @@ jobs:
           repository: ${{github.repository}}
 
       - name: Run OpenELS image
-        run: docker compose -f test.docker-compose.yml up -d
+        run: docker compose -f test.docker-compose.yml up -d --build --wait --wait-timeout 120
 
       - name: Cypress run
         uses: cypress-io/github-action@v6
@@ -213,6 +213,13 @@ jobs:
         env:
           CYPRESS_STARTUP_WAIT_MILLISECONDS: 300000
           CYPRESS_VIDEO: false
+
+      - name: Dump docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v2
+        with:
+          # Only show last 100 lines of each
+          tail: "100"
 
   build-and-push-image-backend:
     needs: [run-e2e-qa]

@@ -8,9 +8,8 @@ on:
 
 env:
   DOCKER_NAME: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.event.repository.name }}-frontend
-  
-jobs:
 
+jobs:
   build-prod-frontend-image:
     runs-on: ubuntu-latest
     permissions:
@@ -38,8 +37,7 @@ jobs:
         with:
           context: ./frontend
           file: ./frontend/Dockerfile.prod
-          push: false    
-
+          push: false
 
   build-and-run-qa-tests:
     runs-on: ubuntu-latest
@@ -51,11 +49,7 @@ jobs:
           submodules: recursive
 
       - name: Run OpenELS image
-        run: docker compose -f build.docker-compose.yml up -d
-
-      - name: Sleep for 2 minutes
-        run: sleep 2m
-        shell: bash
+        run: docker compose -f build.docker-compose.yml up -d  --build --wait --wait-timeout 120
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
@@ -73,3 +67,10 @@ jobs:
       - name: Run Frontend Qa Workflow
         run: npx cypress run –headless
         working-directory: frontend
+
+      - name: Dump docker logs on failure
+        if: failure()
+        uses: jwalton/gh-docker-logs@v2
+        with:
+          # Only show last 100 lines of each
+          tail: "100"
