@@ -669,10 +669,11 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                     // TODO don't write connection information until security parameters can be
                     // hammered out
                 } else {
-                    writeableProperties.setProperty(propertyName, propertyHolder.getValue());
+                    writeableProperties.setProperty(propertyName,
+                            propertyHolder == null ? "" : propertyHolder.getValue());
                 }
             } else {
-                writeableProperties.setProperty(propertyName, propertyHolder.getValue());
+                writeableProperties.setProperty(propertyName, propertyHolder == null ? "" : propertyHolder.getValue());
             }
         }
 
