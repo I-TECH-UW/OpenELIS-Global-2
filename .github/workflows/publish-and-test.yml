@@ -138,13 +138,12 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          platforms: linux/amd64,linux/arm64
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache-prod
-          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache-prod,mode=max
+          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache,mode=max
           build-args: SKIP_SPOTLESS=true
 
   build-and-push-test-image-frontend:
@@ -186,8 +185,8 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache-prod
-          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache-prod,mode=max
+          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache,mode=max
 
   run-e2e-qa:
     needs:
@@ -255,13 +254,12 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
-          platforms: linux/amd64,linux/arm64
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache-prod
-          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache-prod,mode=max
+          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}:buildcache,mode=max
           build-args: SKIP_SPOTLESS=true
 
   build-and-push-image-frontend:
@@ -304,5 +302,5 @@ jobs:
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
-          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache-prod
-          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache-prod,mode=max
+          cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache
+          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache,mode=max
