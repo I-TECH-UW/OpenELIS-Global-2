@@ -99,12 +99,6 @@ services:
       - ./volume/tomcat/hapi_server.xml:/opt/bitnami/tomcat/conf/server.xml
     secrets:
       - source: hapi_application.yaml 
-    healthcheck:
-      test: ["CMD", "/healthcheck.sh"]
-      timeout: 10s
-      interval: 30s
-      retries: 3
-      start_period: 2m
       
   frontend.openelis.org:
     image: frontend
@@ -122,12 +116,6 @@ services:
     environment:
       - CHOKIDAR_USEPOLLING=true
     tty: true
-    healthcheck:
-      test: ["CMD", "/healthcheck.sh"]
-      timeout: 10s
-      interval: 30s
-      retries: 3
-      start_period: 2m
 
 
   proxy:
@@ -147,12 +135,6 @@ services:
     restart: unless-stopped
     depends_on:
       - certs
-    healthcheck:
-      test: ["CMD", "/healthcheck.sh"]
-      timeout: 10s
-      interval: 30s
-      retries: 3
-      start_period: 2m
 
 secrets:
   datasource.password:
