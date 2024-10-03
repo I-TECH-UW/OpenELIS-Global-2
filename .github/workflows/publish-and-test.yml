@@ -204,7 +204,7 @@ jobs:
           repository: ${{github.repository}}
 
       - name: Run OpenELS image
-        run: docker compose -f test.docker-compose.yml up -d --build --wait --wait-timeout 120
+        run: docker compose -f test.docker-compose.yml up -d --build --wait --wait-timeout 300
 
       - name: Cypress run
         uses: cypress-io/github-action@v6

@@ -49,7 +49,7 @@ jobs:
           submodules: recursive
 
       - name: Run OpenELS image
-        run: docker compose -f build.docker-compose.yml up -d  --build --wait --wait-timeout 120
+        run: docker compose -f build.docker-compose.yml up -d  --build --wait --wait-timeout 300
 
       - name: Set up Node.js
         uses: actions/setup-node@v3
