@@ -647,7 +647,12 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         public Properties getPropertiesForWriting() {
             Properties writeableProperties = new Properties();
             for (Entry<String, PropertyHolder> propertySet : allProperties.entrySet()) {
-                addWriteProperty(writeableProperties, propertySet.getKey(), propertySet.getValue());
+                if (propertySet.getKey() == null) {
+                    LogEvent.logWarn(this.getClass().getSimpleName(), "getPropertiesForWriting",
+                            "detected null property name");
+                } else {
+                    addWriteProperty(writeableProperties, propertySet.getKey(), propertySet.getValue());
+                }
             }
             return writeableProperties;
         }
@@ -670,10 +675,12 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
                     // hammered out
                 } else {
                     writeableProperties.setProperty(propertyName,
-                            propertyHolder == null ? "" : propertyHolder.getValue());
+                            (propertyHolder == null || propertyHolder.getValue() == null) ? ""
+                                    : propertyHolder.getValue());
                 }
             } else {
-                writeableProperties.setProperty(propertyName, propertyHolder == null ? "" : propertyHolder.getValue());
+                writeableProperties.setProperty(propertyName,
+                        (propertyHolder == null || propertyHolder.getValue() == null) ? "" : propertyHolder.getValue());
             }
         }
 
