@@ -111,10 +111,10 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         finalProperties.setPropertyValue(Property.releaseNumber.name(),
                 SpringContext.getBean(Versioning.class).getReleaseNumber());
         LogEvent.logDebug(this.getClass().getSimpleName(), "initialize", "finished initializing configuration");
-
         // setDefaultLocale here to avoid a circular dependency
         ((GlobalLocaleResolver) SpringContext.getBean(LocaleResolver.class)).setDefaultLocale(
                 Locale.forLanguageTag(finalProperties.getProperty(Property.DEFAULT_LANG_LOCALE.name())));
+
     }
 
     private void copyPropertiesPreferSource(OEProperties sourceProperties, OEProperties destinationProperties) {
@@ -308,6 +308,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         properties.setPropertyValue(Property.ALPHANUM_ACCESSION_PREFIX, "");
         properties.setPropertyValue(Property.USE_ALPHANUM_ACCESSION_PREFIX, "false");
         properties.setPropertyValue(Property.REQUIRE_LAB_UNIT_AT_LOGIN, "false");
+        properties.setPropertyValue(Property.ENABLE_CLIENT_REGISTRY, "false");
         return properties;
     }
 

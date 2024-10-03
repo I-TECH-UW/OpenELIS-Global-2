@@ -63,11 +63,14 @@ import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.SampleAddService.SampleTestCollection;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.common.services.TableIdService;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
@@ -115,7 +118,6 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.AsyncResult;
 import org.springframework.stereotype.Service;
@@ -123,13 +125,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class FhirTransformServiceImpl implements FhirTransformService {
-
-    @Value("${org.openelisglobal.crserver.uri:}")
-    private String clientRegistryServerUrl;
-    @Value("${org.openelisglobal.crserver.username:}")
-    private String clientRegistryUserName;
-    @Value("${org.openelisglobal.crserver.password:}")
-    private String clientRegistryPassword;
 
     @Autowired
     private FhirConfig fhirConfig;
@@ -173,7 +168,6 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private AddressPartService addressPartService;
     @Autowired
     private OrganizationService organizationService;
-
     @Autowired
     private FhirUtil fhirUtil;
 
@@ -199,7 +193,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Async
     @Override
     public AsyncResult<Bundle> transformPersistPatients(List<String> patientIds) throws FhirLocalPersistingException {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistPatients", "transformPersistPatients called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistPatients",
+                "transformPersistPatients called");
 
         FhirOperations fhirOperations = new FhirOperations();
         CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
@@ -231,7 +226,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Override
     public AsyncResult<Bundle> transformPersistObjectsUnderSamples(List<String> sampleIds)
             throws FhirLocalPersistingException {
-                LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples", "transformPersistObjectsUnderSamples called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistObjectsUnderSamples",
+                "transformPersistObjectsUnderSamples called");
 
         FhirOperations fhirOperations = new FhirOperations();
         CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
@@ -395,28 +391,30 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Transactional(readOnly = true)
     public void transformPersistPatient(PatientManagementInfo patientInfo, boolean isCreate)
             throws FhirLocalPersistingException {
-                LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistPatient", "transformPersistPatient called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistPatient", "transformPersistPatient called");
 
         CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
         FhirOperations fhirOperations = new FhirOperations();
         org.hl7.fhir.r4.model.Patient patient = transformToFhirPatient(patientInfo.getPatientPK());
         this.addToOperations(fhirOperations, tempIdGenerator, patient);
 
-        if (!GenericValidator.isBlankOrNull(clientRegistryServerUrl)
-                && !GenericValidator.isBlankOrNull(clientRegistryUserName)
-                && !GenericValidator.isBlankOrNull(clientRegistryPassword)) {
-            IGenericClient clientRegistry = fhirUtil.getFhirClient(clientRegistryServerUrl, clientRegistryUserName,
-                    clientRegistryPassword);
-            try {
-                if (isCreate) {
-                    clientRegistry.create().resource(patient).execute();
-                } else {
-                    clientRegistry.update().resource(patient).execute();
+        if (ConfigurationProperties.getInstance().getPropertyValue(Property.ENABLE_CLIENT_REGISTRY).equals("true")) {
+            if (!GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryServerUrl())
+                    && !GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryUserName())
+                    && !GenericValidator.isBlankOrNull(fhirConfig.getClientRegistryPassword())) {
+                IGenericClient clientRegistry = fhirUtil.getFhirClient(fhirConfig.getClientRegistryServerUrl(),
+                        fhirConfig.getClientRegistryUserName(), fhirConfig.getClientRegistryPassword());
+                try {
+                    if (isCreate) {
+                        clientRegistry.create().resource(patient).execute();
+                    } else {
+                        clientRegistry.update().resource(patient).execute();
+                    }
+                } catch (FhirClientConnectionException e) {
+                    handleException(e, patientInfo.getPatientUpdateStatus());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
                 }
-            } catch (FhirClientConnectionException e) {
-                handleException(e, patientInfo.getPatientUpdateStatus());
-            } catch (Exception e) {
-                throw new RuntimeException(e);
             }
         }
 
@@ -427,7 +425,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Async
     @Override
     public void transformPersistOrganization(Organization organization) throws FhirLocalPersistingException {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistOrganization", "transformPersistOrganization called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistOrganization",
+                "transformPersistOrganization called");
 
         CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
         FhirOperations fhirOperations = new FhirOperations();
@@ -442,7 +441,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     public void transformPersistOrderEntryFhirObjects(SamplePatientUpdateData updateData,
             PatientManagementInfo patientInfo, boolean useReferral, List<ReferralItem> referralItems)
             throws FhirLocalPersistingException {
-                LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistOrderEntryFhirObjects", "transformPersistOrderEntryFhirObjects called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistOrderEntryFhirObjects",
+                "transformPersistOrderEntryFhirObjects called");
         LogEvent.logTrace(this.getClass().getSimpleName(), "createFhirFromSamplePatient",
                 "accessionNumber - " + updateData.getAccessionNumber());
         CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
@@ -517,7 +517,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     private void updateReferringTaskWithTaskInfo(Task referringTask, Task task) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "updateReferringTaskWithTaskInfo", "updateReferringTaskWithTaskInfo called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "updateReferringTaskWithTaskInfo",
+                "updateReferringTaskWithTaskInfo called");
 
         if (TaskStatus.COMPLETED.equals(task.getStatus())) {
             referringTask.setStatus(TaskStatus.COMPLETED);
@@ -528,7 +529,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     private void updateReferringServiceRequestWithSampleInfo(Sample sample, ServiceRequest serviceRequest) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "updateReferringServiceRequestWithSampleInfo", "updateReferringServiceRequestWithSampleInfo called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "updateReferringServiceRequestWithSampleInfo",
+                "updateReferringServiceRequestWithSampleInfo called");
 
         if (!serviceRequest.hasRequisition()) {
             serviceRequest.setRequisition(
@@ -537,7 +539,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     private Optional<Task> getReferringTaskForSample(Sample sample) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "getReferringTaskForSample", "getReferringTaskForSample called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "getReferringTaskForSample",
+                "getReferringTaskForSample called");
 
         List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(sample.getReferringId());
         if (eOrders.size() > 0 && ElectronicOrderType.FHIR.equals(eOrders.get(0).getType())) {
@@ -547,7 +550,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     private Optional<ServiceRequest> getReferringServiceRequestForSample(Sample sample) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "getReferringServiceRequestForSample", "getReferringServiceRequestForSample called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "getReferringServiceRequestForSample",
+                "getReferringServiceRequestForSample called");
 
         List<ElectronicOrder> eOrders = electronicOrderService.getElectronicOrdersByExternalId(sample.getReferringId());
         if (eOrders.size() > 0 && ElectronicOrderType.FHIR.equals(eOrders.get(0).getType())) {
@@ -562,7 +566,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     @Override
     public Practitioner transformProviderToPractitioner(Provider provider) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformProviderToPractitioner", "transformProviderToPractitioner called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformProviderToPractitioner",
+                "transformProviderToPractitioner called");
 
         Practitioner practitioner = new Practitioner();
         practitioner.setId(provider.getFhirUuidAsString());
@@ -689,14 +694,16 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     private org.hl7.fhir.r4.model.Patient transformToFhirPatient(Patient patient) {
         LogEvent.logTrace(this.getClass().getSimpleName(), "transformToFhirPatient", "transformToFhirPatient called");
 
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformToFhirPatient", "transforming patient with id: " + patient.getId());
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformToFhirPatient",
+                "transforming patient with id: " + patient.getId());
         org.hl7.fhir.r4.model.Patient fhirPatient = new org.hl7.fhir.r4.model.Patient();
         String subjectNumber = patientService.getSubjectNumber(patient);
         String nationalId = patientService.getNationalId(patient);
         String guid = patientService.getGUID(patient);
         String stNumber = patientService.getSTNumber(patient);
         String uuid = patient.getFhirUuidAsString();
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformToFhirPatient", "transforming patient with id: " + patient.getId() + " fhirUuid: " + uuid);
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformToFhirPatient",
+                "transforming patient with id: " + patient.getId() + " fhirUuid: " + uuid);
 
         fhirPatient.setId(uuid);
         fhirPatient.setIdentifier(createPatientIdentifiers(subjectNumber, nationalId, stNumber, guid, uuid));
@@ -728,6 +735,64 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         fhirPatient.addAddress(transformToAddress(patient.getPerson()));
 
         return fhirPatient;
+    }
+
+    @Override
+    public PatientSearchResults transformToOpenElisPatientSearchResults(org.hl7.fhir.r4.model.Patient fhirPatient) {
+        PatientSearchResults patientSearchResults = new PatientSearchResults();
+
+        if (fhirPatient.hasId()) {
+            patientSearchResults.setPatientID(fhirPatient.getIdElement().getIdPart());
+        }
+
+        for (Identifier identifier : fhirPatient.getIdentifier()) {
+            String system = identifier.getSystem();
+            String value = identifier.getValue();
+
+            if ("http://openelis-global.org/pat_nationalId".equals(system)) {
+                patientSearchResults.setNationalId(value);
+            } else if ("http://openelis-global.org/pat_guid".equals(system)) {
+                patientSearchResults.setExternalId(value);
+            } else if ("http://openelis-global.org/pat_uuid".equals(system)) {
+                patientSearchResults.setGUID(value);
+            }
+        }
+
+        if (!fhirPatient.getName().isEmpty()) {
+            HumanName name = fhirPatient.getNameFirstRep();
+            patientSearchResults.setFirstName(name.getGivenAsSingleString());
+            patientSearchResults.setLastName(name.getFamily());
+        }
+
+        switch (fhirPatient.getGender()) {
+        case MALE:
+            patientSearchResults.setGender("M");
+            break;
+        case FEMALE:
+            patientSearchResults.setGender("F");
+            break;
+        default:
+            patientSearchResults.setGender(null);
+            break;
+        }
+
+        if (fhirPatient.getBirthDate() != null) {
+            patientSearchResults.setBirthdate(
+                    DateUtil.convertTimestampToStringDate(new Timestamp(fhirPatient.getBirthDate().getTime())));
+        }
+
+        if (!fhirPatient.getTelecom().isEmpty()) {
+            ContactPoint telecom = fhirPatient.getTelecomFirstRep();
+            if (ContactPointSystem.PHONE.equals(telecom.getSystem())) {
+                patientSearchResults.setContactPhone(telecom.getValue());
+            }
+
+            if (ContactPointSystem.EMAIL.equals(telecom.getSystem())) {
+                patientSearchResults.setContactEmail(telecom.getValue());
+            }
+        }
+
+        return patientSearchResults;
     }
 
     private Address transformToAddress(Person person) {
@@ -765,7 +830,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private List<Identifier> createPatientIdentifiers(String subjectNumber, String nationalId, String stNumber,
             String guid, String fhirUuid) {
-                LogEvent.logTrace(this.getClass().getSimpleName(), "transformToAddress", "transformToAddress called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformToAddress", "transformToAddress called");
 
         List<Identifier> identifierList = new ArrayList<>();
         if (!GenericValidator.isBlankOrNull(subjectNumber)) {
@@ -788,7 +853,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private List<ServiceRequest> transformToServiceRequests(SamplePatientUpdateData updateData,
             SampleTestCollection sampleTestCollection) {
-                LogEvent.logTrace(this.getClass().getSimpleName(), "transformToServiceRequests", "transformToServiceRequests called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformToServiceRequests",
+                "transformToServiceRequests called");
 
         List<ServiceRequest> serviceRequestsForSampleItem = new ArrayList<>();
 
@@ -803,7 +869,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     private ServiceRequest transformToServiceRequest(Analysis analysis) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformToServiceRequest", "transformToServiceRequest called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformToServiceRequest",
+                "transformToServiceRequest called");
 
         Sample sample = analysis.getSampleItem().getSample();
         Patient patient = sampleHumanService.getPatientForSample(sample);
@@ -881,7 +948,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     private CodeableConcept transformSampleProgramToCodeableConcept(ObservationHistory program) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformSampleProgramToCodeableConcept", "transformSampleProgramToCodeableConcept called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformSampleProgramToCodeableConcept",
+                "transformSampleProgramToCodeableConcept called");
 
         CodeableConcept codeableConcept = new CodeableConcept();
         String programDisplay = "";
@@ -906,7 +974,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     private CodeableConcept transformTestToCodeableConcept(Test test) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformTestToCodeableConcept", "transformTestToCodeableConcept test called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformTestToCodeableConcept",
+                "transformTestToCodeableConcept test called");
 
         CodeableConcept codeableConcept = new CodeableConcept();
         codeableConcept
@@ -960,7 +1029,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     private CodeableConcept transformSampleConditionToCodeableConcept(ObservationHistory initialSampleCondition) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformSampleConditionToCodeableConcept", "transformSampleConditionToCodeableConcept called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformSampleConditionToCodeableConcept",
+                "transformSampleConditionToCodeableConcept called");
 
         String observationValue;
         String observationDisplay;
@@ -996,7 +1066,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     private CodeableConcept transformTypeOfSampleToCodeableConcept(TypeOfSample typeOfSample) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformTypeOfSampleToCodeableConcept", "transformTypeOfSampleToCodeableConcept called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformTypeOfSampleToCodeableConcept",
+                "transformTypeOfSampleToCodeableConcept called");
 
         CodeableConcept codeableConcept = new CodeableConcept();
         codeableConcept.addCoding(new Coding(fhirConfig.getOeFhirSystem() + "/sampleType",
@@ -1009,7 +1080,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Transactional(readOnly = true)
     public void transformPersistResultsEntryFhirObjects(ResultsUpdateDataSet actionDataSet)
             throws FhirLocalPersistingException {
-                LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistResultsEntryFhirObjects", "transformPersistResultsEntryFhirObjects called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistResultsEntryFhirObjects",
+                "transformPersistResultsEntryFhirObjects called");
 
         CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
         FhirOperations fhirOperations = new FhirOperations();
@@ -1040,7 +1112,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     public void transformPersistResultValidationFhirObjects(List<Result> deletableList,
             List<Analysis> analysisUpdateList, ArrayList<Result> resultUpdateList, List<AnalysisItem> resultItemList,
             ArrayList<Sample> sampleUpdateList, ArrayList<Note> noteUpdateList) throws FhirLocalPersistingException {
-                LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistResultValidationFhirObjects", "transformPersistResultValidationFhirObjects called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformPersistResultValidationFhirObjects",
+                "transformPersistResultValidationFhirObjects called");
 
         CountingTempIdGenerator tempIdGenerator = new CountingTempIdGenerator();
         FhirOperations fhirOperations = new FhirOperations();
@@ -1127,7 +1200,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     private DiagnosticReport transformResultToDiagnosticReport(Analysis analysis) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformResultToDiagnosticReport", "transformResultToDiagnosticReport called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformResultToDiagnosticReport",
+                "transformResultToDiagnosticReport called");
 
         List<Result> allResults = resultService.getResultsByAnalysis(analysis);
         SampleItem sampleItem = analysis.getSampleItem();
@@ -1176,7 +1250,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     private Observation transformResultToObservation(Result result) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformResultToObservation", "transformResultToObservation called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformResultToObservation",
+                "transformResultToObservation called");
 
         Analysis analysis = result.getAnalysis();
         Test test = analysis.getTest();
@@ -1251,7 +1326,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     @Override
     public Practitioner transformNameToPractitioner(String practitionerName) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformNameToPractitioner", "transformNameToPractitioner called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformNameToPractitioner",
+                "transformNameToPractitioner called");
 
         Practitioner practitioner = new Practitioner();
         HumanName name = practitioner.addName();
@@ -1277,7 +1353,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     @Override
     @Transactional(readOnly = true)
     public org.hl7.fhir.r4.model.Organization transformToFhirOrganization(Organization organization) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformToFhirOrganization", "transformToFhirOrganization called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformToFhirOrganization",
+                "transformToFhirOrganization called");
 
         org.hl7.fhir.r4.model.Organization fhirOrganization = new org.hl7.fhir.r4.model.Organization();
         fhirOrganization
@@ -1312,7 +1389,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private void setOeOrganizationIdentifiers(Organization organization,
             org.hl7.fhir.r4.model.Organization fhirOrganization) {
-                LogEvent.logTrace(this.getClass().getSimpleName(), "setOeOrganizationIdentifiers", "setOeOrganizationIdentifiers called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "setOeOrganizationIdentifiers",
+                "setOeOrganizationIdentifiers called");
 
         organization.setFhirUuid(UUID.fromString(fhirOrganization.getIdElement().getIdPart()));
         for (Identifier identifier : fhirOrganization.getIdentifier()) {
@@ -1330,7 +1408,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private void setFhirOrganizationIdentifiers(org.hl7.fhir.r4.model.Organization fhirOrganization,
             Organization organization) {
-                LogEvent.logTrace(this.getClass().getSimpleName(), "setFhirOrganizationIdentifiers", "setFhirOrganizationIdentifiers called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "setFhirOrganizationIdentifiers",
+                "setFhirOrganizationIdentifiers called");
 
         if (!GenericValidator.isBlankOrNull(organization.getCliaNum())) {
             fhirOrganization.addIdentifier(new Identifier().setSystem(fhirConfig.getOeFhirSystem() + "/org_cliaNum")
@@ -1352,7 +1431,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private void setOeOrganizationTypes(Organization organization,
             org.hl7.fhir.r4.model.Organization fhirOrganization) {
-                LogEvent.logTrace(this.getClass().getSimpleName(), "setOeOrganizationTypes", "setOeOrganizationTypes called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "setOeOrganizationTypes", "setOeOrganizationTypes called");
 
         Set<OrganizationType> orgTypes = new HashSet<>();
         OrganizationType orgType = null;
@@ -1375,7 +1454,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private void setFhirOrganizationTypes(org.hl7.fhir.r4.model.Organization fhirOrganization,
             Organization organization) {
-                LogEvent.logTrace(this.getClass().getSimpleName(), "setFhirOrganizationTypes", "setFhirOrganizationTypes called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "setFhirOrganizationTypes",
+                "setFhirOrganizationTypes called");
 
         Set<OrganizationType> orgTypes = organizationService.get(organization.getId()).getOrganizationTypes();
         for (OrganizationType orgType : orgTypes) {
@@ -1389,7 +1469,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
     private void setOeOrganizationAddressInfo(Organization organization,
             org.hl7.fhir.r4.model.Organization fhirOrganization) {
-                LogEvent.logTrace(this.getClass().getSimpleName(), "setOeOrganizationAddressInfo", "setOeOrganizationAddressInfo called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "setOeOrganizationAddressInfo",
+                "setOeOrganizationAddressInfo called");
 
         organization.setStreetAddress(fhirOrganization.getAddressFirstRep().getLine().stream()
                 .map(e -> e.asStringValue()).collect(Collectors.joining("\\n")));
@@ -1416,7 +1497,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     private Annotation transformNoteToAnnotation(Note note) {
-        LogEvent.logTrace(this.getClass().getSimpleName(), "transformNoteToAnnotation", "transformNoteToAnnotation called");
+        LogEvent.logTrace(this.getClass().getSimpleName(), "transformNoteToAnnotation",
+                "transformNoteToAnnotation called");
 
         Annotation annotation = new Annotation();
         annotation.setText(note.getText());

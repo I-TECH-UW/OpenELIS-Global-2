@@ -63,7 +63,7 @@ public class FhirTransformationController extends BaseController {
         }
         info.checkAll = checkAll;
         info.batchSize = batchSize;
-        info.threads = threads; 
+        info.threads = threads;
         info.waitForResults = waitForResults;
         info.objectType = "Patient";
         info.phase = "Fetching";

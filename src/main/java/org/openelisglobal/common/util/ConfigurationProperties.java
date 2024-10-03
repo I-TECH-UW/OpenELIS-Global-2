@@ -211,27 +211,30 @@ public abstract class ConfigurationProperties {
         ALPHANUM_ACCESSION_PREFIX("alphanumAccessionPrefix", "text"), //
         LAB_DIRECTOR_NAME("labDirectorName", "text"), //
         LAB_DIRECTOR_TITLE("labDirectorTitle", "text"), //
-        INFO_HIGHWAY_USERNAME("infoHighway.username", "connection_username"), //
-        INFO_HIGHWAY_PASSWORD("infoHighway.password", "connection_password"), //
-        INFO_HIGHWAY_ADDRESS("infoHighway.uri", "connection_address"), //
-        INFO_HIGHWAY_ENABLED("infoHighway.enabled", "connection_status"), //
-        PATIENT_RESULTS_BMP_SMS_USERNAME("patientresultsbmpsms.username", "connection_username"), //
-        PATIENT_RESULTS_BMP_SMS_PASSWORD("patientresultsbmpsms.password", "connection_password"), //
-        PATIENT_RESULTS_BMP_SMS_ADDRESS("patientresultsbmpsms.uri", "connection_address"), //
-        PATIENT_RESULTS_BMP_SMS_ENABLED("patientresultsbmpsms.enabled", "connection_status"), //
-        PATIENT_RESULTS_SMPP_SMS_USERNAME("patientresultssmpp.username", "connection_username"), //
-        PATIENT_RESULTS_SMPP_SMS_PASSWORD("patientresultssmpp.password", "connection_password"), //
-        PATIENT_RESULTS_SMPP_SMS_ADDRESS("patientresultssmpp.uri", "connection_address"), //
-        PATIENT_RESULTS_SMPP_SMS_ENABLED("patientresultssmpp.enabled", "connection_status"), //
-        PATIENT_RESULTS_SMTP_USERNAME("patientresultssmtp.username", "connection_username"), //
-        PATIENT_RESULTS_SMTP_PASSWORD("patientresultssmtp.password", "connection_password"), //
-        PATIENT_RESULTS_SMTP_ADDRESS("patientresultssmtp.uri", "connection_address"), //
-        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled", "connection_status"), //
+        INFO_HIGHWAY_USERNAME("infoHighway.username", "text"), //
+        INFO_HIGHWAY_PASSWORD("infoHighway.password", "text"), //
+        INFO_HIGHWAY_ADDRESS("infoHighway.uri", "text"), //
+        INFO_HIGHWAY_ENABLED("infoHighway.enabled", "text"), //
+        PATIENT_RESULTS_BMP_SMS_USERNAME("patientresultsbmpsms.username", "text"), //
+        PATIENT_RESULTS_BMP_SMS_PASSWORD("patientresultsbmpsms.password", "text"), //
+        PATIENT_RESULTS_BMP_SMS_ADDRESS("patientresultsbmpsms.uri", "text"), //
+        PATIENT_RESULTS_BMP_SMS_ENABLED("patientresultsbmpsms.enabled", "text"), //
+        PATIENT_RESULTS_SMPP_SMS_USERNAME("patientresultssmpp.username", "text"), //
+        PATIENT_RESULTS_SMPP_SMS_PASSWORD("patientresultssmpp.password", "text"), //
+        PATIENT_RESULTS_SMPP_SMS_ADDRESS("patientresultssmpp.uri", "text"), //
+        PATIENT_RESULTS_SMPP_SMS_ENABLED("patientresultssmpp.enabled", "text"), //
+        PATIENT_RESULTS_SMTP_USERNAME("patientresultssmtp.username", "text"), //
+        PATIENT_RESULTS_SMTP_PASSWORD("patientresultssmtp.password", "text"), //
+        PATIENT_RESULTS_SMTP_ADDRESS("patientresultssmtp.uri", "text"), //
+        PATIENT_RESULTS_SMTP_ENABLED("patientresultssmtp.enabled", "text"), //
         CONTACT_TRACING("contactTracingEnabled", "text"), //
-        REQUIRE_LAB_UNIT_AT_LOGIN("requireLabUnitAtLogin", "text");
+        REQUIRE_LAB_UNIT_AT_LOGIN("requireLabUnitAtLogin", "text"), //
+        ENABLE_CLIENT_REGISTRY("enableClientRegistry", "text"); // if true, then client registry search option is
+                                                                // visible on
+        // the ui
 
         private String dbName;
-        private String propertyType;
+        private String propertyType; // text, localization
 
         private Property(String dbName, String propertyType) {
             this.dbName = dbName;
