@@ -203,8 +203,8 @@ public abstract class BaseController implements IActionConstants {
     }
 
     protected boolean userHasPermissionForModule(HttpServletRequest request, String module) {
-        if (!userModuleService.isUserAdmin(request)
-                && ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equals("ROLE")) {
+        if (!userModuleService.isUserAdmin(request) && ConfigurationProperties.getInstance()
+                .getPropertyValue("permissions.agent").equalsIgnoreCase("ROLE")) {
             @SuppressWarnings("rawtypes")
             HashSet accessMap = (HashSet) request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
             return accessMap.contains(module);

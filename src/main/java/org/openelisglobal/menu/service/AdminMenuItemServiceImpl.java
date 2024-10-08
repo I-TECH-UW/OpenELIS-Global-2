@@ -171,7 +171,7 @@ public class AdminMenuItemServiceImpl implements AdminMenuItemService, Configura
         curItem.setMessageKey("plugin.menu.list.plugins");
         adminMenuItems.add(curItem);
 
-        if (permissionBase.equals("ROLE")) {
+        if (permissionBase.equalsIgnoreCase("ROLE")) {
             curItem = new AdminMenuItem();
             curItem.setPath("/UnifiedSystemUserMenu");
             curItem.setMessageKey("unifiedSystemUser.browser.title");

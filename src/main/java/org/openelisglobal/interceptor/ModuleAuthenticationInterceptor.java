@@ -61,7 +61,7 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
     }
 
     protected boolean hasPermission(Errors errors, HttpServletRequest request) {
-        if (ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equals("ROLE")) {
+        if (ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equalsIgnoreCase("ROLE")) {
             return hasPermissionForUrl(request, USE_PARAMETERS) || userModuleService.isUserAdmin(request);
         } else {
             return userModuleService.isVerifyUserModule(request) || userModuleService.isUserAdmin(request);

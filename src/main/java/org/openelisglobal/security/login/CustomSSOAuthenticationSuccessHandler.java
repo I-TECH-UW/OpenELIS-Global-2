@@ -20,7 +20,6 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.common.validator.BaseErrors;
-import org.openelisglobal.login.service.LoginUserService;
 import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.role.service.RoleService;
@@ -29,7 +28,6 @@ import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.systemusermodule.service.PermissionModuleService;
 import org.openelisglobal.systemusermodule.valueholder.PermissionModule;
-import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,9 +45,6 @@ import org.springframework.web.servlet.support.RequestContextUtils;
 @Component
 public class CustomSSOAuthenticationSuccessHandler extends SavedRequestAwareAuthenticationSuccessHandler
         implements IActionConstants {
-
-    @Autowired
-    private LoginUserService loginService;
     @Autowired
     private UserRoleService userRoleService;
     @Autowired
@@ -58,8 +53,6 @@ public class CustomSSOAuthenticationSuccessHandler extends SavedRequestAwareAuth
     private SystemUserService systemUserService;
     @Autowired
     private RoleService roleService;
-    @Autowired
-    private TestSectionService testSectionService;
 
     @Value("${org.openelisglobal.timezone:}")
     private String timezone;
@@ -246,7 +239,7 @@ public class CustomSSOAuthenticationSuccessHandler extends SavedRequestAwareAuth
         request.getSession().setAttribute("timezone", timezone);
 
         // get permitted actions map (available modules for the current user)
-        if (ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equals("ROLE")) {
+        if (ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equalsIgnoreCase("ROLE")) {
             Set<String> permittedPages = getPermittedForms(authorities);
             request.getSession().setAttribute(IActionConstants.PERMITTED_ACTIONS_MAP, permittedPages);
             // showAdminMenu |= permittedPages.contains("MasterList");
@@ -293,7 +286,7 @@ public class CustomSSOAuthenticationSuccessHandler extends SavedRequestAwareAuth
         request.getSession().setAttribute("timezone", timezone);
 
         // get permitted actions map (available modules for the current user)
-        if (ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equals("ROLE")) {
+        if (ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equalsIgnoreCase("ROLE")) {
             Set<String> permittedPages = getPermittedForms(authorities);
             request.getSession().setAttribute(IActionConstants.PERMITTED_ACTIONS_MAP, permittedPages);
             // showAdminMenu |= permittedPages.contains("MasterList");
@@ -316,6 +309,7 @@ public class CustomSSOAuthenticationSuccessHandler extends SavedRequestAwareAuth
                 }
             }
         }
+
         for (String roleId : roleIds) {
             Set<String> permittedPagesForRole = permissionModuleService
                     .getAllPermittedPagesFromAgentId(Integer.parseInt(roleId));

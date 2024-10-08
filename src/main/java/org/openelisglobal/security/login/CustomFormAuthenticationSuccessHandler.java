@@ -159,7 +159,7 @@ public class CustomFormAuthenticationSuccessHandler extends SavedRequestAwareAut
         request.getSession().setAttribute("timezone", timezone);
 
         // get permitted actions map (available modules for the current user)
-        if (ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equals("ROLE")) {
+        if (ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equalsIgnoreCase("ROLE")) {
             Set<String> permittedPages = getPermittedForms(usd.getSystemUserId());
             request.getSession().setAttribute(IActionConstants.PERMITTED_ACTIONS_MAP, permittedPages);
             // showAdminMenu |= permittedPages.contains("MasterList");

@@ -150,13 +150,6 @@ public class LoginPageController extends BaseController {
                 }
             }
             setLabunitRolesForExistingUser(request, session);
-            // setLabunitRolesForExistingUser(session);
-            Set<String> roles = new HashSet<>();
-            for (String roleId : userRoleService.getRoleIdsForUser(user.getId())) {
-                roles.add(roleService.getRoleById(roleId).getName().trim());
-            }
-            session.setRoles(roles);
-
         }
         return session;
     }
@@ -168,6 +161,11 @@ public class LoginPageController extends BaseController {
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserDetails) {
                 setLabunitRolesForExistingUserFromDB(session);
+                Set<String> roles = new HashSet<>();
+                for (String roleId : userRoleService.getRoleIdsForUser(session.getUserId())) {
+                    roles.add(roleService.getRoleById(roleId).getName().trim());
+                }
+                session.setRoles(roles);
             } else if (principal instanceof DefaultSaml2AuthenticatedPrincipal) {
                 setLabunitRolesForExistingUserFromGrantedAuthorities(session, authentication);
             } else if (principal instanceof DefaultOAuth2User) {
@@ -180,15 +178,17 @@ public class LoginPageController extends BaseController {
             Authentication authentication) {
         Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
         Map<String, List<String>> userLabRolesMap = new HashMap<>();
+        Set<String> roles = new HashSet<>();
         for (GrantedAuthority authority : authorities) {
             String[] authorityExplode = authority.getAuthority().split("-");
             if (authorityExplode.length == 3) {
-                List<String> roles = userLabRolesMap.getOrDefault(authorityExplode[2], new ArrayList<>());
+                List<String> userLabRoles = userLabRolesMap.getOrDefault(authorityExplode[2], new ArrayList<>());
+                userLabRoles.add(authorityExplode[1]);
                 roles.add(authorityExplode[1]);
-                userLabRolesMap.put(authorityExplode[2], roles);
+                userLabRolesMap.put(authorityExplode[2], userLabRoles);
             }
         }
-
+        session.setRoles(roles);
         session.setUserLabRolesMap(userLabRolesMap);
     }
 
