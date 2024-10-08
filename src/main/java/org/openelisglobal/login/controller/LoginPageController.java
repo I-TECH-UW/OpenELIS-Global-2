@@ -181,7 +181,9 @@ public class LoginPageController extends BaseController {
         Set<String> roles = new HashSet<>();
         for (GrantedAuthority authority : authorities) {
             String[] authorityExplode = authority.getAuthority().split("-");
-            if (authorityExplode.length == 3) {
+            if (authorityExplode.length == 2) {
+                roles.add(authorityExplode[1]);
+            } else if (authorityExplode.length == 3) {
                 List<String> userLabRoles = userLabRolesMap.getOrDefault(authorityExplode[2], new ArrayList<>());
                 userLabRoles.add(authorityExplode[1]);
                 roles.add(authorityExplode[1]);
