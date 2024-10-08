@@ -262,6 +262,11 @@ public abstract class ConfigurationProperties {
         return SpringContext.getBean(DefaultConfigurationProperties.class);
     }
 
+    public String getPropertyValue(String propertyName) {
+        return GenericValidator.isBlankOrNull(finalProperties.getProperty(propertyName)) ? null
+                : finalProperties.getProperty(propertyName).trim();
+    }
+
     public String getPropertyValue(Property property) {
         return GenericValidator.isBlankOrNull(finalProperties.getProperty(property.name())) ? null
                 : finalProperties.getProperty(property.name()).trim();

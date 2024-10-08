@@ -9,7 +9,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Questionnaire;
@@ -34,7 +33,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -165,8 +163,6 @@ public class AppConfig implements WebMvcConfigurer {
     // functionality
     public LocaleResolver localeResolver() {
         GlobalLocaleResolver localeResolver = new GlobalLocaleResolver();
-        localeResolver.setDefaultLocale(Locale.forLanguageTag("en-US"));
-        LocaleContextHolder.setDefaultLocale(Locale.forLanguageTag("en-US"));
         return localeResolver;
     }
 

@@ -17,7 +17,7 @@ import org.json.JSONObject;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.login.service.LoginUserService;
@@ -246,7 +246,7 @@ public class CustomSSOAuthenticationSuccessHandler extends SavedRequestAwareAuth
         request.getSession().setAttribute("timezone", timezone);
 
         // get permitted actions map (available modules for the current user)
-        if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
+        if (ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equals("ROLE")) {
             Set<String> permittedPages = getPermittedForms(authorities);
             request.getSession().setAttribute(IActionConstants.PERMITTED_ACTIONS_MAP, permittedPages);
             // showAdminMenu |= permittedPages.contains("MasterList");
@@ -293,7 +293,7 @@ public class CustomSSOAuthenticationSuccessHandler extends SavedRequestAwareAuth
         request.getSession().setAttribute("timezone", timezone);
 
         // get permitted actions map (available modules for the current user)
-        if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
+        if (ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equals("ROLE")) {
             Set<String> permittedPages = getPermittedForms(authorities);
             request.getSession().setAttribute(IActionConstants.PERMITTED_ACTIONS_MAP, permittedPages);
             // showAdminMenu |= permittedPages.contains("MasterList");
@@ -351,9 +351,9 @@ public class CustomSSOAuthenticationSuccessHandler extends SavedRequestAwareAuth
 
     private boolean passwordExpiringSoon(LoginUser loginInfo) {
         return loginInfo.getPasswordExpiredDayNo() <= Integer
-                .parseInt(SystemConfiguration.getInstance().getLoginUserPasswordExpiredReminderDay())
-                && (loginInfo.getPasswordExpiredDayNo() > Integer
-                        .parseInt(SystemConfiguration.getInstance().getLoginUserChangePasswordAllowDay()));
+                .parseInt(ConfigurationProperties.getInstance().getPropertyValue("login.user.expired.reminder.day"))
+                && (loginInfo.getPasswordExpiredDayNo() > Integer.parseInt(
+                        ConfigurationProperties.getInstance().getPropertyValue("login.user.change.allow.day")));
     }
 
     protected void clearCustomAuthenticationAttributes(HttpServletRequest request) {

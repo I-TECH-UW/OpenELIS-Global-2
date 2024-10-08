@@ -29,6 +29,7 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.Properties;
 import java.util.Set;
@@ -42,7 +43,6 @@ import org.openelisglobal.externalconnections.service.ExternalConnectionService;
 import org.openelisglobal.externalconnections.valueholder.BasicAuthenticationData;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection;
 import org.openelisglobal.externalconnections.valueholder.ExternalConnection.ProgrammedConnection;
-import org.openelisglobal.internationalization.GlobalLocaleResolver;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
@@ -50,7 +50,6 @@ import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.servlet.LocaleResolver;
 
 @Component
 public class DefaultConfigurationProperties extends ConfigurationProperties {
@@ -111,9 +110,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         finalProperties.setPropertyValue(Property.releaseNumber.name(),
                 SpringContext.getBean(Versioning.class).getReleaseNumber());
         LogEvent.logDebug(this.getClass().getSimpleName(), "initialize", "finished initializing configuration");
-        // setDefaultLocale here to avoid a circular dependency
-        ((GlobalLocaleResolver) SpringContext.getBean(LocaleResolver.class)).setDefaultLocale(
-                Locale.forLanguageTag(finalProperties.getProperty(Property.DEFAULT_LANG_LOCALE.name())));
+        SpringContext.getBean(ConfigurationListenerService.class).refreshConfigurations();
 
     }
 
@@ -389,13 +386,13 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
     protected OEProperties loadChangedValuesFromDatabase() {
         OEProperties changedProperties = new OEProperties();
         OEProperties properties = loadFromDatabase();
-        if (dbOnLoadProperties != null) {
+        if (finalProperties != null) {
             for (String propertyName : properties.stringPropertyNames()) {
-                if (!dbOnLoadProperties.containsKey(propertyName)) {
+                if (!finalProperties.containsKey(propertyName)) {
                     LogEvent.logDebug(this.getClass().getSimpleName(), "loadChangedValuesFromDatabase",
                             propertyName + " is a new property in the database");
                     changedProperties.setPropertyHolder(propertyName, properties.getPropertyHolder(propertyName));
-                } else if (!dbOnLoadProperties.getPropertyHolder(propertyName)
+                } else if (!finalProperties.getPropertyHolder(propertyName)
                         .equals(properties.getPropertyHolder(propertyName))) {
                     LogEvent.logDebug(this.getClass().getSimpleName(), "loadChangedValuesFromDatabase",
                             propertyName + " has changed in the database");
@@ -516,7 +513,14 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         }
 
         public boolean equals(PropertyHolder that) {
-            return this.propertyValue.equals(that.propertyValue) && this.localizationId.equals(that.localizationId)
+            if (this == that) {
+                return true;
+            }
+            if (that == null) {
+                return false;
+            }
+            return Objects.equals(this.propertyValue, that.propertyValue)
+                    && Objects.equals(this.localizationId, that.localizationId)
                     && areEqual(this.localizationValues, that.localizationValues);
 
         }

@@ -7,7 +7,6 @@
          		org.openelisglobal.common.action.IActionConstants,
          		org.openelisglobal.common.util.IdValuePair,
          		org.openelisglobal.common.util.Versioning,
-         		org.openelisglobal.common.util.SystemConfiguration,
          		org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl" %>
 
 <%@ page isELIgnored="false" %>

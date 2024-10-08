@@ -12,8 +12,8 @@ import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.dao.UserModuleService;
 import org.openelisglobal.login.valueholder.UserSessionData;
@@ -204,7 +204,7 @@ public abstract class BaseController implements IActionConstants {
 
     protected boolean userHasPermissionForModule(HttpServletRequest request, String module) {
         if (!userModuleService.isUserAdmin(request)
-                && SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
+                && ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equals("ROLE")) {
             @SuppressWarnings("rawtypes")
             HashSet accessMap = (HashSet) request.getSession().getAttribute(IActionConstants.PERMITTED_ACTIONS_MAP);
             return accessMap.contains(module);
