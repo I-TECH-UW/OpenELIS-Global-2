@@ -18,7 +18,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.LocaleChangeListener;
-import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.internationalization.GlobalLocaleResolver;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.method.valueholder.Method;
@@ -45,6 +45,7 @@ import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.servlet.LocaleResolver;
 
 @Service
 @DependsOn({ "springContext" })
@@ -76,7 +77,10 @@ public class TestServiceImpl extends AuditableBaseObjectServiceImpl<Test, String
 
     @PostConstruct
     private void initialize() {
-        SystemConfiguration.getInstance().addLocalChangeListener(this);
+        LocaleResolver localeResolver = SpringContext.getBean(LocaleResolver.class);
+        if (localeResolver instanceof GlobalLocaleResolver) {
+            ((GlobalLocaleResolver) localeResolver).addLocalChangeListener(this);
+        }
     }
 
     private synchronized void initializeGlobalVariables() {

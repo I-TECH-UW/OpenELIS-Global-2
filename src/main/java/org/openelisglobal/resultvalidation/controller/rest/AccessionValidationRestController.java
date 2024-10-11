@@ -262,7 +262,6 @@ public class AccessionValidationRestController extends BaseResultValidationContr
                 .getAttribute(IActionConstants.RESULTS_SESSION_CACHE);
         List<Result> checkResults = (List<Result>) checkPagedResults.get(0);
         if (checkResults.size() == 0) {
-            System.out.println("Operation failed");
             LogEvent.logDebug(this.getClass().getSimpleName(), "ResultValidation()", "Attempted save of stale page.");
             return form;
         }
@@ -327,7 +326,6 @@ public class AccessionValidationRestController extends BaseResultValidationContr
         // if
         // (ConfigurationProperties.getInstance().isPropertyValueEqual(Property.configurationName,
         // "CI RetroCI"))
-        System.out.println("Operation success");
         // redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
         if (isBlankOrNull(testSectionName)) {
             // return findForward(forward, form);

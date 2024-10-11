@@ -22,8 +22,8 @@ import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.systemuser.dao.SystemUserDAO;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.stereotype.Component;
@@ -81,7 +81,9 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
         List<SystemUser> list;
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             // bugzilla 1399
             String sql = "from SystemUser s order by s.lastName, s.firstName";
@@ -161,7 +163,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
     public SystemUser getDataForLoginUser(String userName) throws LIMSRuntimeException {
         List<SystemUser> list;
         try {
-            String sql = "from SystemUser where login_name = :name";
+            String sql = "from SystemUser where loginName = :name";
             Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
             query.setParameter("name", userName);
             list = query.list();
