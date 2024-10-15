@@ -569,6 +569,8 @@
   "labNumber.format.new": "Nouveau format",
   "labNumber.format.current": "Format actuel",
   "validation.label.nonconform": "= L'échantillon ou la commande est non conforme ou le test a été rejeté",
+  "label.button.login.sso": "L'authentification unique",
+  "label.button.login": "Se Connector",
   "menu.billing.title": "Gestion du menu de facturation",
   "menu.billing.address": "Adresse de facturation",
   "menu.billing.active": "Menu de facturation Actif",

@@ -161,7 +161,34 @@
       <groupId>ca.uhn.hapi</groupId>
       <artifactId>hapi-hl7overhttp</artifactId>
       <version>${hapi.version}</version>
+      <exclusions>
+        <exclusion>
+          <groupId>org.bouncycastle</groupId>
+          <artifactId>bcprov-jdk16</artifactId>
+        </exclusion>
+      </exclusions>
     </dependency>
+    <dependency>
+      <groupId>com.jcabi</groupId>
+      <artifactId>jcabi-xml</artifactId>
+      <version>0.14</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opensaml</groupId>
+      <artifactId>opensaml-core</artifactId>
+      <version>4.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opensaml</groupId>
+      <artifactId>opensaml-saml-api</artifactId>
+      <version>4.3.2</version>
+    </dependency>
+    <dependency>
+      <groupId>org.opensaml</groupId>
+      <artifactId>opensaml-saml-impl</artifactId>
+      <version>4.3.2</version>
+    </dependency>
+
     <dependency>
       <groupId>ca.uhn.hapi</groupId>
       <artifactId>hapi-structures-v251</artifactId>
@@ -203,7 +230,7 @@
       <groupId>org.bouncycastle</groupId>
       <artifactId>bcpkix-jdk18on</artifactId>
       <version>1.78</version>
-  </dependency>
+    </dependency>
     <!-- JAVAX DEPENDENCIES -->
     <dependency>
       <groupId>javax.annotation</groupId>
@@ -539,6 +566,10 @@
       <id>jaspersoft-third-party</id>
       <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
     </repository>
+    <repository>
+      <id>shibboleth</id> <!-- openSaml-->
+      <url>https://build.shibboleth.net/maven/releases/</url>
+    </repository>
   </repositories>
   <build>
     <finalName>OpenELIS-Global</finalName>
@@ -664,6 +695,7 @@
                 <exclude>tools/Liquibase-Outdated/**</exclude>
                 <exclude>dataexport/**</exclude>
                 <exclude>plugins/**</exclude>
+                <exclude>frontend/**</exclude>
               </excludes>
               <prettier>
                 <!-- Formatter that Spotless supports and can format Markdown:

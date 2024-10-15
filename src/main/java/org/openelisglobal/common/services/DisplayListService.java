@@ -27,11 +27,11 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.LocaleChangeListener;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.gender.service.GenderService;
 import org.openelisglobal.gender.valueholder.Gender;
+import org.openelisglobal.internationalization.GlobalLocaleResolver;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.method.service.MethodService;
 import org.openelisglobal.method.valueholder.Method;
@@ -73,6 +73,7 @@ import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
 import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.web.servlet.LocaleResolver;
 
 @Service
 public class DisplayListService implements LocaleChangeListener {
@@ -134,14 +135,18 @@ public class DisplayListService implements LocaleChangeListener {
     private ProviderService providerService;
     @Autowired
     private ProgramService programService;
+    @Autowired
+    private LocaleResolver localeResolver;
 
     @PostConstruct
     private void setupGlobalVariables() {
         instance = this;
 
         refreshLists();
+        if (localeResolver instanceof GlobalLocaleResolver) {
+            ((GlobalLocaleResolver) localeResolver).addLocalChangeListener(this);
+        }
 
-        SystemConfiguration.getInstance().addLocalChangeListener(this);
     }
 
     public static DisplayListService getInstance() {
