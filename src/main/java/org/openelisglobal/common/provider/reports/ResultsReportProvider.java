@@ -42,9 +42,9 @@ import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.exception.LIMSResultsReportHasNoDataException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -732,7 +732,8 @@ public class ResultsReportProvider extends BaseReportsProvider {
                 reportAnalyteResult.setAnalyte(analyte);
                 reportAnalyteResult.setComponentName(analyte.getAnalyteName());
                 String resultValue = "";
-                if (result.getResultType().equals(SystemConfiguration.getInstance().getDictionaryType())) {
+                if (result.getResultType()
+                        .equals(ConfigurationProperties.getInstance().getPropertyValue("dictionaryType"))) {
                     Dictionary dictionary = new Dictionary();
                     dictionary.setId(result.getValue());
                     dictionaryService.getData(dictionary);

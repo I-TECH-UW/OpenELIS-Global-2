@@ -1,7 +1,5 @@
 package org.openelisglobal.result.controller.rest;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
@@ -70,16 +68,7 @@ public class ResultsRestController extends LogbookResultsBaseController {
     @ResponseBody
     public AccessionResultsForm getResults(@RequestParam String labNumber)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
-        // System.out.println("Get Results:");
-        // System.out.println("Get Results:" + request.toString());
-
-        // return
-        // DisplayListService.getInstance().getList(DisplayListService.ListType.ALL_TESTS);
-        // HttpServletRequest request = null;
-        System.out.println("ResultsRestController getTestResult:labNumber:" + labNumber);
         String accessionNumber = labNumber;
-        // String accessionNumber = "TESTA220000000000042";
-        // String accessionNumber = "TESTA220000000000037";
 
         AccessionResultsForm form = new AccessionResultsForm();
 
@@ -150,34 +139,6 @@ public class ResultsRestController extends LogbookResultsBaseController {
         } else {
             paging.page(request, form, Integer.parseInt(newPage));
         }
-
-        System.out.println("ResultsRestController getTestResult:");
-
-        List<TestResultItem> testResultItems = form.getTestResult();
-        //// Timestamp now = new Timestamp(System.currentTimeMillis());
-        //
-        // testResultItems.forEach(item -> {
-        ////
-        // item.getResult().getAnalysis().getTestSection().getOrganization().setLastupdated(now);
-        //// System.out.println(":" +
-        // item.getResult().getAnalysis().getTestSection().getOrganization().getLastupdated());
-        // System.out.println(":" + item.getTestName());
-        // });
-        //
-        ObjectMapper mapper = new ObjectMapper();
-        String jsonForm = "";
-        try {
-            jsonForm = mapper.writeValueAsString(form);
-        } catch (JsonProcessingException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
-        }
-        //
-        // IdValuePair formsEntry = new IdValuePair("0", jsonForm);
-        // List<IdValuePair> forms = new ArrayList<>();
-        // forms.add(0, formsEntry);
-
-        // System.out.println("ResultsRestController jsonForm:" + jsonForm);
 
         return (form);
     }

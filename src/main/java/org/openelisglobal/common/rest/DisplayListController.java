@@ -13,6 +13,7 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.logging.log4j.core.util.KeyValuePair;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.rest.provider.bean.TestDisplayBean;
@@ -26,7 +27,6 @@ import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.LabelValuePair;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.localization.service.LocalizationService;
@@ -44,16 +44,22 @@ import org.openelisglobal.role.valueholder.Role;
 import org.openelisglobal.siteinformation.service.SiteInformationService;
 import org.openelisglobal.siteinformation.valueholder.SiteInformation;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.controller.UnifiedSystemUserController;
 import org.openelisglobal.systemuser.service.UserService;
+import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ResolvableType;
 import org.springframework.http.MediaType;
+import org.springframework.security.oauth2.client.registration.ClientRegistration;
+import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -69,6 +75,9 @@ public class DisplayListController extends BaseRestController {
 
     @Value("${org.itech.login.oauth:false}")
     private Boolean useOAUTH;
+
+    @Value("${org.itech.login.form:true}")
+    private Boolean useFormLogin;
 
     @Autowired
     private ProviderService providerService;
@@ -89,6 +98,9 @@ public class DisplayListController extends BaseRestController {
     TypeOfSampleService typeOfSampleService;
 
     @Autowired
+    TestSectionService testSectionService;
+
+    @Autowired
     private LocalizationService localizationService;
 
     @Autowired
@@ -102,6 +114,11 @@ public class DisplayListController extends BaseRestController {
 
     @Autowired
     DictionaryService dictionaryService;
+
+    @Autowired(required = false)
+    private ClientRegistrationRepository clientRegistrationRepository;
+    private static String authorizationRequestBaseUri = "oauth2/authorization";
+    Map<String, String> oauth2AuthenticationUrls = new HashMap<>();
 
     private static boolean HAS_NFS_PANEL = false;
 
@@ -310,8 +327,8 @@ public class DisplayListController extends BaseRestController {
 
     @GetMapping(value = "configuration-properties", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    private Map<String, String> getConfigurationProperties() {
-        Map<String, String> configs = getOpenConfigurationProperties();
+    private Map<String, Object> getConfigurationProperties() {
+        Map<String, Object> configs = getOpenConfigurationProperties();
 
         configs.put(Property.allowResultRejection.toString(),
                 ConfigurationProperties.getInstance().getPropertyValue(Property.allowResultRejection));
@@ -326,17 +343,16 @@ public class DisplayListController extends BaseRestController {
                 ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_DATE_LOCALE));
         configs.put(Property.UseExternalPatientInfo.toString(),
                 ConfigurationProperties.getInstance().getPropertyValue(Property.UseExternalPatientInfo));
-        configs.put("DEFAULT_PAGE_SIZE", String.valueOf(SystemConfiguration.getInstance().getDefaultPageSize()));
+        configs.put("DEFAULT_PAGE_SIZE",
+                ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"));
         return configs;
     }
 
     // these are fetched before login
     @GetMapping(value = "open-configuration-properties", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
-    private Map<String, String> getOpenConfigurationProperties() {
-        ConfigurationProperties.forceReload();
-
-        Map<String, String> configs = new HashMap<>();
+    private Map<String, Object> getOpenConfigurationProperties() {
+        Map<String, Object> configs = new HashMap<>();
         configs.put(Property.restrictFreeTextProviderEntry.toString(),
                 ConfigurationProperties.getInstance().getPropertyValue(Property.restrictFreeTextProviderEntry));
         configs.put(Property.restrictFreeTextRefSiteEntry.toString(),
@@ -359,6 +375,18 @@ public class DisplayListController extends BaseRestController {
         configs.put("studyManagementTab", studyManagementTab != null ? studyManagementTab.getValue() : "false");
         configs.put("useSaml", useSAML ? "true" : "false");
         configs.put("useOauth", useOAUTH ? "true" : "false");
+        if (useOAUTH) {
+            ResolvableType type = ResolvableType.forInstance(clientRegistrationRepository).as(Iterable.class);
+            if (type != ResolvableType.NONE && ClientRegistration.class.isAssignableFrom(type.resolveGenerics()[0])) {
+                @SuppressWarnings("unchecked")
+                Iterable<ClientRegistration> clientRegistrations = (Iterable<ClientRegistration>) clientRegistrationRepository;
+                clientRegistrations.forEach(registration -> oauth2AuthenticationUrls.put(registration.getClientName(),
+                        authorizationRequestBaseUri + "/" + registration.getRegistrationId()));
+            }
+            configs.put("oauthUrls",
+                    oauth2AuthenticationUrls.entrySet().stream().map(e -> new KeyValuePair(e.getKey(), e.getValue())));
+        }
+        configs.put("useFormLogin", useFormLogin ? "true" : "false");
         configs.put(Property.SUBJECT_ON_WORKPLAN.toString(),
                 ConfigurationProperties.getInstance().getPropertyValue(Property.SUBJECT_ON_WORKPLAN));
         configs.put(Property.NEXT_VISIT_DATE_ON_WORKPLAN.toString(),
@@ -556,5 +584,33 @@ public class DisplayListController extends BaseRestController {
     public List<LabelValuePair> getRoles(@RequestParam(required = false) String sampleType) {
         return roleService.getAllActiveRoles().stream().filter(r -> !r.getGroupingRole())
                 .map(r -> new LabelValuePair(r.getDescription(), r.getName())).collect(Collectors.toList());
+    }
+
+    @GetMapping(value = "systemroles-testsections", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public List<LabelValuePair> getRolesWithTestSections() {
+        List<LabelValuePair> rolesWithTestSections = new ArrayList<>();
+        String globalParentRoleId = roleService.getRoleByName(Constants.GLOBAL_ROLES_GROUP).getId();
+        String labUnitRoleId = roleService.getRoleByName(Constants.LAB_ROLES_GROUP).getId();
+        List<TestSection> testSections = testSectionService.getAllActiveTestSections();
+
+        List<Role> roles = roleService.getAllActiveRoles();
+        List<Role> globalRoles = roles.stream().filter(role -> globalParentRoleId.equals(role.getGroupingParent()))
+                .collect(Collectors.toList());
+        List<Role> labUnitRoles = roles.stream().filter(role -> labUnitRoleId.equals(role.getGroupingParent()))
+                .collect(Collectors.toList());
+        rolesWithTestSections.addAll(
+                globalRoles.stream().map(r -> new LabelValuePair(r.getDescription(), "oeg-" + r.getName().trim()))
+                        .collect(Collectors.toList()));
+
+        rolesWithTestSections.addAll(labUnitRoles.stream()
+                .map(r -> new LabelValuePair(r.getDescription(),
+                        "oeg-" + r.getName().trim() + "-" + UnifiedSystemUserController.ALL_LAB_UNITS))
+                .collect(Collectors.toList()));
+        testSections.forEach(e -> rolesWithTestSections.addAll(labUnitRoles.stream()
+                .map(r -> new LabelValuePair(r.getDescription(),
+                        "oeg-" + r.getName().trim() + "-" + e.getTestSectionName().trim()))
+                .collect(Collectors.toList())));
+        return rolesWithTestSections;
     }
 }

@@ -4,7 +4,6 @@
 		javax.servlet.jsp.JspException,
 		org.openelisglobal.common.action.IActionConstants,
 		org.openelisglobal.common.util.resources.ResourceLocator,
-		org.openelisglobal.common.util.SystemConfiguration,
 		org.owasp.encoder.Encode,
 		org.openelisglobal.common.constants.Constants" %>
 <%@ page isELIgnored="false" %>
