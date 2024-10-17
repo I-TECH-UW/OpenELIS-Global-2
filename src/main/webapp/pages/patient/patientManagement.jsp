@@ -381,7 +381,7 @@ function  /*void*/ updatePatientAge( DOB )
 {
 	var date = String( DOB.value );
 
-	var datePattern = '<%=LocaleConfiguraiton.getInstance().getPatternForDateLocale() %>';
+	var datePattern = '<%=DateUtil.getDateFormat() %>';
 	var splitPattern = datePattern.split("/");
 	var dayIndex = 0;
 	var monthIndex = 1;

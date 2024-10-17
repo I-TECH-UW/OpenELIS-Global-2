@@ -23,6 +23,7 @@ import {
 } from "@carbon/react";
 import "./Dashboard.css";
 import { Minimize, Maximize } from "@carbon/react/icons";
+import { Copy } from "@carbon/icons-react";
 import { useState, useEffect, useRef, useContext } from "react";
 import {
   getFromOpenElisServer,
@@ -407,22 +408,39 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
       return (
         <TableCell key={cell.id}>
           <>
-            {selectedTile.type == "ORDERS_IN_PROGRESS" ||
-            selectedTile.type == "ORDERS_READY_FOR_VALIDATION" ? (
-              <Link
-                style={{ color: "blue" }}
-                href={
-                  selectedTile.type == "ORDERS_IN_PROGRESS"
-                    ? "/result?type=order&doRange=false&accessionNumber=" +
-                      cell.value
-                    : "validation?type=order&accessionNumber=" + cell.value
-                }
-              >
-                <u>{convertAlphaNumLabNumForDisplay(cell.value)}</u>
-              </Link>
-            ) : (
-              <> {convertAlphaNumLabNumForDisplay(cell.value)}</>
-            )}
+            <div style={{ display: "flex", alignItems: "center" }}>
+              <Button
+                onClick={async () => {
+                  if ("clipboard" in navigator) {
+                    return await navigator.clipboard.writeText(cell.value);
+                  } else {
+                    return document.execCommand("copy", true, cell.value);
+                  }
+                }}
+                kind="ghost"
+                iconDescription={intl.formatMessage({
+                  id: "instructions.copy.labnum",
+                })}
+                hasIconOnly
+                renderIcon={Copy}
+              />
+              {selectedTile.type == "ORDERS_IN_PROGRESS" ||
+              selectedTile.type == "ORDERS_READY_FOR_VALIDATION" ? (
+                <Link
+                  style={{ color: "blue" }}
+                  href={
+                    selectedTile.type == "ORDERS_IN_PROGRESS"
+                      ? "/result?type=order&doRange=false&accessionNumber=" +
+                        cell.value
+                      : "validation?type=order&accessionNumber=" + cell.value
+                  }
+                >
+                  <u>{convertAlphaNumLabNumForDisplay(cell.value)}</u>
+                </Link>
+              ) : (
+                <> {convertAlphaNumLabNumForDisplay(cell.value)}</>
+              )}
+            </div>
           </>
         </TableCell>
       );

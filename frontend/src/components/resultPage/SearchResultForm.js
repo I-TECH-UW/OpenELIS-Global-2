@@ -481,14 +481,17 @@ export function SearchResultForm(props) {
                     <Column lg={6} sm={4}>
                       <Field name="startLabNo">
                         {({ field }) => (
-                          <TextInput
-                            placeholder={"Enter LabNo"}
+                          <CustomLabNumberInput
+                            placeholder="Enter Accession No."
                             name={field.name}
                             id={field.name}
-                            defaultValue={values["accessionNumber"]}
+                            value={values[field.name]}
                             labelText={
                               <FormattedMessage id="search.label.fromaccession" />
                             }
+                            onChange={(e, rawValue) => {
+                              setFieldValue(field.name, rawValue);
+                            }}
                           />
                         )}
                       </Field>
@@ -496,14 +499,17 @@ export function SearchResultForm(props) {
                     <Column lg={6} sm={4}>
                       <Field name="endLabNo">
                         {({ field }) => (
-                          <TextInput
-                            placeholder={"Enter LabNo"}
+                          <CustomLabNumberInput
+                            placeholder="Enter Accession No."
                             name={field.name}
                             id={field.name}
-                            defaultValue={values["endLabNo"]}
+                            value={values[field.name]}
                             labelText={
                               <FormattedMessage id="search.label.toaccession" />
                             }
+                            onChange={(e, rawValue) => {
+                              setFieldValue(field.name, rawValue);
+                            }}
                           />
                         )}
                       </Field>
