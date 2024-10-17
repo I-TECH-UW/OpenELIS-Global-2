@@ -36,8 +36,9 @@ import net.sf.jasperreports.engine.JRException;
 import net.sf.jasperreports.engine.JasperRunManager;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.springframework.validation.Errors;
 
@@ -73,7 +74,7 @@ public class MycologyWorksheetProvider extends BaseReportsProvider {
 
             InitialContext ic = new InitialContext();
             DataSource nativeDS = (DataSource) ic
-                    .lookup(SystemConfiguration.getInstance().getDefaultDataSource().toString());
+                    .lookup(ConfigurationProperties.getInstance().getPropertyValue("default.datasource").toString());
             conn = nativeDS.getConnection();
 
             // get yesterday's date as date received
@@ -90,7 +91,7 @@ public class MycologyWorksheetProvider extends BaseReportsProvider {
 
             // convert string date to java.util.Date by going through java.sql.Date
             // bugzilla 2274 - date conversion fixed
-            String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+            String locale = ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE);
             java.sql.Date sDate = DateUtil.convertStringDateToSqlDate(dateAsText, locale);
             java.util.Date date = new java.util.Date(sDate.getTime());
 
