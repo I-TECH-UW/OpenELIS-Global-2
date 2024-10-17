@@ -4,6 +4,7 @@
                  org.openelisglobal.common.formfields.FormFields.Field,
                  org.openelisglobal.patient.action.bean.PatientManagementInfo,
                  org.openelisglobal.common.util.*, org.openelisglobal.internationalization.MessageUtil" %>
+				 <%@page import="org.openelisglobal.common.util.DateUtil"%>
 
 <%@ page isELIgnored="false" %>
 <%@ taglib prefix="form" uri="http://www.springframework.org/tags/form"%>
@@ -291,7 +292,7 @@ function /*void*/ checkValidAgeDate(dateElement) {
 function /*void*/ updatePatientAge(DOB) {
 	var date = String(DOB.value);
 
-	var datePattern = '<%=SystemConfiguration.getInstance().getPatternForDateLocale() %>';
+	var datePattern = '<%=DateUtil.getDateFormat()%>';
 	var splitPattern = datePattern.split("/");
 	var dayIndex = 0;
 	var monthIndex = 1;
@@ -421,7 +422,7 @@ function  /*void*/ pt_updateDOB( ageYears, ageMonths, ageDays )
 		}
 		year = date.getFullYear();
 
-		var datePattern = '<%=SystemConfiguration.getInstance().getPatternForDateLocale() %>';
+		var datePattern = '<%=DateUtil.getDateFormat() %>';
 		var splitPattern = datePattern.split("/");
 
 		var DOB = "";

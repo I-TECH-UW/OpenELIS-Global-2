@@ -62,21 +62,39 @@ public class NotificationRestController {
 
     @PostMapping("/notification/{userId}")
     public ResponseEntity<?> saveNotification(@PathVariable String userId, @RequestBody Notification notification) {
-        notification.setUser(systemUserService.getUserById(userId));
-        notification.setCreatedDate(OffsetDateTime.now());
-        notification.setReadAt(null);
-        notificationDAO.save(notification);
+        try {
+            // Set user and created date
+            notification.setUser(systemUserService.getUserById(userId));
+            notification.setCreatedDate(OffsetDateTime.now());
+            notification.setReadAt(null);
 
-        // Ensure BouncyCastleProvider is added for cryptographic operations
-        if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
-            Security.addProvider(new BouncyCastleProvider());
+            // Save notification
+            notificationDAO.save(notification);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to save notification: " + e.getMessage());
         }
 
-        NotificationSubscriptions ns = notificationSubscriptionDAO
-                .getNotificationSubscriptionByUserId(Long.valueOf(userId));
+        try {
+            // Ensure BouncyCastleProvider is added for cryptographic operations
+            if (Security.getProvider(BouncyCastleProvider.PROVIDER_NAME) == null) {
+                Security.addProvider(new BouncyCastleProvider());
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to add BouncyCastleProvider: " + e.getMessage());
+        }
 
-        if (ns == null) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subscription not found");
+        NotificationSubscriptions ns;
+        try {
+            // Get notification subscription by userId
+            ns = notificationSubscriptionDAO.getNotificationSubscriptionByUserId(Long.valueOf(userId));
+            if (ns == null) {
+                return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Subscription not found for userId: " + userId);
+            }
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body("Failed to retrieve notification subscription: " + e.getMessage());
         }
 
         try {
@@ -101,6 +119,7 @@ public class NotificationRestController {
             nl.martijndwars.webpush.Notification webPushNotification = new nl.martijndwars.webpush.Notification(
                     ns.getPfEndpoint(), ns.getPfP256dh(), ns.getPfAuth(), payloadJson);
 
+            // Send push notification
             HttpResponse response = pushService.send(webPushNotification);
 
             return ResponseEntity.ok()
@@ -109,7 +128,6 @@ public class NotificationRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("Failed to send push notification: " + e.getMessage());
         }
-
     }
 
     @GetMapping("/notification/pnconfig")

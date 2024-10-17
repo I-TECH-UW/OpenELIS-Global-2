@@ -105,7 +105,7 @@ public class ResultReportingConfigurationController extends BaseController {
             return findForward(FWD_FAIL_INSERT, form);
         }
 
-        ConfigurationProperties.forceReload();
+        ConfigurationProperties.loadDBValuesIntoConfiguration();
         SpringContext.getBean(SchedulerConfig.class).reloadSchedules();
 
         redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);

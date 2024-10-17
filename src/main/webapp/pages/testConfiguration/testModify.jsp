@@ -7,7 +7,7 @@
 <%@ page import="org.openelisglobal.internationalization.MessageUtil"%>
 <%@ page import="org.openelisglobal.common.util.Versioning"%>
 <%@ page
-	import="org.openelisglobal.common.util.SystemConfiguration"%>
+	import="org.openelisglobal.common.util.DateUtil"%>
 <%@ page
 	import="org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl"%>
 <%@ page
@@ -38,7 +38,7 @@
   --%>
 
 <%
-	String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+String locale = SpringContext.getBean(DefaultConfigurationProperties.class).getPropertyValue(Property.DEFAULT_LANG_LOCALE);
 %>
 <%--Do not add jquery.ui.js, it will break the sorting --%>
 <script type="text/javascript"

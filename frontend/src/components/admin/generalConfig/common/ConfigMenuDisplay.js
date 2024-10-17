@@ -33,7 +33,7 @@ import {
 import config from "../../../../config.json";
 import { FormattedMessage, useIntl } from "react-intl";
 import PageBreadCrumb from "../../../common/PageBreadCrumb.js";
-import GenericConfigEdit from "../../formEntry/common/GenericConfigEdit.js";
+import GenericConfigEdit from "../../generalConfig/common/GenericConfigEdit.js";
 
 let breadcrumbs = [{ label: "home.label", link: "/" }];
 function ConfigMenuDisplay(props) {

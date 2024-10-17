@@ -7,8 +7,8 @@ import javax.servlet.http.HttpServletRequest;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.menu.service.AdminMenuItemService;
 import org.openelisglobal.spring.util.SpringContext;
 
@@ -21,7 +21,7 @@ public abstract class BaseMenuController<T> extends BaseController {
     protected static final int NONE = -1;
 
     protected int getPageSize() {
-        return SystemConfiguration.getInstance().getDefaultPageSize();
+        return Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"));
     }
 
     protected String performMenuAction(AdminOptionMenuForm<T> form, HttpServletRequest request)

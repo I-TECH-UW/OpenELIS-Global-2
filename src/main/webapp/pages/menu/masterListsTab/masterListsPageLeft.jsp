@@ -1,6 +1,5 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
-	import="org.openelisglobal.common.util.SystemConfiguration,
-			org.openelisglobal.common.util.ConfigurationProperties,
+	import="org.openelisglobal.common.util.ConfigurationProperties,
 			org.openelisglobal.common.formfields.AdminFormFields,
 			org.openelisglobal.common.formfields.AdminFormFields.Field,
 			org.openelisglobal.siteinformation.valueholder.SiteInformation"%>
