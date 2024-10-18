@@ -313,14 +313,16 @@ public abstract class PatientReport extends Report {
 
         if (onlyResults) {
             Set<Integer> analysisStatusIds = new HashSet<>();
-            analysisStatusIds.add(Integer.parseInt(
-                    SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
             analysisStatusIds.add(Integer
                     .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
-            analysisStatusIds.add(Integer.parseInt(
-                    SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
-            analysisStatusIds.add(Integer.parseInt(
-                    SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+            /**
+             * analysisStatusIds.add(Integer.parseInt(
+             * SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
+             * analysisStatusIds.add(Integer.parseInt(
+             * SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
+             * analysisStatusIds.add(Integer.parseInt(
+             * SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
+             **/
             sampleList = sampleList.stream().filter(
                     e -> (analysisService.getAnalysesBySampleIdAndStatusId(e.getId(), analysisStatusIds).size() > 0))
                     .collect(Collectors.toList());
