@@ -634,8 +634,8 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
             <Form onSubmit={(e) => handleSubmit(e, index)}>
               <Stack gap={7}>
                 <div className="ruleBody">
-                  <div className="inlineDiv">
-                    <div>
+                  <Grid>
+                    <Column lg={4} md={4} sm={12}>
                       <TextInput
                         required
                         name="name"
@@ -648,9 +648,8 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         value={calculation.name}
                         onChange={(e) => handleCalculationFieldChange(e, index)}
                       />
-                    </div>
-                    <div>&nbsp; &nbsp;</div>
-                    <div>
+                    </Column>
+                    <Column lg={4} md={4} sm={12}>
                       <Toggle
                         toggled={calculation.toggled}
                         aria-label="toggle button"
@@ -660,9 +659,8 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         }
                         onToggle={(e) => toggleCalculation(e, index)}
                       />
-                    </div>
-                    <div>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</div>
-                    <div>
+                    </Column>
+                    <Column lg={4} md={4} sm={12}>
                       <Checkbox
                         labelText={"Active: " + calculation.active}
                         name="active"
@@ -675,13 +673,16 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                           setCalculationList(list);
                         }}
                       />
-                    </div>
-                  </div>
+                    </Column>
+                  </Grid>
                   {calculation.toggled && (
                     <>
-                      <div className="inlineDiv">
-                        <FormattedMessage id="label.button.add" /> &nbsp; &nbsp;
-                        <div>
+                      <Grid>
+                        <Column lg={16} md={8} sm={4}>
+                          <FormattedMessage id="label.button.add" /> &nbsp;
+                          &nbsp;
+                        </Column>
+                        <Column lg={2} md={4} sm={4}>
                           <Button
                             renderIcon={Add}
                             id={index + "_testresult"}
@@ -691,9 +692,8 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                           >
                             <FormattedMessage id="testcalculation.label.testResult" />
                           </Button>
-                        </div>
-                        <div>&nbsp; &nbsp;</div>
-                        <div>
+                        </Column>
+                        <Column lg={3} md={4} sm={4}>
                           <Button
                             renderIcon={Add}
                             id={index + "_mathfunction"}
@@ -703,9 +703,8 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                           >
                             <FormattedMessage id="testcalculation.label.mathFucntion" />
                           </Button>
-                        </div>
-                        <div>&nbsp; &nbsp;</div>
-                        <div>
+                        </Column>
+                        <Column lg={2} md={4} sm={4}>
                           <Button
                             renderIcon={Add}
                             id={index + "_integer"}
@@ -715,9 +714,8 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                           >
                             <FormattedMessage id="testcalculation.label.integer" />
                           </Button>
-                        </div>
-                        <div>&nbsp; &nbsp;</div>
-                        <div>
+                        </Column>
+                        <Column lg={2} md={4} sm={4}>
                           <Button
                             renderIcon={Add}
                             id={index + "_patientattribute"}
@@ -729,45 +727,49 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                           >
                             <FormattedMessage id="testcalculation.label.patientAttribute" />
                           </Button>
-                        </div>
-                      </div>
+                        </Column>
+                      </Grid>
                       <div className="section">
-                        <div className="inlineDiv">
-                          <h5>
-                            <FormattedMessage id="testcalculation.label.calculation" />
-                          </h5>
-                        </div>
+                        <Grid>
+                          <Column lg={16} md={8} sm={4}>
+                            <h5>
+                              <FormattedMessage id="testcalculation.label.calculation" />
+                            </h5>
+                          </Column>
+                        </Grid>
                         <div className="section">
-                          <div className="inlineDiv">
-                            &nbsp;{" "}
-                            {calculation.operations.map(
-                              (operation, operationIndex) => (
-                                <div key={index + "_" + operationIndex}>
-                                  {operation.type === "TEST_RESULT" &&
-                                  operation.value
-                                    ? "'"
-                                    : ""}
-                                  {operation.type === "TEST_RESULT"
-                                    ? sampleTestList["TEST_RESULT"][index]
-                                      ? sampleTestList["TEST_RESULT"][index][
-                                          operationIndex
-                                        ]?.filter(
-                                          (test) => test.id == operation.value,
-                                        )[0]?.value + "'"
-                                      : ""
-                                    : operation.value}{" "}
-                                  &nbsp;
-                                </div>
-                              ),
-                            )}{" "}
-                            {<b style={{ color: "red" }}>{" => "}</b>} &nbsp;{" "}
-                            {calculation.testId ? "'" : ""}
-                            {sampleTestList["FINAL_RESULT"][index]
-                              ? sampleTestList["FINAL_RESULT"][index]?.filter(
-                                  (test) => test.id == calculation.testId,
-                                )[0]?.value + "'"
-                              : ""}
-                          </div>
+                          <Grid>
+                            <Column lg={16} md={8} sm={4}>
+                              {calculation.operations.map(
+                                (operation, operationIndex) => (
+                                  <div key={index + "_" + operationIndex}>
+                                    {operation.type === "TEST_RESULT" &&
+                                    operation.value
+                                      ? "'"
+                                      : ""}
+                                    {operation.type === "TEST_RESULT"
+                                      ? sampleTestList["TEST_RESULT"][index]
+                                        ? sampleTestList["TEST_RESULT"][index][
+                                            operationIndex
+                                          ]?.filter(
+                                            (test) =>
+                                              test.id == operation.value,
+                                          )[0]?.value + "'"
+                                        : ""
+                                      : operation.value}{" "}
+                                    &nbsp;
+                                  </div>
+                                ),
+                              )}{" "}
+                              {<b style={{ color: "red" }}>{" => "}</b>} &nbsp;{" "}
+                              {calculation.testId ? "'" : ""}
+                              {sampleTestList["FINAL_RESULT"][index]
+                                ? sampleTestList["FINAL_RESULT"][index]?.filter(
+                                    (test) => test.id == calculation.testId,
+                                  )[0]?.value + "'"
+                                : ""}
+                            </Column>
+                          </Grid>
                         </div>
                         <Grid>
                           <Column lg={16}>
@@ -854,13 +856,15 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                         )}
                       </div>
                       <div className="section">
-                        <div className="inlineDiv">
-                          <h6>
-                            <FormattedMessage id="testcalculation.label.finalresult" />
-                          </h6>
-                        </div>
-                        <div className="inlineDiv">
-                          <div>
+                        <Grid>
+                          <Column lg={16} md={8} sm={4}>
+                            <h6>
+                              <FormattedMessage id="testcalculation.label.finalresult" />
+                            </h6>
+                          </Column>
+                        </Grid>
+                        <Grid>
+                          <Column lg={4} md={4} sm={4}>
                             <Select
                               id={index + "_sample"}
                               name="sampleId"
@@ -892,8 +896,8 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                                 />
                               ))}
                             </Select>
-                          </div>
-                          <div>
+                          </Column>
+                          <Column lg={4} md={4} sm={4}>
                             <AutoComplete
                               id={index + "_finalresult"}
                               class="inputText"
@@ -907,21 +911,21 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                                   : []
                               }
                             ></AutoComplete>
-                          </div>
-                          <div>&nbsp; &nbsp;</div>
+                          </Column>
                           {sampleTestList["FINAL_RESULT"][index] && (
                             <>
-                              {getResultInputByResultType(
-                                sampleTestList["FINAL_RESULT"][index].filter(
-                                  (test) => test.id == calculation.testId,
-                                )[0]?.resultType,
-                                index,
-                                calculation,
-                              )}
+                              <Column lg={4} md={4} sm={4}>
+                                {getResultInputByResultType(
+                                  sampleTestList["FINAL_RESULT"][index].filter(
+                                    (test) => test.id == calculation.testId,
+                                  )[0]?.resultType,
+                                  index,
+                                  calculation,
+                                )}
+                              </Column>
                             </>
                           )}
-                          <div>&nbsp; &nbsp;</div>
-                          <div>
+                          <Column lg={4} md={4} sm={4}>
                             <TextArea
                               name="note"
                               id={index + "_note"}
@@ -934,8 +938,8 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
                                 handleCalculationFieldChange(e, index);
                               }}
                             />
-                          </div>
-                        </div>
+                          </Column>
+                        </Grid>
                       </div>
                       <Button
                         renderIcon={Save}
