@@ -300,7 +300,6 @@ describe("Study Reports", function () {
     reportPage.visitAuditTrailReport();
     reportPage.verifyHeaderText("section > h3", "Audit Trail");
     cy.fixture("EnteredOrder").then((order) => {
-      console.log("******** generated Lab No. " + order.labNo)
       reportPage.typeInField("labNo", order.labNo);
     });
     //reportPage.validateAudit();

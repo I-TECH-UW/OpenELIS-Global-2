@@ -45,12 +45,14 @@ function SearchPatientForm(props) {
   const [patientSearchResults, setPatientSearchResults] = useState([]);
   const [importStatus, setImportStatus] = useState({});
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(100);
   const [loading, setLoading] = useState(false);
   const [nextPage, setNextPage] = useState(null);
   const [isToggled, setIsToggled] = useState(false);
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
+  const [currentApiPage, setCurrentApiPage] = useState(null);
+  const [totalApiPages, setTotalApiPages] = useState(null);
   const [url, setUrl] = useState("");
   const [searchFormValues, setSearchFormValues] = useState(
     SearchPatientFormValues,
@@ -200,6 +202,8 @@ function SearchPatientForm(props) {
       var { totalPages, currentPage } = res.paging;
       if (totalPages > 1) {
         setPagination(true);
+        setCurrentApiPage(currentPage);
+        setTotalApiPages(totalPages);
         if (parseInt(currentPage) < parseInt(totalPages)) {
           setNextPage(parseInt(currentPage) + 1);
         } else {
@@ -461,41 +465,50 @@ function SearchPatientForm(props) {
                   />
                 </Column>
               )}
+              <Column lg={16}>
+                {" "}
+                <br />
+                <br />
+              </Column>
             </Grid>
           </Form>
         )}
       </Formik>
-      <Column lg={16}>
-        {" "}
-        <br />{" "}
-      </Column>
-      <Column lg={16}>
-        {pagination && (
-          <Grid>
-            <Column lg={11} />
-            <Column lg={2}>
-              <Button
-                type=""
-                id="loadpreviousresults"
-                onClick={loadPreviousResultsPage}
-                disabled={previousPage != null ? false : true}
-              >
-                <FormattedMessage id="button.label.loadprevious" />
-              </Button>
-            </Column>
-            <Column lg={2}>
-              <Button
-                type=""
-                id="loadnextresults"
-                disabled={nextPage != null ? false : true}
-                onClick={loadNextResultsPage}
-              >
-                <FormattedMessage id="button.label.loadnext" />
-              </Button>
-            </Column>
-          </Grid>
-        )}
-      </Column>
+      {pagination && (
+        <Grid>
+          <Column lg={8}>
+            {" "}
+            <div></div>
+          </Column>
+          <Column lg={3}>
+            <Button
+              type=""
+              id="loadpreviousresults"
+              onClick={loadPreviousResultsPage}
+              disabled={previousPage != null ? false : true}
+              style={{ width: "120%" }}
+            >
+              <FormattedMessage id="button.label.loadprevious" />
+            </Button>
+          </Column>
+          <Column lg={3}>
+            <Button
+              type=""
+              id="loadnextresults"
+              disabled={nextPage != null ? false : true}
+              onClick={loadNextResultsPage}
+              style={{ width: "120%" }}
+            >
+              <FormattedMessage id="button.label.loadnext" />
+            </Button>
+          </Column>
+          <Column lg={2}>
+            <Button id="pagelabel" kind="secondary" style={{ width: "100%" }}>
+              {currentApiPage} of {totalApiPages}
+            </Button>
+          </Column>
+        </Grid>
+      )}
       <DataTable
         rows={patientSearchResults}
         headers={patientSearchHeaderData}
@@ -595,7 +608,7 @@ function SearchPatientForm(props) {
         onChange={handlePageChange}
         page={page}
         pageSize={pageSize}
-        pageSizes={[5, 10, 20, 30]}
+        pageSizes={[10, 20, 30, 50, 100]}
         totalItems={patientSearchResults.length}
         forwardText={intl.formatMessage({ id: "pagination.forward" })}
         backwardText={intl.formatMessage({ id: "pagination.backward" })}

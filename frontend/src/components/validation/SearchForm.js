@@ -44,6 +44,8 @@ const SearchForm = (props) => {
   const [nextPage, setNextPage] = useState(null);
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
+  const [currentApiPage, setCurrentApiPage] = useState(null);
+  const [totalApiPages, setTotalApiPages] = useState(null);
   const [url, setUrl] = useState("");
 
   const validationResults = (data) => {
@@ -54,6 +56,8 @@ const SearchForm = (props) => {
         var { totalPages, currentPage } = data.paging;
         if (totalPages > 1) {
           setPagination(true);
+          setCurrentApiPage(currentPage);
+          setTotalApiPages(totalPages);
           if (parseInt(currentPage) < parseInt(totalPages)) {
             setNextPage(parseInt(currentPage) + 1);
           } else {
@@ -370,25 +374,32 @@ const SearchForm = (props) => {
       <>
         {pagination && (
           <Grid>
-            <Column lg={11} />
-            <Column lg={2}>
+            <Column lg={8} />
+            <Column lg={3}>
               <Button
                 type=""
                 id="loadpreviousresults"
                 onClick={loadPreviousResultsPage}
                 disabled={previousPage != null ? false : true}
+                style={{ width: "120%" }}
               >
                 <FormattedMessage id="button.label.loadprevious" />
               </Button>
             </Column>
-            <Column lg={2}>
+            <Column lg={3}>
               <Button
                 type=""
                 id="loadnextresults"
                 disabled={nextPage != null ? false : true}
                 onClick={loadNextResultsPage}
+                style={{ width: "120%" }}
               >
                 <FormattedMessage id="button.label.loadnext" />
+              </Button>
+            </Column>
+            <Column lg={2}>
+              <Button id="pagelabel" kind="secondary" style={{ width: "100%" }}>
+                {currentApiPage} of {totalApiPages}
               </Button>
             </Column>
           </Grid>

@@ -16,6 +16,8 @@ export default function WorkplanSearchForm(props) {
   const [nextPage, setNextPage] = useState(null);
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
+  const [currentApiPage, setCurrentApiPage] = useState(null);
+  const [totalApiPages, setTotalApiPages] = useState(null);
   const [url, setUrl] = useState("");
 
   let title = "";
@@ -58,6 +60,8 @@ export default function WorkplanSearchForm(props) {
         var { totalPages, currentPage } = res.paging;
         if (totalPages > 1) {
           setPagination(true);
+          setCurrentApiPage(currentPage);
+          setTotalApiPages(totalPages);
           if (parseInt(currentPage) < parseInt(totalPages)) {
             setNextPage(parseInt(currentPage) + 1);
           } else {
@@ -160,25 +164,32 @@ export default function WorkplanSearchForm(props) {
       <>
         {pagination && (
           <Grid>
-            <Column sm={4} md={8} lg={11} />
-            <Column sm={2} md={2} lg={2}>
+            <Column sm={4} md={8} lg={8} />
+            <Column sm={2} md={2} lg={3}>
               <Button
                 type=""
                 id="loadpreviousresults"
                 onClick={loadPreviousResultsPage}
                 disabled={previousPage != null ? false : true}
+                style={{ width: "120%" }}
               >
                 <FormattedMessage id="button.label.loadprevious" />
               </Button>
             </Column>
-            <Column sm={2} md={2} lg={2}>
+            <Column sm={2} md={2} lg={3}>
               <Button
                 type=""
                 id="loadnextresults"
                 disabled={nextPage != null ? false : true}
                 onClick={loadNextResultsPage}
+                style={{ width: "120%" }}
               >
                 <FormattedMessage id="button.label.loadnext" />
+              </Button>
+            </Column>
+            <Column lg={2} md={2}>
+              <Button id="pagelabel" kind="secondary" style={{ width: "100%" }}>
+                {currentApiPage} of {totalApiPages}
               </Button>
             </Column>
           </Grid>
