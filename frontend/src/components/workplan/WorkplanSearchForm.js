@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Column, Form, Grid, Section, Button } from "@carbon/react";
+import { Column, Form, Grid, Section, Button, Link } from "@carbon/react";
+import { ArrowLeft, ArrowRight } from "@carbon/react/icons";
 import { FormattedMessage } from "react-intl";
 import "../Style.css";
 import TestSectionSelectForm from "./TestSectionSelectForm";
@@ -164,33 +165,38 @@ export default function WorkplanSearchForm(props) {
       <>
         {pagination && (
           <Grid>
-            <Column sm={4} md={8} lg={8} />
-            <Column sm={2} md={2} lg={3}>
-              <Button
-                type=""
-                id="loadpreviousresults"
-                onClick={loadPreviousResultsPage}
-                disabled={previousPage != null ? false : true}
-                style={{ width: "120%" }}
-              >
-                <FormattedMessage id="button.label.loadprevious" />
-              </Button>
-            </Column>
-            <Column sm={2} md={2} lg={3}>
-              <Button
-                type=""
-                id="loadnextresults"
-                disabled={nextPage != null ? false : true}
-                onClick={loadNextResultsPage}
-                style={{ width: "120%" }}
-              >
-                <FormattedMessage id="button.label.loadnext" />
-              </Button>
-            </Column>
-            <Column lg={2} md={2}>
-              <Button id="pagelabel" kind="secondary" style={{ width: "100%" }}>
-                {currentApiPage} of {totalApiPages}
-              </Button>
+            <Column lg={14} />
+            <Column
+              lg={2}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "10px",
+                width: "110%",
+              }}
+            >
+              <Link>
+                {currentApiPage} / {totalApiPages}
+              </Link>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <Button
+                  hasIconOnly
+                  id="loadpreviousresults"
+                  onClick={loadPreviousResultsPage}
+                  disabled={previousPage != null ? false : true}
+                  renderIcon={ArrowLeft}
+                  iconDescription="previous"
+                ></Button>
+                <Button
+                  hasIconOnly
+                  id="loadnextresults"
+                  onClick={loadNextResultsPage}
+                  disabled={nextPage != null ? false : true}
+                  renderIcon={ArrowRight}
+                  iconDescription="next"
+                ></Button>
+              </div>
             </Column>
           </Grid>
         )}

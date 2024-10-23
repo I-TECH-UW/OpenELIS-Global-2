@@ -22,8 +22,9 @@ import {
   Loading,
   Toggle,
   Tag,
+  Link,
 } from "@carbon/react";
-import { Person } from "@carbon/react/icons";
+import { Person, ArrowLeft, ArrowRight } from "@carbon/react/icons";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import { patientSearchHeaderData } from "../data/PatientResultsTableHeaders";
 import { Formik, Field } from "formik";
@@ -137,6 +138,9 @@ function SearchPatientForm(props) {
   };
 
   const handleSubmit = (values) => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
     setLoading(true);
     values.dateOfBirth = dob;
     let searchEndPoint =
@@ -480,32 +484,38 @@ function SearchPatientForm(props) {
             {" "}
             <div></div>
           </Column>
-          <Column lg={3}>
-            <Button
-              type=""
-              id="loadpreviousresults"
-              onClick={loadPreviousResultsPage}
-              disabled={previousPage != null ? false : true}
-              style={{ width: "120%" }}
-            >
-              <FormattedMessage id="button.label.loadprevious" />
-            </Button>
-          </Column>
-          <Column lg={3}>
-            <Button
-              type=""
-              id="loadnextresults"
-              disabled={nextPage != null ? false : true}
-              onClick={loadNextResultsPage}
-              style={{ width: "120%" }}
-            >
-              <FormattedMessage id="button.label.loadnext" />
-            </Button>
-          </Column>
-          <Column lg={2}>
-            <Button id="pagelabel" kind="secondary" style={{ width: "100%" }}>
-              {currentApiPage} of {totalApiPages}
-            </Button>
+          <Column lg={14} />
+          <Column
+            lg={2}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "10px",
+              width: "110%",
+            }}
+          >
+            <Link>
+              {currentApiPage} / {totalApiPages}
+            </Link>
+            <div style={{ display: "flex", gap: "10px" }}>
+              <Button
+                hasIconOnly
+                id="loadpreviousresults"
+                onClick={loadPreviousResultsPage}
+                disabled={previousPage != null ? false : true}
+                renderIcon={ArrowLeft}
+                iconDescription="previous"
+              ></Button>
+              <Button
+                hasIconOnly
+                id="loadnextresults"
+                onClick={loadNextResultsPage}
+                disabled={nextPage != null ? false : true}
+                renderIcon={ArrowRight}
+                iconDescription="next"
+              ></Button>
+            </div>
           </Column>
         </Grid>
       )}

@@ -13,6 +13,7 @@ import {
   Select,
   Loading,
   Grid,
+  Link,
 } from "@carbon/react";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -23,6 +24,7 @@ import { NotificationContext } from "../layout/Layout";
 import { NotificationKinds } from "../common/CustomNotification";
 import { format } from "date-fns";
 import CustomDatePicker from "../common/CustomDatePicker";
+import {ArrowLeft, ArrowRight } from "@carbon/react/icons";
 
 const SearchForm = (props) => {
   const { setNotificationVisible, addNotification } =
@@ -374,33 +376,38 @@ const SearchForm = (props) => {
       <>
         {pagination && (
           <Grid>
-            <Column lg={8} />
-            <Column lg={3}>
-              <Button
-                type=""
-                id="loadpreviousresults"
-                onClick={loadPreviousResultsPage}
-                disabled={previousPage != null ? false : true}
-                style={{ width: "120%" }}
-              >
-                <FormattedMessage id="button.label.loadprevious" />
-              </Button>
-            </Column>
-            <Column lg={3}>
-              <Button
-                type=""
-                id="loadnextresults"
-                disabled={nextPage != null ? false : true}
-                onClick={loadNextResultsPage}
-                style={{ width: "120%" }}
-              >
-                <FormattedMessage id="button.label.loadnext" />
-              </Button>
-            </Column>
-            <Column lg={2}>
-              <Button id="pagelabel" kind="secondary" style={{ width: "100%" }}>
-                {currentApiPage} of {totalApiPages}
-              </Button>
+            <Column lg={14} />
+            <Column
+              lg={2}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "10px",
+                width: "110%",
+              }}
+            >
+              <Link>
+                {currentApiPage} / {totalApiPages}
+              </Link>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <Button
+                  hasIconOnly
+                  id="loadpreviousresults"
+                  onClick={loadPreviousResultsPage}
+                  disabled={previousPage != null ? false : true}
+                  renderIcon={ArrowLeft}
+                  iconDescription="previous"
+                ></Button>
+                <Button
+                  hasIconOnly
+                  id="loadnextresults"
+                  onClick={loadNextResultsPage}
+                  disabled={nextPage != null ? false : true}
+                  renderIcon={ArrowRight}
+                  iconDescription="next"
+                ></Button>
+              </div>
             </Column>
           </Grid>
         )}

@@ -734,7 +734,7 @@ function ImmunohistochemistryCaseView() {
                   <Grid fullWidth={true} className="gridBoundary">
                     <Column lg={16} md={8} sm={4}>
                       <Link>
-                        {currentApiPage} of {totalApiPages}
+                        {currentApiPage} / {totalApiPages}
                       </Link>
                       <div style={{ display: "flex", gap: "10px" }}>
                         <Button
@@ -755,7 +755,10 @@ function ImmunohistochemistryCaseView() {
                         />
                       </div>
                     </Column>
-                    <Column lg={16}><br/><br/></Column>
+                    <Column lg={16}>
+                      <br />
+                      <br />
+                    </Column>
                     <Column lg={3} md={8} sm={4}>
                       <FormattedMessage id="pathology.label.conclusion" />
                     </Column>
