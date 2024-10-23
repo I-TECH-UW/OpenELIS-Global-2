@@ -176,7 +176,7 @@ public class PatientDashBoardProvider {
             return unprintedAnalyses;
         }
         analyses.forEach(a -> {
-            if (a.getPrintedDate() == null) {
+            if (!analysisService.patientReportHasBeenDone(a)) {
                 unprintedAnalyses.add(a);
             }
         });
