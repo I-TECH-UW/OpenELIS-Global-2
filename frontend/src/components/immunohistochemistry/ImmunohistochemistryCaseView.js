@@ -732,29 +732,31 @@ function ImmunohistochemistryCaseView() {
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={16} md={8} sm={4}>
                   <Grid fullWidth={true} className="gridBoundary">
-                    <Column lg={16} md={8} sm={4}>
-                      <Link>
-                        {currentApiPage} / {totalApiPages}
-                      </Link>
-                      <div style={{ display: "flex", gap: "10px" }}>
-                        <Button
-                          hasIconOnly
-                          iconDescription="previous"
-                          disabled={previousPage != null ? false : true}
-                          onClick={loadPreviousConclusionsPage}
-                          renderIcon={ArrowLeft}
-                          size="sm"
-                        />
-                        <Button
-                          hasIconOnly
-                          iconDescription="next"
-                          disabled={nextPage != null ? false : true}
-                          renderIcon={ArrowRight}
-                          onClick={loadNextCOnclusionsPage}
-                          size="sm"
-                        />
-                      </div>
-                    </Column>
+                    {pagination && (
+                      <Column lg={16} md={8} sm={4}>
+                        <Link>
+                          {currentApiPage} / {totalApiPages}
+                        </Link>
+                        <div style={{ display: "flex", gap: "10px" }}>
+                          <Button
+                            hasIconOnly
+                            iconDescription="previous"
+                            disabled={previousPage != null ? false : true}
+                            onClick={loadPreviousConclusionsPage}
+                            renderIcon={ArrowLeft}
+                            size="sm"
+                          />
+                          <Button
+                            hasIconOnly
+                            iconDescription="next"
+                            disabled={nextPage != null ? false : true}
+                            renderIcon={ArrowRight}
+                            onClick={loadNextCOnclusionsPage}
+                            size="sm"
+                          />
+                        </div>
+                      </Column>
+                    )}
                     <Column lg={16}>
                       <br />
                       <br />
