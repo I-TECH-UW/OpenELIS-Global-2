@@ -24,7 +24,7 @@ import { NotificationContext } from "../layout/Layout";
 import { NotificationKinds } from "../common/CustomNotification";
 import { format } from "date-fns";
 import CustomDatePicker from "../common/CustomDatePicker";
-import {ArrowLeft, ArrowRight } from "@carbon/react/icons";
+import { ArrowLeft, ArrowRight } from "@carbon/react/icons";
 
 const SearchForm = (props) => {
   const { setNotificationVisible, addNotification } =
