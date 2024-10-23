@@ -22,7 +22,7 @@ import {
   Tag,
 } from "@carbon/react";
 import "./Dashboard.css";
-import { Minimize, Maximize } from "@carbon/react/icons";
+import { Minimize, Maximize, ArrowLeft, ArrowRight } from "@carbon/react/icons";
 import { Copy } from "@carbon/icons-react";
 import { useState, useEffect, useRef, useContext } from "react";
 import {
@@ -555,35 +555,38 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                   <Column lg={16} md={8} sm={4}>
                     {pagination && (
                       <Grid>
-                        <Column lg={8} />
-                        <Column lg={3}>
-                          <Button
-                            id="loadpreviousresults"
-                            onClick={loadPreviousResultsPage}
-                            disabled={previousPage != null ? false : true}
-                            style={{ width: "120%" }}
-                          >
-                            <FormattedMessage id="button.label.loadprevious" />
-                          </Button>
-                        </Column>
-                        <Column lg={3}>
-                          <Button
-                            id="loadnextresults"
-                            onClick={loadNextResultsPage}
-                            disabled={nextPage != null ? false : true}
-                            style={{ width: "120%" }}
-                          >
-                            <FormattedMessage id="button.label.loadnext" />
-                          </Button>
-                        </Column>
-                        <Column lg={2}>
-                          <Button
-                            id="pagelabel"
-                            kind="secondary"
-                            style={{ width: "100%" }}
-                          >
-                            {currentApiPage} of {totalApiPages}
-                          </Button>
+                        <Column lg={14} />
+                        <Column
+                          lg={2}
+                          style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            alignItems: "center",
+                            gap: "10px",
+                            width: "110%",
+                          }}
+                        >
+                          <Link>
+                            {currentApiPage} / {totalApiPages}
+                          </Link>
+                          <div style={{ display: "flex", gap: "10px" }}>
+                            <Button
+                              hasIconOnly
+                              id="loadpreviousresults"
+                              onClick={loadPreviousResultsPage}
+                              disabled={previousPage != null ? false : true}
+                              renderIcon={ArrowLeft}
+                              iconDescription="previous"
+                            ></Button>
+                            <Button
+                              hasIconOnly
+                              id="loadnextresults"
+                              onClick={loadNextResultsPage}
+                              disabled={nextPage != null ? false : true}
+                              renderIcon={ArrowRight}
+                              iconDescription="next"
+                            ></Button>
+                          </div>
                         </Column>
                       </Grid>
                     )}
