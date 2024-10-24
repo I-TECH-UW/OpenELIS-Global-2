@@ -32,7 +32,7 @@ const PatientHeader = (props) => {
             {id ? (
               <div className={className}>
                 <Grid>
-                  <Column lg={4} md={2} sm={2}>
+                  <Column lg={4} md={2} sm={1}>
                     <div
                       className={
                         referringFacility ? "patientAvatar2" : "patientAvatar"
@@ -55,7 +55,7 @@ const PatientHeader = (props) => {
                       />
                     </div>
                   </Column>
-                  <Column lg={10} md={5} sm={2}>
+                  <Column lg={10} md={5} sm={3}>
                     <div className="patient-name">
                       {patientName ? patientName : lastName + " " + firstName}
                     </div>
@@ -137,7 +137,7 @@ const PatientHeader = (props) => {
             ) : (
               <div className={className}>
                 <Grid>
-                  <Column lg={4} md={2} sm={2}>
+                  <Column lg={4} md={2} sm={1}>
                     <Avatar
                       alt={"Patient avatar"}
                       color="rgba(0,0,0,0)"
