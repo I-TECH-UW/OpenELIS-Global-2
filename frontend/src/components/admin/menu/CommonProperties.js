@@ -93,9 +93,11 @@ export const CommonProperties = () => {
                       let shortKey = key.replace(/^org\.openelisglobal\./, "");
 
                       return (
-                        <div
+                        <Column
+                          lg={8}
+                          md={8}
+                          sm={4}
                           key={key}
-                          className="inlineDiv"
                           style={{ gap: "20px" }}
                         >
                           <TextInput
@@ -109,7 +111,7 @@ export const CommonProperties = () => {
                               });
                             }}
                           />
-                        </div>
+                        </Column>
                       );
                     })}
                 </>
@@ -126,9 +128,11 @@ export const CommonProperties = () => {
                       let shortKey = key.replace(/^org\.openelisglobal\./, "");
 
                       return (
-                        <div
+                        <Column
+                          lg={8}
+                          md={8}
+                          sm={4}
                           key={key}
-                          className="inlineDiv"
                           style={{ gap: "20px" }}
                         >
                           <TextInput
@@ -142,7 +146,7 @@ export const CommonProperties = () => {
                               });
                             }}
                           />
-                        </div>
+                        </Column>
                       );
                     })}
                 </>
@@ -150,14 +154,14 @@ export const CommonProperties = () => {
             </Column>
           </Grid>
 
-          <div style={{ marginLeft: "2em" }} className="inlineDiv">
+          <Column lg={8} md={8} sm={4} style={{ marginLeft: "2em" }}>
             <Button type="submit" onClick={handleSubmit}>
               <FormattedMessage
                 id="label.button.update"
                 defaultMessage="Update"
               />
             </Button>
-          </div>
+          </Column>
         </div>
       </div>
     </>

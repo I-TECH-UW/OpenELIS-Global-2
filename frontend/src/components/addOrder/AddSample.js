@@ -1,5 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
-import { Button, Link, Row, Stack } from "@carbon/react";
+import { Button, Link, Row, Stack, Grid, Column } from "@carbon/react";
 import { Add } from "@carbon/react/icons";
 import { getFromOpenElisServer } from "../utils/Utils";
 import SampleType from "./SampleType";
@@ -135,13 +135,15 @@ const AddSample = (props) => {
             );
           })}
           <Row>
-            <div className="inlineDiv">
-              <Button onClick={handleAddNewSample}>
-                {<FormattedMessage id="sample.add.action" />}
-                &nbsp; &nbsp;
-                <Add size={16} />
-              </Button>
-            </div>
+            <Grid>
+              <Column>
+                <Button onClick={handleAddNewSample}>
+                  {<FormattedMessage id="sample.add.action" />}
+                  &nbsp; &nbsp;
+                  <Add size={16} />
+                </Button>
+              </Column>
+            </Grid>
           </Row>
         </div>
       </Stack>
