@@ -143,6 +143,8 @@ public class ReportImplementationFactory {
                 return new CovidResultsReport();
             } else if (report.equals("statisticsReport")) {
                 return new StatisticsReport();
+            } else if (report.equals("CSVPatientStatusReport")) {
+                return new CSVPatientStatusReport();
             } else if (report.equals("sampleRejectionReport")) {
                 return new CSVSampleRejectionReport();
             }
@@ -283,6 +285,30 @@ public class ReportImplementationFactory {
                 return new StatisticsReport();
             } else if (report.equals("sampleRejectionReport")) {
                 return new CSVSampleRejectionReport();
+                // New Changes start
+            } else if (report.equals("CSVPatientStatusReport")) {
+                return new CSVPatientStatusReport();
+            } else if (report.equals("CSVStatisticsReport")) {
+                return new CSVStatisticsReport();
+            } else if (report.equals("CSVSummaryOfAllTestReport")) {
+                return new CSVSummaryOfAllTestReport();
+            } else if (report.equals("CSVHIVTestSummaryReport")) {
+                return new CSVHIVTestSummaryreport();
+            } else if (report.equals("CSVActivityByTesttypeReport")) {
+                return new CSVActivityByTestTypeReport();
+            } else if (report.equals("CSVActivityByPanelTypeReport")) {
+                return new CSVActivityByPanelTypeReport();
+            } else if (report.equals("CSVActivityByUnitReport")) {
+                return new CSVActivityByUnitReport();
+            } else if (report.equals("CSVReferredOutTestsReport")) {
+                return new CSVReferredOutTestsReport();
+            } else if (report.equals("CSVNonConformityByDateReport")) {
+                return new CSVNonConformityByDateReport();
+            } else if (report.equals("CSVHIVTestSummaryReport")) {
+                return new CSVHIVTestSummaryreport();
+            } else if (report.equals("CSVNonConformityByUnitReport")) {
+                return new CSVNonConformityByUnitReport();
+                // New Changes ends
             } else if (report.equals("PatientPathologyReport")) {
                 return new PatientPathologyReport();
             } else if (report.equals("PatientCytologyReport")) {
