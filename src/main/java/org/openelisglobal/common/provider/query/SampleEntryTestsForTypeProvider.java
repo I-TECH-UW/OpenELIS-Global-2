@@ -209,7 +209,7 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
         xml.append("<panel>");
         XMLUtil.appendKeyValue("name", testMap.getName(), xml);
         XMLUtil.appendKeyValue("id", testMap.getPanelId(), xml);
-        XMLUtil.appendKeyValue("testMap", testMap.getTestMaps(), xml);
+        XMLUtil.appendKeyValue("testIds", testMap.getTestIds(), xml);
         xml.append("</panel>");
     }
 
@@ -277,13 +277,13 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
 
     public class PanelTestMap {
         private String name;
-        private String testMaps;
+        private String testIds;
         private String panelId;
         private int panelOrder;
 
-        public PanelTestMap(String panelId, int panelOrder, String panelName, String map) {
+        public PanelTestMap(String panelId, int panelOrder, String panelName, String testIds) {
             name = panelName;
-            testMaps = map;
+            this.testIds = testIds;
             this.panelId = panelId;
             this.panelOrder = panelOrder;
         }
@@ -292,8 +292,8 @@ public class SampleEntryTestsForTypeProvider extends BaseQueryProvider {
             return name;
         }
 
-        public String getTestMaps() {
-            return testMaps;
+        public String getTestIds() {
+            return testIds;
         }
 
         public String getPanelId() {
