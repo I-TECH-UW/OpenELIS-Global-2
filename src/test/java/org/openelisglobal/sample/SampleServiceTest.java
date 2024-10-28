@@ -1,22 +1,18 @@
 package org.openelisglobal.sample;
 
-import java.sql.Timestamp;
-
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.List;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
-import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
@@ -30,7 +26,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class SampleServiceTest extends BaseWebContextSensitiveTest {
 
-     @Autowired
+    @Autowired
     PersonService personService;
 
     @Autowired
@@ -38,12 +34,11 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
 
     @Autowired
     SampleService sampleService;
-    
+
     @Autowired
     SampleHumanService sampleHumanService;
 
     SampleHumanDAO sampleHumanDAO;
-
 
     @Before
     public void init() throws Exception {
@@ -56,7 +51,7 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
 
     @After
     public void tearDown() {
-        patientService.deleteAll(patientService.getAll());
+        // patientService.deleteAll(patientService.getAll());
         personService.deleteAll(personService.getAll());
         sampleService.deleteAll(sampleService.getAll());
         sampleHumanService.deleteAll(sampleHumanService.getAll());
@@ -68,7 +63,7 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
         java.util.Date date = dateFormat.parse(receivedTimestamp);
         long time = date.getTime();
         Timestamp doc = new Timestamp(time);
-        
+
         Sample sample = new Sample();
         sample.setReceivedTimestamp(doc);
         sample.setAccessionNumber(accessionNumber);
@@ -124,30 +119,29 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
         Assert.assertEquals("2024-06-03 00:00:00.0", savedSample.getReceivedTimestamp().toString());
     }
 
-
     @Test
     public void insertDataWithAccessionNumber_shouldReturnsampleWithInsertedData() throws Exception {
-       Sample sample = new Sample();
-       Date enteredDate = Date.valueOf("2024-06-03");
-       DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-       java.util.Date date = dateFormat.parse("03/06/2024");
-       long time = date.getTime();
-       Timestamp doc = new Timestamp(time);
-       sample.setAccessionNumber("43");
-       sample.setReceivedTimestamp(doc);
-       sample.setEnteredDate(enteredDate);
+        Sample sample = new Sample();
+        Date enteredDate = Date.valueOf("2024-06-03");
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        java.util.Date date = dateFormat.parse("03/06/2024");
+        long time = date.getTime();
+        Timestamp doc = new Timestamp(time);
+        sample.setAccessionNumber("43");
+        sample.setReceivedTimestamp(doc);
+        sample.setEnteredDate(enteredDate);
 
-       String sampId = sampleService.insert(sample);
-       Sample savedSample = sampleService.getSampleByAccessionNumber("43");
-       savedSample.setEnumName("HIV4");
-       sampleService.update(savedSample);
+        String sampId = sampleService.insert(sample);
+        Sample savedSample = sampleService.getSampleByAccessionNumber("43");
+        savedSample.setEnumName("HIV4");
+        sampleService.update(savedSample);
 
-       Assert.assertEquals("HIV4", savedSample.getEnumName());
-    
+        Assert.assertEquals("HIV4", savedSample.getEnumName());
+
     }
 
     @Test
-    public void getOrderedDate_shouldReturnOrderedDate()throws Exception{
+    public void getOrderedDate_shouldReturnOrderedDate() throws Exception {
         Date enteredDate = Date.valueOf("2024-06-03");
         String receivedTimestamp = "03/06/2024";
         String accessionNumber = "12";
@@ -160,9 +154,9 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void getSamplesReceivedOn_shouldReturnSamplesOnDate()throws Exception{
+    public void getSamplesReceivedOn_shouldReturnSamplesOnDate() throws Exception {
         Date enteredDate = Date.valueOf("2024-06-03");
-        Date recievedDate= Date.valueOf("2024-06-04");
+        Date recievedDate = Date.valueOf("2024-06-04");
         String receivedTimestamp = "03/06/2024";
         String accessionNumber = "12";
         Sample samp = createSample(receivedTimestamp, accessionNumber);
@@ -176,7 +170,7 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
 
     // @Test
     // public void getSamplesForPatient_shouldReturnSamplesForPatient() throws Exception {
-        
+
     //     Date enteredDate = Date.valueOf("2024-06-03");
     //     String receivedTimestamp = "03/06/2024";
     //     String accessionNumber = "12";
@@ -194,12 +188,11 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
     //     long time = date.getTime();
     //     Timestamp dob = new Timestamp(time);
 
-    //     Patient pat= new Patient();
+    //     Patient pat = new Patient();
     //     pat.setPerson(person);
     //     pat.setBirthDate(dob);
     //     pat.setGender("M");
     //     String patId = patientService.insert(pat);
-        
 
     //     SampleHuman human = new SampleHuman();
     //     human.setSampleId(sampleId);
@@ -211,9 +204,9 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
     // }
 
     @Test
-    public void getReceivedDateForDisplay_shouldReturnReceivedDateForDisplay()throws Exception{
+    public void getReceivedDateForDisplay_shouldReturnReceivedDateForDisplay() throws Exception {
         Date enteredDate = Date.valueOf("2024-06-03");
-        Date recievedDate= Date.valueOf("2024-06-04");
+        Date recievedDate = Date.valueOf("2024-06-04");
         String receivedTimestamp = "03/06/2024";
         String accessionNumber = "12";
         Sample samp = createSample(receivedTimestamp, accessionNumber);
@@ -223,12 +216,12 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
 
         String sampleId = sampleService.insert(samp);
         Sample savedSample = sampleService.get(sampleId);
-        
+
         Assert.assertEquals("04/06/2024", sampleService.getReceivedDateForDisplay(savedSample));
     }
 
     @Test
-    public void getReceived24HourTimeForDisplay_shouldReturnReceived24HourTimeForDisplay()throws Exception{
+    public void getReceived24HourTimeForDisplay_shouldReturnReceived24HourTimeForDisplay() throws Exception {
         Date enteredDate = Date.valueOf("2024-06-03");
         String receivedTimestamp = "03/06/2024";
         String accessionNumber = "12";
@@ -241,7 +234,7 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void getReceivedTimeForDisplay_shouldReturnReceivedTimeForDisplay()throws Exception{
+    public void getReceivedTimeForDisplay_shouldReturnReceivedTimeForDisplay() throws Exception {
         Date enteredDate = Date.valueOf("2024-06-03");
         String receivedTimestamp = "03/06/2024";
         String accessionNumber = "12";
@@ -251,12 +244,12 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
 
         String sampleId = sampleService.insert(samp);
         Sample savedSample = sampleService.get(sampleId);
-        
+
         Assert.assertEquals("00:00", sampleService.getReceivedTimeForDisplay(savedSample));
     }
 
     @Test
-    public void isConfirmationSample_shouldReturnisConfirmationSample()throws Exception{
+    public void isConfirmationSample_shouldReturnisConfirmationSample() throws Exception {
         Date enteredDate = Date.valueOf("2024-06-03");
         String receivedTimestamp = "03/06/2024";
         String accessionNumber = "12";
@@ -272,7 +265,7 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void getReceivedDateWithTwoYearDisplay_shouldReturnReceivedDateWithTwoYearDisplay()throws Exception{
+    public void getReceivedDateWithTwoYearDisplay_shouldReturnReceivedDateWithTwoYearDisplay() throws Exception {
         Date enteredDate = Date.valueOf("2024-06-03");
         String receivedTimestamp = "03/06/2024";
         String accessionNumber = "12";
@@ -285,7 +278,8 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void getConfirmationSamplesReceivedInDateRange_shouldReturnConfirmationSamplesReceivedInDateRange()throws Exception{
+    public void getConfirmationSamplesReceivedInDateRange_shouldReturnConfirmationSamplesReceivedInDateRange()
+            throws Exception {
         Date recievedDateStart = Date.valueOf("2024-06-03");
         Date recievedDateEnd = Date.valueOf("2024-06-04");
         Date enteredDate = Date.valueOf("2024-06-03");
@@ -297,7 +291,8 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
 
         String sampleId = sampleService.insert(samp);
         Sample savedSample = sampleService.get(sampleId);
-        Assert.assertEquals(1, sampleService.getConfirmationSamplesReceivedInDateRange(recievedDateStart, recievedDateEnd).size());
+        Assert.assertEquals(1,
+                sampleService.getConfirmationSamplesReceivedInDateRange(recievedDateStart, recievedDateEnd).size());
     }
 
     @Test
@@ -305,7 +300,7 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
         Date enteredDate = Date.valueOf("2024-06-03");
         String receivedTimestamp = "03/06/2024";
         String accessionNumber = "123";
-        String collectionDate="03/06/2024";
+        String collectionDate = "03/06/2024";
 
         Date enteredDate2 = Date.valueOf("2024-06-04");
         String receivedTimestamp2 = "03/06/2024";
@@ -320,7 +315,6 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
         samp.setEnteredDate(enteredDate);
         samp.setCollectionDate(doc);
         String sampleId = sampleService.insert(samp);
-
 
         DateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
         java.util.Date date2 = dateFormat2.parse(collectionDate);
@@ -355,7 +349,7 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void getSamplesReceivedInDateRange_shouldReturnSamplesReceivedInDateRange()throws Exception{
+    public void getSamplesReceivedInDateRange_shouldReturnSamplesReceivedInDateRange() throws Exception {
         String recievedDateStart = "03/06/2024";
         String recievedDateEnd = "04/06/2024";
         Date enteredDate = Date.valueOf("2024-06-03");
@@ -390,7 +384,7 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void getId_shouldReturnId()throws Exception{
+    public void getId_shouldReturnId() throws Exception {
         Date enteredDate = Date.valueOf("2024-06-03");
         String receivedTimestamp = "03/06/2024";
         String accessionNumber = "12";
@@ -401,4 +395,4 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
         Sample savedSample = sampleService.get(sampleId);
         Assert.assertEquals(sampleId, sampleService.getId(savedSample));
     }
-   }
+}

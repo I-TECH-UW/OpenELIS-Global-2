@@ -17,9 +17,6 @@ import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.localization.dao.LocalizationDAO;
 import org.openelisglobal.localization.service.LocalizationServiceImpl;
 import org.openelisglobal.note.service.NoteService;
-import org.openelisglobal.referral.service.ReferralResultService;
-import org.openelisglobal.referral.service.ReferralSetService;
-
 import org.openelisglobal.notification.service.AnalysisNotificationConfigService;
 import org.openelisglobal.notification.service.TestNotificationConfigService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
@@ -29,7 +26,9 @@ import org.openelisglobal.program.service.ImmunohistochemistrySampleService;
 import org.openelisglobal.program.service.PathologySampleService;
 import org.openelisglobal.program.service.ProgramSampleService;
 import org.openelisglobal.provider.service.ProviderService;
+import org.openelisglobal.referral.service.ReferralResultService;
 import org.openelisglobal.referral.service.ReferralService;
+import org.openelisglobal.referral.service.ReferralSetService;
 import org.openelisglobal.requester.service.RequesterTypeService;
 import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.sampleorganization.service.SampleOrganizationService;
@@ -74,11 +73,11 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
         "org.openelisglobal.systemusermodule.service", "org.openelisglobal.rolemodule.service",
         "org.openelisglobal.systemusermodule.daoimpl", "org.openelisglobal.systemusermodule.service",
         "org.openelisglobal.login.service", "org.openelisglobal.view", "org.openelisglobal.search.service",
-        "org.openelisglobal.sample.daoimpl", "org.openelisglobal.common.util",
-        "org.openelisglobal.login.service", "org.openelisglobal.view", "org.openelisglobal.search.service", 
-        "org.openelisglobal.sample", "org.openelisglobal.sampleitem.", "org.openelisglobal.analysis", "org.openelisglobal.result.service", 
-        "org.openelisglobal.result.daoimpl", "org.openelisglobal.resultlimit", "org.openelisglobal.resultlimits", 
-        "org.openelisglobal.typeoftestresult", "org.openelisglobal.samplehuman", 
+        "org.openelisglobal.sample.daoimpl", "org.openelisglobal.common.util", "org.openelisglobal.login.service",
+        "org.openelisglobal.view", "org.openelisglobal.search.service", "org.openelisglobal.sample",
+        "org.openelisglobal.sampleitem.", "org.openelisglobal.analysis", "org.openelisglobal.result.service",
+        "org.openelisglobal.result.daoimpl", "org.openelisglobal.resultlimit", "org.openelisglobal.resultlimits",
+        "org.openelisglobal.typeoftestresult", "org.openelisglobal.samplehuman",
         "org.openelisglobal.role", }, excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.patient.controller.*"),
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.sample.controller.*"),
