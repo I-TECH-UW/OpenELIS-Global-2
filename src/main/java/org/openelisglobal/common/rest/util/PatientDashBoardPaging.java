@@ -23,8 +23,8 @@ import org.openelisglobal.common.paging.IPageFlattener;
 import org.openelisglobal.common.paging.IPageUpdater;
 import org.openelisglobal.common.paging.PagingProperties;
 import org.openelisglobal.common.paging.PagingUtility;
-import org.openelisglobal.common.provider.query.PatientDashBoardForm;
 import org.openelisglobal.common.rest.provider.bean.homedashboard.OrderDisplayBean;
+import org.openelisglobal.common.rest.provider.form.PatientDashBoardForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.spring.util.SpringContext;
 
