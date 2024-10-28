@@ -145,7 +145,7 @@ public class SampleHumanDAOImpl extends BaseDAOImpl<SampleHuman, String> impleme
                     + " sampleHuman.sampleId = sample.id and sampleHuman.patientId = :patientId order by"
                     + " sample.id";
             Query<Sample> query = entityManager.unwrap(Session.class).createQuery(sql, Sample.class);
-            query.setParameter("patientId", Integer.parseInt(patientID));
+            query.setParameter("patientId", patientID);
             samples = query.list();
         } catch (HibernateException e) {
             LogEvent.logError(e);
