@@ -1,7 +1,6 @@
 package org.openelisglobal.panel.service;
 
 import java.util.List;
-
 import org.hibernate.Hibernate;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
@@ -149,7 +148,7 @@ public class PanelServiceImpl extends AuditableBaseObjectServiceImpl<Panel, Stri
         return localization;
     }
 
-    @Override 
+    @Override
     public Panel getPanelByLoincCode(String loincCode) {
         return getBaseObjectDAO().getPanelByLoincCode(loincCode);
     }

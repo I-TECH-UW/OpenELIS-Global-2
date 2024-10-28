@@ -1,8 +1,6 @@
 package org.openelisglobal.panel.service;
 
 import java.util.List;
-import java.util.Optional;
-
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.panel.valueholder.Panel;

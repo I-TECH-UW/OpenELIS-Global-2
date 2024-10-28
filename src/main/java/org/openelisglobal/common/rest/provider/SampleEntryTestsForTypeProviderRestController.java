@@ -285,7 +285,7 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
 
         private String testIds;
 
-        //panel id
+        // panel id
         private String id;
 
         private int panelOrder;

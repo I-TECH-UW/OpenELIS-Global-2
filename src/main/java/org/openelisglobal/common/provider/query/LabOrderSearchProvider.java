@@ -480,7 +480,8 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
     //
     // }
 
-    private void addToTestOrPanel(List<Request> tests, List<Request> panels, String loinc, String sampleTypeAbbreviation) {
+    private void addToTestOrPanel(List<Request> tests, List<Request> panels, String loinc,
+            String sampleTypeAbbreviation) {
         Test test = null;
         Panel panel = null;
         TypeOfSample typeOfSample = null;
@@ -504,15 +505,17 @@ public class LabOrderSearchProvider extends BaseQueryProvider {
                 typeOfSample = typeOfSampleService.getTypeOfSampleForTest(test.getId()).get(0);
             }
             tests.add(new Request(test.getName(), loinc, typeOfSample.getLocalizedName()));
-            return; 
+            return;
         }
         panel = panelService.getPanelByLoincCode(loinc);
         if (panel != null) {
-            LogEvent.logDebug(this.getClass().getSimpleName(), "addToTestOrPanel", "panel matching loinc is: " + panel.getDescription());
+            LogEvent.logDebug(this.getClass().getSimpleName(), "addToTestOrPanel",
+                    "panel matching loinc is: " + panel.getDescription());
 
             if (typeOfSample == null) {
                 typeOfSample = typeOfSampleService.getTypeOfSampleForPanelId(panel.getId()).get(0);
-                LogEvent.logDebug(this.getClass().getSimpleName(), "addToTestOrPanel", "typeOfSample matching for panel is: " + typeOfSample.getDescription());
+                LogEvent.logDebug(this.getClass().getSimpleName(), "addToTestOrPanel",
+                        "typeOfSample matching for panel is: " + typeOfSample.getDescription());
 
             }
             panels.add(new Request(panel.getPanelName(), loinc, typeOfSample.getLocalizedName()));

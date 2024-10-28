@@ -61,6 +61,7 @@ public class Panel extends EnumValueItemImpl {
     public void setDescription(String description) {
         this.description = description;
     }
+
     public String getLoinc() {
         return loinc;
     }

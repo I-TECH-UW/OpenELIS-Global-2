@@ -186,7 +186,7 @@ public class TaskInterpreterImpl implements TaskInterpreter {
                 loincCode = serviceRequest.getCode().getCoding().get(i).getCodeElement().toString();
                 if (!GenericValidator.isBlankOrNull(loincCode)) {
                     panel = panelService.getPanelByLoincCode(loincCode);
-                   return panel;
+                    return panel;
                 } else {
                     LogEvent.logWarn(this.getClass().getSimpleName(), "createTestFromFHIR",
                             "loinc code is missing a value in SR: " + serviceRequest.getIdElement().getIdPart());
@@ -345,7 +345,9 @@ public class TaskInterpreterImpl implements TaskInterpreter {
                     results.add(InterpreterResults.MISSING_PATIENT_IDENTIFIER);
                 }
 
-                if ((test == null || !getTestIdentityService().doesActiveTestExistForLoinc(test.getLoinc())) && (panel == null || !getTestIdentityService().doesActivePanelExistForLoinc(panel.getLoinc()))) {
+                if ((test == null || !getTestIdentityService().doesActiveTestExistForLoinc(test.getLoinc()))
+                        && (panel == null
+                                || !getTestIdentityService().doesActivePanelExistForLoinc(panel.getLoinc()))) {
                     results.add(InterpreterResults.UNSUPPORTED_TESTS);
                 }
             }
@@ -357,7 +359,6 @@ public class TaskInterpreterImpl implements TaskInterpreter {
 
         return results;
     }
-
 
     @Override
     public OrderPriority getOrderPriority() {

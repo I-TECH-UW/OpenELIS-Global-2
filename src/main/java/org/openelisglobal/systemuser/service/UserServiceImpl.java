@@ -41,7 +41,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.context.SecurityContext;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
 import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
@@ -184,7 +183,8 @@ public class UserServiceImpl implements UserService {
         if (requestAttributes instanceof ServletRequestAttributes) {
             request = ((ServletRequestAttributes) requestAttributes).getRequest();
 
-            Object sc = request.getSession().getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+            Object sc = request.getSession()
+                    .getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
             if (!(sc instanceof SecurityContext)) {
                 LogEvent.logWarn(this.getClass().getSimpleName(), "getUserLogin",
                         "security context is not of type SecurityContext");
@@ -194,7 +194,7 @@ public class UserServiceImpl implements UserService {
         } else {
             LogEvent.logWarn(this.getClass().getSimpleName(), "getUserLogin",
                     "requestAttributes is not of type ServletRequestAttributes");
-                }
+        }
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserDetails) {

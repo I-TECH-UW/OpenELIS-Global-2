@@ -16,11 +16,9 @@ package org.openelisglobal.common.services;
 import java.util.List;
 import java.util.Locale;
 import java.util.Objects;
-
 import javax.annotation.PostConstruct;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.panel.service.PanelService;
-import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testresult.service.TestResultService;

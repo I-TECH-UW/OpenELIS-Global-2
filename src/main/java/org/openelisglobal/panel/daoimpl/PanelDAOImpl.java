@@ -29,7 +29,6 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.panel.dao.PanelDAO;
 import org.openelisglobal.panel.valueholder.Panel;
-import org.openelisglobal.test.valueholder.Test;
 import org.springframework.stereotype.Component;
 import org.springframework.transaction.annotation.Transactional;
 
