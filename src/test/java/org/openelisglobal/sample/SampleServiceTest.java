@@ -14,14 +14,11 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
 import org.openelisglobal.patient.service.PatientService;
-import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
-import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.dao.SampleHumanDAO;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
-import org.openelisglobal.samplehuman.valueholder.SampleHuman;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SampleServiceTest extends BaseWebContextSensitiveTest {
@@ -169,37 +166,39 @@ public class SampleServiceTest extends BaseWebContextSensitiveTest {
     }
 
     // @Test
-    // public void getSamplesForPatient_shouldReturnSamplesForPatient() throws Exception {
+    // public void getSamplesForPatient_shouldReturnSamplesForPatient() throws
+    // Exception {
 
-    //     Date enteredDate = Date.valueOf("2024-06-03");
-    //     String receivedTimestamp = "03/06/2024";
-    //     String accessionNumber = "12";
-    //     Sample samp = createSample(receivedTimestamp, accessionNumber);
-    //     samp.setEnteredDate(enteredDate);
-    //     String sampleId = sampleService.insert(samp);
+    // Date enteredDate = Date.valueOf("2024-06-03");
+    // String receivedTimestamp = "03/06/2024";
+    // String accessionNumber = "12";
+    // Sample samp = createSample(receivedTimestamp, accessionNumber);
+    // samp.setEnteredDate(enteredDate);
+    // String sampleId = sampleService.insert(samp);
 
-    //     Person person = new Person();
-    //     person.setFirstName("kasozi");
-    //     person.setLastName("paulaaa");
-    //     personService.save(person);
+    // Person person = new Person();
+    // person.setFirstName("kasozi");
+    // person.setLastName("paulaaa");
+    // personService.save(person);
 
-    //     DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-    //     java.util.Date date = dateFormat.parse("03/06/2024");
-    //     long time = date.getTime();
-    //     Timestamp dob = new Timestamp(time);
+    // DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+    // java.util.Date date = dateFormat.parse("03/06/2024");
+    // long time = date.getTime();
+    // Timestamp dob = new Timestamp(time);
 
-    //     Patient pat = new Patient();
-    //     pat.setPerson(person);
-    //     pat.setBirthDate(dob);
-    //     pat.setGender("M");
-    //     String patId = patientService.insert(pat);
+    // Patient pat = new Patient();
+    // pat.setPerson(person);
+    // pat.setBirthDate(dob);
+    // pat.setGender("M");
+    // String patId = patientService.insert(pat);
 
-    //     SampleHuman human = new SampleHuman();
-    //     human.setSampleId(sampleId);
-    //     human.setPatientId(patId);
-    //     String humanId = sampleHumanService.insert(human);
+    // SampleHuman human = new SampleHuman();
+    // human.setSampleId(sampleId);
+    // human.setPatientId(patId);
+    // String humanId = sampleHumanService.insert(human);
 
-    //     Assert.assertEquals(1, sampleHumanService.getSamplesForPatient(patId).size());
+    // Assert.assertEquals(1,
+    // sampleHumanService.getSamplesForPatient(patId).size());
 
     // }
 
