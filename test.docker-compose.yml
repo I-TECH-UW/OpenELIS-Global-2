@@ -69,9 +69,7 @@ services:
 
   fhir.openelis.org:
     container_name: external-fhir-api
-    build:
-      context: ./fhir
-      dockerfile: ./Dockerfile
+    image: "${DOCKER_TEST_NAME}-fhir:${GITHUB_REF_NAME}"
     depends_on:
       - database
       - certs
@@ -109,9 +107,7 @@ services:
       start_period: 2m
 
   proxy:
-    build:
-      context: ./nginx-proxy
-      dockerfile: ./Dockerfile
+    image: "${DOCKER_TEST_NAME}-proxy:${GITHUB_REF_NAME}"
     container_name: openelisglobal-proxy
     ports:
       - 80:80
