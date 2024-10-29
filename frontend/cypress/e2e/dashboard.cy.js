@@ -38,7 +38,7 @@ describe("Pathology Dashboard", function () {
 
   it("Validate the Status of Order", () => {
     cy.fixture("DashBoard").then((order) => {
-    //  dashboard.validateOrderStatus(order.labNo, 4);
+      //  dashboard.validateOrderStatus(order.labNo, 4);
     });
   });
 });

@@ -28,8 +28,13 @@ body {
   padding-left: 0px;
   width: 100%;
   z-index: 10;
-  position: relative;
+  position: absolute;
   background-color: #ffffff;
+}
+
+.suggestions-container {
+  position: relative;
+  width: 100%;
 }
 
 .suggestions li {
