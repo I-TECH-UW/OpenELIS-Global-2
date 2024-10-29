@@ -142,7 +142,8 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
     @Test
     public void createPatientType_shouldCreateNewPatientType() throws Exception {
         PatientType patientType = new PatientType();
-        patientType.setDescription("Test Type");
+        patientType.setDescription("Test Type Description");
+        patientType.setType("Test Type");
 
         Assert.assertEquals(0, patientTypeService.getAllPatientTypes().size());
 
@@ -150,7 +151,8 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
         PatientType savedPatientType = patientTypeService.get(patientTypeId);
 
         Assert.assertEquals(1, patientTypeService.getAllPatientTypes().size());
-        Assert.assertEquals("Test Type", savedPatientType.getDescription());
+        Assert.assertEquals("Test Type Description", savedPatientType.getDescription());
+        Assert.assertEquals("Test Type", savedPatientType.getType());
     }
 
     @Test
