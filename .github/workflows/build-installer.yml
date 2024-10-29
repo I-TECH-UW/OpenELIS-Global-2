@@ -1,4 +1,4 @@
-name: OpenELIS-Global-2 CI Build
+name: Build OpenELIS-Global-2 Installer
 on:
   workflow_dispatch:
     
