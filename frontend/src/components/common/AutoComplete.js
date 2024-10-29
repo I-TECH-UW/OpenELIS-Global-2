@@ -88,7 +88,7 @@ function AutoComplete(props) {
   if (showSuggestions && userInput) {
     if (filteredSuggestions.length) {
       suggestionsListComponent = (
-        <div class="suggestions-container">
+        <div className="suggestions-container">
           <ul className="suggestions">
             {filteredSuggestions.map((suggestion, index) => {
               let className;
