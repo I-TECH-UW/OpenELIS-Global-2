@@ -17,5 +17,5 @@ jobs:
         run: ./build.sh -ib develop
 
       - name: check installer
-        run: ls OEInstaller  
+        run: ls OEInstaller/linux  
  
