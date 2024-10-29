@@ -1,4 +1,3 @@
-<%@page import="org.openelisglobal.common.util.SystemConfiguration"%>
 <%@page import="org.openelisglobal.common.action.IActionConstants"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8"
 	import="org.openelisglobal.common.formfields.FormFields,
@@ -147,7 +146,7 @@ function /*void*/setSaveButton() {
 
 			year = date.getFullYear();
 
-			var datePattern = '<%=SystemConfiguration.getInstance().getPatternForDateLocale() %>';
+			var datePattern = '<%=DateUtil.getDateFormat() %>';
 			var splitPattern = datePattern.split("/");
 
 			var DOB = "";

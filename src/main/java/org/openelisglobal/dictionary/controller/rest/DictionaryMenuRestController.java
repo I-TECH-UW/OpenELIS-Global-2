@@ -10,7 +10,7 @@ import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dictionary.form.DictionaryMenuForm;
 import org.openelisglobal.dictionary.service.DictionaryService;
@@ -128,8 +128,10 @@ public class DictionaryMenuRestController extends BaseMenuController<Dictionary>
         request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
 
         int numOfRecs = 0;
-        if (dictionaries.size() > SystemConfiguration.getInstance().getDefaultPageSize()) {
-            numOfRecs = SystemConfiguration.getInstance().getDefaultPageSize();
+        if (dictionaries.size() > Integer
+                .parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))) {
+            numOfRecs = Integer
+                    .parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"));
         } else {
             numOfRecs = dictionaries.size();
         }

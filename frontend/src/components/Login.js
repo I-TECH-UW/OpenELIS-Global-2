@@ -3,6 +3,7 @@ import config from "../config.json";
 import "./Style.css";
 import qs from "qs";
 import { FormattedMessage, injectIntl } from "react-intl";
+import { HardwareSecurityModule } from "@carbon/icons-react";
 import {
   Form,
   Section,
@@ -30,7 +31,7 @@ function Login(props) {
   const firstInput = createRef();
 
   useEffect(() => {
-    firstInput.current.focus();
+    firstInput?.current?.focus();
 
     const interval = setInterval(() => {
       checkLogin();
@@ -129,6 +130,26 @@ function Login(props) {
       });
   };
 
+  const renderOauthButtons = () => {
+    return (
+      <span id="oauth-buttons">
+        {configurationProperties?.oauthUrls?.map((url) => (
+          <Button
+            key={url.key}
+            type="button"
+            renderIcon={HardwareSecurityModule}
+            onClick={() => {
+              console.log(url);
+              window.location.href = config.serverBaseUrl + "/" + url.value;
+            }}
+          >
+            <FormattedMessage id="label.button.login.sso" />
+          </Button>
+        ))}
+      </span>
+    );
+  };
+
   return (
     <>
       <div className="loginPageContent">
@@ -167,45 +188,50 @@ function Login(props) {
                           <FormattedMessage id="login.title" />
                         </Heading>
                       </FormLabel>
-                      <TextInput
-                        id="loginName"
-                        invalidText={props.intl.formatMessage({
-                          id: "login.msg.username.missing",
-                        })}
-                        labelText={props.intl.formatMessage({
-                          id: "login.msg.username",
-                        })}
-                        hideLabel={true}
-                        placeholder={props.intl.formatMessage({
-                          id: "login.msg.username",
-                        })}
-                        autoComplete="off"
-                        ref={firstInput}
-                      />
-                      <TextInput.PasswordInput
-                        id="password"
-                        invalidText={props.intl.formatMessage({
-                          id: "login.msg.password.missing",
-                        })}
-                        labelText={props.intl.formatMessage({
-                          id: "login.msg.password",
-                        })}
-                        hideLabel={true}
-                        placeholder={props.intl.formatMessage({
-                          id: "login.msg.password",
-                        })}
-                      />
-                      <Button type="submit" disabled={!isValid}>
-                        <FormattedMessage id="label.button.submit" />
-                        <Loading
-                          small={true}
-                          withOverlay={false}
-                          className={submitting ? "show" : "hidden"}
-                        />
-                      </Button>
+                      {configurationProperties?.useFormLogin == "true" && (
+                        <>
+                          <TextInput
+                            id="loginName"
+                            invalidText={props.intl.formatMessage({
+                              id: "login.msg.username.missing",
+                            })}
+                            labelText={props.intl.formatMessage({
+                              id: "login.msg.username",
+                            })}
+                            hideLabel={true}
+                            placeholder={props.intl.formatMessage({
+                              id: "login.msg.username",
+                            })}
+                            autoComplete="off"
+                            ref={firstInput}
+                          />
+                          <TextInput.PasswordInput
+                            id="password"
+                            invalidText={props.intl.formatMessage({
+                              id: "login.msg.password.missing",
+                            })}
+                            labelText={props.intl.formatMessage({
+                              id: "login.msg.password",
+                            })}
+                            hideLabel={true}
+                            placeholder={props.intl.formatMessage({
+                              id: "login.msg.password",
+                            })}
+                          />
+                          <Button type="submit" disabled={!isValid}>
+                            <FormattedMessage id="label.button.login" />
+                            <Loading
+                              small={true}
+                              withOverlay={false}
+                              className={submitting ? "show" : "hidden"}
+                            />
+                          </Button>
+                        </>
+                      )}
                       {configurationProperties?.useSaml == "true" && (
                         <Button
                           type="button"
+                          renderIcon={HardwareSecurityModule}
                           onClick={() => {
                             const POPUP_HEIGHT = 700;
                             const POPUP_WIDTH = 600;
@@ -227,6 +253,8 @@ function Login(props) {
                           <FormattedMessage id="label.button.login.sso" />
                         </Button>
                       )}
+                      {configurationProperties?.useOauth == "true" &&
+                        renderOauthButtons()}
                     </Stack>
                   </Form>
                 )}

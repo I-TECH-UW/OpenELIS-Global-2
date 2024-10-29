@@ -149,28 +149,17 @@ const SampleType = (props) => {
 
   const handleRemoveSelectedTest = (test) => {
     removedTestFromSelectedTests(test);
-    updateSampleTypeTests(test, false);
   };
 
   const handleFilterSelectTest = (test) => {
     setTestSearchTerm("");
     addTestToSelectedTests(test);
-    updateSampleTypeTests(test, true);
   };
-
-  function updateSampleTypeTests(test, userBenchChoice = false) {
-    let tests = [...sampleTypeTests.tests];
-    let testIndex = findTestIndex(test.id);
-    tests[testIndex].userBenchChoice = userBenchChoice;
-    setSampleTypeTests({ ...sampleTypeTests, tests: tests });
-  }
 
   const handleTestCheckbox = (e, test) => {
     if (e.currentTarget.checked) {
-      updateSampleTypeTests(test, true);
       addTestToSelectedTests(test);
     } else {
-      updateSampleTypeTests(test, false);
       removedTestFromSelectedTests(test);
     }
   };
@@ -183,17 +172,36 @@ const SampleType = (props) => {
     return sampleTypeTests.tests.findIndex((test) => test.id === testId);
   }
 
-  const triggerPanelCheckBoxChange = (isChecked, testMaps) => {
-    const testIds = testMaps.split(",").map((id) => id.trim());
-    testIds.map((testId) => {
+  const panelIsSelected = (panelId) => {
+    for (let i in selectedPanels) {
+      if (selectedPanels[i].id === panelId) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const testIsSelected = (testId) => {
+    for (let i in selectedTests) {
+      if (selectedTests[i].id === testId) {
+        return true;
+      }
+    }
+    return false;
+  };
+
+  const triggerPanelCheckBoxChange = (isChecked, testIds) => {
+    const testIdsList = testIds.split(",").map((id) => id.trim());
+    testIdsList.map((testId) => {
       let testIndex = findTestIndex(testId);
       let test = findTestById(testId);
       if (testIndex !== -1) {
-        updateSampleTypeTests(test, isChecked);
         if (isChecked) {
-          setSelectedTests((prevState) => {
-            return [...prevState, { id: test.id, name: test.name }];
-          });
+          if (!testIsSelected(test.id)) {
+            setSelectedTests((prevState) => {
+              return [...prevState, { id: test.id, name: test.name }];
+            });
+          }
         } else {
           removedTestFromSelectedTests(test);
         }
@@ -292,13 +300,6 @@ const SampleType = (props) => {
 
   useEffect(() => {
     props.sampleTypeObject({
-      selectedTests: selectedTests,
-      sampleObjectIndex: index,
-    });
-  }, [selectedTests]);
-
-  useEffect(() => {
-    props.sampleTypeObject({
       referralItems: referralRequests,
       sampleObjectIndex: index,
     });
@@ -333,11 +334,9 @@ const SampleType = (props) => {
 
   const removedPanelFromSelectedPanels = (panel) => {
     let index = 0;
-    let panelId = panel.id !== undefined ? panel.id : panel.panelId;
-
     for (let i in selectedPanels) {
-      if (selectedPanels[i].id === panelId) {
-        triggerPanelCheckBoxChange(false, selectedPanels[i].testMaps);
+      if (selectedPanels[i].id === panel.id) {
+        triggerPanelCheckBoxChange(false, selectedPanels[i].testIds);
         const newPanels = selectedPanels;
         newPanels.splice(index, 1);
         setSelectedPanels([...newPanels]);
@@ -361,8 +360,8 @@ const SampleType = (props) => {
     addPanelToSelectedPanels(panel);
   };
 
-  const handlePanelCheckbox = (e, panel) => {
-    if (e.currentTarget.checked) {
+  const handlePanelCheckbox = (panel) => {
+    if (!panelIsSelected(panel.id)) {
       addPanelToSelectedPanels(panel);
     } else {
       removedPanelFromSelectedPanels(panel);
@@ -374,15 +373,16 @@ const SampleType = (props) => {
   };
 
   function addTestToSelectedTests(test) {
-    setSelectedTests([...selectedTests, { id: test.id, name: test.name }]);
+    if (!testIsSelected(test.id)) {
+      setSelectedTests([...selectedTests, { id: test.id, name: test.name }]);
+    }
   }
 
   const addPanelToSelectedPanels = (panel) => {
     setSelectedPanels([
       ...selectedPanels,
-      { id: panel.panelId, name: panel.name, testMaps: panel.testMaps },
+      { id: panel.id, name: panel.name, testIds: panel.testIds },
     ]);
-    triggerPanelCheckBoxChange(true, panel.testMaps);
   };
 
   useEffect(() => {
@@ -407,10 +407,20 @@ const SampleType = (props) => {
 
   useEffect(() => {
     props.sampleTypeObject({
+      selectedTests: selectedTests,
+      sampleObjectIndex: index,
+    });
+  }, [selectedTests]);
+
+  useEffect(() => {
+    props.sampleTypeObject({
       selectedPanels: selectedPanels,
       sampleObjectIndex: index,
     });
-  }, [selectedPanels]);
+    for (let i in selectedPanels) {
+      triggerPanelCheckBoxChange(true, selectedPanels[i].testIds);
+    }
+  }, [selectedPanels, sampleTypeTests]);
 
   const repopulateUI = () => {
     if (props.sample !== null) {
@@ -610,12 +620,12 @@ const SampleType = (props) => {
                   ""
                 ) : (
                   <Checkbox
-                    onChange={(e) => handlePanelCheckbox(e, panel)}
+                    onChange={() => handlePanelCheckbox(panel)}
                     labelText={panel.name}
-                    id={`panel_` + index + "_" + panel.panelId}
-                    key={index + panel.panelId}
+                    id={`panel_` + index + "_" + panel.id}
+                    key={index + panel.id}
                     checked={
-                      selectedPanels.filter((item) => item.id === panel.panelId)
+                      selectedPanels.filter((item) => item.id === panel.id)
                         .length > 0
                     }
                   />
@@ -718,7 +728,6 @@ const SampleType = (props) => {
                     selectedTests.filter((item) => item.id === test.id).length >
                     0
                   }
-                  // checked={test.userBenchChoice}
                 />
               );
             })}

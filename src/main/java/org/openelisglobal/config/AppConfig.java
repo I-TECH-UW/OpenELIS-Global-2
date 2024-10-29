@@ -9,7 +9,6 @@ import com.fasterxml.jackson.datatype.jsr310.JavaTimeModule;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.List;
-import java.util.Locale;
 import java.util.Properties;
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Questionnaire;
@@ -34,7 +33,6 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.context.annotation.Scope;
-import org.springframework.context.i18n.LocaleContextHolder;
 import org.springframework.context.support.PropertySourcesPlaceholderConfigurer;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.http.converter.HttpMessageConverter;
@@ -58,6 +56,9 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @PropertySource("classpath:application.properties")
 @PropertySource("file:/run/secrets/common.properties")
 @PropertySource(value = "file:/run/secrets/extra.properties", ignoreResourceNotFound = true)
+@PropertySource(value = "classpath:SystemConfiguration.properties", ignoreResourceNotFound = true)
+@PropertySource(value = "file:/var/lib/openelis-global/properties/TotalSystemConfiguration.properties", ignoreResourceNotFound = true)
+@PropertySource(value = "file:/var/lib/openelis-global/properties/SystemConfiguration.properties", ignoreResourceNotFound = true)
 @ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech", "org.ozeki.sms", "oe.plugin" })
 public class AppConfig implements WebMvcConfigurer {
 
@@ -161,9 +162,6 @@ public class AppConfig implements WebMvcConfigurer {
     // functionality
     public LocaleResolver localeResolver() {
         GlobalLocaleResolver localeResolver = new GlobalLocaleResolver();
-        String localeName = ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE);
-        localeResolver.setDefaultLocale(Locale.forLanguageTag(localeName));
-        LocaleContextHolder.setDefaultLocale(Locale.forLanguageTag(localeName));
         return localeResolver;
     }
 

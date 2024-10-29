@@ -14,9 +14,9 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.login.service.LoginUserService;
 import org.openelisglobal.login.valueholder.LoginUser;
@@ -255,7 +255,7 @@ public class UnifiedSystemUserMenuRestController extends BaseMenuController<Unif
 
     @Override
     protected int getPageSize() {
-        return SystemConfiguration.getInstance().getDefaultPageSize();
+        return Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"));
     }
 
     @PostMapping(value = "/DeleteUnifiedSystemUser")

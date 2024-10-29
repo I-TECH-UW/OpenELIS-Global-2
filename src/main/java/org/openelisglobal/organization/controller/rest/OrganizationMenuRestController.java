@@ -9,7 +9,7 @@ import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.organization.form.OrganizationMenuForm;
@@ -115,8 +115,10 @@ public class OrganizationMenuRestController extends BaseMenuController<Organizat
         request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
         int numOfRecs = 0;
         if (organizations != null) {
-            if (organizations.size() > SystemConfiguration.getInstance().getDefaultPageSize()) {
-                numOfRecs = SystemConfiguration.getInstance().getDefaultPageSize();
+            if (organizations.size() > Integer
+                    .parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))) {
+                numOfRecs = Integer
+                        .parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"));
             } else {
                 numOfRecs = organizations.size();
             }
@@ -151,7 +153,7 @@ public class OrganizationMenuRestController extends BaseMenuController<Organizat
 
     @Override
     protected int getPageSize() {
-        return SystemConfiguration.getInstance().getDefaultPageSize();
+        return Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"));
     }
 
     // gnr: Deactivate not Delete
