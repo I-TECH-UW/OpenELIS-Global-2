@@ -1,0 +1,21 @@
+name: OpenELIS-Global-2 CI Build
+on:
+  workflow_dispatch:
+    
+jobs:
+  check-out-and-build-installer:
+    runs-on: ubuntu-latest
+    steps:
+
+      - name: Checkout OpenELIS-Global2
+        uses: actions/checkout@v2
+        with:
+          repository: ${{github.repository}}
+          submodules: recursive
+
+      - name: Build installer
+        run: ./build.sh -ib develop
+
+      - name: check installer
+        run: ls OEInstaller  
+ 
