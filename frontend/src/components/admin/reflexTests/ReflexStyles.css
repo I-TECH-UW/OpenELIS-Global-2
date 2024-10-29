@@ -26,9 +26,9 @@ body {
   margin-left: 0px;
   overflow-y: auto;
   padding-left: 0px;
-  width: 30%;
+  width: 100%;
   z-index: 10;
-  position: absolute;
+  position: relative;
   background-color: #ffffff;
 }
 
