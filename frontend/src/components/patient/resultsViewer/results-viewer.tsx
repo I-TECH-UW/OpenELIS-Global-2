@@ -88,7 +88,7 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
       <>
         <Loading></Loading>
         <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={4} >
+          <Column lg={16} md={8} sm={4}>
             <EmptyState
               headerTitle={intl.formatMessage({ id: "label.test.results" })}
               displayText={intl.formatMessage({
@@ -116,7 +116,7 @@ const RoutedResultsViewer: React.FC<ResultsViewerProps> = () => {
         </Column>
       </Grid>
       <Grid fullWidth={true}>
-        <Column lg={16} md={8} sm={4} >
+        <Column lg={16} md={8} sm={4}>
           <Section>
             <Section>
               <Heading>
