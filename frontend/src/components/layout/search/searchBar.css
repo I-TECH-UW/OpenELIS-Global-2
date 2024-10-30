@@ -49,8 +49,30 @@
   cursor: pointer;
 }
 
-/* Small screens - Mobile layout (768px and below) */
-@media (max-width: 768px) {
+/* Small screens - Mobile layout (768px and 600px) */
+@media (max-width: 600px) {
+  .patientHead {
+    flex-direction: column; /* Stack elements vertically on small screens */
+    align-items: center; /* Center items for mobile view */
+    width: 50%; /* Allow full width on mobile */
+  }
+
+  .search-bar-container {
+    flex-direction: row; /* Stack search elements vertically */
+    align-items: right;
+    margin-top: 40px;
+    width: 35%; /* Expand to full width on mobile */
+    /* padding: 10px;  Optional padding for better spacing */
+  }
+
+  .search-input {
+    width: 90%; /* Set search input to almost full width */
+    /*margin: 10px 0;  Add margin to separate elements */
+  }
+}
+
+/* Small screens - Mobile layout (768px and 601px) */
+@media (min-width: 601px) and (max-width: 768px) {
   .patientHead {
     flex-direction: column; /* Stack elements vertically on small screens */
     align-items: center; /* Center items for mobile view */
