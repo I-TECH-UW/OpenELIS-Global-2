@@ -31,11 +31,11 @@ public class FhirConfig {
     private String oeFhirSystem;
 
     @Getter
-    @Value("${org.openelisglobal.fhirstore.uri}")
+    @Value("${org.openelisglobal.fhirstore.uri:}")
     private String localFhirStorePath;
 
     @Getter
-    @Value("${org.openelisglobal.remote.source.uri}")
+    @Value("${org.openelisglobal.remote.source.uri:}")
     private String[] remoteStorePaths;
 
     @Getter
@@ -47,15 +47,15 @@ public class FhirConfig {
     private String password;
 
     @Getter
-    @Value("${org.openelisglobal.crserver.uri}")
+    @Value("${org.openelisglobal.crserver.uri:}")
     private String clientRegistryServerUrl;
 
     @Getter
-    @Value("${org.openelisglobal.crserver.username}")
+    @Value("${org.openelisglobal.crserver.username:}")
     private String clientRegistryUserName;
 
     @Getter
-    @Value("${org.openelisglobal.crserver.password}")
+    @Value("${org.openelisglobal.crserver.password:}")
     private String clientRegistryPassword;
 
     @Value("${org.openelisglobal.remote.source.identifier:}#{T(java.util.Collections).emptyList()}")

@@ -88,24 +88,26 @@ function AutoComplete(props) {
   if (showSuggestions && userInput) {
     if (filteredSuggestions.length) {
       suggestionsListComponent = (
-        <ul className="suggestions">
-          {filteredSuggestions.map((suggestion, index) => {
-            let className;
-            // Flag the active suggestion with a class
-            if (index === activeSuggestion) {
-              className = "suggestion-active";
-            }
-            return (
-              <li
-                className={className}
-                key={index}
-                onClick={(e) => onClick(e, suggestion.id, suggestion)}
-              >
-                {suggestion.value}
-              </li>
-            );
-          })}
-        </ul>
+        <div className="suggestions-container">
+          <ul className="suggestions">
+            {filteredSuggestions.map((suggestion, index) => {
+              let className;
+              // Flag the active suggestion with a class
+              if (index === activeSuggestion) {
+                className = "suggestion-active";
+              }
+              return (
+                <li
+                  className={className}
+                  key={index}
+                  onClick={(e) => onClick(e, suggestion.id, suggestion)}
+                >
+                  {suggestion.value}
+                </li>
+              );
+            })}
+          </ul>
+        </div>
       );
     } else {
       suggestionsListComponent = (

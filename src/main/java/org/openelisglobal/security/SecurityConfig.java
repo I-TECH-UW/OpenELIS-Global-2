@@ -12,6 +12,7 @@ import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import javax.servlet.ServletContext;
 import javax.servlet.http.HttpServletRequest;
@@ -23,22 +24,33 @@ import org.openelisglobal.security.KeystoreUtil.KeyCertPair;
 import org.openelisglobal.security.login.BasicAuthFilter;
 import org.openelisglobal.security.login.CustomAuthenticationFailureHandler;
 import org.openelisglobal.security.login.CustomFormAuthenticationSuccessHandler;
+import org.openelisglobal.security.login.CustomSSOAuthenticationSuccessHandler;
 import org.openelisglobal.spring.util.SpringContext;
+import org.opensaml.core.xml.XMLObject;
+import org.opensaml.core.xml.schema.XSString;
+import org.opensaml.saml.saml2.core.Assertion;
+import org.opensaml.saml.saml2.core.Attribute;
+import org.opensaml.saml.saml2.core.AttributeStatement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
 import org.springframework.core.annotation.Order;
+import org.springframework.core.convert.converter.Converter;
 import org.springframework.core.io.Resource;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.AuthenticationProvider;
+import org.springframework.security.authentication.ProviderManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configuration.AuthenticationConfiguration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
+import org.springframework.security.core.AuthenticatedPrincipal;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -49,8 +61,13 @@ import org.springframework.security.oauth2.client.registration.ClientRegistratio
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
 import org.springframework.security.oauth2.client.registration.ClientRegistrations;
 import org.springframework.security.oauth2.client.registration.InMemoryClientRegistrationRepository;
+import org.springframework.security.saml2.core.Saml2ResponseValidatorResult;
 import org.springframework.security.saml2.core.Saml2X509Credential;
 import org.springframework.security.saml2.core.Saml2X509Credential.Saml2X509CredentialType;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider.AssertionToken;
+import org.springframework.security.saml2.provider.service.authentication.OpenSaml4AuthenticationProvider.ResponseToken;
+import org.springframework.security.saml2.provider.service.authentication.Saml2Authentication;
 import org.springframework.security.saml2.provider.service.registration.InMemoryRelyingPartyRegistrationRepository;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistration;
 import org.springframework.security.saml2.provider.service.registration.RelyingPartyRegistrationRepository;
@@ -97,6 +114,12 @@ public class SecurityConfig {
     @Autowired
     public void configureGlobalSecurity(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
+    }
+
+    @Bean
+    public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
+            throws Exception {
+        return authenticationConfiguration.getAuthenticationManager();
     }
 
     @Configuration
@@ -229,16 +252,33 @@ public class SecurityConfig {
             MultipartFilter multipartFilter = new MultipartFilter();
             multipartFilter.setServletContext(SpringContext.getBean(ServletContext.class));
             http.addFilterBefore(multipartFilter, CsrfFilter.class);
+            OpenSaml4AuthenticationProvider authenticationProvider = new OpenSaml4AuthenticationProvider();
+            Converter<ResponseToken, Saml2Authentication> delegate = OpenSaml4AuthenticationProvider
+                    .createDefaultResponseAuthenticationConverter();
+            authenticationProvider
+                    .setAssertionValidator(OpenSaml4AuthenticationProvider.createDefaultAssertionValidator());
+            authenticationProvider.setResponseAuthenticationConverter(responseToken -> {
 
+                Saml2Authentication authentication = delegate.convert(responseToken);
+                Assertion assertion = responseToken.getResponse().getAssertions().get(0);
+                AuthenticatedPrincipal principal = (AuthenticatedPrincipal) authentication.getPrincipal();
+                Collection<GrantedAuthority> authorities = new KeycloakAuthoritiesExtractor().convert(assertion);
+
+                return new Saml2Authentication(principal, authentication.getSaml2Response(), authorities);
+            });
+            Converter<AssertionToken, Saml2ResponseValidatorResult> validator = OpenSaml4AuthenticationProvider
+                    .createDefaultAssertionValidator();
+            authenticationProvider.setAssertionValidator(validator);
             http.requestMatcher(new SamlRequestedMatcher()).authorizeRequests().anyRequest().authenticated().and()
-                    .saml2Logout().and().saml2Login().failureHandler(customAuthenticationFailureHandler())
+                    .saml2Logout().and().saml2Login().authenticationManager(new ProviderManager(authenticationProvider))
+                    .failureHandler(customAuthenticationFailureHandler())
                     .successHandler(customAuthenticationSuccessHandler())
                     .relyingPartyRegistrationRepository(relyingPartyRegistrationRepository());
         }
 
         @Bean("samlAuthenticationSuccessHandler")
         public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
-            return new CustomFormAuthenticationSuccessHandler();
+            return new CustomSSOAuthenticationSuccessHandler();
         }
 
         @Bean("samlAuthenticationFailureHandler")
@@ -256,6 +296,7 @@ public class SecurityConfig {
         private String config;
 
         @Value("${org.itech.login.oauth.clientID:OpenELIS-Global_oauth}")
+
         private String clientID;
 
         @Value("${org.itech.login.oauth.clientSecret:}")
@@ -341,6 +382,7 @@ public class SecurityConfig {
     }
 
     @Configuration
+    @ConditionalOnProperty(property = "org.itech.login.form", havingValue = "true", matchIfMissing = true)
     public static class defaultSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
         @Override
@@ -379,12 +421,6 @@ public class SecurityConfig {
         @Primary
         public AuthenticationSuccessHandler customAuthenticationSuccessHandler() {
             return new CustomFormAuthenticationSuccessHandler();
-        }
-
-        @Bean
-        public AuthenticationManager authenticationManager(AuthenticationConfiguration authenticationConfiguration)
-                throws Exception {
-            return authenticationConfiguration.getAuthenticationManager();
         }
     }
 
@@ -475,6 +511,28 @@ public class SecurityConfig {
             String auth = request.getHeader("Authorization");
             boolean haveCertificateAuth = (auth != null) && auth.startsWith("Cert");
             return haveCertificateAuth;
+        }
+    }
+
+    private static class KeycloakAuthoritiesExtractor {
+
+        // TODO should we use authority AND Role? (Spring Concepts)
+        public Collection<GrantedAuthority> convert(Assertion assertion) {
+            Collection<GrantedAuthority> authorties = new ArrayList<>();
+            for (AttributeStatement statement : assertion.getAttributeStatements()) {
+                for (Attribute attr : statement.getAttributes()) {
+                    if ("Role".equals(attr.getName())) {
+                        for (XMLObject attributeValue : attr.getAttributeValues()) {
+                            String value = ((XSString) attributeValue).getValue();
+                            if (value != null && value.startsWith("oeg-")) {
+                                authorties.add(new SimpleGrantedAuthority(value));
+                            }
+
+                        }
+                    }
+                }
+            }
+            return authorties;
         }
     }
 }

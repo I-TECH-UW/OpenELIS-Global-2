@@ -2,6 +2,7 @@ package org.openelisglobal.login.controller;
 
 import java.security.Principal;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -31,8 +32,14 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ResolvableType;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.oauth2.client.registration.ClientRegistration;
 import org.springframework.security.oauth2.client.registration.ClientRegistrationRepository;
+import org.springframework.security.oauth2.core.user.DefaultOAuth2User;
+import org.springframework.security.saml2.provider.service.authentication.DefaultSaml2AuthenticatedPrincipal;
 import org.springframework.security.web.csrf.CsrfToken;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
@@ -132,7 +139,9 @@ public class LoginPageController extends BaseController {
             session.setLoginName(user.getLoginName());
             session.setFirstName(user.getFirstName());
             session.setLastName(user.getLastName());
-            session.setCSRF(token.getToken());
+            if (token != null) {
+                session.setCSRF(token.getToken());
+            }
             UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
             if (usd.getLoginLabUnit() != 0) {
                 TestSection testSection = testSectionService.getTestSectionById(String.valueOf(usd.getLoginLabUnit()));
@@ -140,15 +149,49 @@ public class LoginPageController extends BaseController {
                     session.setLoginLabUnit(testSection.getLocalizedName());
                 }
             }
-            setLabunitRolesForExistingUser(session);
-            Set<String> roles = new HashSet<>();
-            for (String roleId : userRoleService.getRoleIdsForUser(user.getId())) {
-                roles.add(roleService.getRoleById(roleId).getName().trim());
-            }
-            session.setRoles(roles);
-
+            setLabunitRolesForExistingUser(request, session);
         }
         return session;
+    }
+
+    private void setLabunitRolesForExistingUser(HttpServletRequest request, UserSession session) {
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+
+        if (authentication != null) {
+            Object principal = authentication.getPrincipal();
+            if (principal instanceof UserDetails) {
+                setLabunitRolesForExistingUserFromDB(session);
+                Set<String> roles = new HashSet<>();
+                for (String roleId : userRoleService.getRoleIdsForUser(session.getUserId())) {
+                    roles.add(roleService.getRoleById(roleId).getName().trim());
+                }
+                session.setRoles(roles);
+            } else if (principal instanceof DefaultSaml2AuthenticatedPrincipal) {
+                setLabunitRolesForExistingUserFromGrantedAuthorities(session, authentication);
+            } else if (principal instanceof DefaultOAuth2User) {
+                setLabunitRolesForExistingUserFromGrantedAuthorities(session, authentication);
+            }
+        }
+    }
+
+    private void setLabunitRolesForExistingUserFromGrantedAuthorities(UserSession session,
+            Authentication authentication) {
+        Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
+        Map<String, List<String>> userLabRolesMap = new HashMap<>();
+        Set<String> roles = new HashSet<>();
+        for (GrantedAuthority authority : authorities) {
+            String[] authorityExplode = authority.getAuthority().split("-");
+            if (authorityExplode.length == 2) {
+                roles.add(authorityExplode[1]);
+            } else if (authorityExplode.length == 3) {
+                List<String> userLabRoles = userLabRolesMap.getOrDefault(authorityExplode[2], new ArrayList<>());
+                userLabRoles.add(authorityExplode[1]);
+                roles.add(authorityExplode[1]);
+                userLabRolesMap.put(authorityExplode[2], userLabRoles);
+            }
+        }
+        session.setRoles(roles);
+        session.setUserLabRolesMap(userLabRolesMap);
     }
 
     @PostMapping(value = "/rest/setUserLoginLabUnit/{labUnitId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -166,7 +209,7 @@ public class LoginPageController extends BaseController {
         }
     }
 
-    private void setLabunitRolesForExistingUser(UserSession session) {
+    private void setLabunitRolesForExistingUserFromDB(UserSession session) {
         UserLabUnitRoles roles = userService.getUserLabUnitRoles(session.getUserId());
         if (roles != null) {
             Set<LabUnitRoleMap> roleMaps = roles.getLabUnitRoleMap();
