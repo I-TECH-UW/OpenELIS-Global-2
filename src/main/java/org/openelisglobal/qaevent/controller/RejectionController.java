@@ -20,7 +20,6 @@ import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.project.service.ProjectService;
@@ -179,7 +178,7 @@ public class RejectionController extends BaseController {
                     DateUtil.convertStringDateToTruncatedTimestamp(form.getCollectionDateForDisplay()));
             rejectedSample.setEnteredDate(DateUtil.getNowAsSqlDate());
             rejectedSample.setPriority(OrderPriority.ROUTINE);
-            rejectedSample.setDomain(SystemConfiguration.getInstance().getHumanDomain());
+            rejectedSample.setDomain(ConfigurationProperties.getInstance().getPropertyValue("domain.human"));
             rejectedSample.setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(OrderStatus.Entered));
             rejectedSample.setReceivedTimestamp(
                     DateUtil.convertStringDateToTruncatedTimestamp(form.getReceptionDateForDisplay()));

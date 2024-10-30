@@ -209,7 +209,7 @@ describe("Result By Referred Out Tests", function () {
     //   );
     // });
   });
-//commented due to UI changes
+  //commented due to UI changes
   // it("should select the respecting referred test and print the selected patient reports", function () {
   //   result.selectRefferedTest();
   //   result.printReport();

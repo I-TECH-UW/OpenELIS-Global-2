@@ -1,14 +1,10 @@
-package org.openelisglobal.common.provider.query;
+package org.openelisglobal.common.rest.provider.form;
 
 import java.util.List;
 import org.openelisglobal.common.form.IPagingForm;
 import org.openelisglobal.common.paging.PagingBean;
 import org.openelisglobal.common.rest.provider.bean.homedashboard.OrderDisplayBean;
 
-/**
- * To be returned as a response to a request for a patient dashboard form. It
- * contains display iteams of a page and paging information.
- */
 public class PatientDashBoardForm implements IPagingForm {
 
     private PagingBean paging;

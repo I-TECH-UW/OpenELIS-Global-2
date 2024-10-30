@@ -5,7 +5,7 @@ import java.util.List;
 import java.util.Set;
 import javax.servlet.http.HttpServletRequest;
 import org.openelisglobal.common.action.IActionConstants;
-import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.login.service.LoginUserService;
 import org.openelisglobal.login.valueholder.LoginUser;
 import org.openelisglobal.login.valueholder.UserSessionData;
@@ -58,7 +58,7 @@ public class BasicAuthFilter extends BasicAuthenticationFilter {
         request.getSession().setAttribute(IActionConstants.USER_SESSION_DATA, usd);
 
         // get permitted actions map (available modules for the current user)
-        if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
+        if (ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equalsIgnoreCase("ROLE")) {
             Set<String> permittedPages = getPermittedForms(usd.getSystemUserId());
             request.setAttribute(IActionConstants.PERMITTED_ACTIONS_MAP, permittedPages);
             // showAdminMenu |= permittedPages.contains("MasterList");

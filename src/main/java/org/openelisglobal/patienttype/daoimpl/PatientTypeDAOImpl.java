@@ -19,8 +19,8 @@ import org.hibernate.Session;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.patienttype.dao.PatientTypeDAO;
 import org.openelisglobal.patienttype.valueholder.PatientType;
 import org.springframework.stereotype.Component;
@@ -184,7 +184,9 @@ public class PatientTypeDAOImpl extends BaseDAOImpl<PatientType, String> impleme
         List<PatientType> list = new Vector<>();
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             String sql = "from PatientType l order by l.type";
             org.hibernate.query.Query query = entityManager.unwrap(Session.class).createQuery(sql);

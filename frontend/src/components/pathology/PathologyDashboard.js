@@ -44,7 +44,7 @@ function PathologyDashboard() {
   const [statuses, setStatuses] = useState([]);
   const [pathologyEntries, setPathologyEntries] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(10);
+  const [pageSize, setPageSize] = useState(100);
   const [filters, setFilters] = useState({
     searchTerm: "",
     myCases: false,
@@ -431,7 +431,7 @@ function PathologyDashboard() {
               onChange={handlePageChange}
               page={page}
               pageSize={pageSize}
-              pageSizes={[10, 20, 30]}
+              pageSizes={[10, 20, 30, 50, 100]}
               totalItems={pathologyEntries.length}
               forwardText={intl.formatMessage({ id: "pagination.forward" })}
               backwardText={intl.formatMessage({ id: "pagination.backward" })}

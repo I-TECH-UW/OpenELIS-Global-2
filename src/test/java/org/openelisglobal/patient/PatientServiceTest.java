@@ -11,7 +11,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
-import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.service.PatientTypeService;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -142,7 +142,8 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
     @Test
     public void createPatientType_shouldCreateNewPatientType() throws Exception {
         PatientType patientType = new PatientType();
-        patientType.setDescription("Test Type");
+        patientType.setDescription("Test Type Description");
+        patientType.setType("Test Type");
 
         Assert.assertEquals(0, patientTypeService.getAllPatientTypes().size());
 
@@ -150,7 +151,8 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
         PatientType savedPatientType = patientTypeService.get(patientTypeId);
 
         Assert.assertEquals(1, patientTypeService.getAllPatientTypes().size());
-        Assert.assertEquals("Test Type", savedPatientType.getDescription());
+        Assert.assertEquals("Test Type Description", savedPatientType.getDescription());
+        Assert.assertEquals("Test Type", savedPatientType.getType());
     }
 
     @Test
@@ -281,7 +283,8 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
 
         List<Patient> patientsPage = patientService.getPageOfPatients(1);
 
-        int expectedPageSize = SystemConfiguration.getInstance().getDefaultPageSize();
+        int expectedPageSize = Integer
+                .parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"));
         Assert.assertTrue(patientsPage.size() <= expectedPageSize);
 
         if (expectedPageSize >= 2) {
