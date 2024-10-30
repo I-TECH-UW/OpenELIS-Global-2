@@ -108,7 +108,7 @@ public class ResultReportingConfigurationRestController extends BaseController {
             return form;
         }
 
-        ConfigurationProperties.forceReload();
+        ConfigurationProperties.loadDBValuesIntoConfiguration();
         SpringContext.getBean(SchedulerConfig.class).reloadSchedules();
 
         // redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);

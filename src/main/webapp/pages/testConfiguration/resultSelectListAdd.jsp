@@ -14,7 +14,6 @@
           		org.openelisglobal.common.util.IdValuePair,
           		org.openelisglobal.internationalization.MessageUtil,
           		org.openelisglobal.common.util.Versioning,
-          		org.openelisglobal.common.util.SystemConfiguration,
           		org.openelisglobal.testconfiguration.action.SampleTypePanel" %>
 
 <%@ page isELIgnored="false" %>

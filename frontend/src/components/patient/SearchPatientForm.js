@@ -22,8 +22,9 @@ import {
   Loading,
   Toggle,
   Tag,
+  Link,
 } from "@carbon/react";
-import { Person } from "@carbon/react/icons";
+import { Person, ArrowLeft, ArrowRight } from "@carbon/react/icons";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import { patientSearchHeaderData } from "../data/PatientResultsTableHeaders";
 import { Formik, Field } from "formik";
@@ -45,12 +46,14 @@ function SearchPatientForm(props) {
   const [patientSearchResults, setPatientSearchResults] = useState([]);
   const [importStatus, setImportStatus] = useState({});
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(5);
+  const [pageSize, setPageSize] = useState(100);
   const [loading, setLoading] = useState(false);
   const [nextPage, setNextPage] = useState(null);
   const [isToggled, setIsToggled] = useState(false);
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
+  const [currentApiPage, setCurrentApiPage] = useState(null);
+  const [totalApiPages, setTotalApiPages] = useState(null);
   const [url, setUrl] = useState("");
   const [searchFormValues, setSearchFormValues] = useState(
     SearchPatientFormValues,
@@ -135,6 +138,9 @@ function SearchPatientForm(props) {
   };
 
   const handleSubmit = (values) => {
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
     setLoading(true);
     values.dateOfBirth = dob;
     let searchEndPoint =
@@ -200,6 +206,8 @@ function SearchPatientForm(props) {
       var { totalPages, currentPage } = res.paging;
       if (totalPages > 1) {
         setPagination(true);
+        setCurrentApiPage(currentPage);
+        setTotalApiPages(totalPages);
         if (parseInt(currentPage) < parseInt(totalPages)) {
           setNextPage(parseInt(currentPage) + 1);
         } else {
@@ -461,41 +469,56 @@ function SearchPatientForm(props) {
                   />
                 </Column>
               )}
+              <Column lg={16}>
+                {" "}
+                <br />
+                <br />
+              </Column>
             </Grid>
           </Form>
         )}
       </Formik>
-      <Column lg={16}>
-        {" "}
-        <br />{" "}
-      </Column>
-      <Column lg={16}>
-        {pagination && (
-          <Grid>
-            <Column lg={11} />
-            <Column lg={2}>
+      {pagination && (
+        <Grid>
+          <Column lg={8}>
+            {" "}
+            <div></div>
+          </Column>
+          <Column lg={14} />
+          <Column
+            lg={2}
+            style={{
+              display: "flex",
+              flexDirection: "column",
+              alignItems: "center",
+              gap: "10px",
+              width: "110%",
+            }}
+          >
+            <Link>
+              {currentApiPage} / {totalApiPages}
+            </Link>
+            <div style={{ display: "flex", gap: "10px" }}>
               <Button
-                type=""
+                hasIconOnly
                 id="loadpreviousresults"
                 onClick={loadPreviousResultsPage}
                 disabled={previousPage != null ? false : true}
-              >
-                <FormattedMessage id="button.label.loadprevious" />
-              </Button>
-            </Column>
-            <Column lg={2}>
+                renderIcon={ArrowLeft}
+                iconDescription="previous"
+              ></Button>
               <Button
-                type=""
+                hasIconOnly
                 id="loadnextresults"
-                disabled={nextPage != null ? false : true}
                 onClick={loadNextResultsPage}
-              >
-                <FormattedMessage id="button.label.loadnext" />
-              </Button>
-            </Column>
-          </Grid>
-        )}
-      </Column>
+                disabled={nextPage != null ? false : true}
+                renderIcon={ArrowRight}
+                iconDescription="next"
+              ></Button>
+            </div>
+          </Column>
+        </Grid>
+      )}
       <DataTable
         rows={patientSearchResults}
         headers={patientSearchHeaderData}
@@ -595,7 +618,7 @@ function SearchPatientForm(props) {
         onChange={handlePageChange}
         page={page}
         pageSize={pageSize}
-        pageSizes={[5, 10, 20, 30]}
+        pageSizes={[10, 20, 30, 50, 100]}
         totalItems={patientSearchResults.length}
         forwardText={intl.formatMessage({ id: "pagination.forward" })}
         backwardText={intl.formatMessage({ id: "pagination.backward" })}
