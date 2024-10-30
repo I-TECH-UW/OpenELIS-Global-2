@@ -17,11 +17,11 @@ import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.provider.query.PatientDashBoardForm;
 import org.openelisglobal.common.rest.provider.bean.homedashboard.AverageTimeDisplayBean;
 import org.openelisglobal.common.rest.provider.bean.homedashboard.DashBoardMetrics;
 import org.openelisglobal.common.rest.provider.bean.homedashboard.DashBoardTile;
 import org.openelisglobal.common.rest.provider.bean.homedashboard.OrderDisplayBean;
+import org.openelisglobal.common.rest.provider.form.PatientDashBoardForm;
 import org.openelisglobal.common.rest.util.PatientDashBoardPaging;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
@@ -176,7 +176,7 @@ public class PatientDashBoardProvider {
             return unprintedAnalyses;
         }
         analyses.forEach(a -> {
-            if (a.getPrintedDate() == null) {
+            if (!analysisService.patientReportHasBeenDone(a)) {
                 unprintedAnalyses.add(a);
             }
         });

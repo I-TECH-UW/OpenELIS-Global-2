@@ -428,14 +428,18 @@ const Index = () => {
     let nodes =
       elements[tag] instanceof Array ? elements[tag] : [elements[tag]];
     let objList = [];
+
     for (let j = 0; j < nodes.length; j++) {
       let name = nodes[j].name;
       let id = nodes[j].id;
       if (tag == "panel") {
         objList[j] = newPanel(id, name);
-        let testNodes = elements.panelTests;
+        let testNodes = nodes[j].panelTests;
+        if (testNodes.length === undefined) {
+          testNodes = [testNodes];
+        }
         for (let x = 0; x < testNodes.length; x++) {
-          let ptNodes = elements.test;
+          let ptNodes = testNodes[x].test;
           for (let y = 0; y < ptNodes.length; y++) {
             let pName = ptNodes[y].name;
             let pId = ptNodes[y].id;

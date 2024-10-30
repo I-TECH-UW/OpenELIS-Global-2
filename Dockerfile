@@ -91,7 +91,12 @@ RUN groupadd tomcat; \
     chmod g-w,o-rwx $CATALINA_HOME/conf/logging.properties; \
     chmod g-w,o-rwx $CATALINA_HOME/conf/server.xml; \
     chmod g-w,o-rwx $CATALINA_HOME/conf/tomcat-users.xml; \
-    chmod g-w,o-rwx $CATALINA_HOME/conf/web.xml
+    chmod g-w,o-rwx $CATALINA_HOME/conf/web.xml; \
+    mkdir -p /var/lib/openelis-global/logs/; \
+    chown -R tomcat_admin:tomcat /var/lib/openelis-global/logs/;\
+    mkdir -p /var/lib/openelis-global/properties/; \
+    chown -R tomcat_admin:tomcat /var/lib/openelis-global/properties/;
+
 
 COPY install/openelis_healthcheck.sh /healthcheck.sh
 RUN chown tomcat_admin:tomcat /healthcheck.sh; \

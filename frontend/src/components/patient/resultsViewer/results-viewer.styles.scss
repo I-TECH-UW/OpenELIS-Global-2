@@ -203,3 +203,19 @@
   height: 5rem;
   border-radius: 1px;
 }
+@media screen and (max-width: 673px) {
+  .patient-name {
+    font-size: 16px;
+    margin-left: 5%;
+  }
+
+  .patient-dob {
+    font-size: 14px;
+    margin-left: 5%;
+  }
+
+  .patient-id {
+    font-size: 12px;
+    margin-left: 5%;
+  }
+}
