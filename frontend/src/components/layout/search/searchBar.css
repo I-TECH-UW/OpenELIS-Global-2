@@ -16,6 +16,7 @@
 .search-input {
   width: 100%;
   position: relative;
+  
 }
 
 .search-bar-container:hover {
@@ -48,24 +49,54 @@
   cursor: pointer;
 }
 
+/* Small screens - Mobile layout (768px and below) */
 @media (max-width: 768px) {
   .patientHead {
-    flex-direction: column;
+    flex-direction: column; /* Stack elements vertically on small screens */
+    align-items: center; /* Center items for mobile view */
+    width: 50%; /* Allow full width on mobile */
   }
 
   .search-bar-container {
-    flex-direction: column;
-    align-items: stretch;
+    flex-direction: row; /* Stack search elements vertically */
+    align-items: centre;
+    margin-top: 40px;
+    width: 50%; /* Expand to full width on mobile */
+    /* padding: 10px;  Optional padding for better spacing */
   }
 
   .search-input {
-    width: 100%;
+    width: 90%; /* Set search input to almost full width */
+    /*margin: 10px 0;  Add margin to separate elements */
   }
 }
 
-@media (min-width: 769px) and (max-width: 1024px) {
+
+
+/* Medium screens - Tablet layout */
+@media (min-width: 769px) and (max-width: 1099px) {
   .patientHead {
     flex-direction: row;
+    justify-content: space-between;
+  }
+
+  .search-bar-container {
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    margin-top: 40px;
+  }
+
+  .search-input {
+    width: 75%; /* Adjust for better usability on tablets */
+  }
+}
+
+/* Larger screens - Desktop layout */
+@media (min-width: 1100px) {
+  .patientHead {
+    flex-direction: row;
+    justify-content: space-between;
   }
 
   .search-bar-container {
@@ -74,6 +105,6 @@
   }
 
   .search-input {
-    width: 75%;
+    width: 50%; /* Width for desktop */
   }
 }
