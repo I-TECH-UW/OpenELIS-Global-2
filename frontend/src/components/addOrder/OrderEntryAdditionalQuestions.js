@@ -381,18 +381,20 @@ const OrderEntryAdditionalQuestions = ({
 
   function setAdditionalQuestions(res, event) {
     console.debug(res);
-    setQuestionnaire(res);
-    var convertedQuestionnaireResponse = convertQuestionnaireToResponse(res);
-    setQuestionnaireResponse(convertedQuestionnaireResponse);
-    setOrderFormValues({
-      ...orderFormValues,
-      sampleOrderItems: {
-        ...orderFormValues.sampleOrderItems,
-        questionnaire: res,
-        programId: event ? event.target.value : "",
-        additionalQuestions: convertedQuestionnaireResponse,
-      },
-    });
+    if ("item" in res) {
+      setQuestionnaire(res);
+      var convertedQuestionnaireResponse = convertQuestionnaireToResponse(res);
+      setQuestionnaireResponse(convertedQuestionnaireResponse);
+      setOrderFormValues({
+        ...orderFormValues,
+        sampleOrderItems: {
+          ...orderFormValues.sampleOrderItems,
+          questionnaire: res,
+          programId: event ? event.target.value : "",
+          additionalQuestions: convertedQuestionnaireResponse,
+        },
+      });
+    }
   }
   const getAnswer = (linkId) => {
     var responseItem = questionnaireResponse?.item?.find(
