@@ -58,16 +58,15 @@
   }
 
   .search-bar-container {
-    flex-direction: row; /* Stack search elements vertically */
-    align-items: right;
+    flex-direction: row; /* Stack search elements horizontally */ 
     margin-top: 40px;
-    width: 35%; /* Expand to full width on mobile */
+    width: 35%;
+    box-shadow: none;
     /* padding: 10px;  Optional padding for better spacing */
   }
 
   .search-input {
     width: 90%; /* Set search input to almost full width */
-    /*margin: 10px 0;  Add margin to separate elements */
   }
 }
 
