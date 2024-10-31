@@ -15,9 +15,16 @@ You can find more information on how to set up OpenELIS at our
 
 [![End to End QA Tests Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/frontend-qa.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/frontend-qa.yml)
 
+[![End to End QA Tests Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/build-installer.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/build-installer.yml)
+
+### For Offline Installation ,Download the OpenELIS Global Installer for each Release from the [Release Assets](https://github.com/I-TECH-UW/OpenELIS-Global-2/releases)
+
+see full [installtion instructions](https://docs.openelis-global.org/en/latest/install/) with the Offline Installer
+
 ### For Implementers who Just want to run OpenELIS without Making any Code Changes
 
 see [OpenELIS-Docker setup](https://github.com/I-TECH-UW/openelis-docker)
+
 
 ### Running OpenELIS in Docker For Devlopers with Intention of Making code Changes
 
