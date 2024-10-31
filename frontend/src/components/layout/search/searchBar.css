@@ -92,18 +92,18 @@
   .patientHead {
     flex-direction: column;
     align-items: center;
-    width: 40%;
+    width: 45%;
   }
 
   .search-bar-container {
     flex-direction: row;
     align-items: center;
     margin-top: 40px;
-    width: 40%;
+    width: 45%;
   }
 
   .search-input {
-    width: 40%;
+    width: 45%;
   }
 }
 
