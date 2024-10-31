@@ -1,9 +1,7 @@
 package org.openelisglobal.reports.form;
 
 import java.util.List;
-
 import javax.validation.constraints.Pattern;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
@@ -14,8 +12,8 @@ import org.openelisglobal.reports.action.implementation.ReportSpecificationList;
 import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.validation.annotations.ValidDate;
 
-//values not preserved, so security validation not a large concern
-//values used in jasperreports
+// values not preserved, so security validation not a large concern
+// values used in jasperreports
 public class ReportForm extends BaseForm {
 
     public enum DateType {
@@ -31,7 +29,6 @@ public class ReportForm extends BaseForm {
         public String getMessageKey() {
             return this.messageKey;
         }
-
     }
 
     public enum ReceptionTime {
@@ -134,15 +131,15 @@ public class ReportForm extends BaseForm {
     private String selPatient;
 
     private boolean useSiteSearch;
-    
+
     private boolean useArvOrganizationSearch;
 
     private String referringSiteId;
 
     private List<IdValuePair> referringSiteList;
-    
+
     private List<Organization> arvOrganizationList;
-    
+
     private String arvSiteId;
 
     private List<IdValuePair> arvSiteList;
@@ -162,6 +159,46 @@ public class ReportForm extends BaseForm {
     private List<String> labSections;
 
     private Boolean useStatisticsParams = false;
+
+    private String programSampleId;
+
+    private String erPercent;
+
+    private String erIntensity;
+
+    private String erScore;
+
+    private String prPercent;
+
+    private String prIntensity;
+
+    private String prScore;
+
+    private String mib;
+
+    private String pattern;
+
+    private String herAssesment;
+
+    private String herScore;
+
+    private String diagnosis;
+
+    private String molecularSubType;
+
+    private String conclusion;
+
+    private String ihcScore;
+
+    private String ihcRatio;
+
+    private String averageChrom;
+
+    private String averageHer2;
+
+    private String numberOfcancerNuclei;
+
+    private List<String> codedConclusions;
 
     // for display
     private List<IdValuePair> priorityList;
@@ -628,35 +665,196 @@ public class ReportForm extends BaseForm {
         this.receptionTime = receptionTime;
     }
 
-	public String getArvSiteId() {
-		return arvSiteId;
-	}
+    public String getProgramSampleId() {
+        return programSampleId;
+    }
 
-	public void setArvSiteId(String arvSiteId) {
-		this.arvSiteId = arvSiteId;
-	}
+    public void setProgramSampleId(String programSampleId) {
+        this.programSampleId = programSampleId;
+    }
 
-	public List<IdValuePair> getArvSiteList() {
-		return arvSiteList;
-	}
+    public String getErPercent() {
+        return erPercent;
+    }
 
-	public void setArvSiteList(List<IdValuePair> arvSiteList) {
-		this.arvSiteList = arvSiteList;
-	}
+    public void setErPercent(String erPercent) {
+        this.erPercent = erPercent;
+    }
 
-	public boolean isUseArvOrganizationSearch() {
-		return useArvOrganizationSearch;
-	}
+    public String getErIntensity() {
+        return erIntensity;
+    }
 
-	public void setUseArvOrganizationSearch(boolean useArvOrganizationSearch) {
-		this.useArvOrganizationSearch = useArvOrganizationSearch;
-	}
+    public void setErIntensity(String erIntensity) {
+        this.erIntensity = erIntensity;
+    }
 
-	public List<Organization> getArvOrganizationList() {
-		return arvOrganizationList;
-	}
+    public String getErScore() {
+        return erScore;
+    }
 
-	public void setArvOrganizationList(List<Organization> arvOrganizationList) {
-		this.arvOrganizationList = arvOrganizationList;
-	}
+    public void setErScore(String erScore) {
+        this.erScore = erScore;
+    }
+
+    public String getPrPercent() {
+        return prPercent;
+    }
+
+    public void setPrPercent(String prPercent) {
+        this.prPercent = prPercent;
+    }
+
+    public String getPrIntensity() {
+        return prIntensity;
+    }
+
+    public void setPrIntensity(String prIntensity) {
+        this.prIntensity = prIntensity;
+    }
+
+    public String getPrScore() {
+        return prScore;
+    }
+
+    public void setPrScore(String prScore) {
+        this.prScore = prScore;
+    }
+
+    public String getMib() {
+        return mib;
+    }
+
+    public void setMib(String mib) {
+        this.mib = mib;
+    }
+
+    public String getPattern() {
+        return pattern;
+    }
+
+    public void setPattern(String pattern) {
+        this.pattern = pattern;
+    }
+
+    public String getHerScore() {
+        return herScore;
+    }
+
+    public void setHerScore(String herScore) {
+        this.herScore = herScore;
+    }
+
+    public String getDiagnosis() {
+        return diagnosis;
+    }
+
+    public void setDiagnosis(String diagnosis) {
+        this.diagnosis = diagnosis;
+    }
+
+    public String getMolecularSubType() {
+        return molecularSubType;
+    }
+
+    public void setMolecularSubType(String molecularSubType) {
+        this.molecularSubType = molecularSubType;
+    }
+
+    public String getHerAssesment() {
+        return herAssesment;
+    }
+
+    public void setHerAssesment(String herAssesment) {
+        this.herAssesment = herAssesment;
+    }
+
+    public String getConclusion() {
+        return conclusion;
+    }
+
+    public void setConclusion(String conclusion) {
+        this.conclusion = conclusion;
+    }
+
+    public String getIhcScore() {
+        return ihcScore;
+    }
+
+    public void setIhcScore(String ihcScore) {
+        this.ihcScore = ihcScore;
+    }
+
+    public String getIhcRatio() {
+        return ihcRatio;
+    }
+
+    public void setIhcRatio(String ihcRatio) {
+        this.ihcRatio = ihcRatio;
+    }
+
+    public String getAverageChrom() {
+        return averageChrom;
+    }
+
+    public void setAverageChrom(String averageChrom) {
+        this.averageChrom = averageChrom;
+    }
+
+    public String getAverageHer2() {
+        return averageHer2;
+    }
+
+    public void setAverageHer2(String averageHer2) {
+        this.averageHer2 = averageHer2;
+    }
+
+    public String getNumberOfcancerNuclei() {
+        return numberOfcancerNuclei;
+    }
+
+    public void setNumberOfcancerNuclei(String numberOfcancerNuclei) {
+        this.numberOfcancerNuclei = numberOfcancerNuclei;
+    }
+
+    public String getArvSiteId() {
+        return arvSiteId;
+    }
+
+    public void setArvSiteId(String arvSiteId) {
+        this.arvSiteId = arvSiteId;
+    }
+
+    public List<IdValuePair> getArvSiteList() {
+        return arvSiteList;
+    }
+
+    public void setArvSiteList(List<IdValuePair> arvSiteList) {
+        this.arvSiteList = arvSiteList;
+    }
+
+    public boolean isUseArvOrganizationSearch() {
+        return useArvOrganizationSearch;
+    }
+
+    public void setUseArvOrganizationSearch(boolean useArvOrganizationSearch) {
+        this.useArvOrganizationSearch = useArvOrganizationSearch;
+    }
+
+    public List<Organization> getArvOrganizationList() {
+        return arvOrganizationList;
+    }
+
+    public void setArvOrganizationList(List<Organization> arvOrganizationList) {
+        this.arvOrganizationList = arvOrganizationList;
+    }
+
+    public List<String> getCodedConclusions() {
+        return codedConclusions;
+    }
+
+    public void setCodedConclusions(List<String> codedConclusions) {
+        this.codedConclusions = codedConclusions;
+    }
+
 }

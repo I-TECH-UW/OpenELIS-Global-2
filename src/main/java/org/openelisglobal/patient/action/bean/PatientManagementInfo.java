@@ -1,33 +1,27 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
- *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
  */
 package org.openelisglobal.patient.action.bean;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
-
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
@@ -48,6 +42,7 @@ import org.openelisglobal.sample.form.SamplePatientEntryForm;
 import org.openelisglobal.sample.form.SamplePatientEntryForm.SamplePatientEntryBatch;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.validation.annotations.OptionalNotBlank;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
@@ -70,6 +65,7 @@ public class PatientManagementInfo implements Serializable {
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String patientPK;
+
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String STnumber;
@@ -79,26 +75,30 @@ public class PatientManagementInfo implements Serializable {
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String subjectNumber;
+
     @OptionalNotBlank(properties = { Property.PATIENT_NATIONAL_ID_REQUIRED }, groups = {
             SamplePatientEntryForm.SamplePatientEntry.class })
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String nationalId;
+
     @Pattern(regexp = ValidationHelper.PATIENT_ID_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String guid;
-//    private UUID fhirUuid;
+    // private UUID fhirUuid;
 
     @OptionalNotBlank(formFields = { Field.PatientNameRequired }, groups = {
             SamplePatientEntryForm.SamplePatientEntry.class })
     @ValidName(nameType = NameType.LAST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String lastName;
+
     @OptionalNotBlank(formFields = { Field.PatientNameRequired }, groups = {
             SamplePatientEntryForm.SamplePatientEntry.class })
     @ValidName(nameType = NameType.FIRST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String firstName;
+
     @ValidName(nameType = NameType.FULL_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String aka;
@@ -106,18 +106,22 @@ public class PatientManagementInfo implements Serializable {
     @ValidName(nameType = NameType.LAST_NAME, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String mothersName;
+
     @Size(max = 1)
     private String mothersInitial;
 
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String streetAddress;
+
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String city;
+
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String commune;
+
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String addressDepartment;
@@ -130,6 +134,7 @@ public class PatientManagementInfo implements Serializable {
     private String ageYears;
     private String ageMonths;
     private String ageDays;
+
     @ValidDate(relative = DateRelation.PAST, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String birthDateForDisplay = "";
@@ -144,12 +149,15 @@ public class PatientManagementInfo implements Serializable {
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String insuranceNumber;
+
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String occupation;
+
     @Pattern(regexp = ValidationHelper.PHONE_REGEX, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String primaryPhone;
+
     @Email(groups = { SamplePatientEntryForm.SamplePatientEntry.class, SamplePatientEntryBatch.class })
     private String email;
 
@@ -164,18 +172,23 @@ public class PatientManagementInfo implements Serializable {
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String healthRegion;
+
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String education;
+
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String maritialStatus;
+
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String nationality;
+
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String healthDistrict;
+
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE, groups = { SamplePatientEntryForm.SamplePatientEntry.class,
             SamplePatientEntryBatch.class })
     private String otherNationality;
@@ -531,15 +544,15 @@ public class PatientManagementInfo implements Serializable {
         this.patientContact = patientContact;
     }
 
-//    public UUID getFhirUuid() {
-//        return fhirUuid;
-//    }
-//
-//    public void setFhirUuid(UUID fhirUuid) {
-//        this.fhirUuid = fhirUuid;
-//    }
-//
-//    public String getFhirUuidAsString() {
-//        return fhirUuid == null ? "" : fhirUuid.toString();
-//    }
+    // public UUID getFhirUuid() {
+    // return fhirUuid;
+    // }
+    //
+    // public void setFhirUuid(UUID fhirUuid) {
+    // this.fhirUuid = fhirUuid;
+    // }
+    //
+    // public String getFhirUuidAsString() {
+    // return fhirUuid == null ? "" : fhirUuid.toString();
+    // }
 }

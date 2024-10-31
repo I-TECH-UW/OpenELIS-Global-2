@@ -10,7 +10,6 @@ import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
 import javax.validation.Valid;
-
 import org.openelisglobal.common.valueholder.BaseObject;
 
 @Entity
@@ -61,5 +60,4 @@ public class AnalyzerExperiment extends BaseObject<Integer> {
     public void setFile(byte[] file) {
         this.file = file;
     }
-
 }

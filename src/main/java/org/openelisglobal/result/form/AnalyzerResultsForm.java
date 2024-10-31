@@ -1,16 +1,14 @@
 package org.openelisglobal.result.form;
 
 import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.analyzer.service.BidirectionalAnalyzer.LISAction;
 import org.openelisglobal.analyzerresults.action.beanitems.AnalyzerResultItem;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.form.IPagingForm;
 import org.openelisglobal.common.paging.PagingBean;
+import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class AnalyzerResultsForm extends BaseForm implements IPagingForm {
 
@@ -88,5 +86,4 @@ public class AnalyzerResultsForm extends BaseForm implements IPagingForm {
     public void setSupportedLISActions(List<LISAction> supportedLISActions) {
         this.supportedLISActions = supportedLISActions;
     }
-
 }

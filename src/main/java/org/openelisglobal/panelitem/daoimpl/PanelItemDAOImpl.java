@@ -1,23 +1,20 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.panelitem.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -25,8 +22,8 @@ import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.panelitem.dao.PanelItemDAO;
 import org.openelisglobal.panelitem.valueholder.PanelItem;
 import org.springframework.stereotype.Component;
@@ -54,7 +51,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
                 panelItem.setId(null);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PanelItem getData()", e);
         }
     }
@@ -68,7 +65,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
             Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PanelItem getAllPanelItems()", e);
         }
 
@@ -81,7 +78,9 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
         List<PanelItem> list;
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             String sql = "from PanelItem p order by p.panel.panelName, p.testName";
             Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
@@ -90,7 +89,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PanelItem getPageOfPanelItems()", e);
         }
 
@@ -102,7 +101,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
         try {
             pi = entityManager.unwrap(Session.class).get(PanelItem.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PanelItem readPanelItem()", e);
         }
 
@@ -114,16 +113,16 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
     public List<PanelItem> getPanelItems(String filter) throws LIMSRuntimeException {
         List<PanelItem> list;
         try {
-            String sql = "from PanelItem p where upper(p.methodName) like upper(:param) order by upper(p.methodName)";
+            String sql = "from PanelItem p where upper(p.methodName) like upper(:param) order by"
+                    + " upper(p.methodName)";
             Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
             query.setParameter("param", filter + "%");
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PanelItem getPanelItems(String filter)", e);
         }
         return list;
-
     }
 
     @Override
@@ -137,12 +136,11 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in PanelItem getPanelItemsForPanel(String panelId)", e);
         }
 
         return list;
-
     }
 
     @Override
@@ -159,7 +157,8 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
-            String sql = "from PanelItem t where trim(lower(t.panel.panelName)) = :param and t.sortOrder = :sortOrder and t.id != :panelItemId";
+            String sql = "from PanelItem t where trim(lower(t.panel.panelName)) = :param and t.sortOrder ="
+                    + " :sortOrder and t.id != :panelItemId";
             Query<PanelItem> query = entityManager.unwrap(Session.class).createQuery(sql, PanelItem.class);
 
             query.setParameter("param", panelItem.getPanelName().toLowerCase().trim());
@@ -179,7 +178,7 @@ public class PanelItemDAOImpl extends BaseDAOImpl<PanelItem, String> implements 
             return !list.isEmpty();
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in getDuplicateSortOrderForPanel()", e);
         }
     }

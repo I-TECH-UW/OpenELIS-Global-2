@@ -14,5 +14,4 @@ public class ProfileForm extends BaseForm {
     public void setFile(MultipartFile file) {
         this.file = file;
     }
-
 }

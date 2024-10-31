@@ -1,21 +1,19 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
-*
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
+ */
 package org.openelisglobal.analyzerimport.analyzerreaders;
 
+import com.ibm.icu.text.CharsetDetector;
 import java.io.BufferedInputStream;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -23,13 +21,10 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.PluginAnalyzerService;
 import org.openelisglobal.plugin.AnalyzerImporterPlugin;
 import org.openelisglobal.spring.util.SpringContext;
-
-import com.ibm.icu.text.CharsetDetector;
 
 public class AnalyzerLineReader extends AnalyzerReader {
 
@@ -70,13 +65,11 @@ public class AnalyzerLineReader extends AnalyzerReader {
                 }
             } catch (IOException e) {
                 error = "Unable to read file";
-                LogEvent.logError(e);
                 LogEvent.logError("an error occured detecting the encoding of the analyzer file", e);
                 return false;
             }
         } catch (IOException e) {
             error = "Unable to determine file encoding";
-            LogEvent.logError(e);
             LogEvent.logError("an error occured detecting the encoding of the analyzer file", e);
             return false;
         }
@@ -92,15 +85,18 @@ public class AnalyzerLineReader extends AnalyzerReader {
             error = "Empty file";
             return false;
         }
-
     }
 
     private void setInserter() {
 
         for (AnalyzerImporterPlugin plugin : SpringContext.getBean(PluginAnalyzerService.class).getAnalyzerPlugins()) {
-            if (plugin.isTargetAnalyzer(lines)) {
-                inserter = plugin.getAnalyzerLineInserter();
-                return;
+            try {
+                if (plugin.isTargetAnalyzer(lines)) {
+                    inserter = plugin.getAnalyzerLineInserter();
+                    return;
+                }
+            } catch (RuntimeException e) {
+                LogEvent.logError(e);
             }
         }
         // This is going to be highly customized based on the characteristics of the
@@ -114,10 +110,10 @@ public class AnalyzerLineReader extends AnalyzerReader {
                 || lines.get(0).contains(EVOLIS_MUREX_DBS_INDICATOR)) { // Evolis is found on the first line
             inserter = new EvolisReader();
         } else if (lines.get(1) != null && lines.get(1).contains(SYSMEX_XT_INDICATOR)) { // Sysmex model found on data
-                                                                                         // line
+            // line
             inserter = new SysmexReader();
         } else if (lines.get(1) != null && lines.get(1).contains(FACSCALIBUR_INDICATOR)) { // Fascalibur software found
-                                                                                           // on data line
+            // on data line
             inserter = new FacscaliburReader();
         } else if (lines.get(1) != null
                 && (lines.get(1).contains(COBAS_TAQMAN_INDICATOR) || lines.get(1).contains(COBAS_TAQMAN_INDICATOR_2)
@@ -160,7 +156,6 @@ public class AnalyzerLineReader extends AnalyzerReader {
 
             return success;
         }
-
     }
 
     @Override

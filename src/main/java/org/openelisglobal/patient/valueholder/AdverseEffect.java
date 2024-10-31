@@ -1,10 +1,7 @@
-/**
- *
- */
+/** */
 package org.openelisglobal.patient.valueholder;
 
 import java.io.Serializable;
-
 import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class AdverseEffect implements Serializable {
@@ -12,6 +9,7 @@ public class AdverseEffect implements Serializable {
 
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String type;
+
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String grade;
 

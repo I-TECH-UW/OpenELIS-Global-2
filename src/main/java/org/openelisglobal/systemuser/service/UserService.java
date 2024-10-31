@@ -3,7 +3,6 @@ package org.openelisglobal.systemuser.service;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.login.valueholder.LoginUser;
@@ -33,11 +32,12 @@ public interface UserService {
     List<AnalysisItem> filterAnalysisResultsByLabUnitRoles(String SystemUserId, List<AnalysisItem> results,
             String roleName);
 
-    List<Analysis> filterAnalysesByLabUnitRoles(String SystemUserId, List<Analysis> results,
-            String roleName);
+    List<Analysis> filterAnalysesByLabUnitRoles(String SystemUserId, List<Analysis> results, String roleName);
 
     List<TestResultItem> filterResultsByLabUnitRoles(String SystemUserId, List<TestResultItem> results,
             String roleName);
 
-	List<IdValuePair> getUserSampleTypes(String systemUserId, String roleName, String testSectionName);
+    List<IdValuePair> getUserPrograms(String systemUserId, String userRole);
+
+    List<IdValuePair> getUserSampleTypes(String systemUserId, String roleName, String testSectionName);
 }

@@ -20,11 +20,9 @@ package org.openelisglobal.common.provider.query;
 import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
 import org.openelisglobal.common.util.XMLUtil;
@@ -72,5 +70,4 @@ public class DepartmentsForReferringClinicProvider extends BaseQueryProvider {
         }
         XMLUtil.appendKeyValue("selectedValue", selectedValue, xml);
     }
-
 }

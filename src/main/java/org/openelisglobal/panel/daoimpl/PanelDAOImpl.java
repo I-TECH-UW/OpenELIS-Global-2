@@ -1,18 +1,16 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.panel.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
@@ -20,7 +18,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -28,8 +25,8 @@ import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.panel.dao.PanelDAO;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.springframework.stereotype.Component;
@@ -62,10 +59,9 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel getData()", e);
         }
-
     }
 
     @Override
@@ -82,7 +78,6 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<Panel> getAllActivePanels() throws LIMSRuntimeException {
         try {
@@ -92,14 +87,12 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             List<Panel> list = query.list();
             return list;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel getAllActivePanels()", e);
         }
-
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<Panel> getAllPanels() throws LIMSRuntimeException {
         try {
@@ -109,10 +102,9 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             List<Panel> list = query.list();
             return list;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel getAllPanels()", e);
         }
-
     }
 
     @Override
@@ -121,7 +113,9 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
         List<Panel> list;
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             // bugzilla 1399
             String sql = "from Panel p order by p.panelName";
@@ -132,7 +126,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel getPageOfPanels()", e);
         }
 
@@ -145,7 +139,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             panel = entityManager.unwrap(Session.class).get(Panel.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel readPanel()", e);
         }
 
@@ -158,17 +152,17 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
     public List<Panel> getActivePanels(String filter) throws LIMSRuntimeException {
         List<Panel> list = null;
         try {
-            String sql = "from Panel p where isActive = 'Y' and upper(p.panelName) like upper(:param) order by upper(p.panelName)";
+            String sql = "from Panel p where isActive = 'Y' and upper(p.panelName) like upper(:param) order by"
+                    + " upper(p.panelName)";
             Query<Panel> query = entityManager.unwrap(Session.class).createQuery(sql, Panel.class);
             query.setParameter("param", filter + "%");
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel getPanels()", e);
         }
         return list;
-
     }
 
     @Override
@@ -212,7 +206,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             }
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicatePanelExists()", e);
         }
     }
@@ -246,7 +240,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             }
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicatePanelDescriptionExists()", e);
         }
     }
@@ -315,7 +309,7 @@ public class PanelDAOImpl extends BaseDAOImpl<Panel, String> implements PanelDAO
             List<Panel> panelList = query.list();
             return panelList.isEmpty() ? null : panelList.get(0);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Panel getPanelByName()", e);
         }
     }

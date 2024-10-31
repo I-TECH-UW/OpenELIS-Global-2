@@ -10,13 +10,12 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToOne;
 import javax.persistence.SequenceGenerator;
 import javax.persistence.Table;
-
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.security.PasswordUtil;
 import org.openelisglobal.security.converter.EncryptionConverter;
 
-//info to needed for a client viewing their results
+// info to needed for a client viewing their results
 @Entity
 @Table(name = "client_results_view")
 public class ClientResultsViewBean extends BaseObject<Integer> {
@@ -36,7 +35,6 @@ public class ClientResultsViewBean extends BaseObject<Integer> {
 
     // this exists for hibernate
     ClientResultsViewBean() {
-
     }
 
     public ClientResultsViewBean(Result result) {
@@ -69,5 +67,4 @@ public class ClientResultsViewBean extends BaseObject<Integer> {
     public void setResult(Result result) {
         this.result = result;
     }
-
 }

@@ -1,9 +1,9 @@
 package org.openelisglobal.barcode.labeltype;
 
+import com.lowagie.text.Font;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -24,13 +24,10 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.valueholder.Test;
 
-import com.lowagie.text.Font;
-
 /**
  * Stores values and formatting for Specimen Labels
  *
  * @author Caleb
- *
  */
 public class SpecimenLabel extends Label {
 
@@ -102,8 +99,8 @@ public class SpecimenLabel extends Label {
         }
 
         // add code
-//      String sampleCode = sampleItem.getSortOrder();
-//      setCode(labNo + "." + sampleCode);
+        // String sampleCode = sampleItem.getSortOrder();
+        // setCode(labNo + "." + sampleCode);
         setCode(labNumber);
 
         setValueFont(new Font(Font.HELVETICA, 7, Font.NORMAL));
@@ -259,5 +256,4 @@ public class SpecimenLabel extends Label {
         max = Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue(Property.MAX_SPECIMEN_PRINTED));
         return max;
     }
-
 }

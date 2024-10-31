@@ -6,10 +6,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
-
 import org.openelisglobal.analyzer.form.AnalyzerSetupForm;
 import org.openelisglobal.analyzer.service.AnalyzerExperimentService;
 import org.openelisglobal.analyzer.service.AnalyzerService;
@@ -83,16 +81,19 @@ public class AnalyzerExperimentController extends BaseController {
                                     testService.get(e.getTestId()).getLocalizedTestName().getLocalizedValue(),
                                     testService.get(e.getTestId()).getLoinc()))
                             .collect(Collectors.toList()));
-//            analyzerTests.put(analyzer.getId(),
-//                    analyzerMappingService.getAllForAnalyzer(analyzer.getId()).stream()
-//                            .map(e -> new LabelValuePair(e.getAnalyzerTestName(), e.getTestId()))
-//                            .collect(Collectors.toList()));
+            // analyzerTests.put(analyzer.getId(),
+            // analyzerMappingService.getAllForAnalyzer(analyzer.getId()).stream()
+            // .map(e -> new LabelValuePair(e.getAnalyzerTestName(),
+            // e.getTestId()))
+            // .collect(Collectors.toList()));
 
         }
         form.setAnalyzers(analyzerLabels);
         form.setAnalyzersTests(analyzersTests);
         form.setAnalyzersWellInfo(analyzersWellInfo);
-//        form.setTests(analyzerService.getAllMatching("hasSetupPage", true).stream().map(e -> e.))
+        // form.setTests(analyzerService.getAllMatching("hasSetupPage",
+        // true).stream().map(e ->
+        // e.))
         form.setPreviousRuns(analyzerExperimentService.getAllOrdered("lastupdated", true).stream()
                 .map(e -> new LabelValuePair(e.getName(), e.getId().toString())).collect(Collectors.toList()));
         return findForward(FWD_SUCCESS, form);
@@ -172,5 +173,4 @@ public class AnalyzerExperimentController extends BaseController {
         // TODO Auto-generated method stub
         return null;
     }
-
 }

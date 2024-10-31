@@ -2,10 +2,8 @@ package org.openelisglobal.patient.controller;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.Date;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.patient.form.PatientEntryByProjectForm;
 import org.openelisglobal.patient.saving.Accessioner;
@@ -77,7 +75,7 @@ public class PatientEntryByProjectController extends BasePatientEntryByProject {
             RedirectAttributes redirectAttributes)
             throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
 
-    	formValidator.validate(form, result);
+        formValidator.validate(form, result);
         if (result.hasErrors()) {
             saveErrors(result);
             return findForward(FWD_FAIL_INSERT, form);

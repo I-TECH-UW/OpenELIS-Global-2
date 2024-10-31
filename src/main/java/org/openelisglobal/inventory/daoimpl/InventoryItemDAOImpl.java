@@ -1,22 +1,19 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.inventory.daoimpl;
 
 import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
@@ -36,7 +33,6 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<InventoryItem> getAllInventoryItems() throws LIMSRuntimeException {
         List<InventoryItem> inventoryItems;
@@ -45,7 +41,7 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
             Query<InventoryItem> query = entityManager.unwrap(Session.class).createQuery(sql, InventoryItem.class);
             inventoryItems = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in InventoryItem getAllInventoryItems()", e);
         }
 
@@ -58,11 +54,10 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, String> imp
         try {
             data = entityManager.unwrap(Session.class).get(InventoryItem.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in InventoryItem readInventoryItem()", e);
         }
 
         return data;
     }
-
 }

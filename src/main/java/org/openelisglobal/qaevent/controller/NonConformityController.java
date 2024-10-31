@@ -10,9 +10,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
@@ -197,7 +195,6 @@ public class NonConformityController extends BaseController {
         }
 
         form.setDepartments(DisplayListService.getInstance().getList(ListType.HAITI_DEPARTMENTS));
-
     }
 
     private void createForExistingSample(NonConformityForm form, Sample sample)
@@ -460,7 +457,7 @@ public class NonConformityController extends BaseController {
         }
 
         NonConformityUpdateData data = new NonConformityUpdateData(form, getSysUserId(request));
-//		NonConformityUpdateWorker worker = new NonConformityUpdateWorker(data);
+        // NonConformityUpdateWorker worker = new NonConformityUpdateWorker(data);
         INonConformityUpdateWorker worker = SpringContext.getBean(INonConformityUpdateWorker.class);
         worker.setWebData(data);
         try {

@@ -2,7 +2,6 @@ package org.openelisglobal.sampleitem.service;
 
 import java.util.List;
 import java.util.Set;
-
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;

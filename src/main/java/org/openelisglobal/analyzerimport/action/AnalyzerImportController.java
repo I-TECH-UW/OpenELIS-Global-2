@@ -1,29 +1,23 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
-*
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
+ */
 package org.openelisglobal.analyzerimport.action;
 
-import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analyzer.service.BidirectionalAnalyzer;
 import org.openelisglobal.analyzerimport.analyzerreaders.ASTMAnalyzerReader;
@@ -41,7 +35,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -89,16 +82,14 @@ public class AnalyzerImportController implements IActionConstants {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-
     }
 
     @PostMapping("/analyzer/astm")
-    public void doPost(@RequestBody String message, HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    public void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         ASTMAnalyzerReader reader = null;
         boolean read = false;
-        InputStream stream = new ByteArrayInputStream(message.getBytes());
+        InputStream stream = request.getInputStream();
 
         reader = (ASTMAnalyzerReader) AnalyzerReaderFactory.getReaderFor("astm");
 
@@ -108,7 +99,7 @@ public class AnalyzerImportController implements IActionConstants {
                 boolean success = reader.processData(getSysUserId(request));
                 if (reader.hasResponse()) {
                     response.getWriter().print(reader.getResponse());
-                } 
+                }
                 if (success) {
                     response.setStatus(HttpServletResponse.SC_OK);
                     return;
@@ -125,7 +116,6 @@ public class AnalyzerImportController implements IActionConstants {
             response.setStatus(HttpServletResponse.SC_BAD_REQUEST);
             return;
         }
-
     }
 
     @PostMapping("/analyzer/runAction")
@@ -140,7 +130,6 @@ public class AnalyzerImportController implements IActionConstants {
                     : ResponseEntity.internalServerError().body(MessageUtil.getMessage("analyzer.lisaction.failed"));
         }
         return ResponseEntity.badRequest().body(MessageUtil.getMessage("analyzer.lisaction.unsupported"));
-
     }
 
     protected String getAnalyzerNameFromType(String analyzerType) {
@@ -159,59 +148,60 @@ public class AnalyzerImportController implements IActionConstants {
         return String.valueOf(usd.getSystemUserId());
     }
 
-//    private String getSysUserId(String user, String password) {
-//        LoginUser login = new LoginUser();
-//        login.setLoginName(user);
-//        login.setPassword(password);
-//
-//        login = loginService.getValidatedLogin(user, password).orElse(null);
-//
-//        if (login != null) {
-//            SystemUser systemUser = systemUserService.getDataForLoginUser(login.getLoginName());
-//            return systemUser.getId();
-//        }
-//
-//        return "";
-//    }
-//
-//    private boolean userValid(String user, String password) {
-//        LoginUser login = new LoginUser();
-//        login.setLoginName(user);
-//        login.setPassword(password);
-//
-//        login = loginService.getValidatedLogin(user, password).orElse(null);
-//
-//        if (login == null) {
-//            return false;
-//        } else {
-//            return true;
-//        }
-//    }
+    // private String getSysUserId(String user, String password) {
+    // LoginUser login = new LoginUser();
+    // login.setLoginName(user);
+    // login.setPassword(password);
+    //
+    // login = loginService.getValidatedLogin(user, password).orElse(null);
+    //
+    // if (login != null) {
+    // SystemUser systemUser =
+    // systemUserService.getDataForLoginUser(login.getLoginName());
+    // return systemUser.getId();
+    // }
+    //
+    // return "";
+    // }
+    //
+    // private boolean userValid(String user, String password) {
+    // LoginUser login = new LoginUser();
+    // login.setLoginName(user);
+    // login.setPassword(password);
+    //
+    // login = loginService.getValidatedLogin(user, password).orElse(null);
+    //
+    // if (login == null) {
+    // return false;
+    // } else {
+    // return true;
+    // }
+    // }
 
-//    private String streamToString(InputStream stream) throws IOException {
-//        StringBuilder builder = new StringBuilder();
-//        int len;
-//        byte[] buffer = new byte[1024];
-//        while ((len = stream.read(buffer, 0, buffer.length)) != -1) {
-//            builder.append(new String(buffer, 0, len, StandardCharsets.UTF_8));
-//        }
-//        return builder.toString();
-//    }
+    // private String streamToString(InputStream stream) throws IOException {
+    // StringBuilder builder = new StringBuilder();
+    // int len;
+    // byte[] buffer = new byte[1024];
+    // while ((len = stream.read(buffer, 0, buffer.length)) != -1) {
+    // builder.append(new String(buffer, 0, len, StandardCharsets.UTF_8));
+    // }
+    // return builder.toString();
+    // }
 
-//    private String fieldStreamToString(InputStream stream) throws IOException {
-//        StringBuilder builder = new StringBuilder((int) (FIELD_SIZE_MAX / 2));
-//        int len;
-//        byte[] buffer = new byte[32];
-//        int totalFieldSize = 0;
-//
-//        while ((len = stream.read(buffer, 0, buffer.length)) != -1) {
-//            builder.append(new String(buffer, 0, len, StandardCharsets.UTF_8));
-//            totalFieldSize += len;
-//            if (totalFieldSize >= FIELD_SIZE_MAX) {
-//                break;
-//            }
-//        }
-//        return builder.toString();
-//    }
+    // private String fieldStreamToString(InputStream stream) throws IOException {
+    // StringBuilder builder = new StringBuilder((int) (FIELD_SIZE_MAX / 2));
+    // int len;
+    // byte[] buffer = new byte[32];
+    // int totalFieldSize = 0;
+    //
+    // while ((len = stream.read(buffer, 0, buffer.length)) != -1) {
+    // builder.append(new String(buffer, 0, len, StandardCharsets.UTF_8));
+    // totalFieldSize += len;
+    // if (totalFieldSize >= FIELD_SIZE_MAX) {
+    // break;
+    // }
+    // }
+    // return builder.toString();
+    // }
 
 }

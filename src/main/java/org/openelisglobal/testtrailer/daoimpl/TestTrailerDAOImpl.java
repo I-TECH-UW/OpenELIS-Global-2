@@ -1,32 +1,29 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.testtrailer.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.testtrailer.dao.TestTrailerDAO;
 import org.openelisglobal.testtrailer.valueholder.TestTrailer;
 import org.springframework.stereotype.Component;
@@ -43,115 +40,121 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
         super(TestTrailer.class);
     }
 
-//	@Override
-//	public void deleteData(List testTrailers) throws LIMSRuntimeException {
-//		// add to audit trail
-//		try {
-//
-//			for (int i = 0; i < testTrailers.size(); i++) {
-//				TestTrailer data = (TestTrailer) testTrailers.get(i);
-//
-//				TestTrailer oldData = readTestTrailer(data.getId());
-//				TestTrailer newData = new TestTrailer();
-//
-//				String sysUserId = data.getSysUserId();
-//				String event = IActionConstants.AUDIT_TRAIL_DELETE;
-//				String tableName = "TEST_TRAILER";
-//				auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TestTrailerDAOImpl", "AuditTrail deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TestTrailer AuditTrail deleteData()", e);
-//		}
-//
-//		try {
-//			for (int i = 0; i < testTrailers.size(); i++) {
-//				TestTrailer data = (TestTrailer) testTrailers.get(i);
-//				// bugzilla 2206
-//				data = readTestTrailer(data.getId());
-//				entityManager.unwrap(Session.class).delete(data);
-//				// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//				// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TestTrailerDAOImpl", "deleteData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TestTrailer deleteData()", e);
-//		}
-//	}
+    // @Override
+    // public void deleteData(List testTrailers) throws LIMSRuntimeException {
+    // // add to audit trail
+    // try {
+    //
+    // for (int i = 0; i < testTrailers.size(); i++) {
+    // TestTrailer data = (TestTrailer) testTrailers.get(i);
+    //
+    // TestTrailer oldData = readTestTrailer(data.getId());
+    // TestTrailer newData = new TestTrailer();
+    //
+    // String sysUserId = data.getSysUserId();
+    // String event = IActionConstants.AUDIT_TRAIL_DELETE;
+    // String tableName = "TEST_TRAILER";
+    // auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+    // }
+    // } catch (RuntimeException e) {
+    // // bugzilla 2154
+    // LogEvent.logError("TestTrailerDAOImpl", "AuditTrail deleteData()",
+    // e.toString());
+    // throw new LIMSRuntimeException("Error in TestTrailer AuditTrail
+    // deleteData()", e);
+    // }
+    //
+    // try {
+    // for (int i = 0; i < testTrailers.size(); i++) {
+    // TestTrailer data = (TestTrailer) testTrailers.get(i);
+    // // bugzilla 2206
+    // data = readTestTrailer(data.getId());
+    // entityManager.unwrap(Session.class).delete(data);
+    // // entityManager.unwrap(Session.class).flush(); // CSL remove old
+    // // entityManager.unwrap(Session.class).clear(); // CSL remove old
+    // }
+    // } catch (RuntimeException e) {
+    // // bugzilla 2154
+    // LogEvent.logError("TestTrailerDAOImpl", "deleteData()", e.toString());
+    // throw new LIMSRuntimeException("Error in TestTrailer deleteData()", e);
+    // }
+    // }
 
-//	@Override
-//	public boolean insertData(TestTrailer testTrailer) throws LIMSRuntimeException {
-//		try {
-//			// bugzilla 1482 throw Exception if record already exists
-//			if (duplicateTestTrailerExists(testTrailer)) {
-//				throw new LIMSDuplicateRecordException(
-//						"Duplicate record exists for " + testTrailer.getTestTrailerName());
-//			}
-//
-//			String id = (String) entityManager.unwrap(Session.class).save(testTrailer);
-//			testTrailer.setId(id);
-//
-//			// bugzilla 1824 inserts will be logged in history table
-//
-//			String sysUserId = testTrailer.getSysUserId();
-//			String tableName = "TEST_TRAILER";
-//			auditDAO.saveNewHistory(testTrailer, sysUserId, tableName);
-//
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TestTrailerDAOImpl", "insertData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TestTrailer insertData()", e);
-//		}
-//
-//		return true;
-//	}
-//
-//	@Override
-//	public void updateData(TestTrailer testTrailer) throws LIMSRuntimeException {
-//		// bugzilla 1482 throw Exception if record already exists
-//		try {
-//			if (duplicateTestTrailerExists(testTrailer)) {
-//				throw new LIMSDuplicateRecordException(
-//						"Duplicate record exists for " + testTrailer.getTestTrailerName());
-//			}
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TestTrailerDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TestTrailer updateData()", e);
-//		}
-//
-//		TestTrailer oldData = readTestTrailer(testTrailer.getId());
-//		TestTrailer newData = testTrailer;
-//
-//		// add to audit trail
-//		try {
-//
-//			String sysUserId = testTrailer.getSysUserId();
-//			String event = IActionConstants.AUDIT_TRAIL_UPDATE;
-//			String tableName = "TEST_TRAILER";
-//			auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TestTrailerDAOImpl", "AuditTrail updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TestTrailer AuditTrail updateData()", e);
-//		}
-//
-//		try {
-//			entityManager.unwrap(Session.class).merge(testTrailer);
-//			// entityManager.unwrap(Session.class).flush(); // CSL remove old
-//			// entityManager.unwrap(Session.class).clear(); // CSL remove old
-//			// entityManager.unwrap(Session.class).evict // CSL remove old(testTrailer);
-//			// entityManager.unwrap(Session.class).refresh // CSL remove old(testTrailer);
-//		} catch (RuntimeException e) {
-//			// bugzilla 2154
-//			LogEvent.logError("TestTrailerDAOImpl", "updateData()", e.toString());
-//			throw new LIMSRuntimeException("Error in TestTrailer updateData()", e);
-//		}
-//	}
+    // @Override
+    // public boolean insertData(TestTrailer testTrailer) throws
+    // LIMSRuntimeException {
+    // try {
+    // // bugzilla 1482 throw Exception if record already exists
+    // if (duplicateTestTrailerExists(testTrailer)) {
+    // throw new LIMSDuplicateRecordException(
+    // "Duplicate record exists for " + testTrailer.getTestTrailerName());
+    // }
+    //
+    // String id = (String) entityManager.unwrap(Session.class).save(testTrailer);
+    // testTrailer.setId(id);
+    //
+    // // bugzilla 1824 inserts will be logged in history table
+    //
+    // String sysUserId = testTrailer.getSysUserId();
+    // String tableName = "TEST_TRAILER";
+    // auditDAO.saveNewHistory(testTrailer, sysUserId, tableName);
+    //
+    // // entityManager.unwrap(Session.class).flush(); // CSL remove old
+    // // entityManager.unwrap(Session.class).clear(); // CSL remove old
+    // } catch (RuntimeException e) {
+    // // bugzilla 2154
+    // LogEvent.logError("TestTrailerDAOImpl", "insertData()", e.toString());
+    // throw new LIMSRuntimeException("Error in TestTrailer insertData()", e);
+    // }
+    //
+    // return true;
+    // }
+    //
+    // @Override
+    // public void updateData(TestTrailer testTrailer) throws LIMSRuntimeException {
+    // // bugzilla 1482 throw Exception if record already exists
+    // try {
+    // if (duplicateTestTrailerExists(testTrailer)) {
+    // throw new LIMSDuplicateRecordException(
+    // "Duplicate record exists for " + testTrailer.getTestTrailerName());
+    // }
+    // } catch (RuntimeException e) {
+    // // bugzilla 2154
+    // LogEvent.logError("TestTrailerDAOImpl", "updateData()", e.toString());
+    // throw new LIMSRuntimeException("Error in TestTrailer updateData()", e);
+    // }
+    //
+    // TestTrailer oldData = readTestTrailer(testTrailer.getId());
+    // TestTrailer newData = testTrailer;
+    //
+    // // add to audit trail
+    // try {
+    //
+    // String sysUserId = testTrailer.getSysUserId();
+    // String event = IActionConstants.AUDIT_TRAIL_UPDATE;
+    // String tableName = "TEST_TRAILER";
+    // auditDAO.saveHistory(newData, oldData, sysUserId, event, tableName);
+    // } catch (RuntimeException e) {
+    // // bugzilla 2154
+    // LogEvent.logError("TestTrailerDAOImpl", "AuditTrail updateData()",
+    // e.toString());
+    // throw new LIMSRuntimeException("Error in TestTrailer AuditTrail
+    // updateData()", e);
+    // }
+    //
+    // try {
+    // entityManager.unwrap(Session.class).merge(testTrailer);
+    // // entityManager.unwrap(Session.class).flush(); // CSL remove old
+    // // entityManager.unwrap(Session.class).clear(); // CSL remove old
+    // // entityManager.unwrap(Session.class).evict // CSL remove old(testTrailer);
+    // // entityManager.unwrap(Session.class).refresh // CSL remove
+    // old(testTrailer);
+    // } catch (RuntimeException e) {
+    // // bugzilla 2154
+    // LogEvent.logError("TestTrailerDAOImpl", "updateData()", e.toString());
+    // throw new LIMSRuntimeException("Error in TestTrailer updateData()", e);
+    // }
+    // }
 
     @Override
     @Transactional(readOnly = true)
@@ -167,7 +170,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestTrailer getData()", e);
         }
     }
@@ -184,7 +187,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestTrailer getAllTestTrailers()", e);
         }
 
@@ -197,7 +200,9 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
         List<TestTrailer> list;
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             // bugzilla 1399
             String sql = "from TestTrailer t order by t.testTrailerName";
@@ -208,7 +213,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestTrailer getPageOfTestTrailers()", e);
         }
 
@@ -221,7 +226,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
             tr = entityManager.unwrap(Session.class).get(TestTrailer.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestTrailer readTestTrailer()", e);
         }
 
@@ -246,7 +251,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestTrailer getTestTrailerByName()", e);
         }
     }
@@ -257,14 +262,15 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
     public List<TestTrailer> getTestTrailers(String filter) throws LIMSRuntimeException {
         List<TestTrailer> list;
         try {
-            String sql = "from TestTrailer t where upper(t.testTrailerName) like upper(:param) order by upper(t.testTrailerName)";
+            String sql = "from TestTrailer t where upper(t.testTrailerName) like upper(:param) order by"
+                    + " upper(t.testTrailerName)";
             Query<TestTrailer> query = entityManager.unwrap(Session.class).createQuery(sql, TestTrailer.class);
             query.setParameter("param", filter + "%");
 
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TestTrailer getTestTrailers(String filter)", e);
         }
         return list;
@@ -307,7 +313,7 @@ public class TestTrailerDAOImpl extends BaseDAOImpl<TestTrailer, String> impleme
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateTestTrailerExists()", e);
         }
     }

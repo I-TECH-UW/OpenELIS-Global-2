@@ -2,9 +2,7 @@ package org.openelisglobal.referral.fhir.controller;
 
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.validation.Valid;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.services.DisplayListService;
@@ -84,7 +82,6 @@ public class FhirReferralReceptionController extends BaseController {
             for (ElectronicOrder eOrder : electronicOrders) {
                 eOrder.setStatus(statusOfSampleService.get(eOrder.getStatusId()));
             }
-
         }
         return findForward(FWD_SUCCESS, form);
     }
@@ -116,5 +113,4 @@ public class FhirReferralReceptionController extends BaseController {
         // TODO Auto-generated method stub
         return null;
     }
-
 }

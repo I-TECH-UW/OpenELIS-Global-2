@@ -1,7 +1,6 @@
 package org.openelisglobal.resultlimit.service;
 
 import java.util.List;
-
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.service.BaseObjectService;

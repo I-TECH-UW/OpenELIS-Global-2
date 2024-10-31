@@ -6,10 +6,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -183,7 +181,6 @@ public class StatusResultsController extends BaseController {
 
         List<DropPair> sampleStatusList = getSampleStatusTypes();
         form.setSampleStatusSelections(sampleStatusList);
-
     }
 
     private List<TestResultItem> getSelectedTests(StatusResultsForm form, ResultsLoadUtility resultsUtility) {
@@ -246,7 +243,6 @@ public class StatusResultsController extends BaseController {
                 }
             }
             return blendedList;
-
         }
     }
 
@@ -348,7 +344,6 @@ public class StatusResultsController extends BaseController {
     @Override
     protected String getPageTitleKey() {
         return "banner.menu.results";
-
     }
 
     @Override

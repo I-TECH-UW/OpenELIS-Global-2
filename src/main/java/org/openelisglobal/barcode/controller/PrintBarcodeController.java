@@ -10,11 +10,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.barcode.form.PrintBarcodeForm;
@@ -165,7 +163,6 @@ public class PrintBarcodeController extends BaseController {
         patientSearch.setLoadFromServerWithPatient(true);
         patientSearch.setSelectedPatientActionButtonText(MessageUtil.getMessage("label.patient.search.select"));
         displayObjects.put("patientSearch", patientSearch);
-
     }
 
     @Override
@@ -311,6 +308,5 @@ public class PrintBarcodeController extends BaseController {
                 return o1.getTestName().compareTo(o2.getTestName());
             }
         }
-
     }
 }

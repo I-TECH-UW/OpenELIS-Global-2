@@ -65,7 +65,6 @@ public class AccessionServiceImpl implements AccessionService {
         info.setCurVal(value);
 
         return accessionDAO.save(info);
-
     }
 
     @Override
@@ -74,5 +73,4 @@ public class AccessionServiceImpl implements AccessionService {
         info.setCurVal(curVal);
         accessionDAO.save(info);
     }
-
 }

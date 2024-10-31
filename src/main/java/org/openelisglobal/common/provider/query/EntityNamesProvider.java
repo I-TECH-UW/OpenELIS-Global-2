@@ -18,11 +18,9 @@ package org.openelisglobal.common.provider.query;
 import java.io.IOException;
 import java.io.StringWriter;
 import java.util.Locale;
-
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 import org.openelisglobal.common.log.LogEvent;
@@ -82,7 +80,6 @@ public class EntityNamesProvider extends BaseQueryProvider {
             }
         }
         ajaxServlet.sendData(Encode.forXmlContent(jString), Encode.forXmlContent(jResult), request, response);
-
     }
 
     @SuppressWarnings("unchecked")
@@ -155,5 +152,4 @@ public class EntityNamesProvider extends BaseQueryProvider {
     public AjaxServlet getServlet() {
         return this.ajaxServlet;
     }
-
 }

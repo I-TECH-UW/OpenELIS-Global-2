@@ -1,9 +1,6 @@
 package org.openelisglobal.view;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-
+import java.io.IOException;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.xml.bind.JAXBContext;
@@ -12,8 +9,8 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.sax.SAXSource;
-
 import org.apache.commons.validator.GenericValidator;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Service;
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
@@ -25,8 +22,7 @@ public class PageBuilderServiceImpl implements PageBuilderService {
     private TilesDefinitions definitionsByName;
 
     @PostConstruct
-    public void readDefinitions()
-            throws JAXBException, ParserConfigurationException, FileNotFoundException, SAXException {
+    public void readDefinitions() throws JAXBException, ParserConfigurationException, SAXException, IOException {
         JAXBContext jaxbContext = JAXBContext.newInstance(TilesDefinitions.class);
 
         SAXParserFactory spf = SAXParserFactory.newInstance();
@@ -34,9 +30,9 @@ public class PageBuilderServiceImpl implements PageBuilderService {
         spf.setFeature("http://xml.org/sax/features/validation", false);
 
         XMLReader xmlReader = spf.newSAXParser().getXMLReader();
-        File file = new File(getClass().getClassLoader().getResource("tiles/tiles-defs.xml").getFile());
-        InputSource inputSource = new InputSource(new FileReader(file));
-        SAXSource source = new SAXSource(xmlReader, inputSource);
+
+        ClassPathResource resource = new ClassPathResource("tiles/tiles-defs.xml");
+        SAXSource source = new SAXSource(xmlReader, new InputSource(resource.getInputStream()));
 
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
 
@@ -77,5 +73,4 @@ public class PageBuilderServiceImpl implements PageBuilderService {
     private boolean definitionExtends(Definition definition) {
         return !GenericValidator.isBlankOrNull(definition.getExtends());
     }
-
 }

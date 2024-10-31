@@ -1,21 +1,23 @@
 package org.openelisglobal.systemuser.form;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import java.sql.Timestamp;
+import java.util.HashMap;
 import java.util.List;
-
+import java.util.Map;
+import java.util.Set;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-
 import org.json.JSONArray;
 import org.json.JSONObject;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.role.action.bean.DisplayRole;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
-import org.openelisglobal.common.util.IdValuePair;
 
 public class UnifiedSystemUserForm extends BaseForm {
     @Pattern(regexp = ValidationHelper.ID_REGEX)
@@ -56,14 +58,14 @@ public class UnifiedSystemUserForm extends BaseForm {
      * ui-form can dynamically create more fields mapped to this same field(path),
      * this field is only used to get values from the form as a single String with
      * comma ,separated values ie "value1 ,value2"
-     **/
+     */
     private String testSectionId;
 
     /**
      * There are multiple fields in the ui-form mapped to this field, because the
      * ui-form can dynamically create more fields mapped to this same field(path),
      * this field is only used to get values from the form as a List of Strings
-     **/
+     */
     private List<String> selectedLabUnitRoles;
 
     private List<@Pattern(regexp = ValidationHelper.ID_REGEX) String> selectedRoles;
@@ -96,6 +98,7 @@ public class UnifiedSystemUserForm extends BaseForm {
      * ,with fields that are mapped to the same path ie testSectionId and
      * selectedLabUnitRoles
      **/
+    @JsonIgnore
     private JSONObject userLabRoleData;
 
     // for display
@@ -264,6 +267,7 @@ public class UnifiedSystemUserForm extends BaseForm {
         this.selectedLabUnitRoles = selectedLabUnitRoles;
     }
 
+    @JsonIgnore
     public JSONObject getUserLabRoleData() {
         return userLabRoleData;
     }
@@ -272,6 +276,7 @@ public class UnifiedSystemUserForm extends BaseForm {
         this.userLabRoleData = userLabRoleData;
     }
 
+    @JsonIgnore
     public JSONArray getSystemUsers() {
         return systemUsers;
     }
@@ -294,5 +299,15 @@ public class UnifiedSystemUserForm extends BaseForm {
 
     public void setAllowCopyUserRoles(String allowCopyUserRoles) {
         this.allowCopyUserRoles = allowCopyUserRoles;
+    }
+
+    private Map<String, Set<String>> selectedTestSectionLabUnits = new HashMap<>();
+
+    public Map<String, Set<String>> getSelectedTestSectionLabUnits() {
+        return selectedTestSectionLabUnits;
+    }
+
+    public void setSelectedTestSectionLabUnits(Map<String, Set<String>> selectedTestSectionLabUnits) {
+        this.selectedTestSectionLabUnits = selectedTestSectionLabUnits;
     }
 }

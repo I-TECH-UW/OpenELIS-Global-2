@@ -1,7 +1,7 @@
 package org.openelisglobal.barcode.labeltype;
 
+import com.lowagie.text.Font;
 import java.util.ArrayList;
-
 import org.openelisglobal.barcode.LabelField;
 import org.openelisglobal.barcode.service.BarcodeLabelInfoService;
 import org.openelisglobal.barcode.valueholder.BarcodeLabelInfo;
@@ -9,15 +9,12 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.spring.util.SpringContext;
 
-import com.lowagie.text.Font;
-
 /**
  * Stores all the values, layout, and acts as a link to the persisted meta data
  * that is stored in the database. Used in printing bar code labels through the
  * BarcodeLabelMaker class
  *
  * @author Caleb
- *
  */
 public abstract class Label {
 
@@ -48,6 +45,7 @@ public abstract class Label {
     protected ArrayList<LabelField> aboveFields;
     protected ArrayList<LabelField> belowFields;
     private String code;
+    private String codeLabel;
 
     // information stored in/for database
     private BarcodeLabelInfo labelInfo;
@@ -210,6 +208,14 @@ public abstract class Label {
         this.code = code;
     }
 
+    public String getCodeLabel() {
+        return codeLabel == null ? code : codeLabel;
+    }
+
+    public void setCodeLabel(String codeLabel) {
+        this.codeLabel = codeLabel;
+    }
+
     /**
      * Get number of labels to attempt to print
      *
@@ -302,7 +308,7 @@ public abstract class Label {
                 labelInfo = new BarcodeLabelInfo(code);
             }
         } catch (LIMSRuntimeException e) {
-            LogEvent.logErrorStack(e);
+            LogEvent.logError(e);
         }
     }
 
@@ -313,5 +319,4 @@ public abstract class Label {
     public void incrementNumPrinted() {
         labelInfo.incrementNumPrinted();
     }
-
 }

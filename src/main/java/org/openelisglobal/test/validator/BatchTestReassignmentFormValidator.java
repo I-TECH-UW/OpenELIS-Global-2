@@ -39,11 +39,11 @@ public class BatchTestReassignmentFormValidator implements Validator {
                 // true);
 
                 JSONArray replacements = JSONUtils.getAsArray(batchTest.get("replace"));
-                if(ObjectUtils.isNotEmpty(replacements)) {
-	                for (int i = 0; i < replacements.size(); ++i) {
-	                    ValidationHelper.validateIdField(StringUtil.nullSafeToString(replacements.get(i)), "JsonWad",
-	                            "replace[" + i + "]", errors, true);
-	                }
+                if (ObjectUtils.isNotEmpty(replacements)) {
+                    for (int i = 0; i < replacements.size(); ++i) {
+                        ValidationHelper.validateIdField(StringUtil.nullSafeToString(replacements.get(i)), "JsonWad",
+                                "replace[" + i + "]", errors, true);
+                    }
                 }
 
                 JSONArray changesNotStarted = JSONUtils.getAsArray(batchTest.get("changeNotStarted"));
@@ -99,5 +99,4 @@ public class BatchTestReassignmentFormValidator implements Validator {
             errors.rejectValue("jsonWad", "error.field.json.format.invalid");
         }
     }
-
 }

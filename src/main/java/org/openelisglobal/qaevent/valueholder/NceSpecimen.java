@@ -1,7 +1,6 @@
 package org.openelisglobal.qaevent.valueholder;
 
 import java.util.Objects;
-
 import org.openelisglobal.common.valueholder.BaseObject;
 
 public class NceSpecimen extends BaseObject<String> {

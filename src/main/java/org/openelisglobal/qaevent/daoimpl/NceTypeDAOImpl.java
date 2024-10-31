@@ -1,7 +1,6 @@
 package org.openelisglobal.qaevent.daoimpl;
 
 import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
@@ -29,7 +28,7 @@ public class NceTypeDAOImpl extends BaseDAOImpl<NceType, String> implements NceT
             Query<NceType> query = entityManager.unwrap(Session.class).createQuery(sql, NceType.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in NceCategory getAllNceType()", e);
         }
         return list;

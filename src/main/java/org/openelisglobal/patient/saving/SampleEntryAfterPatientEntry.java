@@ -3,7 +3,6 @@ package org.openelisglobal.patient.saving;
 import static org.openelisglobal.common.services.StatusService.RecordStatus.NotRegistered;
 
 import javax.servlet.http.HttpServletRequest;
-
 import org.openelisglobal.common.services.StatusService.RecordStatus;
 import org.openelisglobal.patient.saving.form.IAccessionerForm;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
@@ -12,7 +11,7 @@ import org.springframework.stereotype.Service;
 
 @Service
 @Scope("prototype")
-public class SampleEntryAfterPatientEntry extends SampleEntry implements ISampleEntryAfterPatientEntry{
+public class SampleEntryAfterPatientEntry extends SampleEntry implements ISampleEntryAfterPatientEntry {
 
     public SampleEntryAfterPatientEntry(IAccessionerForm form, String sysUserId, HttpServletRequest request) {
         this();

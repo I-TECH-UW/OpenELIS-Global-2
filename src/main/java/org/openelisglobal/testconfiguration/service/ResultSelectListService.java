@@ -2,7 +2,6 @@ package org.openelisglobal.testconfiguration.service;
 
 import java.util.List;
 import java.util.Map;
-
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.testconfiguration.form.ResultSelectListForm;

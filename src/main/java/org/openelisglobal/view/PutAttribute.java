@@ -10,6 +10,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class PutAttribute {
     @XmlAttribute(name = "name")
     private String name;
+
     @XmlAttribute(name = "value")
     private String value;
 

@@ -1,13 +1,10 @@
 package org.openelisglobal.qaevent.form;
 
 import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
@@ -15,6 +12,7 @@ import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.qaevent.valueholder.retroCI.QaEventItem;
 import org.openelisglobal.test.valueholder.TestSection;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidName;

@@ -5,9 +5,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.stream.Collectors;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.action.IActionConstants;
@@ -17,9 +15,9 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.login.service.LoginUserService;
 import org.openelisglobal.login.valueholder.LoginUser;
@@ -243,7 +241,7 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
 
     @Override
     protected int getPageSize() {
-        return SystemConfiguration.getInstance().getDefaultPageSize();
+        return Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"));
     }
 
     @RequestMapping(value = "/DeleteUnifiedSystemUser", method = RequestMethod.POST)
@@ -297,14 +295,13 @@ public class UnifiedSystemUserMenuController extends BaseMenuController<UnifiedS
             unifiedSystemUserService.deleteData(userRoles, systemUsers, loginUsers, getSysUserId(request));
         } catch (LIMSRuntimeException e) {
 
-            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
                 result.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
             } else {
                 result.reject("errors.DeleteException", "errors.DeleteException");
             }
             saveErrors(result);
             return findForward(FWD_FAIL_DELETE, form);
-
         }
 
         return findForward(FWD_SUCCESS_DELETE, form);

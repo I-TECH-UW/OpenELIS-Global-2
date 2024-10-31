@@ -2,7 +2,6 @@ package org.openelisglobal.testconfiguration.controller;
 
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.hibernate.HibernateException;
 import org.openelisglobal.common.controller.BaseController;
 import org.openelisglobal.common.log.LogEvent;
@@ -95,7 +94,6 @@ public class TestSectionRenameEntryController extends BaseController {
             } catch (HibernateException e) {
                 LogEvent.logDebug(e);
             }
-
         }
 
         // Refresh Test Section names

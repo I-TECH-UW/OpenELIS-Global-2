@@ -18,8 +18,7 @@ package org.openelisglobal.reports.action.implementation.reportBeans;
 
 import java.sql.Timestamp;
 
-/**
- */
+/** */
 public class ActivityReportBean {
 
     private String accessionNumber;

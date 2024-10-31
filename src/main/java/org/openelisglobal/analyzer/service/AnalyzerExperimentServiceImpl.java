@@ -16,18 +16,17 @@ import java.util.Map.Entry;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-
 import org.openelisglobal.analyzer.dao.AnalyzerExperimentDAO;
 import org.openelisglobal.analyzer.valueholder.AnalyzerExperiment;
 import org.openelisglobal.common.dao.BaseDAO;
 import org.openelisglobal.common.exception.LIMSException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 @Service
-public class AnalyzerExperimentServiceImpl extends BaseObjectServiceImpl<AnalyzerExperiment, Integer>
+public class AnalyzerExperimentServiceImpl extends AuditableBaseObjectServiceImpl<AnalyzerExperiment, Integer>
         implements AnalyzerExperimentService {
 
     @Autowired
@@ -78,7 +77,6 @@ public class AnalyzerExperimentServiceImpl extends BaseObjectServiceImpl<Analyze
             throw new LIMSException("could not generate the csv");
         }
         return outputStream.toByteArray();
-
     }
 
     public class WellValueComparator implements Comparator<Entry<String, String>> {
@@ -117,6 +115,5 @@ public class AnalyzerExperimentServiceImpl extends BaseObjectServiceImpl<Analyze
                 return 0;
             }
         }
-
     }
 }

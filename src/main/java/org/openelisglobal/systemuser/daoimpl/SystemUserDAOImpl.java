@@ -1,32 +1,29 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.systemuser.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.systemuser.dao.SystemUserDAO;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.springframework.stereotype.Component;
@@ -56,7 +53,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUser getData()", e);
         }
     }
@@ -71,7 +68,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUser getAllSystemUsers()", e);
         }
 
@@ -84,7 +81,9 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
         List<SystemUser> list;
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             // bugzilla 1399
             String sql = "from SystemUser s order by s.lastName, s.firstName";
@@ -95,7 +94,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUser getPageOfSystemUsers()", e);
         }
 
@@ -108,7 +107,7 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
             su = entityManager.unwrap(Session.class).get(SystemUser.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUser readSystemUser()", e);
         }
 
@@ -131,7 +130,8 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
-            String sql = "from SystemUser t where trim(lower(t.lastName)) = :param and trim(lower(t.firstName)) = :param2 and t.id != :id";
+            String sql = "from SystemUser t where trim(lower(t.lastName)) = :param and trim(lower(t.firstName)) ="
+                    + " :param2 and t.id != :id";
             Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
             query.setParameter("param", systemUser.getLastName().toLowerCase().trim());
             query.setParameter("param2", systemUser.getFirstName().toLowerCase().trim());
@@ -153,23 +153,22 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateSystemUserExists()", e);
         }
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public SystemUser getDataForLoginUser(String userName) throws LIMSRuntimeException {
         List<SystemUser> list;
         try {
-            String sql = "from SystemUser where login_name = :name";
+            String sql = "from SystemUser where loginName = :name";
             Query<SystemUser> query = entityManager.unwrap(Session.class).createQuery(sql, SystemUser.class);
             query.setParameter("name", userName);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUser getDataForUser()", e);
         }
 
@@ -188,5 +187,4 @@ public class SystemUserDAOImpl extends BaseDAOImpl<SystemUser, String> implement
 
         return null;
     }
-
 }

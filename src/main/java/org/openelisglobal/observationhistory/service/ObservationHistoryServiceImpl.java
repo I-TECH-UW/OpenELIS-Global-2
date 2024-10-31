@@ -3,9 +3,8 @@ package org.openelisglobal.observationhistory.service;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.validator.GenericValidator;
-import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.common.service.AuditableBaseObjectServiceImpl;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.observationhistory.dao.ObservationHistoryDAO;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
@@ -21,7 +20,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @DependsOn({ "springContext" })
-public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<ObservationHistory, String>
+public class ObservationHistoryServiceImpl extends AuditableBaseObjectServiceImpl<ObservationHistory, String>
         implements ObservationHistoryService {
 
     public enum ObservationType {
@@ -29,9 +28,10 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
         REQUEST_DATE("requestDate"), NEXT_VISIT_DATE("nextVisitDate"), REFERRING_SITE("referringSite"),
         REFERRERS_PATIENT_ID("referrersPatientId"), BILLING_REFERENCE_NUMBER("billingRefNumber"),
         TEST_LOCATION_CODE("testLocationCode"), TEST_LOCATION_CODE_OTHER("testLocationCodeOther"), PROGRAM("program"),
-        HIV_STATUS("hivStatus"),VL_PREGNANCY("vlPregnancy"),VL_SUCKLE("vlSuckle"),
-        TB_ORDER_REASON("TbOrderReason"),TB_DIAGNOSTIC_REASON("TbDiagnosticReason"),TB_FOLLOWUP_REASON("TbFollowupReason"),
-        TB_FOLLOWUP_PERIOD_LINE1("TbFollowupReasonPeriodLine1"),TB_FOLLOWUP_PERIOD_LINE2("TbFollowupReasonPeriodLine2"),TB_ANALYSIS_METHOD("TbAnalysisMethod"),
+        HIV_STATUS("hivStatus"), VL_PREGNANCY("vlPregnancy"), VL_SUCKLE("vlSuckle"), TB_ORDER_REASON("TbOrderReason"),
+        TB_DIAGNOSTIC_REASON("TbDiagnosticReason"), TB_FOLLOWUP_REASON("TbFollowupReason"),
+        TB_FOLLOWUP_PERIOD_LINE1("TbFollowupReasonPeriodLine1"),
+        TB_FOLLOWUP_PERIOD_LINE2("TbFollowupReasonPeriodLine2"), TB_ANALYSIS_METHOD("TbAnalysisMethod"),
         TB_SAMPLE_ASPECT("TbSampleAspects");
 
         private String dbName;
@@ -43,7 +43,6 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
         public String getDatabaseName() {
             return dbName;
         }
-
     }
 
     private final Map<ObservationType, String> observationTypeToIdMap = new EnumMap<>(ObservationType.class);
@@ -150,7 +149,6 @@ public class ObservationHistoryServiceImpl extends BaseObjectServiceImpl<Observa
         } else {
             return null;
         }
-
     }
 
     @Override

@@ -1,24 +1,20 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
- *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
  */
 package org.openelisglobal.dataexchange.aggregatereporting.daoimpl;
 
 import java.sql.Timestamp;
 import java.util.List;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -55,7 +51,6 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
             handleException(e, "getRecalculateReportExports");
         }
         return null;
-
     }
 
     @Override
@@ -74,13 +69,13 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         }
 
         return null;
-
     }
 
     @Override
     @Transactional(readOnly = true)
     public ReportExternalExport getLatestSentReportExport(String reportQueueTypeId) throws LIMSRuntimeException {
-        String sql = "from ReportExternalExport rq where rq.send = false and rq.typeId = :typeId order by rq.sentDate desc";
+        String sql = "from ReportExternalExport rq where rq.send = false and rq.typeId = :typeId order by"
+                + " rq.sentDate desc";
 
         try {
             Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
@@ -113,7 +108,6 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
         }
 
         return null;
-
     }
 
     @Override
@@ -188,7 +182,8 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
     @Override
     @Transactional(readOnly = true)
     public ReportExternalExport getReportByEventDateAndType(ReportExternalExport report) throws LIMSRuntimeException {
-        String sql = "From ReportExternalExport ree where ree.eventDate >= :eventDate and ree.eventDate < :nextDay and ree.typeId = :typeId";
+        String sql = "From ReportExternalExport ree where ree.eventDate >= :eventDate and ree.eventDate <"
+                + " :nextDay and ree.typeId = :typeId";
 
         try {
             Query<ReportExternalExport> query = entityManager.unwrap(Session.class).createQuery(sql,
@@ -209,5 +204,4 @@ public class ReportExternalExportDAOImpl extends BaseDAOImpl<ReportExternalExpor
     public ReportExternalExport loadReport(ReportExternalExport report) throws LIMSRuntimeException {
         return readReportExternalExport(report.getId());
     }
-
 }

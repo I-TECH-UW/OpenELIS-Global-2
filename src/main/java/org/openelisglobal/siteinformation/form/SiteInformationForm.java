@@ -1,15 +1,13 @@
 package org.openelisglobal.siteinformation.form;
 
 import java.util.List;
-
 import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class SiteInformationForm extends BaseForm {
     @NotNull

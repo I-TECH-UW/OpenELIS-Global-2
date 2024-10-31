@@ -10,7 +10,6 @@ import java.security.PrivateKey;
 import java.security.UnrecoverableKeyException;
 import java.security.cert.Certificate;
 import java.security.cert.CertificateException;
-
 import org.springframework.core.io.Resource;
 
 public class KeystoreUtil {
@@ -82,5 +81,4 @@ public class KeystoreUtil {
             return cert;
         }
     }
-
 }

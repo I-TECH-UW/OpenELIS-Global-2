@@ -20,8 +20,11 @@ import java.sql.Timestamp;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.List;
-
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
+import org.openelisglobal.common.provider.validation.AlphanumAccessionValidator;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
@@ -41,9 +44,6 @@ import org.openelisglobal.sample.util.AccessionNumberUtil;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.spring.util.SpringContext;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public abstract class ActivityReport extends Report implements IReportCreator {
     private int PREFIX_LENGTH = AccessionNumberUtil.getMainAccessionNumberGenerator().getInvarientLength();
@@ -66,7 +66,6 @@ public abstract class ActivityReport extends Report implements IReportCreator {
         reportParameters.put("startDate", dateRange.getLowDateStr());
         reportParameters.put("endDate", dateRange.getHighDateStr());
         reportParameters.put("isReportByTest", isReportByTest());
-
     }
 
     protected boolean isReportByTest() {
@@ -127,7 +126,13 @@ public abstract class ActivityReport extends Report implements IReportCreator {
         item.setTechnician(resultService.getSignature(result));
 
         // item.setAccessionNumber(sampleService.getAccessionNumber(sample).substring(PREFIX_LENGTH));
-        item.setAccessionNumber(sampleService.getAccessionNumber(sample));
+        if (AccessionFormat.ALPHANUM.toString()
+                .equals(ConfigurationProperties.getInstance().getPropertyValue(Property.AccessionFormat))) {
+            item.setAccessionNumber(AlphanumAccessionValidator
+                    .convertAlphaNumLabNumForDisplay(sampleService.getAccessionNumber(sample)));
+        } else {
+            item.setAccessionNumber(sampleService.getAccessionNumber(sample));
+        }
 
         item.setReceivedDate(sampleService.getReceivedDateWithTwoYearDisplay(sample));
         Timestamp start = sample.getReceivedTimestamp();
@@ -151,8 +156,9 @@ public abstract class ActivityReport extends Report implements IReportCreator {
         item.setPatientId(patient.getStringId() == null ? "" : patient.getStringId());
 
         List<String> values = new ArrayList<>();
-        values.add(
-                patientService.getLastName(patient) == null ? "" : patientService.getLastName(patient).toUpperCase());
+        // values.add(
+        // patientService.getLastName(patient) == null ? "" :
+        // patientService.getLastName(patient).toUpperCase());
         values.add(patientService.getNationalId(patient));
 
         String referringPatientId = SpringContext.getBean(ObservationHistoryService.class)
@@ -162,7 +168,9 @@ public abstract class ActivityReport extends Report implements IReportCreator {
         String name = StringUtil.buildDelimitedStringFromList(values, " / ", true);
 
         if (useTestName) {
-            item.setPatientOrTestName(resultService.getReportingTestName(result));
+            item.setPatientOrTestName(
+                    resultService.getReportingTestName(result) != null ? resultService.getReportingTestName(result)
+                            : "");
             item.setNonPrintingPatient(name);
         } else {
             item.setPatientOrTestName(name);

@@ -12,7 +12,6 @@ import org.springframework.transaction.annotation.Transactional;
  * (clinlims.barcode_label_info)
  *
  * @author Caleb
- *
  */
 @Component
 @Transactional
@@ -21,5 +20,4 @@ public class BarcodeLabelInfoDAOImpl extends BaseDAOImpl<BarcodeLabelInfo, Strin
     public BarcodeLabelInfoDAOImpl() {
         super(BarcodeLabelInfo.class);
     }
-
 }

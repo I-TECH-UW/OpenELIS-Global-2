@@ -1,26 +1,23 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
  *
- * Contributor(s): CIRG, University of Washington, Seattle WA.
+ * <p>Contributor(s): CIRG, University of Washington, Seattle WA.
  */
 package org.openelisglobal.resultlimits.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.Session;
@@ -28,7 +25,7 @@ import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.resultlimits.dao.ResultLimitDAO;
 import org.openelisglobal.resultlimits.valueholder.ResultLimit;
 import org.springframework.stereotype.Component;
@@ -53,7 +50,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
                 resultLimit.setId(null);
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultLimit getData()", e);
         }
     }
@@ -67,7 +64,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
             Query<ResultLimit> query = entityManager.unwrap(Session.class).createQuery(sql, ResultLimit.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultLimit getAllResultLimits()", e);
         }
 
@@ -80,7 +77,9 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
         List<ResultLimit> list;
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             String sql = "from ResultLimit t order by t.id";
             Query<ResultLimit> query = entityManager.unwrap(Session.class).createQuery(sql, ResultLimit.class);
@@ -89,7 +88,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultLimit getPageOfResultLimits()", e);
         }
 
@@ -101,7 +100,7 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
         try {
             recoveredLimit = entityManager.unwrap(Session.class).get(ResultLimit.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ResultLimit readResultLimit()", e);
         }
 
@@ -109,7 +108,6 @@ public class ResultLimitDAOImpl extends BaseDAOImpl<ResultLimit, String> impleme
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<ResultLimit> getAllResultLimitsForTest(String testId) throws LIMSRuntimeException {
 

@@ -1,30 +1,25 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) ITECH, University of Washington, Seattle WA.  All Rights Reserved.
- *
+ * <p>Copyright (C) ITECH, University of Washington, Seattle WA. All Rights Reserved.
  */
-
 package org.openelisglobal.dataexchange.order.valueholder;
 
 import java.sql.Timestamp;
-
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.common.valueholder.ValueHolder;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.valueholder.Patient;
-import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 import org.openelisglobal.sample.valueholder.OrderPriority;
+import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 
 public class ElectronicOrder extends BaseObject<String> {
 
@@ -151,28 +146,27 @@ public class ElectronicOrder extends BaseObject<String> {
         this.priority = priority;
     }
 
-	public String getRejectReasonId() {
-		return rejectReasonId;
-	}
+    public String getRejectReasonId() {
+        return rejectReasonId;
+    }
 
-	public void setRejectReasonId(String rejectReasonId) {
-		this.rejectReasonId = rejectReasonId;
-	}
+    public void setRejectReasonId(String rejectReasonId) {
+        this.rejectReasonId = rejectReasonId;
+    }
 
-	public String getRejectComment() {
-		return rejectComment;
-	}
+    public String getRejectComment() {
+        return rejectComment;
+    }
 
-	public void setRejectComment(String rejectComment) {
-		this.rejectComment = rejectComment;
-	}
+    public void setRejectComment(String rejectComment) {
+        this.rejectComment = rejectComment;
+    }
 
-	public String getQaAuthorizer() {
-		return qaAuthorizer;
-	}
+    public String getQaAuthorizer() {
+        return qaAuthorizer;
+    }
 
-	public void setQaAuthorizer(String qaAuthorizer) {
-		this.qaAuthorizer = qaAuthorizer;
-	}
-    
+    public void setQaAuthorizer(String qaAuthorizer) {
+        this.qaAuthorizer = qaAuthorizer;
+    }
 }

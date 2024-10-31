@@ -1,19 +1,15 @@
 package org.openelisglobal.systemuser.form;
 
 import java.util.List;
-
 import javax.validation.constraints.Pattern;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.systemuser.valueholder.UnifiedSystemUser;
-import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class UnifiedSystemUserMenuForm extends AdminOptionMenuForm<UnifiedSystemUser> {
-    /**
-     *
-     */
+    /** */
     private static final long serialVersionUID = 4853994882374119915L;
 
     // for display

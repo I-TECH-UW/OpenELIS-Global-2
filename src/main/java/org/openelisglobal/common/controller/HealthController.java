@@ -15,7 +15,9 @@ public class HealthController {
 
     public static class HealthState {
 
-        public enum Status {UP};
+        public enum Status {
+            UP
+        };
 
         public Status status = Status.UP;
 

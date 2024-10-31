@@ -1,25 +1,22 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.patient.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -28,8 +25,8 @@ import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.patient.dao.PatientDAO;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.valueholder.Person;
@@ -86,7 +83,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             }
 
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Patient getData()", e);
         }
     }
@@ -113,7 +110,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Patient getAllPatients()", e);
         }
 
@@ -126,7 +123,9 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
         List<Patient> patients;
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             String sql = "from Patient t order by t.id";
             Query<Patient> query = entityManager.unwrap(Session.class).createQuery(sql, Patient.class);
@@ -137,7 +136,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Patient getPageOfPatients()", e);
         }
 
@@ -151,7 +150,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             pat = entityManager.unwrap(Session.class).get(Patient.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Patient readPatient()", e);
         }
 
@@ -171,7 +170,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 
             results = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Patient readPatient()", e);
         }
 
@@ -187,7 +186,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
             query.setParameter(propertyName, propertyValue);
             patients = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Patient getPatientByStringProperty(" + propertyName + "\", ) ", e);
         }
         return patients.isEmpty() ? null : patients.get(0);
@@ -222,7 +221,6 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public Patient getPatientByPerson(Person person) throws LIMSRuntimeException {
         List<Patient> patients;
@@ -235,7 +233,7 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
 
             patients = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Patient getPatientByPerson()", e);
         }
 
@@ -309,5 +307,4 @@ public class PatientDAOImpl extends BaseDAOImpl<Patient, String> implements Pati
         }
         return null;
     }
-
 }

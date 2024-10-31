@@ -1,25 +1,22 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*
-* Contributor(s): CIRG, University of Washington, Seattle WA.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ *
+ * <p>Contributor(s): CIRG, University of Washington, Seattle WA.
+ */
 package org.openelisglobal.analyte.daoimpl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.analyte.dao.AnalyteDAO;
@@ -44,7 +41,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 
     @Override
     public void delete(Analyte analyte) {
-        LogEvent.logInfo(this.getClass().getName(), "method unkown", "selete dao");
+        LogEvent.logWarn(this.getClass().getSimpleName(), "delete", "delete analyte is not implemented");
     }
 
     // bugzilla 1367 added ignoreCase
@@ -79,7 +76,7 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
 
         } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Analyte getAnalyteByName()", e);
         }
     }
@@ -119,9 +116,8 @@ public class AnalyteDAOImpl extends BaseDAOImpl<Analyte, String> implements Anal
             return list.size() > 0;
         } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateAnalyteExists()", e);
         }
     }
-
 }

@@ -1,18 +1,14 @@
 package org.openelisglobal.dictionary.form;
 
 import java.util.List;
-
 import javax.validation.constraints.Pattern;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class DictionaryMenuForm extends AdminOptionMenuForm<Dictionary> {
-    /**
-     *
-     */
+    /** */
     private static final long serialVersionUID = -1585240883233995437L;
 
     // for display

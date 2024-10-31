@@ -17,7 +17,6 @@ package org.openelisglobal.referral.daoimpl;
 
 import java.sql.Date;
 import java.util.List;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -74,5 +73,4 @@ public class ReferringTestResultDAOImpl extends BaseDAOImpl<ReferringTestResult,
 
         return null;
     }
-
 }

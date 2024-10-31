@@ -3,10 +3,8 @@ package org.openelisglobal.notification.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
@@ -72,7 +70,6 @@ public class TestNotificationConfigMenuController extends BaseMenuController<Tes
             testNotificationConfigService.saveTestNotificationConfigsActiveStatuses(form.getMenuList(),
                     this.getSysUserId(request));
         } catch (RuntimeException e) {
-            LogEvent.logError(e);
             LogEvent.logError("could not save result notification configs", e);
             Errors errors = new BaseErrors();
             errors.reject("alert.error", "An error occured while saving");
@@ -131,5 +128,4 @@ public class TestNotificationConfigMenuController extends BaseMenuController<Tes
         // TODO Auto-generated method stub
         return null;
     }
-
 }

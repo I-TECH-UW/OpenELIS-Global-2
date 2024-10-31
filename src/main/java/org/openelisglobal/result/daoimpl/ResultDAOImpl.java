@@ -1,26 +1,23 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
  *
- * Contributor(s): CIRG, University of Washington, Seattle WA.
+ * <p>Contributor(s): CIRG, University of Washington, Seattle WA.
  */
 package org.openelisglobal.result.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.sql.Date;
 import java.util.List;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -30,7 +27,7 @@ import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.result.dao.ResultDAO;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.sample.valueholder.Sample;
@@ -62,7 +59,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getData()", e);
         }
     }
@@ -95,13 +92,12 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
 
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getResultByAnalysisAndAnalyte()", e);
         }
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<Result> getResultsByAnalysis(Analysis analysis) throws LIMSRuntimeException {
         try {
@@ -113,7 +109,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             List<Result> results = query.list();
             return results;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getResultByAnalysis()", e);
         }
     }
@@ -148,7 +144,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             }
 
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getResultByTestResult()", e);
         }
     }
@@ -163,7 +159,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             results = query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getAllResults()", e);
         }
 
@@ -176,7 +172,9 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
         List<Result> results;
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             String sql = "from Result r order by r.id";
             Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
@@ -186,7 +184,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             results = query.list();
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getPageOfResults()", e);
         }
 
@@ -199,7 +197,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             data = entityManager.unwrap(Session.class).get(Result.class, idString);
         } catch (RuntimeException e) {
 
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result readResult()", e);
         }
 
@@ -238,7 +236,7 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
             return results;
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Result getReportableResultsByAnalysis()", e);
         }
     }
@@ -272,7 +270,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     public Result getResultForAnalyteAndSampleItem(String analyteId, String sampleItemId) throws LIMSRuntimeException {
 
         try {
-            String sql = "from Result r where r.analyte.id = :analyteId and r.analysis.sampleItem.id = :sampleItemId";
+            String sql = "from Result r where r.analyte.id = :analyteId and r.analysis.sampleItem.id ="
+                    + " :sampleItemId";
             Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
             query.setParameter("analyteId", Integer.parseInt(analyteId));
             query.setParameter("sampleItemId", Integer.parseInt(sampleItemId));
@@ -290,7 +289,6 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<Result> getResultsForAnalysisIdList(List<Integer> analysisIdList) throws LIMSRuntimeException {
         if (analysisIdList.isEmpty()) {
@@ -314,7 +312,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     @Override
     @Transactional(readOnly = true)
     public List<Result> getResultsForTestAndSample(String sampleId, String testId) {
-        String sql = "FROM Result r WHERE r.analysis.sampleItem.sample.id = :sampleId AND r.testResult.test.id = :testId";
+        String sql = "FROM Result r WHERE r.analysis.sampleItem.sample.id = :sampleId AND r.testResult.test.id ="
+                + " :testId";
 
         try {
             Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
@@ -367,7 +366,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     @Transactional(readOnly = true)
     public List<Result> getResultsForTestInDateRange(String testId, Date startDate, Date endDate)
             throws LIMSRuntimeException {
-        String sql = "FROM Result r WHERE r.analysis.test.id = :testId AND r.lastupdated BETWEEN :lowDate AND :highDate";
+        String sql = "FROM Result r WHERE r.analysis.test.id = :testId AND r.lastupdated BETWEEN :lowDate AND"
+                + " :highDate";
 
         try {
             Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
@@ -387,7 +387,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     @Transactional(readOnly = true)
     public List<Result> getResultsForPanelInDateRange(String panelId, Date lowDate, Date highDate)
             throws LIMSRuntimeException {
-        String sql = "FROM Result r WHERE r.analysis.panel.id = :panelId AND r.lastupdated BETWEEN :lowDate AND :highDate order by r.id";
+        String sql = "FROM Result r WHERE r.analysis.panel.id = :panelId AND r.lastupdated BETWEEN :lowDate AND"
+                + " :highDate order by r.id";
 
         try {
             Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);
@@ -407,7 +408,8 @@ public class ResultDAOImpl extends BaseDAOImpl<Result, String> implements Result
     @Transactional(readOnly = true)
     public List<Result> getResultsForTestSectionInDateRange(String testSectionId, Date lowDate, Date highDate)
             throws LIMSRuntimeException {
-        String sql = "FROM Result r WHERE r.analysis.testSection.id = :testSectionId AND r.lastupdated BETWEEN :lowDate AND :highDate";
+        String sql = "FROM Result r WHERE r.analysis.testSection.id = :testSectionId AND r.lastupdated BETWEEN"
+                + " :lowDate AND :highDate";
 
         try {
             Query<Result> query = entityManager.unwrap(Session.class).createQuery(sql, Result.class);

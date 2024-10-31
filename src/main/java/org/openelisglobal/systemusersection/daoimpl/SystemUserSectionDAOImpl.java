@@ -1,32 +1,29 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.systemusersection.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.systemusersection.dao.SystemUserSectionDAO;
 import org.openelisglobal.systemusersection.valueholder.SystemUserSection;
 import org.springframework.stereotype.Component;
@@ -56,7 +53,7 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUserSection getData()", e);
         }
     }
@@ -72,7 +69,7 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUserSection getAllSystemModules()", e);
         }
 
@@ -92,7 +89,7 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUserSection getAllSystemUserSectionsBySystemUserId()", e);
         }
 
@@ -105,7 +102,9 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
         List<SystemUserSection> list;
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             String sql = "from SystemUserSection s ";
             Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
@@ -116,7 +115,7 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUserSection getPageOfSystemUserSections()", e);
         }
 
@@ -129,7 +128,7 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
             sysUserSection = entityManager.unwrap(Session.class).get(SystemUserSection.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUserSection readSystemUserSection(idString)", e);
         }
 
@@ -148,7 +147,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
 
             List<SystemUserSection> list = new ArrayList<>();
 
-            String sql = "from SystemUserSection s where s.systemUser.id = :param and s.testSection.id = :param2 and s.id != :param3";
+            String sql = "from SystemUserSection s where s.systemUser.id = :param and s.testSection.id = :param2"
+                    + " and s.id != :param3";
             Query<SystemUserSection> query = entityManager.unwrap(Session.class).createQuery(sql,
                     SystemUserSection.class);
             query.setParameter("param", systemUserSection.getSystemUser().getId());
@@ -170,9 +170,8 @@ public class SystemUserSectionDAOImpl extends BaseDAOImpl<SystemUserSection, Str
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateSystemUserSectionExists()", e);
         }
     }
-
 }

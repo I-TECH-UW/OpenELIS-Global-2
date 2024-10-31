@@ -17,5 +17,4 @@ public interface ITestIdentityService {
     public abstract boolean isTestNumericViralLoad(String testId);
 
     public abstract boolean isTestNumericViralLoad(Test test);
-
 }

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -42,19 +41,19 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
             return new ArrayList<>();
         }
         return getAllMatching(queryMap);
-//        if (patient != null && sample != null) {
-//            ObservationHistory dh = new ObservationHistory();
-//            dh.setPatientId(patient.getId());
-//            dh.setSampleId(sample.getId());
-//            return readByExample(dh);
-//        }
+        // if (patient != null && sample != null) {
+        // ObservationHistory dh = new ObservationHistory();
+        // dh.setPatientId(patient.getId());
+        // dh.setSampleId(sample.getId());
+        // return readByExample(dh);
+        // }
     }
 
     @Override
     @Transactional(readOnly = true)
     public List<ObservationHistory> getAll(Patient patient, Sample sample, String observationHistoryTypeId) {
         Map<String, Object> queryMap = new HashMap<>();
-        //queryMap.put("patientId", patient.getId());
+        // queryMap.put("patientId", patient.getId());
         if (patient != null && patient.getId() != null) {
             queryMap.put("patientId", patient.getId());
         }
@@ -65,11 +64,10 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
             queryMap.put("observationHistoryTypeId", observationHistoryTypeId);
         }
         return getAllMatching(queryMap);
-//        return readByExample(history);
+        // return readByExample(history);
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<ObservationHistory> getObservationHistoryByDictonaryValues(String dictionaryValue)
             throws LIMSRuntimeException {
@@ -133,7 +131,8 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
     @Transactional(readOnly = true)
     public List<ObservationHistory> getObservationHistoriesByPatientIdAndType(String patientId,
             String observationHistoryTypeId) throws LIMSRuntimeException {
-        String sql = "from ObservationHistory oh where oh.patientId = :patientId and oh.observationHistoryTypeId = :ohTypeId order by oh.lastupdated desc";
+        String sql = "from ObservationHistory oh where oh.patientId = :patientId and oh.observationHistoryTypeId"
+                + " = :ohTypeId order by oh.lastupdated desc";
 
         try {
             Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
@@ -154,7 +153,8 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
     @Transactional(readOnly = true)
     public ObservationHistory getObservationHistoriesBySampleIdAndType(String sampleId, String observationHistoryTypeId)
             throws LIMSRuntimeException {
-        String sql = "from ObservationHistory oh where oh.sampleId = :sampleId and oh.observationHistoryTypeId = :ohTypeId";
+        String sql = "from ObservationHistory oh where oh.sampleId = :sampleId and oh.observationHistoryTypeId ="
+                + " :ohTypeId";
         try {
             Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
                     ObservationHistory.class);
@@ -174,7 +174,8 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
     @Transactional(readOnly = true)
     public List<ObservationHistory> getObservationHistoriesByValueAndType(String value, String typeId, String valueType)
             throws LIMSRuntimeException {
-        String sql = "from ObservationHistory oh where oh.value = :value and oh.observationHistoryTypeId = :typeId and oh.valueType = :valueType";
+        String sql = "from ObservationHistory oh where oh.value = :value and oh.observationHistoryTypeId ="
+                + " :typeId and oh.valueType = :valueType";
 
         try {
             Query<ObservationHistory> query = entityManager.unwrap(Session.class).createQuery(sql,
@@ -192,21 +193,25 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
         return null;
     }
 
-//    /**
-//     * Read a list of entities which match those fields(members) in the entity which
-//     * are filled in.
-//     */
-//    public List<ObservationHistory> readByExample(ObservationHistory entity) throws LIMSRuntimeException {
-//        List<ObservationHistory> results;
-//        try {
-//			// TODO rework this
-//            results = entityManager.unwrap(Session.class).createCriteria(entity.getClass()).add(Example.create(entity))
-//                    .list();
-//        } catch (RuntimeException e) {
-//            throw createAndLogException("readByExample()", e);
-//        }
-//        return results;
-//    }
+    // /**
+    // * Read a list of entities which match those fields(members) in the entity
+    // which
+    // * are filled in.
+    // */
+    // public List<ObservationHistory> readByExample(ObservationHistory entity)
+    // throws
+    // LIMSRuntimeException {
+    // List<ObservationHistory> results;
+    // try {
+    // // TODO rework this
+    // results =
+    // entityManager.unwrap(Session.class).createCriteria(entity.getClass()).add(Example.create(entity))
+    // .list();
+    // } catch (RuntimeException e) {
+    // throw createAndLogException("readByExample()", e);
+    // }
+    // return results;
+    // }
 
     /**
      * Utility routine for (1) logging an error and (2) creating a new
@@ -217,7 +222,7 @@ public class ObservationHistoryDAOImpl extends BaseDAOImpl<ObservationHistory, S
      * @return new RuntimeException
      */
     protected LIMSRuntimeException createAndLogException(String methodName, Exception e) {
-        LogEvent.logError(e.toString(), e);
+        LogEvent.logError(e);
         return new LIMSRuntimeException("Error in " + this.getClass().getSimpleName() + " " + methodName, e);
     }
 

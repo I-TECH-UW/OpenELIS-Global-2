@@ -4,9 +4,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -14,8 +12,8 @@ import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.services.DisplayListService;
-import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -29,8 +27,8 @@ import org.openelisglobal.sampleqaevent.service.SampleQaEventService;
 import org.openelisglobal.sampleqaevent.valueholder.SampleQaEvent;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.UserService;
-import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.test.service.TestServiceImpl;
 import org.openelisglobal.workplan.form.WorkplanForm;
 import org.openelisglobal.workplan.form.WorkplanForm.PrintWorkplan;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -191,7 +189,6 @@ public class WorkPlanByPriorityController extends BaseWorkplanController {
         public int compare(IdValuePair p1, IdValuePair p2) {
             return p1.getValue().toUpperCase().compareTo(p2.getValue().toUpperCase());
         }
-
     }
 
     @Override

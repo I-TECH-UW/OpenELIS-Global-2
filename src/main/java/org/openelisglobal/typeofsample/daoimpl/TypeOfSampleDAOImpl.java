@@ -1,20 +1,18 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*
-* Contributor(s): CIRG, University of Washington, Seattle WA.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ *
+ * <p>Contributor(s): CIRG, University of Washington, Seattle WA.
+ */
 package org.openelisglobal.typeofsample.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
@@ -22,7 +20,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -30,8 +27,8 @@ import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.dao.TypeOfSampleDAO;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
@@ -68,7 +65,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TypeOfSample getData()", e);
         }
     }
@@ -85,14 +82,13 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TypeOfSample getAllTypeOfSamples()", e);
         }
         return list;
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<TypeOfSample> getAllTypeOfSamplesSortOrdered() throws LIMSRuntimeException {
         List<TypeOfSample> list = new ArrayList<>();
@@ -101,7 +97,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TypeOfSample getAllTypeOfSamplesSortOrdered()", e);
         }
 
@@ -114,7 +110,9 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
         List<TypeOfSample> list;
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             // bugzilla 1399
             String sql = "from TypeOfSample t order by t.domain, t.description";
@@ -125,7 +123,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TypeOfSample getPageOfTypeOfSamples()", e);
         }
 
@@ -138,7 +136,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             tos = entityManager.unwrap(Session.class).get(TypeOfSample.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TypeOfSample readTypeOfSample()", e);
         }
 
@@ -156,10 +154,11 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             String sql = "";
             // bugzilla 1387 added domain parm
             if (!StringUtil.isNullorNill(domain)) {
-                sql = "from TypeOfSample t where upper(t.description) like upper(:param) and t.domain = :param2 order by upper(t.description)";
+                sql = "from TypeOfSample t where upper(t.description) like upper(:param) and t.domain ="
+                        + " :param2 order by upper(t.description)";
             } else {
-                sql = "from TypeOfSample t where upper(t.description) like upper(:param) order by upper(t.description)";
-
+                sql = "from TypeOfSample t where upper(t.description) like upper(:param) order by"
+                        + " upper(t.description)";
             }
             Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
             query.setParameter("param", filter + "%");
@@ -171,11 +170,10 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TypeOfSample getTypes(String filter)", e);
         }
         return list;
-
     }
 
     @Override
@@ -194,7 +192,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logDebug(e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in TypeOfSample getTypes(String filter)", e);
         }
         return list;
@@ -220,7 +218,6 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
         }
 
         return list;
-
     }
 
     @Override
@@ -258,7 +255,6 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
         default: {
             domainKey = "H";
         }
-
         }
 
         return domainKey;
@@ -281,7 +277,8 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
             if (!StringUtil.isNullorNill(tos.getDomain())) {
                 if (ignoreCase) {
-                    sql = "from TypeOfSample tos where trim(lower(tos.description)) = :param and tos.domain = :param2";
+                    sql = "from TypeOfSample tos where trim(lower(tos.description)) = :param and tos.domain ="
+                            + " :param2";
                 } else {
                     sql = "from TypeOfSample tos where trim(tos.description) = :param and tos.domain = :param2";
                 }
@@ -314,7 +311,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Test getTypeOfSampleByDescriptionAndDomain()", e);
         }
     }
@@ -330,8 +327,10 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
             // duplicates
 
             // bugzilla 2432 add check for local abbreviation
-            String sql = "from TypeOfSample t where (trim(lower(t.description)) = :description and trim(lower(t.domain)) = :domain and t.id != :id)"
-                    + " or (trim(lower(t.localAbbreviation)) = :abbrev and trim(lower(t.domain)) = :domain and t.id != :id)";
+            String sql = "from TypeOfSample t where (trim(lower(t.description)) = :description and"
+                    + " trim(lower(t.domain)) = :domain and t.id != :id) or"
+                    + " (trim(lower(t.localAbbreviation)) = :abbrev and trim(lower(t.domain)) = :domain"
+                    + " and t.id != :id)";
             Query<TypeOfSample> query = entityManager.unwrap(Session.class).createQuery(sql, TypeOfSample.class);
             query.setParameter("description", typeOfSample.getDescription().toLowerCase().trim());
             query.setParameter("domain", typeOfSample.getDomain().toLowerCase().trim());
@@ -356,7 +355,7 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateTypeOfSampleExists()", e);
         }
     }
@@ -411,5 +410,4 @@ public class TypeOfSampleDAOImpl extends BaseDAOImpl<TypeOfSample, String> imple
         }
         return null;
     }
-
 }

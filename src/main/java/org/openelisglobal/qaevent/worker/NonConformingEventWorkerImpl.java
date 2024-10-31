@@ -6,7 +6,6 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
 import org.dom4j.DocumentHelper;
@@ -255,8 +254,8 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
     }
 
     private void setActionLogs(NonConformingEventForm form, NcEvent ncEvent) {
-        if (form.getActionLogStr() != null) {
-            List<NceActionLog> actionLogs = initNceActionLog(form.getActionLogStr());
+        if (form.getActionLog() != null) {
+            List<NceActionLog> actionLogs = form.getActionLog();
             if (actionLogs != null) {
                 for (NceActionLog actionLog : actionLogs) {
                     actionLog.setNcEventId(Integer.parseInt(ncEvent.getId()));
@@ -265,7 +264,6 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
                 }
             }
         }
-
     }
 
     @Override
@@ -273,6 +271,8 @@ public class NonConformingEventWorkerImpl implements NonConformingEventWorker {
         NcEvent ncEvent = ncEventService.get(form.getId());
         if (ncEvent != null) {
             ncEvent.setDiscussionDate(form.getDiscussionDate());
+            ncEvent.setDateCompleted(getDate(form.getDateCompleted(), "dd/MM/yyyy")); // Convert the string to a Date
+                                                                                      // object
             setActionLogs(form, ncEvent);
             ncEvent.setSysUserId(form.getCurrentUserId());
             ncEventService.update(ncEvent);

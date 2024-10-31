@@ -1,23 +1,20 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.systemmodule.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.List;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -25,8 +22,8 @@ import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.systemmodule.dao.SystemModuleDAO;
 import org.openelisglobal.systemmodule.valueholder.SystemModule;
 import org.springframework.stereotype.Component;
@@ -55,7 +52,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemModule getData()", e);
         }
     }
@@ -69,7 +66,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
             Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemModule getAllSystemModules()", e);
         }
 
@@ -82,7 +79,9 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
         List<SystemModule> list;
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             String sql = "from SystemModule s order by s.systemModuleName";
             Query<SystemModule> query = entityManager.unwrap(Session.class).createQuery(sql, SystemModule.class);
@@ -91,7 +90,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemModule getPageOfSystemModules()", e);
         }
 
@@ -103,7 +102,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
         try {
             sysModule = entityManager.unwrap(Session.class).get(SystemModule.class, idString);
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemModule readSystemModule(idString)", e);
         }
 
@@ -152,7 +151,7 @@ public class SystemModuleDAOImpl extends BaseDAOImpl<SystemModule, String> imple
 
             return list.size() > 0;
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateSystemModuleExists()", e);
         }
     }

@@ -18,7 +18,6 @@ package org.openelisglobal.common.services;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.openelisglobal.organization.service.OrganizationTypeService;
 import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.organization.valueholder.OrganizationType;
@@ -35,8 +34,7 @@ import org.springframework.context.annotation.DependsOn;
 import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
-/**
- */
+/** */
 @Service
 @Scope("prototype")
 @DependsOn({ "springContext" })
@@ -164,7 +162,6 @@ public class RequesterService {
         }
 
         return organizationDepartment;
-
     }
 
     public List<SampleRequester> getSampleRequestersByType(Requester type, boolean createIfNotFound) {
@@ -206,13 +203,16 @@ public class RequesterService {
                 TableIdService.getInstance().REFERRING_ORG_TYPE_ID);
         organizationDepartment = sampleService.getOrganizationRequester(sampleService.get(sampleId),
                 TableIdService.getInstance().REFERRING_ORG_DEPARTMENT_TYPE_ID);
-//        for (SampleRequester requester : requesters) {
-//            if (requester.getRequesterTypeId() == Requester.PERSON.getId()) {
-//                person = personService.getPersonById(String.valueOf(requester.getRequesterId()));
-//            } else if (requester.getRequesterTypeId() == Requester.ORGANIZATION.getId()) {
-//
-//                organization = organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
-//            }
-//        }
+        // for (SampleRequester requester : requesters) {
+        // if (requester.getRequesterTypeId() == Requester.PERSON.getId()) {
+        // person =
+        // personService.getPersonById(String.valueOf(requester.getRequesterId()));
+        // } else if (requester.getRequesterTypeId() == Requester.ORGANIZATION.getId())
+        // {
+        //
+        // organization =
+        // organizationService.getOrganizationById(String.valueOf(requester.getRequesterId()));
+        // }
+        // }
     }
 }

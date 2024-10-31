@@ -1,7 +1,6 @@
 package org.openelisglobal.config;
 
 import javax.net.ssl.SSLContext;
-
 import org.apache.http.client.config.RequestConfig;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.impl.client.CloseableHttpClient;

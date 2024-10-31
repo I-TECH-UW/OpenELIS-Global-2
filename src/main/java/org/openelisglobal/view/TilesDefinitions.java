@@ -1,7 +1,6 @@
 package org.openelisglobal.view;
 
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
@@ -25,5 +24,4 @@ public class TilesDefinitions {
     public Definition getDefinitionByName(String name) {
         return definitions.stream().filter(x -> x.getName().equals(name)).findFirst().orElseThrow();
     }
-
 }

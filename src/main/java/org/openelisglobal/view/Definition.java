@@ -1,7 +1,6 @@
 package org.openelisglobal.view;
 
 import java.util.List;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -14,10 +13,13 @@ public class Definition {
 
     @XmlAttribute(name = "name")
     private String name;
+
     @XmlAttribute(name = "extends")
     private String extension;
+
     @XmlAttribute(name = "template")
     private String template;
+
     @XmlElement(name = "put-attribute")
     private List<PutAttribute> putAttributes;
 

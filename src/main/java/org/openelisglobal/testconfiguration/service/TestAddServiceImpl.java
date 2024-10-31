@@ -1,7 +1,6 @@
 package org.openelisglobal.testconfiguration.service;
 
 import java.util.List;
-
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.panel.service.PanelService;
@@ -108,7 +107,5 @@ public class TestAddServiceImpl implements TestAddService {
                 resultLimitService.insert(resultLimit);
             }
         }
-
     }
-
 }

@@ -1,34 +1,31 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*
-* Contributor(s): CIRG, University of Washington, Seattle WA.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ *
+ * <p>Contributor(s): CIRG, University of Washington, Seattle WA.
+ */
 package org.openelisglobal.systemusermodule.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.systemusermodule.dao.SystemUserModuleDAO;
 import org.openelisglobal.systemusermodule.valueholder.SystemUserModule;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -60,7 +57,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUserModule getData()", e);
         }
     }
@@ -76,7 +73,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUserModule getAllSystemModules()", e);
         }
 
@@ -95,12 +92,11 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUserModule getAllSystemUserModulesBySystemUserId()", e);
         }
 
         return list;
-
     }
 
     @Override
@@ -109,7 +105,9 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
         List<SystemUserModule> list;
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             String sql = "from SystemUserModule s order by s.systemUser.id";
             Query<SystemUserModule> query = entityManager.unwrap(Session.class).createQuery(sql,
@@ -120,7 +118,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in SystemUserModule getPageOfSystemUserModules()", e);
         }
 
@@ -133,7 +131,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
             sysUserModule = entityManager.unwrap(Session.class).get(SystemUserModule.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Gender readSystemUserModule(idString)", e);
         }
 
@@ -152,7 +150,8 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 
             List<SystemUserModule> list = new ArrayList<>();
 
-            String sql = "from SystemUserModule s where s.systemUser.id = :param and s.systemModule.id = :param2 and s.id != :param3";
+            String sql = "from SystemUserModule s where s.systemUser.id = :param and s.systemModule.id = :param2"
+                    + " and s.id != :param3";
             Query<SystemUserModule> query = entityManager.unwrap(Session.class).createQuery(sql,
                     SystemUserModule.class);
             query.setParameter("param", systemUserModule.getSystemUser().getId());
@@ -174,7 +173,7 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateSystemUserModuleExists()", e);
         }
     }
@@ -184,5 +183,4 @@ public class SystemUserModuleDAOImpl extends BaseDAOImpl<SystemUserModule, Strin
         List<SystemUserModule> userModuleList = getAllPermissionModulesByAgentId(userId);
         return userModuleList.size() > 0;
     }
-
 }

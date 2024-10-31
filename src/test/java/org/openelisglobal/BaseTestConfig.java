@@ -1,10 +1,9 @@
 package org.openelisglobal;
 
 import java.io.IOException;
-
 import javax.persistence.EntityManagerFactory;
 import javax.sql.DataSource;
-
+import liquibase.integration.spring.SpringLiquibase;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -18,8 +17,6 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.utility.MountableFile;
-
-import liquibase.integration.spring.SpringLiquibase;
 
 @Configuration
 @EnableTransactionManagement
@@ -36,6 +33,7 @@ public class BaseTestConfig {
 
     private static final String DB_NAME = "clinlims";
 
+    @SuppressWarnings("rawtypes")
     private static PostgreSQLContainer postgreSqlContainer = new PostgreSQLContainer("postgres:14.4");
 
     @Bean("liquibase")
@@ -86,7 +84,7 @@ public class BaseTestConfig {
 
     private void startPostgreSql() {
         postgreSqlContainer.withCopyFileToContainer(MountableFile.forClasspathResource("postgre-db-init"),
-                 "/docker-entrypoint-initdb.d");
+                "/docker-entrypoint-initdb.d");
         postgreSqlContainer.withEnv("POSTGRES_INITDB_ARGS", "--auth-host=md5");
         postgreSqlContainer.withDatabaseName(DB_NAME);
         postgreSqlContainer.withUsername(USER);

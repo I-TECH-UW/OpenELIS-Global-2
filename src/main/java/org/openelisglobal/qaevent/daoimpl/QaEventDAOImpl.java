@@ -1,33 +1,30 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.qaevent.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.qaevent.dao.QaEventDAO;
 import org.openelisglobal.qaevent.valueholder.QaEvent;
 import org.springframework.stereotype.Component;
@@ -57,7 +54,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in QaEvent getData()", e);
         }
     }
@@ -71,7 +68,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
             Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in QaEvent getAllQaEvents()", e);
         }
 
@@ -84,7 +81,9 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
         List<QaEvent> list = new Vector<>();
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             String sql = "from QaEvent qe order by qe.qaEventName";
             Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
@@ -94,7 +93,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in QaEvent getPageOfQaEvents()", e);
         }
 
@@ -107,7 +106,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
             qaEvent = entityManager.unwrap(Session.class).get(QaEvent.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in QaEvent readQaEvent()", e);
         }
 
@@ -120,18 +119,18 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
     public List<QaEvent> getQaEvents(String filter) throws LIMSRuntimeException {
         List<QaEvent> list = new Vector<>();
         try {
-            String sql = "from QaEvent qe where upper(qe.qaEventName) like upper(:param) order by upper(qe.qaEventName)";
+            String sql = "from QaEvent qe where upper(qe.qaEventName) like upper(:param) order by"
+                    + " upper(qe.qaEventName)";
             Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
             query.setParameter("param", filter + "%");
 
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in QaEvent getQaEvents(String filter)", e);
         }
         return list;
-
     }
 
     @Override
@@ -152,7 +151,7 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in QaEvent getQaEventByName()", e);
         }
     }
@@ -171,10 +170,9 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
-            String sql = "from QaEvent t where "
-                    + "((trim(lower(t.qaEventName)) = :param and trim(lower(t.type)) = :param3 and t.id != :param2) "
-                    + "or "
-                    + "(trim(lower(t.description)) = :param4 and trim(lower(t.type)) = :param3 and t.id != :param2)) ";
+            String sql = "from QaEvent t where ((trim(lower(t.qaEventName)) = :param and trim(lower(t.type)) ="
+                    + " :param3 and t.id != :param2) or (trim(lower(t.description)) = :param4 and"
+                    + " trim(lower(t.type)) = :param3 and t.id != :param2)) ";
 
             Query<QaEvent> query = entityManager.unwrap(Session.class).createQuery(sql, QaEvent.class);
             query.setParameter("param", qaEvent.getQaEventName().toLowerCase().trim());
@@ -198,9 +196,8 @@ public class QaEventDAOImpl extends BaseDAOImpl<QaEvent, String> implements QaEv
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateQaEventExists()", e);
         }
     }
-
 }

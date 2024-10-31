@@ -2,7 +2,6 @@ package org.openelisglobal.validation.constraintvalidator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
 import org.jsoup.Jsoup;
 import org.jsoup.safety.Safelist;
 import org.openelisglobal.validation.annotations.SafeHtml;
@@ -25,8 +24,8 @@ public class HtmlValidator implements ConstraintValidator<SafeHtml, String> {
         if (s == null) {
             return true;
         }
-        if(!s.matches(".*\\<[^>]+>.*")) { //allow <LL or >log7 as result values 
-        	return true;
+        if (!s.matches(".*\\<[^>]+>.*")) { // allow <LL or >log7 as result values
+            return true;
         }
         switch (level) {
         case NONE:
@@ -42,6 +41,5 @@ public class HtmlValidator implements ConstraintValidator<SafeHtml, String> {
         default:
             return Jsoup.isValid(s, Safelist.none());
         }
-
     }
 }

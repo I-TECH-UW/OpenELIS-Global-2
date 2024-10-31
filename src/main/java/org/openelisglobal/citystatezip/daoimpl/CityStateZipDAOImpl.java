@@ -1,23 +1,20 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.citystatezip.daoimpl;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.citystatezip.dao.CityStateZipDAO;
@@ -35,7 +32,6 @@ import org.springframework.transaction.annotation.Transactional;
  */
 /**
  * @author benzd1
- *
  */
 @Component
 @Transactional
@@ -70,7 +66,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
         } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in CityStateZip getCities(String filter)", e);
         }
 
@@ -83,7 +79,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
         List<CityStateZip> cityStateZips = new ArrayList<>();
         try {
 
-            String sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where upper(csz.city) = :param";
+            String sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where upper(csz.city) ="
+                    + " :param";
 
             Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
             query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
@@ -110,7 +107,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
         } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in CityStateZip getZipCodesByCity()", e);
         }
     }
@@ -142,7 +139,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
             }
         } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in getCitiesByZipCode()", e);
         }
 
@@ -170,7 +167,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
             }
         } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in CityStateZip getAllStateCodes()", e);
         }
 
@@ -195,7 +192,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
         } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in getCityStateZipByCityAndZipCode()", e);
         }
 
@@ -230,7 +227,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
         } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in CityStateZip getState()", e);
         }
 
@@ -266,7 +263,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
         } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in CityStateZip getCity()", e);
         }
 
@@ -302,7 +299,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
         } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in CityStateZip getZip()", e);
         }
 
@@ -322,7 +319,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
             if (!StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
                     && !StringUtil.isNullorNill(zipCode)) {
-                sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param and csz.zipCode = :param2 and upper(csz.state) = :param3";
+                sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where"
+                        + " upper(csz.city) = :param and csz.zipCode = :param2 and upper(csz.state) =" + " :param3";
                 Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                 query.setParameter("param2", cityStateZip.getZipCode().trim().toUpperCase());
@@ -330,21 +328,24 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                 list = query.list();
             } else if (!StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
                     && StringUtil.isNullorNill(zipCode)) {
-                sql = "select distinct csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param and upper(csz.state) = :param3";
+                sql = "select distinct csz.city, csz.state from CityStateZip csz where upper(csz.city) ="
+                        + " :param and upper(csz.state) = :param3";
                 Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                 query.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
                 list = query.list();
             } else if (StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
                     && !StringUtil.isNullorNill(zipCode)) {
-                sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where upper(csz.city) = :param and csz.zipCode = :param2";
+                sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where upper(csz.city) ="
+                        + " :param and csz.zipCode = :param2";
                 Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                 query.setParameter("param2", cityStateZip.getZipCode().trim().toUpperCase());
                 list = query.list();
             } else if (!StringUtil.isNullorNill(state) && StringUtil.isNullorNill(city)
                     && !StringUtil.isNullorNill(zipCode)) {
-                sql = "select distinct csz.zipCode, csz.state from CityStateZip csz where csz.zipCode = :param2 and upper(csz.state) = :param3";
+                sql = "select distinct csz.zipCode, csz.state from CityStateZip csz where csz.zipCode ="
+                        + " :param2 and upper(csz.state) = :param3";
                 Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param2", cityStateZip.getZipCode().trim().toUpperCase());
                 query.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
@@ -380,7 +381,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
         } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in isCityStateZipValidForHumanSampleEntry()", e);
         }
     }
@@ -405,7 +406,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
             if (!StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
                     && !StringUtil.isNullorNill(zipCode)) {
                 // first get all where city matches (and state)
-                sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param and upper(csz.state) = :param3 order by csz.zipCode";
+                sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where"
+                        + " upper(csz.city) = :param and upper(csz.state) = :param3 order by csz.zipCode";
                 Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                 query.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
@@ -424,7 +426,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                     cityStateZips.add(csz);
                 }
                 // now get all where zip matches (and state)
-                sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where csz.zipCode = :param2 and upper(csz.state) = :param3 order by csz.city";
+                sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where"
+                        + " csz.zipCode = :param2 and upper(csz.state) = :param3 order by csz.city";
                 Query<?> query2 = entityManager.unwrap(Session.class).createQuery(sql);
                 query2.setParameter("param2", cityStateZip.getZipCode().trim());
                 query2.setParameter("param3", cityStateZip.getState().trim().toUpperCase());
@@ -447,7 +450,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                 // for case that state entered is incorrect for both city and zip we should list
                 // all matches for city and zip regardless of state
                 if (cityStateZips.size() == 0) {
-                    sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param order by csz.zipCode";
+                    sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where"
+                            + " upper(csz.city) = :param order by csz.zipCode";
                     Query<?> query3 = entityManager.unwrap(Session.class).createQuery(sql);
                     query3.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                     listByCity = query3.list();
@@ -465,7 +469,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                         cityStateZips.add(csz);
                     }
                     // now get all where zip matches
-                    sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where csz.zipCode = :param2 order by csz.city";
+                    sql = "select distinct csz.zipCode, csz.city, csz.state from CityStateZip csz where"
+                            + " csz.zipCode = :param2 order by csz.city";
                     Query<?> query4 = entityManager.unwrap(Session.class).createQuery(sql);
                     query4.setParameter("param2", cityStateZip.getZipCode().trim());
                     listByZip = query4.list();
@@ -486,7 +491,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                 }
             } else if (!StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
                     && StringUtil.isNullorNill(zipCode)) {
-                sql = "select distinct csz.city, csz.state from CityStateZip csz where upper(csz.city) = :param order by csz.state";
+                sql = "select distinct csz.city, csz.state from CityStateZip csz where upper(csz.city) ="
+                        + " :param order by csz.state";
                 Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                 list = query.list();
@@ -505,7 +511,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                 }
             } else if (StringUtil.isNullorNill(state) && !StringUtil.isNullorNill(city)
                     && !StringUtil.isNullorNill(zipCode)) {
-                sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where upper(csz.city) = :param order by csz.zipCode";
+                sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where upper(csz.city) ="
+                        + " :param order by csz.zipCode";
                 Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param", cityStateZip.getCity().trim().toUpperCase());
                 listByCity = query.list();
@@ -523,7 +530,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                     cityStateZips.add(csz);
                 }
                 // now get all where zip matches
-                sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where csz.zipCode = :param2 order by csz.city";
+                sql = "select distinct csz.zipCode, csz.city from CityStateZip csz where csz.zipCode ="
+                        + " :param2 order by csz.city";
                 Query<?> query2 = entityManager.unwrap(Session.class).createQuery(sql);
                 query2.setParameter("param2", cityStateZip.getZipCode().trim());
                 listByZip = query2.list();
@@ -543,7 +551,8 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
                 }
             } else if (!StringUtil.isNullorNill(state) && StringUtil.isNullorNill(city)
                     && !StringUtil.isNullorNill(zipCode)) {
-                sql = "select distinct csz.state, csz.zipCode from CityStateZip csz where csz.zipCode = :param2 order by csz.state";
+                sql = "select distinct csz.state, csz.zipCode from CityStateZip csz where csz.zipCode ="
+                        + " :param2 order by csz.state";
                 Query<?> query = entityManager.unwrap(Session.class).createQuery(sql);
                 query.setParameter("param2", cityStateZip.getZipCode().trim());
                 list = query.list();
@@ -566,7 +575,7 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
 
         } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in getValidCityStateZipCombosForHumanSampleEntry()", e);
         }
     }
@@ -606,11 +615,10 @@ public class CityStateZipDAOImpl extends BaseDAOImpl<CityStateZip, String> imple
             }
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in getCountyCodeByStateAndZipCode()", e);
         }
 
         return countyCode;
     }
-
 }

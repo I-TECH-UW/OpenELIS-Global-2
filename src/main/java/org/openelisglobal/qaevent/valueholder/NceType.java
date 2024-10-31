@@ -2,7 +2,6 @@ package org.openelisglobal.qaevent.valueholder;
 
 import java.sql.Timestamp;
 import java.util.Objects;
-
 import org.openelisglobal.common.valueholder.BaseObject;
 
 public class NceType extends BaseObject<String> {

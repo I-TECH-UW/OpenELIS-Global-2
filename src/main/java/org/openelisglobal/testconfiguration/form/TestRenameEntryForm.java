@@ -1,14 +1,12 @@
 package org.openelisglobal.testconfiguration.form;
 
 import java.util.List;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.validator.ValidationHelper;
+import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class TestRenameEntryForm extends BaseForm {
     // for display

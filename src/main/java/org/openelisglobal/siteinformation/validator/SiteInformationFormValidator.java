@@ -33,7 +33,5 @@ public class SiteInformationFormValidator implements Validator {
 
         ValidationHelper.validateOptionField(form.getTag(), "tag", errors,
                 new String[] { "enable", "url", "numericOnly", "programConfiguration", "localization", "", null });
-
     }
-
 }

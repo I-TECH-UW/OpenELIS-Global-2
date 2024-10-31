@@ -1,7 +1,6 @@
 package org.openelisglobal.dataexchange.order.form;
 
 import java.util.List;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrderDisplayItem;
@@ -50,7 +49,7 @@ public class ElectronicOrderViewForm extends BaseForm {
     private String qaAuthorizer;
 
     private String qaNote;
-    
+
     public ElectronicOrderViewForm() {
         setFormName("ElectronicOrderViewForm");
     }

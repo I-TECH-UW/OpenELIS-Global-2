@@ -1,10 +1,8 @@
 package org.openelisglobal.testconfiguration.form;
 
 import java.util.List;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
-
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.testconfiguration.action.PanelTests;

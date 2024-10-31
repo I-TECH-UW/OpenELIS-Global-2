@@ -1,5 +1,7 @@
 package org.openelisglobal.reports.action.implementation.reportBeans;
 
+import ca.uhn.fhir.context.FhirContext;
+import ca.uhn.fhir.rest.client.api.IGenericClient;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Arrays;
@@ -7,7 +9,6 @@ import java.util.Date;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
-
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Bundle.BundleEntryComponent;
@@ -31,9 +32,6 @@ import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
-
-import ca.uhn.fhir.context.FhirContext;
-import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
 
@@ -93,8 +91,10 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
 
         return analysises;
 
-//        return analysises.stream().filter(analysis -> analysis.getStartedDate().after(this.dateRange.getLowDate())
-//                && analysis.getStartedDate().before(this.dateRange.getHighDate())).collect(Collectors.toList());
+        // return analysises.stream().filter(analysis ->
+        // analysis.getStartedDate().after(this.dateRange.getLowDate())
+        // &&
+        // analysis.getStartedDate().before(this.dateRange.getHighDate())).collect(Collectors.toList());
     }
 
     protected Optional<Task> getReferringTaskForAnalysis(Analysis analysis) {
@@ -172,5 +172,4 @@ public abstract class CovidResultsBuilderImpl implements CovidResultsBuilder {
         }
         return EMPTY_VALUE;
     }
-
 }

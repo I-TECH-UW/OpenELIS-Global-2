@@ -1,18 +1,16 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
- *               I-TECH, University of Washington, Seattle WA.
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved. I-TECH,
+ * University of Washington, Seattle WA.
  */
 package org.openelisglobal.resultvalidation.util;
 
@@ -27,9 +25,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.annotation.PostConstruct;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -163,7 +159,7 @@ public class ResultsValidationUtility {
 
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
             List<ResultValidationItem> testList = getPageUnValidatedTestResultItemsInTestSection(testSectionId,
-                    statusList);  
+                    statusList);
             resultList = testResultListToAnalysisItemList(testList);
             sortByAccessionNumberAndOrder(resultList);
             setGroupingNumbers(resultList);
@@ -185,25 +181,25 @@ public class ResultsValidationUtility {
 
     public int getCountResultValidationList(List<Integer> statusList, String testSectionId) {
 
-//        List<AnalysisItem> resultList = new ArrayList<>();
+        // List<AnalysisItem> resultList = new ArrayList<>();
         int count = 0;
         if (!GenericValidator.isBlankOrNull(testSectionId)) {
             count = getCountUnValidatedTestResultItemsInTestSection(testSectionId, statusList);
-//            resultList = testResultListToAnalysisItemList(testList);
-//            sortByAccessionNumberAndOrder(resultList);
-//            setGroupingNumbers(resultList);
+            // resultList = testResultListToAnalysisItemList(testList);
+            // sortByAccessionNumberAndOrder(resultList);
+            // setGroupingNumbers(resultList);
         }
 
         return count;
-
     }
 
     @SuppressWarnings("unchecked")
     public final List<ResultValidationItem> getPageUnValidatedTestResultItemsInTestSection(String sectionId,
             List<Integer> statusList) {
 
-//        List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList,
-//                false);
+        // List<Analysis> analysisList =
+        // analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList,
+        // false);
         // getPage for validation
         List<Analysis> analysisList = analysisService.getPageAnalysisByTestSectionAndStatus(sectionId, statusList,
                 false);
@@ -214,8 +210,9 @@ public class ResultsValidationUtility {
     public final List<ResultValidationItem> getPageUnValidatedTestResultItemsAtAccessionNumber(String accessionNumber,
             List<Integer> statusList) {
 
-//        List<Analysis> analysisList = analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList,
-//                false);
+        // List<Analysis> analysisList =
+        // analysisService.getAllAnalysisByTestSectionAndStatus(sectionId, statusList,
+        // false);
         // getPage for validation
         List<Analysis> analysisList = analysisService.getPageAnalysisAtAccessionNumberAndStatus(accessionNumber,
                 statusList, false);
@@ -247,7 +244,6 @@ public class ResultsValidationUtility {
                         : accessionComp);
             }
         });
-
     }
 
     protected final void setGroupingNumbers(List<AnalysisItem> resultList) {
@@ -300,13 +296,12 @@ public class ResultsValidationUtility {
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
                         } catch (RuntimeException e) {
-                            LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
+                            LogEvent.logInfo(this.getClass().getSimpleName(), "getGroupedTestsForAnalysisList",
                                     e.getMessage());
                             // no-op
                         }
 
                         validationItem.setResultValue(resultValue);
-
                     }
 
                     validationItem.setAnalysis(analysis);
@@ -343,13 +338,12 @@ public class ResultsValidationUtility {
                                     ? dictionary.getDictEntry()
                                     : dictionary.getLocalAbbreviation();
                         } catch (RuntimeException e) {
-                            LogEvent.logInfo(this.getClass().getName(), "getGroupedTestsForAnalysisList",
+                            LogEvent.logInfo(this.getClass().getSimpleName(), "getGroupedTestsForAnalysisList",
                                     e.getMessage());
                             // no-op
                         }
 
                         validationItem.setResultValue(resultValue);
-
                     }
 
                     validationItem.setAnalysis(analysis);
@@ -412,7 +406,7 @@ public class ResultsValidationUtility {
                     analysis.getSampleItem().getSortOrder(), result,
                     analysis.getSampleItem().getSample().getAccessionNumber(), notes);
 
-            notes = null;// we only want it once
+            notes = null; // we only want it once
             if (resultItem.getQualifiedDictionaryId() != null) {
                 parentItem = resultItem;
             }
@@ -429,9 +423,9 @@ public class ResultsValidationUtility {
         List<TestResult> testResults = getPossibleResultsForTest(test);
 
         String displayTestName = TestServiceImpl.getLocalizedTestNameWithType(test);
-//      displayTestName = augmentTestNameWithRange(displayTestName, result);
+        // displayTestName = augmentTestNameWithRange(displayTestName, result);
 
-       ResultLimit resultLimit = SpringContext.getBean(ResultLimitService.class).getResultLimitForTestAndPatient(test,
+        ResultLimit resultLimit = SpringContext.getBean(ResultLimitService.class).getResultLimitForTestAndPatient(test,
                 currentPatient);
         ResultValidationItem testItem = new ResultValidationItem();
 
@@ -457,13 +451,16 @@ public class ResultsValidationUtility {
     }
 
     private void setResultLimitDependencies(ResultLimit resultLimit, ResultValidationItem testItem,
-         List<TestResult> testResults) {
+            List<TestResult> testResults) {
         if (resultLimit != null) {
-         testItem.setResultLimitId(resultLimit.getId());
+            testItem.setResultLimitId(resultLimit.getId());
             testItem.setLowerCritical(
-        resultLimit.getLowCritical() == Double.NEGATIVE_INFINITY ? 0 : resultLimit.getLowCritical());
-             testItem.setHigherCritical(
-                resultLimit.getHighCritical() == Double.POSITIVE_INFINITY ? 0 : resultLimit.getHighCritical());
+                    resultLimit.getLowCritical() == Double.NEGATIVE_INFINITY ? 0 : resultLimit.getLowCritical());
+            testItem.setHigherCritical(
+                    resultLimit.getHighCritical() == Double.POSITIVE_INFINITY ? 0 : resultLimit.getHighCritical());
+
+            testItem.setNormalRange(SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(
+                    resultLimit, testResults.isEmpty() ? "0" : testResults.get(0).getSignificantDigits(), " - "));
         }
     }
 
@@ -605,6 +602,8 @@ public class ResultsValidationUtility {
                 currentMultiSelectAnalysisItem.setQualifiedResultValue(testResultItem.getQualifiedResultValue());
                 currentMultiSelectAnalysisItem.setQualifiedDictionaryId(testResultItem.getQualifiedDictionaryId());
                 currentMultiSelectAnalysisItem.setHasQualifiedResult(true);
+                currentMultiSelectAnalysisItem.setNormalRange(testResultItem.getNormalRange());
+                currentMultiSelectAnalysisItem.setPatientName(testResultItem.getPatientName());
             }
         }
 
@@ -647,9 +646,11 @@ public class ResultsValidationUtility {
 
         analysisResultItem.setAccessionNumber(testResultItem.getAccessionNumber());
         analysisResultItem.setLowerCritical(
-                        testResultItem.getLowerCritical() == Double.NEGATIVE_INFINITY ? 0 : testResultItem.getLowerCritical());
-        analysisResultItem.setHigherCritical(
-                        testResultItem.getHigherCritical() == Double.POSITIVE_INFINITY ? 0 : testResultItem.getHigherCritical());               
+                testResultItem.getLowerCritical() == Double.NEGATIVE_INFINITY ? 0 : testResultItem.getLowerCritical());
+        analysisResultItem.setHigherCritical(testResultItem.getHigherCritical() == Double.POSITIVE_INFINITY ? 0
+                : testResultItem.getHigherCritical());
+        analysisResultItem.setNormalRange(testResultItem.getNormalRange());
+        analysisResultItem.setPatientName(testResultItem.getPatientName());
         analysisResultItem.setTestName(testName);
         analysisResultItem.setUnits(testUnits);
         analysisResultItem.setAnalysisId(testResultItem.getAnalysis().getId());
@@ -687,7 +688,6 @@ public class ResultsValidationUtility {
         analysisResultItem.setHasQualifiedResult(testResultItem.isHasQualifiedResult());
 
         return analysisResultItem;
-
     }
 
     protected final String getFormattedResult(ResultValidationItem testResultItem) {
@@ -721,7 +721,6 @@ public class ResultsValidationUtility {
             }
         }
         return uomName;
-
     }
 
     public List<AnalysisItem> getValidationAnalysisBySample(Sample sample) {
@@ -764,5 +763,4 @@ public class ResultsValidationUtility {
                 : patient.getNationalId());
         form.setSubjectNumber(patientService.getSubjectNumber(patient));
     }
-
 }

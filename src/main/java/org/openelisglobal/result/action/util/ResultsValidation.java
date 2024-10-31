@@ -3,7 +3,6 @@ package org.openelisglobal.result.action.util;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-
 import org.apache.commons.validator.GenericValidator;
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
@@ -15,8 +14,8 @@ import org.openelisglobal.common.formfields.FormFields;
 import org.openelisglobal.common.formfields.FormFields.Field;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.util.validator.CustomDateValidator;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.BaseErrors;
@@ -146,9 +145,7 @@ public class ResultsValidation {
             if (resultHasChanged(item)) {
                 errors.reject("error.requiredNote.missing");
             }
-
         }
-
     }
 
     private boolean resultHasChanged(TestResultItem item) {
@@ -217,5 +214,4 @@ public class ResultsValidation {
             errors.reject("error.reject.noReason");
         }
     }
-
 }

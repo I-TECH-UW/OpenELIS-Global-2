@@ -2,11 +2,8 @@ package org.openelisglobal.barcode.form;
 
 import java.util.List;
 import java.util.Map;
-
 import javax.validation.Valid;
 import javax.validation.constraints.Pattern;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.BaseForm;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
@@ -19,11 +16,12 @@ import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.form.ProjectData;
 import org.openelisglobal.samplebatchentry.form.SampleBatchEntryForm.SampleBatchEntrySetup;
+import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.validation.annotations.ValidAccessionNumber;
 import org.openelisglobal.validation.annotations.ValidDate;
 import org.openelisglobal.validation.annotations.ValidTime;
 
-//values used for fetching, tight validation not needed
+// values used for fetching, tight validation not needed
 public class PrintBarcodeForm extends BaseForm {
     @SafeHtml(level = SafeHtml.SafeListLevel.NONE)
     private String accessionNumber;
@@ -341,12 +339,10 @@ public class PrintBarcodeForm extends BaseForm {
 
     public List<IdValuePair> getSampleNatureList() {
         return sampleNatureList;
-
     }
 
     public void setSampleNatureList(List<IdValuePair> sampleNatureList) {
         this.sampleNatureList = sampleNatureList;
-
     }
 
     public String getStartingAtAccession() {
@@ -356,5 +352,4 @@ public class PrintBarcodeForm extends BaseForm {
     public void setStartingAtAccession(String startingAtAccession) {
         this.startingAtAccession = startingAtAccession;
     }
-
 }

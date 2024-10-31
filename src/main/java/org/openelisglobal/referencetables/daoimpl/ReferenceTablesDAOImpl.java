@@ -1,25 +1,22 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.referencetables.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Vector;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.hibernate.HibernateException;
 import org.hibernate.Session;
@@ -27,8 +24,8 @@ import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.referencetables.dao.ReferenceTablesDAO;
 import org.openelisglobal.referencetables.valueholder.ReferenceTables;
 import org.springframework.stereotype.Component;
@@ -58,7 +55,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Referencetables getData()", e);
         }
     }
@@ -73,7 +70,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Referencetables getAllReferenceTables()", e);
         }
 
@@ -86,7 +83,9 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
         List<ReferenceTables> list = new Vector<>();
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             String sql = "from ReferenceTables r order by r.tableName";
             Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql, ReferenceTables.class);
@@ -97,7 +96,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Referencetables getPageOfReferenceTables()", e);
         }
 
@@ -110,12 +109,11 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             referenceTables = entityManager.unwrap(Session.class).get(ReferenceTables.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Referencetables readReferenceTables(idString)", e);
         }
 
         return referenceTables;
-
     }
 
     // bugzilla 1411
@@ -142,10 +140,10 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
                 sql = "from ReferenceTables t where trim(lower(t.tableName)) = :param and id != :param2";
             }
 
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Yi in
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Yi in
             // duplicateReferencetables sql is " + sql);
             Query<ReferenceTables> query = entityManager.unwrap(Session.class).createQuery(sql, ReferenceTables.class);
-            // LogEvent.logInfo(this.getClass().getName(), "method unkown",
+            // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown",
             // "duplicateReferencetables sql is " + sql);
 
             query.setParameter("param", referenceTables.getTableName().toLowerCase().trim());
@@ -169,7 +167,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateReferenceTablesExists()", e);
         }
     }
@@ -187,7 +185,7 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
             list = query.list();
         } catch (RuntimeException e) {
             // buzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ReferenceTables getAllReferenceTablesForHl7Encoding()", e);
         }
 
@@ -224,5 +222,4 @@ public class ReferenceTablesDAOImpl extends BaseDAOImpl<ReferenceTables, String>
 
         return null;
     }
-
 }

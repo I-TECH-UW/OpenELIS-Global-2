@@ -1,7 +1,6 @@
 package org.openelisglobal.reportconfiguration.daoimpl;
 
 import java.util.List;
-
 import org.hibernate.Session;
 import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
@@ -33,7 +32,7 @@ public class ReportDAOImpl extends BaseDAOImpl<Report, String> implements Report
             return -1;
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ReportDAOImpl getMaxSortOrder()", e);
         }
     }

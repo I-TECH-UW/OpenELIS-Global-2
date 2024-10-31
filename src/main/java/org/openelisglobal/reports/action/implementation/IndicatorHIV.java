@@ -1,18 +1,15 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
- *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
  */
 package org.openelisglobal.reports.action.implementation;
 
@@ -23,7 +20,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.analyte.service.AnalyteService;
@@ -31,7 +29,6 @@ import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.MathUtil;
-import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -43,9 +40,6 @@ import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestServiceImpl;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 public class IndicatorHIV extends IndicatorReport implements IReportCreator, IReportParameterSetter {
 
@@ -71,7 +65,6 @@ public class IndicatorHIV extends IndicatorReport implements IReportCreator, IRe
     private static DictionaryService dictionaryService = SpringContext.getBean(DictionaryService.class);
 
     static {
-
         Dictionary dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Positive",
                 "Conclusion");
         if (dictionary != null) {

@@ -1,18 +1,15 @@
 /**
- * The contents of this file are subject to the Mozilla Public License
- * Version 1.1 (the "License"); you may not use this file except in
- * compliance with the License. You may obtain a copy of the License at
- * http://www.mozilla.org/MPL/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
  *
- * Software distributed under the License is distributed on an "AS IS"
- * basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
- * License for the specific language governing rights and limitations under
- * the License.
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
  *
- * The Original Code is OpenELIS code.
+ * <p>The Original Code is OpenELIS code.
  *
- * Copyright (C) CIRG, University of Washington, Seattle WA.  All Rights Reserved.
- *
+ * <p>Copyright (C) CIRG, University of Washington, Seattle WA. All Rights Reserved.
  */
 package org.openelisglobal.reports.action.implementation;
 
@@ -21,7 +18,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
-
+import net.sf.jasperreports.engine.JRDataSource;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.exception.LIMSInvalidConfigurationException;
@@ -39,9 +37,6 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
-
-import net.sf.jasperreports.engine.JRDataSource;
-import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 
 @SuppressWarnings("unchecked")
 public class IndicatorSectionPerformanceReport extends RetroCIReport implements IReportCreator {
@@ -126,7 +121,6 @@ public class IndicatorSectionPerformanceReport extends RetroCIReport implements 
                 return o2.getCategoryValue().compareTo(o1.getCategoryValue());
             }
         });
-
     }
 
     private void addTestItems() {
@@ -150,7 +144,6 @@ public class IndicatorSectionPerformanceReport extends RetroCIReport implements 
         fillDataForAnalysis(hematologyAnalysisList, "Hematologie test");
         fillDataForAnalysis(immunologyAnalysisList, "Immuno test");
         fillDataForAnalysis(verologyAnalysisList, "Verologie test");
-
     }
 
     private void addValidationItems() {
@@ -174,7 +167,6 @@ public class IndicatorSectionPerformanceReport extends RetroCIReport implements 
         fillDataForValidation(hematologyAnalysisList, "Hematologie Validation");
         fillDataForValidation(immunologyAnalysisList, "Immuno Validation");
         fillDataForValidation(verologyAnalysisList, "Verologie Validation");
-
     }
 
     private void fillDataForValidation(List<Analysis> analysisList, String category) {
@@ -258,5 +250,4 @@ public class IndicatorSectionPerformanceReport extends RetroCIReport implements 
         // redo so it actually looks, although this should be the lowest
         return observationList.get(0).getSampleId();
     }
-
 }

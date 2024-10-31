@@ -1,20 +1,18 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*
-* Contributor(s): CIRG, University of Washington, Seattle WA.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ *
+ * <p>Contributor(s): CIRG, University of Washington, Seattle WA.
+ */
 package org.openelisglobal.sample.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
@@ -26,7 +24,6 @@ import java.util.Calendar;
 import java.util.List;
 import java.util.Locale;
 import java.util.stream.Collectors;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
@@ -35,8 +32,9 @@ import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.sample.dao.SampleDAO;
 import org.openelisglobal.sample.valueholder.OrderPriority;
 import org.openelisglobal.sample.valueholder.Sample;
@@ -79,7 +77,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getData()", e);
         }
     }
@@ -91,7 +89,9 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
         try {
 
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             String sql = "from Sample s order by s.id";
             Query<Sample> query = entityManager.unwrap(Session.class).createQuery(sql, Sample.class);
@@ -111,7 +111,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
                 samp.setReleasedDateForDisplay(DateUtil.convertSqlDateToStringDate(samp.getReleasedDate()));
             }
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getPageOfSamples()", e);
         }
 
@@ -145,7 +145,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getDataByAccessionNumber()", e);
         }
     }
@@ -156,7 +156,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             samp = entityManager.unwrap(Session.class).get(Sample.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample readSample()", e);
         }
         return samp;
@@ -199,12 +199,13 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
                             if (stringSequenceShort.length() == 6) {
                                 stringSequenceLong = stringSequenceShort;
                             }
-                            if (stringSequenceShort.length() > 6) {// we
+                            if (stringSequenceShort.length() > 6) { // we
                                 // are
                                 // over
                                 // the
                                 // limit
-                                // LogEvent.logInfo(this.getClass().getName(), "method unkown", "Error in Sample
+                                // LogEvent.logInfo(this.getClass().getSimpleName(), "method unkown", "Error in
+                                // Sample
                                 // getNextAccessionNumber() max sequence
                                 // number reached");
                                 throw new LIMSRuntimeException(
@@ -232,7 +233,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getNextAccessionNumber()", e);
         }
         return accessionNumber;
@@ -242,12 +243,10 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
      * Get the Sample for the specified accession number.
      *
      * @param accessionNumber The accession number of the Sample being sought.
-     *
      * @return Sample The Sample for the specified accession number, or null if the
      *         accession number does not exist.
      */
     @Override
-
     @Transactional(readOnly = true)
     public Sample getSampleByAccessionNumber(String accessionNumber) throws LIMSRuntimeException {
         Sample sample = null;
@@ -261,6 +260,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
                 sample = list.get(0);
             }
         } catch (RuntimeException e) {
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Exception occurred in getSampleForAccessionNumber", e);
         }
         return sample;
@@ -280,7 +280,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
         } catch (RuntimeException e) {
 
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getAllSampleByStatusAndDomain()", e);
         }
 
@@ -288,7 +288,6 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<Sample> getSamplesWithPendingQaEvents(Sample sample, boolean filterByQaEventCategory,
             String qaEventCategoryId, boolean filterByDomain) throws LIMSRuntimeException {
@@ -300,53 +299,51 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
             if (filterByDomain) {
                 if (filterByQaEventCategory) {
-                    sql = "from Sample s where s.id IN "
-                            + "(select sqe.sample.id from SampleQaEvent sqe where sqe.completedDate is null and sqe.qaEvent.category = :param2) "
-                            + " or s.id IN "
-                            + "(select aqe.analysis.sampleItem.sample.id from AnalysisQaEvent aqe where aqe.completedDate is null and aqe.qaEvent.category = :param2 and "
-                            +
+                    sql = "from Sample s where s.id IN (select sqe.sample.id from SampleQaEvent sqe where"
+                            + " sqe.completedDate is null and sqe.qaEvent.category = :param2)  or s.id IN"
+                            + " (select aqe.analysis.sampleItem.sample.id from AnalysisQaEvent aqe where"
+                            + " aqe.completedDate is null and aqe.qaEvent.category = :param2 and " +
                             // bugzilla 2300 exclude canceled tests
                             "aqe.analysis.status NOT IN (:param3) and" +
                             // make sure we only pick the max revision analyses that have qa events pending
-                            "(aqe.analysis.sampleItem.id, aqe.analysis.test.id, aqe.analysis.revision) IN (select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b "
-                            + " group by b.sampleItem.id, b.test.id)) " + "and s.domain = :param "
-                            + "order by s.accessionNumber";
+                            "(aqe.analysis.sampleItem.id, aqe.analysis.test.id, aqe.analysis.revision) IN"
+                            + " (select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b  group by"
+                            + " b.sampleItem.id, b.test.id)) and s.domain = :param order by s.accessionNumber";
                 } else {
-                    sql = "from Sample s where s.id IN "
-                            + "(select sqe.sample.id from SampleQaEvent sqe where sqe.completedDate is null) "
-                            + " or s.id IN "
-                            + "(select aqe.analysis.sampleItem.sample.id from AnalysisQaEvent aqe where aqe.completedDate is null and "
-                            +
+                    sql = "from Sample s where s.id IN (select sqe.sample.id from SampleQaEvent sqe where"
+                            + " sqe.completedDate is null)  or s.id IN (select"
+                            + " aqe.analysis.sampleItem.sample.id from AnalysisQaEvent aqe where"
+                            + " aqe.completedDate is null and " +
                             // bugzilla 2300 exclude canceled tests
                             "aqe.analysis.status NOT IN (:param3) and " +
                             // make sure we only pick the max revision analyses that have qa events pending
-                            "(aqe.analysis.sampleItem.id, aqe.analysis.test.id, aqe.analysis.revision) IN (select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b "
-                            + " group by b.sampleItem.id, b.test.id)) " + "and s.domain = :param "
-                            + "order by s.accessionNumber";
+                            "(aqe.analysis.sampleItem.id, aqe.analysis.test.id, aqe.analysis.revision) IN"
+                            + " (select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b  group by"
+                            + " b.sampleItem.id, b.test.id)) and s.domain = :param order by s.accessionNumber";
                 }
             } else {
                 if (filterByQaEventCategory) {
-                    sql = "from Sample s where s.id IN "
-                            + "(select sqe.sample.id from SampleQaEvent sqe where sqe.completedDate is null and sqe.qaEvent.category = :param2) "
-                            + " or s.id IN "
-                            + "(select aqe.analysis.sampleItem.sample.id from AnalysisQaEvent aqe where aqe.completedDate is null and aqe.qaEvent.category = :param2 and "
-                            +
+                    sql = "from Sample s where s.id IN (select sqe.sample.id from SampleQaEvent sqe where"
+                            + " sqe.completedDate is null and sqe.qaEvent.category = :param2)  or s.id IN"
+                            + " (select aqe.analysis.sampleItem.sample.id from AnalysisQaEvent aqe where"
+                            + " aqe.completedDate is null and aqe.qaEvent.category = :param2 and " +
                             // bugzilla 2300 exclude canceled tests
                             "aqe.analysis.status NOT IN (:param3) and" +
                             // make sure we only pick the max revision analyses that have qa events pending
-                            "(aqe.analysis.sampleItem.id, aqe.analysis.test.id, aqe.analysis.revision) IN (select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b "
-                            + " group by b.sampleItem.id, b.test.id)) " + "order by s.accessionNumber";
+                            "(aqe.analysis.sampleItem.id, aqe.analysis.test.id, aqe.analysis.revision) IN"
+                            + " (select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b  group by"
+                            + " b.sampleItem.id, b.test.id)) order by s.accessionNumber";
                 } else {
-                    sql = "from Sample s where s.id IN "
-                            + "(select sqe.sample.id from SampleQaEvent sqe where sqe.completedDate is null) "
-                            + " or s.id IN "
-                            + "(select aqe.analysis.sampleItem.sample.id from AnalysisQaEvent aqe where aqe.completedDate is null and "
-                            +
+                    sql = "from Sample s where s.id IN (select sqe.sample.id from SampleQaEvent sqe where"
+                            + " sqe.completedDate is null)  or s.id IN (select"
+                            + " aqe.analysis.sampleItem.sample.id from AnalysisQaEvent aqe where"
+                            + " aqe.completedDate is null and " +
                             // bugzilla 2300 exclude canceled tests
                             "aqe.analysis.status NOT IN (:param3) and " +
                             // make sure we only pick the max revision analyses that have qa events pending
-                            "(aqe.analysis.sampleItem.id, aqe.analysis.test.id, aqe.analysis.revision) IN (select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b "
-                            + " group by b.sampleItem.id, b.test.id)) " + "order by s.accessionNumber";
+                            "(aqe.analysis.sampleItem.id, aqe.analysis.test.id, aqe.analysis.revision) IN"
+                            + " (select b.sampleItem.id, b.test.id, max(b.revision) from Analysis b  group by"
+                            + " b.sampleItem.id, b.test.id)) order by s.accessionNumber";
                 }
             }
 
@@ -359,11 +356,11 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             }
 
             List<String> statusesToExclude = new ArrayList<>();
-            statusesToExclude.add(SystemConfiguration.getInstance().getAnalysisStatusCanceled());
+            statusesToExclude.add(ConfigurationProperties.getInstance().getPropertyValue("analysis.status.canceled"));
             query.setParameterList("param3", statusesToExclude);
             list = query.list();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getSamplesWithPendingQaEvents()", e);
         }
 
@@ -405,14 +402,13 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             query.setParameter("end", end.getTime());
             list = query.list();
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getSamplesReceivedInDateRange()", e);
         }
         return list;
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<Sample> getSamplesCollectedOn(String collectionDate) throws LIMSRuntimeException {
         List<Sample> list = null;
@@ -426,7 +422,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             list = query.list();
 
         } catch (HibernateException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Sample getSamplesRecievedOn()", e);
         }
 
@@ -434,7 +430,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     }
 
     private Calendar getCalendarForDateString(String recievedDate) {
-        String localeName = SystemConfiguration.getInstance().getDefaultLocale().toString();
+        String localeName = ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE);
         Locale locale = new Locale(localeName);
         Calendar calendar = Calendar.getInstance(locale);
 
@@ -444,14 +440,13 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(List<Integer> inclusiveProjectIdList,
             List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) throws LIMSRuntimeException {
 
-        String sql = "from Sample s where s.statusId in (:statusList) and "
-                + "s.accessionNumber >= :minAccess and s.accessionNumber <= :maxAccess and "
-                + "s.id in (select sp.sample.id from SampleProject sp where sp.project.id in (:projectId))";
+        String sql = "from Sample s where s.statusId in (:statusList) and s.accessionNumber >= :minAccess and"
+                + " s.accessionNumber <= :maxAccess and s.id in (select sp.sample.id from SampleProject"
+                + " sp where sp.project.id in (:projectId))";
         try {
             Query<Sample> query = entityManager.unwrap(Session.class).createQuery(sql, Sample.class);
             query.setParameterList("statusList", inclusiveStatusIdList);
@@ -470,14 +465,13 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<Sample> getSamplesByProjectAndStatusIDAndAccessionRange(String projectId,
             List<Integer> inclusiveStatusIdList, String minAccession, String maxAccession) throws LIMSRuntimeException {
 
-        String sql = "from Sample s where s.statusId in (:statusList) and "
-                + "s.accessionNumber >= :minAccess and s.accessionNumber <= :maxAccess and "
-                + "s.id in (select sp.sample.id from SampleProject sp where sp.project.id = :projectId)";
+        String sql = "from Sample s where s.statusId in (:statusList) and s.accessionNumber >= :minAccess and"
+                + " s.accessionNumber <= :maxAccess and s.id in (select sp.sample.id from SampleProject"
+                + " sp where sp.project.id = :projectId)";
         try {
             Query<Sample> query = entityManager.unwrap(Session.class).createQuery(sql, Sample.class);
             query.setParameterList("statusList", inclusiveStatusIdList);
@@ -496,7 +490,6 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<Sample> getSamplesByAccessionRange(String minAccession, String maxAccession)
             throws LIMSRuntimeException {
@@ -528,7 +521,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             greatestAccessionNumber = query.uniqueResult();
 
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Exception occurred in SampleDAOImpl.getLargestAccessionNumber", e);
         }
 
@@ -546,7 +539,7 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
             query.setParameter("prefix", prefix + "%");
             greatestAccessionNumber = query.uniqueResult();
         } catch (RuntimeException e) {
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException(
                     "Exception occurred in SampleNumberDAOImpl.getLargestAccessionNumberWithPrefix", e);
         }
@@ -561,7 +554,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
         String greatestAccessionNumber = null;
 
         try {
-            String sql = "select max(s.accessionNumber) from Sample s where s.accessionNumber LIKE :starts and length(s.accessionNumber) = :numberSize";
+            String sql = "select max(s.accessionNumber) from Sample s where s.accessionNumber LIKE :starts and"
+                    + " length(s.accessionNumber) = :numberSize";
             Query<String> query = entityManager.unwrap(Session.class).createQuery(sql, String.class);
             query.setParameter("starts", startingWith + "%");
             query.setParameter("numberSize", accessionSize);
@@ -576,7 +570,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     @Override
     @Transactional(readOnly = true)
     public List<Sample> getSamplesWithPendingQaEventsByService(String serviceId) throws LIMSRuntimeException {
-        String sql = "Select sqa.sample From SampleQaEvent sqa where sqa.sample.id IN (select sa.sample.id from SampleOrganization sa where sa.organization.id = :serviceId) ";
+        String sql = "Select sqa.sample From SampleQaEvent sqa where sqa.sample.id IN (select sa.sample.id from"
+                + " SampleOrganization sa where sa.organization.id = :serviceId) ";
 
         try {
             Query<Sample> query = entityManager.unwrap(Session.class).createQuery(sql, Sample.class);
@@ -590,11 +585,11 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     }
 
     @Override
-
     @Transactional(readOnly = true)
     public List<Sample> getConfirmationSamplesReceivedInDateRange(Date receivedDateStart, Date receivedDateEnd)
             throws LIMSRuntimeException {
-        String sql = "from Sample s where s.isConfirmation = true and s.receivedTimestamp BETWEEN :lowDate AND :highDate";
+        String sql = "from Sample s where s.isConfirmation = true and s.receivedTimestamp BETWEEN :lowDate AND"
+                + " :highDate";
         try {
             Query<Sample> query = entityManager.unwrap(Session.class).createQuery(sql, Sample.class);
             query.setParameter("lowDate", receivedDateStart);
@@ -612,7 +607,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     @Transactional(readOnly = true)
     public List<Sample> getSamplesBySampleItem(Integer sampleitemId) throws LIMSRuntimeException {
 
-        String sql = "from Sample s where s.id in (select si.sample.id from SampleItem si where si.id = :sampleitemId)";
+        String sql = "from Sample s where s.id in (select si.sample.id from SampleItem si where si.id ="
+                + " :sampleitemId)";
         try {
             Query<Sample> query = entityManager.unwrap(Session.class).createQuery(sql, Sample.class);
             query.setParameter("sampleitemId", sampleitemId);
@@ -657,7 +653,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
 
     @Override
     public List<Sample> getSamplesByAnalysisIds(List<String> analysisIds) {
-        String hql = "FROM Sample s WHERE s.id IN (SELECT si.sample.id FROM SampleItem si WHERE si.id IN (SELECT a.sampleItem.id FROM Analysis a WHERE a.id IN (:analysisIds)))";
+        String hql = "FROM Sample s WHERE s.id IN (SELECT si.sample.id FROM SampleItem si WHERE si.id IN (SELECT"
+                + " a.sampleItem.id FROM Analysis a WHERE a.id IN (:analysisIds)))";
         try {
             Query<Sample> query = entityManager.unwrap(Session.class).createQuery(hql, Sample.class);
             query.setParameter("analysisIds",
@@ -672,7 +669,10 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     @Override
     public List<Sample> getSamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate) {
-        String hql = "FROM Sample s WHERE s.enteredDate BETWEEN :lowerDate AND :upperDate AND s.id IN (SELECT sr.sampleId FROM SampleRequester sr WHERE sr.requesterId = :requesterId AND sr.requesterTypeId = (SELECT rt.id FROM RequesterType rt WHERE rt.requesterType = 'organization' ))";
+        String hql = "FROM Sample s WHERE s.enteredDate BETWEEN :lowerDate AND :upperDate AND s.id IN (SELECT"
+                + " sr.sampleId FROM SampleRequester sr WHERE sr.requesterId = :requesterId AND"
+                + " sr.requesterTypeId = (SELECT rt.id FROM RequesterType rt WHERE rt.requesterType ="
+                + " 'organization' ))";
         try {
             Query<Sample> query = entityManager.unwrap(Session.class).createQuery(hql, Sample.class);
             query.setParameter("requesterId", Integer.parseInt(referringSiteId));
@@ -688,7 +688,8 @@ public class SampleDAOImpl extends BaseDAOImpl<Sample, String> implements Sample
     @Override
     public List<Sample> getStudySamplesForSiteBetweenOrderDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate) {
-        String hql = "FROM Sample s WHERE s.enteredDate BETWEEN :lowerDate AND :upperDate AND s.id IN (SELECT so.sample.id FROM SampleOrganization so WHERE so.organization.id = :requesterId )";
+        String hql = "FROM Sample s WHERE s.enteredDate BETWEEN :lowerDate AND :upperDate AND s.id IN (SELECT"
+                + " so.sample.id FROM SampleOrganization so WHERE so.organization.id = :requesterId )";
         try {
             Query<Sample> query = entityManager.unwrap(Session.class).createQuery(hql, Sample.class);
             query.setParameter("requesterId", Integer.parseInt(referringSiteId));

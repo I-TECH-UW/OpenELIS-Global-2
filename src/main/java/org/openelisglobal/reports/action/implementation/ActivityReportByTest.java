@@ -18,15 +18,13 @@ package org.openelisglobal.reports.action.implementation;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.reports.form.ReportForm;
 import org.openelisglobal.result.service.ResultServiceImpl;
 import org.openelisglobal.result.valueholder.Result;
 
-/**
- */
+/** */
 public class ActivityReportByTest extends ActivityReport implements IReportCreator, IReportParameterSetter {
     private String testName = "";
 
@@ -70,7 +68,8 @@ public class ActivityReportByTest extends ActivityReport implements IReportCreat
             if (result.getAnalysis() != null && result.getAnalysis().getId() != null) {
                 if (!currentAnalysisId.equals(result.getAnalysis().getId())) {
                     testsResults.add(createActivityReportBean(result, false));
-//                    System.out.println("ActivityReport:" + "in buildReportContent " + result.getStringId());
+                    // System.out.println("ActivityReport:" + "in buildReportContent " +
+                    // result.getStringId());
                     currentAnalysisId = result.getAnalysis().getId();
                 }
             }

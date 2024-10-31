@@ -1,7 +1,6 @@
 package org.openelisglobal.qaevent.daoimpl;
 
 import java.util.List;
-
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.qaevent.dao.NceActionLogDAO;

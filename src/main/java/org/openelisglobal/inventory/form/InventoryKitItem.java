@@ -1,11 +1,9 @@
 package org.openelisglobal.inventory.form;
 
 import java.io.Serializable;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Pattern;
 import javax.validation.groups.Default;
-
 import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.common.validator.ValidationHelper;
 import org.openelisglobal.validation.annotations.SafeHtml;

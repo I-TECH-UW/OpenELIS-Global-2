@@ -1,24 +1,21 @@
 /**
-* The contents of this file are subject to the Mozilla Public License
-* Version 1.1 (the "License"); you may not use this file except in
-* compliance with the License. You may obtain a copy of the License at
-* http://www.mozilla.org/MPL/
-*
-* Software distributed under the License is distributed on an "AS IS"
-* basis, WITHOUT WARRANTY OF ANY KIND, either express or implied. See the
-* License for the specific language governing rights and limitations under
-* the License.
-*
-* The Original Code is OpenELIS code.
-*
-* Copyright (C) The Minnesota Department of Health.  All Rights Reserved.
-*/
+ * The contents of this file are subject to the Mozilla Public License Version 1.1 (the "License");
+ * you may not use this file except in compliance with the License. You may obtain a copy of the
+ * License at http://www.mozilla.org/MPL/
+ *
+ * <p>Software distributed under the License is distributed on an "AS IS" basis, WITHOUT WARRANTY OF
+ * ANY KIND, either express or implied. See the License for the specific language governing rights
+ * and limitations under the License.
+ *
+ * <p>The Original Code is OpenELIS code.
+ *
+ * <p>Copyright (C) The Minnesota Department of Health. All Rights Reserved.
+ */
 package org.openelisglobal.project.daoimpl;
 
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.HibernateException;
@@ -27,9 +24,9 @@ import org.hibernate.query.Query;
 import org.openelisglobal.common.daoimpl.BaseDAOImpl;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.project.dao.ProjectDAO;
 import org.openelisglobal.project.valueholder.Project;
 import org.springframework.stereotype.Component;
@@ -64,7 +61,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             }
         } catch (IllegalAccessException | InvocationTargetException | NoSuchMethodException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project getData()", e);
         }
     }
@@ -79,7 +76,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project getAllProjects()", e);
         }
 
@@ -92,7 +89,9 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
         List<Project> list;
         try {
             // calculate maxRow to be one more than the page size
-            int endingRecNo = startingRecNo + (SystemConfiguration.getInstance().getDefaultPageSize() + 1);
+            int endingRecNo = startingRecNo
+                    + (Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))
+                            + 1);
 
             // bugzilla 1399
             // bugzilla 2438 order by local abbreviation
@@ -104,7 +103,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             list = query.list();
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project getPageOfProjects()", e);
         }
 
@@ -117,12 +116,11 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             pro = entityManager.unwrap(Session.class).get(Project.class, idString);
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project readProject()", e);
         }
 
         return pro;
-
     }
 
     // bugzilla 1978: added param activeOnly
@@ -162,7 +160,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project getProjectByName()", e);
         }
     }
@@ -175,9 +173,10 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
         try {
             String sql = "";
             if (activeOnly) {
-                sql = "from Project p where upper(p.projectName) like upper(:param) and p.isActive='Y' order by upper(p.projectName)";
+                sql = "from Project p where upper(p.projectName) like upper(:param) and p.isActive='Y' order"
+                        + " by upper(p.projectName)";
             } else {
-                sql = "from Project p where upper(p.projectName) like upper(:param) order by upper(p.projectName)";
+                sql = "from Project p where upper(p.projectName) like upper(:param) order by" + " upper(p.projectName)";
             }
             Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
             query.setParameter("param", filter + "%");
@@ -187,7 +186,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project getProjects(String filter)", e);
         }
     }
@@ -211,7 +210,8 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
             // duplicates
 
             // bugzilla 2438 adding local abbreviation to duplicate check
-            String sql = "from Project t where ((trim(lower(t.projectName)) = :param and t.id != :param2) or (trim(lower(t.localAbbreviation)) = :param3 and t.id != :param2))";
+            String sql = "from Project t where ((trim(lower(t.projectName)) = :param and t.id != :param2) or"
+                    + " (trim(lower(t.localAbbreviation)) = :param3 and t.id != :param2))";
             Query<Project> query = entityManager.unwrap(Session.class).createQuery(sql, Project.class);
             query.setParameter("param", project.getProjectName().toLowerCase().trim());
             query.setParameter("param3", project.getLocalAbbreviation().toLowerCase().trim());
@@ -233,7 +233,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateProjectExists()", e);
         }
     }
@@ -261,7 +261,7 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
 
         } catch (RuntimeException e) {
             // bugzilla 2154
-            LogEvent.logError(e.toString(), e);
+            LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in Project getProjectByLocalAbbreviation()", e);
         }
     }
@@ -283,5 +283,4 @@ public class ProjectDAOImpl extends BaseDAOImpl<Project, String> implements Proj
         }
         return null;
     }
-
 }

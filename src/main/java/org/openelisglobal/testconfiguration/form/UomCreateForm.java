@@ -1,11 +1,9 @@
 package org.openelisglobal.testconfiguration.form;
 
 import java.util.List;
-
 import javax.validation.constraints.NotBlank;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.common.form.BaseForm;
+import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class UomCreateForm extends BaseForm {
     // for display

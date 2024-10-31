@@ -4,13 +4,11 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.login.dao.UserModuleService;
 import org.openelisglobal.systemmodule.service.SystemModuleUrlService;
@@ -49,7 +47,7 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
         if (!hasPermission(errors, request)) {
             LogEvent.logInfo("ModuleAuthenticationInterceptor", "preHandle()",
                     "======> NOT ALLOWED ACCESS TO THIS MODULE");
-            LogEvent.logInfo(this.getClass().getName(), "method unkown", "has no permission"); //
+            LogEvent.logInfo(this.getClass().getSimpleName(), "preHandle", "has no permission"); //
             redirectStrategy.sendRedirect(request, response, "/Home?access=denied");
             return false;
         }
@@ -63,7 +61,7 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
     }
 
     protected boolean hasPermission(Errors errors, HttpServletRequest request) {
-        if (SystemConfiguration.getInstance().getPermissionAgent().equals("ROLE")) {
+        if (ConfigurationProperties.getInstance().getPropertyValue("permissions.agent").equalsIgnoreCase("ROLE")) {
             return hasPermissionForUrl(request, USE_PARAMETERS) || userModuleService.isUserAdmin(request);
         } else {
             return userModuleService.isVerifyUserModule(request) || userModuleService.isUserAdmin(request);
@@ -111,5 +109,4 @@ public class ModuleAuthenticationInterceptor extends HandlerInterceptorAdapter {
         }
         return filteredSysModsByUrl;
     }
-
 }

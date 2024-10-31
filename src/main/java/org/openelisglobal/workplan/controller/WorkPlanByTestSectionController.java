@@ -3,9 +3,7 @@ package org.openelisglobal.workplan.controller;
 import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.List;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -17,8 +15,8 @@ import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.QAService;
 import org.openelisglobal.common.services.QAService.QAObservationType;
 import org.openelisglobal.common.util.ConfigurationProperties;
-import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
@@ -210,7 +208,6 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
                     workplanTestList.add(testResultItem);
                 }
             }
-
         }
 
         return workplanTestList;
@@ -241,7 +238,6 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
             testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
             newIndex++;
         }
-
     }
 
     private void addPatientNameToList(TestResultItem firstTestResultItem, List<TestResultItem> workplanTestList,
@@ -255,7 +251,6 @@ public class WorkPlanByTestSectionController extends BaseWorkplanController {
         testResultItem.setSampleGroupingNumber(sampleGroupingNumber);
         testResultItem.setServingAsTestGroupIdentifier(true);
         workplanTestList.add(insertPosition, testResultItem);
-
     }
 
     private boolean isPatientNameAdded() {

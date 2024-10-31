@@ -2,7 +2,6 @@ package org.openelisglobal.validation.constraintvalidator;
 
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.provider.validation.AccessionNumberValidatorFactory.AccessionFormat;
 import org.openelisglobal.common.provider.validation.IAccessionNumberValidator.ValidationResults;
@@ -22,7 +21,7 @@ public class AccessionNumberConstraintValidator implements ConstraintValidator<V
 
     @Override
     public boolean isValid(String value, ConstraintValidatorContext context) {
-    	if (org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
+        if (org.apache.commons.validator.GenericValidator.isBlankOrNull(value)) {
             return true;
         }
         if (value.contains(".") && validateAccessionNumberConstraint.searchValue()) {
@@ -36,8 +35,8 @@ public class AccessionNumberConstraintValidator implements ConstraintValidator<V
                 .valueOf(ConfigurationProperties.getInstance().getPropertyValue(Property.ACCESSION_NUMBER_VALIDATE))) {
             return !AccessionNumberUtil.containsBlackListCharacters(value);
         }
-        if (AccessionFormat.ALPHANUM_DASH.equals(validateAccessionNumberConstraint.format())) {
-            return value.matches("^[a-zA-Z0-9-*]*$");
+        if (AccessionFormat.UNFORMATTED.equals(validateAccessionNumberConstraint.format())) {
+            return value.matches("^[a-zA-Z0-9-]*$");
         }
         try {
             return ValidationResults.SUCCESS

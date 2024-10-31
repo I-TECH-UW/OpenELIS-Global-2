@@ -10,14 +10,12 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
-
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import javax.validation.Valid;
-
 import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.validator.GenericValidator;
 import org.json.JSONArray;
@@ -28,7 +26,9 @@ import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.provider.validation.PasswordValidationFactory;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.DateUtil;
+import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.login.dao.UserModuleService;
@@ -51,15 +51,16 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.Errors;
 import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.openelisglobal.common.services.DisplayListService.ListType;
-import org.openelisglobal.common.util.IdValuePair;
 
 @Controller
 public class UnifiedSystemUserController extends BaseController {
@@ -99,6 +100,23 @@ public class UnifiedSystemUserController extends BaseController {
     @InitBinder
     public void initBinder(WebDataBinder binder) {
         binder.setAllowedFields(ALLOWED_FIELDS);
+    }
+
+    @GetMapping(value = "/rest/users/{roleName}")
+    @ResponseBody
+    public List<IdValuePair> getUsersWithRole(@PathVariable String roleName) {
+        List<SystemUser> users = systemUserService.getAll();
+        return users.stream().filter(e -> userRoleService.userInRole(e.getId(), roleName))
+                .map(e -> new IdValuePair(e.getId(), e.getDisplayName())).collect(Collectors.toList());
+    }
+
+    @GetMapping(value = "/rest/users")
+    @ResponseBody
+    public List<IdValuePair> getUsersWithRole() {
+        List<SystemUser> users = systemUserService.getAll();
+        List<IdValuePair> idValues = users.stream().map(e -> new IdValuePair(e.getId(), e.getDisplayName()))
+                .collect(Collectors.toList());
+        return idValues;
     }
 
     @RequestMapping(value = "/UnifiedSystemUser", method = RequestMethod.GET)
@@ -340,9 +358,8 @@ public class UnifiedSystemUserController extends BaseController {
             setLabunitRolesForExistingUser(form);
 
             // is this meant to be returned?
-//            doFiltering = !roleIds.contains(MAINTENANCE_ADMIN_ID);
+            // doFiltering = !roleIds.contains(MAINTENANCE_ADMIN_ID);
         }
-
     }
 
     private String getProxyPassword(LoginUser login) {
@@ -472,9 +489,9 @@ public class UnifiedSystemUserController extends BaseController {
             }
             ID = systemUser.getId() + "-" + loginUser.getId();
         } catch (LIMSRuntimeException e) {
-            if (e.getException() instanceof org.hibernate.StaleObjectStateException) {
+            if (e.getCause() instanceof org.hibernate.StaleObjectStateException) {
                 errors.reject("errors.OptimisticLockException", "errors.OptimisticLockException");
-            } else if (e.getException() instanceof LIMSDuplicateRecordException) {
+            } else if (e.getCause() instanceof LIMSDuplicateRecordException) {
                 errors.reject("errors.DuplicateRecordException", "errors.DuplicateRecordException");
             } else {
                 errors.reject("errors.UpdateException", "errors.UpdateException");
@@ -647,7 +664,6 @@ public class UnifiedSystemUserController extends BaseController {
          * ,Set<LabUnitRoles>> for each Lab Unit Role Set based on the suffix appended
          * ie testSectionId = "1=2,2=5,2=6" ,selectedLabUnitRoles = [1=56, 2=36 ,3=44]
          */
-
         String labUnitEntryMapString = form.getTestSectionId();
         List<String> labUnitsRolesEntryMaps = form.getSelectedLabUnitRoles();
 

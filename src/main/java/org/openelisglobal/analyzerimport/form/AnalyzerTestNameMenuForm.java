@@ -1,15 +1,12 @@
 package org.openelisglobal.analyzerimport.form;
 
 import java.util.List;
-
-import org.openelisglobal.validation.annotations.SafeHtml;
 import org.openelisglobal.analyzerimport.action.beans.NamedAnalyzerTestMapping;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
+import org.openelisglobal.validation.annotations.SafeHtml;
 
 public class AnalyzerTestNameMenuForm extends AdminOptionMenuForm<NamedAnalyzerTestMapping> {
-    /**
-     *
-     */
+    /** */
     private static final long serialVersionUID = -5470283912736977696L;
 
     // for display

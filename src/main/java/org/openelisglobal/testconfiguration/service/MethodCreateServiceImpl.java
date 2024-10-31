@@ -2,12 +2,12 @@ package org.openelisglobal.testconfiguration.service;
 
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
+import org.openelisglobal.method.service.MethodService;
+import org.openelisglobal.method.valueholder.Method;
 import org.openelisglobal.rolemodule.service.RoleModuleService;
 import org.openelisglobal.systemmodule.service.SystemModuleService;
 import org.openelisglobal.systemmodule.valueholder.SystemModule;
 import org.openelisglobal.systemusermodule.valueholder.RoleModule;
-import org.openelisglobal.method.service.MethodService;
-import org.openelisglobal.method.valueholder.Method;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -39,5 +39,4 @@ public class MethodCreateServiceImpl implements MethodCreateService {
         roleModuleService.insert(resultResultModule);
         roleModuleService.insert(validationValidationModule);
     }
-
 }

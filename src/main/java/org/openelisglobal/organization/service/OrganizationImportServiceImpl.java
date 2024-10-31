@@ -1,5 +1,6 @@
 package org.openelisglobal.organization.service;
 
+import ca.uhn.fhir.rest.client.api.IGenericClient;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -9,7 +10,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.stream.Collectors;
-
 import org.apache.commons.validator.GenericValidator;
 import org.hl7.fhir.instance.model.api.IBaseBundle;
 import org.hl7.fhir.r4.model.Bundle;
@@ -32,8 +32,6 @@ import org.springframework.scheduling.annotation.Async;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-
-import ca.uhn.fhir.rest.client.api.IGenericClient;
 
 @Service
 public class OrganizationImportServiceImpl implements OrganizationImportService {
@@ -191,10 +189,9 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
                 }
             } catch (LIMSRuntimeException e) {
                 LogEvent.logError(e);
-                LogEvent.logError(this.getClass().getName(), "", "error importing an organization with id: "
+                LogEvent.logError(this.getClass().getSimpleName(), "", "error importing an organization with id: "
                         + organizationObjects.organization.getFhirUuidAsString());
             }
-
         }
 
         // import fhir organizations as is
@@ -237,5 +234,4 @@ public class OrganizationImportServiceImpl implements OrganizationImportService 
         public String parentUUID;
         public Set<String> organizationTypeNames;
     }
-
 }

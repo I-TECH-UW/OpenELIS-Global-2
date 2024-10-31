@@ -18,9 +18,7 @@ cd /ucd u	* The contents of this file are subject to the Mozilla Public License
 package org.openelisglobal.patient.saving;
 
 import java.lang.reflect.InvocationTargetException;
-
 import javax.servlet.http.HttpServletRequest;
-
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.form.PatientEntryByProjectForm;
@@ -31,7 +29,6 @@ import org.springframework.stereotype.Service;
  * @author Paul A. Hill (pahill@uw.edu)
  * @since Jul 29, 2010
  */
-
 @Service
 @Scope("prototype")
 public class PatientEditUpdate extends PatientEntry implements IPatientEditUpdate {
