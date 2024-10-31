@@ -49,52 +49,65 @@
   cursor: pointer;
 }
 
-/* Small screens - Mobile layout (768px and 600px) */
-@media (max-width: 600px) {
+/* Small screens - Mobile layout (300px to 479px) */
+@media (min-width: 300px) and (max-width: 479px) {
   .patientHead {
-    flex-direction: column; /* Stack elements vertically on small screens */
-    align-items: center; /* Center items for mobile view */
-    width: 50%; /* Allow full width on mobile */
+    flex-direction: row;
+    align-items: stretch;
   }
 
   .search-bar-container {
-    flex-direction: row; /* Stack search elements horizontally */ 
+    margin-top: 40px;
+    width: 30%;
+    box-shadow: none;
+  }
+
+  .search-input {
+    width: 30%;
+  }
+}
+
+/* Small-medium screens (480px to 600px) */
+@media (min-width: 480px) and (max-width: 600px) {
+  .patientHead {
+    flex-direction: column;
+    align-items: center;
+    width: 35%;
+  }
+
+  .search-bar-container {
+    flex-direction: row;
     margin-top: 40px;
     width: 35%;
     box-shadow: none;
-    /* padding: 10px;  Optional padding for better spacing */
   }
 
   .search-input {
-    width: 90%; /* Set search input to almost full width */
+    width: 35%;
   }
 }
 
-/* Small screens - Mobile layout (768px and 601px) */
+/* Medium screens (601px to 768px) */
 @media (min-width: 601px) and (max-width: 768px) {
   .patientHead {
-    flex-direction: column; /* Stack elements vertically on small screens */
-    align-items: center; /* Center items for mobile view */
-    width: 50%; /* Allow full width on mobile */
+    flex-direction: column;
+    align-items: center;
+    width: 40%;
   }
 
   .search-bar-container {
-    flex-direction: row; /* Stack search elements vertically */
-    align-items: centre;
+    flex-direction: row;
+    align-items: center;
     margin-top: 40px;
-    width: 50%; /* Expand to full width on mobile */
-    /* padding: 10px;  Optional padding for better spacing */
+    width: 40%;
   }
 
   .search-input {
-    width: 90%; /* Set search input to almost full width */
-    /*margin: 10px 0;  Add margin to separate elements */
+    width: 40%;
   }
 }
 
-
-
-/* Medium screens - Tablet layout */
+/* Medium-large screens (769px to 1099px) */
 @media (min-width: 769px) and (max-width: 1099px) {
   .patientHead {
     flex-direction: row;
@@ -106,14 +119,15 @@
     align-items: center;
     justify-content: space-between;
     margin-top: 40px;
+    width: 60%;
   }
 
   .search-input {
-    width: 75%; /* Adjust for better usability on tablets */
+    width: 60%;
   }
 }
 
-/* Larger screens - Desktop layout */
+/* Large screens (1100px and up) */
 @media (min-width: 1100px) {
   .patientHead {
     flex-direction: row;
@@ -123,9 +137,10 @@
   .search-bar-container {
     flex-direction: row;
     align-items: center;
+    width: 60%;
   }
 
   .search-input {
-    width: 50%; /* Width for desktop */
+    width: 60%;
   }
 }
