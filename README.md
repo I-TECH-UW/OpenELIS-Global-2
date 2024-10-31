@@ -17,27 +17,30 @@ You can find more information on how to set up OpenELIS at our
 
 [![End to End QA Tests Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/build-installer.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/build-installer.yml)
 
-### For Offline Installation ,Download the OpenELIS Global Installer for each Release from the [Release Assets](https://github.com/I-TECH-UW/OpenELIS-Global-2/releases)
+### For Offline Installation Using the OpenELIS Global2 Installer
+
+Download the OpenELIS Global Installer for each Release from the
+[Release Assets](https://github.com/I-TECH-UW/OpenELIS-Global-2/releases)
 
 see full
 [installtion instructions](https://docs.openelis-global.org/en/latest/install/)
-with the Offline Installer
+for Offline Installation
 
-### For Implementers who Just want to run OpenELIS without Making any Code Changes
+### For running OpenELIS Global2 in Docker with default Settings out of the Box
 
 see [OpenELIS-Docker setup](https://github.com/I-TECH-UW/openelis-docker)
 
-### Running OpenELIS in Docker For Devlopers with Intention of Making code Changes
+### For Running OpenELIS Global2 from Source Code
 
-#### Running docker compose With pre-released docker images
+#### Running OpenELIS Global2 using docker compose With published docker images on dockerhub
 
     docker-compose up -d
 
-#### Running docker compose with docker images built directly from the source code
+#### Running OpenELIS Global2 using docker compose with docker images built directly from the source code
 
     docker-compose -f build.docker-compose.yml up -d --build
 
-#### Running docker compose With locally compiled/built Artifacts (ie the War file and React code) For Developers
+#### Running OpenELIS Global2 using docker compose With locally compiled/built Artifacts (ie the War file and React code)
 
 1.  Fork the
     [OpenELIS-Global Repository](https://github.com/I-TECH-UW/OpenELIS-Global-2.git)
