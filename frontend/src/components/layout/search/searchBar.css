@@ -1,7 +1,6 @@
 .main {
   position: absolute;
-  right: 175px;
-  width: 700px;
+  width: 100%;
 }
 
 .search-bar-container {
@@ -9,7 +8,9 @@
   display: flex;
   width: 100%;
   top: 10px;
-  right: -30px;
+  margin-top: 38px;
+  right: 1px;
+  /*right: -20px;*/
   box-shadow: 0em 0.1em 0.05em #ccc;
 }
 
@@ -50,98 +51,18 @@
   cursor: pointer;
 }
 
-/* Small screens - Mobile layout (300px to 479px) */
-@media (min-width: 300px) and (max-width: 479px) {
-  .patientHead {
-    flex-direction: row;
-    align-items: stretch;
-  }
+
+/* Large screens (1208px and up) */
+@media (min-width: 1208px) {
+  
 
   .search-bar-container {
-    margin-top: 40px;
-    width: 30%;
-    box-shadow: none;
-  }
-
-  .search-input {
-    width: 30%;
-  }
-}
-
-/* Small-medium screens (480px to 600px) */
-@media (min-width: 480px) and (max-width: 600px) {
-  .patientHead {
-    flex-direction: column;
-    align-items: center;
-    width: 35%;
-  }
-
-  .search-bar-container {
-    flex-direction: row;
-    margin-top: 40px;
-    width: 35%;
-    box-shadow: none;
-  }
-
-  .search-input {
-    width: 35%;
-  }
-}
-
-/* Medium screens (601px to 768px) */
-@media (min-width: 601px) and (max-width: 768px) {
-  .patientHead {
-    flex-direction: column;
-    align-items: center;
     width: 45%;
-  }
-
-  .search-bar-container {
-    flex-direction: row;
-    align-items: center;
-    margin-top: 40px;
-    width: 45%;
+    margin-top: 0%;
+    right: 130px;
   }
 
   .search-input {
     width: 45%;
-  }
-}
-
-/* Medium-large screens (769px to 1099px) */
-@media (min-width: 769px) and (max-width: 1099px) {
-  .patientHead {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .search-bar-container {
-    flex-direction: row;
-    align-items: center;
-    justify-content: space-between;
-    margin-top: 40px;
-    width: 60%;
-  }
-
-  .search-input {
-    width: 60%;
-  }
-}
-
-/* Large screens (1100px and up) */
-@media (min-width: 1100px) {
-  .patientHead {
-    flex-direction: row;
-    justify-content: space-between;
-  }
-
-  .search-bar-container {
-    flex-direction: row;
-    align-items: center;
-    width: 60%;
-  }
-
-  .search-input {
-    width: 60%;
   }
 }
