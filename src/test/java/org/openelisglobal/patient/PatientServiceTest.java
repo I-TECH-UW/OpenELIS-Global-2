@@ -1,11 +1,14 @@
 package org.openelisglobal.patient;
 
+import static org.junit.Assert.assertEquals;
+
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -62,6 +65,99 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
         Assert.assertEquals(firstName, savedPatient.getPerson().getFirstName());
         Assert.assertEquals(lastname, savedPatient.getPerson().getLastName());
         Assert.assertEquals(gender, savedPatient.getGender());
+    }
+
+    @Test
+    public void getData_shouldCopyPropertiesFromDatabase() throws Exception {
+        String firstName = "John";
+        String lastname = "Doe";
+        String dob = "12/12/1992";
+        String gender = "M";
+        Patient patient = createPatient(firstName, lastname, dob, gender);
+        String patientId = patientService.insert(patient);
+
+        Patient savedPatient = new Patient();
+        savedPatient.setId(patientId);
+        patientService.getData(savedPatient);
+
+        Assert.assertEquals(gender, savedPatient.getGender());
+    }
+
+    @Test
+    public void getData_shouldCopyPropertiesFromDatabaseById() throws Exception {
+        String firstName = "John";
+        String lastname = "Doe";
+        String dob = "12/12/1992";
+        String gender = "M";
+        Patient patient = createPatient(firstName, lastname, dob, gender);
+        String patientId = patientService.insert(patient);
+
+        Patient patient2 = patientService.getData(patientId);
+
+        Assert.assertEquals(gender, patient2.getGender());
+    }
+
+    @Test
+    public void getEnteredDOB_shouldReturnEnteredDOB() throws Exception {
+        String firstName = "John";
+        String lastname = "Doe";
+        String dob = "12/12/1992";
+        String gender = "M";
+        Patient patient = createPatient(firstName, lastname, dob, gender);
+        patient.setBirthDateForDisplay("12/12/1992");
+        patientService.insert(patient);
+        Assert.assertEquals(dob, patientService.getEnteredDOB(patient));
+    }
+
+    @Test
+    public void getDOB_shouldReturnDOB() throws Exception {
+        String firstName = "John";
+        String lastname = "Doe";
+        String dob = "12/12/1992";
+        String gender = "M";
+        Patient patient = createPatient(firstName, lastname, dob, gender);
+        patientService.insert(patient);
+        Assert.assertEquals("1992-12-12 00:00:00.0", patientService.getDOB(patient).toString());
+    }
+
+    @Test
+    public void getPhone_shouldReturnPhone() throws Exception {
+        String firstName = "John";
+        String lastname = "Doe";
+        String dob = "12/12/1992";
+        String gender = "M";
+        Patient patient = createPatient(firstName, lastname, dob, gender);
+        patient.getPerson().setPrimaryPhone("12345");
+        patientService.insert(patient);
+        Assert.assertEquals("12345", patientService.getPhone(patient));
+    }
+
+    @Test
+    public void getPerson_shouldReturnPerson() throws Exception {
+        String firstName = "John";
+        String lastname = "Doe";
+        String dob = "12/12/1992";
+        String gender = "M";
+        Patient patient = createPatient(firstName, lastname, dob, gender);
+
+        patientService.insert(patient);
+
+        Person retrievedPerson = patientService.getPerson(patient);
+        Assert.assertEquals(firstName, retrievedPerson.getFirstName());
+        Assert.assertEquals(lastname, retrievedPerson.getLastName());
+    }
+
+    @Test
+    public void getPatientId_shouldReturngetPatientId() throws Exception {
+        String firstName = "John";
+        String lastname = "Doe";
+        String dob = "12/12/1992";
+        String gender = "M";
+        Patient patient = createPatient(firstName, lastname, dob, gender);
+
+        String patientId = patientService.insert(patient);
+
+        Assert.assertEquals(patientId, patientService.getPatientId(patient));
     }
 
     @Test
@@ -153,6 +249,49 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
         Assert.assertEquals(1, patientTypeService.getAllPatientTypes().size());
         Assert.assertEquals("Test Type Description", savedPatientType.getDescription());
         Assert.assertEquals("Test Type", savedPatientType.getType());
+    }
+
+    @Test
+    public void getNationalId_shouldReturnNationalId() throws Exception {
+        String firstName = "Bruce";
+        String lastName = "Wayne";
+        String dob = "10/10/1975";
+        String gender = "M";
+        Patient pat = createPatient(firstName, lastName, dob, gender);
+        pat.setNationalId("12345");
+
+        String patientId = patientService.insert(pat);
+
+        Assert.assertEquals("12345", patientService.getNationalId(pat));
+    }
+
+    @Test
+    public void getAddressComponents_shouldReturnAddressComponents() throws Exception {
+        String firstName = "Bruce";
+        String lastName = "Wayne";
+        String dob = "10/10/1975";
+        String gender = "M";
+        String city = "Kampala";
+        String country = "Uganda";
+        String state = "Kisumali";
+        String streetAdress = "Bakuli";
+        String zipCode = "256";
+        Patient pat = createPatient(firstName, lastName, dob, gender);
+        pat.getPerson().setCity(city);
+        pat.getPerson().setCountry(country);
+        pat.getPerson().setState(state);
+        pat.getPerson().setStreetAddress(streetAdress);
+        pat.getPerson().setZipCode(zipCode);
+
+        String patientId = patientService.insert(pat);
+
+        Map<String, String> result = patientService.getAddressComponents(pat);
+
+        assertEquals(city, result.get("City"));
+        assertEquals(country, result.get("Country"));
+        assertEquals(state, result.get("State"));
+        assertEquals(streetAdress, result.get("Street"));
+        assertEquals(zipCode, result.get("Zip"));
     }
 
     @Test
