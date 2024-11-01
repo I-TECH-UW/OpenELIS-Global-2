@@ -371,7 +371,7 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
         assertEquals(zipCode, result.get("Zip"));
     }
 
-     @Test
+    @Test
     public void testGetAddressComponents_handlesNullPerson() {
         Map<String, String> result = personService.getAddressComponents(null);
 
