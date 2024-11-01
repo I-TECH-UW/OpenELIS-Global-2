@@ -200,7 +200,7 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void getData_shouldReturncopiesPropertiesFromDatabase() throws Exception {
+    public void getData_shouldReturncopiedPropertiesFromDatabase() throws Exception {
         String firstName = "John";
         String lastName = "Doe";
 
@@ -376,5 +376,21 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
         Map<String, String> result = personService.getAddressComponents(null);
 
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void deletePerson_shouldDeletePerson() {
+        String firstName = "John";
+        String lastName = "Doe";
+
+        Person person = createPerson(firstName, lastName);
+        String personId = personService.insert(person);
+        Assert.assertNotNull(personId);
+
+        Person savedPerson = personService.get(personId);
+
+        personService.delete(savedPerson);
+
+        Assert.assertEquals(0, personService.getAll().size());
     }
 }
