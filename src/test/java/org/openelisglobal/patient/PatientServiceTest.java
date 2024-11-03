@@ -171,6 +171,36 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
         Assert.assertEquals(1, patientService.getAllPatients().size());
     }
 
+    @Test
+    public void getPatientByPerson_shouldReturnPatientByPerson() throws Exception {
+        String firstName = "John";
+        String lastname = "Doe";
+        String dobs = "12/12/1992";
+        String gender = "M";
+
+        Person person = new Person();
+        person.setFirstName(firstName);
+        person.setLastName(lastname);
+        personService.save(person);
+
+        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = dateFormat.parse(dobs);
+        long time = date.getTime();
+        Timestamp dob = new Timestamp(time);
+
+        Patient pat = new Patient();
+        pat.setPerson(person);
+        pat.setBirthDate(dob);
+        pat.setGender(gender);
+
+        patientService.insert(pat);
+
+        Patient patient = patientService.getPatientByPerson(person);
+
+        Assert.assertEquals(gender, patient.getGender());
+
+    }
+
     private Patient createPatient(String firstName, String LastName, String birthDate, String gender)
             throws ParseException {
         Person person = new Person();
@@ -312,6 +342,32 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
+    public void getPatientsByNationalId_shouldReturnListOfPatients() throws Exception {
+        String firstName = "Bruce";
+        String lastName = "Wayne";
+        String dob = "10/10/1975";
+        String gender = "M";
+        Patient pat = createPatient(firstName, lastName, dob, gender);
+        pat.setNationalId("12345");
+
+        String patientId = patientService.insert(pat);
+
+        String firstName2 = "Bruce";
+        String lastName2 = "Wayne";
+        String dob2 = "10/10/1975";
+        String gender2 = "M";
+        Patient pat2 = createPatient(firstName2, lastName2, dob2, gender2);
+        pat2.setNationalId("12345");
+
+        String patientId2 = patientService.insert(pat2);
+
+        List<Patient> fetchedPatients = patientService.getPatientsByNationalId("12345");
+
+        Assert.assertNotNull(fetchedPatients);
+        Assert.assertEquals(2, fetchedPatients.size());
+    }
+
+    @Test
     public void getPatientByExternalId_shouldReturnCorrectPatient() throws Exception {
         String firstName = "Oliver";
         String lastName = "Queen";
@@ -326,6 +382,48 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
 
         Assert.assertNotNull(fetchedPatient);
         Assert.assertEquals(patientId, fetchedPatient.getId());
+    }
+
+    @Test
+    public void externalIDExists_shouldReturnExternalIDExists() throws Exception {
+        String firstName = "Oliver";
+        String lastName = "Queen";
+        String dob = "27/09/1985";
+        String gender = "M";
+        Patient pat = createPatient(firstName, lastName, dob, gender);
+        pat.setExternalId("EX123");
+
+        String patientId = patientService.insert(pat);
+
+        Assert.assertTrue(patientService.externalIDExists("EX123"));
+    }
+
+    @Test
+    public void getExternalID_shouldReturnExternalID() throws Exception {
+        String firstName = "Oliver";
+        String lastName = "Queen";
+        String dob = "27/09/1985";
+        String gender = "M";
+        Patient pat = createPatient(firstName, lastName, dob, gender);
+        pat.setExternalId("EX123");
+
+        Assert.assertEquals("EX123", patientService.getExternalId(pat));
+    }
+
+    @Test
+    public void readPatient_shouldReadPatient() throws Exception {
+        String firstName = "Oliver";
+        String lastName = "Queen";
+        String dob = "27/09/1985";
+        String gender = "M";
+        Patient pat = createPatient(firstName, lastName, dob, gender);
+        pat.setExternalId("EX123");
+
+        String patientId = patientService.insert(pat);
+
+        Patient patient = patientService.readPatient(patientId);
+        Assert.assertEquals(gender, patient.getGender());
+        Assert.assertEquals("1985-09-27 00:00:00.0", patient.getBirthDate().toString());
     }
 
     @Test
