@@ -41,12 +41,14 @@ jobs:
         run: mvn clean install -Dspotless.check.skip=true
 
       - name: Generate JaCoCo Badge
+        if: github.event_name == 'push'
         uses: cicirello/jacoco-badge-generator@v2
         with:
           jacoco-csv-file: target/site/jacoco/jacoco.csv
           badges-directory: target/html/badges
 
       - name: Publish coverage report to GitHub Pages
+        if: github.event_name == 'push'
         uses: JamesIves/github-pages-deploy-action@v4
         with:
           folder: target/html/    
