@@ -162,8 +162,8 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
         panelMap = sortPanels(panelMap);
         panelsMapList.clear();
         for (PanelTestMap testMap : panelMap) {
-            panelsMapList.add(new PanelTestMap(testMap.getPanelId(), testMap.getPanelOrder(), testMap.getName(),
-                    testMap.getTestMaps()));
+            panelsMapList.add(new PanelTestMap(testMap.getId(), testMap.getPanelOrder(), testMap.getName(),
+                    testMap.getTestIds()));
         }
         sampleEntryTests.setPanels(panelsMapList);
     }
@@ -283,16 +283,17 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
 
         private String name;
 
-        private String testMaps;
+        private String testIds;
 
-        private String panelId;
+        // panel id
+        private String id;
 
         private int panelOrder;
 
-        public PanelTestMap(String panelId, int panelOrder, String panelName, String map) {
+        public PanelTestMap(String id, int panelOrder, String panelName, String testIds) {
             name = panelName;
-            testMaps = map;
-            this.panelId = panelId;
+            this.testIds = testIds;
+            this.id = id;
             this.panelOrder = panelOrder;
         }
 
@@ -300,12 +301,12 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
             return name;
         }
 
-        public String getTestMaps() {
-            return testMaps;
+        public String getTestIds() {
+            return testIds;
         }
 
-        public String getPanelId() {
-            return panelId;
+        public String getId() {
+            return id;
         }
 
         public int getPanelOrder() {

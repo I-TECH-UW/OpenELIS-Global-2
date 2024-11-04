@@ -175,21 +175,26 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<IdValuePair> getUserTestSections(String systemUserId, String roleId) {
-        // Authentication authentication2 =
-        // SecurityContextHolder.getContext().getAuthentication();
+        Authentication authentication = null;
         // TODO workaround for Security Context authentication is null
         RequestAttributes requestAttributes = RequestContextHolder.getRequestAttributes();
 
         HttpServletRequest request = null;
         if (requestAttributes instanceof ServletRequestAttributes) {
             request = ((ServletRequestAttributes) requestAttributes).getRequest();
-        }
-        Object sc = request.getSession().getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
-        if (!(sc instanceof SecurityContext)) {
+
+            Object sc = request.getSession()
+                    .getAttribute(HttpSessionSecurityContextRepository.SPRING_SECURITY_CONTEXT_KEY);
+            if (!(sc instanceof SecurityContext)) {
+                LogEvent.logWarn(this.getClass().getSimpleName(), "getUserLogin",
+                        "security context is not of type SecurityContext");
+            } else {
+                authentication = ((SecurityContext) sc).getAuthentication();
+            }
+        } else {
             LogEvent.logWarn(this.getClass().getSimpleName(), "getUserLogin",
-                    "security context is not of type SecurityContext");
+                    "requestAttributes is not of type ServletRequestAttributes");
         }
-        Authentication authentication = ((SecurityContext) sc).getAuthentication();
         if (authentication != null) {
             Object principal = authentication.getPrincipal();
             if (principal instanceof UserDetails) {

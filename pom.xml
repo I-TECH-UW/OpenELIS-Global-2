@@ -13,10 +13,10 @@
   <properties>
     <maven.java.release>11</maven.java.release>
     <major.version>3</major.version>
-    <minor.version>0</minor.version>
-    <state.version>3</state.version>
+    <minor.version>1</minor.version>
+    <state.version>0</state.version>
     <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-    <fix.version>2</fix.version>
+    <fix.version>0</fix.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <liquibase.propertyFile>${project.basedir}/liquibase/liquibase.properties</liquibase.propertyFile>
     <castor.version>1.4.1</castor.version>
