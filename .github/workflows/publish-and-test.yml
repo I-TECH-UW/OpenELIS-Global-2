@@ -389,6 +389,7 @@ jobs:
           cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache,mode=max
 
   build-and-push-image-proxy:
+    needs: [run-e2e-qa]
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -431,6 +432,7 @@ jobs:
           cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-proxy:buildcache,mode=max
 
   build-and-push-image-fhir:
+    needs: [run-e2e-qa]
     runs-on: ubuntu-latest
     permissions:
       contents: read
