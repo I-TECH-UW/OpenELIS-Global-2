@@ -92,4 +92,33 @@ public class ReferenceTablesServiceTest extends BaseWebContextSensitiveTest {
         List<ReferenceTables> allTables = referenceTablesService.getAllReferenceTables();
         Assert.assertEquals(initialCount + 2, allTables.size());
     }
+
+    @Test
+    public void getTotalReferenceTableCount_shouldReturnCorrectCount() throws Exception {
+        int initialCount = referenceTablesService.getTotalReferenceTableCount();
+
+        ReferenceTables refTable1 = createReferenceTable("CountTable1");
+        ReferenceTables refTable2 = createReferenceTable("CountTable2");
+        referenceTablesService.insert(refTable1);
+        referenceTablesService.insert(refTable2);
+
+        int newCount = referenceTablesService.getTotalReferenceTableCount();
+        Assert.assertEquals(initialCount + 2, newCount);
+    }
+
+    @Test
+    public void getAllReferenceTablesForHl7Encoding_shouldReturnOnlyHl7EncodedTables() throws Exception {
+        ReferenceTables hl7Table = createReferenceTable("Hl7Table");
+        hl7Table.setIsHl7Encoded("Y");
+        referenceTablesService.insert(hl7Table);
+
+        ReferenceTables nonHl7Table = createReferenceTable("NonHl7Table");
+        nonHl7Table.setIsHl7Encoded("N");
+        referenceTablesService.insert(nonHl7Table);
+
+        List<ReferenceTables> hl7EncodedTables = referenceTablesService.getAllReferenceTablesForHl7Encoding();
+        Assert.assertTrue(hl7EncodedTables.stream().allMatch(t -> "Y".equals(t.getIsHl7Encoded())));
+        Assert.assertTrue(hl7EncodedTables.stream().anyMatch(t -> "Hl7Table".equals(t.getTableName())));
+        Assert.assertFalse(hl7EncodedTables.stream().anyMatch(t -> "NonHl7Table".equals(t.getTableName())));
+    }
 }
