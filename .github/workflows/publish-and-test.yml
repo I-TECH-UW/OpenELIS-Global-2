@@ -227,8 +227,8 @@ jobs:
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           # cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache
-          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-proxy:buildcache,mode=max      
-   
+          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-proxy:buildcache,mode=max
+
   build-and-push-test-image-fhir:
     runs-on: ubuntu-latest
     permissions:
@@ -335,6 +335,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
+          platforms: linux/amd64,linux/arm64
           context: .
           push: true
           tags: ${{ steps.meta.outputs.tags }}
@@ -378,6 +379,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
+          platforms: linux/amd64,linux/arm64
           context: ./frontend
           file: ./frontend/Dockerfile.prod
           push: true
@@ -385,7 +387,6 @@ jobs:
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache
           cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-frontend:buildcache,mode=max
-
 
   build-and-push-image-proxy:
     runs-on: ubuntu-latest
@@ -421,13 +422,14 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
+          platforms: linux/amd64,linux/arm64
           context: ./nginx-proxy
           push: true
           tags: ${{ steps.meta.outputs.tags }}
           labels: ${{ steps.meta.outputs.labels }}
           cache-from: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-proxy:buildcache
-          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-proxy:buildcache,mode=max      
-   
+          cache-to: type=registry,ref=${{ env.DOCKER_TEST_NAME }}-proxy:buildcache,mode=max
+
   build-and-push-image-fhir:
     runs-on: ubuntu-latest
     permissions:
@@ -462,6 +464,7 @@ jobs:
       - name: Build and push Docker image
         uses: docker/build-push-action@v5
         with:
+          platforms: linux/amd64,linux/arm64
           context: ./fhir
           push: true
           tags: ${{ steps.meta.outputs.tags }}
