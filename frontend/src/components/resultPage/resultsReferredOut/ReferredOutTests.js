@@ -1,7 +1,7 @@
 import React, { useContext, useState, useRef, useEffect } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../../Style.css";
-import { encodeDate, getFromOpenElisServer } from "../../utils/Utils";
+import { encodeDate, getFromOpenElisServer, Roles } from "../../utils/Utils";
 import {
   Form,
   Dropdown,
@@ -239,14 +239,17 @@ function ReferredOutTests(props) {
       "testSectionId",
     );
     testSectionId = testSectionId ? testSectionId : "";
-    getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
-      let testSection = fetchedTestSections.find(
-        (testSection) => testSection.id === testSectionId,
-      );
-      let testSectionLabel = testSection ? testSection.value : "";
-      setTestNames(testSectionLabel);
-      fetchTestSections(fetchedTestSections);
-    });
+    getFromOpenElisServer(
+      "/rest/user-test-sections/" + Roles.RESULTS,
+      (fetchedTestSections) => {
+        let testSection = fetchedTestSections.find(
+          (testSection) => testSection.id === testSectionId,
+        );
+        let testSectionLabel = testSection ? testSection.value : "";
+        setTestNames(testSectionLabel);
+        fetchTestSections(fetchedTestSections);
+      },
+    );
   }, []);
 
   useEffect(() => {

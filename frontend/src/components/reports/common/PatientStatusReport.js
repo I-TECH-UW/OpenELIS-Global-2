@@ -64,21 +64,21 @@ function PatientStatusReport(props) {
   const handleReportPrint = () => {
     let barcodesPdf =
       config.serverBaseUrl +
-      `/ReportPrint?report=${props.report}&type=patient&accessionDirect=${reportFormValues.form}&highAccessionDirect=${reportFormValues.to}&dateOfBirthSearchValue=&selPatient=${reportFormValues.selectedPatientId}&referringSiteId=${reportFormValues.referringSiteId}&referringSiteDepartmentId=${reportFormValues.referringSiteDepartmentId ? reportFormValues.referringSiteDepartmentId : ""}&onlyResults=${result}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
+      `/ReportPrint?report=${props.report}&type=patient&accessionDirect=${reportFormValues.from}&highAccessionDirect=${reportFormValues.to}&dateOfBirthSearchValue=&selPatient=${reportFormValues.selectedPatientId}&referringSiteId=${reportFormValues.referringSiteId}&referringSiteDepartmentId=${reportFormValues.referringSiteDepartmentId ? reportFormValues.referringSiteDepartmentId : ""}&onlyResults=${result}&_onlyResults=${checkbox}&dateType=${items}&lowerDateRange=${reportFormValues.startDate}&upperDateRange=${reportFormValues.endDate}`;
     window.open(barcodesPdf);
   };
 
-  function handlePatientIdFrom(e) {
+  function handlePatientIdFrom(value) {
     setReportFormValues({
       ...reportFormValues,
-      form: e.target.value,
+      from: value,
     });
   }
 
-  function handlePatientIdTo(e) {
+  function handlePatientIdTo(value) {
     setReportFormValues({
       ...reportFormValues,
-      to: e.target.value,
+      to: value,
     });
   }
 
@@ -250,7 +250,7 @@ function PatientStatusReport(props) {
                               id={field.name}
                               onChange={(e, rawValue) => {
                                 setFieldValue(field.name, rawValue);
-                                handlePatientIdFrom(e);
+                                handlePatientIdFrom(rawValue);
                               }}
                             />
                           )}
@@ -269,7 +269,7 @@ function PatientStatusReport(props) {
                               id={field.name}
                               onChange={(e, rawValue) => {
                                 setFieldValue(field.name, rawValue);
-                                handlePatientIdTo(e);
+                                handlePatientIdTo(rawValue);
                               }}
                             />
                           )}
@@ -376,6 +376,7 @@ function PatientStatusReport(props) {
                       <Column lg={4} md={8} sm={4}>
                         <Dropdown
                           id="dateType"
+                          data-cy="dateTypeDropdown"
                           name="dateType"
                           titleText="Date Type"
                           initialSelectedItem={itemList.find(

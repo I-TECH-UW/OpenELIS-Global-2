@@ -24,8 +24,9 @@ import javax.persistence.Table;
 import javax.persistence.Transient;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.Size;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.SystemConfiguration;
 import org.openelisglobal.common.valueholder.BaseObject;
 import org.openelisglobal.validation.annotations.ValidName;
 import org.openelisglobal.validation.constraintvalidator.NameValidator.NameType;
@@ -169,7 +170,7 @@ public class LoginUser extends BaseObject<Integer> {
 
     public void setPasswordExpiredDateForDisplay(String passwordExpiredDTForDisplay) {
         // also update the java.sql.Date
-        String locale = SystemConfiguration.getInstance().getDefaultLocale().toString();
+        String locale = ConfigurationProperties.getInstance().getPropertyValue(Property.DEFAULT_LANG_LOCALE);
         this.passwordExpiredDT = DateUtil.convertStringDateToSqlDate(passwordExpiredDTForDisplay, locale);
     }
 

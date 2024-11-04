@@ -5,6 +5,7 @@ import {
   getFromOpenElisServer,
   postToOpenElisServerJsonResponse,
   convertAlphaNumLabNumForDisplay,
+  Roles,
 } from "../utils/Utils";
 import {
   Form,
@@ -19,8 +20,9 @@ import {
   Select,
   SelectItem,
   Loading,
+  Link,
 } from "@carbon/react";
-import { Copy } from "@carbon/icons-react";
+import { Copy, ArrowLeft, ArrowRight } from "@carbon/icons-react";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import DataTable from "react-data-table-component";
 import { Formik, Field } from "formik";
@@ -90,6 +92,8 @@ export function SearchResultForm(props) {
   const [nextPage, setNextPage] = useState(null);
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
+  const [currentApiPage, setCurrentApiPage] = useState(null);
+  const [totalApiPages, setTotalApiPages] = useState(null);
   const [url, setUrl] = useState("");
   const componentMounted = useRef(false);
 
@@ -105,6 +109,8 @@ export function SearchResultForm(props) {
         var { totalPages, currentPage } = results.paging;
         if (totalPages > 1) {
           setPagination(true);
+          setCurrentApiPage(currentPage);
+          setTotalApiPages(totalPages);
           if (parseInt(currentPage) < parseInt(totalPages)) {
             setNextPage(parseInt(currentPage) + 1);
           } else {
@@ -312,15 +318,18 @@ export function SearchResultForm(props) {
       "testSectionId",
     );
     testSectionId = testSectionId ? testSectionId : "";
-    getFromOpenElisServer("/rest/user-test-sections", (fetchedTestSections) => {
-      let testSection = fetchedTestSections.find(
-        (testSection) => testSection.id === testSectionId,
-      );
-      let testSectionLabel = testSection ? testSection.value : "";
-      setDefaultTestSectionId(testSectionId);
-      setDefaultTestSectionLabel(testSectionLabel);
-      fetchTestSections(fetchedTestSections);
-    });
+    getFromOpenElisServer(
+      "/rest/user-test-sections/" + Roles.RESULTS,
+      (fetchedTestSections) => {
+        let testSection = fetchedTestSections.find(
+          (testSection) => testSection.id === testSectionId,
+        );
+        let testSectionLabel = testSection ? testSection.value : "";
+        setDefaultTestSectionId(testSectionId);
+        setDefaultTestSectionLabel(testSectionLabel);
+        fetchTestSections(fetchedTestSections);
+      },
+    );
     if (testSectionId) {
       let values = { unitType: testSectionId };
       querySearch(values);
@@ -477,14 +486,17 @@ export function SearchResultForm(props) {
                     <Column lg={6} sm={4}>
                       <Field name="startLabNo">
                         {({ field }) => (
-                          <TextInput
-                            placeholder={"Enter LabNo"}
+                          <CustomLabNumberInput
+                            placeholder="Enter Accession No."
                             name={field.name}
                             id={field.name}
-                            defaultValue={values["accessionNumber"]}
+                            value={values[field.name]}
                             labelText={
                               <FormattedMessage id="search.label.fromaccession" />
                             }
+                            onChange={(e, rawValue) => {
+                              setFieldValue(field.name, rawValue);
+                            }}
                           />
                         )}
                       </Field>
@@ -492,14 +504,17 @@ export function SearchResultForm(props) {
                     <Column lg={6} sm={4}>
                       <Field name="endLabNo">
                         {({ field }) => (
-                          <TextInput
-                            placeholder={"Enter LabNo"}
+                          <CustomLabNumberInput
+                            placeholder="Enter Accession No."
                             name={field.name}
                             id={field.name}
-                            defaultValue={values["endLabNo"]}
+                            value={values[field.name]}
                             labelText={
                               <FormattedMessage id="search.label.toaccession" />
                             }
+                            onChange={(e, rawValue) => {
+                              setFieldValue(field.name, rawValue);
+                            }}
                           />
                         )}
                       </Field>
@@ -702,26 +717,42 @@ export function SearchResultForm(props) {
       <>
         {pagination && (
           <Grid>
-            <Column lg={12} />
-            <Column lg={2}>
-              <Button
-                type=""
-                id="loadpreviousresults"
-                onClick={loadPreviousResultsPage}
-                disabled={previousPage != null ? false : true}
-              >
-                <FormattedMessage id="button.label.loadprevious" />
-              </Button>
+            <Column lg={16}>
+              {" "}
+              <br /> <br />
             </Column>
-            <Column lg={2}>
-              <Button
-                type=""
-                id="loadnextresults"
-                disabled={nextPage != null ? false : true}
-                onClick={loadNextResultsPage}
-              >
-                <FormattedMessage id="button.label.loadnext" />
-              </Button>
+            <Column lg={14} />
+            <Column
+              lg={2}
+              style={{
+                display: "flex",
+                flexDirection: "column",
+                alignItems: "center",
+                gap: "10px",
+                width: "110%",
+              }}
+            >
+              <Link>
+                {currentApiPage} / {totalApiPages}
+              </Link>
+              <div style={{ display: "flex", gap: "10px" }}>
+                <Button
+                  hasIconOnly
+                  id="loadpreviousresults"
+                  onClick={loadPreviousResultsPage}
+                  disabled={previousPage != null ? false : true}
+                  renderIcon={ArrowLeft}
+                  iconDescription="previous"
+                ></Button>
+                <Button
+                  hasIconOnly
+                  id="loadnextresults"
+                  onClick={loadNextResultsPage}
+                  disabled={nextPage != null ? false : true}
+                  renderIcon={ArrowRight}
+                  iconDescription="next"
+                ></Button>
+              </div>
             </Column>
           </Grid>
         )}
@@ -738,7 +769,7 @@ export function SearchResults(props) {
   const intl = useIntl();
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(100);
   const [acceptAsIs, setAcceptAsIs] = useState([]);
   const [referalOrganizations, setReferalOrganizations] = useState([]);
   const [methods, setMethods] = useState([]);
@@ -1635,7 +1666,7 @@ export function SearchResults(props) {
                 onChange={handlePageChange}
                 page={page}
                 pageSize={pageSize}
-                pageSizes={[10, 20, 50, 100]}
+                pageSizes={[10, 20, 30, 50, 100]}
                 totalItems={props.results?.testResult?.length}
                 forwardText={intl.formatMessage({ id: "pagination.forward" })}
                 backwardText={intl.formatMessage({ id: "pagination.backward" })}

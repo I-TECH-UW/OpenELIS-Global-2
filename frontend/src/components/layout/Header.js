@@ -7,6 +7,7 @@ import {
   Notification,
   Search,
   UserAvatarFilledAlt,
+  LocationFilled,
 } from "@carbon/icons-react";
 import { Select, SelectItem } from "@carbon/react";
 import React, {
@@ -101,7 +102,7 @@ function OEHeader(props) {
       getFromOpenElisServer("/rest/notifications", (data) => {
         setReadNotifications([]);
         setUnReadNotifications([]);
-        data.forEach((element) => {
+        data?.forEach((element) => {
           if (element.readAt) {
             setReadNotifications((prev) => [...prev, element]);
           } else {
@@ -475,15 +476,15 @@ function OEHeader(props) {
                                   position: "absolute",
                                   top: "-5px",
                                   right: "-5px",
-                                  backgroundColor: "#3A6B8D",
+                                  backgroundColor: "red",
                                   color: "white",
                                   borderRadius: "50%",
-                                  width: "16px",
-                                  height: "16px",
+                                  width: "22px",
+                                  height: "22px",
                                   display: "flex",
                                   alignItems: "center",
                                   justifyContent: "center",
-                                  fontSize: "10px",
+                                  fontSize: "12px",
                                   animation: "pulse 5s infinite",
                                   opacity: 1,
                                   transition:
@@ -522,6 +523,15 @@ function OEHeader(props) {
                             {userSessionDetails.firstName}{" "}
                             {userSessionDetails.lastName}
                           </li>
+                          {userSessionDetails.loginLabUnit && (
+                            <li className="userDetails">
+                              <LocationFilled
+                                size={18}
+                                style={{ marginRight: "4px" }}
+                              />
+                              {userSessionDetails.loginLabUnit}{" "}
+                            </li>
+                          )}
                           <li
                             className="userDetails clickableUserDetails"
                             onClick={logout}

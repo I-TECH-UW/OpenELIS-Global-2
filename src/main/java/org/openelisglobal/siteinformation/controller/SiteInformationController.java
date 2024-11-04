@@ -261,7 +261,7 @@ public class SiteInformationController extends BaseController {
             forward = validateAndUpdateSiteInformation(request, response, form, isNew);
         }
         // makes the changes take effect immediately
-        ConfigurationProperties.forceReload();
+        ConfigurationProperties.loadDBValuesIntoConfiguration();
         DisplayListService.getInstance().refreshLists();
         if (FWD_SUCCESS_INSERT.equals(forward)) {
             redirectAttributes.addFlashAttribute(FWD_SUCCESS, true);
@@ -329,7 +329,7 @@ public class SiteInformationController extends BaseController {
         }
         try {
             siteInformationService.persistData(siteInformation, newSiteInformation);
-            if (siteInformation.getName().equals(Property.DEFAULT_LANG_LOCALE.getName())) {
+            if (siteInformation.getName().equals(Property.DEFAULT_LANG_LOCALE.getDBName())) {
                 localeResolver.setLocale(request, response, Locale.forLanguageTag(siteInformation.getValue()));
             }
         } catch (LIMSRuntimeException e) {

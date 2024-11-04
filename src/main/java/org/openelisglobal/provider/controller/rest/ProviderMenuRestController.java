@@ -10,7 +10,7 @@ import org.openelisglobal.common.controller.BaseMenuController;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.form.AdminOptionMenuForm;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.util.SystemConfiguration;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.provider.form.ProviderMenuForm;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
@@ -106,8 +106,10 @@ public class ProviderMenuRestController extends BaseMenuController<Provider> {
         request.setAttribute(MENU_FROM_RECORD, String.valueOf(startingRecNo));
         int numOfRecs = 0;
         if (providers != null) {
-            if (providers.size() > SystemConfiguration.getInstance().getDefaultPageSize()) {
-                numOfRecs = SystemConfiguration.getInstance().getDefaultPageSize();
+            if (providers.size() > Integer
+                    .parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"))) {
+                numOfRecs = Integer
+                        .parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"));
             } else {
                 numOfRecs = providers.size();
             }
@@ -151,7 +153,7 @@ public class ProviderMenuRestController extends BaseMenuController<Provider> {
 
     @Override
     protected int getPageSize() {
-        return SystemConfiguration.getInstance().getDefaultPageSize();
+        return Integer.parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"));
     }
 
     // gnr: Deactivate not Delete

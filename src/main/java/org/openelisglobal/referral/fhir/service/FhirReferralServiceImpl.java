@@ -77,7 +77,6 @@ import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -120,9 +119,6 @@ public class FhirReferralServiceImpl implements FhirReferralService {
     private TestService testService;
     @Autowired
     private FhirConfig fhirConfig;
-
-    @Value("${org.openelisglobal.remote.source.identifier:}#{T(java.util.Collections).emptyList()}")
-    private List<String> remoteStoreIdentifier;
 
     private final String RESULT_SUBJECT = "Result Note";
     private String RESULT_TABLE_ID;
@@ -246,9 +242,9 @@ public class FhirReferralServiceImpl implements FhirReferralService {
         if (requester.isPresent()) {
             task.setRequester(fhirTransformService.createReferenceFor(requester.get()));
         }
-        if (!remoteStoreIdentifier.isEmpty()) {
+        if (!fhirConfig.getRemoteStoreIdentifier().isEmpty()) {
             task.setRestriction(new TaskRestrictionComponent()
-                    .setRecipient(Arrays.asList(new Reference(remoteStoreIdentifier.get(0)))));
+                    .setRecipient(Arrays.asList(new Reference(fhirConfig.getRemoteStoreIdentifier().get(0)))));
         }
         task.setAuthoredOn(new Date());
         task.setStatus(TaskStatus.REQUESTED);

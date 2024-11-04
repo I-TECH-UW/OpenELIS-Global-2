@@ -72,11 +72,7 @@ public class WHONetReportServiceImpl implements WHONetReportService {
         List<Analysis> analysises = analysisService.getAllAnalysisByTestsAndStatusAndCompletedDateRange(testIds,
                 ANALYSIS_STATUS_IDS, SAMPLE_STATUS_IDS, lowDate, highDate);
 
-        System.out.println(
-                "analysises" + String.join(", ", analysises.stream().map(e -> e.getId()).collect(Collectors.toList())));
         analysises.stream().forEach(e -> sampleItems.putIfAbsent(e.getSampleItem().getId(), e.getSampleItem()));
-        System.out.println("sampleItems"
-                + String.join(", ", analysises.stream().map(e -> e.getId()).collect(Collectors.toList())));
 
         return new ArrayList<SampleItem>(sampleItems.values());
     }

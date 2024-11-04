@@ -19,8 +19,10 @@ import {
   InlineLoading,
   Toggle,
   TextArea,
+  FilterableMultiSelect,
+  Link,
 } from "@carbon/react";
-import { Launch, Subtract } from "@carbon/react/icons";
+import { Launch, Subtract, ArrowLeft, ArrowRight } from "@carbon/react/icons";
 import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
@@ -57,6 +59,9 @@ function ImmunohistochemistryCaseView() {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const [immunohistochemistrySampleInfo, setImmunohistochemistrySampleInfo] =
     useState({ labNumber: "" });
+
+  const [conclusions, setConclusions] = useState([]);
+
   const [statuses, setStatuses] = useState([]);
   const [reportTypes, setReportTypes] = useState([]);
   const [technicianUsers, setTechnicianUsers] = useState([]);
@@ -68,6 +73,11 @@ function ImmunohistochemistryCaseView() {
   const [intensityList, setIntensityList] = useState([]);
   const [cerbB2PatternList, setCerbB2PatternList] = useState([]);
   const [molecularSubTypeList, setMolecularSubTypeList] = useState([]);
+  const [nextPage, setNextPage] = useState(null);
+  const [previousPage, setPreviousPage] = useState(null);
+  const [pagination, setPagination] = useState(false);
+  const [currentApiPage, setCurrentApiPage] = useState(null);
+  const [totalApiPages, setTotalApiPages] = useState(null);
   const [reportParams, setReportParams] = useState({
     0: {
       erPercent: "",
@@ -83,6 +93,7 @@ function ImmunohistochemistryCaseView() {
       diagnosis: "",
       molecularSubType: "",
       conclusion: "",
+      codedConclusions: [],
       ihcScore: "",
       ihcRatio: "",
       averageChrom: "",
@@ -174,6 +185,75 @@ function ImmunohistochemistryCaseView() {
     params[index]["toggled"] = e;
     setReportParams(params);
   };
+
+  useEffect(() => {
+    componentMounted.current = true;
+
+    setNextPage(null);
+    setPreviousPage(null);
+    setPagination(false);
+    getFromOpenElisServer(
+      "/rest/paginatedDisplayList/PATHOLOGIST_CONCLUSIONS",
+      loadConclusionData,
+    );
+
+    return () => {
+      componentMounted.current = false;
+    };
+  }, []);
+
+  const loadNextCOnclusionsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer(
+      "/rest/paginatedDisplayList/PATHOLOGIST_CONCLUSIONS" +
+        "?page=" +
+        nextPage,
+      loadConclusionData,
+    );
+  };
+
+  const loadPreviousConclusionsPage = () => {
+    setLoading(true);
+    getFromOpenElisServer(
+      "/rest/paginatedDisplayList/PATHOLOGIST_CONCLUSIONS" +
+        "?page=" +
+        previousPage,
+      loadConclusionData,
+    );
+  };
+
+  const loadConclusionData = (res) => {
+    // If the response object is not null and has displayItems array with length greater than 0 then set it as data.
+    if (res && res.displayItems && res.displayItems.length > 0) {
+      setConclusions(res.displayItems);
+    } else {
+      setConclusions([]);
+    }
+
+    // Sets next and previous page numbers based on the total pages and current page number.
+    if (res && res.paging) {
+      const { totalPages, currentPage } = res.paging;
+      if (totalPages > 1) {
+        setPagination(true);
+        setCurrentApiPage(currentPage);
+        setTotalApiPages(totalPages);
+        if (parseInt(currentPage) < parseInt(totalPages)) {
+          setNextPage(parseInt(currentPage) + 1);
+        } else {
+          setNextPage(null);
+        }
+
+        if (parseInt(currentPage) > 1) {
+          setPreviousPage(parseInt(currentPage) - 1);
+        } else {
+          setPreviousPage(null);
+        }
+      }
+    }
+
+    setLoading(false);
+  };
+
   const createReportParams = (reportType, index) => {
     switch (reportType) {
       case "BREAST_CANCER_HORMONE_RECEPTOR":
@@ -650,8 +730,86 @@ function ImmunohistochemistryCaseView() {
           <>
             <Column lg={16} md={8} sm={4}>
               <Grid fullWidth={true} className="gridBoundary">
+                <Column lg={16} md={8} sm={4}>
+                  <Grid fullWidth={true} className="gridBoundary">
+                    {pagination && (
+                      <Column lg={16} md={8} sm={4}>
+                        <Link>
+                          {currentApiPage} / {totalApiPages}
+                        </Link>
+                        <div style={{ display: "flex", gap: "10px" }}>
+                          <Button
+                            hasIconOnly
+                            iconDescription="previous"
+                            disabled={previousPage != null ? false : true}
+                            onClick={loadPreviousConclusionsPage}
+                            renderIcon={ArrowLeft}
+                            size="sm"
+                          />
+                          <Button
+                            hasIconOnly
+                            iconDescription="next"
+                            disabled={nextPage != null ? false : true}
+                            renderIcon={ArrowRight}
+                            onClick={loadNextCOnclusionsPage}
+                            size="sm"
+                          />
+                        </div>
+                      </Column>
+                    )}
+                    <Column lg={16}>
+                      <br />
+                      <br />
+                    </Column>
+                    <Column lg={3} md={8} sm={4}>
+                      <FormattedMessage id="pathology.label.conclusion" />
+                    </Column>
+                    <Column lg={4} md={8} sm={4}>
+                      <FilterableMultiSelect
+                        id="conclusion"
+                        titleText=""
+                        items={conclusions}
+                        itemToString={(item) => (item ? item.value : "")}
+                        initialSelectedItems={
+                          reportParams[index]?.codedConclusions
+                        }
+                        onChange={(changes) => {
+                          var params = { ...reportParams };
+                          if (!params[index]) {
+                            params[index] = {};
+                          }
+                          params[index].codedConclusions =
+                            changes.selectedItems;
+                          setReportParams(params);
+                        }}
+                        selectionFeedback="top-after-reopen"
+                      />
+                    </Column>
+                    <Column lg={8} md={8} sm={4}>
+                      {reportParams[index] &&
+                        reportParams[index]?.codedConclusions.map(
+                          (conclusion, conclusionIndex) => (
+                            <Tag
+                              key={conclusionIndex}
+                              filter
+                              onClose={() => {
+                                var params = { ...reportParams };
+                                params[index]["codedConclusions"].splice(
+                                  conclusionIndex,
+                                  1,
+                                );
+                                setReportParams(params);
+                              }}
+                            >
+                              {conclusion.value}
+                            </Tag>
+                          ),
+                        )}
+                    </Column>
+                  </Grid>
+                </Column>
                 <Column lg={3} md={8} sm={4}>
-                  <FormattedMessage id="pathology.label.conclusion" />
+                  <FormattedMessage id="pathology.label.textconclusion" />
                 </Column>
                 <Column lg={13} md={8} sm={4}>
                   <TextArea
@@ -1156,6 +1314,11 @@ function ImmunohistochemistryCaseView() {
                               averageHer2: reportParams[index]?.averageHer2,
                               numberOfcancerNuclei:
                                 reportParams[index]?.numberOfcancerNuclei,
+                              codedConclusions: reportParams[
+                                index
+                              ]?.codedConclusions.map(
+                                (conclusion) => conclusion.id,
+                              ),
                             };
                             postToOpenElisServerForPDF(
                               "/rest/ReportPrint",
