@@ -41,7 +41,7 @@ export default function Workplan(props) {
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(100);
 
   const type = props.type;
   let title = "";
@@ -366,7 +366,7 @@ export default function Workplan(props) {
                     onChange={handlePageChange}
                     page={page}
                     pageSize={pageSize}
-                    pageSizes={[10, 20, 50, 100]}
+                    pageSizes={[10, 20, 30, 50, 100]}
                     totalItems={testsList.length}
                     forwardText={intl.formatMessage({
                       id: "pagination.forward",

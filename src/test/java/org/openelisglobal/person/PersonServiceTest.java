@@ -1,9 +1,16 @@
 package org.openelisglobal.person;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertTrue;
+
 import java.sql.Timestamp;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.transaction.Transactional;
 import org.junit.After;
@@ -11,6 +18,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.person.service.PersonService;
@@ -113,6 +121,28 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
+    public void getLastName_shouldReturnLastName() {
+        String firstName = "John";
+        String lastName = "Doe";
+
+        Person person = createPerson(firstName, lastName);
+        String retrievedLastName = personService.getLastName(person);
+
+        Assert.assertEquals(lastName, retrievedLastName);
+    }
+
+    @Test
+    public void getFirstName_shouldReturnFirstName() {
+        String firstName = "Jones";
+        String lastName = "Doe";
+
+        Person person = createPerson(firstName, lastName);
+        String retrievedFirstName = personService.getFirstName(person);
+
+        Assert.assertEquals(firstName, retrievedFirstName);
+    }
+
+    @Test
     public void getLastFirstName_shouldReturnCorrectFormat() throws Exception {
         String firstName = "John";
         String lastName = "Doe";
@@ -121,6 +151,112 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
         String lastFirstName = personService.getLastFirstName(person);
 
         Assert.assertEquals(lastName + ", " + firstName, lastFirstName);
+    }
+
+    @Test
+    public void getWorkPhone_shouldReturnWorkPhone() throws Exception {
+        String firstName = "John";
+        String lastName = "Doe";
+
+        Person person = createPerson(firstName, lastName);
+        person.setWorkPhone("12345");
+        String personId = personService.insert(person);
+        Assert.assertEquals("12345", personService.getWorkPhone(person));
+    }
+
+    @Test
+    public void getCellPhone_shouldReturnCellPhone() throws Exception {
+        String firstName = "John";
+        String lastName = "Doe";
+
+        Person person = createPerson(firstName, lastName);
+        person.setCellPhone("12345");
+        String personId = personService.insert(person);
+        Assert.assertEquals("12345", personService.getCellPhone(person));
+    }
+
+    @Test
+    public void getFax_shouldReturnFax() throws Exception {
+        String firstName = "John";
+        String lastName = "Doe";
+
+        Person person = createPerson(firstName, lastName);
+        person.setFax("1245");
+        String personId = personService.insert(person);
+        Assert.assertEquals("1245", personService.getFax(person));
+    }
+
+    @Test
+    public void getPersonById_shouldReturngetPersonById() throws Exception {
+        String firstName = "John";
+        String lastName = "Doe";
+
+        Person person = createPerson(firstName, lastName);
+        person.setFax("1245");
+        String personId = personService.insert(person);
+
+        Person savedPerson = personService.getPersonById(personId);
+        Assert.assertEquals("1245", personService.getFax(savedPerson));
+    }
+
+    @Test
+    public void getData_shouldReturncopiedPropertiesFromDatabase() throws Exception {
+        String firstName = "John";
+        String lastName = "Doe";
+
+        Person person = createPerson(firstName, lastName);
+        person.setFax("1245");
+        String personId = personService.insert(person);
+
+        Person personToUpdate = new Person();
+        personToUpdate.setId(personId);
+
+        personService.getData(personToUpdate);
+
+        assertNotNull(personToUpdate.getId());
+        assertEquals("1245", personToUpdate.getFax());
+    }
+
+    @Test
+    public void getData_shouldReturnpersonNotFound() throws Exception {
+        String firstName = "John";
+        String lastName = "Doe";
+
+        Person person = createPerson(firstName, lastName);
+        person.setFax("1245");
+        String personId = personService.insert(person);
+
+        Person personToUpdate = new Person();
+        personToUpdate.setId("345");
+
+        personService.getData(personToUpdate);
+
+        assertNull(personToUpdate.getId());
+    }
+
+    @Test
+    public void getPageOfPersons_shouldReturnPageOfPersons() {
+        String firstName = "John";
+        String lastName = "Doe";
+
+        String firstName2 = "Joseph";
+        String lastName2 = "Luke";
+
+        Person person = createPerson(firstName, lastName);
+        Person person2 = createPerson(firstName2, lastName2);
+        personService.insert(person);
+        personService.insert(person2);
+
+        List<Person> personsPage = personService.getPageOfPersons(1);
+
+        int expectedPageSize = Integer
+                .parseInt(ConfigurationProperties.getInstance().getPropertyValue("page.defaultPageSize"));
+        Assert.assertTrue(personsPage.size() <= expectedPageSize);
+
+        if (expectedPageSize >= 2) {
+            Assert.assertTrue(personsPage.stream().anyMatch(p -> p.getFirstName().equals(firstName)));
+            Assert.assertTrue(personsPage.stream().anyMatch(p -> p.getFirstName().equals(firstName2)));
+        }
     }
 
     @Test
@@ -209,4 +345,52 @@ public class PersonServiceTest extends BaseWebContextSensitiveTest {
         Assert.assertEquals(lastName, retrievedPerson.getLastName());
     }
 
+    @Test
+    public void getAddressComponents_shouldReturngetAddressComponents() throws Exception {
+        String firstName = "Jane";
+        String lastName = "Smith";
+        String city = "Kampala";
+        String country = "Uganda";
+        String state = "Kisumali";
+        String streetAdress = "Bakuli";
+        String zipCode = "256";
+
+        Person person = createPerson(firstName, lastName);
+        person.setCity(city);
+        person.setCountry(country);
+        person.setState(state);
+        person.setStreetAddress(streetAdress);
+        person.setZipCode(zipCode);
+        personService.insert(person);
+
+        Map<String, String> result = personService.getAddressComponents(person);
+        assertEquals(city, result.get("City"));
+        assertEquals(country, result.get("Country"));
+        assertEquals(state, result.get("State"));
+        assertEquals(streetAdress, result.get("Street"));
+        assertEquals(zipCode, result.get("Zip"));
+    }
+
+    @Test
+    public void testGetAddressComponents_handlesNullPerson() {
+        Map<String, String> result = personService.getAddressComponents(null);
+
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void deletePerson_shouldDeletePerson() {
+        String firstName = "John";
+        String lastName = "Doe";
+
+        Person person = createPerson(firstName, lastName);
+        String personId = personService.insert(person);
+        Assert.assertNotNull(personId);
+
+        Person savedPerson = personService.get(personId);
+
+        personService.delete(savedPerson);
+
+        Assert.assertEquals(0, personService.getAll().size());
+    }
 }

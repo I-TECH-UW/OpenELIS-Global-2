@@ -7,7 +7,7 @@
 .search-bar-container {
   position: absolute;
   display: flex;
-  width: 430px;
+  width: 100%;
   top: 10px;
   right: -30px;
   box-shadow: 0em 0.1em 0.05em #ccc;
@@ -24,11 +24,12 @@
 
 .patients {
   overflow-y: auto;
-  width: 700px;
+  width: 100%;
   max-height: 250px;
-  position: relative;
+  position: absolute;
   background-color: #f0e7e7;
   top: 45px;
+  right: -30px;
   box-shadow: 0em 0.1em 0.5em #ccc;
 }
 
