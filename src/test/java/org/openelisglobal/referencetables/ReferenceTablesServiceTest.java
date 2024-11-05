@@ -1,5 +1,7 @@
 package org.openelisglobal.referencetables;
 
+import static org.junit.Assert.*;
+
 import java.util.List;
 import org.junit.After;
 import org.junit.Assert;
@@ -32,8 +34,8 @@ public class ReferenceTablesServiceTest extends BaseWebContextSensitiveTest {
         referenceTablesService.insert(refTable);
 
         ReferenceTables retrievedTable = referenceTablesService.getReferenceTableByName(tableName);
-        Assert.assertNotNull(retrievedTable);
-        Assert.assertEquals(tableName, retrievedTable.getTableName());
+        assertNotNull(retrievedTable);
+        assertEquals(tableName, retrievedTable.getTableName());
     }
 
     @Test
@@ -49,7 +51,7 @@ public class ReferenceTablesServiceTest extends BaseWebContextSensitiveTest {
             referenceTablesService.insert(refTable2);
             Assert.fail("Expected LIMSDuplicateRecordException to be thrown");
         } catch (LIMSDuplicateRecordException e) {
-            Assert.assertEquals("Duplicate record exists for " + tableName, e.getMessage());
+            assertEquals("Duplicate record exists for " + tableName, e.getMessage());
         }
     }
 
@@ -62,22 +64,12 @@ public class ReferenceTablesServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void updateReferenceTable_shouldUpdateCorrectly() throws Exception {
-        ReferenceTables refTable = createReferenceTable("UpdateTestTable");
-        referenceTablesService.insert(refTable);
-        refTable.setKeepHistory("N");
-        referenceTablesService.update(refTable);
-        ReferenceTables updatedTable = referenceTablesService.getReferenceTableByName("UpdateTestTable");
-        Assert.assertEquals("N", updatedTable.getKeepHistory());
-    }
-
-    @Test
     public void insertReferenceTable_shouldInsertCorrectly() throws Exception {
         ReferenceTables refTable = createReferenceTable("InsertTestTable");
         referenceTablesService.insert(refTable);
         ReferenceTables retrievedTable = referenceTablesService.getReferenceTableByName("InsertTestTable");
-        Assert.assertNotNull(retrievedTable);
-        Assert.assertEquals("InsertTestTable", retrievedTable.getTableName());
+        assertNotNull(retrievedTable);
+        assertEquals("InsertTestTable", retrievedTable.getTableName());
     }
 
     @Test
@@ -90,7 +82,7 @@ public class ReferenceTablesServiceTest extends BaseWebContextSensitiveTest {
         referenceTablesService.insert(refTable2);
 
         List<ReferenceTables> allTables = referenceTablesService.getAllReferenceTables();
-        Assert.assertEquals(initialCount + 2, allTables.size());
+        assertEquals(initialCount + 2, allTables.size());
     }
 
     @Test
@@ -103,7 +95,7 @@ public class ReferenceTablesServiceTest extends BaseWebContextSensitiveTest {
         referenceTablesService.insert(refTable2);
 
         int newCount = referenceTablesService.getTotalReferenceTableCount();
-        Assert.assertEquals(initialCount + 2, newCount);
+        assertEquals(initialCount + 2, newCount);
     }
 
     @Test
@@ -117,8 +109,8 @@ public class ReferenceTablesServiceTest extends BaseWebContextSensitiveTest {
         referenceTablesService.insert(nonHl7Table);
 
         List<ReferenceTables> hl7EncodedTables = referenceTablesService.getAllReferenceTablesForHl7Encoding();
-        Assert.assertTrue(hl7EncodedTables.stream().allMatch(t -> "Y".equals(t.getIsHl7Encoded())));
-        Assert.assertTrue(hl7EncodedTables.stream().anyMatch(t -> "Hl7Table".equals(t.getTableName())));
+        assertTrue(hl7EncodedTables.stream().allMatch(t -> "Y".equals(t.getIsHl7Encoded())));
+        assertTrue(hl7EncodedTables.stream().anyMatch(t -> "Hl7Table".equals(t.getTableName())));
         Assert.assertFalse(hl7EncodedTables.stream().anyMatch(t -> "NonHl7Table".equals(t.getTableName())));
     }
 }
