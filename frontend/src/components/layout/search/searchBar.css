@@ -30,7 +30,7 @@
   max-height: 250px;
   position: absolute;
   background-color: #f0e7e7;
-  top: 45px;
+  top: 90px;
   right: -30px;
   box-shadow: 0em 0.1em 0.5em #ccc;
 }
@@ -64,5 +64,8 @@
 
   .search-input {
     width: 45%;
+  }
+  .patients{
+    top: 45px;
   }
 }
