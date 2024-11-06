@@ -3,13 +3,21 @@ package org.openelisglobal;
 import static org.mockito.Mockito.mock;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
+
+import ca.uhn.fhir.context.FhirContext;
+
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
+
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.openelisglobal.audittrail.dao.AuditTrailService;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.util.Versioning;
+import org.openelisglobal.dataexchange.fhir.FhirConfig;
+import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.externalconnections.service.BasicAuthenticationDataService;
 import org.openelisglobal.externalconnections.service.ExternalConnectionService;
@@ -77,9 +85,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
         "org.openelisglobal.view", "org.openelisglobal.search.service", "org.openelisglobal.sample",
         "org.openelisglobal.sampleitem.", "org.openelisglobal.analysis", "org.openelisglobal.result.service",
         "org.openelisglobal.result.daoimpl", "org.openelisglobal.resultlimit", "org.openelisglobal.resultlimits",
-        "org.openelisglobal.typeoftestresult", "org.openelisglobal.samplehuman",
+        "org.openelisglobal.typeoftestresult", "org.openelisglobal.samplehuman", "org.openelisglobal.provider",
         "org.openelisglobal.role", }, excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.patient.controller.*"),
+                @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.provider.controller.*"),
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.sample.controller.*"),
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.dictionary.controller.*.java"),
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.config.*"),
@@ -93,6 +102,36 @@ public class AppTestConfig implements WebMvcConfigurer {
     @Profile("test")
     public FhirPersistanceService fhirPesistence() {
         return mock(FhirPersistanceService.class);
+    }
+
+    @Bean()
+    @Profile("test")
+    public FhirUtil fhirUtil() {
+        return mock(FhirUtil.class);
+    }
+
+    @Bean()
+    @Profile("test")
+    public FhirConfig fhirConfig() {
+        return mock(FhirConfig.class);
+    }
+
+    @Bean()
+    @Profile("test")
+    public CloseableHttpClient closeableHttpClient() {
+        return mock(CloseableHttpClient.class);
+    }
+
+    @Bean()
+    @Profile("test")
+    public FhirContext fhirContext() {
+        return mock(FhirContext.class);
+    }
+
+    @Bean()
+    @Profile("test")
+    public FhirTransformService fhirTransformServicehirTransformService() {
+        return mock(FhirTransformService.class);
     }
 
     @Bean()
@@ -165,12 +204,6 @@ public class AppTestConfig implements WebMvcConfigurer {
     @Profile("test")
     public TestSectionService testSectionService() {
         return mock(TestSectionService.class);
-    }
-
-    @Bean()
-    @Profile("test")
-    public ProviderService providerService() {
-        return mock(ProviderService.class);
     }
 
     @Bean()
