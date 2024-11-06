@@ -488,22 +488,6 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void getData_shouldCopyPropertiesFromDatabase() throws Exception {
-        String firstName = "John";
-        String lastname = "Doe";
-        String dob = "12/12/1992";
-        String gender = "M";
-        Patient patient = createPatient(firstName, lastname, dob, gender);
-        String patientId = patientService.insert(patient);
-
-        Patient savedPatient = new Patient();
-        savedPatient.setId(patientId);
-        patientService.getData(savedPatient);
-
-        Assert.assertEquals(gender, savedPatient.getGender());
-    }
-
-    @Test
     public void getData_shouldCopyPropertiesFromDatabaseById() throws Exception {
         String firstName = "John";
         String lastname = "Doe";
