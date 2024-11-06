@@ -2,14 +2,11 @@ package org.openelisglobal;
 
 import static org.mockito.Mockito.mock;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-
 import ca.uhn.fhir.context.FhirContext;
-
+import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.ArrayList;
 import java.util.List;
 import lombok.NonNull;
-
 import org.apache.http.impl.client.CloseableHttpClient;
 import org.openelisglobal.audittrail.dao.AuditTrailService;
 import org.openelisglobal.common.services.IStatusService;
@@ -33,7 +30,6 @@ import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.program.service.ImmunohistochemistrySampleService;
 import org.openelisglobal.program.service.PathologySampleService;
 import org.openelisglobal.program.service.ProgramSampleService;
-import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.referral.service.ReferralResultService;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.service.ReferralSetService;

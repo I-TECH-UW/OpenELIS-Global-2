@@ -1,7 +1,6 @@
 package org.openelisglobal.patient;
 
 import java.util.List;
-
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -9,7 +8,6 @@ import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.patient.service.PatientTypeService;
-import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.patienttype.valueholder.PatientType;
 import org.springframework.beans.factory.annotation.Autowired;
 
