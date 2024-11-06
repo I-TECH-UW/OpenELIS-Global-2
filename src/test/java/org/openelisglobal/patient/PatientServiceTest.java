@@ -37,7 +37,6 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
     @Autowired
     PersonService personService;
 
-
     @Autowired
     PatientIdentityTypeService identityTypeService;
 
@@ -62,7 +61,7 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
         patientTypeService.deleteAll(patientTypeService.getAll());
     }
 
-     @Test
+    @Test
     public void getSubjectNumber_shouldReturnSubjectNumber() throws Exception {
         String firstName = "John";
         String lastname = "Doe";
@@ -933,7 +932,6 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
 
         Assert.assertEquals("MALE", localizedGender);
     }
-
 
     @Test
     public void getBirthdayForDisplay_shouldReturnBirthdayForDisplay() throws Exception {
