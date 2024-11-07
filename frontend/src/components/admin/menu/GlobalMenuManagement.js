@@ -33,7 +33,7 @@ function GlobalMenuManagement() {
 
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
-  const [showChildren, setShowChildren] = useState(false);
+  const [showChildren, setShowChildren] = useState(true);
   const [menuItem, setMenuItem] = useState({
     menu: { isActive: true, elementId: "menu_sidenav" },
     childMenus: [],

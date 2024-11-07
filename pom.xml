@@ -13,10 +13,10 @@
   <properties>
     <maven.java.release>11</maven.java.release>
     <major.version>3</major.version>
-    <minor.version>0</minor.version>
-    <state.version>3</state.version>
+    <minor.version>1</minor.version>
+    <state.version>0</state.version>
     <!-- 0 = alpha, 1 = beta, 2 = rc, 3 = deployable -->
-    <fix.version>2</fix.version>
+    <fix.version>0</fix.version>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
     <liquibase.propertyFile>${project.basedir}/liquibase/liquibase.properties</liquibase.propertyFile>
     <castor.version>1.4.1</castor.version>
@@ -722,6 +722,60 @@
           </java>
         </configuration>
       </plugin>
+      <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.12</version>
+          <configuration>
+             <excludes>
+                    <exclude>**/*.jar</exclude>
+                    <exclude>naughty-dependency/**/*.class</exclude>
+                </excludes>
+          </configuration>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>prepare-agent</goal>
+                  </goals>
+              </execution>
+              <execution>
+                  <id>report</id>
+                  <phase>test</phase>
+                  <goals>
+                      <goal>report</goal>
+                  </goals>
+              </execution>
+
+               <!-- Make sure we have at least 70% coverage -->
+              <!-- <execution>
+                <id>verify-test-coverage</id>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <rule>
+                      <element>BUNDLE</element>
+                      <excludes>
+                        <exclude>*Mojo</exclude>
+                      </excludes>
+                      <limits>
+                        <limit>
+                          <counter>INSTRUCTION</counter>
+                          <value>COVEREDRATIO</value>
+                          <minimum>10%</minimum>
+                        </limit>
+                      </limits>
+                    </rule>
+                  </rules>
+                </configuration>
+              </execution> -->
+
+          </executions>
+        </plugin>
+
+
+
     </plugins>
   </build>
 </project>
