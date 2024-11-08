@@ -23,10 +23,10 @@ import org.json.simple.JSONObject;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService;
 import org.openelisglobal.common.servlet.validation.AjaxServlet;
+import org.openelisglobal.common.util.ControllerUtills;
 import org.openelisglobal.spring.util.SpringContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -37,7 +37,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/rest")
-public class PendingAnalysisForTestProviderRestController extends BaseRestController {
+public class PendingAnalysisForTestProviderRestController extends ControllerUtills {
 
     private static final List<Integer> NOT_STARTED;
     private static final List<Integer> TECH_REJECT;

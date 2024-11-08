@@ -6,8 +6,8 @@ import java.util.List;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.ControllerUtills;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.qaevent.form.NonConformingEventForm;
 import org.openelisglobal.qaevent.service.NCEventService;
 import org.openelisglobal.qaevent.service.NceCategoryService;
@@ -29,7 +29,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ViewNonConformEventsRestController {
+public class ViewNonConformEventsRestController extends ControllerUtills {
 
     @Autowired
     private NCEventService ncEventService;
@@ -45,8 +45,6 @@ public class ViewNonConformEventsRestController {
 
     @Autowired
     private SampleItemService sampleItemService;
-
-    private static final String USER_SESSION_DATA = "userSessionData";
 
     private final NonConformingEventWorker nonConformingEventWorker;
 
@@ -119,16 +117,5 @@ public class ViewNonConformEventsRestController {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
                     .body("An error occurred while processing the request." + e);
         }
-    }
-
-    protected String getSysUserId(HttpServletRequest request) {
-        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-        if (usd == null) {
-            usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
-            if (usd == null) {
-                return null;
-            }
-        }
-        return String.valueOf(usd.getSystemUserId());
     }
 }

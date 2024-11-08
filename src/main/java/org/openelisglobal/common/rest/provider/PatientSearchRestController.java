@@ -19,10 +19,10 @@ import org.openelisglobal.common.provider.query.PatientSearchResultsForm;
 import org.openelisglobal.common.provider.query.workerObjects.PatientSearchLocalAndExternalWorker;
 import org.openelisglobal.common.provider.query.workerObjects.PatientSearchLocalWorker;
 import org.openelisglobal.common.provider.query.workerObjects.PatientSearchWorker;
-import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.common.rest.util.PatientSearchResultsPaging;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.ControllerUtills;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
@@ -49,7 +49,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 
 @Controller
 @RequestMapping(value = "/rest/")
-public class PatientSearchRestController extends BaseRestController {
+public class PatientSearchRestController extends ControllerUtills {
 
     @Autowired
     private FhirConfig fhirConfig;
