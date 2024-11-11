@@ -16,6 +16,7 @@ import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.common.util.UserSessionUtils;
 import org.openelisglobal.common.validator.BaseErrors;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.patient.action.IPatientUpdate;
@@ -76,11 +77,6 @@ public class PatientManagementUpdate implements IPatientUpdate {
                 ADDRESS_PART_VILLAGE_ID = addressPart.getId();
             }
         }
-    }
-
-    protected String getSysUserId(HttpServletRequest request) {
-        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(IActionConstants.USER_SESSION_DATA);
-        return String.valueOf(usd.getSystemUserId());
     }
 
     public void setSysUserIdFromRequest(HttpServletRequest request) {
@@ -293,7 +289,7 @@ public class PatientManagementUpdate implements IPatientUpdate {
 
         copyFormBeanToValueHolders(patientInfo);
 
-        setSystemUserID(getSysUserId(request));
+        setSystemUserID(UserSessionUtils.getSysUserId(request));
 
         setLastUpdatedTimeStamps(patientInfo);
 

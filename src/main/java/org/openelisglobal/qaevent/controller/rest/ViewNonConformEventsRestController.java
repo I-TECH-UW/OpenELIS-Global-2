@@ -7,7 +7,7 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.common.util.UserSessionUtils;
 import org.openelisglobal.qaevent.form.NonConformingEventForm;
 import org.openelisglobal.qaevent.service.NCEventService;
 import org.openelisglobal.qaevent.service.NceCategoryService;
@@ -45,8 +45,6 @@ public class ViewNonConformEventsRestController {
 
     @Autowired
     private SampleItemService sampleItemService;
-
-    private static final String USER_SESSION_DATA = "userSessionData";
 
     private final NonConformingEventWorker nonConformingEventWorker;
 
@@ -91,7 +89,7 @@ public class ViewNonConformEventsRestController {
         response.setSeverityRecurrenceList(
                 DisplayListService.getInstance().getList(DisplayListService.ListType.SEVERITY_RECURRENCE_LIST));
         response.setReportingUnit(event.getReportingUnitId());
-        response.setCurrentUserId((getSysUserId(request)));
+        response.setCurrentUserId((UserSessionUtils.getSysUserId(request)));
 
         List<NceSpecimen> specimenList = nceSpecimenService.getAllMatching("nceId", event.getId());
         List<SampleItem> sampleItems = new ArrayList<>();
@@ -121,14 +119,4 @@ public class ViewNonConformEventsRestController {
         }
     }
 
-    protected String getSysUserId(HttpServletRequest request) {
-        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-        if (usd == null) {
-            usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
-            if (usd == null) {
-                return null;
-            }
-        }
-        return String.valueOf(usd.getSystemUserId());
-    }
 }

@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import nl.martijndwars.webpush.PushService;
 import org.apache.http.HttpResponse;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.common.util.UserSessionUtils;
 import org.openelisglobal.notifications.dao.NotificationDAO;
 import org.openelisglobal.notifications.dao.NotificationSubscriptionDAO;
 import org.openelisglobal.notifications.entity.Notification;
@@ -36,7 +36,6 @@ public class NotificationRestController {
     private final NotificationDAO notificationDAO;
     private final SystemUserService systemUserService;
     private final NotificationSubscriptionDAO notificationSubscriptionDAO;
-    private static final String USER_SESSION_DATA = "userSessionData";
 
     @Autowired
     private ConfigurableEnvironment env;
@@ -56,7 +55,7 @@ public class NotificationRestController {
 
     @GetMapping("/notifications")
     public List<Notification> getNotificationsByUserId(HttpServletRequest request) {
-        String sysUserId = getSysUserId(request);
+        String sysUserId = UserSessionUtils.getSysUserId(request);
         return notificationDAO.getNotificationsByUserId(Long.parseLong(sysUserId));
     }
 
@@ -132,7 +131,7 @@ public class NotificationRestController {
 
     @GetMapping("/notification/pnconfig")
     public ResponseEntity<?> getSubscriptionDetails(HttpServletRequest request) {
-        String sysUserId = getSysUserId(request);
+        String sysUserId = UserSessionUtils.getSysUserId(request);
         NotificationSubscriptions ns = notificationSubscriptionDAO
                 .getNotificationSubscriptionByUserId(Long.valueOf(sysUserId));
 
@@ -154,7 +153,7 @@ public class NotificationRestController {
 
     @PutMapping("/notification/markasread/all")
     public ResponseEntity<?> markAllNotificationsAsRead(HttpServletRequest request) {
-        String sysUserId = getSysUserId(request);
+        String sysUserId = UserSessionUtils.getSysUserId(request);
         notificationDAO.setAllUserNotificationsToRead(Long.valueOf(sysUserId));
         return ResponseEntity.ok().body("All notifications updated successfully");
     }
@@ -178,7 +177,7 @@ public class NotificationRestController {
     public ResponseEntity<?> subscribe(@RequestBody NotificationSubscriptions notificationSubscription,
             HttpServletRequest request) {
 
-        String sysUserId = getSysUserId(request);
+        String sysUserId = UserSessionUtils.getSysUserId(request);
 
         // Fetch the user object
         SystemUser user = systemUserService.getUserById(sysUserId);
@@ -198,7 +197,7 @@ public class NotificationRestController {
 
     @PutMapping("/notification/unsubscribe")
     public ResponseEntity<?> unsubscribe(HttpServletRequest request) {
-        String sysUserId = getSysUserId(request);
+        String sysUserId = UserSessionUtils.getSysUserId(request);
         NotificationSubscriptions ns = notificationSubscriptionDAO
                 .getNotificationSubscriptionByUserId(Long.valueOf(sysUserId));
 
@@ -211,14 +210,4 @@ public class NotificationRestController {
         return ResponseEntity.ok().body("Unsubscribed successfully");
     }
 
-    protected String getSysUserId(HttpServletRequest request) {
-        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-        if (usd == null) {
-            usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
-            if (usd == null) {
-                return null;
-            }
-        }
-        return String.valueOf(usd.getSystemUserId());
-    }
 }

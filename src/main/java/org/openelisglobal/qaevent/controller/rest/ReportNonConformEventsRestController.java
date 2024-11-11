@@ -10,7 +10,7 @@ import org.openelisglobal.common.rest.bean.NceSampleItemInfo;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.RequesterService;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.login.valueholder.UserSessionData;
+import org.openelisglobal.common.util.UserSessionUtils;
 import org.openelisglobal.qaevent.form.NonConformingEventForm;
 import org.openelisglobal.qaevent.service.NceCategoryService;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
@@ -41,8 +41,6 @@ public class ReportNonConformEventsRestController {
     private final NonConformingEventWorker nonConformingEventWorker;
     private final NceCategoryService nceCategoryService;
     private final RequesterService requesterService;
-
-    private static final String USER_SESSION_DATA = "userSessionData";
 
     @Autowired
     private SystemUserService systemUserService;
@@ -101,7 +99,7 @@ public class ReportNonConformEventsRestController {
             eventData.setCurrentUserId(params.get("currentUserId"));
             eventData.setNceCategories(nceCategoryService.getAllNceCategories());
 
-            SystemUser systemUser = systemUserService.getUserById(getSysUserId(request));
+            SystemUser systemUser = systemUserService.getUserById(UserSessionUtils.getSysUserId(request));
             eventData.setName(systemUser.getFirstName() + " " + systemUser.getLastName());
 
             String ncenumber = String.valueOf(System.currentTimeMillis());
@@ -122,7 +120,7 @@ public class ReportNonConformEventsRestController {
                 eventData.setSpecimens(sampleItems);
             }
 
-            eventData.setCurrentUserId(getSysUserId(request));
+            eventData.setCurrentUserId(UserSessionUtils.getSysUserId(request));
 
             eventData.setReportingUnits(
                     DisplayListService.getInstance().getList(DisplayListService.ListType.TEST_SECTION_ACTIVE));
@@ -173,17 +171,6 @@ public class ReportNonConformEventsRestController {
 
         sampleInfo.setSampleItems(sampleItemsList);
         return sampleInfo;
-    }
-
-    protected String getSysUserId(HttpServletRequest request) {
-        UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
-        if (usd == null) {
-            usd = (UserSessionData) request.getAttribute(USER_SESSION_DATA);
-            if (usd == null) {
-                return null;
-            }
-        }
-        return String.valueOf(usd.getSystemUserId());
     }
 
     private Sample getSampleForLabNumber(String labNumber) throws LIMSInvalidConfigurationException {
