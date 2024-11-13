@@ -1,5 +1,6 @@
 package org.openelisglobal.common.rest;
 
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -13,10 +14,13 @@ import java.util.stream.Collectors;
 import javax.annotation.PostConstruct;
 import javax.servlet.http.HttpServletRequest;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.GenericValidator;
 import org.apache.logging.log4j.core.util.KeyValuePair;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.rest.provider.bean.TestDisplayBean;
+import org.openelisglobal.common.rest.provider.form.DisplayListPagingForm;
+import org.openelisglobal.common.rest.util.DisplayListPaging;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.services.IStatusService;
@@ -222,6 +226,26 @@ public class DisplayListController extends BaseRestController {
     @ResponseBody
     public List<IdValuePair> getDisplayList(@PathVariable DisplayListService.ListType listType) {
         return DisplayListService.getInstance().getFreshList(listType);
+    }
+
+    @GetMapping(value = "paginatedDisplayList/{listType}", produces = MediaType.APPLICATION_JSON_VALUE)
+    @ResponseBody
+    public DisplayListPagingForm getPaginatedDisplayList(HttpServletRequest request,
+            @PathVariable DisplayListService.ListType listType)
+            throws IllegalAccessException, InvocationTargetException, NoSuchMethodException {
+        DisplayListPagingForm displayListform = new DisplayListPagingForm();
+        DisplayListPaging paging = new DisplayListPaging();
+        List<IdValuePair> displayItems = new ArrayList<>();
+        String requestedPage = request.getParameter("page");
+        if (GenericValidator.isBlankOrNull(requestedPage)) {
+            displayItems = DisplayListService.getInstance().getFreshList(listType);
+
+            paging.setDatabaseResults(request, displayListform, displayItems);
+        } else {
+            int requestedPageNumber = Integer.parseInt(requestedPage);
+            paging.page(request, displayListform, requestedPageNumber);
+        }
+        return displayListform;
     }
 
     @GetMapping(value = "tests", produces = MediaType.APPLICATION_JSON_VALUE)

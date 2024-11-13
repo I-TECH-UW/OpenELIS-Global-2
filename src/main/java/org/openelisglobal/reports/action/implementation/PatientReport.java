@@ -144,6 +144,7 @@ public abstract class PatientReport extends Report {
     protected String completionDate;
     protected Sample currentSample;
     protected Patient currentPatient;
+    protected Boolean onlyResultsForReportBySite = false;
 
     protected static final NoteType[] FILTER = { NoteType.EXTERNAL, NoteType.REJECTION_REASON,
             NoteType.NON_CONFORMITY };
@@ -249,6 +250,7 @@ public abstract class PatientReport extends Report {
             }
             if (!GenericValidator.isBlankOrNull(form.getUpperDateRange())
                     && !GenericValidator.isBlankOrNull(form.getLowerDateRange())) {
+                onlyResultsForReportBySite = form.isOnlyResults();
                 reportSampleList = findReportSamplesForSite(form.getReferringSiteId(),
                         form.getReferringSiteDepartmentId(), form.isOnlyResults(), form.getDateType(),
                         form.getLowerDateRange(), form.getUpperDateRange());
@@ -315,14 +317,6 @@ public abstract class PatientReport extends Report {
             Set<Integer> analysisStatusIds = new HashSet<>();
             analysisStatusIds.add(Integer
                     .parseInt(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.Finalized)));
-            /**
-             * analysisStatusIds.add(Integer.parseInt(
-             * SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.BiologistRejected)));
-             * analysisStatusIds.add(Integer.parseInt(
-             * SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance)));
-             * analysisStatusIds.add(Integer.parseInt(
-             * SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalRejected)));
-             **/
             sampleList = sampleList.stream().filter(
                     e -> (analysisService.getAnalysesBySampleIdAndStatusId(e.getId(), analysisStatusIds).size() > 0))
                     .collect(Collectors.toList());

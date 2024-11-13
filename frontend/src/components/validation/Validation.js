@@ -34,7 +34,7 @@ const Validation = (props) => {
   const intl = useIntl();
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(100);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -417,7 +417,7 @@ const Validation = (props) => {
               onChange={handlePageChange}
               page={page}
               pageSize={pageSize}
-              pageSizes={[10, 20, 50, 100]}
+              pageSizes={[10, 20, 30, 50, 100]}
               totalItems={
                 props.results
                   ? props.results.resultList
