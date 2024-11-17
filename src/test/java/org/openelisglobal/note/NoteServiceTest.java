@@ -1,5 +1,9 @@
 package org.openelisglobal.note;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
+
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -7,9 +11,6 @@ import org.openelisglobal.BaseWebContextSensitiveTest;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.valueholder.Note;
 import org.springframework.beans.factory.annotation.Autowired;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertEquals;
 
 public class NoteServiceTest extends BaseWebContextSensitiveTest {
 
@@ -69,9 +70,7 @@ public class NoteServiceTest extends BaseWebContextSensitiveTest {
         note2.setSubject(subject2);
         note2.setText(text2);
         noteService.insert(note2);
-
         noteService.deleteAll(noteService.getAll());
-
         assertEquals(0, noteService.getAll().size());
     }
 }
