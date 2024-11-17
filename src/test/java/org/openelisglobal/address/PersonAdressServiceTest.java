@@ -1,10 +1,9 @@
 package org.openelisglobal.address;
 
-
-import org.junit.Before;
-import org.junit.Test;
 import org.junit.After;
 import org.junit.Assert;
+import org.junit.Before;
+import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
 import org.openelisglobal.address.service.AddressPartService;
 import org.openelisglobal.address.service.PersonAddressService;
@@ -26,15 +25,15 @@ public class PersonAdressServiceTest extends BaseWebContextSensitiveTest {
     PersonService personService;
 
     @Before
-    public void init(){
+    public void init() {
         pAddressService.deleteAll(pAddressService.getAll());
         partService.deleteAll(partService.getAll());
         personService.deleteAll(personService.getAll());
     }
-    
+
     @After
     @Before
-    public void tearDown(){
+    public void tearDown() {
         pAddressService.deleteAll(pAddressService.getAll());
         partService.deleteAll(partService.getAll());
         personService.deleteAll(personService.getAll());
@@ -42,15 +41,15 @@ public class PersonAdressServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void createPersonAddress_shouldCreatePersonAddress() throws Exception {
-        
+
         Person person = new Person();
         String personId = personService.insert(person);
 
-         AddressPart part = new AddressPart();
+        AddressPart part = new AddressPart();
         part.setPartName("PartName");
         part.setDisplayOrder("022");
 
-        String partId =  partService.insert(part);
+        String partId = partService.insert(part);
 
         PersonAddress personAddress = new PersonAddress();
         personAddress.setAddressPartId(partId);
@@ -68,15 +67,15 @@ public class PersonAdressServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void updatePersonAddress_shouldUpdatePersonAdress() throws Exception {
-        
+
         Person person = new Person();
         String personId = personService.insert(person);
 
-         AddressPart part = new AddressPart();
+        AddressPart part = new AddressPart();
         part.setPartName("PartName");
         part.setDisplayOrder("022");
 
-        String partId =  partService.insert(part);
+        String partId = partService.insert(part);
 
         PersonAddress personAddress = new PersonAddress();
         personAddress.setAddressPartId(partId);
@@ -88,7 +87,7 @@ public class PersonAdressServiceTest extends BaseWebContextSensitiveTest {
 
         AddressPK savedPAID = pAddressService.insert(personAddress);
         PersonAddress address = pAddressService.get(savedPAID);
-        address.setValue("124"); 
+        address.setValue("124");
         pAddressService.save(address);
 
         Assert.assertEquals("124", address.getValue());
@@ -97,15 +96,15 @@ public class PersonAdressServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void deletePersonAddress_shouldDeletePersonAddress() throws Exception {
-        
+
         Person person = new Person();
         String personId = personService.insert(person);
 
-         AddressPart part = new AddressPart();
+        AddressPart part = new AddressPart();
         part.setPartName("PartName");
         part.setDisplayOrder("022");
 
-        String partId =  partService.insert(part);
+        String partId = partService.insert(part);
 
         PersonAddress personAddress = new PersonAddress();
         personAddress.setAddressPartId(partId);
@@ -113,23 +112,23 @@ public class PersonAdressServiceTest extends BaseWebContextSensitiveTest {
         personAddress.setType("B");
         personAddress.setValue("123");
 
-       PersonAddress pAddress = pAddressService.save(personAddress);
-       pAddressService.delete(pAddress);
+        PersonAddress pAddress = pAddressService.save(personAddress);
+        pAddressService.delete(pAddress);
 
         Assert.assertEquals(0, pAddressService.getAll().size());
     }
 
     @Test
     public void insert_shouldInsertPersonAdress() throws Exception {
-        
+
         Person person = new Person();
         String personId = personService.insert(person);
 
-         AddressPart part = new AddressPart();
+        AddressPart part = new AddressPart();
         part.setPartName("PartName");
         part.setDisplayOrder("022");
 
-        String partId =  partService.insert(part);
+        String partId = partService.insert(part);
 
         PersonAddress personAddress = new PersonAddress();
         personAddress.setAddressPartId(partId);
@@ -148,7 +147,7 @@ public class PersonAdressServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getAddressPartsByPersonId_shouldAddressPartsByPersonId() throws Exception {
-        
+
         Person person = new Person();
         String personId = personService.insert(person);
 
@@ -156,7 +155,7 @@ public class PersonAdressServiceTest extends BaseWebContextSensitiveTest {
         part.setPartName("PartName");
         part.setDisplayOrder("022");
 
-        String partId =  partService.insert(part);
+        String partId = partService.insert(part);
 
         PersonAddress personAddress = new PersonAddress();
         personAddress.setAddressPartId(partId);
@@ -173,15 +172,15 @@ public class PersonAdressServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getByPersonIdAndPartId_shouldReturnPersonAdressByPersonIdAndPartId() throws Exception {
-        
+
         Person person = new Person();
         String personId = personService.insert(person);
 
-         AddressPart part = new AddressPart();
+        AddressPart part = new AddressPart();
         part.setPartName("PartName");
         part.setDisplayOrder("022");
 
-        String partId =  partService.insert(part);
+        String partId = partService.insert(part);
 
         PersonAddress personAddress = new PersonAddress();
         personAddress.setAddressPartId(partId);

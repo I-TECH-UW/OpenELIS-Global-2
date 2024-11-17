@@ -9,21 +9,21 @@ import org.openelisglobal.address.service.AddressPartService;
 import org.openelisglobal.address.valueholder.AddressPart;
 import org.springframework.beans.factory.annotation.Autowired;
 
-public class AddressPartServiceTest extends BaseWebContextSensitiveTest{
-    
+public class AddressPartServiceTest extends BaseWebContextSensitiveTest {
+
     @Autowired
     AddressPartService partService;
 
     @Before
-    public void init(){
+    public void init() {
         partService.deleteAll(partService.getAll());
     }
-    
+
     @After
-    public void tearDown(){
+    public void tearDown() {
         partService.deleteAll(partService.getAll());
     }
-    
+
     @Test
     public void createAddressPart_shouldCreateAddressPart() throws Exception {
         AddressPart part = new AddressPart();
@@ -65,10 +65,10 @@ public class AddressPartServiceTest extends BaseWebContextSensitiveTest{
 
         Assert.assertEquals(0, partService.getAll().size());
 
-       String partId = partService.insert(part);
-       AddressPart savedPart = partService.get(partId);
-       savedPart.setPartName("upadtedName");
-       partService.save(savedPart);
+        String partId = partService.insert(part);
+        AddressPart savedPart = partService.get(partId);
+        savedPart.setPartName("upadtedName");
+        partService.save(savedPart);
 
         Assert.assertEquals("upadtedName", savedPart.getPartName());
 
@@ -82,12 +82,12 @@ public class AddressPartServiceTest extends BaseWebContextSensitiveTest{
 
         Assert.assertEquals(0, partService.getAll().size());
 
-       String partId = partService.insert(part);
-       AddressPart savedPart = partService.get(partId);
-       savedPart.setPartName("upadtedName");
-       partService.delete(savedPart);
+        String partId = partService.insert(part);
+        AddressPart savedPart = partService.get(partId);
+        savedPart.setPartName("upadtedName");
+        partService.delete(savedPart);
 
-       Assert.assertEquals(0, partService.getAll().size());
+        Assert.assertEquals(0, partService.getAll().size());
 
     }
 

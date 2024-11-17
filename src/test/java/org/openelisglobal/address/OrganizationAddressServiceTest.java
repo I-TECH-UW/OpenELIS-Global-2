@@ -14,80 +14,80 @@ import org.openelisglobal.organization.valueholder.Organization;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class OrganizationAddressServiceTest extends BaseWebContextSensitiveTest {
-   @Autowired
-   OrganizationAddressService addressService;
+    @Autowired
+    OrganizationAddressService addressService;
 
-   @Autowired
-   AddressPartService partService;
+    @Autowired
+    AddressPartService partService;
 
-   @Autowired
-   OrganizationService orgService;
+    @Autowired
+    OrganizationService orgService;
 
-   @Before
-   public void init() {
-      addressService.deleteAll(addressService.getAll());
-      partService.deleteAll(partService.getAll());
-      orgService.deleteAll(orgService.getAll());
-   }
+    @Before
+    public void init() {
+        addressService.deleteAll(addressService.getAll());
+        partService.deleteAll(partService.getAll());
+        orgService.deleteAll(orgService.getAll());
+    }
 
-   @After
-   public void tearDown() {
-      addressService.deleteAll(addressService.getAll());
-      partService.deleteAll(partService.getAll());
-      orgService.deleteAll(orgService.getAll());
-   }
+    @After
+    public void tearDown() {
+        addressService.deleteAll(addressService.getAll());
+        partService.deleteAll(partService.getAll());
+        orgService.deleteAll(orgService.getAll());
+    }
 
-   @Test
-   public void createOrganizationAdress_shouldCreateOrganisationAdress() throws Exception {
-      
-      Organization organization = new Organization();
-      organization.setOrganizationName("MTN");
-      organization.setIsActive("Y");
-      organization.setMlsSentinelLabFlag("Y");
-      String orgId = orgService.insert(organization);
+    @Test
+    public void createOrganizationAdress_shouldCreateOrganisationAdress() throws Exception {
 
-      AddressPart part = new AddressPart();
-      part.setPartName("PartName");
-      part.setDisplayOrder("022");
+        Organization organization = new Organization();
+        organization.setOrganizationName("MTN");
+        organization.setIsActive("Y");
+        organization.setMlsSentinelLabFlag("Y");
+        String orgId = orgService.insert(organization);
 
-      String partId = partService.insert(part);
+        AddressPart part = new AddressPart();
+        part.setPartName("PartName");
+        part.setDisplayOrder("022");
 
-      OrganizationAddress address = new OrganizationAddress();
-      address.setAddressPartId(partId);
-      address.setOrganizationId(orgId);
-      address.setType("B");
-      address.setValue("123");
+        String partId = partService.insert(part);
 
-      Assert.assertEquals(0, addressService.getAll().size());
+        OrganizationAddress address = new OrganizationAddress();
+        address.setAddressPartId(partId);
+        address.setOrganizationId(orgId);
+        address.setType("B");
+        address.setValue("123");
 
-      addressService.save(address);
+        Assert.assertEquals(0, addressService.getAll().size());
 
-      Assert.assertEquals(1, addressService.getAll().size());
-   }
+        addressService.save(address);
 
-   @Test
-   public void getAddressPartsByOrganizationId_shouldReturnAddressPartsByOrganizationId() throws Exception {
-      
-      Organization organization = new Organization();
-      organization.setOrganizationName("MTN");
-      organization.setIsActive("Y");
-      organization.setMlsSentinelLabFlag("Y");
-      String orgId = orgService.insert(organization);
+        Assert.assertEquals(1, addressService.getAll().size());
+    }
 
-      AddressPart part = new AddressPart();
-      part.setPartName("PartName");
-      part.setDisplayOrder("022");
+    @Test
+    public void getAddressPartsByOrganizationId_shouldReturnAddressPartsByOrganizationId() throws Exception {
 
-      String partId = partService.insert(part);
+        Organization organization = new Organization();
+        organization.setOrganizationName("MTN");
+        organization.setIsActive("Y");
+        organization.setMlsSentinelLabFlag("Y");
+        String orgId = orgService.insert(organization);
 
-      OrganizationAddress address = new OrganizationAddress();
-      address.setAddressPartId(partId);
-      address.setOrganizationId(orgId);
-      address.setType("B");
-      address.setValue("123");
+        AddressPart part = new AddressPart();
+        part.setPartName("PartName");
+        part.setDisplayOrder("022");
 
-      addressService.save(address);
+        String partId = partService.insert(part);
 
-      Assert.assertEquals(1, addressService.getAddressPartsByOrganizationId(orgId).size());
-   }
+        OrganizationAddress address = new OrganizationAddress();
+        address.setAddressPartId(partId);
+        address.setOrganizationId(orgId);
+        address.setType("B");
+        address.setValue("123");
+
+        addressService.save(address);
+
+        Assert.assertEquals(1, addressService.getAddressPartsByOrganizationId(orgId).size());
+    }
 }
