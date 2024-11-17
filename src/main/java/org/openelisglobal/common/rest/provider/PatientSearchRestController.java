@@ -200,7 +200,7 @@ public class PatientSearchRestController extends BaseRestController {
             }
         }
 
-        List<PatientSearchResults> finalResults = new ArrayList<>();
+        Set<PatientSearchResults> finalResults = new LinkedHashSet<>();
         for (org.hl7.fhir.r4.model.Patient externalPatient : externalPatients) {
             // convert fhir object to patient search result
             PatientSearchResults transformedPatientSearchResult = SpringContext.getBean(FhirTransformService.class)
@@ -218,7 +218,7 @@ public class PatientSearchRestController extends BaseRestController {
             finalResults.add(transformedPatientSearchResult);
         }
 
-        return finalResults;
+        return new ArrayList<>(finalResults);
     }
 
     // FIXME: get better fallback initials and gender
