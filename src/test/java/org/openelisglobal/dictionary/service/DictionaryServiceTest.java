@@ -1,5 +1,6 @@
 package org.openelisglobal.dictionary.service;
 
+import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
@@ -8,8 +9,6 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.dictionarycategory.service.DictionaryCategoryService;
 import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 public class DictionaryServiceTest extends BaseWebContextSensitiveTest {
 
@@ -28,7 +27,8 @@ public class DictionaryServiceTest extends BaseWebContextSensitiveTest {
     public void verifyTestData() {
         List<DictionaryCategory> categories = dictionaryCategoryService.getAll();
         System.out.println("Dictionary Categories: " + categories.size());
-        categories.forEach(cat -> System.out.println(cat.getCategoryName() + " - " + cat.getLocalAbbreviation() + " - " + cat.getDescription()));
+        categories.forEach(cat -> System.out
+                .println(cat.getCategoryName() + " - " + cat.getLocalAbbreviation() + " - " + cat.getDescription()));
 
         List<Dictionary> dictionaries = dictionaryService.getAll();
         System.out.println("Dictionaries: " + dictionaries.size());
@@ -102,7 +102,8 @@ public class DictionaryServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getDictionaryEntrysByNameAndCategoryDescription_shouldGetDictionaryEntrysByNameAndCategoryDescription() {
-        Dictionary dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Dictionary Entry 1", "Category Description 1");
+        Dictionary dictionary = dictionaryService.getDictionaryEntrysByNameAndCategoryDescription("Dictionary Entry 1",
+                "Category Description 1");
         Assert.assertNotNull(dictionary);
 
         Assert.assertEquals("Dictionary Entry 1", dictionary.getDictEntry());
@@ -112,7 +113,8 @@ public class DictionaryServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getDictionaryEntrysByCategoryNameLocalizedSort_shouldGetDictionaryEntrysByCategoryNameLocalizedSort() {
-        List<Dictionary> dictionaries = dictionaryService.getDictionaryEntrysByCategoryNameLocalizedSort("Category Name 1");
+        List<Dictionary> dictionaries = dictionaryService
+                .getDictionaryEntrysByCategoryNameLocalizedSort("Category Name 1");
         Assert.assertNotEquals(0, dictionaries.size());
 
         Assert.assertEquals("Dictionary Entry 1", dictionaries.get(0).getDictEntry());
