@@ -10,7 +10,7 @@ import javax.servlet.http.HttpServletRequest;
 import nl.martijndwars.webpush.PushService;
 import org.apache.http.HttpResponse;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
-import org.openelisglobal.common.util.ControllerUtills;
+import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.notifications.dao.NotificationDAO;
 import org.openelisglobal.notifications.dao.NotificationSubscriptionDAO;
 import org.openelisglobal.notifications.entity.Notification;
@@ -31,7 +31,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RequestMapping("/rest")
 @RestController
-public class NotificationRestController extends ControllerUtills {
+public class NotificationRestController extends BaseRestController {
 
     private final NotificationDAO notificationDAO;
     private final SystemUserService systemUserService;
