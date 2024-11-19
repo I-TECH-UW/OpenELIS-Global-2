@@ -9,7 +9,9 @@ import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.dictionarycategory.service.DictionaryCategoryService;
 import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.test.annotation.Rollback;
 
+@Rollback
 public class DictionaryServiceTest extends BaseWebContextSensitiveTest {
 
     @Autowired
