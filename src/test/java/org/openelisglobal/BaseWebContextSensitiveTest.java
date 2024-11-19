@@ -5,6 +5,7 @@ import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.*;
 import javax.sql.DataSource;
 import org.dbunit.database.DatabaseConfig;
 import org.dbunit.database.DatabaseConnection;
@@ -18,11 +19,15 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.AbstractTransactionalJUnit4SpringContextTests;
+import org.springframework.test.context.transaction.AfterTransaction;
 import org.springframework.test.context.web.WebAppConfiguration;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.context.WebApplicationContext;
 
+@Transactional(propagation = Propagation.NOT_SUPPORTED)
 @ContextConfiguration(classes = { BaseTestConfig.class, AppTestConfig.class })
 @WebAppConfiguration
 @TestPropertySource("classpath:common.properties")
@@ -36,6 +41,20 @@ public abstract class BaseWebContextSensitiveTest extends AbstractTransactionalJ
     private DataSource dataSource;
 
     protected MockMvc mockMvc;
+
+    private Map<String, IDataSet> originalStateCache;
+
+    private List<String[]> tablesToRestore;
+
+    protected BaseWebContextSensitiveTest() {
+        this.originalStateCache = new HashMap<>();
+        this.tablesToRestore = new ArrayList<>();
+    }
+
+    protected BaseWebContextSensitiveTest(List<String[]> tablesToRestore) {
+        this.originalStateCache = new HashMap<>();
+        this.tablesToRestore = tablesToRestore != null ? tablesToRestore : new ArrayList<>();
+    }
 
     protected void setUp() {
         mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
@@ -55,59 +74,83 @@ public abstract class BaseWebContextSensitiveTest extends AbstractTransactionalJ
     }
 
     /**
-     * Executes a dataset from an XML file and inserts the data into the database.
-     *
-     * <p>
-     * This method loads the specified dataset file from the classpath, establishes
-     * a connection to the database, and performs a CLEAN_INSERT operation using the
-     * dataset. CLEAN_INSERT first clears the existing data in the tables referenced
-     * by the dataset and then inserts the new data.
-     * </p>
-     *
-     * @param datasetFilename the name of the XML dataset file to load from the
-     *                        classpath.
-     * @throws IllegalArgumentException if the specified dataset file cannot be
-     *                                  found in the classpath.
-     *
-     * @throws Exception                if any error occurs during database
-     *                                  operations, including: Database connection
-     *                                  failures, XML parsing errors, Data insertion
-     *                                  failures, Resource cleanup issues
-     *
-     *                                  <p>
-     *                                  <strong>Usage:</strong>
-     *                                  </p>
-     * 
-     *                                  <pre>{@code
-     *     executeDataSet("test-dataset.xml");
-     * }</pre>
-     *
-     *                                  <p>
-     *                                  The dataset file must be in a Flat XML
-     *                                  format compatible with DBUnit.
-     *                                  </p>
-     *
-     *                                  <p>
-     *                                  <strong>Example Dataset File:</strong>
-     *                                  </p>
-     * 
-     *                                  <pre>{@code
-     * <dataset>
-     *     <table_name column1="value1" column2="value2" />
-     *     <table_name column1="value3" column2="value4" />
-     * </dataset>
-     * }</pre>
-     *
-     *                                  <p>
-     *                                  <strong>Note:</strong>
-     *                                  </p>
-     *                                  <ul>
-     *                                  <li>The connection is configured to allow
-     *                                  empty fields.</li>
-     *                                  <li>Always closes the input stream and
-     *                                  database connection to prevent resource
-     *                                  leaks.</li>
-     *                                  </ul>
+     * Executes a dataset with state management - preserves and restores the
+     * original state of affected tables after execution.
+     */
+    protected void executeDataSetWithStateManagement(String datasetFilename) throws Exception {
+        if (datasetFilename == null) {
+            throw new NullPointerException("Please provide test dataset file to execute!");
+        }
+
+        IDatabaseConnection connection = null;
+        try {
+            connection = new DatabaseConnection(dataSource.getConnection());
+            DatabaseConfig config = connection.getConfig();
+            config.setProperty(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, true);
+
+            IDataSet newDataSet = loadDataSet(datasetFilename);
+            String[] tableNames = newDataSet.getTableNames();
+
+            // Backup current state of affected tables
+            IDataSet currentState = connection.createDataSet(tableNames);
+            originalStateCache.put(Arrays.toString(tableNames), currentState);
+            tablesToRestore.add(tableNames);
+
+            executeDataSet(datasetFilename);
+        } finally {
+            if (connection != null) {
+                connection.close();
+            }
+        }
+    }
+
+    /**
+     * This method will be called after each transaction to restore the database
+     * state
+     */
+    @AfterTransaction
+    @SuppressWarnings("unused")
+    protected void restoreDatabase() throws Exception {
+        try {
+            for (String[] tableNames : tablesToRestore) {
+                String key = Arrays.toString(tableNames);
+                IDataSet originalState = originalStateCache.get(key);
+                if (originalState != null) {
+                    IDatabaseConnection connection = null;
+                    try {
+                        connection = new DatabaseConnection(dataSource.getConnection());
+                        DatabaseConfig config = connection.getConfig();
+                        config.setProperty(DatabaseConfig.FEATURE_ALLOW_EMPTY_FIELDS, true);
+
+                        DatabaseOperation.CLEAN_INSERT.execute(connection, originalState);
+                    } finally {
+                        if (connection != null) {
+                            connection.close();
+                        }
+                    }
+                    originalStateCache.remove(key);
+                }
+            }
+        } finally {
+            originalStateCache.clear();
+            tablesToRestore.clear();
+        }
+    }
+
+    /**
+     * Loads a dataset from an XML file.
+     */
+    private IDataSet loadDataSet(String datasetFilename) throws Exception {
+        try (InputStream inputStream = getClass().getClassLoader().getResourceAsStream(datasetFilename)) {
+            if (inputStream == null) {
+                throw new IllegalArgumentException("Dataset file '" + datasetFilename + "' not found in classpath");
+            }
+            return new FlatXmlDataSet(inputStream);
+        }
+    }
+
+    /**
+     * Executes a dataset from an XML file.
      */
     protected void executeDataSet(String datasetFilename) throws Exception {
         if (datasetFilename == null) {
@@ -130,15 +173,6 @@ public abstract class BaseWebContextSensitiveTest extends AbstractTransactionalJ
             } finally {
                 connection.close();
             }
-        }
-    }
-
-    /**
-     * Useful method to clear all data from specific tables
-     */
-    protected void clearTable(String... tableNames) throws Exception {
-        for (String tableName : tableNames) {
-            jdbcTemplate.execute("DELETE FROM " + tableName);
         }
     }
 }

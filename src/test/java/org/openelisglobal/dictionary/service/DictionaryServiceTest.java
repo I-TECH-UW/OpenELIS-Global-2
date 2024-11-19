@@ -20,7 +20,7 @@ public class DictionaryServiceTest extends BaseWebContextSensitiveTest {
 
     @Before
     public void setup() throws Exception {
-        executeDataSet("testdata/dictionary.xml");
+        executeDataSetWithStateManagement("testdata/dictionary.xml");
     }
 
     @Test
@@ -188,5 +188,4 @@ public class DictionaryServiceTest extends BaseWebContextSensitiveTest {
         Assert.assertEquals("Y", dictionaryService.get("1").getIsActive());
         Assert.assertEquals("INFLUENZA VIRUS A RNA DETECTEDetest", dictionaryService.get("1").getDictEntry());
     }
-
 }
