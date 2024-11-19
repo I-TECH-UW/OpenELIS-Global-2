@@ -52,7 +52,8 @@ public class DictionaryMenuRestControllerTest extends BaseWebContextSensitiveTes
         assertThat(menuList.get(0).getMenuList().get(0).getIsActive(), is("Y"));
         assertThat(menuList.get(0).getMenuList().get(0).getDictEntry(), is("Dictionary Entry 1"));
         assertThat(menuList.get(0).getMenuList().get(0).getSortOrder(), is(1));
-        assertThat(menuList.get(0).getMenuList().get(0).getDictionaryCategory().getCategoryName(), is("Category Name 1"));
+        assertThat(menuList.get(0).getMenuList().get(0).getDictionaryCategory().getCategoryName(),
+                is("Category Name 1"));
     }
 
     @Test
