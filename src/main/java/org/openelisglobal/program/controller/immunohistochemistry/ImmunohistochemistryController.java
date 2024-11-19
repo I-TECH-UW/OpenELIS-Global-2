@@ -7,7 +7,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import javax.servlet.http.HttpServletRequest;
-import org.openelisglobal.common.util.ControllerUtills;
+
+import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.program.bean.ImmunohistochemistryDashBoardCount;
 import org.openelisglobal.program.service.ImmunohistochemistryDisplayService;
 import org.openelisglobal.program.service.ImmunohistochemistrySampleService;
@@ -27,7 +28,7 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-public class ImmunohistochemistryController extends ControllerUtills {
+public class ImmunohistochemistryController extends BaseRestController {
 
     @Autowired
     private ImmunohistochemistrySampleService immunohistochemistrySampleService;

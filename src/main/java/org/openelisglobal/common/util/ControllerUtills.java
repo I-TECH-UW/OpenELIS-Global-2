@@ -1,12 +1,11 @@
 package org.openelisglobal.common.util;
 
 import javax.servlet.http.HttpServletRequest;
-import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.login.valueholder.UserSessionData;
-import org.springframework.stereotype.Controller;
+public class ControllerUtills {
 
-@Controller
-public class ControllerUtills implements IActionConstants {
+    private static final String USER_SESSION_DATA = "userSessionData";
+
     protected String getSysUserId(HttpServletRequest request) {
         UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
         if (usd == null) {
@@ -17,5 +16,4 @@ public class ControllerUtills implements IActionConstants {
         }
         return String.valueOf(usd.getSystemUserId());
     }
-
 }

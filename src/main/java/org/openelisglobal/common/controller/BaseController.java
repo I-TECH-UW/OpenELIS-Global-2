@@ -28,7 +28,7 @@ import org.springframework.web.servlet.ModelAndView;
 import org.springframework.web.servlet.support.RequestContextUtils;
 
 @Component
-public abstract class BaseController extends ControllerUtills {
+public abstract class BaseController extends ControllerUtills implements IActionConstants{
 
     // Request being autowired appears to be threadsafe because of how Spring
     // handles autowiring, despite all controllers being singletons
