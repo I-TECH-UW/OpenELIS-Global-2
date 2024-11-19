@@ -569,14 +569,20 @@
   </dependencies>
   <repositories>
     <repository>
-      <id>jaspersoft-third-party</id>
-      <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
+        <id>jaspersoft-third-party</id>
+        <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
     </repository>
     <repository>
-      <id>shibboleth</id> <!-- openSaml-->
-      <url>https://build.shibboleth.net/maven/releases/</url>
+        <id>shibboleth</id>
+        <!-- openSaml-->
+        <url>https://build.shibboleth.net/maven/releases/</url>
     </repository>
-  </repositories>
+    <repository>
+        <id>uwdigi-repo-central</id>
+        <name>DIGI Public Repository</name>
+        <url>https://packages.uwdigi.org/artifactory/public</url>
+    </repository>
+</repositories>
   <build>
     <finalName>OpenELIS-Global</finalName>
     <resources>
