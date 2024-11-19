@@ -56,7 +56,7 @@ public abstract class BaseWebContextSensitiveTest extends AbstractTransactionalJ
         this.tablesToRestore = tablesToRestore != null ? tablesToRestore : new ArrayList<>();
     }
 
-    protected void setUp() {
+    protected void setUp() throws Exception {
         mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
     }
 
