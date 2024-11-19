@@ -2,6 +2,7 @@ package org.openelisglobal.common.util;
 
 import javax.servlet.http.HttpServletRequest;
 import org.openelisglobal.login.valueholder.UserSessionData;
+
 public class ControllerUtills {
 
     private static final String USER_SESSION_DATA = "userSessionData";

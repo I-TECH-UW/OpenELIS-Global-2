@@ -5,7 +5,6 @@ import org.openelisglobal.common.util.ControllerUtills;
 import org.springframework.stereotype.Component;
 
 @Component
-public class BaseRestController extends ControllerUtills implements IActionConstants{
+public class BaseRestController extends ControllerUtills implements IActionConstants {
 
-    
 }
