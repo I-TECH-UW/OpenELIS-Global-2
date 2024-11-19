@@ -71,8 +71,9 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void createSampleHuman_shouldCreateNewSampleHuman() throws Exception {
-        SampleHuman sampleHuman = creatSampleHuman(PATIENT_FIRSTNAME, PATIENT_LASTNAME , PROVIDER_FIRSTNAME, PROVIDER_LASTNAME, PATIENT_BIRTHDATE,
-        SAMPLE_ACCESSION_NUMBER, PATIENT_GENDER, SAMPLE_RECEIVED_TIMESTAMP, PROVIDER_TYPE, SAMPLE_ENTERED_DATE);
+        SampleHuman sampleHuman = creatSampleHuman(PATIENT_FIRSTNAME, PATIENT_LASTNAME, PROVIDER_FIRSTNAME,
+                PROVIDER_LASTNAME, PATIENT_BIRTHDATE, SAMPLE_ACCESSION_NUMBER, PATIENT_GENDER,
+                SAMPLE_RECEIVED_TIMESTAMP, PROVIDER_TYPE, SAMPLE_ENTERED_DATE);
 
         Assert.assertEquals(0, humanService.getAll().size());
 
@@ -140,8 +141,9 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void deleteSampleHuman_shouldDeleteSampleHuman() throws Exception {
-        SampleHuman sampleHuman = creatSampleHuman(PATIENT_FIRSTNAME, PATIENT_LASTNAME , PROVIDER_FIRSTNAME, PROVIDER_LASTNAME, PATIENT_BIRTHDATE,
-        SAMPLE_ACCESSION_NUMBER, PATIENT_GENDER, SAMPLE_RECEIVED_TIMESTAMP, PROVIDER_TYPE, SAMPLE_ENTERED_DATE);
+        SampleHuman sampleHuman = creatSampleHuman(PATIENT_FIRSTNAME, PATIENT_LASTNAME, PROVIDER_FIRSTNAME,
+                PROVIDER_LASTNAME, PATIENT_BIRTHDATE, SAMPLE_ACCESSION_NUMBER, PATIENT_GENDER,
+                SAMPLE_RECEIVED_TIMESTAMP, PROVIDER_TYPE, SAMPLE_ENTERED_DATE);
         Assert.assertEquals(0, humanService.getAll().size());
 
         String sampleHumanId = humanService.insert(sampleHuman);
@@ -155,8 +157,9 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getAllPatientsWithSampleEntered_shouldReturnPatientsWithSample() throws Exception {
-        SampleHuman sampleHuman = creatSampleHuman(PATIENT_FIRSTNAME, PATIENT_LASTNAME , PROVIDER_FIRSTNAME, PROVIDER_LASTNAME, PATIENT_BIRTHDATE,
-        SAMPLE_ACCESSION_NUMBER, PATIENT_GENDER, SAMPLE_RECEIVED_TIMESTAMP, PROVIDER_TYPE, SAMPLE_ENTERED_DATE);
+        SampleHuman sampleHuman = creatSampleHuman(PATIENT_FIRSTNAME, PATIENT_LASTNAME, PROVIDER_FIRSTNAME,
+                PROVIDER_LASTNAME, PATIENT_BIRTHDATE, SAMPLE_ACCESSION_NUMBER, PATIENT_GENDER,
+                SAMPLE_RECEIVED_TIMESTAMP, PROVIDER_TYPE, SAMPLE_ENTERED_DATE);
 
         Assert.assertEquals(0, humanService.getAll().size());
 
