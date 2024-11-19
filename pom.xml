@@ -570,6 +570,11 @@
       <id>shibboleth</id> <!-- openSaml-->
       <url>https://build.shibboleth.net/maven/releases/</url>
     </repository>
+    <repository>
+			<id>uwdigi-repo-central</id>
+			<name>DIGI Public Repository</name>
+			<url>https://packages.uwdigi.org/artifactory/public</url>
+		</repository>
   </repositories>
   <build>
     <finalName>OpenELIS-Global</finalName>
