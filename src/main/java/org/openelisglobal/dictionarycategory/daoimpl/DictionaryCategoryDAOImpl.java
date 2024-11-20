@@ -45,16 +45,16 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
     public boolean duplicateDictionaryCategoryExists(DictionaryCategory dictionaryCategory)
             throws LIMSRuntimeException {
         try {
-
             List<DictionaryCategory> list = new ArrayList<>();
 
             // not case sensitive hemolysis and Hemolysis are considered
             // duplicates
             // only one of each name, description, local abbrev can exist in entire table
             String sql = "from DictionaryCategory t where "
-                    + "((trim(lower(t.categoryName)) = :param and t.id != :param3) " + "or "
-                    + "(trim(lower(t.description)) = :param2 and t.id != :param3) " + "or "
-                    + "(trim(lower(t.localAbbreviation)) = :param4 and t.id != :param3)) ";
+                    + "((trim(lower(t.categoryName)) = :param and CAST(t.id AS TEXT) != :param3) or "
+                    + "(trim(lower(t.description)) = :param2 and CAST(t.id AS TEXT) != :param3) or "
+                    + "(trim(lower(t.localAbbreviation)) = :param4 and CAST(t.id AS TEXT) != :param3)) ";
+
             Query<DictionaryCategory> query = entityManager.unwrap(Session.class).createQuery(sql,
                     DictionaryCategory.class);
             query.setParameter("param", dictionaryCategory.getCategoryName().toLowerCase().trim());
@@ -70,15 +70,9 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
             query.setParameter("param3", dictId);
 
             list = query.list();
-
-            if (list.size() > 0) {
-                return true;
-            } else {
-                return false;
-            }
+            return !list.isEmpty();
 
         } catch (RuntimeException e) {
-            // bugzilla 2154
             LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in duplicateDictionaryExists()", e);
         }
@@ -99,7 +93,7 @@ public class DictionaryCategoryDAOImpl extends BaseDAOImpl<DictionaryCategory, S
                 return categoryList.get(0);
             }
         } catch (RuntimeException e) {
-            handleException(e, "getDictonaryCategoryByName");
+            handleException(e, "getDictionaryCategoryByName");
         }
 
         return null;
