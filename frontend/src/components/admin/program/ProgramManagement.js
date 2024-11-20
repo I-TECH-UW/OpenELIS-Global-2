@@ -172,7 +172,7 @@ function ProgramManagement() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       <div className="adminPageContent">
         <PageBreadCrumb breadcrumbs={breadcrumbs} />
-        <Grid>
+        <Grid fullWidth={true}>
           <Column lg={16}>
             <Section>
               <Heading>
@@ -182,7 +182,7 @@ function ProgramManagement() {
           </Column>
         </Grid>
         <Form onSubmit={handleSubmit}>
-          <Grid>
+          <Grid fullWidth={true}>
             <Column lg={8}>
               <Select
                 id="additionalQuestionsSelect"

@@ -12,7 +12,7 @@ function ReflexTestManagement() {
     <>
       <div className="adminPageContent">
         <PageBreadCrumb breadcrumbs={breadcrumbs} />
-        <Grid>
+        <Grid fullWidth={true}>
           <Column lg={16}>
             <Section>
               <Heading>
