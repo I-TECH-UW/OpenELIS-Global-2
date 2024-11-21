@@ -67,10 +67,10 @@ public class AddressPartServiceTest extends BaseWebContextSensitiveTest {
 
         String partId = partService.insert(part);
         AddressPart savedPart = partService.get(partId);
-        savedPart.setPartName("upadtedName");
+        savedPart.setPartName("updatedName");
         partService.save(savedPart);
 
-        Assert.assertEquals("upadtedName", savedPart.getPartName());
+        Assert.assertEquals("updatedName", savedPart.getPartName());
 
     }
 
@@ -84,7 +84,7 @@ public class AddressPartServiceTest extends BaseWebContextSensitiveTest {
 
         String partId = partService.insert(part);
         AddressPart savedPart = partService.get(partId);
-        savedPart.setPartName("upadtedName");
+        savedPart.setPartName("updatedName");
         partService.delete(savedPart);
 
         Assert.assertEquals(0, partService.getAll().size());

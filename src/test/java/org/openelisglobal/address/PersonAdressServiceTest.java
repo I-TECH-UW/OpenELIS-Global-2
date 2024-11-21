@@ -138,8 +138,8 @@ public class PersonAdressServiceTest extends BaseWebContextSensitiveTest {
 
         Assert.assertEquals(0, pAddressService.getAll().size());
 
-        AddressPK savedPAID = pAddressService.insert(personAddress);
-        PersonAddress address = pAddressService.get(savedPAID);
+        AddressPK savedAddressPK = pAddressService.insert(personAddress);
+        PersonAddress address = pAddressService.get(savedAddressPK);
 
         Assert.assertEquals("123", address.getValue());
         Assert.assertEquals("B", address.getType());
