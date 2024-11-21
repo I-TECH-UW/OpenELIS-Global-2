@@ -28,7 +28,14 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { ConfigurationContext } from "../../layout/Layout";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 
-let breadcrumbs = [{ label: "home.label", link: "/" }];
+let breadcrumbs = [
+  { label: "home.label", link: "/" },
+  { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  {
+    label: "sidenav.label.admin.labNumber",
+    link: "/MasterListsPage#labNumber",
+  },
+];
 function LabNumberManagement() {
   const intl = useIntl();
 

@@ -26,6 +26,10 @@ import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 let breadcrumbs = [
   { label: "home.label", link: "/" },
   { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  {
+    label: "sidenav.label.admin.menu.patient",
+    link: "/MasterListsPage#patientMenuManagement",
+  },
 ];
 function PatientMenuManagement() {
   const { notificationVisible, setNotificationVisible, addNotification } =

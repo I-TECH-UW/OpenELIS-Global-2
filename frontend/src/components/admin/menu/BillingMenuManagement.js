@@ -25,6 +25,10 @@ import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 let breadcrumbs = [
   { label: "home.label", link: "/" },
   { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  {
+    label: "Billing Menu Management",
+    link: "/MasterListsPage#billingMenuManagement",
+  },
 ];
 function BillingMenuManagement() {
   const { notificationVisible, setNotificationVisible, addNotification } =

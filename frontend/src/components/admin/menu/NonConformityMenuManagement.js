@@ -25,6 +25,10 @@ import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 let breadcrumbs = [
   { label: "home.label", link: "/" },
   { label: "breadcrums.admin.managment", link: "/MasterListsPage" },
+  {
+    label: "Non Conformity Menu Management",
+    link: "/MasterListsPage#nonConformityMenuManagement",
+  },
 ];
 function NonConformityMenuManagement() {
   const { notificationVisible, setNotificationVisible, addNotification } =
