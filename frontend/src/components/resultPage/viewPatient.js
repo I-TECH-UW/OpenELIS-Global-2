@@ -10,21 +10,25 @@ import {
   Column
 } from "@carbon/react";
 import { getFromOpenElisServer } from "../utils/Utils";
+import { FormattedMessage, useIntl } from "react-intl";
 
 const { TableContainer, Table, TableHead, TableRow, TableHeader, TableBody, TableCell } = DataTable;
 
 const ViewPage = () => {
-  const [searchBy, setSearchBy] = useState("Last Name");
+  const [searchBy, setSearchBy] = useState(" ");
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
 
+  const intl = useIntl();
+
   const headers = [
-    { id: 1, header: "Last Name", key: "lastName" },
-    { id: 2, header: "First Name", key: "firstName" },
-    { id: 3, header: "Gender", key: "gender" },
-    { id: 4, header: "Date Of Birth", key: "birthdate" },
-    { id: 5, header: "Unique Health ID", key: "subjectNumber" },
-    { id: 6, header: "National ID", key: "nationalId" },
+    { id: 0, header: " " },
+    { id: 1, header: intl.formatMessage({ id: "patient.first.name" }), key: "lastName" },
+    { id: 2, header: intl.formatMessage({ id: "patient.last.name" }), key: "firstName" },
+    { id: 3, header: intl.formatMessage({ id: "patient.gender" }), key: "gender" },
+    { id: 4, header: intl.formatMessage({ id: "patient.dob" }), key: "birthdate" },
+    { id: 5, header: intl.formatMessage({ id: "patient.subject.number" }), key: "subjectNumber" },
+    { id: 6, header: intl.formatMessage({ id: "patient.natioanalid" }), key: "nationalId" },
   ];
 
   const handleSearch = async () => {
@@ -33,23 +37,23 @@ const ViewPage = () => {
       alert("Please enter a search query.");
       return;
     }
-  
+
     const searchCriteriaMap = {
-      "Last Name": "lastName",
-      "First Name": "firstName",
-      "Patient Identification Code": "patientID",
-      "Lab No": "labNo",
+      "patient.last.name": "lastName",
+      "patient.first.name": "firstName",
+      "patient.subject.number": "subjectNumber",
+      "patient.lab.no": "labNo",
     };
-  
+
     const searchKey = searchCriteriaMap[searchBy];
     if (!searchKey) {
       console.error("Invalid search criteria selected.");
       return;
     }
-  
+
     const endpoint = `/rest/patient-search?${searchKey}=${encodeURIComponent(query)}`;
     console.log(`Fetching data with endpoint: ${endpoint}`);
-  
+
     getFromOpenElisServer(endpoint, (response) => {
       if (response && Array.isArray(response)) {
         setData(
@@ -69,42 +73,59 @@ const ViewPage = () => {
       }
     });
   };
-  
 
   return (
     <div style={{ padding: "1rem" }}>
-      <h1>View Patient</h1>
-
+      <h1><b>
+        <FormattedMessage id="banner.menu.patientConsult" />{" "}
+        <FormattedMessage id="banner.menu.patient" />
+        </b>
+      </h1>
+<h2><b><FormattedMessage id="patient.label.info" /> </b></h2>
       <Form>
         <Grid>
           <Column lg={4} md={2} sm={1}>
             <Select
               id="search-criteria"
-              labelText="Select Search Criteria"
-              value={searchBy}
-              defaultValue="Search by.."
+              labelText={intl.formatMessage({ id: "order.legend.selectMethod" })}
+              
               onChange={(e) => setSearchBy(e.target.value)}
             >
-              <SelectItem value="Last Name" text="Last Name" />
-              <SelectItem value="First Name" text="First Name" />
               <SelectItem
-                value="Patient Identification Code"
-                text="Patient Identification Code"
+              
+                text=""
               />
-              <SelectItem value="Lab No" text="Lab No" />
+              <SelectItem
+                value="patient.last.name"
+                text={intl.formatMessage({ id: "patient.last.name" })}
+              />
+              <SelectItem
+                value="patient.first.name"
+                text={intl.formatMessage({ id: "patient.first.name" })}
+              />
+              <SelectItem
+                value="patient.subject.number"
+                text={intl.formatMessage({ id: "patient.subject.number" })}
+              />
+              <SelectItem
+                value="patient.lab.no"
+                text={intl.formatMessage({ id: "label.audittrail" })}
+              />
             </Select>
           </Column>
           <Column lg={6} md={2} sm={1}>
             <TextInput
               id="search-query"
-              labelText={`Enter ${searchBy}`}
-              placeholder={`Type ${searchBy}`}
+              labelText={intl.formatMessage({ id: "search.patient.label" }, { criteria: intl.formatMessage({ id: searchBy }) })}
+              placeholder={intl.formatMessage({ id: "label.form.searchby" }, { criteria: intl.formatMessage({ id: searchBy }) })}
               value={query}
               onChange={(e) => setQuery(e.target.value)}
             />
           </Column>
           <Column lg={2} md={1} sm={1}>
-            <Button onClick={handleSearch}>Search</Button>
+            <Button onClick={handleSearch}>
+              <FormattedMessage id="label.button.search" />
+            </Button>
           </Column>
         </Grid>
       </Form>
@@ -114,7 +135,7 @@ const ViewPage = () => {
           rows={data}
           headers={headers}
           render={({ rows, headers, getHeaderProps }) => (
-            <TableContainer title="Search Results">
+            <TableContainer >
               <Table>
                 <TableHead>
                   <TableRow>
@@ -139,6 +160,45 @@ const ViewPage = () => {
           )}
         />
       </div>
+      <Grid>
+        <Column  lg={4} >
+    
+        <Select
+              id="search-criteria"
+              labelText=""
+              
+              
+            >
+              <SelectItem
+                text=""
+              />
+              <SelectItem
+                
+                text={intl.formatMessage({ id: "project.ARVStudy.name" })}
+              />
+              <SelectItem
+                
+                text={intl.formatMessage({ id: "project.ARVFollowupStudy.name" })}
+              />
+              <SelectItem
+                
+                text={intl.formatMessage({ id: "project.RTNStudy.name" })}
+              />
+              <SelectItem
+                
+                text={intl.formatMessage({ id: "banner.menu.resultvalidation.viralload" })}
+              />
+              <SelectItem
+                
+                text={intl.formatMessage({ id: "project.EIDStudy.name" })}
+              />
+               <SelectItem
+                
+                text={intl.formatMessage({ id: "project.Recency.name" })}
+              />
+            </Select>
+        </Column>
+      </Grid>
     </div>
   );
 };
