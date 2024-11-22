@@ -18,6 +18,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 
 public class ProviderServiceTest extends BaseWebContextSensitiveTest {
 
+    private static final String PERSON_FIRSTNAME = "John";
+    private static final String PERSON_LASTNAME = "Doe";
+    private static final String PROVIDER_TYPE = "M";
+    private static final String PERSON_LASTNAME2 = "Rick";
+    private static final String PROVIDER_TYPE2 = "B";
+
     @Autowired
     ProviderService providerService;
 
@@ -36,10 +42,7 @@ public class ProviderServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void createProvider_shouldReturnCreatedProvider() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
 
         Assert.assertEquals(0, providerService.getAll().size());
 
@@ -49,10 +52,7 @@ public class ProviderServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void updateProvider_shouldUpdateProvider() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
 
         Assert.assertEquals(0, providerService.getAll().size());
 
@@ -65,10 +65,7 @@ public class ProviderServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void deleteProvider_shouldDeleteProvider() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
 
         providerService.save(prov);
 
@@ -79,10 +76,7 @@ public class ProviderServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getAllProviders_shouldReturnAllProvider() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
 
         Assert.assertEquals(0, providerService.getAll().size());
 
@@ -92,43 +86,34 @@ public class ProviderServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getData_shouldReturncopiedPropertiesFromDatabase() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
 
         String provId = providerService.insert(prov);
 
         Provider provider = new Provider();
         provider.setId(provId);
         providerService.getData(provider);
-        Assert.assertEquals(providerType, provider.getProviderType());
-        Assert.assertEquals(firstName, provider.getPerson().getFirstName());
-        Assert.assertEquals(lastName, provider.getPerson().getLastName());
+        Assert.assertEquals(PROVIDER_TYPE, provider.getProviderType());
+        Assert.assertEquals(PERSON_FIRSTNAME, provider.getPerson().getFirstName());
+        Assert.assertEquals(PERSON_LASTNAME, provider.getPerson().getLastName());
     }
 
     @Test
     public void getProviderByFhirId_shouldReturnProviderByFhirId() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
         UUID firUuid = UUID.randomUUID();
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
         prov.setFhirUuid(firUuid);
 
         providerService.insert(prov);
 
         Provider provid = providerService.getProviderByFhirId(firUuid);
-        Assert.assertEquals(providerType, provid.getProviderType());
+        Assert.assertEquals(PROVIDER_TYPE, provid.getProviderType());
     }
 
     @Test
     public void insertOrUpdateProviderByFhirUuid_shouldUpdateProviderByFhirId() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
         UUID firUuid = UUID.randomUUID();
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
         prov.setFhirUuid(firUuid);
 
         Provider savedProvider = providerService.save(prov);
@@ -140,11 +125,8 @@ public class ProviderServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getProviderIdByFhirId_shouldReturnProviderByFhirId() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
         UUID firUuid = UUID.randomUUID();
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
         prov.setFhirUuid(firUuid);
 
         providerService.insert(prov);
@@ -155,15 +137,9 @@ public class ProviderServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getPageOfProviders_shouldReturnPageOfProviders() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
 
-        String firstName2 = "John";
-        String lastName2 = "Doe";
-        String providerType2 = "m";
-        Provider prov2 = createProvider(firstName2, lastName2, providerType2);
+        Provider prov2 = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME2, PROVIDER_TYPE2);
         providerService.insert(prov);
         providerService.insert(prov2);
 
@@ -174,45 +150,34 @@ public class ProviderServiceTest extends BaseWebContextSensitiveTest {
         Assert.assertTrue(providersPage.size() <= expectedPageSize);
 
         if (expectedPageSize >= 2) {
-            Assert.assertTrue(providersPage.stream().anyMatch(p -> p.getPerson().getFirstName().equals(firstName)));
-            Assert.assertTrue(providersPage.stream().anyMatch(p -> p.getPerson().getFirstName().equals(firstName2)));
+            Assert.assertTrue(
+                    providersPage.stream().anyMatch(p -> p.getPerson().getFirstName().equals(PERSON_FIRSTNAME)));
+            Assert.assertTrue(
+                    providersPage.stream().anyMatch(p -> p.getPerson().getLastName().equals(PERSON_LASTNAME2)));
         }
     }
 
     @Test
     public void getPagesOfSearchedProviders_shouldReturnPagesOfSearchedProviders() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
 
-        String firstName2 = "John";
-        String lastName2 = "Rick";
-        String providerType2 = "B";
-        Provider prov2 = createProvider(firstName2, lastName2, providerType2);
+        Provider prov2 = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME2, PROVIDER_TYPE2);
         providerService.insert(prov);
         providerService.insert(prov2);
 
-        List<Provider> providersPage = providerService.getPagesOfSearchedProviders(1, firstName);
+        List<Provider> providersPage = providerService.getPagesOfSearchedProviders(1, PERSON_FIRSTNAME);
 
         Assert.assertNotNull(providersPage);
         Assert.assertEquals(2, providersPage.size());
-        Assert.assertEquals(lastName, providersPage.get(0).getPerson().getLastName());
-        Assert.assertEquals(lastName2, providersPage.get(1).getPerson().getLastName());
+        Assert.assertEquals(PERSON_LASTNAME, providersPage.get(0).getPerson().getLastName());
+        Assert.assertEquals(PERSON_LASTNAME2, providersPage.get(1).getPerson().getLastName());
     }
 
     @Test
     public void getPagesOfSearchedProviders_shouldReturnEmptyListIfNoMatch() throws ParseException {
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
 
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
-        Provider prov = createProvider(firstName, lastName, providerType);
-
-        String firstName2 = "John";
-        String lastName2 = "Rick";
-        String providerType2 = "B";
-        Provider prov2 = createProvider(firstName2, lastName2, providerType2);
+        Provider prov2 = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME2, PROVIDER_TYPE2);
         providerService.insert(prov);
         providerService.insert(prov2);
 
@@ -224,16 +189,10 @@ public class ProviderServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getAllActiveProviders_shouldReturnAllActiveProviders() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
         prov.setActive(true);
 
-        String firstName2 = "John";
-        String lastName2 = "Doe";
-        String providerType2 = "m";
-        Provider prov2 = createProvider(firstName2, lastName2, providerType2);
+        Provider prov2 = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME2, PROVIDER_TYPE2);
         prov2.setActive(true);
 
         providerService.insert(prov);
@@ -245,16 +204,10 @@ public class ProviderServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void deactivateAllProviders_shouldDeactivateAllProviders() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
         prov.setActive(true);
 
-        String firstName2 = "John";
-        String lastName2 = "Doe";
-        String providerType2 = "m";
-        Provider prov2 = createProvider(firstName2, lastName2, providerType2);
+        Provider prov2 = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME2, PROVIDER_TYPE2);
         prov2.setActive(true);
 
         providerService.insert(prov);
@@ -270,16 +223,10 @@ public class ProviderServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getTotalSearchedProviderCount_shouldReturnTotalSearchedProviderCount() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
         prov.setActive(true);
 
-        String firstName2 = "John";
-        String lastName2 = "Rick";
-        String providerType2 = "B";
-        Provider prov2 = createProvider(firstName2, lastName2, providerType2);
+        Provider prov2 = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME2, PROVIDER_TYPE2);
         prov2.setActive(true);
 
         providerService.insert(prov);
@@ -291,16 +238,10 @@ public class ProviderServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void deactivateProviders_shouldReturndeactivateProviders() throws Exception {
-        String firstName = "John";
-        String lastName = "Doe";
-        String providerType = "m";
-        Provider prov = createProvider(firstName, lastName, providerType);
+        Provider prov = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME, PROVIDER_TYPE);
         prov.setActive(true);
 
-        String firstName2 = "John";
-        String lastName2 = "Rick";
-        String providerType2 = "B";
-        Provider prov2 = createProvider(firstName2, lastName2, providerType2);
+        Provider prov2 = createProvider(PERSON_FIRSTNAME, PERSON_LASTNAME2, PROVIDER_TYPE2);
         prov2.setActive(true);
 
         providerService.insert(prov);
