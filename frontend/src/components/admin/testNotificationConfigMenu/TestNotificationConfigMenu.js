@@ -38,7 +38,7 @@ import {
 } from "../../common/CustomNotification.js";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
-import { Edit } from "@carbon/icons-react";
+import { Settings } from "@carbon/icons-react";
 import ActionPaginationButtonType from "../../common/ActionPaginationButtonType.js";
 
 let breadcrumbs = [
@@ -244,7 +244,7 @@ function TestNotificationConfigMenu() {
               id: "testnotification.testdefault.editIcon",
             })}
             onClick={() => handleEditButtonClick(row.cells[0].value)}
-            renderIcon={Edit}
+            renderIcon={Settings}
             kind="tertiary"
           />
         </TableCell>
