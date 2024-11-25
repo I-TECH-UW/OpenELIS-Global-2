@@ -1,4 +1,10 @@
-# OpenELIS Global 2
+# Kapsiki OpenELIS Global
+
+### This is based on OpenELIS 3.1.0  stable release
+
+### Requirements for running
+1. Java 11
+2. Maven 3.6 +
 
 This is the OpenELIS rewrite onto Java Spring, and with all new technology and
 features. Please vist our [website](http://www.openelis-global.org/) for more
@@ -7,48 +13,23 @@ information.
 You can find more information on how to set up OpenELIS at our
 [docs page](http://docs.openelis-global.org/)
 
-### CI Status
+### For Running kapsiki openelis global from Source Code
 
-[![Maven Build Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/ci.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/ci.yml)
-![Coverage](https://raw.githubusercontent.com/I-TECH-UW/OpenELIS-Global-2/refs/heads/gh-pages/badges/jacoco.svg)
-
-[![Publish OpenELIS WebApp Docker Image Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish-and-test.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/publish-and-test.yml)
-
-[![End to End QA Tests Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/frontend-qa.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/frontend-qa.yml)
-
-[![End to End QA Tests Status](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/build-installer.yml/badge.svg)](https://github.com/I-TECH-UW/OpenELIS-Global-2/actions/workflows/build-installer.yml)
-
-### For Offline Installation Using the OpenELIS Global2 Installer
-
-Download the OpenELIS Global Installer for each Release from the
-[Release Assets](https://github.com/I-TECH-UW/OpenELIS-Global-2/releases)
-
-see full
-[installtion instructions](https://docs.openelis-global.org/en/latest/install/)
-for Offline Installation
-
-### For running OpenELIS Global2 in Docker with default Settings out of the Box
-
-see [OpenELIS-Docker setup](https://github.com/I-TECH-UW/openelis-docker)
-
-### For Running OpenELIS Global2 from Source Code
-
-#### Running OpenELIS Global2 using docker compose With published docker images on dockerhub
+#### Running kapsiki openelis global using docker compose With published docker images on dockerhub
 
     docker-compose up -d
 
-#### Running OpenELIS Global2 using docker compose with docker images built directly from the source code
+#### Running kapsiki openelis global using docker compose with docker images built directly from the source code
 
     docker-compose -f build.docker-compose.yml up -d --build
 
-#### Running OpenELIS Global2 using docker compose With locally compiled/built Artifacts (ie the War file and React code)
+#### Running kapsiki openelis global using docker compose With locally compiled/built Artifacts (ie the War file and React code)
 
 1.  Fork the
-    [OpenELIS-Global Repository](https://github.com/I-TECH-UW/OpenELIS-Global-2.git)
-    and clone the forked repo. The `username` below is the `username` of your
-    Github profile.
+    [kapsiki-openelis-global Repository](https://github.com/kapsiki/kapsiki-openelis-global)
+    and clone the forked repo.
 
-         git clone https://github.com/username/OpenELIS-Global-2.git
+         git clone https://github.com/kapsiki/kapsiki-openelis-global
 
 1.  Build the War file
 
