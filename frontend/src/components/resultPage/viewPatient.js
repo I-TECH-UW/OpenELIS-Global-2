@@ -9,6 +9,10 @@ import {
   Grid,
   Column
 } from "@carbon/react";
+import PageBreadCrumb from "../common/PageBreadCrumb.js";
+
+let breadcrumbs = [{ label: "home.label", link: "/" }];
+
 import { getFromOpenElisServer } from "../utils/Utils";
 import { FormattedMessage, useIntl } from "react-intl";
 
@@ -18,6 +22,7 @@ const ViewPage = () => {
   const [searchBy, setSearchBy] = useState(" ");
   const [query, setQuery] = useState("");
   const [data, setData] = useState([]);
+  const [scan,setScan] = useState(false)
 
   const intl = useIntl();
 
@@ -76,6 +81,7 @@ const ViewPage = () => {
 
   return (
     <div style={{ padding: "1rem" }}>
+      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <h1><b>
         <FormattedMessage id="banner.menu.patientConsult" />{" "}
         <FormattedMessage id="banner.menu.patient" />
@@ -84,12 +90,16 @@ const ViewPage = () => {
 <h2><b><FormattedMessage id="patient.label.info" /> </b></h2>
       <Form>
         <Grid>
-          <Column lg={4} md={2} sm={1}>
+          <Column lg={4} md={8} sm={4}>
             <Select
+            style={{margin:"10px"}} 
               id="search-criteria"
               labelText={intl.formatMessage({ id: "order.legend.selectMethod" })}
               
-              onChange={(e) => setSearchBy(e.target.value)}
+              onChange={(e) => {
+                const selectedValue = e.target.value;
+                setSearchBy(selectedValue);
+                setScan(selectedValue === "patient.lab.no")}}
             >
               <SelectItem
               
@@ -113,7 +123,7 @@ const ViewPage = () => {
               />
             </Select>
           </Column>
-          <Column lg={6} md={2} sm={1}>
+          <Column lg={6} md={4} sm={2}>
             <TextInput
               id="search-query"
               labelText={intl.formatMessage({ id: "search.patient.label" }, { criteria: intl.formatMessage({ id: searchBy }) })}
@@ -122,11 +132,18 @@ const ViewPage = () => {
               onChange={(e) => setQuery(e.target.value)}
             />
           </Column>
-          <Column lg={2} md={1} sm={1}>
+          <Column lg={2} md={2} sm={1}>
             <Button onClick={handleSearch}>
               <FormattedMessage id="label.button.search" />
             </Button>
           </Column>
+          {scan && (
+             <Column lg={3} md={2} sm={1}>
+             <p  style={{margin:"10px"}} ><b><FormattedMessage id="referral.input" /> </b></p>
+           </Column>
+
+          )}
+         
         </Grid>
       </Form>
 
@@ -137,24 +154,24 @@ const ViewPage = () => {
           render={({ rows, headers, getHeaderProps }) => (
             <TableContainer >
               <Table>
-                <TableHead>
-                  <TableRow>
-                    {headers.map((header) => (
-                      <TableHeader key={header.key} {...getHeaderProps({ header })}>
-                        {header.header}
-                      </TableHeader>
-                    ))}
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map((row) => (
-                    <TableRow key={row.id}>
-                      {row.cells.map((cell) => (
-                        <TableCell key={cell.id}>{cell.value}</TableCell>
+              <TableHead>
+                    <TableRow>
+                      {headers.map((header) => (
+                        <TableHeader key={header.key}>{header.header}</TableHeader>
                       ))}
                     </TableRow>
-                  ))}
-                </TableBody>
+                  </TableHead>
+
+                  <TableBody>
+                    {rows.map((row) => (
+                      <TableRow key={row.id}>
+                        {row.cells.map((cell) => (
+                          <TableCell key={cell.id}>{cell.value}</TableCell>
+                        ))}
+                      </TableRow>
+                    ))}
+                  </TableBody>
+
               </Table>
             </TableContainer>
           )}
