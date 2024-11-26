@@ -143,6 +143,8 @@ public class ReportImplementationFactory {
                 return new CovidResultsReport();
             } else if (report.equals("statisticsReport")) {
                 return new StatisticsReport();
+            } else if (report.equals("CSVPatientStatusReport")) {
+                return new CSVPatientStatusReport();
             } else if (report.equals("sampleRejectionReport")) {
                 return new CSVSampleRejectionReport();
             }
@@ -283,6 +285,8 @@ public class ReportImplementationFactory {
                 return new StatisticsReport();
             } else if (report.equals("sampleRejectionReport")) {
                 return new CSVSampleRejectionReport();
+            } else if (report.equals("CSVPatientStatusReport")) {
+                return new CSVPatientStatusReport();
             } else if (report.equals("PatientPathologyReport")) {
                 return new PatientPathologyReport();
             } else if (report.equals("PatientCytologyReport")) {

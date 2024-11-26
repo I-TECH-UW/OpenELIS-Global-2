@@ -21,7 +21,12 @@ export const RoutineReports = (props) => {
           id={"openreports.patientTestStatus"}
         />
       )}
-
+      {type === "patient" && report === "CSVPatientStatusReport" && (
+        <PatientStatusReport
+          report={"CSVPatientStatusReport"}
+          id={"sidenav.label.statusreport.csv"}
+        />
+      )}
       {type === "patient" && report === "referredOut" && <ReferredOut />}
 
       {type === "patient" && report === "haitiNonConformityBySectionReason" && (

@@ -24,6 +24,16 @@ export const RoutineReportsMenu = {
       ],
     },
     {
+      title: <FormattedMessage id="sidenav.label.statusreport.csv" />,
+      icon: IbmWatsonDiscovery,
+      SideNavMenuItem: [
+        {
+          link: "/RoutineReport?type=patient&report=CSVPatientStatusReport",
+          label: <FormattedMessage id="sidenav.label.statusreport.csv" />,
+        },
+      ],
+    },
+    {
       title: <FormattedMessage id="sidenav.title.aggregatereport" />,
       icon: Microscope,
       SideNavMenuItem: [
