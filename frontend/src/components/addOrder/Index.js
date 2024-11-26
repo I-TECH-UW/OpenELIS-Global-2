@@ -45,6 +45,7 @@ const Index = () => {
   const [orderFormValues, setOrderFormValues] = useState(SampleOrderFormValues);
   const [samples, setSamples] = useState([sampleObject]);
   const [errors, setErrors] = useState([]);
+  const [hasInteracted, setHasInteracted] = useState(false);
 
   let SampleTypes = [];
   let sampleTypeMap = {};
@@ -598,6 +599,8 @@ const Index = () => {
   }, [page]);
 
   useEffect(() => {
+     if (hasInteracted) {
+
     OrderEntryValidationSchema.validate(orderFormValues, { abortEarly: false })
       .then((validData) => {
         setErrors([]);
@@ -607,7 +610,8 @@ const Index = () => {
         setErrors(errors);
         console.error("Validation Errors:", errors.errors);
       });
-  }, [orderFormValues]);
+     }
+  }, [orderFormValues, hasInteracted]);
 
   useEffect(() => {
     const labNumber = new URLSearchParams(window.location.search).get(
@@ -767,6 +771,7 @@ const Index = () => {
               <AddOrder
                 orderFormValues={orderFormValues}
                 setOrderFormValues={setOrderFormValues}
+                setHasInteracted={setHasInteracted} 
                 samples={samples}
                 error={elementError}
                 isModifyOrder={false}
