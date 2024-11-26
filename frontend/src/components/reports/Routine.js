@@ -24,6 +24,16 @@ export const RoutineReportsMenu = {
       ],
     },
     {
+      title: <FormattedMessage id="sidenav.label.statusreport.csv" />,
+      icon: IbmWatsonDiscovery,
+      SideNavMenuItem: [
+        {
+          link: "/RoutineReport?type=patient&report=CSVPatientStatusReport",
+          label: <FormattedMessage id="sidenav.label.statusreport.csv" />,
+        },
+      ],
+    },
+    {
       title: <FormattedMessage id="sidenav.title.aggregatereport" />,
       icon: Microscope,
       SideNavMenuItem: [
@@ -38,6 +48,25 @@ export const RoutineReportsMenu = {
         {
           link: "/RoutineReport?type=indicator&report=indicatorCDILNSPHIV",
           label: <FormattedMessage id="sideNav.label.hivtestsummary" />,
+        },
+      ],
+    },
+    {
+      title: <FormattedMessage id="sidenav.title.aggregatereport.csv" />,
+      icon: Microscope,
+      SideNavMenuItem: [
+        {
+          link: "/RoutineReport?type=indicator&report=CSVStatisticsReport",
+          label: <FormattedMessage id="sidenav.label.statisticsreport.csv" />,
+        },
+        {
+          //When i try to change it CSVSummaryOfAllTest it appear nothing
+          link: "/RoutineReport?type=indicator&report=indicatorHaitiLNSPAllTests",
+          label: <FormattedMessage id="sidenav.label.testsummary.csv" />,
+        },
+        {
+          link: "/RoutineReport?type=indicator&report=indicatorCDILNSPHIV",
+          label: <FormattedMessage id="sideNav.label.hivtestsummary.csv" />,
         },
       ],
     },
@@ -70,10 +99,43 @@ export const RoutineReportsMenu = {
       ],
     },
     {
+      title: <FormattedMessage id="sideNav.title.activityreport.csv" />,
+      icon: IbmWatsonNaturalLanguageUnderstanding,
+      SideNavMenuItem: [
+        {
+          link: "/RoutineReport?type=indicator&report=activityReportByTest",
+          label: <FormattedMessage id="sideNav.label.bytesttype.csv" />,
+        },
+        {
+          link: "/RoutineReport?type=indicator&report=activityReportByPanel",
+          label: <FormattedMessage id="sideNav.label.bypaneltype.csv" />,
+        },
+        {
+          link: "/RoutineReport?type=indicator&report=activityReportByTestSection",
+          label: <FormattedMessage id="sideNav.label.byunit.csv" />,
+        },
+      ],
+    },
+    {
       title: (
         <FormattedMessage
           id="sideNav.title.referredtestreport"
           defaultMessage="Referred Out Tests Report"
+        />
+      ),
+      icon: IbmWatsonNaturalLanguageUnderstanding,
+      SideNavMenuItem: [
+        {
+          link: "/RoutineReport?type=patient&report=referredOut",
+          label: <FormattedMessage id="sideNav.label.referredtestreport" />,
+        },
+      ],
+    },
+    {
+      title: (
+        <FormattedMessage
+          id="sideNav.title.referredtestreport.csv"
+          defaultMessage="Referred Out Tests Report CSV "
         />
       ),
       icon: IbmWatsonNaturalLanguageUnderstanding,
@@ -98,6 +160,24 @@ export const RoutineReportsMenu = {
           link: "/RoutineReport?type=patient&report=haitiNonConformityBySectionReason",
           label: (
             <FormattedMessage id="sideNav.label.noncomformityreportsbyunit" />
+          ),
+        },
+      ],
+    },
+    {
+      title: <FormattedMessage id="sideNav.title.noncomformityreports.csv" />,
+      icon: IbmWatsonNaturalLanguageUnderstanding,
+      SideNavMenuItem: [
+        {
+          link: "/RoutineReport?type=patient&report=haitiNonConformityByDate",
+          label: (
+            <FormattedMessage id="sideNav.label.noncomformityreportsbydate.csv" />
+          ),
+        },
+        {
+          link: "/RoutineReport?type=patient&report=haitiNonConformityBySectionReason",
+          label: (
+            <FormattedMessage id="sideNav.label.noncomformityreportsbyunit.csv" />
           ),
         },
       ],

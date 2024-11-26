@@ -62,6 +62,10 @@ import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
  * @since Mar 18, 2011
  */
 public abstract class CSVColumnBuilder {
+//
+//    public abstract String[] getHeaders();
+//
+//    public abstract List<String[]> getRows();
 
     // these are used so we are not passing around strings in the methods that are
     // appended to sql
