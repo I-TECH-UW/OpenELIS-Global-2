@@ -130,12 +130,6 @@ button {
   width: 120%;
 }
 
-.inlineDiv {
-  display: flex;
-  margin-top: 2%;
-  margin-bottom: 3%;
-  margin-left: 1%;
-}
 .section {
   border: 0.5px solid green;
   border-radius: 3px;
@@ -331,13 +325,6 @@ button {
   padding: 0.5%;
 }
 
-.inlineDiv {
-  display: flex;
-  margin-top: 2%;
-  margin-bottom: 3%;
-  margin-left: 1%;
-}
-
 .section {
   border: 0.5px solid green;
   border-radius: 3px;
@@ -522,11 +509,6 @@ button {
   }
 }
 
-@media screen and (max-width: 460px) {
-  .inlineDiv {
-    flex-direction: column;
-  }
-}
 @media screen and (max-width: 500px) {
   .adminPageContent {
     margin-left: 17%;
