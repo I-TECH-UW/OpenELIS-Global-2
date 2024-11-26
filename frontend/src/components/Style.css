@@ -57,7 +57,8 @@ li.clickableUserDetails:hover {
 
 .inputSearch {
   --cds-text-primary: black;
-  width: 100%;
+  /*width: 100%;*/
+  width: 50%;
   --cds-text-secondary: black;
   --cds-icon-primary: black;
 }
@@ -271,13 +272,6 @@ button {
   --cds-text-primary: black;
   width: 380px;
   --cds-text-secondary: black;
-}
-
-.inputSearch {
-  --cds-text-primary: black;
-  width: 100%;
-  --cds-text-secondary: black;
-  --cds-icon-primary: black;
 }
 
 .results {

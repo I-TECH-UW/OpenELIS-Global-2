@@ -402,6 +402,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.dbunit</groupId>
+      <artifactId>dbunit</artifactId>
+      <version>2.7.3</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.mockito</groupId>
       <artifactId>mockito-core</artifactId>
       <version>2.21.0</version>
@@ -563,14 +569,20 @@
   </dependencies>
   <repositories>
     <repository>
-      <id>jaspersoft-third-party</id>
-      <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
+        <id>jaspersoft-third-party</id>
+        <url>https://jaspersoft.jfrog.io/jaspersoft/third-party-ce-artifacts/</url>
     </repository>
     <repository>
-      <id>shibboleth</id> <!-- openSaml-->
-      <url>https://build.shibboleth.net/maven/releases/</url>
+        <id>shibboleth</id>
+        <!-- openSaml-->
+        <url>https://build.shibboleth.net/maven/releases/</url>
     </repository>
-  </repositories>
+    <repository>
+        <id>uwdigi-repo-central</id>
+        <name>DIGI Public Repository</name>
+        <url>https://packages.uwdigi.org/artifactory/public</url>
+    </repository>
+</repositories>
   <build>
     <finalName>OpenELIS-Global</finalName>
     <resources>
@@ -722,6 +734,60 @@
           </java>
         </configuration>
       </plugin>
+      <plugin>
+          <groupId>org.jacoco</groupId>
+          <artifactId>jacoco-maven-plugin</artifactId>
+          <version>0.8.12</version>
+          <configuration>
+             <excludes>
+                    <exclude>**/*.jar</exclude>
+                    <exclude>naughty-dependency/**/*.class</exclude>
+                </excludes>
+          </configuration>
+          <executions>
+              <execution>
+                  <goals>
+                      <goal>prepare-agent</goal>
+                  </goals>
+              </execution>
+              <execution>
+                  <id>report</id>
+                  <phase>test</phase>
+                  <goals>
+                      <goal>report</goal>
+                  </goals>
+              </execution>
+
+               <!-- Make sure we have at least 70% coverage -->
+              <!-- <execution>
+                <id>verify-test-coverage</id>
+                <goals>
+                  <goal>check</goal>
+                </goals>
+                <configuration>
+                  <rules>
+                    <rule>
+                      <element>BUNDLE</element>
+                      <excludes>
+                        <exclude>*Mojo</exclude>
+                      </excludes>
+                      <limits>
+                        <limit>
+                          <counter>INSTRUCTION</counter>
+                          <value>COVEREDRATIO</value>
+                          <minimum>10%</minimum>
+                        </limit>
+                      </limits>
+                    </rule>
+                  </rules>
+                </configuration>
+              </execution> -->
+
+          </executions>
+        </plugin>
+
+
+
     </plugins>
   </build>
 </project>
