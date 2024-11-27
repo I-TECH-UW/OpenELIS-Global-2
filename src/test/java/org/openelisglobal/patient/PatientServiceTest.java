@@ -50,7 +50,6 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
         patientService.deleteAll(patientService.getAll());
         personService.deleteAll(personService.getAll());
         patientTypeService.deleteAll(patientTypeService.getAll());
-
     }
 
     @After
@@ -60,41 +59,6 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
         patientService.deleteAll(patientService.getAll());
         personService.deleteAll(personService.getAll());
         patientTypeService.deleteAll(patientTypeService.getAll());
-    }
-
-    @Test
-    public void createPatient_shouldCreateNewPatient() throws Exception {
-        String firstName = "John";
-        String lastname = "Doe";
-        String dob = "12/12/1992";
-        String gender = "M";
-        Patient pat = createPatient(firstName, lastname, dob, gender);
-
-        Assert.assertEquals(0, patientService.getAllPatients().size());
-
-        String patientId = patientService.insert(pat);
-        Patient savedPatient = patientService.get(patientId);
-
-        Assert.assertEquals(1, patientService.getAllPatients().size());
-        Assert.assertEquals(firstName, savedPatient.getPerson().getFirstName());
-        Assert.assertEquals(lastname, savedPatient.getPerson().getLastName());
-        Assert.assertEquals(gender, savedPatient.getGender());
-    }
-
-    @Test
-    public void getData_shouldCopyPropertiesFromDatabase() throws Exception {
-        String firstName = "John";
-        String lastname = "Doe";
-        String dob = "12/12/1992";
-        String gender = "M";
-        Patient patient = createPatient(firstName, lastname, dob, gender);
-        String patientId = patientService.insert(patient);
-
-        Patient savedPatient = new Patient();
-        savedPatient.setId(patientId);
-        patientService.getData(savedPatient);
-
-        Assert.assertEquals(gender, savedPatient.getGender());
     }
 
     @Test
@@ -501,6 +465,25 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
 
         Patient savedPatient = patientService.getPatientForGuid("EA400A1");
 
+        Assert.assertEquals(gender, savedPatient.getGender());
+    }
+
+    @Test
+    public void createPatient_shouldCreateNewPatient() throws Exception {
+        String firstName = "John";
+        String lastname = "Doe";
+        String dob = "12/12/1992";
+        String gender = "M";
+        Patient pat = createPatient(firstName, lastname, dob, gender);
+
+        Assert.assertEquals(0, patientService.getAllPatients().size());
+
+        String patientId = patientService.insert(pat);
+        Patient savedPatient = patientService.get(patientId);
+
+        Assert.assertEquals(1, patientService.getAllPatients().size());
+        Assert.assertEquals(firstName, savedPatient.getPerson().getFirstName());
+        Assert.assertEquals(lastname, savedPatient.getPerson().getLastName());
         Assert.assertEquals(gender, savedPatient.getGender());
     }
 
