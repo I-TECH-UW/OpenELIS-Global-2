@@ -45,7 +45,6 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
 
     @Before
     public void init() throws Exception {
-        // identityTypeService.deleteAll(identityTypeService.getAll());
         identityService.deleteAll(identityService.getAll());
         patientService.deleteAll(patientService.getAll());
         personService.deleteAll(personService.getAll());
@@ -55,7 +54,6 @@ public class PatientServiceTest extends BaseWebContextSensitiveTest {
 
     @After
     public void tearDown() {
-        // identityTypeService.deleteAll(identityTypeService.getAll());
         identityService.deleteAll(identityService.getAll());
         patientService.deleteAll(patientService.getAll());
         personService.deleteAll(personService.getAll());
