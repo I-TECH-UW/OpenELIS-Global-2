@@ -6,7 +6,7 @@ import {
   TextInput,
   Stack,
 } from "@carbon/react";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import "../../index.css";
 import "../../App.css";
 import "../Style.css";
@@ -15,14 +15,10 @@ import { getFromOpenElisServer } from "../utils/Utils";
 export const Questionnaire = ({
   questionnaire,
   onAnswerChange = () => {
-    console.debug("default onAnswerChange function does nothing");
+    console.log("default onAnswerChange function does nothing");
   },
-  getAnswer = () => {
-    console.debug("default getAnswer function does nothing");
-  },
+  setAnswer,
 }) => {
-  const intl = useIntl();
-
   const getSelectOption = (answerOption, index) => {
     if ("valueString" in answerOption) {
       return (
@@ -77,24 +73,18 @@ export const Questionnaire = ({
               className="inputText"
               labelText={item.text}
               onChange={onAnswerChange}
-              value={getAnswer(item.linkId)}
+              value={setAnswer(item.linkId)}
             >
-              <SelectItem
-                disabled
-                value=""
-                text={intl.formatMessage({ id: "select.default.option.label" })}
-              />
+              <FormattedMessage id="select.default.option.label">
+                {(msg) => <SelectItem disabled value="" text={msg} />}
+              </FormattedMessage>
               <SelectItem value="" text="" />
-              <SelectItem
-                disabled
-                value="true"
-                text={intl.formatMessage({ id: "yes.option" })}
-              />
-              <SelectItem
-                disabled
-                value="false"
-                text={intl.formatMessage({ id: "no.option" })}
-              />
+              <FormattedMessage id="yes.option">
+                {(msg) => <SelectItem disabled value="true" text={msg} />}
+              </FormattedMessage>
+              <FormattedMessage id="no.option">
+                {(msg) => <SelectItem disabled value="false" text={msg} />}
+              </FormattedMessage>
             </Select>
           )}
           {item.type == "choice" && item.repeats !== true && (
@@ -106,18 +96,16 @@ export const Questionnaire = ({
                   ? "valueString" in item.initial[0]
                     ? item.initial[0].valueString
                     : "valueCoding" in item.initial[0]
-                      ? item.initial[0].valueCoding
-                      : ""
+                    ? item.initial[0].valueCoding
+                    : ""
                   : ""
               }
-              value={getAnswer(item.linkId)}
+              value={setAnswer(item.linkId)}
               onChange={onAnswerChange}
             >
-              <SelectItem
-                disabled
-                value=""
-                text={intl.formatMessage({ id: "select.default.option.label" })}
-              />
+              <FormattedMessage id="select.default.option.label">
+                {(msg) => <SelectItem disabled value="" text={msg} />}
+              </FormattedMessage>
               <SelectItem value="" text="" />
               {"answerOption" in item &&
                 item.answerOption.map((answerOption, index) =>
@@ -138,7 +126,7 @@ export const Questionnaire = ({
                 e.target.value = changes.selectedItems;
                 onAnswerChange(e);
               }}
-              value={getAnswer(item.linkId)}
+              value={setAnswer(item.linkId)}
               selectionFeedback="top-after-reopen"
             />
           )}
@@ -147,7 +135,7 @@ export const Questionnaire = ({
               id={item.linkId}
               labelText={item.text}
               onChange={onAnswerChange}
-              value={getAnswer(item.linkId)}
+              value={setAnswer(item.linkId)}
               type="number"
               step="1"
               pattern="\d+"
@@ -158,7 +146,7 @@ export const Questionnaire = ({
               id={item.linkId}
               labelText={item.text}
               onChange={onAnswerChange}
-              value={getAnswer(item.linkId)}
+              value={setAnswer(item.linkId)}
               type="number"
               step="0.01"
             />
@@ -168,7 +156,7 @@ export const Questionnaire = ({
               id={item.linkId}
               labelText={item.text}
               onChange={onAnswerChange}
-              value={getAnswer(item.linkId)}
+              value={setAnswer(item.linkId)}
               type="date"
             />
           )}
@@ -177,7 +165,7 @@ export const Questionnaire = ({
               id={item.linkId}
               labelText={item.text}
               onChange={onAnswerChange}
-              value={getAnswer(item.linkId)}
+              value={setAnswer(item.linkId)}
               type="time"
             />
           )}
@@ -186,7 +174,7 @@ export const Questionnaire = ({
               id={item.linkId}
               labelText={item.text}
               onChange={onAnswerChange}
-              value={getAnswer(item.linkId)}
+              value={setAnswer(item.linkId)}
               type="text"
             />
           )}
@@ -195,7 +183,7 @@ export const Questionnaire = ({
               id={item.linkId}
               labelText={item.text}
               onChange={onAnswerChange}
-              value={getAnswer(item.linkId)}
+              value={setAnswer(item.linkId)}
               type="text"
             />
           )}
@@ -204,7 +192,7 @@ export const Questionnaire = ({
               id={item.linkId}
               labelText={item.text}
               onChange={onAnswerChange}
-              value={getAnswer(item.linkId)}
+              value={setAnswer(item.linkId)}
               type="number"
             />
           )}
@@ -249,14 +237,11 @@ export const Questionnaire = ({
 
 export const ProgramSelect = ({
   programChange = () => {
-    console.debug("default programChange function does nothing");
+    console.log("default programChange function does nothing");
   },
-  orderFormValues,
-  editable,
+  orderFormValues
 }) => {
-  const componentMounted = useRef(false);
-
-  const intl = useIntl();
+  const componentMounted = useRef(true);
 
   const [programs, setPrograms] = useState([]);
 
@@ -265,18 +250,6 @@ export const ProgramSelect = ({
       setPrograms(programsList);
     }
   };
-
-  useEffect(() => {
-    if (!orderFormValues?.sampleOrderItems?.programId) {
-      programChange({
-        target: {
-          value: programs.find((program) => {
-            return program.value === "Routine Testing";
-          })?.id,
-        },
-      });
-    }
-  }, [programs]);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -293,10 +266,14 @@ export const ProgramSelect = ({
           <div className="inputText">
             <Select
               id="additionalQuestionsSelect"
-              labelText={intl.formatMessage({ id: "label.program" })}
+              labelText={<FormattedMessage id="label.program" />}
               onChange={programChange}
               value={orderFormValues?.sampleOrderItems?.programId}
-              disabled={editable ? editable : false}
+              defaultValue={
+                programs.find((program) => {
+                  return program.value === "Routine Testing";
+                })?.id
+              }
             >
               <SelectItem value="" text="" />
               {programs.map((program) => {
@@ -319,7 +296,7 @@ export const ProgramSelect = ({
 const OrderEntryAdditionalQuestions = ({
   orderFormValues,
   setOrderFormValues = () => {
-    console.debug("default setOrderFormValues change function does nothing");
+    console.log("default setOrderFormValues change function does nothing");
   },
 }) => {
   const [questionnaire, setQuestionnaire] = useState(
@@ -330,25 +307,18 @@ const OrderEntryAdditionalQuestions = ({
   );
 
   const handleProgramSelection = (event) => {
-    if (!event?.target?.value) {
-      setAdditionalQuestions({});
+    if (event.target.value === "") {
+      setAdditionalQuestions(null);
       setOrderFormValues({
         ...orderFormValues,
         sampleOrderItems: {
           ...orderFormValues.sampleOrderItems,
-          programId: "",
+          programId: null,
         },
       });
     } else {
-      setOrderFormValues({
-        ...orderFormValues,
-        sampleOrderItems: {
-          ...orderFormValues.sampleOrderItems,
-          programId: event.target.value,
-        },
-      });
       getFromOpenElisServer(
-        "/rest/program/" + event.target.value + "/questionnaire",
+        "/program/" + event.target.value + "/questionnaire",
         (res) => setAdditionalQuestions(res, event),
       );
     }
@@ -379,24 +349,22 @@ const OrderEntryAdditionalQuestions = ({
     return null;
   }
 
-  function setAdditionalQuestions(res, event) {
-    console.debug(res);
-    if ("item" in res) {
-      setQuestionnaire(res);
-      var convertedQuestionnaireResponse = convertQuestionnaireToResponse(res);
-      setQuestionnaireResponse(convertedQuestionnaireResponse);
-      setOrderFormValues({
-        ...orderFormValues,
-        sampleOrderItems: {
-          ...orderFormValues.sampleOrderItems,
-          questionnaire: res,
-          programId: event ? event.target.value : "",
-          additionalQuestions: convertedQuestionnaireResponse,
-        },
-      });
-    }
+  function setAdditionalQuestions(res ,event) {
+    console.log(res);
+    setQuestionnaire(res);
+    var convertedQuestionnaireResponse = convertQuestionnaireToResponse(res);
+    setQuestionnaireResponse(convertedQuestionnaireResponse);
+    setOrderFormValues({
+      ...orderFormValues,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        questionnaire: res,
+        programId: event.target.value,
+        additionalQuestions: convertedQuestionnaireResponse,
+      },
+    });
   }
-  const getAnswer = (linkId) => {
+  const setAnswer = (linkId) => {
     var responseItem = questionnaireResponse?.item?.find(
       (item) => item.linkId === linkId,
     );
@@ -526,7 +494,7 @@ const OrderEntryAdditionalQuestions = ({
           <Questionnaire
             questionnaire={questionnaire}
             onAnswerChange={answerChange}
-            getAnswer={getAnswer}
+            setAnswer={setAnswer}
           />
           {questionnaireResponse && (
             <input

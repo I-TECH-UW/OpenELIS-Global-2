@@ -1,5 +1,5 @@
-import { navigate } from "./commons";
-import { dashboardMeta } from "./dashboard.meta";
+import { navigate } from './commons';
+import { dashboardMeta } from './dashboard.meta';
 
 export const makeThrottled = <T extends (...args: any[]) => any>(
   func: T,
@@ -32,17 +32,11 @@ export const makeThrottled = <T extends (...args: any[]) => any>(
 export const navigateToTimeline = (basePath: string, panelUuid: string) =>
   navigate({ to: `${testResultsBasePath(basePath)}/timeline/${panelUuid}` });
 
-export const navigateToTrendline = (
-  basePath: string,
-  panelUuid: string,
-  testUuid: string,
-) =>
+export const navigateToTrendline = (basePath: string, panelUuid: string, testUuid: string) =>
   navigate({
     to: `${testResultsBasePath(basePath)}/trendline/${panelUuid}/${testUuid}`,
   });
 
-export const navigateToResults = (basePath: string) =>
-  navigate({ to: `${testResultsBasePath(basePath)}` });
+export const navigateToResults = (basePath: string) => navigate({ to: `${testResultsBasePath(basePath)}` });
 
-export const testResultsBasePath = (basePath: string) =>
-  `${"https://localhost/PatientHistory"}${basePath}/${dashboardMeta.title}`;
+export const testResultsBasePath = (basePath: string) => `${"https://localhost/PatientHistory"}${basePath}/${dashboardMeta.title}`;

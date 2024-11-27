@@ -26,20 +26,20 @@ export interface ConceptRecord {
 export interface PatientData {
   [_: string]: {
     entries: Array<ObsRecord>;
-    type: "LabSet" | "Test";
+    type: 'LabSet' | 'Test';
     uuid: string;
   };
 }
 
 export type OBSERVATION_INTERPRETATION =
-  | "NORMAL"
-  | "HIGH"
-  | "CRITICALLY_HIGH"
-  | "OFF_SCALE_HIGH"
-  | "LOW"
-  | "CRITICALLY_LOW"
-  | "OFF_SCALE_LOW"
-  | "--";
+  | 'NORMAL'
+  | 'HIGH'
+  | 'CRITICALLY_HIGH'
+  | 'OFF_SCALE_HIGH'
+  | 'LOW'
+  | 'CRITICALLY_LOW'
+  | 'OFF_SCALE_LOW'
+  | '--';
 
 export interface ExternalOverviewProps {
   patientUuid: string;

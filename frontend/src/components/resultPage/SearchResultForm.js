@@ -5,7 +5,6 @@ import {
   getFromOpenElisServer,
   postToOpenElisServerJsonResponse,
   convertAlphaNumLabNumForDisplay,
-  Roles,
 } from "../utils/Utils";
 import {
   Form,
@@ -15,14 +14,15 @@ import {
   Button,
   Grid,
   Column,
+  DatePicker,
+  DatePickerInput,
   Stack,
   Pagination,
   Select,
   SelectItem,
   Loading,
-  Link,
 } from "@carbon/react";
-import { Copy, ArrowLeft, ArrowRight } from "@carbon/icons-react";
+import { Copy } from "@carbon/icons-react";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import DataTable from "react-data-table-component";
 import { Formik, Field } from "formik";
@@ -30,44 +30,21 @@ import SearchResultFormValues from "../formModel/innitialValues/SearchResultForm
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 import SearchPatientForm from "../patient/SearchPatientForm";
-import ReferredOutTests from "./resultsReferredOut/ReferredOutTests";
 import { ConfigurationContext } from "../layout/Layout";
 import config from "../../config.json";
-import CustomDatePicker from "../common/CustomDatePicker";
 
 function ResultSearchPage() {
-  const [originalResultForm, setOriginalResultForm] = useState({
-    testResult: [],
-  });
-  const [resultForm, setResultForm] = useState(originalResultForm);
-  const [searchBy, setSearchBy] = useState({ type: "", doRange: false });
-  const [param, setParam] = useState("&accessionNumber=");
-
-  const setResults = (resultForm) => {
-    setOriginalResultForm(resultForm);
-    setResultForm(resultForm);
-  };
-
+  const [resultForm, setResultForm] = useState({ testResult: [] });
   return (
     <>
-      <SearchResultForm
-        setParam={setParam}
-        setSearchBy={setSearchBy}
-        setResults={setResults}
-      />
-      <SearchResults
-        extraParams={param}
-        searchBy={searchBy}
-        results={resultForm}
-        setResultForm={setResultForm}
-        refreshOnSubmit={true}
-      />
+      <SearchResultForm setResults={setResultForm} />
+      <SearchResults results={resultForm} />
     </>
   );
 }
 
 export function SearchResultForm(props) {
-  const { notificationVisible, setNotificationVisible, addNotification } =
+  const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
 
   const [tests, setTests] = useState([]);
@@ -77,23 +54,12 @@ export function SearchResultForm(props) {
   const [searchBy, setSearchBy] = useState({ type: "", doRange: false });
   const [patient, setPatient] = useState({ patientPK: "" });
   const [testSections, setTestSections] = useState([]);
-  const [defaultTestSectionId, setDefaultTestSectionId] = useState("");
-  const [defaultTestSectionLabel, setDefaultTestSectionLabel] = useState("");
-  const [defaultTestId, setDefaultTestId] = useState("");
-  const [defaultTestLabel, setDefaultTestLabel] = useState("");
-  const [defaultSampleStatusId, setDefaultSampleStatusId] = useState("");
-  const [defaultSampleStatusLabel, setDefaultSampleStatusLabel] = useState("");
-  const [defaultAnalysisStatusId, setDefaultAnalysisStatusId] = useState("");
-  const [defaultAnalysisStatusLabel, setDefaultAnalysisStatusLabel] =
-    useState("");
   const [searchFormValues, setSearchFormValues] = useState(
     SearchResultFormValues,
   );
   const [nextPage, setNextPage] = useState(null);
   const [previousPage, setPreviousPage] = useState(null);
   const [pagination, setPagination] = useState(false);
-  const [currentApiPage, setCurrentApiPage] = useState(null);
-  const [totalApiPages, setTotalApiPages] = useState(null);
   const [url, setUrl] = useState("");
   const componentMounted = useRef(false);
 
@@ -109,8 +75,6 @@ export function SearchResultForm(props) {
         var { totalPages, currentPage } = results.paging;
         if (totalPages > 1) {
           setPagination(true);
-          setCurrentApiPage(currentPage);
-          setTotalApiPages(totalPages);
           if (parseInt(currentPage) < parseInt(totalPages)) {
             setNextPage(parseInt(currentPage) + 1);
           } else {
@@ -125,17 +89,15 @@ export function SearchResultForm(props) {
       }
     } else {
       props.setResults?.({ testResult: [] });
-      addNotification({
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "patient.search.nopatient" }),
+      setNotificationBody({
+        title: <FormattedMessage id="notification.title" />,
+        message: "No results found!",
         kind: NotificationKinds.warning,
       });
       setNotificationVisible(true);
       setLoading(false);
     }
   };
-
-  const intl = useIntl();
 
   const loadNextResultsPage = () => {
     setLoading(true);
@@ -165,8 +127,9 @@ export function SearchResultForm(props) {
       values.accessionNumber !== ""
         ? values.accessionNumber
         : values.startLabNo;
-    let labNo = accessionNumber ? accessionNumber.split("-")[0] : "";
-    const endLabNo = values.endLabNo ? values.endLabNo : "";
+    let labNo =
+      accessionNumber !== undefined ? accessionNumber.split("-")[0] : "";
+    const endLabNo = values.endLabNo !== undefined ? values.endLabNo : "";
     values.unitType = values.unitType ? values.unitType : "";
 
     let searchEndPoint =
@@ -192,39 +155,8 @@ export function SearchResultForm(props) {
       "&doRange=" +
       searchBy.doRange +
       "&finished=" +
-      false;
+      true;
     setUrl(searchEndPoint);
-    props.setSearchBy?.(searchBy);
-    switch (searchBy.type) {
-      case "unit":
-        props.setParam("&testSectionId=" + values.unitType);
-        break;
-      case "patient":
-        props.setParam("&patientId=" + patient.patientPK);
-        break;
-      case "order":
-        props.setParam("&accessionNumber=" + labNo);
-        break;
-      case "date":
-        props.setParam(
-          "&selectedTest=" +
-            values.testName +
-            "&selectedSampleStatus=" +
-            values.sampleStatusType +
-            "&selectedAnalysisStatus=" +
-            values.analysisStatus +
-            "&collectionDate=" +
-            values.collectionDate +
-            "&recievedDate=" +
-            values.recievedDate,
-        );
-        break;
-      case "range":
-        props.setParam(
-          "&accessionNumber=" + labNo + "&upperAccessionNumber=" + endLabNo,
-        );
-        break;
-    }
 
     getFromOpenElisServer(searchEndPoint, setResultsWithId);
   };
@@ -268,94 +200,17 @@ export function SearchResultForm(props) {
 
   useEffect(() => {
     componentMounted.current = true;
-    let testId = new URLSearchParams(window.location.search).get(
-      "selectedTest",
-    );
-    testId = testId ? testId : "";
-    getFromOpenElisServer("/rest/test-list", (fetchedTests) => {
-      let test = fetchedTests.find((test) => test.id === testId);
-      let testLabel = test ? test.value : "";
-      setDefaultTestId(testId);
-      setDefaultTestLabel(testLabel);
-      getTests(fetchedTests);
-    });
-
-    let sampleStatusId = new URLSearchParams(window.location.search).get(
-      "selectedSampleStatus",
-    );
-    sampleStatusId = sampleStatusId ? sampleStatusId : "";
-    getFromOpenElisServer(
-      "/rest/sample-status-types",
-      (fetchedSampleStatusTypes) => {
-        let sampleStatus = fetchedSampleStatusTypes.find(
-          (sampleStatus) => sampleStatus.id === sampleStatusId,
-        );
-        let sampleStatusLabel = sampleStatus ? sampleStatus.value : "";
-        setDefaultSampleStatusId(sampleStatusId);
-        setDefaultSampleStatusLabel(sampleStatusLabel);
-        getSampleStatusTypes(fetchedSampleStatusTypes);
-      },
-    );
-
-    let analysisStatusId = new URLSearchParams(window.location.search).get(
-      "selectedAnalysisStatus",
-    );
-    analysisStatusId = analysisStatusId ? analysisStatusId : "";
+    getFromOpenElisServer("/rest/test-list", getTests);
     getFromOpenElisServer(
       "/rest/analysis-status-types",
-      (fetchedAnalysisStatusTypes) => {
-        let analysisStatus = fetchedAnalysisStatusTypes.find(
-          (analysisStatus) => analysisStatus.id === analysisStatusId,
-        );
-        let analysisStatusLabel = analysisStatus ? analysisStatus.value : "";
-        setDefaultAnalysisStatusId(analysisStatusId);
-        setDefaultAnalysisStatusLabel(analysisStatusLabel);
-        getAnalysisStatusTypes(fetchedAnalysisStatusTypes);
-      },
+      getAnalysisStatusTypes,
     );
-
-    let testSectionId = new URLSearchParams(window.location.search).get(
-      "testSectionId",
+    getFromOpenElisServer("/rest/sample-status-types", getSampleStatusTypes);
+    getFromOpenElisServer("/rest/user-test-sections", fetchTestSections);
+    let displayFormType = new URLSearchParams(window.location.search).get(
+      "type",
     );
-    testSectionId = testSectionId ? testSectionId : "";
-    getFromOpenElisServer(
-      "/rest/user-test-sections/" + Roles.RESULTS,
-      (fetchedTestSections) => {
-        let testSection = fetchedTestSections.find(
-          (testSection) => testSection.id === testSectionId,
-        );
-        let testSectionLabel = testSection ? testSection.value : "";
-        setDefaultTestSectionId(testSectionId);
-        setDefaultTestSectionLabel(testSectionLabel);
-        fetchTestSections(fetchedTestSections);
-      },
-    );
-    if (testSectionId) {
-      let values = { unitType: testSectionId };
-      querySearch(values);
-    }
-
-    var displayFormType = "";
-    var doRange = "";
-    if (window.location.pathname == "/result") {
-      displayFormType = new URLSearchParams(window.location.search).get("type");
-      doRange = new URLSearchParams(window.location.search).get("doRange");
-    } else if (window.location.pathname == "/LogbookResults") {
-      displayFormType = "unit";
-      doRange = "false";
-    } else if (window.location.pathname == "/PatientResults") {
-      displayFormType = "patient";
-      doRange = "false";
-    } else if (window.location.pathname == "/AccessionResults") {
-      displayFormType = "order";
-      doRange = "false";
-    } else if (window.location.pathname == "/StatusResults") {
-      displayFormType = "date";
-      doRange = "false";
-    } else if (window.location.pathname == "/RangeResults") {
-      displayFormType = "range";
-      doRange = "true";
-    }
+    let doRange = new URLSearchParams(window.location.search).get("doRange");
     setSearchBy({
       type: displayFormType,
       doRange: doRange,
@@ -366,56 +221,10 @@ export function SearchResultForm(props) {
     let accessionNumber = new URLSearchParams(window.location.search).get(
       "accessionNumber",
     );
-    let upperAccessionNumber = new URLSearchParams(window.location.search).get(
-      "upperAccessionNumber",
-    );
     if (accessionNumber) {
       let searchValues = {
         ...searchFormValues,
         accessionNumber: accessionNumber,
-      };
-      setSearchFormValues(searchValues);
-      querySearch(searchValues);
-    }
-    if (accessionNumber || upperAccessionNumber) {
-      let searchValues = {
-        ...searchFormValues,
-        accessionNumber: accessionNumber,
-        endLabNo: upperAccessionNumber,
-      };
-      setSearchFormValues(searchValues);
-      querySearch(searchValues);
-    }
-    let collectionDate = new URLSearchParams(window.location.search).get(
-      "collectionDate",
-    );
-    let recievedDate = new URLSearchParams(window.location.search).get(
-      "recievedDate",
-    );
-    let selectedTest = new URLSearchParams(window.location.search).get(
-      "selectedTest",
-    );
-    let selectedSampleStatus = new URLSearchParams(window.location.search).get(
-      "selectedSampleStatus",
-    );
-    let selectedAnalysisStatus = new URLSearchParams(
-      window.location.search,
-    ).get("selectedAnalysisStatus");
-
-    if (
-      collectionDate ||
-      recievedDate ||
-      selectedTest ||
-      selectedSampleStatus ||
-      selectedAnalysisStatus
-    ) {
-      let searchValues = {
-        ...searchFormValues,
-        collectionDate: collectionDate ? collectionDate : "",
-        recievedDate: recievedDate ? recievedDate : "",
-        testName: selectedTest ? selectedTest : "",
-        sampleStatusType: selectedSampleStatus ? selectedSampleStatus : "",
-        analysisStatus: selectedAnalysisStatus ? selectedAnalysisStatus : "",
       };
       setSearchFormValues(searchValues);
       querySearch(searchValues);
@@ -452,14 +261,14 @@ export function SearchResultForm(props) {
           >
             <Stack gap={2}>
               <Grid>
-                <Column lg={16} md={8} sm={4}>
+                <Column lg={16}>
                   <h4>
                     <FormattedMessage id="label.button.search" />
                   </h4>
                 </Column>
                 {searchBy.type === "order" && (
                   <>
-                    <Column lg={6} md={4} sm={4}>
+                    <Column lg={6}>
                       <Field name="accessionNumber">
                         {({ field }) => (
                           <CustomLabNumberInput
@@ -483,38 +292,30 @@ export function SearchResultForm(props) {
 
                 {searchBy.type === "range" && (
                   <>
-                    <Column lg={6} sm={4}>
+                    <Column lg={6}>
                       <Field name="startLabNo">
                         {({ field }) => (
-                          <CustomLabNumberInput
-                            placeholder="Enter Accession No."
+                          <TextInput
+                            placeholder={"Enter LabNo"}
                             name={field.name}
                             id={field.name}
-                            value={values[field.name]}
                             labelText={
                               <FormattedMessage id="search.label.fromaccession" />
                             }
-                            onChange={(e, rawValue) => {
-                              setFieldValue(field.name, rawValue);
-                            }}
                           />
                         )}
                       </Field>
                     </Column>
-                    <Column lg={6} sm={4}>
+                    <Column lg={6}>
                       <Field name="endLabNo">
                         {({ field }) => (
-                          <CustomLabNumberInput
-                            placeholder="Enter Accession No."
+                          <TextInput
+                            placeholder={"Enter LabNo"}
                             name={field.name}
                             id={field.name}
-                            value={values[field.name]}
                             labelText={
                               <FormattedMessage id="search.label.toaccession" />
                             }
-                            onChange={(e, rawValue) => {
-                              setFieldValue(field.name, rawValue);
-                            }}
                           />
                         )}
                       </Field>
@@ -525,41 +326,35 @@ export function SearchResultForm(props) {
 
                 {searchBy.type === "date" && (
                   <>
-                    <Column lg={3} md={4} sm={4}>
+                    <Column lg={3}>
                       <Field name="collectionDate">
-                        {({ field, form }) => (
-                          <CustomDatePicker
-                            id={field.name}
-                            labelText={intl.formatMessage({
-                              id: "search.label.collectiondate",
-                            })}
-                            value={values[field.name]}
-                            onChange={(date) =>
-                              form.setFieldValue(field.name, date)
-                            }
+                        {({ field }) => (
+                          <TextInput
+                            placeholder={"Collection Date(dd/mm/yyyy)"}
                             name={field.name}
+                            id={field.name}
+                            labelText={
+                              <FormattedMessage id="search.label.collectiondate" />
+                            }
                           />
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3} md={4} sm={4}>
+                    <Column lg={3}>
                       <Field name="recievedDate">
-                        {({ field, form }) => (
-                          <CustomDatePicker
-                            id={field.name}
-                            labelText={intl.formatMessage({
-                              id: "search.label.recieveddate",
-                            })}
-                            value={values[field.name]}
-                            onChange={(date) =>
-                              form.setFieldValue(field.name, date)
-                            }
+                        {({ field }) => (
+                          <TextInput
+                            placeholder={"Received Date(dd/mm/yyyy)"}
                             name={field.name}
+                            id={field.name}
+                            labelText={
+                              <FormattedMessage id="search.label.recieveddate" />
+                            }
                           />
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3} md={4} sm={4}>
+                    <Column lg={3}>
                       <Field name="testName">
                         {({ field }) => (
                           <Select
@@ -569,26 +364,21 @@ export function SearchResultForm(props) {
                             name={field.name}
                             id={field.name}
                           >
-                            <SelectItem
-                              text={defaultTestLabel}
-                              value={defaultTestId}
-                            />
-                            {tests
-                              .filter((item) => item.id !== defaultTestId)
-                              .map((test, index) => {
-                                return (
-                                  <SelectItem
-                                    key={index}
-                                    text={test.value}
-                                    value={test.id}
-                                  />
-                                );
-                              })}
+                            <SelectItem text="" value="" />
+                            {tests.map((test, index) => {
+                              return (
+                                <SelectItem
+                                  key={index}
+                                  text={test.value}
+                                  value={test.id}
+                                />
+                              );
+                            })}
                           </Select>
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3} md={4} sm={4}>
+                    <Column lg={3}>
                       <Field name="analysisStatus">
                         {({ field }) => (
                           <Select
@@ -598,28 +388,21 @@ export function SearchResultForm(props) {
                             name={field.name}
                             id={field.name}
                           >
-                            <SelectItem
-                              text={defaultAnalysisStatusLabel}
-                              value={defaultAnalysisStatusId}
-                            />
-                            {analysisStatusTypes
-                              .filter(
-                                (item) => item.id !== defaultAnalysisStatusId,
-                              )
-                              .map((test, index) => {
-                                return (
-                                  <SelectItem
-                                    key={index}
-                                    text={test.value}
-                                    value={test.id}
-                                  />
-                                );
-                              })}
+                            <SelectItem text="" value="" />
+                            {analysisStatusTypes.map((test, index) => {
+                              return (
+                                <SelectItem
+                                  key={index}
+                                  text={test.value}
+                                  value={test.id}
+                                />
+                              );
+                            })}
                           </Select>
                         )}
                       </Field>
                     </Column>
-                    <Column lg={3} md={4} sm={4}>
+                    <Column lg={3}>
                       <Field name="sampleStatusType">
                         {({ field }) => (
                           <Select
@@ -629,23 +412,16 @@ export function SearchResultForm(props) {
                             name={field.name}
                             id={field.name}
                           >
-                            <SelectItem
-                              text={defaultSampleStatusLabel}
-                              value={defaultSampleStatusId}
-                            />
-                            {sampleStatusTypes
-                              .filter(
-                                (item) => item.id !== defaultSampleStatusId,
-                              )
-                              .map((test, index) => {
-                                return (
-                                  <SelectItem
-                                    key={index}
-                                    text={test.value}
-                                    value={test.id}
-                                  />
-                                );
-                              })}
+                            <SelectItem text="" value="" />
+                            {sampleStatusTypes.map((test, index) => {
+                              return (
+                                <SelectItem
+                                  key={index}
+                                  text={test.value}
+                                  value={test.id}
+                                />
+                              );
+                            })}
                           </Select>
                         )}
                       </Field>
@@ -655,7 +431,7 @@ export function SearchResultForm(props) {
                 )}
 
                 {searchBy.type !== "patient" && searchBy.type !== "unit" && (
-                  <Column lg={16} md={8} sm={4}>
+                  <Column lg={16}>
                     <Button
                       style={{ marginTop: "16px" }}
                       type="submit"
@@ -671,40 +447,27 @@ export function SearchResultForm(props) {
         )}
       </Formik>
       {searchBy.type === "patient" && (
-        <Grid>
-          <Column lg={16} md={8} sm={4}>
-            <SearchPatientForm
-              getSelectedPatient={getSelectedPatient}
-            ></SearchPatientForm>
-          </Column>
-        </Grid>
+        <SearchPatientForm
+          getSelectedPatient={getSelectedPatient}
+        ></SearchPatientForm>
       )}
 
       {searchBy.type === "unit" && (
         <>
           <Grid>
-            <Column lg={6} md={4} sm={4}>
+            <Column lg={6}>
               <Select
-                labelText={intl.formatMessage({ id: "search.label.testunit" })}
+                labelText={<FormattedMessage id="search.label.testunit" />}
                 name="unitType"
                 id="unitType"
                 onChange={submitOnSelect}
               >
-                <SelectItem
-                  text={defaultTestSectionLabel}
-                  value={defaultTestSectionId}
-                />
-                {testSections
-                  .filter((item) => item.id !== defaultTestSectionId)
-                  .map((test, index) => {
-                    return (
-                      <SelectItem
-                        key={index}
-                        text={test.value}
-                        value={test.id}
-                      />
-                    );
-                  })}
+                <SelectItem text="" value="" />
+                {testSections.map((test, index) => {
+                  return (
+                    <SelectItem key={index} text={test.value} value={test.id} />
+                  );
+                })}
               </Select>
             </Column>
             <Column lg={10} />
@@ -712,47 +475,29 @@ export function SearchResultForm(props) {
         </>
       )}
 
-      {searchBy.type === "ReferredOutTests" && <ReferredOutTests />}
-
       <>
         {pagination && (
           <Grid>
-            <Column lg={16}>
-              {" "}
-              <br /> <br />
+            <Column lg={12} />
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadpreviousresults"
+                onClick={loadPreviousResultsPage}
+                disabled={previousPage != null ? false : true}
+              >
+                <FormattedMessage id="button.label.loadprevious" />
+              </Button>
             </Column>
-            <Column lg={14} />
-            <Column
-              lg={2}
-              style={{
-                display: "flex",
-                flexDirection: "column",
-                alignItems: "center",
-                gap: "10px",
-                width: "110%",
-              }}
-            >
-              <Link>
-                {currentApiPage} / {totalApiPages}
-              </Link>
-              <div style={{ display: "flex", gap: "10px" }}>
-                <Button
-                  hasIconOnly
-                  id="loadpreviousresults"
-                  onClick={loadPreviousResultsPage}
-                  disabled={previousPage != null ? false : true}
-                  renderIcon={ArrowLeft}
-                  iconDescription="previous"
-                ></Button>
-                <Button
-                  hasIconOnly
-                  id="loadnextresults"
-                  onClick={loadNextResultsPage}
-                  disabled={nextPage != null ? false : true}
-                  renderIcon={ArrowRight}
-                  iconDescription="next"
-                ></Button>
-              </div>
+            <Column lg={2}>
+              <Button
+                type=""
+                id="loadnextresults"
+                disabled={nextPage != null ? false : true}
+                onClick={loadNextResultsPage}
+              >
+                <FormattedMessage id="button.label.loadnext" />
+              </Button>
             </Column>
           </Grid>
         )}
@@ -762,25 +507,23 @@ export function SearchResultForm(props) {
 }
 
 export function SearchResults(props) {
-  const { notificationVisible, addNotification, setNotificationVisible } =
+  const { notificationVisible, setNotificationBody, setNotificationVisible } =
     useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
 
   const intl = useIntl();
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(100);
+  const [pageSize, setPageSize] = useState(20);
   const [acceptAsIs, setAcceptAsIs] = useState([]);
   const [referalOrganizations, setReferalOrganizations] = useState([]);
   const [methods, setMethods] = useState([]);
   const [referralReasons, setReferralReasons] = useState([]);
   const [rejectReasons, setRejectReasons] = useState([]);
   const [rejectedItems, setRejectedItems] = useState({});
-  const [validationState, setValidationState] = useState({});
   const saveStatus = "";
-  const [referTest, setReferTest] = useState({});
 
-  const componentMounted = useRef(false);
+  const componentMounted = useRef(true);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -841,7 +584,7 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "8rem",
+      width: "12rem",
     };
 
     if (configurationProperties.allowResultRejection == "true") {
@@ -886,11 +629,8 @@ export function SearchResults(props) {
       id: "testName",
       name: intl.formatMessage({ id: "column.name.testName" }),
       selector: (row) => row.testName,
-      cell: (row, index, column, id) => {
-        return renderCell(row, index, column, id);
-      },
       sortable: true,
-      width: "15rem",
+      width: "8rem",
     },
     {
       id: "normalRange",
@@ -913,7 +653,7 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "12rem",
+      width: "10rem",
     },
     {
       id: "currentResult",
@@ -921,7 +661,7 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "10rem",
+      width: "8rem",
     },
     {
       id: "notes",
@@ -929,18 +669,14 @@ export function SearchResults(props) {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "25rem",
+      width: "7rem",
     },
   ];
 
   const renderCell = (row, index, column, id) => {
     let formatLabNum = configurationProperties.AccessionFormat === "ALPHANUM";
-    const fullTestName = row.testName;
-    const splitIndex = fullTestName.lastIndexOf("(");
-    const testName = fullTestName.substring(0, splitIndex);
-    const sampleType = fullTestName.substring(splitIndex);
 
-    console.debug("renderCell: index: " + index + ", id: " + id);
+    console.log("renderCell: index: " + index + ", id: " + id);
     switch (column.id) {
       case "sampleInfo":
         // return <input id={"results_" + id} type="text" size="6"></input>
@@ -994,15 +730,6 @@ export function SearchResults(props) {
             )}
           </>
         );
-      case "testName":
-        return (
-          <div className="sampleInfo">
-            <br></br>
-            {testName}
-            <br></br>
-            {sampleType}
-          </div>
-        );
 
       case "accept":
         return (
@@ -1023,38 +750,43 @@ export function SearchResults(props) {
 
       case "reject":
         return (
-          <div>
-            <Field name="reject">
-              {() => (
-                <Checkbox
-                  id={"testResult" + row.id + ".rejected"}
-                  name={"testResult[" + row.id + "].rejected"}
-                  labelText=""
-                  onChange={(e) => handleRejectCheckBoxChange(e, row.id)}
-                />
+          <>
+            <Grid>
+              <Column lg={16}>
+                <Field name="reject">
+                  {() => (
+                    <Checkbox
+                      id={"testResult" + row.id + ".rejected"}
+                      name={"testResult[" + row.id + "].rejected"}
+                      labelText=""
+                      onChange={(e) => handleRejectCheckBoxChange(e, row.id)}
+                    />
+                  )}
+                </Field>
+              </Column>
+              {rejectedItems[row.id] == true && (
+                <Column lg={16}>
+                  <Select
+                    id={"rejectReasonId" + row.id}
+                    name={"testResult[" + row.id + "].rejectReasonId"}
+                    //noLabel={true}
+                    labelText={"Reason"}
+                    onChange={(e) => handleChange(e, row.id)}
+                  >
+                    {/* {...updateShadowResult(e, this, param.rowId)} */}
+                    <SelectItem text="" value="" />
+                    {rejectReasons.map((reason, reason_index) => (
+                      <SelectItem
+                        text={reason.value}
+                        value={reason.id}
+                        key={reason_index}
+                      />
+                    ))}
+                  </Select>
+                </Column>
               )}
-            </Field>
-            <br></br>
-            {rejectedItems[row.id] == true && (
-              <Select
-                id={"rejectReasonId" + row.id}
-                name={"testResult[" + row.id + "].rejectReasonId"}
-                //noLabel={true}
-                labelText={"Reason"}
-                onChange={(e) => handleChange(e, row.id)}
-              >
-                {/* {...updateShadowResult(e, this, param.rowId)} */}
-                <SelectItem text="" value="" />
-                {rejectReasons.map((reason, reason_index) => (
-                  <SelectItem
-                    text={reason.value}
-                    value={reason.id}
-                    key={reason_index}
-                  />
-                ))}
-              </Select>
-            )}
-          </div>
+            </Grid>
+          </>
         );
 
       case "notes":
@@ -1071,10 +803,6 @@ export function SearchResults(props) {
                 rows={1}
                 onChange={(e) => handleChange(e, row.id)}
               ></TextArea>
-              <div
-                className="note"
-                dangerouslySetInnerHTML={{ __html: row.pastNotes }}
-              />
             </div>
           </>
         );
@@ -1091,7 +819,6 @@ export function SearchResults(props) {
                 name={"testResult[" + row.id + "].resultValue"}
                 noLabel={true}
                 onChange={(e) => validateResults(e, row.id)}
-                value={row.resultValue}
               >
                 {/* {...updateShadowResult(e, this, param.rowId)} */}
                 <SelectItem text="" value="" />
@@ -1114,48 +841,7 @@ export function SearchResults(props) {
                 name={"testResult[" + row.id + "].resultValue"}
                 labelText=""
                 type="number"
-                value={row.resultValue}
-                style={validationState[row.id]?.style}
-                onMouseOut={(e) => {
-                  let value = e.target.value;
-                  if (value == null || value == "") {
-                    return;
-                  }
-                  let newValidationState = { ...validationState };
-                  let validation = (newValidationState[row.id] =
-                    validateNumericResults(value, row));
-                  //e.target.value = validation.newValue;
-                  row.resultValue = validation.newValue;
-                  validation.style = {
-                    ...validation?.style,
-                    borderColor: validation.isCritical
-                      ? "orange"
-                      : validation.isInvalid
-                        ? "red"
-                        : "",
-                    background: validation.outsideValid
-                      ? "#ffa0a0"
-                      : validation.outsideNormal
-                        ? "#ffffa0"
-                        : "var(--cds-field)",
-                  };
-
-                  setValidationState(newValidationState);
-
-                  if (
-                    validation.isInvalid &&
-                    configurationProperties.ALERT_FOR_INVALID_RESULTS
-                  ) {
-                    alert(
-                      intl.formatMessage({
-                        id: "result.outOfValidRange.msg",
-                      }),
-                    );
-                  }
-                }}
-                onChange={(e) => {
-                  handleChange(e, row.id);
-                }}
+                onChange={(e) => handleChange(e, row.id)}
               />
             );
 
@@ -1164,10 +850,9 @@ export function SearchResults(props) {
               <TextArea
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
-                rows={1}
+                style={{ width: "10px", height: "20px" }}
                 labelText=""
                 onChange={(e) => handleChange(e, row.id)}
-                value={row.resultValue}
               />
             );
 
@@ -1176,10 +861,9 @@ export function SearchResults(props) {
               <TextArea
                 id={"ResultValue" + row.id}
                 name={"testResult[" + row.id + "].resultValue"}
-                rows={1}
+                style={{ width: "10px", height: "20px" }}
                 labelText=""
                 onChange={(e) => handleChange(e, row.id)}
-                value={row.resultValue}
               />
             );
 
@@ -1196,14 +880,14 @@ export function SearchResults(props) {
               <>
                 {
                   row.dictionaryResults.find(
-                    (result) => result.id == row.shadowResultValue,
+                    (result) => result.id == row.resultValue,
                   )?.value
                 }
               </>
             );
 
           default:
-            return row.shadowResultValue;
+            return row.resultValue;
         }
       default:
         return;
@@ -1213,13 +897,24 @@ export function SearchResults(props) {
   const renderReferral = ({ data }) => (
     <>
       <Grid>
+        <Column lg={3}>
+          <TextArea
+            id={"testResult" + data.id + ".pastNotes"}
+            name={"testResult[" + data.id + "].pastNotes"}
+            value={data.pastNotes}
+            disabled={true}
+            type="text"
+            labelText={<FormattedMessage id="referral.testresult.pastnote" />}
+            rows={2}
+          ></TextArea>
+        </Column>
         <Column lg={2}>
           <Select
             id={"testMethod" + data.id}
             name={"testResult[" + data.id + "].testMethod"}
-            labelText={intl.formatMessage({ id: "referral.label.testmethod" })}
+            labelText={<FormattedMessage id="referral.label.testmethod" />}
             onChange={(e) => handleChange(e, data.id)}
-            value={data.testMethod}
+            value={data.method}
           >
             <SelectItem text="" value="" />
             {methods.map((method, method_index) => (
@@ -1231,29 +926,13 @@ export function SearchResults(props) {
             ))}
           </Select>
         </Column>
-        <Column lg={1}></Column>
-        <Column lg={2}>
-          <Checkbox
-            labelText={intl.formatMessage({ id: "results.label.refer" })}
-            name={"testResult[" + data.id + "].refer"}
-            id={"testResult[" + data.id + "].refer"}
-            checked={data.refer === "true"}
-            disabled={data.referredOut}
-            onChange={(e) => {
-              e.target.value = e.target.checked;
-              handleChange(e, data.id);
-            }}
-          />
-        </Column>
         <Column lg={3}>
           <Select
             id={"referralReason" + data.id}
-            name={"testResult[" + data.id + "].referralItem.referralReasonId"}
+            name={"testResult[" + data.id + "].referralReason"}
             // noLabel={true}
-            labelText={intl.formatMessage({ id: "referral.label.reason" })}
+            labelText={<FormattedMessage id="referral.label.reason" />}
             onChange={(e) => handleChange(e, data.id)}
-            value={data?.referralItem?.referralReasonId}
-            disabled={!referTest[data.id]}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
             <SelectItem text="" value="" />
@@ -1269,14 +948,10 @@ export function SearchResults(props) {
         <Column lg={3}>
           <Select
             id={"institute" + data.id}
-            name={
-              "testResult[" + data.id + "].referralItem.referredInstituteId"
-            }
+            name={"testResult[" + data.id + "].institute"}
             // noLabel={true}
-            labelText={intl.formatMessage({ id: "referral.label.institute" })}
+            labelText={<FormattedMessage id="referral.label.institute" />}
             onChange={(e) => handleChange(e, data.id)}
-            value={data?.referralItem?.referredInstituteId}
-            disabled={!referTest[data.id]}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
 
@@ -1289,14 +964,10 @@ export function SearchResults(props) {
         <Column lg={3}>
           <Select
             id={"testToPerform" + data.id}
-            name={"testResult[" + data.id + "].referralItem.referredTestId"}
+            name={"testResult[" + data.id + "].testToPerform"}
             // noLabel={true}
-            labelText={intl.formatMessage({
-              id: "referral.label.testtoperform",
-            })}
+            labelText={<FormattedMessage id="referral.label.testtoperform" />}
             onChange={(e) => handleChange(e, data.id)}
-            value={data?.referralItem?.referredTestId}
-            disabled={!referTest[data.id]}
           >
             {/* {...updateShadowResult(e, this, param.rowId)} */}
 
@@ -1304,181 +975,39 @@ export function SearchResults(props) {
           </Select>
         </Column>
         <Column lg={2}>
-          <CustomDatePicker
+          <DatePicker
+            datePickerType="single"
             id={"sentDate_" + data.id}
-            labelText={intl.formatMessage({
-              id: "referral.label.sentdate",
-            })}
+            name={"testResult[" + data.id + "].sentDate_"}
             onChange={(date) => handleDatePickerChange(date, data.id)}
-            name={"testResult[" + data.id + "].referralItem.referredSendDate"}
-            value={data?.referralItem?.referredSendDate}
-            disabled={!referTest[data.id]}
-            disallowFutureDate={true}
-          />
+          >
+            <DatePickerInput
+              placeholder="mm/dd/yyyy"
+              labelText={<FormattedMessage id="referral.label.sentdate" />}
+              id="date-picker-single"
+            />
+          </DatePicker>
         </Column>
       </Grid>
     </>
   );
+
   const validateResults = (e, rowId) => {
-    console.debug("validateResults:" + e.target.value);
+    console.log("validateResults:" + e.target.value);
     // e.target.value;
     handleChange(e, rowId);
   };
 
-  const validateNumericResults = (value, row) => {
-    //ignore < or > from the analyser on validation
-    var greaterThanOrLessThan = "";
-    if (("" + value).startsWith("<") || ("" + value).startsWith(">")) {
-      greaterThanOrLessThan = value.charAt(0);
-    }
-    var actualValue = ("" + value).replace(/[<>]/g, "");
-    let validation = {
-      isInvalid: false,
-      outsideNormal: false,
-      isCritical: false,
-      isBlank: false,
-      isNaN: false,
-      outsideValid: false,
-      newValue: value,
-    };
-    //commented out for now
-    let isSpecialCase = "XXXX" == actualValue.toUpperCase();
-    validation = { ...validation, ...validateNumberFormat(value, row) };
-
-    // resultBox.style.borderColor = validFormat ? "" : "red";
-
-    // if( isSpecialCase ){
-    //   resultBox.title = "";
-    //   value = greaterThanOrLessThan + actualValue.toUpperCase();
-    //   resultBox.style.borderColor = "";
-    //   resultBox.style.background = "#ffffff";
-    //   $("valid_" + row).value = true;
-    //   return;
-    // }
-    if (validation.isNaN) {
-      return { ...validation };
-    } else if (
-      row.lowCritical != row.highCritical &&
-      actualValue > row.lowCritical &&
-      actualValue < row.highCritical
-    ) {
-      return { ...validation, isCritical: true };
-    } else if (
-      row.lowerAbnormalRange != row.upperAbnormalRange &&
-      (actualValue < row.lowerAbnormalRange ||
-        actualValue > row.upperAbnormalRange)
-    ) {
-      return { ...validation, isInvalid: true, outsideValid: true };
-      // resultBox.style.background = "#ffa0a0";
-      // resultBox.title = "En dehors de la plage valide"; //FIXME: Uses hardcoded French labels. Switch to refer to resource file.
-      // $("valid_" + row).value = false;
-      // if( outOfValidRangeMsg ){
-      //   alert( outOfValidRangeMsg);
-      // }
-    } else if (
-      row.lowerNormalRange != row.upperNormalRange &&
-      (actualValue < row.lowerNormalRange || actualValue > row.upperNormalRange)
-    ) {
-      return { ...validation, outsideNormal: true };
-      // resultBox.style.background = "#ffffa0";
-      // resultBox.title = "En dehors de la plage normale"; //FIXME: Uses hardcoded French labels. Switch to refer to resource file.
-      // $("valid_" + row).value = true;
-    } else {
-      return { ...validation, outsideNormal: false };
-      // resultBox.style.background = "#ffffff";
-      // resultBox.title = "";
-      // $("valid_" + row).value = true;
-    }
-  };
-
-  const validateNumberFormat = (value, row) => {
-    //ignore < or > from the analyser on validation
-    var greaterThanOrLessThan = "";
-    if (("" + value).startsWith("<") || ("" + value).startsWith(">")) {
-      greaterThanOrLessThan = value.charAt(0);
-    }
-    var actualValue = ("" + value).replace(/[<>]/g, "");
-
-    let validation = { isInvalid: false };
-    if (!actualValue) {
-      return { ...validation, isInvalid: true, isBlank: true };
-      // resultBox.title = "";
-      // resultBox.style.background = "#ffffff";
-      // $("valid_" + row).value = false;
-      // return true;
-    }
-
-    if (actualValue.trim() == ".") {
-      validation = {
-        ...validation,
-        newValue: greaterThanOrLessThan + "0.0",
-      };
-    }
-
-    if (isNaN(actualValue)) {
-      return { ...validation, isInvalid: true, isNaN: true };
-      // $("valid_" + row).value = false;
-      // return false;
-    }
-
-    if (!isNaN(row.significantDigits)) {
-      const valueStr = actualValue.toString();
-      if (valueStr.includes(".")) {
-        const decimalPlaces = valueStr.split(".")[1].length;
-        if (decimalPlaces > row.significantDigits) {
-          actualValue = parseFloat(actualValue).toFixed(row.significantDigits);
-        }
-      }
-      validation = {
-        ...validation,
-        newValue: greaterThanOrLessThan + actualValue,
-      };
-    }
-
-    return validation;
-  };
-
   const handleChange = (e, rowId) => {
     const { name, id, value } = e.target;
-    console.debug(
-      "handleChange:" + id + ":" + name + ":" + value + ":" + rowId,
-    );
+    console.log("handleChange:" + id + ":" + name + ":" + value + ":" + rowId);
     // setState({value: e.target.value})
-    console.debug("State updated to ", e.target.value);
-    var form = { ...props.results };
+    // console.log('State updated to ', e.target.value);
+    var form = props.results;
     var jp = require("jsonpath");
     jp.value(form, name, value);
-    var refer = jp.query(form, "testResult[" + rowId + "].refer")[0];
-    var testId = jp.query(form, "testResult[" + rowId + "].testId")[0];
-    var referList = { ...referTest };
-    referList[rowId] = refer === "true" ? true : false;
-    setReferTest(referList);
-    if (refer == "true") {
-      jp.value(
-        form,
-        "testResult[" + rowId + "].referralItem.referredTestId",
-        testId,
-      );
-      jp.value(
-        form,
-        "testResult[" + rowId + "].referralItem.referredSendDate",
-        configurationProperties.currentDateAsText,
-      );
-    } else {
-      jp.value(
-        form,
-        "testResult[" + rowId + "].referralItem.referredTestId",
-        "",
-      );
-      jp.value(
-        form,
-        "testResult[" + rowId + "].referralItem.referredSendDate",
-        "",
-      );
-    }
     var isModified = "testResult[" + rowId + "].isModified";
     jp.value(form, isModified, "true");
-    props.setResultForm(form);
   };
 
   const handleRejectCheckBoxChange = (e, rowId) => {
@@ -1495,9 +1024,12 @@ export function SearchResults(props) {
     allrejectedItems[rowId] = checked;
     setRejectedItems(allrejectedItems);
 
-    addNotification({
-      title: intl.formatMessage({ id: "notification.title" }),
-      message: intl.formatMessage({ id: "result.reject.warning" }),
+    var message =
+      "Rejecting the result will permanently delete test results \n" +
+      "The results will no longer be available.";
+    setNotificationBody({
+      title: <FormattedMessage id="notification.title" />,
+      message: message,
       kind: NotificationKinds.warning,
     });
     if (checked) {
@@ -1506,31 +1038,34 @@ export function SearchResults(props) {
   };
 
   const handleDatePickerChange = (date, rowId) => {
-    var form = { ...props.results };
-    if (form.testResult[rowId].referralItem) {
-      if (form.testResult[rowId].referralItem.referredSendDate != date) {
-        console.debug("handleDatePickerChange:" + date);
-        var jp = require("jsonpath");
-        jp.value(
-          form,
-          "testResult[" + rowId + "].referralItem.referredSendDate",
-          date,
-        );
-        var isModified = "testResult[" + rowId + "].isModified";
-        jp.value(form, isModified, "true");
-        props.setResultForm(form);
-      }
-    }
+    console.log("handleDatePickerChange:" + date);
+    const d = new Date(date).toLocaleDateString("fr-FR");
+    var form = props.results;
+    var jp = require("jsonpath");
+    jp.value(form, "testResult[" + rowId + "].sentDate_", d);
+    var isModified = "testResult[" + rowId + "].isModified";
+    jp.value(form, isModified, "true");
   };
 
   const handleAcceptAsIsChange = (e, rowId) => {
-    console.debug("handleAcceptAsIsChange:" + acceptAsIs[rowId]);
+    console.log("handleAcceptAsIsChange:" + acceptAsIs[rowId]);
     handleChange(e, rowId);
     if (acceptAsIs[rowId] == undefined) {
-      alert(intl.formatMessage({ id: "result.acceptasis.warning" }));
-      addNotification({
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "result.acceptasis.warning" }),
+      var message =
+        `Checking this box will indicate that you accept the results unconditionally.\n` +
+        `Expected uses:\n` +
+        `1. The test has been redone and the result is the same.\n` +
+        `2. There is no result for the test but you do not want to cancel it.\n` +
+        `3. The result was changed and the technician wants to give the biologist the option to add a note during the validation step explaining the reason of the change.\n` +
+        `In  either case, leave a note explaining why you are taking this action.\n`;
+
+      // message=`Incorrect Username/Password Used \n Please try again…`
+
+      alert(message);
+
+      setNotificationBody({
+        title: <FormattedMessage id="notification.title" />,
+        message: message,
         kind: NotificationKinds.warning,
       });
       setNotificationVisible(true);
@@ -1541,7 +1076,7 @@ export function SearchResults(props) {
   };
 
   const handleSave = (values) => {
-    console.debug("handleSave:" + values);
+    //console.log("handleSave:" + values);
     values.status = saveStatus;
     var searchEndPoint = "/rest/ReactLogbookResultsUpdate";
     props.results.testResult.forEach((result) => {
@@ -1556,25 +1091,17 @@ export function SearchResults(props) {
   };
 
   const setResponse = (resp) => {
-    console.debug("setStatus" + JSON.stringify(resp));
+    console.log("setStatus" + JSON.stringify(resp));
     if (resp) {
-      addNotification({
-        title: intl.formatMessage({ id: "notification.title" }),
+      setNotificationBody({
+        title: <FormattedMessage id="notification.title" />,
         message: createMesssage(resp),
         kind: NotificationKinds.success,
       });
-      if (props.refreshOnSubmit) {
-        window.location.href =
-          "/result?type=" +
-          props.searchBy.type +
-          "&doRange=" +
-          props.searchBy.doRange +
-          props.extraParams;
-      }
     } else {
-      addNotification({
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "error.save.msg" }),
+      setNotificationBody({
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="error.save.msg" />,
         kind: NotificationKinds.error,
       });
     }
@@ -1583,13 +1110,13 @@ export function SearchResults(props) {
 
   const createMesssage = (resp) => {
     var message = "";
-    if (resp.reflex?.length > 0) {
+    if (resp.reflex.length > 0) {
       message +=
         intl.formatMessage({ id: "reflexTests" }) +
         ": " +
         resp.reflex.join(", ");
     }
-    if (resp.calculated?.length > 0) {
+    if (resp.calculated.length > 0) {
       message +=
         intl.formatMessage({ id: "calculatedTests" }) +
         ": " +
@@ -1618,7 +1145,7 @@ export function SearchResults(props) {
         {props.results?.testResult?.length > 0 && (
           <Grid style={{ marginTop: "20px" }} className="gridBoundary">
             <Column lg={3} />
-            <Column lg={7} sm={4}>
+            <Column lg={7}>
               <picture>
                 <img
                   src={config.serverBaseUrl + "/images/nonconforming.gif"}
@@ -1666,48 +1193,11 @@ export function SearchResults(props) {
                 onChange={handlePageChange}
                 page={page}
                 pageSize={pageSize}
-                pageSizes={[10, 20, 30, 50, 100]}
+                pageSizes={[10, 20, 50, 100]}
                 totalItems={props.results?.testResult?.length}
-                forwardText={intl.formatMessage({ id: "pagination.forward" })}
-                backwardText={intl.formatMessage({ id: "pagination.backward" })}
-                itemRangeText={(min, max, total) =>
-                  intl.formatMessage(
-                    { id: "pagination.item-range" },
-                    { min: min, max: max, total: total },
-                  )
-                }
-                itemsPerPageText={intl.formatMessage({
-                  id: "pagination.items-per-page",
-                })}
-                itemText={(min, max) =>
-                  intl.formatMessage(
-                    { id: "pagination.item" },
-                    { min: min, max: max },
-                  )
-                }
-                pageNumberText={intl.formatMessage({
-                  id: "pagination.page-number",
-                })}
-                pageRangeText={(_current, total) =>
-                  intl.formatMessage(
-                    { id: "pagination.page-range" },
-                    { total: total },
-                  )
-                }
-                pageText={(page, pagesUnknown) =>
-                  intl.formatMessage(
-                    { id: "pagination.page" },
-                    { page: pagesUnknown ? "" : page },
-                  )
-                }
-              />
+              ></Pagination>
 
-              <Button
-                type="button"
-                id="submit"
-                onClick={handleSave}
-                style={{ marginTop: "16px" }}
-              >
+              <Button type="button" id="submit" onClick={handleSave}>
                 <FormattedMessage id="label.button.save" />
               </Button>
             </Form>

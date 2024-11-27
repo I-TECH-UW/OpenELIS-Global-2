@@ -1,0 +1,208 @@
+//@import "../root.scss";
+
+// remote 7-1 for developement purposes
+//@import url("http://localhost:8080/spa/kapsiki-esm-styleguide/dist/mandara.css");
+
+////Start modified styles
+.cds--form-item {
+width: 100%;
+}
+.input-group {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.cds--text-input {
+  height: 3rem;
+  border-radius: 5px;
+  width: 100%;
+  background-color: #f4f4f4!important;
+}
+
+.cds--text-input__field-outer-wrapper {
+  width: 18rem;
+  border-radius: 5px;
+}
+
+@media only screen and (max-width: 480px) {
+  .login-card {
+    margin-top: 2.5%;
+    border: none;
+    padding: 2.5rem 1rem;
+  }
+
+  .form-container {
+    min-height: 100vh;
+  }
+}
+
+.ProductOfLogo-container {
+  filter: grayscale(1);
+}
+
+.continueButton {
+  background-color: #517EC3;
+  color: white;
+  font-size: 1.2em;
+  font-family: var(--title-font-family);
+  font-weight: bold;
+  border-radius: 5px;
+  text-align: center;
+  border: none;
+  padding: 14px 15px;
+  display: flex;
+  justify-content: center;
+}
+
+.continueButton:hover {
+  background-color: #A0A0A1;
+}
+
+.login-card {
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+  background-color: #fff!important;
+  border-radius: 5px;
+  width: 23rem;
+  padding: 2.5rem!important;
+  position: relative;
+  min-height: 21.5rem;
+  border-radius: 5px;
+  color: #A0A0A1;
+  box-shadow: 0 4px 8px 0 rgba(0, 0, 0, 0.2), 0 6px 20px 0 rgba(0, 0, 0, 0.19);
+  border: 1px solid #e0e0e0;
+}
+
+.login-card > h1 {
+  text-align: center;
+  font-weight: bold;
+  color: #a0a0a1;
+  font-size: 1.5em;
+  margin-bottom: 2.5rem;
+}
+
+.forgot-password-container {
+  display: flex;
+  justify-content: right;
+  flex-direction: column;
+  align-items: end;
+  width: 18rem;
+  margin-top: 0.5rem;
+}
+
+.forgot-password-link {
+  color: #0CAE50;
+}
+
+.forgot-password-link:hover {
+  color: #A0A0A1; 
+}
+////End modified styles
+
+.form-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  background: transparent;
+}
+
+.logo {
+  margin-bottom: 1rem;
+  height: 5rem;
+  width: 16rem;
+}
+
+.logo32x32-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.logo32x32 {
+  margin-bottom: 2.5rem;
+}
+
+.logo-img {
+  margin-bottom: 3rem;
+  max-width: 100%;
+}
+
+.powered-by-txt {
+  text-align: center;
+  color: gray;
+  color: gray;
+}
+
+.need-help {
+  display: flex;
+  width: 23rem;
+}
+
+.need-help-txt {
+  text-align: left;
+  color: gray;
+  display: flex;
+  flex-direction: row;
+  align-items: center;
+  margin: 1rem 0;
+}
+
+.link {
+  text-decoration-line: none;
+  margin-left: 0.5rem;
+}
+
+.powered-by-logo {
+  height: 2.5rem;
+  width: 6.5rem;
+}
+
+@media only screen and (min-width: 481px) {
+  .form-container {
+    min-height: 100vh;
+  }
+}
+
+.continueButton {
+  margin-top: 1.5rem;
+  width: 18rem;
+}
+
+.back-button-div {
+  width: 23rem;
+  position: absolute;
+  bottom: 100%;
+  left: 0;
+}
+
+.back-button {
+  height: 3rem;
+  padding-left: 0rem;
+
+  svg {
+    margin-right: 0.5rem;
+    order: 1;
+  }
+
+  span {
+    order: 2;
+  }
+}
+
+.footer {
+  margin-top: 6.75rem;
+}
+
+.loader {
+  min-height: fit-content;
+}
+
+.errorMessage {
+  margin-bottom: 3rem;
+  width: 23rem;
+}

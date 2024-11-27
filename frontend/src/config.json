@@ -1,5 +1,5 @@
 {
-  "title": "Cote d'Ivoire Regional Laboratory LIS",
+  "title": "Kapsiki Lab System",
   "loginRedirect": "/login",
   "serverBaseUrl": "/api/OpenELIS-Global"
 }

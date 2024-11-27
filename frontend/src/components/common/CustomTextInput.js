@@ -3,7 +3,7 @@ import { TextInput } from "@carbon/react";
 
 const CustomTextInput = (props) => {
   const { id, defaultValue, onChange, labelText } = props;
-  const [inputText, setInputText] = useState(props.value ? props.value : "");
+  const [inputText, setInputText] = useState("");
 
   const handleInputChange = (e) => {
     if (onChange != null) {

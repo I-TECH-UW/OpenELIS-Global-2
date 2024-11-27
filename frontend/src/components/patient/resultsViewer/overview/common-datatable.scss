@@ -1,6 +1,6 @@
-@use "@carbon/styles/scss/spacing";
-@use "@carbon/styles/scss/type";
-@import "../commons/scss/vars.scss";
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
+@import '../commons/scss/vars.scss';
 
 .tableContainer :global(.cds--data-table-header) {
   padding: 0.75rem 1rem 0.25rem 1rem;
@@ -24,26 +24,19 @@
 }
 
 tr {
-  &.critically-low,
-  &.critically-high,
-  &.low,
-  &.high {
+  &.critically-low, &.critically-high, &.low, &.high {
     td:nth-child(2) {
       @include type.type-style("heading-compact-01");
       color: $ui-05;
     }
   }
 
-  &.critically-low,
-  &.critically-high,
-  &.off-scale-high,
-  &.off-scale-low {
+  &.critically-low, &.critically-high, &.off-scale-high, &.off-scale-low {
     outline: 2px solid $danger;
     outline-offset: -1px;
   }
 
-  &.low,
-  &.high {
+  &.low, &.high {
     outline: 1px solid black;
     outline-offset: -1px;
   }
@@ -53,7 +46,7 @@ tr {
       content: " ↓↓";
     }
   }
-
+  
   &.critically-high {
     td:nth-child(2)::after {
       content: " ↑↑";
@@ -91,8 +84,8 @@ tr {
 .criticallyLow,
 .high,
 .low {
-  @include type.type-style("heading-compact-01");
-}
+    @include type.type-style('heading-compact-01');
+  }
 
 .high,
 .low {
@@ -101,9 +94,7 @@ tr {
 
 .criticallyHigh,
 .criticallyLow {
-  box-shadow:
-    0 0 0 1px $danger,
-    inset 0 0 0 1px $danger;
+  box-shadow: 0 0 0 1px $danger, inset 0 0 0 1px $danger;
 }
 
 .offScaleLow::after {

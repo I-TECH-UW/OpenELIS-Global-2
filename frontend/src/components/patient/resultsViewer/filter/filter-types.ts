@@ -1,4 +1,4 @@
-import { OBSERVATION_INTERPRETATION } from "../commons";
+import { OBSERVATION_INTERPRETATION } from '../commons';
 interface Observation {
   display: string;
   flatName: string;
@@ -43,7 +43,7 @@ export interface TreeTests {
   [key: string]: TreeNode;
 }
 
-export type LowestNode = Pick<TreeNode, "display" | "flatName">;
+export type LowestNode = Pick<TreeNode, 'display' | 'flatName'>;
 
 export interface ReducerState {
   checkboxes: TreeCheckboxes;
@@ -54,11 +54,11 @@ export interface ReducerState {
 }
 
 export enum ReducerActionType {
-  INITIALIZE = "initialize",
-  TOGGLEVAL = "toggleVal",
-  UDPATEPARENT = "updateParent",
-  UPDATEBASEPATH = "updateBasePath",
-  RESET_TREE = "resetTree",
+  INITIALIZE = 'initialize',
+  TOGGLEVAL = 'toggleVal',
+  UDPATEPARENT = 'updateParent',
+  UPDATEBASEPATH = 'updateBasePath',
+  RESET_TREE = 'resetTree',
 }
 
 export interface ReducerAction {

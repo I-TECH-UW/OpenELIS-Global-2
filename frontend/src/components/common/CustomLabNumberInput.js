@@ -1,9 +1,11 @@
-import React, { useState, useContext, useEffect } from "react";
+import React, { useState, useContext, useRef, useEffect } from "react";
 import { TextInput } from "@carbon/react";
 import { convertAlphaNumLabNumForDisplay } from "../utils/Utils";
 import { ConfigurationContext } from "../layout/Layout";
 
 const CustomLabNumberInput = (props) => {
+  const componentMounted = useRef(true);
+
   const { configurationProperties } = useContext(ConfigurationContext);
 
   const [formattedInput, setFormattedInput] = useState("");

@@ -5,11 +5,15 @@ import {
   ProgressIndicator,
   ProgressStep,
   Stack,
+  Breadcrumb,
+  BreadcrumbItem,
+  Grid,
+  Column,
   Section,
   Tag,
 } from "@carbon/react";
 import EditSample from "./EditSample";
-import AddOrder from "../addOrder/AddOrder";
+import EditOrder from "./EditOrder";
 import "../addOrder/add-order.scss";
 import { ModifyOrderFormValues } from "../formModel/innitialValues/OrderEntryFormValues";
 import { NotificationContext } from "../layout/Layout";
@@ -18,13 +22,6 @@ import { postToOpenElisServer, getFromOpenElisServer } from "../utils/Utils";
 import EditOrderEntryAdditionalQuestions from "./EditOrderEntryAdditionalQuestions";
 import OrderSuccessMessage from "../addOrder/OrderSuccessMessage";
 import { FormattedMessage, useIntl } from "react-intl";
-import PatientHeader from "../common/PatientHeader";
-import PageBreadCrumb from "../common/PageBreadCrumb";
-import ModifyOrderEntryValidationSchema from "../formModel/validationSchema/ModifyOrderEntryValidationSchema";
-let breadcrumbs = [
-  { label: "home.label", link: "/" },
-  { label: "sample.label.search.Order", link: "/SampleEdit" },
-];
 
 export let sampleObject = {
   index: 0,
@@ -38,10 +35,6 @@ export let sampleObject = {
   referralItems: [],
 };
 const ModifyOrder = () => {
-  const componentMounted = useRef(false);
-
-  const intl = useIntl();
-
   const firstPageNumber = 0;
   const lastPageNumber = 3;
   const programPageNumber = firstPageNumber + 0;
@@ -52,7 +45,8 @@ const ModifyOrder = () => {
   const [page, setPage] = useState(firstPageNumber);
   const [orderFormValues, setOrderFormValues] = useState(ModifyOrderFormValues);
   const [samples, setSamples] = useState([sampleObject]);
-  const [errors, setErrors] = useState([]);
+
+  const componentMounted = useRef(false);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -76,35 +70,20 @@ const ModifyOrder = () => {
     };
   }, []);
 
-  useEffect(() => {
-    ModifyOrderEntryValidationSchema.validate(orderFormValues, {
-      abortEarly: false,
-    })
-      .then((validData) => {
-        setErrors([]);
-        console.debug("Valid Data:", validData);
-      })
-      .catch((errors) => {
-        setErrors(errors);
-        console.error("Validation Errors:", errors.errors);
-      });
-  }, [orderFormValues]);
-
   const loadOrderValues = (data) => {
     if (componentMounted.current) {
-      data.sampleOrderItems.referringSiteName = "";
       setOrderFormValues(data);
     }
   };
 
-  const { notificationVisible, setNotificationVisible, addNotification } =
+  const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
 
   const showAlertMessage = (msg, kind) => {
     setNotificationVisible(true);
-    addNotification({
+    setNotificationBody({
       kind: kind,
-      title: intl.formatMessage({ id: "notification.title" }),
+      title: <FormattedMessage id="notification.title" />,
       message: msg,
     });
   };
@@ -125,33 +104,12 @@ const ModifyOrder = () => {
   const handleSubmitOrderForm = (e) => {
     e.preventDefault();
     setPage(page + 1);
-    orderFormValues.sampleOrderItems.modified = true;
-    //remove display Lists rom the form
-    orderFormValues.sampleOrderItems.priorityList = [];
-    orderFormValues.sampleOrderItems.programList = [];
-    orderFormValues.sampleOrderItems.referringSiteList = [];
-    orderFormValues.initialSampleConditionList = [];
-    orderFormValues.testSectionList = [];
-    orderFormValues.sampleOrderItems.providersList = [];
-    orderFormValues.sampleOrderItems.paymentOptions = [];
-    orderFormValues.sampleOrderItems.testLocationCodeList = [];
     console.log(JSON.stringify(orderFormValues));
     postToOpenElisServer(
       "/rest/sample-edit",
       JSON.stringify(orderFormValues),
       handlePost,
     );
-  };
-
-  const elementError = (path) => {
-    if (errors?.errors?.length > 0) {
-      let error = errors.inner?.find((e) => e.path === path);
-      if (error) {
-        return error.message;
-      } else {
-        return null;
-      }
-    }
   };
   useEffect(() => {
     if (page === samplePageNumber + 1) {
@@ -234,23 +192,75 @@ const ModifyOrder = () => {
   const handleTabClickHandler = (e) => {
     setPage(e);
   };
+  const intl = useIntl();
 
   return (
     <>
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
+      <Grid fullWidth={true}>
+        <Column lg={16}>
+          <Breadcrumb>
+            <BreadcrumbItem href="/">
+              {intl.formatMessage({ id: "home.label" })}
+            </BreadcrumbItem>
+            <BreadcrumbItem href="/FindOrder">
+              {intl.formatMessage({ id: "sample.label.search.Order" })}
+            </BreadcrumbItem>
+          </Breadcrumb>
+        </Column>
+      </Grid>
 
-      <PatientHeader
-        id={orderFormValues?.nationalId}
-        patientName={orderFormValues?.patientName}
-        gender={orderFormValues?.gender}
-        dob={orderFormValues?.dob}
-        nationalId={orderFormValues?.nationalId}
-        accesionNumber={orderFormValues?.accessionNumber}
-        className="patient-header3"
-        isOrderPage={true}
-      >
-        {" "}
-      </PatientHeader>
+      <Grid fullWidth={true}>
+        <Column lg={16}>
+          <Section>
+            <Section>
+              {orderFormValues?.sampleOrderItems ? (
+                <div className="patient-header">
+                  <div className="patient-name">
+                    <Tag type="blue">
+                      <FormattedMessage id="patient.label.name" /> :
+                    </Tag>
+                    {orderFormValues.patientName}
+                  </div>
+                  <div className="patient-dob">
+                    {" "}
+                    <Tag type="blue">
+                      <FormattedMessage id="patient.label.sex" /> :
+                    </Tag>
+                    {orderFormValues.gender === "M" ? (
+                      <FormattedMessage id="patient.male" />
+                    ) : (
+                      <FormattedMessage id="patient.female" />
+                    )}{" "}
+                    <Tag type="blue">
+                      <FormattedMessage id="patient.dob" /> :
+                    </Tag>{" "}
+                    {orderFormValues.dob}
+                  </div>
+                  <div className="patient-id">
+                    <Tag type="blue">
+                      <FormattedMessage id="quick.entry.accession.number" /> :
+                    </Tag>
+                    {orderFormValues.accessionNumber}{" "}
+                  </div>
+                  <div className="patient-id">
+                    <Tag type="blue">
+                      <FormattedMessage id="patient.natioanalid" /> :
+                    </Tag>
+                    {orderFormValues.nationalId}
+                  </div>
+                </div>
+              ) : (
+                <div className="patient-header">
+                  <div className="patient-name">
+                    {" "}
+                    <FormattedMessage id="sample.label.noorder" />{" "}
+                  </div>
+                </div>
+              )}
+            </Section>
+          </Section>
+        </Column>
+      </Grid>
       <Stack gap={10}>
         <div className="pageContent">
           {notificationVisible === true ? <AlertDialog /> : ""}
@@ -267,18 +277,15 @@ const ModifyOrder = () => {
                   onChange={(e) => handleTabClickHandler(e)}
                 >
                   <ProgressStep
-                    disabled={orderFormValues.sampleOrderItems.labNo == ""}
-                    label={intl.formatMessage({
-                      id: "order.step.program.selection",
-                    })}
+                    label={
+                      <FormattedMessage id="order.step.program.selection" />
+                    }
                   />
                   <ProgressStep
-                    disabled={orderFormValues.sampleOrderItems.labNo == ""}
-                    label={intl.formatMessage({ id: "sample.add.action" })}
+                    label={<FormattedMessage id="sample.add.action" />}
                   />
                   <ProgressStep
-                    disabled={orderFormValues.sampleOrderItems.labNo == ""}
-                    label={intl.formatMessage({ id: "order.label.add" })}
+                    label={<FormattedMessage id="order.label.add" />}
                   />
                 </ProgressIndicator>
               )}
@@ -294,16 +301,13 @@ const ModifyOrder = () => {
                   setOrderFormValues={setOrderFormValues}
                   setSamples={setSamples}
                   samples={samples}
-                  error={elementError}
                 />
               )}
               {page === orderPageNumber && (
-                <AddOrder
+                <EditOrder
                   orderFormValues={orderFormValues}
                   setOrderFormValues={setOrderFormValues}
                   samples={samples}
-                  error={elementError}
-                  isModifyOrder={true}
                 />
               )}
 
@@ -328,7 +332,7 @@ const ModifyOrder = () => {
                     className="forwardButton"
                     onClick={() => navigateForward()}
                   >
-                    <FormattedMessage id="next.action.button" />
+                    {<FormattedMessage id="next.action.button" />}
                   </Button>
                 )}
 
@@ -337,9 +341,8 @@ const ModifyOrder = () => {
                     kind="primary"
                     className="forwardButton"
                     onClick={handleSubmitOrderForm}
-                    disabled={errors?.errors?.length > 0 ? true : false}
                   >
-                    <FormattedMessage id="label.button.submit" />
+                    {<FormattedMessage id="label.button.submit" />}
                   </Button>
                 )}
               </div>

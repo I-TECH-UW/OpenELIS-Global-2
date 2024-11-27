@@ -1,13 +1,12 @@
-@use "@carbon/styles/scss/spacing";
-@use "@carbon/styles/scss/type";
-@import "../commons/scss/vars.scss";
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
+@import '../commons/scss/vars.scss';
 
 .widgetCard {
   border: 1px solid $ui-03;
 }
 
-.desktopHeader,
-.tabletHeader {
+.desktopHeader, .tabletHeader {
   display: flex;
   justify-content: space-between;
   align-items: center;
@@ -23,18 +22,18 @@
   }
 }
 
-.desktopHeader {
+.desktopHeader {  
   height: 3rem;
   h4 {
-    @include type.type-style("heading-compact-02");
+    @include type.type-style('heading-compact-02');
     color: $text-02;
   }
 }
 
-.tabletHeader {
+.tabletHeader {  
   height: 4.5rem;
   h4 {
-    @include type.type-style("heading-03");
+    @include type.type-style('heading-03');
     color: $text-02;
   }
 }

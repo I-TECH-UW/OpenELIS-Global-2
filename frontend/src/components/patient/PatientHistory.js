@@ -4,12 +4,7 @@ import "../Style.css";
 import { Heading, Grid, Column, Section } from "@carbon/react";
 import SearchPatientForm from "./SearchPatientForm";
 import { useState, useEffect, useRef } from "react";
-import PageBreadCrumb from "../common/PageBreadCrumb";
 
-let breadcrumbs = [
-  { label: "home.label", link: "/" },
-  { label: "label.page.patientHistory", link: "/PatientHistory" },
-];
 const PatientHistory = () => {
   const [selectedPatient, setSelectedPatient] = useState({});
   const componentMounted = useRef(false);
@@ -19,6 +14,7 @@ const PatientHistory = () => {
       setSelectedPatient(patient);
     }
   };
+
   useEffect(() => {
     componentMounted.current = true;
     openPatientResults(selectedPatient.patientPK);
@@ -36,7 +32,6 @@ const PatientHistory = () => {
 
   return (
     <>
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={16}>
           <Section>
@@ -51,11 +46,7 @@ const PatientHistory = () => {
       <br></br>
 
       <div className="orderLegendBody">
-        <Grid fullWidth={true}>
-          <Column lg={16}>
-            <SearchPatientForm getSelectedPatient={getSelectedPatient} />
-          </Column>
-        </Grid>
+        <SearchPatientForm getSelectedPatient={getSelectedPatient} />
       </div>
     </>
   );

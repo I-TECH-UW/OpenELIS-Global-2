@@ -1,6 +1,6 @@
-@use "@carbon/styles/scss/spacing";
-@use "@carbon/styles/scss/type";
-@import "../commons/scss/vars.scss";
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
+@import '../commons/scss/vars.scss';
 
 .timelineHeader {
   position: sticky;
@@ -30,14 +30,13 @@
   align-items: center;
 }
 
-.dayColumn,
-.yearColumn {
-  @include type.type-style("heading-compact-01");
+.dayColumn, .yearColumn {
+  @include type.type-style('heading-compact-01');
   color: $text-02;
 }
 
 .timeColumn {
-  @include type.type-style("body-compact-01");
+  @include type.type-style('body-compact-01');
   color: $text-02;
   scroll-snap-align: start;
 }
@@ -62,10 +61,11 @@
   justify-items: first baseline;
 
   p {
-    @include type.type-style("body-compact-01");
+    @include type.type-style('body-compact-01');
     color: $text-02;
   }
 }
+
 
 .gridContainer {
   padding: 0;
@@ -80,12 +80,13 @@
   overflow-x: scroll;
   width: 100%;
   background-color: white;
-  scrollbar-width: auto;
+  scrollbar-width: none;
   // &::-webkit-scrollbar {
   //   // needed for Chrome, Edge, Opera, Safari
   //   display: none;
   // }
 }
+
 
 .rowHeader {
   overflow: hidden;
@@ -93,6 +94,7 @@
   background-color: $ui-03;
   padding: 0.6rem 1rem;
 }
+
 
 .rowStartCell {
   @extend .timelineCell;
@@ -142,10 +144,12 @@
   top: 0px;
   z-index: 3;
   padding: 0rem 1rem;
+  
+
 
   div {
-    @include type.type-style("heading-compact-01");
-
+    @include type.type-style('heading-compact-01');
+    
     left: 0;
     width: 100%;
     word-wrap: normal;
@@ -153,19 +157,19 @@
 }
 
 .shadow {
-  box-shadow: 8px 0 20px 0 rgba(0, 0, 0, 0.15);
+  box-shadow: 8px 0 20px 0 rgba(0, 0, 0 , 0.15);
 }
 
 .trendlineLink {
-  @include type.type-style("body-compact-01");
-  color: $interactive-01;
+  @include type.type-style('body-compact-01');
+   color: $interactive-01;
   cursor: pointer;
   text-decoration: none;
 }
 
 .rangeUnits {
-  @include type.type-style("helper-text-01");
-  // color: $text-05;
+  @include type.type-style('helper-text-01');
+  // color: $text-05; 
 }
 
 .offScaleHigh,
@@ -175,7 +179,8 @@
 .high,
 .low {
   p {
-    @include type.type-style("heading-compact-01");
+    @include type.type-style('heading-compact-01');
+    
   }
 }
 
@@ -186,9 +191,7 @@
 
 .criticallyHigh,
 .criticallyLow {
-  box-shadow:
-    0 0 0 1px $danger,
-    inset 0 0 0 1px $danger;
+  box-shadow: 0 0 0 1px $danger, inset 0 0 0 1px $danger;
 }
 
 .offScaleLow {

@@ -1,6 +1,6 @@
-import React from "react";
+import React from 'react';
 
-export const EmptyDataIllustration = ({ width = "64", height = "64" }) => {
+export const EmptyDataIllustration = ({ width = '64', height = '64' }) => {
   return (
     <svg width={width} height={height} viewBox="0 0 64 64">
       <title>Empty data illustration</title>
@@ -18,13 +18,7 @@ export const EmptyDataIllustration = ({ width = "64", height = "64" }) => {
           fill="#C6C6C6"
         />
         <circle fill="#C6C6C6" cx={17.636} cy={2.314} r={1.855} />
-        <circle
-          fill="#FFF"
-          fillRule="nonzero"
-          cx={17.636}
-          cy={2.314}
-          r={1.175}
-        />
+        <circle fill="#FFF" fillRule="nonzero" cx={17.636} cy={2.314} r={1.175} />
         <path
           d="M55.893 53.995H24.544a.79.79 0 01-.788-.789V15.644a.79.79 0 01.788-.788h31.349a.79.79 0 01.788.788v37.562a.79.79 0 01-.788.789z"
           fill="#F4F4F4"
@@ -38,13 +32,7 @@ export const EmptyDataIllustration = ({ width = "64", height = "64" }) => {
           fill="#C6C6C6"
         />
         <circle fill="#C6C6C6" cx={40.218} cy={9.755} r={1.855} />
-        <circle
-          fill="#FFF"
-          fillRule="nonzero"
-          cx={40.218}
-          cy={9.755}
-          r={1.13}
-        />
+        <circle fill="#FFF" fillRule="nonzero" cx={40.218} cy={9.755} r={1.13} />
       </g>
     </svg>
   );

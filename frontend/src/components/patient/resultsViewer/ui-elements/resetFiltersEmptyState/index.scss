@@ -1,5 +1,5 @@
-@use "@carbon/styles/scss/spacing";
-@use "@carbon/styles/scss/type";
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
 //@import '~@openmrs/esm-styleguide/src/vars';
 @import "../../commons/scss/vars.scss";
 
@@ -8,7 +8,7 @@
   span.link {
     cursor: pointer;
     color: $interactive-01;
-    text-decoration: underline;
+    text-decoration: underline
   }
 }
 

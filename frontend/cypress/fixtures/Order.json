@@ -4,11 +4,9 @@
       "sampleType": "Serum"
     }
   ],
-  "siteName": "279 - CAMES MAN",
+  "siteName": "example site",
   "requester": {
     "firstName": "Optimus",
     "lastName": "Prime"
-  },
-  "labNo": "",
-  "invalidLabNo": "DEV0124000000000000"
+  }
 }

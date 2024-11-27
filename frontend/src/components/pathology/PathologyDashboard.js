@@ -31,20 +31,16 @@ import { NotificationContext } from "../layout/Layout";
 import { AlertDialog } from "../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import "./PathologyDashboard.css";
-import PageBreadCrumb from "../common/PageBreadCrumb";
 
 function PathologyDashboard() {
   const componentMounted = useRef(false);
 
-  const intl = useIntl();
-
   const { notificationVisible } = useContext(NotificationContext);
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
-
   const [statuses, setStatuses] = useState([]);
   const [pathologyEntries, setPathologyEntries] = useState([]);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(100);
+  const [pageSize, setPageSize] = useState(10);
   const [filters, setFilters] = useState({
     searchTerm: "",
     myCases: false,
@@ -62,6 +58,7 @@ function PathologyDashboard() {
     complete: 0,
   });
   const [loading, setLoading] = useState(true);
+  const intl = useIntl();
 
   const setStatusList = (statusList) => {
     if (componentMounted.current) {
@@ -275,13 +272,10 @@ function PathologyDashboard() {
     };
   }, [filters]);
 
-  let breadcrumbs = [{ label: "home.label", link: "/" }];
-
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading description="Loading Dasboard..." />}
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
 
       <Grid fullWidth={true}>
         <Column lg={16}>
@@ -311,19 +305,15 @@ function PathologyDashboard() {
               onChange={(e) =>
                 setFilters({ ...filters, searchTerm: e.target.value })
               }
-              placeholder={intl.formatMessage({
-                id: "label.search.labno.family",
-              })}
-              labelText={intl.formatMessage({
-                id: "label.search.labno.family",
-              })}
+              placeholder={intl.formatMessage({id:"label.seacrh.labno.family",})}
+              labelText= {<FormattedMessage id="label.seacrh.labno.family"/>}
             />
           </Column>
           <Column lg={8} md={4} sm={2}>
             <div className="inlineDivBlock">
               <div>Filters:</div>
               <Checkbox
-                labelText={intl.formatMessage({ id: "label.filters.mycases" })}
+                labelText={<FormattedMessage id="label.filters.mycases"/>}
                 id="filterMyCases"
                 value={filters.myCases}
                 onChange={(e) =>
@@ -333,7 +323,7 @@ function PathologyDashboard() {
               <Select
                 id="statusFilter"
                 name="statusFilter"
-                labelText={intl.formatMessage({ id: "label.filters.status" })}
+                labelText={<FormattedMessage id= "label.filters.status"/>}
                 defaultValue="placeholder"
                 value={
                   filters.statuses.length > 1 ? "All" : filters.statuses[0].id
@@ -365,31 +355,31 @@ function PathologyDashboard() {
               headers={[
                 {
                   key: "requestDate",
-                  header: <FormattedMessage id="sample.requestDate" />,
+                  header: <FormattedMessage id="sample.requestDate"/>,
                 },
                 {
                   key: "status",
-                  header: <FormattedMessage id="pathology.label.stage" />,
+                  header: <FormattedMessage id="pathology.label.stage"/>,
                 },
                 {
                   key: "lastName",
-                  header: <FormattedMessage id="patient.last.name" />,
+                  header: <FormattedMessage id="patient.last.name"/>,
                 },
                 {
                   key: "firstName",
-                  header: <FormattedMessage id="patient.first.name" />,
+                  header: <FormattedMessage id="patient.first.name"/>,
                 },
                 {
                   key: "assignedTechnician",
-                  header: <FormattedMessage id="assigned.technician.label" />,
+                  header: <FormattedMessage id="assigned.technician.label"/>,
                 },
                 {
                   key: "assignedPathologist",
-                  header: <FormattedMessage id="assigned.pathologist.label" />,
+                  header: <FormattedMessage id="assigned.pathologist.label"/>,
                 },
                 {
                   key: "labNumber",
-                  header: <FormattedMessage id="sample.label.labnumber" />,
+                  header:<FormattedMessage id="sample.label.labnumber"/>,
                 },
               ]}
               isSortable
@@ -431,41 +421,9 @@ function PathologyDashboard() {
               onChange={handlePageChange}
               page={page}
               pageSize={pageSize}
-              pageSizes={[10, 20, 30, 50, 100]}
+              pageSizes={[10, 20, 30]}
               totalItems={pathologyEntries.length}
-              forwardText={intl.formatMessage({ id: "pagination.forward" })}
-              backwardText={intl.formatMessage({ id: "pagination.backward" })}
-              itemRangeText={(min, max, total) =>
-                intl.formatMessage(
-                  { id: "pagination.item-range" },
-                  { min: min, max: max, total: total },
-                )
-              }
-              itemsPerPageText={intl.formatMessage({
-                id: "pagination.items-per-page",
-              })}
-              itemText={(min, max) =>
-                intl.formatMessage(
-                  { id: "pagination.item" },
-                  { min: min, max: max },
-                )
-              }
-              pageNumberText={intl.formatMessage({
-                id: "pagination.page-number",
-              })}
-              pageRangeText={(_current, total) =>
-                intl.formatMessage(
-                  { id: "pagination.page-range" },
-                  { total: total },
-                )
-              }
-              pageText={(page, pagesUnknown) =>
-                intl.formatMessage(
-                  { id: "pagination.page" },
-                  { page: pagesUnknown ? "" : page },
-                )
-              }
-            />
+            ></Pagination>
           </Column>
         </Grid>
       </div>

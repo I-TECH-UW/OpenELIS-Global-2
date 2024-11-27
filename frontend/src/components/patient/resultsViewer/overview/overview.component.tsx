@@ -1,8 +1,8 @@
-import React from "react";
-import useOverviewData from "./useOverviewData";
-import CommonOverview from "./common-overview.component";
-import { DataTableSkeleton } from "@carbon/react";
-import { navigate } from "../commons";
+import React from 'react';
+import useOverviewData from './useOverviewData';
+import CommonOverview from './common-overview.component';
+import { DataTableSkeleton } from '@carbon/react';
+import { navigate } from '../commons';
 
 const defaultOpenTimeline = (patientUuid, panelUuid) => {
   const url = `/patient/${patientUuid}/testresults/timeline/${panelUuid}`;
@@ -29,11 +29,7 @@ export const Overview: React.FC<LabResultProps & LabResultParams> = ({
   return (
     <>
       {loaded ? (
-        <CommonOverview
-          overviewData={overviewData}
-          openTimeline={openTimeline}
-          openTrendline={openTrendline}
-        />
+        <CommonOverview overviewData={overviewData} openTimeline={openTimeline} openTrendline={openTrendline} />
       ) : (
         <DataTableSkeleton columnCount={3} />
       )}

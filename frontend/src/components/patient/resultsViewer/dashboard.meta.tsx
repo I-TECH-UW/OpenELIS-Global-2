@@ -1,5 +1,5 @@
 export const dashboardMeta = {
-  slot: "patient-chart-test-results-dashboard-slot",
+  slot: 'patient-chart-test-results-dashboard-slot',
   config: { columns: 1 },
-  title: "Test Results",
+  title: 'Test Results',
 };

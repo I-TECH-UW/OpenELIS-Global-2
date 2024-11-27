@@ -1,60 +1,51 @@
-import React, { useState, useCallback, useMemo, useLayoutEffect } from "react";
-import { useTranslation } from "react-i18next";
-import { Button, InlineLoading, SkeletonText } from "@carbon/react";
-import { ArrowLeft } from "@carbon/react/icons";
-import { LineChart } from "@carbon/charts-react";
-import {
-  formatDate,
-  formatTime,
-  parseDate,
-  ConfigurableLink,
-} from "../commons";
-import { EmptyState, OBSERVATION_INTERPRETATION } from "../commons";
-import { useObstreeData } from "./trendline-resource";
-import { testResultsBasePath } from "../helpers";
-import CommonDataTable from "../overview/common-datatable.component";
-import RangeSelector from "./range-selector.component";
+import React, { useState, useCallback, useMemo, useLayoutEffect } from 'react';
+import { useTranslation } from 'react-i18next';
+import { Button, InlineLoading, SkeletonText } from '@carbon/react';
+import { ArrowLeft } from '@carbon/react/icons';
+import { LineChart } from '@carbon/charts-react';
+import { formatDate, formatTime, parseDate, ConfigurableLink } from '../commons';
+import { EmptyState, OBSERVATION_INTERPRETATION } from '../commons';
+import { useObstreeData } from './trendline-resource';
+import { testResultsBasePath } from '../helpers';
+import CommonDataTable from '../overview/common-datatable.component';
+import RangeSelector from './range-selector.component';
 //import styles from './trendline.scss';
-import "./trendline.scss";
+import  './trendline.scss';
 
 enum ScaleTypes {
-  TIME = "time",
-  LINEAR = "linear",
-  LOG = "log",
-  LABELS = "labels",
+  TIME = 'time',
+  LINEAR = 'linear',
+  LOG = 'log',
+  LABELS = 'labels',
 }
 
 enum TickRotations {
-  ALWAYS = "always",
-  AUTO = "auto",
-  NEVER = "never",
+  ALWAYS = 'always',
+  AUTO = 'auto',
+  NEVER = 'never',
 }
 
-const TrendLineBackground = ({ ...props }) => (
-  <div {...props} className="background" />
-);
+const TrendLineBackground = ({ ...props }) => <div {...props} className="background" />;
 
-const TrendlineHeader = ({
-  patientUuid,
-  title,
-  referenceRange,
-  isValidating,
-  showBackToTimelineButton,
-}) => {
+const TrendlineHeader = ({ patientUuid, title, referenceRange, isValidating, showBackToTimelineButton }) => {
   const { t } = useTranslation();
   return (
     <div className="header">
       <div className="backButton">
         {showBackToTimelineButton && (
-          <ConfigurableLink to="#groupedtimeline">
+           
+            <ConfigurableLink to="#groupedtimeline"> 
+         
             <Button
               kind="ghost"
               renderIcon={(props) => <ArrowLeft {...props} size={24} />}
-              iconDescription={t("returnToTimeline", "Return to timeline")}
+              iconDescription={t('returnToTimeline', 'Return to timeline')}
             >
-              <span>{t("backToTimeline", "Back to timeline")}</span>
+              <span>{t('backToTimeline', 'Back to timeline')}</span>
             </Button>
-          </ConfigurableLink>
+            
+            </ConfigurableLink> 
+           
         )}
       </div>
       <div className="content">
@@ -81,20 +72,10 @@ const Trendline: React.FC<TrendlineProps> = ({
   hideTrendlineHeader = false,
   showBackToTimelineButton = false,
 }) => {
-  const { trendlineData, isLoading, isValidating } = useObstreeData(
-    patientUuid,
-    conceptUuid,
-  );
+  const { trendlineData, isLoading, isValidating } = useObstreeData(patientUuid, conceptUuid);
   const { t } = useTranslation();
-  const {
-    obs,
-    display: chartTitle,
-    hiNormal,
-    lowNormal,
-    units: leftAxisTitle,
-    range: referenceRange,
-  } = trendlineData;
-  const bottomAxisTitle = t("date", "Date");
+  const { obs, display: chartTitle, hiNormal, lowNormal, units: leftAxisTitle, range: referenceRange } = trendlineData;
+  const bottomAxisTitle = t('date', 'Date');
   const [range, setRange] = useState<[Date, Date]>();
 
   const [upperRange, lowerRange] = useMemo(() => {
@@ -106,10 +87,7 @@ const Trendline: React.FC<TrendlineProps> = ({
 
   const setLowerRange = useCallback(
     (selectedLowerRange: Date) => {
-      setRange([
-        selectedLowerRange > lowerRange ? selectedLowerRange : lowerRange,
-        upperRange,
-      ]);
+      setRange([selectedLowerRange > lowerRange ? selectedLowerRange : lowerRange, upperRange]);
     },
     [setRange, upperRange, lowerRange],
   );
@@ -118,7 +96,7 @@ const Trendline: React.FC<TrendlineProps> = ({
    * reorder svg element to bring line in front of the area
    */
   useLayoutEffect(() => {
-    const graph = document.querySelector("g.cds--cc--area")?.parentElement;
+    const graph = document.querySelector('g.cds--cc--area')?.parentElement;
     if (obs && obs.length && graph) {
       graph.insertBefore(graph.children[3], graph.childNodes[2]);
     }
@@ -178,13 +156,13 @@ const Trendline: React.FC<TrendlineProps> = ({
   const chartOptions = useMemo(
     () => ({
       bounds: {
-        lowerBoundMapsTo: "min",
-        upperBoundMapsTo: "max",
+        lowerBoundMapsTo: 'min',
+        upperBoundMapsTo: 'max',
       },
       axes: {
         bottom: {
           title: bottomAxisTitle,
-          mapsTo: "date",
+          mapsTo: 'date',
           scaleType: ScaleTypes.TIME,
           ticks: {
             rotation: TickRotations.ALWAYS,
@@ -193,17 +171,17 @@ const Trendline: React.FC<TrendlineProps> = ({
           domain: range,
         },
         left: {
-          mapsTo: "value",
+          mapsTo: 'value',
           title: leftAxisTitle,
           scaleType: ScaleTypes.LINEAR,
           includeZero: false,
         },
       },
-      height: "20.125rem",
+      height: '20.125rem',
 
       color: {
         scale: {
-          [chartTitle]: "#6929c4",
+          [chartTitle]: '#6929c4',
         },
       },
       points: {
@@ -225,16 +203,16 @@ const Trendline: React.FC<TrendlineProps> = ({
   const tableHeaderData = useMemo(
     () => [
       {
-        header: t("date", "Date"),
-        key: "date",
+        header: t('date', 'Date'),
+        key: 'date',
       },
       {
-        header: t("timeOfTest", "Time of Test"),
-        key: "time",
+        header: t('timeOfTest', 'Time of Test'),
+        key: 'time',
       },
       {
-        header: `${t("value", "Value")} (${leftAxisTitle})`,
-        key: "value",
+        header: `${t('value', 'Value')} (${leftAxisTitle})`,
+        key: 'value',
       },
     ],
     [leftAxisTitle, t],
@@ -245,12 +223,7 @@ const Trendline: React.FC<TrendlineProps> = ({
   }
 
   if (obs.length === 0) {
-    return (
-      <EmptyState
-        displayText={t("observationsDisplayText", "observations")}
-        headerTitle={chartTitle}
-      />
-    );
+    return <EmptyState displayText={t('observationsDisplayText', 'observations')} headerTitle={chartTitle} />;
   }
 
   return (
@@ -273,10 +246,8 @@ const Trendline: React.FC<TrendlineProps> = ({
   );
 };
 
-const DrawTable = React.memo<{ tableData; tableHeaderData }>(
-  ({ tableData, tableHeaderData }) => {
-    return <CommonDataTable data={tableData} tableHeaders={tableHeaderData} />;
-  },
-);
+const DrawTable = React.memo<{ tableData; tableHeaderData }>(({ tableData, tableHeaderData }) => {
+  return <CommonDataTable data={tableData} tableHeaders={tableHeaderData} />;
+});
 
 export default Trendline;

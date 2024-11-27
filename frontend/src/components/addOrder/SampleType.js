@@ -26,14 +26,9 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 const SampleType = (props) => {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const { configurationProperties } = useContext(ConfigurationContext);
-
-  const intl = useIntl();
-
-  const componentMounted = useRef(false);
+  const { index, rejectSampleReasons, removeSample } = props;
+  const componentMounted = useRef(true);
   const sampleTypesRef = useRef(null);
-
-  const { index, rejectSampleReasons, removeSample, sample } = props;
-
   const [sampleTypes, setSampleTypes] = useState([]);
   const [selectedSampleType, setSelectedSampleType] = useState({
     id: null,
@@ -50,31 +45,25 @@ const SampleType = (props) => {
   const [referralOrganizations, setReferralOrganizations] = useState([]);
   const [testSearchTerm, setTestSearchTerm] = useState("");
   const [referralRequests, setReferralRequests] = useState([]);
-  const { setNotificationVisible, addNotification } =
+  const { setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
   const [rejectionReasonsDisabled, setRejectionReasonsDisabled] =
     useState(true);
   const [selectedPanels, setSelectedPanels] = useState([]);
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
   const [searchBoxPanels, setSearchBoxPanels] = useState([]);
-  const [sampleXml, setSampleXml] = useState(
-    sample?.sampleXML != null
-      ? sample.sampleXML
-      : {
-          collectionDate:
-            configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
-              ? configurationProperties.currentDateAsText
-              : "",
-          collector: "",
-          rejected: false,
-          rejectionReason: "",
-          collectionTime:
-            configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
-              ? configurationProperties.currentTimeAsText
-              : "",
-        },
-  );
+  const [sampleXml, setSampleXml] = useState({
+    collectionDate:
+      configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
+        ? configurationProperties.currentDateAsText
+        : "",
+    collector: "",
+    rejected: false,
+    rejectionReason: "",
+    collectionTime: "",
+  });
   const [loading, setLoading] = useState(true);
+  const intl = useIntl();
 
   const defaultSelect = { id: "", value: "Choose Rejection Reason" };
 
@@ -147,17 +136,28 @@ const SampleType = (props) => {
 
   const handleRemoveSelectedTest = (test) => {
     removedTestFromSelectedTests(test);
+    updateSampleTypeTests(test, false);
   };
 
   const handleFilterSelectTest = (test) => {
     setTestSearchTerm("");
     addTestToSelectedTests(test);
+    updateSampleTypeTests(test, true);
   };
+
+  function updateSampleTypeTests(test, userBenchChoice = false) {
+    let tests = [...sampleTypeTests.tests];
+    let testIndex = findTestIndex(test.id);
+    tests[testIndex].userBenchChoice = userBenchChoice;
+    setSampleTypeTests({ ...sampleTypeTests, tests: tests });
+  }
 
   const handleTestCheckbox = (e, test) => {
     if (e.currentTarget.checked) {
+      updateSampleTypeTests(test, true);
       addTestToSelectedTests(test);
     } else {
+      updateSampleTypeTests(test, false);
       removedTestFromSelectedTests(test);
     }
   };
@@ -170,36 +170,17 @@ const SampleType = (props) => {
     return sampleTypeTests.tests.findIndex((test) => test.id === testId);
   }
 
-  const panelIsSelected = (panelId) => {
-    for (let i in selectedPanels) {
-      if (selectedPanels[i].id === panelId) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const testIsSelected = (testId) => {
-    for (let i in selectedTests) {
-      if (selectedTests[i].id === testId) {
-        return true;
-      }
-    }
-    return false;
-  };
-
-  const triggerPanelCheckBoxChange = (isChecked, testIds) => {
-    const testIdsList = testIds.split(",").map((id) => id.trim());
-    testIdsList.map((testId) => {
+  const triggerPanelCheckBoxChange = (isChecked, testMaps) => {
+    const testIds = testMaps.split(",").map((id) => id.trim());
+    testIds.map((testId) => {
       let testIndex = findTestIndex(testId);
       let test = findTestById(testId);
       if (testIndex !== -1) {
+        updateSampleTypeTests(test, isChecked);
         if (isChecked) {
-          if (!testIsSelected(test.id)) {
-            setSelectedTests((prevState) => {
-              return [...prevState, { id: test.id, name: test.name }];
-            });
-          }
+          setSelectedTests((prevState) => {
+            return [...prevState, { id: test.id, name: test.name }];
+          });
         } else {
           removedTestFromSelectedTests(test);
         }
@@ -298,6 +279,13 @@ const SampleType = (props) => {
 
   useEffect(() => {
     props.sampleTypeObject({
+      selectedTests: selectedTests,
+      sampleObjectIndex: index,
+    });
+  }, [selectedTests]);
+
+  useEffect(() => {
+    props.sampleTypeObject({
       referralItems: referralRequests,
       sampleObjectIndex: index,
     });
@@ -316,10 +304,10 @@ const SampleType = (props) => {
 
   function handleRejection(checked) {
     if (checked) {
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.warning,
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "reject.order.sample.notification" }),
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="reject.order.sample.notification" />,
       });
       setNotificationVisible(true);
     }
@@ -332,9 +320,11 @@ const SampleType = (props) => {
 
   const removedPanelFromSelectedPanels = (panel) => {
     let index = 0;
+    let panelId = panel.id !== undefined ? panel.id : panel.panelId;
+
     for (let i in selectedPanels) {
-      if (selectedPanels[i].id === panel.id) {
-        triggerPanelCheckBoxChange(false, selectedPanels[i].testIds);
+      if (selectedPanels[i].id === panelId) {
+        triggerPanelCheckBoxChange(false, selectedPanels[i].testMaps);
         const newPanels = selectedPanels;
         newPanels.splice(index, 1);
         setSelectedPanels([...newPanels]);
@@ -358,8 +348,8 @@ const SampleType = (props) => {
     addPanelToSelectedPanels(panel);
   };
 
-  const handlePanelCheckbox = (panel) => {
-    if (!panelIsSelected(panel.id)) {
+  const handlePanelCheckbox = (e, panel) => {
+    if (e.currentTarget.checked) {
       addPanelToSelectedPanels(panel);
     } else {
       removedPanelFromSelectedPanels(panel);
@@ -371,16 +361,15 @@ const SampleType = (props) => {
   };
 
   function addTestToSelectedTests(test) {
-    if (!testIsSelected(test.id)) {
-      setSelectedTests([...selectedTests, { id: test.id, name: test.name }]);
-    }
+    setSelectedTests([...selectedTests, { id: test.id, name: test.name }]);
   }
 
   const addPanelToSelectedPanels = (panel) => {
     setSelectedPanels([
       ...selectedPanels,
-      { id: panel.id, name: panel.name, testIds: panel.testIds },
+      { id: panel.panelId, name: panel.name, testMaps: panel.testMaps },
     ]);
+    triggerPanelCheckBoxChange(true, panel.testMaps);
   };
 
   useEffect(() => {
@@ -405,20 +394,10 @@ const SampleType = (props) => {
 
   useEffect(() => {
     props.sampleTypeObject({
-      selectedTests: selectedTests,
-      sampleObjectIndex: index,
-    });
-  }, [selectedTests]);
-
-  useEffect(() => {
-    props.sampleTypeObject({
       selectedPanels: selectedPanels,
       sampleObjectIndex: index,
     });
-    for (let i in selectedPanels) {
-      triggerPanelCheckBoxChange(true, selectedPanels[i].testIds);
-    }
-  }, [selectedPanels, sampleTypeTests]);
+  }, [selectedPanels]);
 
   const repopulateUI = () => {
     if (props.sample !== null) {
@@ -431,7 +410,6 @@ const SampleType = (props) => {
   };
 
   useEffect(() => {
-    componentMounted.current = true;
     getFromOpenElisServer(
       "/rest/referral-reasons",
       displayReferralReasonsOptions,
@@ -474,7 +452,7 @@ const SampleType = (props) => {
         <CustomCheckBox
           id={"reject_" + index}
           onChange={(value) => handleRejection(value)}
-          label={intl.formatMessage({ id: "sample.reject.label" })}
+          label={<FormattedMessage id="sample.reject.label" />}
         />
         {sampleXml.rejected && (
           <CustomSelect
@@ -493,10 +471,8 @@ const SampleType = (props) => {
               configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
             }
             onChange={(date) => handleCollectionDate(date)}
-            value={sampleXml.collectionDate}
-            labelText={intl.formatMessage({ id: "sample.collection.date" })}
+            labelText={<FormattedMessage id="sample.collection.date" />}
             className="inputText"
-            disallowFutureDate={true}
           />
 
           <CustomTimePicker
@@ -505,9 +481,8 @@ const SampleType = (props) => {
               configurationProperties?.AUTOFILL_COLLECTION_DATE === "true"
             }
             onChange={(time) => handleCollectionTime(time)}
-            value={sampleXml.collectionTime}
             className="inputText"
-            labelText={intl.formatMessage({ id: "sample.collection.time" })}
+            labelText={<FormattedMessage id="sample.collection.time" />}
           />
         </div>
         <div className="inlineDiv">
@@ -515,8 +490,7 @@ const SampleType = (props) => {
             id={"collector_" + index}
             onChange={(value) => handleCollector(value)}
             defaultValue={""}
-            value={sampleXml.collector}
-            labelText={intl.formatMessage({ id: "collector.label" })}
+            labelText={<FormattedMessage id="collector.label" />}
             className="inputText"
           />
         </div>
@@ -609,14 +583,10 @@ const SampleType = (props) => {
                   ""
                 ) : (
                   <Checkbox
-                    onChange={() => handlePanelCheckbox(panel)}
+                    onChange={(e) => handlePanelCheckbox(e, panel)}
                     labelText={panel.name}
-                    id={`panel_` + index + "_" + panel.id}
-                    key={index + panel.id}
-                    checked={
-                      selectedPanels.filter((item) => item.id === panel.id)
-                        .length > 0
-                    }
+                    id={`panel_` + index + "_" + panel.panelId}
+                    key={index + panel.panelId}
                   />
                 );
               })}
@@ -648,9 +618,7 @@ const SampleType = (props) => {
             )}
           </div>
           <FormGroup
-            legendText={intl.formatMessage({
-              id: "legend.search.availabletests",
-            })}
+            legendText={<FormattedMessage id="legend.search.availabletests" />}
           >
             <Search
               size="lg"
@@ -713,10 +681,7 @@ const SampleType = (props) => {
                   labelText={test.name}
                   id={`test_` + index + "_" + test.id}
                   key={`test_checkBox_` + index + test.id}
-                  checked={
-                    selectedTests.filter((item) => item.id === test.id).length >
-                    0
-                  }
+                  checked={test.userBenchChoice}
                 />
               );
             })}
@@ -725,9 +690,7 @@ const SampleType = (props) => {
         <div className="requestTestReferral">
           <Checkbox
             id={`useReferral_` + index}
-            labelText={intl.formatMessage({
-              id: "label.refertest.referencelab",
-            })}
+            labelText={<FormattedMessage id="label.refertest.referencelab" />}
             onChange={handleReferralRequest}
           />
           {requestTestReferral === true && (

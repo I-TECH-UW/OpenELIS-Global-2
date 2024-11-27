@@ -11,12 +11,8 @@ const CreatePatientValidationSchema = Yup.object().shape({
       }
       const [day, month, year] = value.split("/");
       const date = new Date(`${year}-${month}-${day}`);
-      const date2 = new Date(`${year}-${day}-${month}`);
 
-      const validDate1 = date instanceof Date && !isNaN(date);
-      const validDate2 = date2 instanceof Date && !isNaN(date2);
-
-      return validDate1 || validDate2;
+      return date instanceof Date && !isNaN(date);
     }),
   patientContact: Yup.object().shape({
     person: Yup.object().shape({

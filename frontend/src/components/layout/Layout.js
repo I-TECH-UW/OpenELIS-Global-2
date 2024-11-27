@@ -2,6 +2,7 @@ import React, { createContext, useState, useEffect, useContext } from "react";
 import Header from "./Header";
 import Footer from "./Footer";
 import { Content, Theme } from "@carbon/react";
+import { NotificationKinds } from "../common/CustomNotification";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { getFromOpenElisServer } from "../utils/Utils";
 
@@ -14,17 +15,11 @@ export default function Layout(props) {
   const [resetConfig, setResetConfig] = useState(false);
   const [configurationProperties, setConfigurationProperties] = useState({});
   const [notificationVisible, setNotificationVisible] = useState(false);
-  const [notifications, setNotifications] = useState([]);
-
-  const addNotification = (notificationBody) => {
-    setNotifications([...notifications, notificationBody]);
-  };
-
-  const removeNotification = (index) => {
-    const newNotifications = [...notifications];
-    newNotifications.splice(index, 1);
-    setNotifications(newNotifications);
-  };
+  const [notificationBody, setNotificationBody] = useState({
+    title: "",
+    message: "",
+    kind: NotificationKinds.info,
+  });
 
   const fetchConfigurationProperties = (res) => {
     setConfigurationProperties(res);
@@ -58,9 +53,8 @@ export default function Layout(props) {
         value={{
           notificationVisible,
           setNotificationVisible,
-          notifications,
-          addNotification,
-          removeNotification,
+          notificationBody,
+          setNotificationBody,
         }}
       >
         <div className="d-flex flex-column min-vh-100">

@@ -1,7 +1,9 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
+import { ConfigurationContext } from "../layout/Layout";
 import { TimePicker } from "@carbon/react";
 
 const CustomTimePicker = (props) => {
+  const { configurationProperties } = useContext(ConfigurationContext);
   const [currentTime, setCurrentTime] = useState(
     props.value ? props.value : "",
   );
@@ -11,6 +13,12 @@ const CustomTimePicker = (props) => {
     setCurrentTime(time);
     props.onChange(time);
   }
+  useEffect(() => {
+    if (props.autofillTime) {
+      setCurrentTime(configurationProperties.currentTimeAsText);
+    }
+  }, [configurationProperties]);
+
   useEffect(() => {
     props.onChange(currentTime);
   }, [currentTime]);

@@ -1,8 +1,11 @@
-@use "@carbon/styles/scss/grid/_flexbox";
-@use "@carbon/styles/scss/spacing";
-@use "@carbon/styles/scss/type";
+
+@use '@carbon/styles/scss/grid/_flexbox';
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
 @use "carbon-components/scss/globals/scss/typography.scss";
-@import "./commons/scss/vars.scss";
+@import './commons/scss/vars.scss';
+
+
 
 .resultsContainer {
   padding: 0;
@@ -46,14 +49,13 @@
   margin-right: spacing.$spacing-05;
 }
 
-.rightSection,
-.rightSectionHeader {
+.rightSection, .rightSectionHeader {
   width: 70%;
 }
 
 .rightSectionHeader {
   display: flex;
-}
+} 
 
 .rightSection :global(.cds--skeleton) {
   width: 100%;
@@ -64,7 +66,7 @@
   min-width: 2.5rem;
 }
 
-.leftHeaderActions > :global(.cds--content-switcher),
+.leftHeaderActions > :global(.cds--content-switcher), 
 .viewOptsContentSwitcherContainer :global(.cds--content-switcher) {
   display: grid;
   grid-template-columns: 1fr 1fr;
@@ -78,12 +80,12 @@
   align-items: baseline;
 
   .trendlineOverlayHeaderTitle {
-    @include type.type-style("heading-compact-02");
+    @include type.type-style('heading-compact-02');
     margin-right: 4px;
   }
 
   .trendlineOverlayHeaderReferenceRange {
-    @include type.type-style("helper-text-01");
+    @include type.type-style('helper-text-01');
   }
 }
 
@@ -137,7 +139,7 @@
   justify-content: center;
   text-align: left;
   margin-top: 20px;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   border-radius: 5px;
   margin: 2%;
   padding: 2%;
@@ -152,26 +154,9 @@
   justify-content: center;
   text-align: left;
   margin-top: 20px;
-  background-color: #ffffff;
+  background-color: #FFFFFF;
   border-radius: 5px;
   margin-top: 1%;
-  padding: 2%;
-}
-
-.patient-header3 {
-  //background-color: #f5f5f5;
-  border: 1px solid #ddd;
-  // padding: 20px;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-  justify-content: center;
-  text-align: left;
-  background-color: #ffffff;
-  border-radius: 5px;
-  margin-top: 2%;
-  margin-left: 6%;
-  margin-right: 6%;
   padding: 2%;
 }
 
@@ -192,30 +177,8 @@
   color: #888;
 }
 
-.patientAvatar {
-  width: 5rem;
-  height: 5rem;
-  border-radius: 1px;
-}
-.patientAvatar2 {
-  padding-right: 140px;
-  width: 5rem;
-  height: 5rem;
-  border-radius: 1px;
-}
-@media screen and (max-width: 673px) {
-  .patient-name {
-    font-size: 16px;
-    margin-left: 5%;
-  }
 
-  .patient-dob {
-    font-size: 14px;
-    margin-left: 5%;
-  }
 
-  .patient-id {
-    font-size: 12px;
-    margin-left: 5%;
-  }
-}
+
+
+

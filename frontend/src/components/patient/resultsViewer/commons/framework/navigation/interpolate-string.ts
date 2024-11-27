@@ -35,13 +35,13 @@ function trimTrailingSlash(str: string) {
  */
 export function interpolateUrl(
   template: string,
-  additionalParams?: { [key: string]: string },
+  additionalParams?: { [key: string]: string }
 ): string {
   //const openmrsSpaBase = trimTrailingSlash(window.getOpenmrsSpaBase());
   return interpolateString(template, {
     openmrsBase: window.openmrsBase,
-    // openmrsSpaBase: openmrsSpaBase,
-    openmrsSpaBase: "https://localhost/api",
+   // openmrsSpaBase: openmrsSpaBase,
+   openmrsSpaBase: "https://localhost/api",
     ...additionalParams,
   }).replace(/^\/\//, "/"); // remove extra initial slash if present
 }
@@ -63,11 +63,11 @@ export function interpolateUrl(
  */
 export function interpolateString(
   template: string,
-  params: { [key: string]: string },
+  params: { [key: string]: string }
 ): string {
   const names = Object.keys(params);
   return names.reduce(
     (prev, curr) => prev.split("${" + curr + "}").join(params[curr]),
-    template,
+    template
   );
 }

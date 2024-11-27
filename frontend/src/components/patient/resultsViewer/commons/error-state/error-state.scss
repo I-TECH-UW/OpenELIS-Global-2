@@ -1,11 +1,11 @@
-@use "@carbon/styles/scss/spacing";
-@use "@carbon/styles/scss/type";
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
 //@import '~@openmrs/esm-styleguide/src/vars';
-@import "../scss/vars.scss";
+@import '../scss/vars.scss';
 
 .errorMessage {
   @include type.type-style("heading-compact-02");
-
+  
   margin-top: 2.25rem;
   margin-bottom: spacing.$spacing-03;
 }
@@ -18,20 +18,19 @@
 
 .desktopHeading {
   h4 {
-    @include type.type-style("heading-compact-02");
+    @include type.type-style('heading-compact-02');
     color: $text-02;
   }
 }
 
 .tabletHeading {
   h4 {
-    @include type.type-style("heading-03");
+    @include type.type-style('heading-03');
     color: $text-02;
   }
 }
 
-.desktopHeading,
-.tabletHeading {
+.desktopHeading, .tabletHeading {
   text-align: left;
   text-transform: capitalize;
   margin-bottom: spacing.$spacing-05;

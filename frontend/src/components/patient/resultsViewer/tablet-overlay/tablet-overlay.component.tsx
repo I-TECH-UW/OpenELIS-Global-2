@@ -1,8 +1,8 @@
-import React from "react";
-import { Button, Header } from "@carbon/react";
-import { ArrowLeft, Close } from "@carbon/react/icons";
+import React from 'react';
+import { Button, Header } from '@carbon/react';
+import { ArrowLeft, Close } from '@carbon/react/icons';
 //import styles from './tablet-overlay.scss';
-import "./tablet-overlay.scss";
+import  './tablet-overlay.scss';
 
 interface OverlayProps {
   children?: React.ReactNode;
@@ -11,12 +11,7 @@ interface OverlayProps {
   buttonsGroup?: React.ReactElement;
 }
 
-const Overlay: React.FC<OverlayProps> = ({
-  close,
-  children,
-  headerText,
-  buttonsGroup,
-}) => (
+const Overlay: React.FC<OverlayProps> = ({ close, children, headerText, buttonsGroup }) => (
   <div className="tabletOverlay">
     <Header className="tabletOverlayHeader">
       <Button onClick={close} hasIconOnly>

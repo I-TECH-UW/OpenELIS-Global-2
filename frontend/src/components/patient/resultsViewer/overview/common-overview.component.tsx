@@ -1,20 +1,13 @@
-import React, { useCallback } from "react";
-import {
-  Button,
-  TableToolbarContent,
-  TableToolbar,
-  Toggletip,
-  ToggletipButton,
-  ToggletipContent,
-} from "@carbon/react";
-import { ChartLine, Information, Table } from "@carbon/react/icons";
-import { EmptyState } from "../commons";
-import { OverviewPanelEntry } from "./useOverviewData";
-import { useTranslation } from "react-i18next";
-import { formatDatetime, navigate } from "../commons";
-import CommonDataTable from "./common-datatable.component";
+import React, { useCallback } from 'react';
+import { Button, TableToolbarContent, TableToolbar, Toggletip, ToggletipButton, ToggletipContent } from '@carbon/react';
+import { ChartLine, Information, Table } from '@carbon/react/icons';
+import { EmptyState } from '../commons';
+import { OverviewPanelEntry } from './useOverviewData';
+import { useTranslation } from 'react-i18next';
+import { formatDatetime, navigate } from '../commons';
+import CommonDataTable from './common-datatable.component';
 //import styles from './common-overview.scss';
-import "./common-overview.scss";
+import './common-overview.scss';
 
 const DashboardResultsCount = 5;
 
@@ -53,104 +46,85 @@ const CommonOverview: React.FC<CommonOverviewProps> = ({
   patientUuid,
 }) => {
   const { t } = useTranslation();
-  const [activeCardUuid, setActiveCardUuid] = React.useState("");
+  const [activeCardUuid, setActiveCardUuid] = React.useState('');
 
   const headers = [
-    { key: "name", header: "Test Name" },
-    { key: "value", header: "Value" },
-    { key: "range", header: "Reference Range" },
+    { key: 'name', header: 'Test Name' },
+    { key: 'value', header: 'Value' },
+    { key: 'range', header: 'Reference Range' },
   ];
 
   const isActiveCard = useCallback(
     (uuid: string) =>
-      activeCardUuid === uuid ||
-      (!activeCardUuid && uuid === overviewData[0][overviewData[0].length - 1]),
+      activeCardUuid === uuid || (!activeCardUuid && uuid === overviewData[0][overviewData[0].length - 1]),
     [activeCardUuid, overviewData],
   );
 
   const handleSeeAvailableResults = useCallback(() => {
-    navigate({
-      to: `\${openmrsSpaBase}/patient/${patientUuid}/chart/test-results`,
-    });
+    navigate({ to: `\${openmrsSpaBase}/patient/${patientUuid}/chart/test-results` });
   }, [patientUuid]);
 
   if (!overviewData.length)
-    return (
-      <EmptyState
-        headerTitle={t("testResults", "Test Results")}
-        displayText={t("testResults", "test results")}
-      />
-    );
+    return <EmptyState headerTitle={t('testResults', 'Test Results')} displayText={t('testResults', 'test results')} />;
 
   return (
     <>
       {(() => {
-        const cards = overviewData.map(
-          ([title, type, data, effectiveDateTime, issuedDateTime, uuid]) => (
-            <article
-              key={uuid}
-              className={
-                insertSeparator
-                  ? ""
-                  : `${"card"} ${isActiveCard(uuid) ? "activeCard" : ""}`
-              }
-            >
-              <CommonDataTable
-                {...{
-                  title,
-                  data,
-                  description: (
-                    <div className={insertSeparator ? "" : "cardHeader"}>
-                      <div className="meta">
-                        {formatDatetime(effectiveDateTime, { mode: "wide" })}
-                        <InfoTooltip
-                          effectiveDateTime={effectiveDateTime}
-                          issuedDateTime={issuedDateTime}
-                        />
-                      </div>
+        const cards = overviewData.map(([title, type, data, effectiveDateTime, issuedDateTime, uuid]) => (
+          <article
+            key={uuid}
+            className={insertSeparator ? '' : `${"card"} ${isActiveCard(uuid) ? "activeCard" : ''}`}
+          >
+            <CommonDataTable
+              {...{
+                title,
+                data,
+                description: (
+                  <div className={insertSeparator ? '' : "cardHeader"}>
+                    <div className="meta">
+                      {formatDatetime(effectiveDateTime, { mode: 'wide' })}
+                      <InfoTooltip effectiveDateTime={effectiveDateTime} issuedDateTime={issuedDateTime} />
                     </div>
-                  ),
-                  tableHeaders: headers,
-                  toolbar: hideToolbar || (
-                    <TableToolbar>
-                      <TableToolbarContent>
-                        {type === "Test" && (
-                          <Button
-                            kind="ghost"
-                            renderIcon={(props) => (
-                              <ChartLine size={16} {...props} />
-                            )}
-                            onClick={() => {
-                              setActiveCardUuid(uuid);
-                              openTrendline(uuid, uuid);
-                            }}
-                          >
-                            {t("trend", "Trend")}
-                          </Button>
-                        )}
+                  </div>
+                ),
+                tableHeaders: headers,
+                toolbar: hideToolbar || (
+                  <TableToolbar>
+                    <TableToolbarContent>
+                      {type === 'Test' && (
                         <Button
                           kind="ghost"
-                          renderIcon={(props) => <Table size={16} {...props} />}
+                          renderIcon={(props) => <ChartLine size={16} {...props} />}
                           onClick={() => {
                             setActiveCardUuid(uuid);
-                            openTimeline(uuid);
+                            openTrendline(uuid, uuid);
                           }}
                         >
-                          {t("timeline", "Timeline")}
+                          {t('trend', 'Trend')}
                         </Button>
-                      </TableToolbarContent>
-                    </TableToolbar>
-                  ),
-                }}
-              />
-              {data.length > DashboardResultsCount && insertSeparator && (
-                <Button onClick={handleSeeAvailableResults} kind="ghost">
-                  {t("moreResultsAvailable", "More results available")}
-                </Button>
-              )}
-            </article>
-          ),
-        );
+                      )}
+                      <Button
+                        kind="ghost"
+                        renderIcon={(props) => <Table size={16} {...props} />}
+                        onClick={() => {
+                          setActiveCardUuid(uuid);
+                          openTimeline(uuid);
+                        }}
+                      >
+                        {t('timeline', 'Timeline')}
+                      </Button>
+                    </TableToolbarContent>
+                  </TableToolbar>
+                ),
+              }}
+            />
+            {data.length > DashboardResultsCount && insertSeparator && (
+              <Button onClick={handleSeeAvailableResults} kind="ghost">
+                {t('moreResultsAvailable', 'More results available')}
+              </Button>
+            )}
+          </article>
+        ));
 
         if (insertSeparator)
           return cards.reduce((acc, val, i, { length }) => {
@@ -180,14 +154,14 @@ const InfoTooltip = ({ effectiveDateTime, issuedDateTime }) => {
       </ToggletipButton>
       <ToggletipContent>
         <div className="tooltip">
-          <p>{t("dateCollected", "Displaying date collected")}</p>
+          <p>{t('dateCollected', 'Displaying date collected')}</p>
           <p>
-            <span className="label">{t("resulted", "Resulted")}: </span>{" "}
-            {formatDatetime(issuedDateTime, { mode: "wide" })}
+            <span className="label">{t('resulted', 'Resulted')}: </span>{' '}
+            {formatDatetime(issuedDateTime, { mode: 'wide' })}
           </p>
           <p>
-            <span className="label">{t("ordered", "Ordered")}: </span>{" "}
-            {formatDatetime(effectiveDateTime, { mode: "wide" })}
+            <span className="label">{t('ordered', 'Ordered')}: </span>{' '}
+            {formatDatetime(effectiveDateTime, { mode: 'wide' })}
           </p>
         </div>
       </ToggletipContent>

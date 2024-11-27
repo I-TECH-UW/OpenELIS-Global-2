@@ -16,7 +16,7 @@ import {
 import React, { useState, useContext, useEffect } from "react";
 import "../Style.css";
 import "./wpStyle.css";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import WorkplanSearchForm from "./WorkplanSearchForm";
 import {
   postToOpenElisServerForPDF,
@@ -25,14 +25,9 @@ import {
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { ConfigurationContext } from "../layout/Layout";
-import PageBreadCrumb from "../common/PageBreadCrumb";
 
 export default function Workplan(props) {
   const { configurationProperties } = useContext(ConfigurationContext);
-  const { notificationVisible, setNotificationVisible, addNotification } =
-    useContext(NotificationContext);
-
-  const intl = useIntl();
 
   const [testsList, setTestsList] = useState([]);
   const [subjectOnWorkplan, setSubjectOnWorkplan] = useState(false);
@@ -41,39 +36,30 @@ export default function Workplan(props) {
   const [selectedValue, setSelectedValue] = useState("");
   const [selectedLabel, setSelectedLabel] = useState("");
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(100);
+  const [pageSize, setPageSize] = useState(20);
+  const { notificationVisible, setNotificationVisible, setNotificationBody } =
+    useContext(NotificationContext);
 
   const type = props.type;
   let title = "";
-  let sourceTitle = "";
   switch (type) {
-    case "test": {
+    case "test":
       title = <FormattedMessage id="workplan.test.title" />;
-      sourceTitle = "WorkPlanByTest";
       break;
-    }
-    case "panel": {
+    case "panel":
       title = <FormattedMessage id="workplan.panel.title" />;
-      sourceTitle = "WorkPlanByPanel";
       break;
-    }
-    case "unit": {
+    case "unit":
       title = <FormattedMessage id="workplan.unit.title" />;
-      sourceTitle = "WorkPlanByTestSection";
       break;
-    }
-    case "priority": {
+    case "priority":
       title = <FormattedMessage id="workplan.priority.title" />;
-      sourceTitle = "WorkPlanByPriority";
       break;
-    }
-    default: {
+    default:
       title = "";
-      sourceTitle = "";
-    }
   }
 
-  useEffect(() => {
+  useEffect(() =>{
     setSubjectOnWorkplan(configurationProperties.SUBJECT_ON_WORKPLAN);
     setNextVisitOnWorkplan(configurationProperties.NEXT_VISIT_DATE_ON_WORKPLAN);
     setConfigurationName(configurationProperties.configurationName);
@@ -82,19 +68,19 @@ export default function Workplan(props) {
   const reportStatus = (pdfGenerated) => {
     setNotificationVisible(true);
     if (pdfGenerated) {
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.success,
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "success.report.status" }),
+        title: <FormattedMessage id="notification.title" />,
+        message: "Succesfuly Generated Report",
       });
     } else {
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.error,
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "error.report.status" }),
+        title: <FormattedMessage id="notification.title" />,
+        message: "Error while Generating Report",
       });
     }
-  };
+  }
 
   const handleTestsList = (tests) => {
     setTestsList(tests.workplanTests);
@@ -129,7 +115,7 @@ export default function Workplan(props) {
     postToOpenElisServerForPDF(
       "/rest/printWorkplanReport",
       JSON.stringify(form),
-      reportStatus,
+      reportStatus
     );
   };
 
@@ -171,15 +157,11 @@ export default function Workplan(props) {
   let rowColorIndex = 2;
   let showAccessionNumber = false;
   let currentAccessionNumber = "";
-
-  let breadcrumbs = [{ label: "home.label", link: "/" }];
-
   return (
     <>
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
-        {notificationVisible === true ? <AlertDialog /> : ""}
-        <Column lg={16} md={8} sm={4}>
+      {notificationVisible === true ? <AlertDialog /> : ""}
+        <Column lg={16}>
           <Section>
             <Section>
               <Heading>{title}</Heading>
@@ -191,7 +173,7 @@ export default function Workplan(props) {
       </Grid>
       <div className="orderLegendBody">
         <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={4}>
+          <Column lg={16}>
             <WorkplanSearchForm
               type={type}
               createTestsList={handleTestsList}
@@ -205,7 +187,7 @@ export default function Workplan(props) {
             <hr />
             <br />
             <Grid fullWidth={true}>
-              <Column lg={16} md={8} sm={4}>
+              <Column lg={16}>
                 <Button
                   size="md"
                   type="button"
@@ -219,7 +201,7 @@ export default function Workplan(props) {
             </Grid>
             <br />
             <Grid fullWidth={true}>
-              <Column sm={4} md={8} lg={16}>
+              <Column lg={16}>
                 <FormattedMessage id="label.total.tests" /> = {testsList.length}
                 &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                 <img
@@ -231,7 +213,7 @@ export default function Workplan(props) {
               </Column>
             </Grid>
             <Grid fullWidth={true}>
-              <Column sm={4} md={8} lg={16}>
+              <Column lg={16} md={2}>
                 <>
                   <Table size={"sm"}>
                     <TableHead>
@@ -320,7 +302,7 @@ export default function Workplan(props) {
                                   <Link
                                     style={{ color: "blue" }}
                                     href={
-                                      `/result?type=order&doRange=false&source=${sourceTitle}&accessionNumber=` +
+                                      "/result?type=order&doRange=false&accessionNumber=" +
                                       row.accessionNumber
                                     }
                                   >
@@ -337,8 +319,7 @@ export default function Workplan(props) {
                                   {showAccessionNumber && row.patientInfo}
                                 </TableCell>
                               )}
-                              {nextVisitOnWorkplan?.toLowerCase() ===
-                                "true" && (
+                              {nextVisitOnWorkplan?.toLowerCase() === "true" && (
                                 <TableCell>
                                   {showAccessionNumber && row.nextVisitDate}
                                 </TableCell>
@@ -366,52 +347,16 @@ export default function Workplan(props) {
                     onChange={handlePageChange}
                     page={page}
                     pageSize={pageSize}
-                    pageSizes={[10, 20, 30, 50, 100]}
+                    pageSizes={[10, 20, 50, 100]}
                     totalItems={testsList.length}
-                    forwardText={intl.formatMessage({
-                      id: "pagination.forward",
-                    })}
-                    backwardText={intl.formatMessage({
-                      id: "pagination.backward",
-                    })}
-                    itemRangeText={(min, max, total) =>
-                      intl.formatMessage(
-                        { id: "pagination.item-range" },
-                        { min: min, max: max, total: total },
-                      )
-                    }
-                    itemsPerPageText={intl.formatMessage({
-                      id: "pagination.items-per-page",
-                    })}
-                    itemText={(min, max) =>
-                      intl.formatMessage(
-                        { id: "pagination.item" },
-                        { min: min, max: max },
-                      )
-                    }
-                    pageNumberText={intl.formatMessage({
-                      id: "pagination.page-number",
-                    })}
-                    pageRangeText={(_current, total) =>
-                      intl.formatMessage(
-                        { id: "pagination.page-range" },
-                        { total: total },
-                      )
-                    }
-                    pageText={(page, pagesUnknown) =>
-                      intl.formatMessage(
-                        { id: "pagination.page" },
-                        { page: pagesUnknown ? "" : page },
-                      )
-                    }
-                  />
+                  ></Pagination>
                 </>
               </Column>
               <hr />
             </Grid>
             <br />
             <Grid fullWidth={true}>
-              <Column sm={4} md={8} lg={16}>
+              <Column lg={16}>
                 <Button
                   size="md"
                   type="button"
@@ -428,7 +373,7 @@ export default function Workplan(props) {
         {selectedValue && testsList.length === 0 && (
           <h4>
             <Grid>
-              <Column sm={4} md={8} lg={16}>
+              <Column lg={16}>
                 <FormattedMessage id="result.noTestsFound" />
               </Column>
             </Grid>

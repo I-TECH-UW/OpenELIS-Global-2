@@ -6,14 +6,16 @@ import SampleType from "./SampleType";
 import { FormattedMessage } from "react-intl";
 const AddSample = (props) => {
   const { samples, setSamples, error } = props;
-  const componentMounted = useRef(false);
+  const componentMounted = useRef(true);
+  const [elementsCounter, setElementsCounter] = useState(0);
 
   const [rejectSampleReasons, setRejectSampleReasons] = useState([]);
 
   const handleAddNewSample = () => {
     let updateSamples = [...samples];
+    let count = elementsCounter + 1;
     updateSamples.push({
-      index: updateSamples.length + 1,
+      index: count,
       sampleRejected: false,
       rejectionReason: "",
       requestReferralEnabled: false,
@@ -23,8 +25,8 @@ const AddSample = (props) => {
       panels: [],
       tests: [],
     });
-    console.debug(JSON.stringify(updateSamples));
     setSamples(updateSamples);
+    setElementsCounter(count);
   };
 
   const sampleTypeObject = (object) => {
@@ -62,15 +64,12 @@ const AddSample = (props) => {
         newState[object.sampleObjectIndex].referralItems = object.referralItems;
         break;
       default:
-        console.debug(JSON.stringify(newState));
         props.setSamples(newState);
     }
-    props.setSamples(newState);
   };
 
   const removeSample = (index) => {
     let updateSamples = samples.splice(index, 1);
-    console.debug(JSON.stringify(updateSamples));
     setSamples(updateSamples);
   };
 
@@ -85,12 +84,21 @@ const AddSample = (props) => {
     let filtered = samples.filter(function (element) {
       return element !== sample;
     });
-    console.debug(JSON.stringify(filtered));
     setSamples(filtered);
   };
 
   useEffect(() => {
-    componentMounted.current = true;
+    getFromOpenElisServer(
+      "/rest/test-rejection-reasons",
+      fetchRejectSampleReasons,
+    );
+    window.scrollTo(0, 0);
+    return () => {
+      componentMounted.current = false;
+    };
+  }, []);
+
+  useEffect(() => {
     getFromOpenElisServer(
       "/rest/test-rejection-reasons",
       fetchRejectSampleReasons,
@@ -123,11 +131,6 @@ const AddSample = (props) => {
                   rejectSampleReasons={rejectSampleReasons}
                   removeSample={removeSample}
                   sample={sample}
-                  setSample={(newSample) => {
-                    let newSamples = [...samples];
-                    newSamples[i] = newSample;
-                    setSamples(newSamples);
-                  }}
                   sampleTypeObject={sampleTypeObject}
                   error={error}
                 />

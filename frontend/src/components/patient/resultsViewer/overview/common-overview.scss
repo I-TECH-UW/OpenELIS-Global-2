@@ -1,6 +1,6 @@
-@use "@carbon/styles/scss/spacing";
-@use "@carbon/styles/scss/type";
-@import "../commons/scss/vars.scss";
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
+@import '../commons/scss/vars.scss';
 
 .card {
   border: 1px solid $ui-03;
@@ -43,7 +43,7 @@
 }
 
 .tooltip {
-  @include type.type-style("body-compact-01");
+  @include type.type-style('body-compact-01');
   color: $ui-01;
 
   p {
@@ -55,7 +55,7 @@
 }
 
 .label {
-  @include type.type-style("label-01");
+  @include type.type-style('label-01');
   color: $labeldropdown;
   margin-right: 0.25rem;
 }

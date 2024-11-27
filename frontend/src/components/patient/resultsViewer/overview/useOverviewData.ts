@@ -1,6 +1,6 @@
-import { useState, useEffect } from "react";
-import { ObsRecord, OBSERVATION_INTERPRETATION } from "../commons";
-import usePatientResultsData from "../loadPatientTestData/usePatientResultsData";
+import { useState, useEffect } from 'react';
+import { ObsRecord, OBSERVATION_INTERPRETATION } from '../commons';
+import usePatientResultsData from '../loadPatientTestData/usePatientResultsData';
 
 export interface OverviewPanelData {
   id: string;
@@ -16,29 +16,16 @@ interface Coding {
   coding: Array<{ code: string; display: string }>;
 }
 
-export type OverviewPanelEntry = [
-  string,
-  string,
-  Array<OverviewPanelData>,
-  Date,
-  Date,
-  string,
-];
+export type OverviewPanelEntry = [string, string, Array<OverviewPanelData>, Date, Date, string];
 
-export function parseSingleEntry(
-  entry: ObsRecord,
-  type: string,
-  panelName: string,
-): Array<OverviewPanelData> {
-  if (type === "Test") {
+export function parseSingleEntry(entry: ObsRecord, type: string, panelName: string): Array<OverviewPanelData> {
+  if (type === 'Test') {
     return [
       {
         id: entry.id,
         name: panelName,
-        range: entry.meta?.range || "--",
-        interpretation: entry.meta.assessValue
-          ? entry.meta.assessValue(entry.value)
-          : "--",
+        range: entry.meta?.range || '--',
+        interpretation: entry.meta.assessValue ? entry.meta.assessValue(entry.value) : '--',
         value: entry.value,
       },
     ];
@@ -47,7 +34,7 @@ export function parseSingleEntry(
       id: gm.id,
       key: gm.id,
       name: gm.name,
-      range: gm.meta?.range || "--",
+      range: gm.meta?.range || '--',
       interpretation: gm.meta.assessValue(gm.value),
       value: gm.value,
     }));
@@ -56,9 +43,7 @@ export function parseSingleEntry(
 
 function useOverviewData(patientUuid: string) {
   const { sortedObs, loaded, error } = usePatientResultsData(patientUuid);
-  const [overviewData, setDisplayData] = useState<Array<OverviewPanelEntry>>(
-    [],
-  );
+  const [overviewData, setDisplayData] = useState<Array<OverviewPanelEntry>>([]);
 
   useEffect(() => {
     setDisplayData(
@@ -75,9 +60,7 @@ function useOverviewData(patientUuid: string) {
             uuid,
           ];
         })
-        .sort(
-          ([, , , date1], [, , , date2]) => date2.getTime() - date1.getTime(),
-        ),
+        .sort(([, , , date1], [, , , date2]) => date2.getTime() - date1.getTime()),
     );
   }, [sortedObs]);
 

@@ -1,5 +1,5 @@
-@use "@carbon/styles/scss/spacing";
-@use "@carbon/styles/scss/type";
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
 @import "~@carbon/charts/styles.css";
 //@import '~@openmrs/esm-styleguide/src/vars';
 @import "../commons/scss/vars.scss";
@@ -22,14 +22,14 @@
 }
 
 .title {
-  @include type.type-style("heading-compact-02");
+  @include type.type-style('heading-compact-02');
   color: $text-02;
   margin-right: 4px;
 }
 
 .reference-range {
-  @include type.type-style("helper-text-01");
-  //  color: $text-05; // WIP
+  @include type.type-style('helper-text-01');
+ //  color: $text-05; // WIP
 }
 
 :global(.cds--cc--area path.area) {
@@ -60,7 +60,7 @@
     svg {
       order: 1;
       margin-right: 0.5rem;
-    }
+    }  
 
     span {
       order: 2;

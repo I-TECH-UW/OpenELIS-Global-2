@@ -1,6 +1,7 @@
 import React, { useContext, useState, useEffect, useRef } from "react";
 import {
   Form,
+  FormLabel,
   Heading,
   TextInput,
   Button,
@@ -20,16 +21,13 @@ import {
   NotificationKinds,
 } from "../../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
-import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 
-let breadcrumbs = [{ label: "home.label", link: "/" }];
 function BillingMenuManagement() {
-  const { notificationVisible, setNotificationVisible, addNotification } =
+  const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
-
   const intl = useIntl();
 
-  const componentMounted = useRef(false);
+  const componentMounted = useRef(true);
 
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -39,18 +37,18 @@ function BillingMenuManagement() {
     setNotificationVisible(true);
     setIsSubmitting(false);
     if (res.status == "200") {
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.success,
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "success.add.edited.msg" }),
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="success.add.edited.msg" />,
       });
       var body = await res.json();
       setMenuItem(body);
     } else {
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.error,
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "error.add.edited.msg" }),
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="error.add.edited.msg" />,
       });
     }
   }
@@ -66,15 +64,12 @@ function BillingMenuManagement() {
   }
 
   const handleMenuItems = (res) => {
-    setLoading(false);
     if (res) {
       setMenuItem(res);
     }
   };
 
   useEffect(() => {
-    componentMounted.current = true;
-    setLoading(true);
     getFromOpenElisServer("/rest/menu/menu_billing", handleMenuItems);
     return () => {
       componentMounted.current = false;
@@ -86,9 +81,8 @@ function BillingMenuManagement() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <div className="adminPageContent">
-        <PageBreadCrumb breadcrumbs={breadcrumbs} />
         <Grid>
-          <Column lg={16} md={8} sm={4}>
+          <Column lg={16}>
             <Section>
               <Heading>
                 <FormattedMessage id="menu.billing.title" />
@@ -102,16 +96,14 @@ function BillingMenuManagement() {
                     labelText={intl.formatMessage({
                       id: "menu.billing.address",
                     })}
-                    value={menuItem.menu.actionURL || ""}
+                    value={menuItem.menu.actionURL}
                     onChange={(e) => {
                       setMenuItem({
                         ...menuItem,
                         menu: { ...menuItem.menu, actionURL: e.target.value },
                       });
                     }}
-                    type="url"
-                    required
-                    pattern="https?://.*"
+                    type="text"
                   />
                 </div>
                 <div className="formInlineDiv">
@@ -120,7 +112,7 @@ function BillingMenuManagement() {
                     labelText={intl.formatMessage({
                       id: "menu.billing.active",
                     })}
-                    checked={menuItem.menu.isActive || false}
+                    checked={menuItem.menu.isActive}
                     onChange={(_, { checked }) => {
                       setMenuItem({
                         ...menuItem,

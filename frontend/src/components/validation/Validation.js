@@ -4,6 +4,8 @@ import {
   Button,
   Checkbox,
   Column,
+  DatePicker,
+  DatePickerInput,
   Form,
   Grid,
   Pagination,
@@ -25,16 +27,16 @@ import { convertAlphaNumLabNumForDisplay } from "../utils/Utils";
 import config from "../../config.json";
 
 const Validation = (props) => {
-  const componentMounted = useRef(false);
-
-  const { setNotificationVisible, addNotification } =
+  const { setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
   const { configurationProperties } = useContext(ConfigurationContext);
+
+  const componentMounted = useRef(false);
 
   const intl = useIntl();
 
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(100);
+  const [pageSize, setPageSize] = useState(20);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -58,11 +60,8 @@ const Validation = (props) => {
       id: "testName",
       name: intl.formatMessage({ id: "column.name.testName" }),
       selector: (row) => row.testName,
-      cell: (row, index, column, id) => {
-        return renderCell(row, index, column, id);
-      },
       sortable: true,
-      width: "15rem",
+      width: "10rem",
     },
     {
       id: "normalRange",
@@ -101,7 +100,7 @@ const Validation = (props) => {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "15rem",
+      width: "10rem",
     },
     {
       id: "pastNotes",
@@ -109,7 +108,7 @@ const Validation = (props) => {
       cell: (row, index, column, id) => {
         return renderCell(row, index, column, id);
       },
-      width: "28rem",
+      width: "16rem",
     },
   ];
 
@@ -121,16 +120,15 @@ const Validation = (props) => {
     );
   };
   const handleResponse = (status) => {
-    let message = intl.formatMessage({ id: "validation.save.error" });
+    let message = "Oops, try gain";
     let kind = NotificationKinds.error;
     if (status == 200) {
-      message = intl.formatMessage({ id: "validation.save.success" });
+      message = "Results have been validated successfully";
       kind = NotificationKinds.success;
-      window.location.href = "/validation" + props.params;
     }
-    addNotification({
+    setNotificationBody({
       kind: kind,
-      title: intl.formatMessage({ id: "notification.title" }),
+      title: <FormattedMessage id="notification.title" />,
       message: message,
     });
     setNotificationVisible(true);
@@ -153,7 +151,7 @@ const Validation = (props) => {
   };
 
   const handleDatePickerChange = (date, rowId) => {
-    console.debug("handleDatePickerChange:" + date);
+    console.log("handleDatePickerChange:" + date);
     const d = new Date(date).toLocaleDateString("fr-FR");
     var form = props.results;
     var jp = require("jsonpath");
@@ -177,10 +175,6 @@ const Validation = (props) => {
 
   const renderCell = (row, index, column, id) => {
     let formatLabNum = configurationProperties.AccessionFormat === "ALPHANUM";
-    const fullTestName = row.testName;
-    const splitIndex = fullTestName.lastIndexOf("(");
-    const testName = fullTestName.substring(0, splitIndex);
-    const sampleType = fullTestName.substring(splitIndex);
     switch (column.id) {
       case "sampleInfo":
         return (
@@ -225,15 +219,6 @@ const Validation = (props) => {
               </picture>
             )}
           </>
-        );
-      case "testName":
-        return (
-          <div className="sampleInfo">
-            <br></br>
-            {testName}
-            <br></br>
-            {sampleType}
-          </div>
         );
 
       case "save":
@@ -280,7 +265,7 @@ const Validation = (props) => {
                 disabled={false}
                 type="text"
                 labelText=""
-                rows={2}
+                rows={3}
                 onChange={(e) => handleChange(e, row.id)}
               ></TextArea>
             </div>
@@ -290,10 +275,17 @@ const Validation = (props) => {
       case "pastNotes":
         return (
           <>
-            <div
-              className="note"
-              dangerouslySetInnerHTML={{ __html: row.pastNotes }}
-            />
+            <div className="note">
+              <TextArea
+                id={"resultList" + row.id + ".pastNotes"}
+                name={"resultList[" + row.id + "].pastNotes"}
+                value={row.pastNotes}
+                disabled={true}
+                type="text"
+                labelText=""
+                rows={3}
+              ></TextArea>
+            </div>
           </>
         );
 
@@ -324,7 +316,7 @@ const Validation = (props) => {
     <>
       {props.results?.resultList?.length > 0 && (
         <Grid style={{ marginTop: "20px" }} className="gridBoundary">
-          <Column lg={7} md={8} sm={2}>
+          <Column lg={7}>
             <picture>
               <img
                 src={config.serverBaseUrl + "/images/nonconforming.gif"}
@@ -338,11 +330,11 @@ const Validation = (props) => {
               <FormattedMessage id="validation.label.nonconform" />
             </b>
           </Column>
-          <Column lg={3} md={2} sm={4}>
+          <Column lg={3}>
             <Checkbox
               id={"saveallnormal"}
               name={"autochecks"}
-              labelText={intl.formatMessage({ id: "validation.accept.normal" })}
+              labelText="Savel All normal"
               onChange={(e) => {
                 const nomalResults = props.results.resultList?.filter(
                   (result) => result.normal == true,
@@ -357,11 +349,11 @@ const Validation = (props) => {
               }}
             />
           </Column>
-          <Column lg={3} md={2} sm={4}>
+          <Column lg={3}>
             <Checkbox
               id={"saveallresults"}
               name={"autochecks"}
-              labelText={intl.formatMessage({ id: "validation.accept.all" })}
+              labelText="Savel All Results"
               onChange={(e) => {
                 const nomalResults = props.results.resultList;
                 nomalResults.forEach((result) => {
@@ -374,11 +366,11 @@ const Validation = (props) => {
               }}
             />
           </Column>
-          <Column lg={3} md={2} sm={4}>
+          <Column lg={3}>
             <Checkbox
               id={"retestalltests"}
               name={"autochecks"}
-              labelText={intl.formatMessage({ id: "validation.reject.all" })}
+              labelText="Retest All Tests"
               onChange={(e) => {
                 const nomalResults = props.results.resultList;
                 nomalResults.forEach((result) => {
@@ -417,7 +409,7 @@ const Validation = (props) => {
               onChange={handlePageChange}
               page={page}
               pageSize={pageSize}
-              pageSizes={[10, 20, 30, 50, 100]}
+              pageSizes={[10, 20, 50, 100]}
               totalItems={
                 props.results
                   ? props.results.resultList
@@ -425,45 +417,12 @@ const Validation = (props) => {
                     : 0
                   : 0
               }
-              forwardText={intl.formatMessage({ id: "pagination.forward" })}
-              backwardText={intl.formatMessage({ id: "pagination.backward" })}
-              itemRangeText={(min, max, total) =>
-                intl.formatMessage(
-                  { id: "pagination.item-range" },
-                  { min: min, max: max, total: total },
-                )
-              }
-              itemsPerPageText={intl.formatMessage({
-                id: "pagination.items-per-page",
-              })}
-              itemText={(min, max) =>
-                intl.formatMessage(
-                  { id: "pagination.item" },
-                  { min: min, max: max },
-                )
-              }
-              pageNumberText={intl.formatMessage({
-                id: "pagination.page-number",
-              })}
-              pageRangeText={(_current, total) =>
-                intl.formatMessage(
-                  { id: "pagination.page-range" },
-                  { total: total },
-                )
-              }
-              pageText={(page, pagesUnknown) =>
-                intl.formatMessage(
-                  { id: "pagination.page" },
-                  { page: pagesUnknown ? "" : page },
-                )
-              }
-            />
+            ></Pagination>
 
             <Button
               type="button"
               onClick={() => handleSave(values)}
               id="submit"
-              style={{ marginTop: "16px" }}
             >
               <FormattedMessage id="label.button.save" />
             </Button>

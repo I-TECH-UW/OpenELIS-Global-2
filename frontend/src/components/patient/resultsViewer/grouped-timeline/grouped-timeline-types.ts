@@ -1,5 +1,5 @@
-import type { OBSERVATION_INTERPRETATION } from "../commons";
-import { TreeNode } from "../filter/filter-types";
+import type { OBSERVATION_INTERPRETATION } from '../commons';
+import { TreeNode } from '../filter/filter-types';
 
 export interface PanelNameCornerProps {
   showShadow: boolean;

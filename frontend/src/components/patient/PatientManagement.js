@@ -4,11 +4,6 @@ import "../Style.css";
 import { Heading, Grid, Column, Section, Button } from "@carbon/react";
 import SearchPatientForm from "./SearchPatientForm";
 import CreatePatientForm from "./CreatePatientForm";
-import PageBreadCrumb from "../common/PageBreadCrumb";
-let breadcrumbs = [
-  { label: "home.label", link: "/" },
-  { label: "patient.label.modify", link: "/PatientManagement" },
-];
 
 function PatientManagement() {
   const [selectedPatient, setSelectedPatient] = useState({});
@@ -39,9 +34,8 @@ function PatientManagement() {
 
   return (
     <>
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
-        <Column lg={16} md={8} sm={4}>
+        <Column lg={16}>
           <Section>
             <Section>
               <Heading>
@@ -53,45 +47,33 @@ function PatientManagement() {
       </Grid>
       <br></br>
       <div className="orderLegendBody">
-        <Grid>
-          <Column lg={4} md={3} sm={2}>
-            <Button
-              kind={searchPatientTab.kind}
-              onClick={handleSearchPatientTab}
-            >
-              <FormattedMessage
-                id="search.patient.label"
-                defaultMessage="Search for Patient"
-              />
-            </Button>
-          </Column>
-          <Column lg={4} md={3} sm={2}>
-            <Button kind={newPatientTab.kind} onClick={handleNewPatientTab}>
-              <FormattedMessage
-                id="new.patient.label"
-                defaultMessage="New Patient"
-              />
-            </Button>
-          </Column>
+        <div className="tabsLayout">
+          <Button kind={searchPatientTab.kind} onClick={handleSearchPatientTab}>
+            <FormattedMessage
+              id="search.patient.label"
+              defaultMessage="Search for Patient"
+            />
+          </Button>
+          <Button kind={newPatientTab.kind} onClick={handleNewPatientTab}>
+            <FormattedMessage
+              id="new.patient.label"
+              defaultMessage="New Patient"
+            />
+          </Button>
+        </div>
+        {searchPatientTab.active && (
+          <SearchPatientForm
+            getSelectedPatient={getSelectedPatient}
+          ></SearchPatientForm>
+        )}
 
-          {searchPatientTab.active && (
-            <Column lg={16} md={8} sm={4}>
-              <SearchPatientForm
-                getSelectedPatient={getSelectedPatient}
-              ></SearchPatientForm>
-            </Column>
-          )}
-
-          <br></br>
-          {newPatientTab.active && (
-            <Column lg={16} md={8} sm={4}>
-              <CreatePatientForm
-                showActionsButton={true}
-                selectedPatient={selectedPatient}
-              ></CreatePatientForm>
-            </Column>
-          )}
-        </Grid>
+        <br></br>
+        {newPatientTab.active && (
+          <CreatePatientForm
+            showActionsButton={true}
+            selectedPatient={selectedPatient}
+          ></CreatePatientForm>
+        )}
       </div>
     </>
   );

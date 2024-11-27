@@ -31,7 +31,6 @@ import { NotificationContext } from "../layout/Layout";
 import { AlertDialog } from "../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import "../pathology/PathologyDashboard.css";
-import PageBreadCrumb from "../common/PageBreadCrumb";
 
 function CytologyDashboard() {
   const componentMounted = useRef(false);
@@ -57,7 +56,7 @@ function CytologyDashboard() {
   });
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(100);
+  const [pageSize, setPageSize] = useState(10);
   const intl = useIntl();
 
   const setStatusList = (statusList) => {
@@ -267,14 +266,10 @@ function CytologyDashboard() {
     };
   }, [filters]);
 
-  let breadcrumbs = [{ label: "home.label", link: "/" }];
-
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading description="Loading Dasboard..." />}
-
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
 
       <Grid fullWidth={true}>
         <Column lg={16}>
@@ -304,21 +299,15 @@ function CytologyDashboard() {
               onChange={(e) =>
                 setFilters({ ...filters, searchTerm: e.target.value })
               }
-              placeholder={intl.formatMessage({
-                id: "label.search.labno.family",
-              })}
-              labelText={intl.formatMessage({
-                id: "label.search.labno.family",
-              })}
+              placeholder={intl.formatMessage({ id: "label.seacrh.labno.family" })}
+              labelText={<FormattedMessage id="label.seacrh.labno.family"/>}
             />
           </Column>
           <Column lg={8} md={4} sm={2}>
             <div className="inlineDivBlock">
-              <div>
-                <FormattedMessage id="filters.label" />
-              </div>
+              <div>{intl.formatMessage({ id: "filters.label" })}</div>
               <Checkbox
-                labelText={intl.formatMessage({ id: "label.filters.mycases" })}
+                labelText={<FormattedMessage id="label.filters.mycases"/>}
                 id="filterMyCases"
                 value={filters.myCases}
                 onChange={(e) =>
@@ -328,22 +317,15 @@ function CytologyDashboard() {
               <Select
                 id="statusFilter"
                 name="statusFilter"
-                labelText={intl.formatMessage({ id: "label.filters.status" })}
+                labelText={<FormattedMessage id="label.filters.status"/>}
                 value={
                   filters.statuses.length > 1 ? "All" : filters.statuses[0].id
                 }
                 onChange={setStatusFilter}
                 noLabel
               >
-                <SelectItem
-                  disabled
-                  value="placeholder"
-                  text={intl.formatMessage({ id: "label.filters.status" })}
-                />
-                <SelectItem
-                  text={intl.formatMessage({ id: "all.label" })}
-                  value="All"
-                />
+                <SelectItem disabled  value="placeholder" text={intl.formatMessage({ id: "label.filters.status"})} />
+                <SelectItem text={intl.formatMessage({ id: "all.label" })} value="All" />
                 {statuses.map((status, index) => {
                   return (
                     <SelectItem
@@ -370,11 +352,11 @@ function CytologyDashboard() {
                 },
                 {
                   key: "status",
-                  header: intl.formatMessage({ id: "label.filters.status" }),
+                  header:intl.formatMessage({ id:  "label.filters.status"}),
                 },
                 {
                   key: "lastName",
-                  header: intl.formatMessage({ id: "patient.last.name" }),
+                  header: intl.formatMessage({ id: "patient.last.name"}),
                 },
                 {
                   key: "firstName",
@@ -382,19 +364,15 @@ function CytologyDashboard() {
                 },
                 {
                   key: "assignedTechnician",
-                  header: intl.formatMessage({
-                    id: "label.button.select.technician",
-                  }),
+                  header: intl.formatMessage({ id:"label.button.select.technician" }) ,
                 },
                 {
                   key: "assignedCytoPathologist",
-                  header: intl.formatMessage({
-                    id: "assigned.cytopathologist.label",
-                  }),
+                  header: intl.formatMessage({ id: "assigned.cytopathologist.label" }),
                 },
                 {
                   key: "labNumber",
-                  header: intl.formatMessage({ id: "sample.label.labnumber" }),
+                  header: intl.formatMessage({ id: "sample.label.labnumber" }), 
                 },
               ]}
               isSortable
@@ -436,41 +414,9 @@ function CytologyDashboard() {
               onChange={handlePageChange}
               page={page}
               pageSize={pageSize}
-              pageSizes={[10, 20, 30, 50, 100]}
+              pageSizes={[10, 20, 30]}
               totalItems={pathologyEntries.length}
-              forwardText={intl.formatMessage({ id: "pagination.forward" })}
-              backwardText={intl.formatMessage({ id: "pagination.backward" })}
-              itemRangeText={(min, max, total) =>
-                intl.formatMessage(
-                  { id: "pagination.item-range" },
-                  { min: min, max: max, total: total },
-                )
-              }
-              itemsPerPageText={intl.formatMessage({
-                id: "pagination.items-per-page",
-              })}
-              itemText={(min, max) =>
-                intl.formatMessage(
-                  { id: "pagination.item" },
-                  { min: min, max: max },
-                )
-              }
-              pageNumberText={intl.formatMessage({
-                id: "pagination.page-number",
-              })}
-              pageRangeText={(_current, total) =>
-                intl.formatMessage(
-                  { id: "pagination.page-range" },
-                  { total: total },
-                )
-              }
-              pageText={(page, pagesUnknown) =>
-                intl.formatMessage(
-                  { id: "pagination.page" },
-                  { page: pagesUnknown ? "" : page },
-                )
-              }
-            />
+            ></Pagination>
           </Column>
         </Grid>
       </div>

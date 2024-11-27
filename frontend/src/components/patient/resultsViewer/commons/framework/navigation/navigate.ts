@@ -46,8 +46,8 @@ export interface NavigateOptions {
 export function navigate({ to, templateParams }: NavigateOptions): void {
   //const openmrsSpaBase = trimTrailingSlash(window.getOpenmrsSpaBase());
   const target = interpolateUrl(to, templateParams);
-  // const isSpaPath = target.startsWith(openmrsSpaBase);
-  const isSpaPath = true;
+ // const isSpaPath = target.startsWith(openmrsSpaBase);
+ const isSpaPath = true;
 
   if (isSpaPath) {
     navigateToUrl(target);

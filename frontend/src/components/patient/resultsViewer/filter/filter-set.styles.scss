@@ -1,5 +1,5 @@
-@use "@carbon/styles/scss/spacing";
-@use "@carbon/styles/scss/type";
+@use '@carbon/styles/scss/spacing';
+@use '@carbon/styles/scss/type';
 //@import '~@openmrs/esm-styleguide/src/vars';
 @import "../commons/scss/vars.scss";
 
@@ -55,9 +55,7 @@
 }
 
 // our special accordion rules
-.nestedAccordion
-  > :global(.cds--accordion--start)
-  > :global(.cds--accordion__item--active) {
+.nestedAccordion > :global(.cds--accordion--start) > :global(.cds--accordion__item--active) {
   border-left: 0.3rem solid var(--brand-01);
   @media (max-width: $breakpoint-tablet-max) {
     margin: 1.5rem 0;
@@ -101,22 +99,18 @@
   }
 
   // Chevron transformations
-  .cds--accordion__item
-    > button[aria-expanded="false"]
-    > .cds--accordion__arrow {
+  .cds--accordion__item > button[aria-expanded="false"] > .cds--accordion__arrow {
     transform: rotate(90deg);
-  }
+}
 
-  .cds--accordion__item--active
-    > .cds--accordion__heading
-    > .cds--accordion__arrow {
+  .cds--accordion__item--active > .cds--accordion__heading > .cds--accordion__arrow {
     /*rtl:ignore*/
     transform: rotate(-90deg);
     fill: var(--brand-01);
   }
 
   .cds--checkbox-label-text {
-    padding: 0 0 0 0.75rem;
+    padding: 0 0 0 .75rem;
   }
 }
 

@@ -9,8 +9,9 @@ while [ -h "$SOURCE" ]; do # resolve $SOURCE until the file is no longer a symli
 done
 scriptDir="$( cd -P "$( dirname "$SOURCE" )" >/dev/null 2>&1 && pwd )"
 
-if [ $(curl -k --fail --silent http://frontend.openelis.org:80/login -o /dev/null -w '%{http_code}' -s) == "200" ]; then
-    exit 0;
+if [ $(curl -k --fail --silent http://frontend.openelis.org:80/login -o /dev/null -w '%{http_code}' -s) == "200" ]; then 
+	exit 0;
 else
-    exit 1;
+	exit 1;
 fi
+

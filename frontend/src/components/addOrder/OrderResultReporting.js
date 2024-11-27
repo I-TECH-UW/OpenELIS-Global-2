@@ -8,7 +8,7 @@ import {
   TableRow,
 } from "@carbon/react";
 import CustomCheckBox from "../common/CustomCheckBox";
-import { useIntl } from "react-intl";
+import { useIntl, FormattedMessage } from "react-intl";
 const PatientEmailAndSMS = (testId, index, handlePatientEmailAndSMS) => {
   function handlePatientSMS(checked) {
     handlePatientEmailAndSMS("PatientSMS", index, checked, testId);
@@ -35,8 +35,6 @@ const PatientEmailAndSMS = (testId, index, handlePatientEmailAndSMS) => {
 };
 
 const RequesterEmailAndSMS = (testId, index, handleRequesterEmailAndSMS) => {
-  const intl = useIntl();
-
   function handleProviderEmail(checked) {
     handleRequesterEmailAndSMS("RequesterEmail", index, checked, testId);
   }
@@ -50,7 +48,7 @@ const RequesterEmailAndSMS = (testId, index, handleRequesterEmailAndSMS) => {
       <CustomCheckBox
         id={"providerEmail_" + index + "_" + testId}
         onChange={(checked) => handleProviderEmail(checked)}
-        label={intl.formatMessage({ id: "provider.email" })}
+        label={<FormattedMessage id="provider.email"/>}
       />
       <CustomCheckBox
         id={"providerSMS_" + index + "_" + testId}

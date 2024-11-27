@@ -7,8 +7,6 @@ import {
   Stack,
   TextInput,
   TimePicker,
-  Column,
-  Grid,
 } from "@carbon/react";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import CustomDatePicker from "../common/CustomDatePicker";
@@ -18,35 +16,24 @@ import { priorities } from "../data/orderOptions";
 import { NotificationKinds } from "../common/CustomNotification";
 import AutoComplete from "../common/AutoComplete";
 import OrderResultReporting from "./OrderResultReporting";
-import { FormattedMessage, useIntl } from "react-intl";
+import { FormattedMessage } from "react-intl";
 import { ConfigurationContext } from "../layout/Layout";
 const AddOrder = (props) => {
-  const { setNotificationVisible, addNotification } =
-    useContext(NotificationContext);
-  const { configurationProperties } = useContext(ConfigurationContext);
-
-  const intl = useIntl();
-
-  const componentMounted = useRef(false);
-
-  const { orderFormValues, setOrderFormValues, samples, error, isModifyOrder } =
-    props;
+  const { orderFormValues, setOrderFormValues, samples, error } = props;
+  const componentMounted = useRef(true);
   const [otherSamplingVisible, setOtherSamplingVisible] = useState(false);
   const [providers, setProviders] = useState([]);
   const [paymentOptions, setPaymentOptions] = useState([]);
   const [samplingPerformed, setSamplingPerformed] = useState([]);
+  const [allowSiteNameOptions, setAllowSiteNameOptions] = useState("false");
+  const [allowRequesterOptions, setAllowRequesterOptions] = useState("false");
+  const { setNotificationVisible, setNotificationBody } =
+    useContext(NotificationContext);
   const [siteNames, setSiteNames] = useState([]);
   const [innitialized, setInnitialized] = useState(false);
+  const [phoneFormat, setPhoneFormat] = useState("");
+  const { configurationProperties } = useContext(ConfigurationContext);
   const [departments, setDepartments] = useState([]);
-
-  useEffect(() => {
-    componentMounted.current = true;
-    getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
-    window.scrollTo(0, 0);
-    return () => {
-      componentMounted.current = false;
-    };
-  }, []);
 
   const handleDatePickerChange = (datePicker, date) => {
     let obj = null;
@@ -191,9 +178,9 @@ const AddOrder = (props) => {
   function accessionNumberValidationResults(res) {
     if (res.status === false) {
       setNotificationVisible(true);
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.error,
-        title: intl.formatMessage({ id: "notification.title" }),
+        title: <FormattedMessage id="notification.title" />,
         message: res.body,
       });
     }
@@ -204,7 +191,7 @@ const AddOrder = (props) => {
       ...orderFormValues,
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
-        providerPersonId: providerId,
+        providerId: providerId,
       },
     });
 
@@ -224,9 +211,6 @@ const AddOrder = (props) => {
         providerWorkPhone: data.person.workPhone,
         providerEmail: data.person.email,
         providerFax: data.person.fax,
-        providerId: data.id,
-        providerPersonId: data.person.id,
-        referringSiteName: "",
       },
     });
   }
@@ -237,7 +221,6 @@ const AddOrder = (props) => {
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
         referringSiteDepartmentId: e.target.value,
-        referringSiteName: "",
       },
     });
   }
@@ -248,23 +231,8 @@ const AddOrder = (props) => {
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
         referringSiteName: e.target.value,
-        referringSiteId: "",
-        referringSiteDepartmentId: "",
       },
     });
-  }
-
-  function clearProviderId(e) {
-    if (e.target.value == "") {
-      setOrderFormValues({
-        ...orderFormValues,
-        sampleOrderItems: {
-          ...orderFormValues.sampleOrderItems,
-          providerId: "",
-          providerPersonId: "",
-        },
-      });
-    }
   }
 
   function handleAutoCompleteSiteName(siteId) {
@@ -273,31 +241,25 @@ const AddOrder = (props) => {
       sampleOrderItems: {
         ...orderFormValues.sampleOrderItems,
         referringSiteId: siteId,
-        referringSiteName: "",
-        referringSiteDepartmentId: "",
       },
     });
+    getFromOpenElisServer(
+      "/rest/departments-for-site?refferingSiteId=" + siteId,
+      loadDepartments,
+    );
   }
   const loadDepartments = (data) => {
     setDepartments(data);
   };
 
   function handleLabNo(e, rawVal) {
-    if (isModifyOrder) {
-      setOrderFormValues({
-        ...orderFormValues,
-        newAccessionNumber: e?.target?.value,
-      });
-    } else {
-      setOrderFormValues({
-        ...orderFormValues,
-        sampleOrderItems: {
-          ...orderFormValues.sampleOrderItems,
-          labNo: rawVal ? rawVal : e?.target?.value,
-        },
-      });
-    }
-    handleLabNoValidationOnChange(e?.target?.value);
+    setOrderFormValues({
+      ...orderFormValues,
+      sampleOrderItems: {
+        ...orderFormValues.sampleOrderItems,
+        labNo: rawVal ? rawVal : e.target.value,
+      },
+    });
     setNotificationVisible(false);
   }
 
@@ -311,20 +273,10 @@ const AddOrder = (props) => {
     }
   };
 
-  const handleLabNoValidationOnChange = (value) => {
-    if (value !== "") {
-      getFromOpenElisServer(
-        "/rest/SampleEntryAccessionNumberValidation?ignoreYear=false&ignoreUsage=false&field=labNo&accessionNumber=" +
-          value,
-        accessionNumberValidationResults,
-      );
-    }
-  };
-
   function fetchPhoneNoValidation(res) {
     if (res.status === false) {
-      addNotification({
-        title: intl.formatMessage({ id: "notification.title" }),
+      setNotificationBody({
+        title: <FormattedMessage id="notification.title" />,
         message: res.body,
         kind: NotificationKinds.error,
       });
@@ -333,7 +285,7 @@ const AddOrder = (props) => {
   }
 
   const handlePhoneNoValidation = () => {
-    if (orderFormValues.sampleOrderItems.providerWorkPhone) {
+    if (orderFormValues.sampleOrderItems.providerWorkPhone !== "") {
       const providerPhoneNo =
         orderFormValues.sampleOrderItems.providerWorkPhone.replace(
           /\+/g,
@@ -360,6 +312,7 @@ const AddOrder = (props) => {
 
   useEffect(() => {
     if (!innitialized) {
+      setPhoneFormat(configurationProperties.phoneFormat);
       setOrderFormValues({
         ...orderFormValues,
         sampleOrderItems: {
@@ -370,19 +323,17 @@ const AddOrder = (props) => {
           receivedTime: configurationProperties.currentTimeAsText,
         },
       });
+      setAllowSiteNameOptions(
+        configurationProperties.restrictFreeTextRefSiteEntry,
+      );
+      setAllowRequesterOptions(
+        configurationProperties.restrictFreeTextProviderEntry,
+      );
     }
     if (orderFormValues.sampleOrderItems.requestDate != "") {
       setInnitialized(true);
     }
   }, [orderFormValues]);
-
-  useEffect(() => {
-    getFromOpenElisServer(
-      "/rest/departments-for-site?refferingSiteId=" +
-        (orderFormValues.sampleOrderItems.referringSiteId || ""),
-      loadDepartments,
-    );
-  }, [orderFormValues.sampleOrderItems.referringSiteId]);
 
   function handlePriority(e) {
     setOrderFormValues({
@@ -396,21 +347,13 @@ const AddOrder = (props) => {
 
   function fetchGeneratedAccessionNo(res) {
     if (res.status) {
-      if (isModifyOrder) {
-        setOrderFormValues({
-          ...orderFormValues,
-          newAccessionNumber: res.body,
-        });
-      } else {
-        setOrderFormValues({
-          ...orderFormValues,
-          sampleOrderItems: {
-            ...orderFormValues.sampleOrderItems,
-            labNo: res.body,
-          },
-        });
-      }
-
+      setOrderFormValues({
+        ...orderFormValues,
+        sampleOrderItems: {
+          ...orderFormValues.sampleOrderItems,
+          labNo: res.body,
+        },
+      });
       setNotificationVisible(false);
     }
   }
@@ -441,229 +384,177 @@ const AddOrder = (props) => {
     }
   };
 
+  useEffect(() => {
+    getFromOpenElisServer("/rest/SamplePatientEntry", getSampleEntryPreform);
+    window.scrollTo(0, 0);
+    return () => {
+      componentMounted.current = false;
+    };
+  }, []);
+
   return (
     <>
       <Stack gap={10}>
         <div className="orderLegendBody">
-          <Grid>
-            <Column lg={16} md={8} sm={4}>
-              <h3>
-                <FormattedMessage id="order.title" />
-              </h3>
-            </Column>
-            {configurationProperties.ACCEPT_EXTERNAL_ORDERS === "true" && (
-              <Column lg={16} md={8} sm={4}>
-                <input
-                  type="hidden"
-                  name="externalOrderNumber"
-                  id="externalOrderNumber"
-                  value={orderFormValues.sampleOrderItems.externalOrderNumber}
-                />
-              </Column>
-            )}
-            {isModifyOrder && (
-              <Column lg={16} md={8} sm={4}>
-                <h5>
-                  {" "}
-                  <FormattedMessage id="sample.label.labnumber" />:{" "}
-                  {orderFormValues.accessionNumber}
-                </h5>
-              </Column>
-            )}
-
-            <Column lg={8} md={4} sm={4}>
-              <div>
-                <CustomLabNumberInput
-                  name="labNo"
-                  placeholder={intl.formatMessage({
-                    id: "input.placeholder.labNo",
-                  })}
-                  value={
-                    isModifyOrder
-                      ? orderFormValues.newAccessionNumber
-                      : orderFormValues.sampleOrderItems.labNo
-                  }
-                  //onMouseLeave={handleLabNoValidation}
-                  onChange={handleLabNo}
-                  onKeyPress={handleKeyPress}
-                  labelText={
-                    <>
-                      <FormattedMessage id="sample.label.labnumber" />{" "}
-                      <span className="requiredlabel">*</span>
-                    </>
-                  }
-                  id="labNo"
-                  invalid={error("sampleOrderItems.labNo") ? true : false}
-                  invalidText={error("sampleOrderItems.labNo")}
-                />
-                <div>
-                  <FormattedMessage id="label.order.scan.text" />{" "}
-                  <Link href="#" onClick={(e) => handleLabNoGeneration(e)}>
-                    <FormattedMessage id="sample.label.labnumber.generate" />
-                  </Link>
-                </div>
-              </div>
-            </Column>
-            <Column lg={8} md={4} sm={4}>
-              <Select
-                id="priorityId"
-                name="priority"
-                labelText={intl.formatMessage({ id: "workplan.priority.list" })}
-                value={orderFormValues.sampleOrderItems.priority}
-                onChange={handlePriority}
-                required
-              >
-                {priorities.map((priority, index) => {
-                  return (
-                    <SelectItem
-                      key={index}
-                      text={priority.label}
-                      value={priority.value}
-                    />
-                  );
-                })}
-              </Select>
-            </Column>
-            <Column lg={16} md={8} sm={3}>
-              {" "}
-              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
-            </Column>
-            <Column lg={8} md={4} sm={4}>
-              <CustomDatePicker
-                id={"order_requestDate"}
-                labelText={intl.formatMessage({ id: "sample.requestDate" })}
-                autofillDate={true}
-                value={
-                  orderFormValues.sampleOrderItems.requestDate
-                    ? orderFormValues.sampleOrderItems.requestDate
-                    : configurationProperties.currentDateAsText
-                }
-                disallowFutureDate={true}
-                onChange={(date) => handleDatePickerChange("requestDate", date)}
-              />
-            </Column>
-            <Column lg={8} md={4} sm={4}>
-              <CustomDatePicker
-                id={"order_receivedDate"}
-                labelText={intl.formatMessage({ id: "sample.receivedDate" })}
-                autofillDate={true}
-                value={
-                  orderFormValues.sampleOrderItems.receivedDateForDisplay
-                    ? orderFormValues.sampleOrderItems.receivedDateForDisplay
-                    : configurationProperties.currentDateAsText
-                }
-                disallowFutureDate={true}
-                onChange={(date) =>
-                  handleDatePickerChange("receivedDate", date)
-                }
-              />
-            </Column>
-            <Column lg={16} md={8} sm={3}>
-              {" "}
-              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
-            </Column>
-            <Column lg={8} md={4} sm={4}>
-              <TimePicker
-                id="order_receivedTime"
-                labelText={intl.formatMessage({ id: "order.reception.time" })}
-                onChange={handleReceivedTime}
-                value={
-                  orderFormValues.sampleOrderItems.receivedTime
-                    ? orderFormValues.sampleOrderItems.receivedTime
-                    : configurationProperties.currentTimeAsText
-                }
-              />
-            </Column>
-            <Column lg={8} md={4} sm={4}>
-              <CustomDatePicker
-                id={"order_nextVisitDate"}
-                labelText={intl.formatMessage({
-                  id: "sample.entry.nextVisit.date",
-                })}
-                value={orderFormValues.sampleOrderItems.nextVisitDate}
-                autofillDate={false}
-                disallowPastDate={true}
-                onChange={(date) =>
-                  handleDatePickerChange("nextVisitDate", date)
-                }
-              />
-            </Column>
-            <Column lg={16} md={8} sm={3}>
-              {" "}
-              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
-            </Column>
-            <Column lg={8} md={4} sm={4}>
-              <AutoComplete
-                name="siteName"
-                id="siteName"
-                allowFreeText={
-                  !(
-                    configurationProperties.restrictFreeTextRefSiteEntry ===
-                    "true"
-                  )
-                }
-                value={
-                  orderFormValues.sampleOrderItems.referringSiteId != ""
-                    ? orderFormValues.sampleOrderItems.referringSiteId
-                    : orderFormValues.sampleOrderItems.referringSiteName
-                }
-                onChange={handleSiteName}
-                onSelect={handleAutoCompleteSiteName}
-                label={
+          <h3>
+            <FormattedMessage id="order.title" />
+          </h3>
+          <div className="formInlineDiv">
+            <div className="inputText">
+              <CustomLabNumberInput
+                name="labNo"
+                value={orderFormValues.sampleOrderItems.labNo}
+                onMouseLeave={handleLabNoValidation}
+                onChange={handleLabNo}
+                onKeyPress={handleKeyPress}
+                labelText={
                   <>
-                    <FormattedMessage id="order.search.site.name" />{" "}
+                    <FormattedMessage id="sample.label.labnumber" />{" "}
                     <span className="requiredlabel">*</span>
                   </>
                 }
+                id="labNo"
+                className="inputText"
+                invalid={error("sampleOrderItems.labNo") ? true : false}
+                invalidText={error("sampleOrderItems.labNo")}
+              />
+              <div className="inputText">
+                <FormattedMessage id="label.order.scan.text" />{" "}
+                <Link href="#" onClick={(e) => handleLabNoGeneration(e)}>
+                  <FormattedMessage id="sample.label.labnumber.generate" />
+                </Link>
+              </div>
+            </div>
+            <Select
+              className="inputText"
+              id="priorityId"
+              name="priority"
+              labelText={<FormattedMessage id="workplan.priority.list" />}
+              value={orderFormValues.sampleOrderItems.priority}
+              onChange={handlePriority}
+              required
+            >
+              {priorities.map((priority, index) => {
+                return (
+                  <SelectItem
+                    key={index}
+                    text={priority.label}
+                    value={priority.value}
+                  />
+                );
+              })}
+            </Select>
+          </div>
+          <div className="inlineDiv">
+            <CustomDatePicker
+              id={"order_requestDate"}
+              labelText={<FormattedMessage id="sample.requestDate" />}
+              autofillDate={true}
+              value={orderFormValues.sampleOrderItems.requestDate}
+              className="inputDate"
+              onChange={(date) => handleDatePickerChange("requestDate", date)}
+            />
+
+            <CustomDatePicker
+              id={"order_receivedDate"}
+              labelText={<FormattedMessage id="sample.receivedDate" />}
+              className="inputDate"
+              autofillDate={true}
+              value={orderFormValues.sampleOrderItems.receivedDateForDisplay}
+              onChange={(date) => handleDatePickerChange("receivedDate", date)}
+            />
+          </div>
+          <div className="inlineDiv">
+            <TimePicker
+              id="order_receivedTime"
+              className="inputTime"
+              labelText={<FormattedMessage id="order.reception.time" />}
+              onChange={handleReceivedTime}
+              value={
+                orderFormValues.sampleOrderItems.receivedTime
+                  ? orderFormValues.sampleOrderItems.receivedTime
+                  : configurationProperties.receivedTime
+              }
+            />
+
+            <CustomDatePicker
+              id={"order_nextVisitDate"}
+              className="inputDate"
+              labelText={<FormattedMessage id="sample.entry.nextVisit.date" />}
+              value={orderFormValues.sampleOrderItems.nextVisitDate}
+              autofillDate={false}
+              onChange={(date) => handleDatePickerChange("nextVisitDate", date)}
+            />
+          </div>
+          <div className="inlineDiv">
+            {allowSiteNameOptions === "false" ? (
+              <TextInput
+                name="siteName"
+                labelText={
+                  <>
+                    <FormattedMessage id="order.site.name" />{" "}
+                    <span className="requiredlabel">*</span>
+                  </>
+                }
+                onChange={handleSiteName}
+                value={
+                  orderFormValues.sampleOrderItems.referringSiteName == null
+                    ? ""
+                    : orderFormValues.sampleOrderItems.referringSiteName
+                }
+                id="siteName"
+                className="inputText"
+                invalid={error("sampleOrderItems") ? true : false}
+                invalidText={error("sampleOrderItems")}
+                required
+              />
+            ) : (
+              <AutoComplete
+                name="siteName"
+                id="siteName"
+                className="inputText"
+                onSelect={handleAutoCompleteSiteName}
+                label={<FormattedMessage id="order.search.site.name" />}
+                class="inputText"
                 style={{ width: "!important 100%" }}
                 suggestions={siteNames.length > 0 ? siteNames : []}
                 required
               />
-              {/* )} */}
-            </Column>
-            <Column lg={8} md={4} sm={4}>
-              <Select
-                id="requesterDepartmentId"
-                name="requesterDepartmentId"
-                labelText={intl.formatMessage({ id: "order.department.label" })}
-                onChange={handleRequesterDept}
-                required
-                value={
-                  orderFormValues.sampleOrderItems.referringSiteDepartmentId
-                }
-              >
-                <SelectItem value="" text="" />
-                {departments.map((department, index) => (
-                  <SelectItem
-                    key={index}
-                    text={department.value}
-                    value={department.id}
-                  />
-                ))}
-              </Select>
-            </Column>
-            <Column lg={16} md={8} sm={3}>
-              {" "}
-              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
-            </Column>
-            <Column lg={8} md={4} sm={4}>
+            )}
+
+            <Select
+              className="inputText"
+              id="requesterDepartmentId"
+              name="requesterDepartmentId"
+              labelText={<FormattedMessage id="order.department.label" />}
+              onChange={handleRequesterDept}
+              required
+            >
+              <SelectItem value="" text="" />
+              {departments.map((department, index) => (
+                <SelectItem
+                  key={index}
+                  text={department.value}
+                  value={department.id}
+                />
+              ))}
+            </Select>
+          </div>
+          {allowRequesterOptions === "false" ? (
+            ""
+          ) : (
+            <div className="inlineDiv">
               <AutoComplete
                 name="requesterId"
                 id="requesterId"
-                allowFreeText={
-                  !(
-                    configurationProperties.restrictFreeTextProviderEntry ===
-                    "true"
-                  )
-                }
                 onSelect={handleProviderSelectOptions}
-                onChange={clearProviderId}
                 label={
                   <>
                     <FormattedMessage id="order.search.requester.label" />{" "}
                     <span className="requiredlabel">*</span>
                   </>
                 }
+                class="inputText"
                 style={{ width: "!important 100%" }}
                 invalidText={
                   <FormattedMessage id="order.invalid.requester.name.label" />
@@ -671,175 +562,92 @@ const AddOrder = (props) => {
                 suggestions={providers.length > 0 ? providers : []}
                 required
               />
-            </Column>
-            {/* <Column lg={8} md={4} sm={4}>
-              {" "}
-            </Column> */}
-            <Column lg={16} md={4} sm={3}>
-              {" "}
-              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
-            </Column>
-            <Column lg={8} md={4} sm={4}>
-              <TextInput
-                name="requesterFirstName"
-                placeholder={intl.formatMessage({
-                  id: "input.placeholder.requesterFirstName",
-                })}
-                labelText={
-                  <>
-                    <FormattedMessage id="order.requester.firstName.label" />
-                    <span className="requiredlabel">*</span>
-                  </>
-                }
-                disabled={
-                  configurationProperties.restrictFreeTextProviderEntry ===
-                  "true"
-                }
-                onChange={handleRequesterFirstName}
-                value={orderFormValues.sampleOrderItems.providerFirstName}
-                invalid={
-                  error("sampleOrderItems.providerFirstName") ? true : false
-                }
-                invalidText={error("sampleOrderItems.providerFirstName")}
-                id="requesterFirstName"
-              />
-            </Column>
+            </div>
+          )}
+          <div className="inlineDiv">
+            <TextInput
+              name="requesterFirstName"
+              labelText={
+                <>
+                  <FormattedMessage id="order.requester.firstName.label" />
+                  <span className="requiredlabel">*</span>
+                </>
+              }
+              disabled={allowRequesterOptions !== "false"}
+              onChange={handleRequesterFirstName}
+              value={orderFormValues.sampleOrderItems.providerFirstName}
+              invalid={
+                error("sampleOrderItems.providerFirstName") ? true : false
+              }
+              invalidText={error("sampleOrderItems.providerFirstName")}
+              id="requesterFirstName"
+              className="inputText"
+            />
 
-            <Column lg={8} md={4} sm={4}>
-              <TextInput
-                name="requesterLastName"
-                placeholder={intl.formatMessage({
-                  id: "input.placeholder.requesterLastName",
-                })}
-                labelText={
-                  <>
-                    <FormattedMessage id="order.requester.lastName.label" />
-                    <span className="requiredlabel">*</span>
-                  </>
-                }
-                disabled={
-                  configurationProperties.restrictFreeTextProviderEntry ===
-                  "true"
-                }
-                value={orderFormValues.sampleOrderItems.providerLastName}
-                onChange={handleRequesterLastName}
-                id="requesterLastName"
-                invalid={
-                  error("sampleOrderItems.providerLastName") ? true : false
-                }
-                invalidText={error("sampleOrderItems.providerLastName")}
-              />
-            </Column>
-            <Column lg={16} md={8} sm={3}>
-              {" "}
-              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
-            </Column>
-            <Column lg={8} sm={4}>
-              <TextInput
-                name="providerWorkPhone"
-                placeholder={intl.formatMessage({
-                  id: "input.placeholder.providerWorkPhone",
-                })}
-                disabled={
-                  configurationProperties.restrictFreeTextProviderEntry ===
-                  "true"
-                }
-                onChange={handleRequesterWorkPhone}
-                value={orderFormValues.sampleOrderItems.providerWorkPhone}
-                onMouseLeave={handlePhoneNoValidation}
-                labelText={intl.formatMessage({
-                  id: "order.requester.phone.label",
-                })}
-                id="providerWorkPhoneId"
-              />
-            </Column>
+            <TextInput
+              name="requesterLastName"
+              labelText={
+                <>
+                  <FormattedMessage id="order.requester.lastName.label" />
+                  <span className="requiredlabel">*</span>
+                </>
+              }
+              disabled={allowRequesterOptions !== "false"}
+              value={orderFormValues.sampleOrderItems.providerLastName}
+              onChange={handleRequesterLastName}
+              id="requesterLastName"
+              className="inputText"
+              invalid={
+                error("sampleOrderItems.providerLastName") ? true : false
+              }
+              invalidText={error("sampleOrderItems.providerLastName")}
+            />
+          </div>
+          <div className="inlineDiv">
+            <TextInput
+              name="providerWorkPhone"
+              disabled={allowRequesterOptions !== "false"}
+              onChange={handleRequesterWorkPhone}
+              value={orderFormValues.sampleOrderItems.providerWorkPhone}
+              onMouseLeave={handlePhoneNoValidation}
+              labelText={<FormattedMessage id="order.requester.phone.label" />}
+              id="providerWorkPhoneId"
+              className="inputText"
+            />
 
-            <Column lg={8} md={4} sm={4}>
-              <TextInput
-                name="providerFax"
-                placeholder={intl.formatMessage({
-                  id: "input.placeholder.providerFax",
-                })}
-                labelText={intl.formatMessage({
-                  id: "order.requester.fax.label",
-                })}
-                disabled={
-                  configurationProperties.restrictFreeTextProviderEntry ===
-                  "true"
-                }
-                onChange={handleRequesterFax}
-                value={orderFormValues.sampleOrderItems.providerFax}
-                id="providerFaxId"
-              />
-            </Column>
-            <Column lg={16} md={8} sm={3}>
-              {" "}
-              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
-            </Column>
-            <Column lg={8} md={4} sm={4}>
-              <TextInput
-                name="providerEmail"
-                placeholder={intl.formatMessage({
-                  id: "input.placeholder.providerEmail",
-                })}
-                labelText={intl.formatMessage({
-                  id: "order.requester.email.label",
-                })}
-                disabled={
-                  configurationProperties.restrictFreeTextProviderEntry ===
-                  "true"
-                }
-                onChange={handleRequesterEmail}
-                value={orderFormValues.sampleOrderItems.providerEmail}
-                id="providerEmailId"
-                invalid={error("sampleOrderItems.providerEmail") ? true : false}
-                invalidText={intl.formatMessage({
-                  id: "error.invalid.email",
-                })}
-              />
-            </Column>
+            <TextInput
+              name="providerFax"
+              labelText={<FormattedMessage id="order.requester.fax.label" />}
+              disabled={allowRequesterOptions !== "false"}
+              onChange={handleRequesterFax}
+              value={orderFormValues.sampleOrderItems.providerFax}
+              id="providerFaxId"
+              className="inputText"
+            />
+          </div>
+          <div className="inlineDiv">
+            <TextInput
+              name="providerEmail"
+              labelText={<FormattedMessage id="order.requester.email.label" />}
+              disabled={allowRequesterOptions !== "false"}
+              onChange={handleRequesterEmail}
+              value={orderFormValues.sampleOrderItems.providerEmail}
+              id="providerEmailId"
+              className="inputText"
+            />
 
-            <Column lg={8} md={4} sm={4}>
-              <Select
-                id="paymentOptionSelectionId"
-                name="paymentOptionSelections"
-                value={orderFormValues.sampleOrderItems.paymentOptionSelection}
-                labelText={intl.formatMessage({
-                  id: "order.payment.status.label",
-                })}
-                onChange={handlePaymentStatus}
-                required
-              >
-                <SelectItem value="" text="" />
-                {paymentOptions &&
-                  paymentOptions.map((option) => {
-                    return (
-                      <SelectItem
-                        key={option.id}
-                        value={option.id}
-                        text={option.value}
-                      />
-                    );
-                  })}
-              </Select>
-            </Column>
-            <Column lg={16} md={8} sm={3}>
-              {" "}
-              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
-            </Column>
-            <Column lg={8} md={4} sm={4}>
-              <Select
-                id="testLocationCodeId"
-                name="testLocationCode"
-                value={orderFormValues.sampleOrderItems.testLocationCode}
-                labelText={
-                  <FormattedMessage id="order.sampling.performed.label" />
-                }
-                onChange={(e) => handleSamplingPerformed(e)}
-                required
-              >
-                <SelectItem value="" text="" />
-                {samplingPerformed.map((option) => {
+            <Select
+              className="inputText"
+              id="paymentOptionSelectionId"
+              name="paymentOptionSelections"
+              value={orderFormValues.sampleOrderItems.paymentOptionSelection}
+              labelText={<FormattedMessage id="order.payment.status.label" />}
+              onChange={handlePaymentStatus}
+              required
+            >
+              <SelectItem value="" text="" />
+              {paymentOptions &&
+                paymentOptions.map((option) => {
                   return (
                     <SelectItem
                       key={option.id}
@@ -848,37 +656,54 @@ const AddOrder = (props) => {
                     />
                   );
                 })}
-              </Select>
-            </Column>
-            <Column lg={8} md={4} sm={4}>
-              <TextInput
-                name="testLocationCodeOther"
-                labelText={intl.formatMessage({ id: "order.if.other.label" })}
-                onChange={handleOtherLocationCode}
-                value={orderFormValues.sampleOrderItems.otherLocationCode}
-                disabled={!otherSamplingVisible}
-                id="testLocationCodeOtherId"
-              />
-            </Column>
-            <Column lg={16} md={8} sm={3}>
-              {" "}
-              &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;{" "}
-            </Column>
-            <Column lg={8} md={4} sm={4}>
-              <Checkbox
-                labelText={
-                  <FormattedMessage id="order.remember.site.and.requester.label" />
-                }
-                id="rememberSiteAndRequester"
-                onChange={handleRememberCheckBox}
-              />
-            </Column>
-          </Grid>
+            </Select>
+          </div>
+          <div className="inlineDiv">
+            <Select
+              className="inputText"
+              id="testLocationCodeId"
+              name="testLocationCode"
+              value={orderFormValues.sampleOrderItems.testLocationCode}
+              labelText={
+                <FormattedMessage id="order.sampling.performed.label" />
+              }
+              onChange={(e) => handleSamplingPerformed(e)}
+              required
+            >
+              <SelectItem value="" text="" />
+              {samplingPerformed.map((option) => {
+                return (
+                  <SelectItem
+                    key={option.id}
+                    value={option.id}
+                    text={option.value}
+                  />
+                );
+              })}
+            </Select>
+            <TextInput
+              name="testLocationCodeOther"
+              labelText={<FormattedMessage id="order.if.other.label" />}
+              onChange={handleOtherLocationCode}
+              className="inputText"
+              value={orderFormValues.sampleOrderItems.otherLocationCode}
+              disabled={!otherSamplingVisible}
+              id="testLocationCodeOtherId"
+            />
+          </div>
+          <div className="inlineDiv">
+            <Checkbox
+              labelText={
+                <FormattedMessage id="order.remember.site.and.requester.label" />
+              }
+              className="inputText"
+              id="rememberSiteAndRequester"
+              onChange={handleRememberCheckBox}
+            />
+          </div>
         </div>
         <div className="orderLegendBody">
-          <h3>
-            <FormattedMessage id="order.result.reporting.heading" />
-          </h3>
+          <h3>{<FormattedMessage id="order.result.reporting.heading" />}</h3>
           {samples.map((sample, index) => {
             if (sample.tests.length > 0) {
               return (

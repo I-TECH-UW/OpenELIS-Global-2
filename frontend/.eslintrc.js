@@ -20,12 +20,10 @@ module.exports = {
   },
   rules: {
     "react/prop-types": "off",
-    "react/react-in-jsx-scope": "off",
     "react/no-unescaped-entities": "warn",
     "react-hooks/exhaustive-deps": "off",
     "no-unused-vars": "warn",
     "@typescript-eslint/no-empty-function": "warn",
-    "prettier/prettier": ["warn"],
   },
   overrides: [
     {
@@ -54,7 +52,6 @@ module.exports = {
        */
       rules: {
         "react/prop-types": "warn",
-        "react/react-in-jsx-scope": "off",
         "@typescript-eslint/no-empty-function": "warn",
         "@typescript-eslint/no-empty-interface": "warn",
         "no-case-declarations": "off",

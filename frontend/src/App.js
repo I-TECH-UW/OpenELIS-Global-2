@@ -1,15 +1,13 @@
 import React, { useState, useEffect } from "react";
 import { BrowserRouter as Router, Route, Switch } from "react-router-dom";
-import { IntlProvider } from "react-intl";
 import { confirmAlert } from "react-confirm-alert";
+import { IntlProvider } from "react-intl";
 import Layout from "./components/layout/Layout";
 import Home from "./components/Home";
-import Login from "./components/Login";
-import LandingPage from "./components/home/LandingPage";
+import Login from "./components/login/Login";
 import { Admin } from "./components";
 import ResultSearch from "./components/resultPage/ResultSearch";
 import UserSessionDetailsContext from "./UserSessionDetailsContext";
-import { getFromOpenElisServer } from "./components/utils/Utils";
 import "./App.css";
 import messages_en from "./languages/en.json";
 import messages_fr from "./languages/fr.json";
@@ -23,8 +21,8 @@ import Workplan from "./components/workplan/Workplan";
 import AddOrder from "./components/addOrder/Index";
 import FindOrder from "./components/modifyOrder/Index";
 import ModifyOrder from "./components/modifyOrder/ModifyOrder";
-import RoutineReports from "./components/reports/Routine";
-import StudyReports from "./components/reports/Study";
+import RoutineReports from "./components/Reports/Routine";
+import StudyReports from "./components/Reports/Study";
 import StudyValidation from "./components/validation/Index";
 import PathologyDashboard from "./components/pathology/PathologyDashboard";
 import CytologyDashboard from "./components/cytology/CytologyDashBoard";
@@ -33,15 +31,6 @@ import PathologyCaseView from "./components/pathology/PathologyCaseView";
 import ImmunohistochemistryDashboard from "./components/immunohistochemistry/ImmunohistochemistryDashboard";
 import ImmunohistochemistryCaseView from "./components/immunohistochemistry/ImmunohistochemistryCaseView";
 import RoutedResultsViewer from "./components/patient/resultsViewer/results-viewer.tsx";
-import EOrderPage from "./components/eOrder/Index";
-import RoutineIndex from "./components/reports/routine/Index.js";
-import StudyIndex from "./components/reports/study/index.js";
-import ReportIndex from "./components/reports/Index.js";
-import PrintBarcode from "./components/printBarcode/Index";
-import NonConformIndex from "./components/nonconform/index";
-import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup.js";
-import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index.js";
-import ReferredOutTests from "./components/resultPage/resultsReferredOut/ReferredOutTests.js";
 
 export default function App() {
   let i18nConfig = {
@@ -68,45 +57,38 @@ export default function App() {
           //includes the browser sessionId in the Header for Authentication on the backend server
           { credentials: "include" },
         );
-        if (response.status === 200) {
-          const jsonResp = await response.json();
-          console.debug(JSON.stringify(jsonResp));
-          if (jsonResp.authenticated) {
-            localStorage.setItem("CSRF", jsonResp.csrf);
-          }
-          if (
-            !Object.keys(jsonResp).every(
-              (key) => jsonResp[key] === userSessionDetails[key],
-            )
-          ) {
-            setUserSessionDetails(jsonResp);
-          }
-          setErrorLoadingSessionDetails(false);
-          return jsonResp;
-        } else {
-          throw new Error(
-            "Did not receive a successful response from the backend while retrieving user session details",
-          );
+        const jsonResp = await response.json();
+        console.log(JSON.stringify(jsonResp));
+        if (jsonResp.authenticated) {
+          localStorage.setItem("CSRF", jsonResp.csrf);
         }
+
+        if (
+          !Object.keys(jsonResp).every(
+            (key) => jsonResp[key] === userSessionDetails[key],
+          )
+        ) {
+          setUserSessionDetails(jsonResp);
+        }
+        setErrorLoadingSessionDetails(false);
+        return jsonResp;
       } catch (error) {
-        console.error(error);
-        if (counter === 10) {
-          const options = {
-            title: "System Error",
-            message: "Error : " + error.message,
-            buttons: [
-              {
-                label: "OK",
-                onClick: () => {
-                  window.location.href = window.location.origin;
-                },
+        console.log(error);
+        const options = {
+          title: "System Error",
+          message: "Error : " + error.message,
+          buttons: [
+            {
+              label: "OK",
+              onClick: () => {
+                window.location.href = window.location.origin;
               },
-            ],
-            closeOnClickOutside: false,
-            closeOnEscape: false,
-          };
-          confirmAlert(options);
-        }
+            },
+          ],
+          closeOnClickOutside: false,
+          closeOnEscape: false,
+        };
+        confirmAlert(options);
       }
       ++counter;
     }
@@ -141,13 +123,14 @@ export default function App() {
       .then(() => {
         getUserSessionDetails();
         window.location.href = config.loginRedirect;
+        //console.log(JSON.stringify(jsonResp))
       })
       .catch((error) => {
-        console.error(error);
+        console.log(error);
       });
   };
 
-  const changeLanguageReact = (lang) => {
+  const changeLanguage = (lang) => {
     switch (lang) {
       case "en":
         i18nConfig.messages = messages_en;
@@ -165,17 +148,8 @@ export default function App() {
     setLocale(lang);
   };
 
-  const changeLanguageBackend = async (lang) => {
-    if (userSessionDetails.authenticated) {
-      getFromOpenElisServer("/Home?lang=" + lang, () => {});
-    } else {
-      getFromOpenElisServer("/LoginPage?lang=" + lang, () => {});
-    }
-  };
-
   const onChangeLanguage = (lang) => {
-    changeLanguageReact(lang);
-    changeLanguageBackend(lang);
+    changeLanguage(lang);
   };
 
   const refresh = async (callback) => {
@@ -210,11 +184,6 @@ export default function App() {
             <Layout onChangeLanguage={onChangeLanguage}>
               <Switch>
                 <Route path="/login" exact component={() => <Login />} />
-                <Route
-                  path="/landing"
-                  exact
-                  component={() => <LandingPage />}
-                />
                 <SecureRoute
                   path="/"
                   exact
@@ -223,12 +192,6 @@ export default function App() {
                 />
                 <SecureRoute
                   path="/admin"
-                  exact
-                  component={() => <Admin />}
-                  role="Global Administrator"
-                />
-                <SecureRoute
-                  path="/MasterListsPage"
                   exact
                   component={() => <Admin />}
                   role="Global Administrator"
@@ -276,7 +239,7 @@ export default function App() {
                   labUnitRole={{ Cytology: ["Results"] }}
                 />
                 <SecureRoute
-                  path="/SamplePatientEntry"
+                  path="/AddOrder"
                   exact
                   component={() => <AddOrder />}
                   role={["Reception"]}
@@ -288,53 +251,9 @@ export default function App() {
                   role="Reception"
                 />
                 <SecureRoute
-                  path="/SampleEdit"
+                  path="/FindOrder"
                   exact
                   component={() => <FindOrder />}
-                  role="Reception"
-                />
-                <SecureRoute
-                  path="/ReportNonConformingEvent"
-                  exact
-                  component={() => (
-                    <NonConformIndex form="ReportNonConformingEvent" />
-                  )}
-                  role="Reception"
-                />
-                <SecureRoute
-                  path="/ViewNonConformingEvent"
-                  exact
-                  component={() => (
-                    <NonConformIndex form="ViewNonConformingEvent" />
-                  )}
-                  role="Reception"
-                />
-
-                <SecureRoute
-                  path="/NCECorrectiveAction"
-                  exact
-                  component={() => (
-                    <NonConformIndex form="NCECorrectiveAction" />
-                  )}
-                />
-
-                <SecureRoute
-                  path="/SampleBatchEntrySetup"
-                  exact
-                  component={() => <SampleBatchEntrySetup />}
-                  role="Reception"
-                />
-
-                <SecureRoute
-                  path="/ElectronicOrders"
-                  exact
-                  component={() => <EOrderPage />}
-                  role="Reception"
-                />
-                <SecureRoute
-                  path="/PrintBarcode"
-                  exact
-                  component={() => <PrintBarcode />}
                   role="Reception"
                 />
                 <SecureRoute
@@ -355,7 +274,6 @@ export default function App() {
                   component={() => <RoutedResultsViewer />}
                   role="Reception"
                 />
-
                 <SecureRoute
                   path="/WorkPlanByTestSection"
                   exact
@@ -384,109 +302,31 @@ export default function App() {
                   path="/result"
                   exact
                   component={() => <ResultSearch />}
-                  role="Results"
-                />
-                <SecureRoute
-                  path="/LogbookResults"
-                  exact
-                  component={() => <ResultSearch />}
-                  role="Results"
-                />
-                <SecureRoute
-                  path="/PatientResults"
-                  exact
-                  component={() => <ResultSearch />}
-                  role="Results"
+                  role="Global Administrator"
                 />
                 <SecureRoute
                   path="/AccessionResults"
                   exact
-                  component={() => <ResultSearch />}
-                  role="Results"
-                />
-                <SecureRoute
-                  path="/StatusResults"
-                  exact
-                  component={() => <ResultSearch />}
-                  role="Results"
-                />
-                <SecureRoute
-                  path="/RangeResults"
-                  exact
-                  component={() => <ResultSearch />}
-                  role="Results"
-                />
-                <SecureRoute
-                  path="/ReferredOutTests"
-                  exact
-                  component={() => <ReferredOutTests />}
-                  role="Results"
+                  component={() => <Admin />}
+                  role="Global Administrator"
                 />
                 <SecureRoute
                   path="/RoutineReports"
                   exact
                   component={() => <RoutineReports />}
-                  role="Reports"
-                />
-                <SecureRoute
-                  path="/RoutineReport"
-                  exact
-                  component={() => <RoutineIndex />}
-                  role="Reports"
+                  role="Global Administrator"
                 />
                 <SecureRoute
                   path="/StudyReports"
                   exact
                   component={() => <StudyReports />}
-                  role="Reports"
-                />
-                <SecureRoute
-                  path="/StudyReport"
-                  exact
-                  component={() => <StudyIndex />}
-                  role="Reports"
-                />
-                <SecureRoute
-                  path="/Report"
-                  exact
-                  component={() => <ReportIndex />}
-                  role="Reports"
-                />
-                <SecureRoute
-                  path="/AuditTrailReport"
-                  exact
-                  component={() => <AuditTrailReportIndex />}
-                  role="Reports"
+                  role="Global Administrator"
                 />
                 <SecureRoute
                   path="/validation"
                   exact
                   component={() => <StudyValidation />}
-                  role="Validation"
-                />
-                <SecureRoute
-                  path="/ResultValidation"
-                  exact
-                  component={() => <StudyValidation />}
-                  role="Validation"
-                />
-                <SecureRoute
-                  path="/AccessionValidation"
-                  exact
-                  component={() => <StudyValidation />}
-                  role="Validation"
-                />
-                <SecureRoute
-                  path="/AccessionValidationRange"
-                  exact
-                  component={() => <StudyValidation />}
-                  role="Validation"
-                />
-                <SecureRoute
-                  path="/ResultValidationByTestDate"
-                  exact
-                  component={() => <StudyValidation />}
-                  role="Validation"
+                  role="Global Administrator"
                 />
                 <Route path="*" component={() => <RedirectOldUI />} />
               </Switch>

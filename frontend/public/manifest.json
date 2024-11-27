@@ -1,6 +1,6 @@
 {
-  "short_name": "OpenELIS",
-  "name": "OpenELIS Global",
+  "short_name": "React App",
+  "name": "Create React App Sample",
   "icons": [
     {
       "src": "images/favicon-16x16.png",

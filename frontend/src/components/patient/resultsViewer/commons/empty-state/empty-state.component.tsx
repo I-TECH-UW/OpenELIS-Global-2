@@ -1,10 +1,10 @@
-import React from "react";
-import { Layer, Link, Tile } from "@carbon/react";
-import { Trans, useTranslation } from "react-i18next";
-import { EmptyDataIllustration } from "./empty-data-illustration.component";
-import { useLayoutType } from "../utils";
+import React from 'react';
+import { Layer, Link, Tile } from '@carbon/react';
+import { Trans, useTranslation } from 'react-i18next';
+import { EmptyDataIllustration } from './empty-data-illustration.component';
+import { useLayoutType } from '../utils';
 //import styles from './empty-state.scss';
-import "./empty-state.scss";
+import './empty-state.scss';
 
 export interface EmptyStateProps {
   displayText: string;
@@ -14,7 +14,7 @@ export interface EmptyStateProps {
 
 export const EmptyState: React.FC<EmptyStateProps> = (props) => {
   const { t } = useTranslation();
-  const isTablet = useLayoutType() === "tablet";
+  const isTablet = useLayoutType() === 'tablet';
 
   return (
     <Layer>
@@ -24,12 +24,8 @@ export const EmptyState: React.FC<EmptyStateProps> = (props) => {
         </div>
         <EmptyDataIllustration />
         <p className="content">
-          <Trans
-            i18nKey="emptyStateText"
-            values={{ displayText: props.displayText.toLowerCase() }}
-          >
-            There are no {props.displayText.toLowerCase()} to display for this
-            patient
+          <Trans i18nKey="emptyStateText" values={{ displayText: props.displayText.toLowerCase() }}>
+            There are no {props.displayText.toLowerCase()} to display for this patient
           </Trans>
         </p>
         <p className="action">
@@ -37,7 +33,7 @@ export const EmptyState: React.FC<EmptyStateProps> = (props) => {
             <span>
               <Link onClick={() => props.launchForm()}>
                 <>
-                  {t("record", "Record")} {props.displayText.toLowerCase()}
+                  {t('record', 'Record')} {props.displayText.toLowerCase()}
                 </>
               </Link>
             </span>

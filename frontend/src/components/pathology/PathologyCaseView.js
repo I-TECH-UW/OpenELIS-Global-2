@@ -16,11 +16,13 @@ import {
   FileUploader,
   Tag,
   TextArea,
+  Breadcrumb,
+  BreadcrumbItem,
   Loading,
   InlineLoading,
-  Link,
+  Row,
 } from "@carbon/react";
-import { Launch, Subtract, ArrowLeft, ArrowRight } from "@carbon/react/icons";
+import { Launch, Subtract } from "@carbon/react/icons";
 import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
@@ -31,21 +33,79 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
-import PatientHeader from "../common/PatientHeader";
-import QuestionnaireResponse from "../common/QuestionnaireResponse";
 import "./PathologyDashboard.css";
-import PageBreadCrumb from "../common/PageBreadCrumb";
+
+export const QuestionnaireResponse = ({ questionnaireResponse }) => {
+  const renderQuestionResponse = (item) => {
+    console.log(JSON.stringify(item));
+    return (
+      <>
+        <div className="questionnaireResponseItem">
+          <Grid>
+            <Column lg={6} md={8} sm={4}>
+              <h6>{item.text}:</h6>
+            </Column>
+            <Column lg={10} md={8} sm={4}>
+              {item.answer &&
+                item.answer.map((answer, index) => {
+                  return <Tag key={index}>{renderAnswer(answer)}</Tag>;
+                })}
+            </Column>
+          </Grid>
+        </div>
+      </>
+    );
+  };
+
+  const renderAnswer = (answer) => {
+    console.log(JSON.stringify(answer));
+
+    var display = "";
+    if ("valueString" in answer) {
+      display = answer.valueString;
+    } else if ("valueBoolean" in answer) {
+      display = answer.valueBoolean;
+    } else if ("valueCoding" in answer) {
+      display = answer.valueCoding.display;
+    } else if ("valueDate" in answer) {
+      display = answer.valueDate;
+    } else if ("valueDecimal" in answer) {
+      display = answer.valueDecimal;
+    } else if ("valueInteger" in answer) {
+      display = answer.valueInteger;
+    } else if ("valueQuantity" in answer) {
+      display = answer.valueQuantity.value + answer.valueQuantity.unit;
+    } else if ("valueTime" in answer) {
+      display = answer.valueTime;
+    }
+    return (
+      <>
+        <span className="questionnaireResponseAnswer">{display}</span>
+      </>
+    );
+  };
+
+  return (
+    <>
+      {questionnaireResponse &&
+        questionnaireResponse.item.map((item, index) => {
+          return <span key={index}>{renderQuestionResponse(item)}</span>;
+        })}
+    </>
+  );
+};
 
 function PathologyCaseView() {
   const intl = useIntl();
-
   const componentMounted = useRef(false);
 
   const { pathologySampleId } = useParams();
 
-  const { notificationVisible, setNotificationVisible, addNotification } =
+  const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
-  const { userSessionDetails } = useContext(UserSessionDetailsContext);
+  const { userSessionDetails, setUserSessionDetails } = useContext(
+    UserSessionDetailsContext,
+  );
 
   const [pathologySampleInfo, setPathologySampleInfo] = useState({});
 
@@ -65,11 +125,6 @@ function PathologyCaseView() {
   const [blocksToAdd, setBlocksToAdd] = useState(1);
   const [slidesToAdd, setSlidesToAdd] = useState(1);
   const [loadingReport, setLoadingReport] = useState(false);
-  const [nextPage, setNextPage] = useState(null);
-  const [previousPage, setPreviousPage] = useState(null);
-  const [pagination, setPagination] = useState(false);
-  const [currentApiPage, setCurrentApiPage] = useState(null);
-  const [totalApiPages, setTotalApiPages] = useState(null);
   const [reportParams, setReportParams] = useState({
     0: {
       submited: false,
@@ -79,7 +134,7 @@ function PathologyCaseView() {
 
   async function displayStatus(response) {
     var body = await response.json();
-    console.debug(body);
+    console.log(body);
     var status = response.status;
     setNotificationVisible(true);
     if (status == "200") {
@@ -87,16 +142,16 @@ function PathologyCaseView() {
       const save2 = document.getElementById("pathology_save2");
       save1.disabled = true;
       save2.disabled = true;
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.success,
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "success.save.msg" }),
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id= "success.save.msg"/>,
       });
     } else {
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.error,
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "error.save.msg" }),
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="error.save.msg"/>,
       });
     }
   }
@@ -105,10 +160,10 @@ function PathologyCaseView() {
     setNotificationVisible(true);
     setLoadingReport(false);
     if (pdfGenerated) {
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.success,
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "success.report.status" }),
+        title: <FormattedMessage id="notification.title" />,
+        message: "Succesfuly Generated Report",
       });
       var params = { ...reportParams };
       if (!params[index]) {
@@ -128,10 +183,10 @@ function PathologyCaseView() {
         reports: newReports,
       });
     } else {
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.error,
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "error.report.status" }),
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="error.report.status"/>,
       });
     }
   };
@@ -203,10 +258,6 @@ function PathologyCaseView() {
       displayStatus,
     );
   };
-  let breadcrumbs = [
-    { label: "home.label", link: "/" },
-    { label: "pathology.label.dashboard", link: "/PathologyDashboard" },
-  ];
 
   const setInitialPathologySampleInfo = (e) => {
     if (
@@ -230,9 +281,6 @@ function PathologyCaseView() {
 
   useEffect(() => {
     componentMounted.current = true;
-    setNextPage(null);
-    setPreviousPage(null);
-    setPagination(false);
     getFromOpenElisServer("/rest/displayList/PATHOLOGY_STATUS", setStatuses);
     getFromOpenElisServer(
       "/rest/displayList/PATHOLOGY_TECHNIQUES",
@@ -252,8 +300,8 @@ function PathologyCaseView() {
       setImmunoHistoChemistryTests,
     );
     getFromOpenElisServer(
-      "/rest/paginatedDisplayList/PATHOLOGIST_CONCLUSIONS",
-      loadConclusionData,
+      "/rest/displayList/PATHOLOGIST_CONCLUSIONS",
+      setConclusions,
     );
     getFromOpenElisServer("/rest/users", setTechnicianUsers);
     getFromOpenElisServer("/rest/users/Pathologist", setPathologistUsers);
@@ -267,64 +315,23 @@ function PathologyCaseView() {
     };
   }, []);
 
-  const loadNextCOnclusionsPage = () => {
-    setLoading(true);
-    getFromOpenElisServer(
-      "/rest/paginatedDisplayList/PATHOLOGIST_CONCLUSIONS" +
-        "?page=" +
-        nextPage,
-      loadConclusionData,
-    );
-  };
-
-  const loadPreviousConclusionsPage = () => {
-    setLoading(true);
-    getFromOpenElisServer(
-      "/rest/paginatedDisplayList/PATHOLOGIST_CONCLUSIONS" +
-        "?page=" +
-        previousPage,
-      loadConclusionData,
-    );
-  };
-
-  const loadConclusionData = (res) => {
-    // If the response object is not null and has displayItems array with length greater than 0 then set it as data.
-    if (res && res.displayItems && res.displayItems.length > 0) {
-      setConclusions(res.displayItems);
-    } else {
-      setConclusions([]);
-    }
-
-    // Sets next and previous page numbers based on the total pages and current page number.
-    if (res && res.paging) {
-      const { totalPages, currentPage } = res.paging;
-      if (totalPages > 1) {
-        setPagination(true);
-        setCurrentApiPage(currentPage);
-        setTotalApiPages(totalPages);
-        if (parseInt(currentPage) < parseInt(totalPages)) {
-          setNextPage(parseInt(currentPage) + 1);
-        } else {
-          setNextPage(null);
-        }
-
-        if (parseInt(currentPage) > 1) {
-          setPreviousPage(parseInt(currentPage) - 1);
-        } else {
-          setPreviousPage(null);
-        }
-      }
-    }
-
-    setLoading(false);
-  };
-
   return (
     <>
-      <PageBreadCrumb breadcrumbs={breadcrumbs} />
+      <Grid fullWidth={true}>
+        <Column lg={16}>
+          <Breadcrumb>
+            <BreadcrumbItem href="/">
+              {intl.formatMessage({ id: "home.label" })}
+            </BreadcrumbItem>
+            <BreadcrumbItem href="/PathologyDashboard">
+              {intl.formatMessage({ id: "pathology.label.dashboard" })}
+            </BreadcrumbItem>
+          </Breadcrumb>
+        </Column>
+      </Grid>
 
       <Grid fullWidth={true}>
-        <Column lg={16} md={8} sm={4}>
+        <Column lg={16}>
           <Section>
             <Section>
               <Heading>
@@ -335,25 +342,74 @@ function PathologyCaseView() {
         </Column>
       </Grid>
       <Grid fullWidth={true}>
-        <Column lg={16} md={8} sm={4}>
+        <Column lg={16}>
           <Section>
             <Section>
-              <PatientHeader
-                id={pathologySampleInfo.labNumber}
-                lastName={pathologySampleInfo.lastName}
-                firstName={pathologySampleInfo.firstName}
-                gender={pathologySampleInfo.sex}
-                age={pathologySampleInfo.age}
-                orderDate={pathologySampleInfo.requestDate}
-                referringFacility={pathologySampleInfo.referringFacility}
-                department={pathologySampleInfo.department}
-                requester={pathologySampleInfo.requester}
-                accesionNumber={pathologySampleInfo.labNumber}
-                className="patient-header2"
-                isOrderPage={true}
-              >
-                {" "}
-              </PatientHeader>
+              {pathologySampleInfo ? (
+                <div className="patient-header2">
+                  <div className="patient-name">
+                    <Tag type="blue">
+                      <FormattedMessage id="patient.label.name" /> :
+                    </Tag>
+                    {pathologySampleInfo.lastName}{" "}
+                    {pathologySampleInfo.firstName}
+                  </div>
+                  <div className="patient-dob">
+                    {" "}
+                    <Tag type="blue">
+                      <FormattedMessage id="patient.label.sex" /> :
+                    </Tag>
+                    {pathologySampleInfo.sex === "M" ? (
+                      <FormattedMessage id="patient.male" />
+                    ) : (
+                      <FormattedMessage id="patient.female" />
+                    )}
+                    <Tag type="blue">
+                      <FormattedMessage id="patient.label.age" /> :
+                    </Tag>
+                    {pathologySampleInfo.age}{" "}
+                  </div>
+                  <div className="patient-id">
+                    <Tag type="blue">
+                      <FormattedMessage id="sample.label.orderdate" /> :
+                    </Tag>
+                    {pathologySampleInfo.requestDate}
+                  </div>
+                  <div className="patient-id">
+                    <Tag type="blue">
+                      {" "}
+                      <FormattedMessage id="sample.label.labnumber" /> :
+                    </Tag>
+                    {pathologySampleInfo.labNumber}
+                  </div>
+                  <div className="patient-id">
+                    <Tag type="blue">
+                      {" "}
+                      <FormattedMessage id="sample.label.facility" /> :
+                    </Tag>{" "}
+                    {pathologySampleInfo.referringFacility}
+                    <Tag type="blue">
+                      {" "}
+                      <FormattedMessage id="sample.label.requester" />:{" "}
+                    </Tag>
+                    {pathologySampleInfo.department}
+                  </div>
+                  <div className="patient-id">
+                    <Tag type="blue">
+                      {" "}
+                      <FormattedMessage id="sample.label.requester" />:{" "}
+                    </Tag>
+                    {pathologySampleInfo.requester}
+                  </div>
+                </div>
+              ) : (
+                <div className="patient-header2">
+                  <div className="patient-name">
+                    {" "}
+                    <FormattedMessage id="patient.label.nopatientid" />{" "}
+                  </div>
+                </div>
+              )}
             </Section>
           </Section>
           <Section>
@@ -390,7 +446,7 @@ function PathologyCaseView() {
           <Select
             id="status"
             name="status"
-            labelText={intl.formatMessage({ id: "label.button.select.status" })}
+            labelText={<FormattedMessage id="label.button.select.status" />}
             value={pathologySampleInfo.status}
             onChange={(event) => {
               setPathologySampleInfo({
@@ -408,13 +464,12 @@ function PathologyCaseView() {
             })}
           </Select>
         </Column>
-        <Column lg={4} md={2} sm={2}>
+        <Column lg={2} md={1} sm={2}></Column>
+        <Column lg={2} md={1} sm={2}>
           <Select
             id="assignedTechnician"
             name="assignedTechnician"
-            labelText={intl.formatMessage({
-              id: "label.button.select.technician",
-            })}
+            labelText={<FormattedMessage id="label.button.select.technician" />}
             value={pathologySampleInfo.assignedTechnicianId}
             onChange={(event) => {
               setPathologySampleInfo({
@@ -431,7 +486,7 @@ function PathologyCaseView() {
             })}
           </Select>
         </Column>
-
+        <Column lg={2} md={4} sm={2} />
         <Column lg={4} md={2} sm={2}>
           <Select
             id="assignedPathologist"
@@ -474,7 +529,7 @@ function PathologyCaseView() {
               pathologySampleInfo.reports.map((report, index) => {
                 return (
                   <>
-                    <Column lg={2} md={4} sm={4}>
+                    <Column lg={2} md={8} sm={4}>
                       <IconButton
                         label={intl.formatMessage({
                           id: "label.button.remove.report",
@@ -491,7 +546,8 @@ function PathologyCaseView() {
                         <FormattedMessage id="immunohistochemistry.label.report" />
                       </IconButton>
                     </Column>
-                    <Column lg={2} md={4} sm={4}>
+
+                    <Column lg={3} md={1} sm={2}>
                       <FileUploader
                         style={{ marginTop: "-20px" }}
                         buttonLabel={
@@ -948,9 +1004,9 @@ function PathologyCaseView() {
         <Column lg={16} md={8} sm={4}></Column>
         {hasRole(userSessionDetails, "Pathologist") && (
           <>
-            <Column lg={16} md={8} sm={4}>
+            <Column lg={16} md={4} sm={2}>
               <Grid fullWidth={true} className="gridBoundary">
-                <Column lg={4} md={8} sm={4}>
+                <Column lg={4} md={4} sm={2}>
                   {initialMount && (
                     <FilterableMultiSelect
                       id="techniques"
@@ -970,7 +1026,7 @@ function PathologyCaseView() {
                     />
                   )}
                 </Column>
-                <Column lg={16} md={8} sm={4}>
+                <Column lg={12} md={4} sm={2}>
                   {pathologySampleInfo.techniques &&
                     pathologySampleInfo.techniques.map((technique, index) => (
                       <Tag
@@ -988,9 +1044,9 @@ function PathologyCaseView() {
                 </Column>
               </Grid>
             </Column>
-            <Column lg={16} md={8} sm={4}>
+            <Column lg={16} md={4} sm={2}>
               <Grid fullWidth={true} className="gridBoundary">
-                <Column lg={4} md={8} sm={4}>
+                <Column lg={4} md={4} sm={2}>
                   {initialMount && (
                     <FilterableMultiSelect
                       id="requests"
@@ -1030,7 +1086,7 @@ function PathologyCaseView() {
                           {request.value}
                         </Tag>
                       </Column>
-                      <Column lg={2} md={8} sm={4}>
+                      <Column lg={2} md={4} sm={2}>
                         <Select
                           id={"requeststatus" + index}
                           name="requeststatus"
@@ -1067,7 +1123,7 @@ function PathologyCaseView() {
                   ))}
               </Grid>
             </Column>
-            <Column lg={16} md={8} sm={4}>
+            <Column lg={16} md={4} sm={2}>
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={16} md={8} sm={4}>
                   <TextArea
@@ -1099,38 +1155,9 @@ function PathologyCaseView() {
                 </Column>
               </Grid>
             </Column>
-            <Column lg={16} md={8} sm={4}>
+            <Column lg={16} md={4} sm={2}>
               <Grid fullWidth={true} className="gridBoundary">
-                {pagination && (
-                  <Column lg={16} md={8} sm={4}>
-                    <Link>
-                      {currentApiPage} / {totalApiPages}
-                    </Link>
-                    <div style={{ display: "flex", gap: "10px" }}>
-                      <Button
-                        hasIconOnly
-                        iconDescription="previous"
-                        disabled={previousPage != null ? false : true}
-                        onClick={loadPreviousConclusionsPage}
-                        renderIcon={ArrowLeft}
-                        size="sm"
-                      />
-                      <Button
-                        hasIconOnly
-                        iconDescription="next"
-                        disabled={nextPage != null ? false : true}
-                        renderIcon={ArrowRight}
-                        onClick={loadNextCOnclusionsPage}
-                        size="sm"
-                      />
-                    </div>
-                  </Column>
-                )}
-                <Column lg={16}>
-                  <br />
-                  <br />
-                </Column>
-                <Column lg={4} md={8} sm={4}>
+                <Column lg={4} md={4} sm={2}>
                   {initialMount && (
                     <FilterableMultiSelect
                       id="conclusion"
@@ -1150,7 +1177,7 @@ function PathologyCaseView() {
                     />
                   )}
                 </Column>
-                <Column lg={12} md={8} sm={4}>
+                <Column lg={12} md={4} sm={2}>
                   {pathologySampleInfo.conclusions &&
                     pathologySampleInfo.conclusions.map((conclusion, index) => (
                       <Tag
@@ -1168,7 +1195,8 @@ function PathologyCaseView() {
                 </Column>
               </Grid>
             </Column>
-            <Column lg={16} md={8} sm={4}>
+
+            <Column lg={16} md={4} sm={2}>
               <Grid fullWidth={true} className="gridBoundary">
                 <Column lg={16} md={8} sm={4}>
                   <TextArea
@@ -1188,11 +1216,11 @@ function PathologyCaseView() {
             </Column>
           </>
         )}
-        <Column lg={16} md={8} sm={4}>
+        <Column lg={16} md={4} sm={2}>
           <Grid fullWidth={true} className="gridBoundary">
-            <Column lg={4} md={4} sm={2}>
+            <Column lg={4}>
               <Checkbox
-                labelText={intl.formatMessage({ id: "pathology.label.refer" })}
+                labelText={<FormattedMessage id="pathology.label.refer" />}
                 id="referToImmunoHistoChemistry"
                 onChange={() => {
                   setPathologySampleInfo({
@@ -1205,7 +1233,7 @@ function PathologyCaseView() {
             </Column>
             {pathologySampleInfo.referToImmunoHistoChemistry && (
               <>
-                <Column lg={4} md={4} sm={2}>
+                <Column lg={4}>
                   <FilterableMultiSelect
                     id="ihctests"
                     titleText={
@@ -1249,11 +1277,9 @@ function PathologyCaseView() {
         </Column>
         {pathologySampleInfo.assignedPathologistId &&
           pathologySampleInfo.assignedTechnicianId && (
-            <Column lg={16} md={8} sm={4}>
+            <Column lg={16}>
               <Checkbox
-                labelText={intl.formatMessage({
-                  id: "pathology.label.release",
-                })}
+                labelText={<FormattedMessage id="pathology.label.release" />}
                 id="release"
                 onChange={() => {
                   setPathologySampleInfo({

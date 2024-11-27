@@ -1,4 +1,4 @@
-import React, { useContext } from "react";
+import React, { useContext, useEffect } from "react";
 import { ToastNotification } from "@carbon/react";
 import { NotificationContext } from "../layout/Layout";
 
@@ -10,35 +10,25 @@ export const NotificationKinds = {
 };
 
 export const AlertDialog = () => {
-  const { notifications, removeNotification } = useContext(NotificationContext);
+  const { notificationBody } = useContext(NotificationContext);
 
   return (
     <div className="toastDisplay">
-      {notifications &&
-        notifications.map((notificationBody, index) => {
-          return (
-            <ToastNotification
-              key={index}
-              title={notificationBody.title}
-              timeout={
-                notificationBody.kind !== NotificationKinds.error ? 2000 : 3000
-              }
-              onClose={(event) => {
-                return false;
-              }}
-              onCloseButtonClick={(event) => {
-                removeNotification(index);
-              }}
-              lowContrast={true}
-              kind={notificationBody.kind}
-              subtitle={notificationBody.subtitle}
-            >
-              {notificationBody.message}
-              <br />
-              <br />
-            </ToastNotification>
-          );
-        })}
+      <ToastNotification
+        title={notificationBody.title}
+        timeout={
+          notificationBody.kind !== NotificationKinds.error ? 8000 : 100000
+        }
+        onClose={() => {}}
+        onCloseButtonClick={() => {}}
+        lowContrast={true}
+        kind={notificationBody.kind}
+        subtitle={notificationBody.subtitle}
+      >
+        {notificationBody.message}
+        <br />
+        <br />
+      </ToastNotification>
     </div>
   );
 };

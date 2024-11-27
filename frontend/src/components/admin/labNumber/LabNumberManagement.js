@@ -26,17 +26,15 @@ import {
 } from "../../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import { ConfigurationContext } from "../../layout/Layout";
-import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 
-let breadcrumbs = [{ label: "home.label", link: "/" }];
 function LabNumberManagement() {
   const intl = useIntl();
 
-  const componentMounted = useRef(false);
+  const componentMounted = useRef(true);
 
   const { configurationProperties, reloadConfiguration } =
     useContext(ConfigurationContext);
-  const { notificationVisible, setNotificationVisible, addNotification } =
+  const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
 
   const [currentLabNumForDisplay, setCurrentLabNumForDisplay] = useState(
@@ -50,7 +48,6 @@ function LabNumberManagement() {
   const [labNumberValues, setLabNumberValues] = useState(LabNumberFormValues);
 
   useEffect(() => {
-    componentMounted.current = true;
     loadValues();
     return () => {
       componentMounted.current = false;
@@ -59,6 +56,9 @@ function LabNumberManagement() {
 
   useEffect(() => {
     fetchCurrentLabNumberNoIncrement();
+    return () => {
+      componentMounted.current = false;
+    };
   }, [configurationProperties]);
 
   useEffect(() => {
@@ -66,13 +66,21 @@ function LabNumberManagement() {
       fetchLegacyLabNumNoIncrement();
     }
     generateSampleLabNum();
+    return () => {
+      componentMounted.current = false;
+    };
   }, [labNumberValues]);
 
   const handleFieldChange = (e) => {
     const { name, value } = e.target;
+    //TODO use better strategy developed with greg
+    var names = name.split(".");
     const updatedValues = { ...labNumberValues };
-    var jp = require("jsonpath");
-    jp.value(updatedValues, name, value);
+    if (names.length === 1) {
+      updatedValues[name] = value;
+    } else if (names.length === 2) {
+      updatedValues[names[0]][names[1]] = value;
+    }
     setLabNumberValues(updatedValues);
   };
 
@@ -80,18 +88,18 @@ function LabNumberManagement() {
     setNotificationVisible(true);
     setIsSubmitting(false);
     if (res.status == "200") {
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.success,
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "success.add.edited.msg" }),
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="success.add.edited.msg" />,
       });
       var body = await res.json();
-      setLabNumberValues({ ...LabNumberFormValues, ...body });
+      setLabNumberValues(body);
     } else {
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.error,
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "error.add.edited.msg" }),
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="error.add.edited.msg" />,
       });
     }
     reloadConfiguration();
@@ -99,7 +107,7 @@ function LabNumberManagement() {
 
   const loadValues = () => {
     getFromOpenElisServer("/rest/labnumbermanagement", (body) => {
-      setLabNumberValues({ ...LabNumberFormValues, ...body });
+      setLabNumberValues(body);
       setLoading(false);
     });
   };
@@ -158,88 +166,75 @@ function LabNumberManagement() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <div className="adminPageContent">
-        <PageBreadCrumb breadcrumbs={breadcrumbs} />
-        <Grid>
+        <Grid >
           <Column lg={16}>
             <Section>
-              <Heading>
-                <FormattedMessage id="configure.labNumber.title" />
-              </Heading>
+              <Section>
+                <Heading>
+                  <FormattedMessage id="configure.labNumber.title" />
+                </Heading>
+              </Section>
             </Section>
           </Column>
         </Grid>
         <Form onSubmit={handleSubmit}>
-          <Grid>
-            <Column lg={8}>
-              <Select
-                id="lab_number_type"
-                labelText={intl.formatMessage({ id: "labNumber.type" })}
-                name="labNumberType"
-                value={labNumberValues.labNumberType}
-                onChange={handleFieldChange}
-              >
-                <SelectItem value="ALPHANUM" text="Alpha Numeric" />
-                <SelectItem value="SITEYEARNUM" text="Legacy" />
-              </Select>
-            </Column>
-            <Column lg={8}></Column>
-            <Column lg={16}>
-              {" "}
-              <br></br>
-            </Column>
-            {labNumberValues.labNumberType === "ALPHANUM" && (
-              <>
-                <Column lg={8}>
-                  <TextInput
-                    type="text"
-                    name="alphanumPrefix"
-                    id="alphanumPrefix"
-                    labelText={intl.formatMessage({ id: "labNumber.prefix" })}
-                    disabled={!labNumberValues.usePrefix}
-                    value={labNumberValues.alphanumPrefix}
-                    onChange={handleFieldChange}
-                    enableCounter={true}
-                    maxCount={5}
-                  />
-                </Column>
-                <Column lg={8}>
-                  <span className="middleAlignVertical">
-                    <Checkbox
-                      type="checkbox"
-                      name="usePrefix"
-                      id="usePrefix"
-                      labelText={intl.formatMessage({
-                        id: "labNumber.usePrefix",
-                      })}
-                      checked={labNumberValues.usePrefix}
-                      onClick={() => {
-                        const updatedValues = { ...labNumberValues };
-                        updatedValues.usePrefix = !labNumberValues.usePrefix;
-                        setLabNumberValues(updatedValues);
-                      }}
-                    />
-                  </span>
-                </Column>
-              </>
-            )}
-            <br></br>
-            <Column lg={16}>
-              <FormattedMessage id="labNumber.format.current" />:{" "}
-              {currentLabNumForDisplay}
-            </Column>
-            <br></br>
-            <Column lg={16}>
-              <FormattedMessage id="labNumber.format.new" />:{" "}
-              {sampleLabNumForDisplay}
-            </Column>
-            <br></br>
-            <Column lg={16}>
-              <Button type="submit">
-                <FormattedMessage id="label.button.submit" />
-                {isSubmitting && <Loading small={true} />}
-              </Button>
-            </Column>
-          </Grid>
+          <div className="inlineDiv">
+            <Select
+              id="lab_number_type"
+              labelText={intl.formatMessage({ id: "labNumber.type" })}
+              name="labNumberType"
+              value={labNumberValues.labNumberType}
+              onChange={handleFieldChange}
+            >
+              <SelectItem value="ALPHANUM" text="Alpha Numeric" />
+              <SelectItem value="SITEYEARNUM" text="Legacy" />
+            </Select>
+          </div>
+          {labNumberValues.labNumberType === "ALPHANUM" && (
+            <>
+              <div className="inlineDiv">
+                <Checkbox
+                  type="checkbox"
+                  name="usePrefix"
+                  id="usePrefix"
+                  labelText={intl.formatMessage({ id: "labNumber.usePrefix" })}
+                  checked={labNumberValues.usePrefix}
+                  onClick={() => {
+                    const updatedValues = { ...labNumberValues };
+                    updatedValues.usePrefix = !labNumberValues.usePrefix;
+                    setLabNumberValues(updatedValues);
+                  }}
+                />
+              </div>
+              <div className="inlineDiv">
+                <TextInput
+                  type="text"
+                  name="alphanumPrefix"
+                  id="alphanumPrefix"
+                  labelText={intl.formatMessage({ id: "labNumber.prefix" })}
+                  disabled={!labNumberValues.usePrefix}
+                  value={labNumberValues.alphanumPrefix}
+                  onChange={handleFieldChange}
+                  enableCounter={true}
+                  maxCount={5}
+                />
+              </div>
+            </>
+          )}
+          <div className="inlineDiv">
+            <FormattedMessage id="labNumber.format.current" />:{" "}
+            {currentLabNumForDisplay}
+          </div>
+          <div className="inlineDiv">
+            <FormattedMessage id="labNumber.format.new" />:{" "}
+            {sampleLabNumForDisplay}
+          </div>
+          <div className="inlineDiv">
+            <Button type="submit">
+              <FormattedMessage id="label.button.submit" />
+              {isSubmitting && <Loading small={true} />}
+            </Button>
+          </div>
         </Form>
       </div>
     </>

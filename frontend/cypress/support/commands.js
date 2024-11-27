@@ -24,23 +24,22 @@
 // -- This will overwrite an existing command --
 // Cypress.Commands.overwrite('visit', (originalFn, url, options) => { ... })
 
-Cypress.Commands.add("getElement", (selector) => {
-  cy.wait(100)
-    .get("body")
-    .then(($body) => {
-      if ($body.find(selector).length) {
-        return cy.get(selector);
-      } else {
-        return null;
-      }
+Cypress.Commands.add('getElement', (selector) => {
+    cy.wait(100).get('body').then(($body) => {
+        if ($body.find(selector).length) {
+            return cy.get(selector)
+        } else {
+            return null;
+        }
     });
 });
 
-Cypress.Commands.add("enterText", (selector, value) => {
-  const field = cy.getElement(selector);
-  if (field != null) {
-    field.clear();
-    field.type(value);
-    return field;
-  }
+Cypress.Commands.add('enterText', (selector, value) => {
+    const field = cy.getElement(selector);
+    if (field != null) {
+        field.clear();
+        field.type(value);
+        return field;
+    }
 });
+

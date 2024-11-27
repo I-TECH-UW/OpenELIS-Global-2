@@ -20,16 +20,13 @@ import {
   NotificationKinds,
 } from "../../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
-import PageBreadCrumb from "../../common/PageBreadCrumb.js";
 
-let breadcrumbs = [{ label: "home.label", link: "/" }];
 function NonConformityMenuManagement() {
-  const { notificationVisible, setNotificationVisible, addNotification } =
+  const { notificationVisible, setNotificationVisible, setNotificationBody } =
     useContext(NotificationContext);
-
   const intl = useIntl();
 
-  const componentMounted = useRef(false);
+  const componentMounted = useRef(true);
 
   const [loading, setLoading] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -40,18 +37,18 @@ function NonConformityMenuManagement() {
     setNotificationVisible(true);
     setIsSubmitting(false);
     if (res.status == "200") {
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.success,
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "success.add.edited.msg" }),
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="success.add.edited.msg" />,
       });
       var body = await res.json();
       setMenuItem(body);
     } else {
-      addNotification({
+      setNotificationBody({
         kind: NotificationKinds.error,
-        title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "error.add.edited.msg" }),
+        title: <FormattedMessage id="notification.title" />,
+        message: <FormattedMessage id="error.add.edited.msg" />,
       });
     }
   }
@@ -73,7 +70,6 @@ function NonConformityMenuManagement() {
   };
 
   useEffect(() => {
-    componentMounted.current = true;
     getFromOpenElisServer("/rest/menu/menu_nonconformity", handleMenuItems);
     return () => {
       componentMounted.current = false;
@@ -85,7 +81,6 @@ function NonConformityMenuManagement() {
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading />}
       <div className="adminPageContent">
-        <PageBreadCrumb breadcrumbs={breadcrumbs} />
         <Grid>
           <Column lg={16}>
             <Section>

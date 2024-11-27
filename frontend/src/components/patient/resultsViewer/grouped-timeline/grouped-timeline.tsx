@@ -1,56 +1,39 @@
-import React, {
-  useCallback,
-  useContext,
-  useEffect,
-  useRef,
-  useState,
-} from "react";
-import { useTranslation } from "react-i18next";
-import { EmptyState } from "../commons";
-import { ConfigurableLink, useLayoutType } from "../commons";
-import { Grid, ShadowBox } from "../commons/utils";
-import { makeThrottled, testResultsBasePath } from "../helpers";
+import React, { useCallback, useContext, useEffect, useRef, useState } from 'react';
+import { useTranslation } from 'react-i18next';
+import { EmptyState } from '../commons';
+import { ConfigurableLink, useLayoutType } from '../commons';
+import { Grid,ShadowBox } from '../commons/utils';
+import { makeThrottled, testResultsBasePath } from '../helpers';
 import type {
   DateHeaderGridProps,
   PanelNameCornerProps,
   TimelineCellProps,
   DataRowsProps,
-} from "./grouped-timeline-types";
-import FilterContext from "../filter/filter-context";
+} from './grouped-timeline-types';
+import FilterContext from '../filter/filter-context';
 //import styles from './grouped-timeline.styles.scss';
-import "./grouped-timeline.styles.scss";
+import './grouped-timeline.styles.scss';
 
 const TimeSlots: React.FC<{
   children?: React.ReactNode;
   style?: React.CSSProperties;
   className?: string;
 }> = ({ children = undefined, className, ...props }) => (
-  <div
-    className={`${"timeSlotInner"} ${className ? className : ""}`}
-    {...props}
-  >
+  <div className={`${'timeSlotInner'} ${className ? className : ''}`} {...props}>
     <div>{children}</div>
   </div>
 );
 
-const PanelNameCorner: React.FC<PanelNameCornerProps> = ({
-  showShadow,
-  panelName,
-}) => <TimeSlots className="cornerGridElement">{panelName}</TimeSlots>;
+const PanelNameCorner: React.FC<PanelNameCornerProps> = ({ showShadow, panelName }) => (
+  <TimeSlots className="cornerGridElement">{panelName}</TimeSlots>
+);
 
-const NewRowStartCell = ({
-  title,
-  range,
-  units,
-  conceptUuid,
-  shadow = false,
-  isString = false,
-}) => {
+const NewRowStartCell = ({ title, range, units, conceptUuid, shadow = false, isString = false }) => {
   return (
     <div
       className="rowStartCell"
       style={{
-        boxShadow: shadow ? "8px 0 20px 0 rgba(0,0,0,0.15)" : undefined,
+        boxShadow: shadow ? '8px 0 20px 0 rgba(0,0,0,0.15)' : undefined,
       }}
     >
       {!isString ? (
@@ -60,6 +43,7 @@ const NewRowStartCell = ({
         >
           {title}
         </ConfigurableLink>
+
       ) : (
         <span className="trendlineLink">{title}</span>
       )}
@@ -71,28 +55,22 @@ const NewRowStartCell = ({
 };
 
 const interpretationToCSS = {
-  OFF_SCALE_HIGH: "offScaleHigh",
-  CRITICALLY_HIGH: "criticallyHigh",
-  HIGH: "high",
-  OFF_SCALE_LOW: "offScaleLow",
-  CRITICALLY_LOW: "criticallyLow",
-  LOW: "low",
-  NORMAL: "",
+  OFF_SCALE_HIGH: 'offScaleHigh',
+  CRITICALLY_HIGH: 'criticallyHigh',
+  HIGH: 'high',
+  OFF_SCALE_LOW: 'offScaleLow',
+  CRITICALLY_LOW: 'criticallyLow',
+  LOW: 'low',
+  NORMAL: '',
 };
 
-const TimelineCell: React.FC<TimelineCellProps> = ({
-  text,
-  interpretation = "NORMAL",
-  zebra,
-}) => {
+const TimelineCell: React.FC<TimelineCellProps> = ({ text, interpretation = 'NORMAL', zebra }) => {
   const additionalClassname: string = interpretationToCSS[interpretation]
     ? interpretationToCSS[interpretation]
-    : "";
+    : '';
 
   return (
-    <div
-      className={`${"timelineDataCell"} ${zebra ? "timelineCellZebra" : ""} ${additionalClassname}`}
-    >
+    <div className={`${"timelineDataCell"} ${zebra ? "timelineCellZebra" : ''} ${additionalClassname}`}>
       <p>{text}</p>
     </div>
   );
@@ -105,34 +83,18 @@ const GridItems = React.memo<{
 }>(({ sortedTimes, obs, zebra }) => (
   <>
     {sortedTimes.map((_, i) => {
-      if (!obs[i]) return <TimelineCell key={i} text={""} zebra={zebra} />;
-      return (
-        <TimelineCell
-          key={i}
-          text={obs[i].value}
-          interpretation={obs[i].interpretation}
-          zebra={zebra}
-        />
-      );
+      if (!obs[i]) return <TimelineCell key={i} text={''} zebra={zebra} />;
+      return <TimelineCell key={i} text={obs[i].value} interpretation={obs[i].interpretation} zebra={zebra} />;
     })}
   </>
 ));
 
-const DataRows: React.FC<DataRowsProps> = ({
-  timeColumns,
-  rowData,
-  sortedTimes,
-  showShadow,
-}) => {
+const DataRows: React.FC<DataRowsProps> = ({ timeColumns, rowData, sortedTimes, showShadow }) => {
   return (
-    <Grid
-      dataColumns={timeColumns.length}
-      padding
-      style={{ gridColumn: "span 2" }}
-    >
+    <Grid dataColumns={timeColumns.length} padding style={{ gridColumn: 'span 2' }}>
       {rowData.map((row, index) => {
         const obs = row.entries;
-        const { units = "", range = "", obs: values } = row;
+        const { units = '', range = '', obs: values } = row;
         const isString = isNaN(parseFloat(values?.[0]?.value));
         return (
           <React.Fragment key={index}>
@@ -179,39 +141,31 @@ const DateHeaderGrid: React.FC<DateHeaderGridProps> = ({
   useEffect(() => {
     const div: HTMLElement | null = ref.current;
     if (div) {
-      div.addEventListener("scroll", handleScroll);
-      return () => div.removeEventListener("scroll", handleScroll);
+      div.addEventListener('scroll', handleScroll);
+      return () => div.removeEventListener('scroll', handleScroll);
     }
   }, [handleScroll]);
 
   return (
-    <div ref={ref} style={{ overflowX: "auto" }} className="dateHeaderInner">
+    <div ref={ref} style={{ overflowX: 'auto' }} className="dateHeaderInner">
       <Grid
         dataColumns={timeColumns.length}
         style={{
-          gridTemplateRows: "repeat(3, 24px)",
+          gridTemplateRows: 'repeat(3, 24px)',
           zIndex: 2,
-          boxShadow: showShadow ? "8px 0 20px 0 rgba(0,0,0,0.15)" : undefined,
+          boxShadow: showShadow ? '8px 0 20px 0 rgba(0,0,0,0.15)' : undefined,
         }}
       >
         {yearColumns.map(({ year, size }) => {
           return (
-            <TimeSlots
-              key={year}
-              className="yearColumn"
-              style={{ gridColumn: `${size} span` }}
-            >
+            <TimeSlots key={year} className="yearColumn" style={{ gridColumn: `${size} span` }}>
               {year}
             </TimeSlots>
           );
         })}
         {dayColumns.map(({ day, year, size }) => {
           return (
-            <TimeSlots
-              key={`${day} - ${year}`}
-              className="dayColumn"
-              style={{ gridColumn: `${size} span` }}
-            >
+            <TimeSlots key={`${day} - ${year}`} className="dayColumn" style={{ gridColumn: `${size} span` }}>
               {day}
             </TimeSlots>
           );
@@ -228,15 +182,7 @@ const DateHeaderGrid: React.FC<DateHeaderGridProps> = ({
   );
 };
 
-const TimelineDataGroup = ({
-  parent,
-  subRows,
-  xScroll,
-  setXScroll,
-  panelName,
-  setPanelName,
-  groupNumber,
-}) => {
+const TimelineDataGroup = ({ parent, subRows, xScroll, setXScroll, panelName, setPanelName, groupNumber }) => {
   const { timelineData } = useContext(FilterContext);
   const {
     data: {
@@ -249,7 +195,7 @@ const TimelineDataGroup = ({
   const titleRef = useRef();
 
   const el: HTMLElement | null = ref.current;
-  if (groupNumber === 1 && panelName === "") {
+  if (groupNumber === 1 && panelName === '') {
     setPanelName(parent.display);
   }
 
@@ -264,8 +210,8 @@ const TimelineDataGroup = ({
   useEffect(() => {
     const div: HTMLElement | null = ref.current;
     if (div) {
-      div.addEventListener("scroll", handleScroll);
-      return () => div.removeEventListener("scroll", handleScroll);
+      div.addEventListener('scroll', handleScroll);
+      return () => div.removeEventListener('scroll', handleScroll);
     }
   }, [handleScroll]);
 
@@ -305,25 +251,18 @@ const TimelineDataGroup = ({
           <ShadowBox />
         </div>
       </div>
-      <div style={{ height: "2em" }}></div>
+      <div style={{ height: '2em' }}></div>
     </>
   );
 };
 
 export const GroupedTimeline = () => {
-  const {
-    activeTests,
-    timelineData,
-    parents,
-    checkboxes,
-    someChecked,
-    lowestParents,
-  } = useContext(FilterContext);
-  const [panelName, setPanelName] = useState("");
+  const { activeTests, timelineData, parents, checkboxes, someChecked, lowestParents } = useContext(FilterContext);
+  const [panelName, setPanelName] = useState('');
   const [xScroll, setXScroll] = useState(0);
   const { t } = useTranslation();
   let shownGroups = 0;
-  const tablet = useLayoutType() === "tablet";
+  const tablet = useLayoutType() === 'tablet';
 
   const {
     data: {
@@ -334,21 +273,16 @@ export const GroupedTimeline = () => {
   } = timelineData;
 
   useEffect(() => {
-    setPanelName("");
+    setPanelName('');
   }, [rowData]);
 
   if (rowData && rowData?.length === 0) {
-    return (
-      <EmptyState
-        displayText={t("data", "data")}
-        headerTitle={t("dataTimelineText", "Data Timeline")}
-      />
-    );
+    return <EmptyState displayText={t('data', 'data')} headerTitle={t('dataTimelineText', 'Data Timeline')} />;
   }
   if (activeTests && timelineData && loaded) {
     return (
-      <div className="timelineHeader" style={{ top: "6.5rem" }}>
-        <div className="timelineHeader" style={{ top: "6.5rem" }}>
+      <div className="timelineHeader" style={{ top: '6.5rem' }}>
+        <div className="timelineHeader" style={{ top: '6.5rem' }}>
           <div className="dateHeaderContainer">
             <PanelNameCorner showShadow={true} panelName={panelName} />
             <DateHeaderGrid
@@ -365,20 +299,14 @@ export const GroupedTimeline = () => {
         </div>
         <div>
           {lowestParents?.map((parent, index) => {
-            if (
-              parents[parent.flatName].some((kid) => checkboxes[kid]) ||
-              !someChecked
-            ) {
+            if (parents[parent.flatName].some((kid) => checkboxes[kid]) || !someChecked) {
               shownGroups += 1;
               const subRows = someChecked
                 ? rowData?.filter(
                     (row: { flatName: string }) =>
-                      parents[parent.flatName].includes(row.flatName) &&
-                      checkboxes[row.flatName],
+                      parents[parent.flatName].includes(row.flatName) && checkboxes[row.flatName],
                   )
-                : rowData?.filter((row: { flatName: string }) =>
-                    parents[parent.flatName].includes(row.flatName),
-                  );
+                : rowData?.filter((row: { flatName: string }) => parents[parent.flatName].includes(row.flatName));
 
               // show kid rows
               return (
