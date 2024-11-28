@@ -3,11 +3,11 @@ package org.openelisglobal.dictionary.service;
 import java.util.List;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.dictionarycategory.service.DictionaryCategoryService;
-import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.annotation.Rollback;
 
@@ -23,18 +23,6 @@ public class DictionaryServiceTest extends BaseWebContextSensitiveTest {
     @Before
     public void setup() throws Exception {
         executeDataSetWithStateManagement("testdata/dictionary.xml");
-    }
-
-    @Test
-    public void verifyTestData() {
-        List<DictionaryCategory> categories = dictionaryCategoryService.getAll();
-        System.out.println("Dictionary Categories: " + categories.size());
-        categories.forEach(cat -> System.out
-                .println(cat.getCategoryName() + " - " + cat.getLocalAbbreviation() + " - " + cat.getDescription()));
-
-        List<Dictionary> dictionaries = dictionaryService.getAll();
-        System.out.println("Dictionaries: " + dictionaries.size());
-        dictionaries.forEach(dict -> System.out.println(dict.getDictEntry() + " - " + dict.getIsActive()));
     }
 
     @Test
@@ -91,16 +79,17 @@ public class DictionaryServiceTest extends BaseWebContextSensitiveTest {
         Assert.assertEquals("Y", dictionary.getIsActive());
     }
 
-//    @Test
+    @Ignore
 //    This fails with java.lang.AssertionError: Values should be different. Actual: 0
-//    public void getDictionaryEntrysByCategoryAbbreviation_shouldGetDictEntrysByCategoryAbbreviation() {
-//        List<Dictionary> dictionaries = dictionaryService.getDictionaryEntrysByCategoryAbbreviation("Dictionary", "CA2");
-//        Assert.assertNotEquals(0, dictionaries.size());
-//
-//        Assert.assertEquals("Dictionary Entry 2", dictionaries.get(0).getDictEntry());
-//        Assert.assertEquals("N", dictionaries.get(0).getIsActive());
-//        Assert.assertEquals("DE2", dictionaries.get(0).getLocalAbbreviation());
-//    }
+    public void getDictionaryEntrysByCategoryAbbreviation_shouldGetDictEntrysByCategoryAbbreviation() {
+        List<Dictionary> dictionaries = dictionaryService.getDictionaryEntrysByCategoryAbbreviation("Dictionary",
+                "CA2");
+        Assert.assertNotEquals(0, dictionaries.size());
+
+        Assert.assertEquals("Dictionary Entry 2", dictionaries.get(0).getDictEntry());
+        Assert.assertEquals("N", dictionaries.get(0).getIsActive());
+        Assert.assertEquals("DE2", dictionaries.get(0).getLocalAbbreviation());
+    }
 
     @Test
     public void getDictionaryEntrysByNameAndCategoryDescription_shouldGetDictionaryEntrysByNameAndCategoryDescription() {
