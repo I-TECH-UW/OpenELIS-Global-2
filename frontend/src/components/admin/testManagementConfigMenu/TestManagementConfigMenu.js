@@ -24,6 +24,7 @@ import {
   Stack,
   UnorderedList,
   ListItem,
+  ClickableTile,
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
@@ -94,96 +95,110 @@ function TestManagementConfigMenu() {
           <Grid fullWidth={true}>
             <Column lg={16} md={8} sm={4}>
               <UnorderedList>
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#TestRenameEntry");
-                  }}
-                >
-                  <FormattedMessage id="configuration.test.rename" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.test.rename.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                    onClick={() => {
+                      window.location.assign("/admin#TestRenameEntry");
+                    }}
+                  >
+                    <FormattedMessage id="configuration.test.rename" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.test.rename.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#PanelRenameEntry");
-                  }}
-                >
-                  <FormattedMessage id="configuration.panel.rename" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.panel.rename.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                    onClick={() => {
+                      window.location.assign("/admin#PanelRenameEntry");
+                    }}
+                  >
+                    <FormattedMessage id="configuration.panel.rename" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.panel.rename.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#SampleTypeRenameEntry");
-                  }}
-                >
-                  <FormattedMessage id="configuration.type.rename" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.type.rename.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                    onClick={() => {
+                      window.location.assign("/admin#SampleTypeRenameEntry");
+                    }}
+                  >
+                    <FormattedMessage id="configuration.type.rename" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.type.rename.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#TestSectionRenameEntry");
-                  }}
-                >
-                  <FormattedMessage id="configuration.testSection.rename" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.testSection.rename.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                    onClick={() => {
+                      window.location.assign("/admin#TestSectionRenameEntry");
+                    }}
+                  >
+                    <FormattedMessage id="configuration.testSection.rename" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.testSection.rename.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#UomRenameEntry");
-                  }}
-                >
-                  <FormattedMessage id="configuration.uom.rename" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.uom.rename.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                    onClick={() => {
+                      window.location.assign("/admin#UomRenameEntry");
+                    }}
+                  >
+                    <FormattedMessage id="configuration.uom.rename" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.uom.rename.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#SelectListRenameEntry");
-                  }}
-                >
-                  <FormattedMessage id="configuration.selectList.rename" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.selectList.rename.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                    onClick={() => {
+                      window.location.assign("/admin#SelectListRenameEntry");
+                    }}
+                  >
+                    <FormattedMessage id="configuration.selectList.rename" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.selectList.rename.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#MethodRenameEntry");
-                  }}
-                >
-                  <FormattedMessage id="configuration.method.rename" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.method.rename.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                    onClick={() => {
+                      window.location.assign("/admin#MethodRenameEntry");
+                    }}
+                  >
+                    <FormattedMessage id="configuration.method.rename" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.method.rename.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
               </UnorderedList>
             </Column>
           </Grid>
@@ -209,160 +224,183 @@ function TestManagementConfigMenu() {
           <Grid fullWidth={true}>
             <Column lg={16} md={8} sm={4}>
               <UnorderedList>
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#TestCatalog");
-                  }}
-                >
-                  <FormattedMessage id="configuration.test.catalog" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.test.catalog.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                    onClick={() => {
+                      window.location.assign("/admin#TestCatalog");
+                    }}
+                  >
+                    <FormattedMessage id="configuration.test.catalog" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.test.catalog.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#MethodManagement");
-                  }}
-                >
-                  <FormattedMessage id="configuration.method" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.method.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                    onClick={() => {
+                      window.location.assign("/admin#MethodManagement");
+                    }}
+                  >
+                    <FormattedMessage id="configuration.method" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.method.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#TestAdd");
-                  }}
-                >
-                  <FormattedMessage id="configuration.test.add" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.test.add.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                  // onClick={() => {
+                  //   window.location.assign("/admin#TestAdd");
+                  // }}
+                  >
+                    <FormattedMessage id="configuration.test.add" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.test.add.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#TestModifyEntry");
-                  }}
-                >
-                  <FormattedMessage id="configuration.test.modify" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.test.modify.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                  // onClick={() => {
+                  //   window.location.assign("/admin#TestModifyEntry");
+                  // }}
+                  >
+                    <FormattedMessage id="configuration.test.modify" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.test.modify.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#TestActivation");
-                  }}
-                >
-                  <FormattedMessage id="configuration.test.activate" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.test.activate.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                  // onClick={() => {
+                  //   window.location.assign("/admin#TestActivation");
+                  // }}
+                  >
+                    <FormattedMessage id="configuration.test.activate" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.test.activate.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#TestOrderability");
-                  }}
-                >
-                  <FormattedMessage id="configuration.test.orderable" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.test.orderable.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                  // onClick={() => {
+                  //   window.location.assign("/admin#TestOrderability");
+                  // }}
+                  >
+                    <FormattedMessage id="configuration.test.orderable" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.test.orderable.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#TestSectionManagement");
-                  }}
-                >
-                  <FormattedMessage id="configuration.testUnit.manage" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.testUnit.manage.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                  // onClick={() => {
+                  //   window.location.assign("/admin#TestSectionManagement");
+                  // }}
+                  >
+                    <FormattedMessage id="configuration.testUnit.manage" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.testUnit.manage.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#SampleTypeManagement");
-                  }}
-                >
-                  <FormattedMessage id="configuration.sampleType.manage" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.sampleType.manage.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                  // onClick={() => {
+                  //   window.location.assign("/admin#SampleTypeManagement");
+                  // }}
+                  >
+                    <FormattedMessage id="configuration.sampleType.manage" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.sampleType.manage.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#UomManagement");
-                  }}
-                >
-                  <FormattedMessage id="configuration.uom.manage" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.uom.manage.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
-
+                <ClickableTile>
+                  <ListItem
+                  // onClick={() => {
+                  //   window.location.assign("/admin#UomManagement");
+                  // }}
+                  >
+                    <FormattedMessage id="configuration.uom.manage" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.uom.manage.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#PanelManagement");
-                  }}
-                >
-                  <FormattedMessage id="configuration.panel.manage" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.panel.manage.explain" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                  // onClick={() => {
+                  //   window.location.assign("/admin#PanelManagement");
+                  // }}
+                  >
+                    <FormattedMessage id="configuration.panel.manage" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.panel.manage.explain" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin#ResultSelectListAdd");
-                  }}
-                >
-                  <FormattedMessage id="configuration.selectList.add" />
-                  <UnorderedList nested>
-                    <ListItem>
-                      <FormattedMessage id="configuration.selectList.add.explain" />
-                    </ListItem>
-                    <ListItem>
-                      <FormattedMessage id="configuration.selectList.add.alert" />
-                    </ListItem>
-                  </UnorderedList>
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                  // onClick={() => {
+                  //   window.location.assign("/admin#ResultSelectListAdd");
+                  // }}
+                  >
+                    <FormattedMessage id="configuration.selectList.add" />
+                    <UnorderedList nested>
+                      <ListItem>
+                        <FormattedMessage id="configuration.selectList.add.explain" />
+                      </ListItem>
+                      <ListItem>
+                        <FormattedMessage id="configuration.selectList.add.alert" />
+                      </ListItem>
+                    </UnorderedList>
+                  </ListItem>
+                </ClickableTile>
                 <br />
-                <ListItem
-                  onClick={() => {
-                    window.location.assign("/admin");
-                  }}
-                >
-                  <FormattedMessage id="manage.testing.algorithms.add.reflex.tests" />
-                </ListItem>
+                <ClickableTile>
+                  <ListItem
+                  // onClick={() => {
+                  //   window.location.assign("/admin");
+                  // }}
+                  >
+                    <FormattedMessage id="manage.testing.algorithms.add.reflex.tests" />
+                  </ListItem>
+                </ClickableTile>
               </UnorderedList>
             </Column>
           </Grid>
