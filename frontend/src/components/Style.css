@@ -1,3 +1,19 @@
+:root {
+  --cds-text-primary: #000000;
+  --cds-border-color: #295785;
+  --cds-background-hover: #072655;
+  --cds-background-primary: #f4f4f4;
+  --cds-border-radius: 5px;
+  --cds-box-shadow: 4px 2px 4px #d3d3d3;
+  --cds-table-background: #f9f9f9;
+  --cds-section-border-color: #008000;
+  --cds-background: #295785;
+  --cds-font-color: #201f1f;
+  --cds-addButton-color: #00d0ff;
+  --cds-example-background: #f1f1f1;
+  --cds-error-color: #ff0000;
+}
+
 .logo {
   height: 40px;
   width: auto;
@@ -17,7 +33,6 @@
 
 .banner p {
   margin: 0;
-  /* padding: 5px 0; */
   font-size: 12px;
 }
 
@@ -36,7 +51,7 @@ li.clickableUserDetails {
 }
 
 li.clickableUserDetails:hover {
-  background: #072655;
+  background: var(--cds-background-hover, #072655);
 }
 
 .adminPageContent {
@@ -49,18 +64,9 @@ li.clickableUserDetails:hover {
   margin-right: 5%;
 }
 
-.inputText {
-  --cds-text-primary: black;
-  width: 100%;
-  --cds-text-secondary: black;
-}
-
 .inputSearch {
-  --cds-text-primary: black;
-  /*width: 100%;*/
-  width: 50%;
-  --cds-text-secondary: black;
-  --cds-icon-primary: black;
+   color: var(--cds-text-primary);
+   width: 50%;
 }
 
 .rules {
@@ -68,91 +74,27 @@ li.clickableUserDetails:hover {
   justify-content: space-between;
 }
 
-.first-division {
-  display: flex;
-  flex-direction: column;
-  margin: 0 5px 0.5rem 0;
-  width: 100%;
-}
-
-.second-division {
-  padding-top: 5%;
-}
-
-button {
-  background: none;
-  outline: none;
-  cursor: pointer;
-  font-weight: 500;
-  border-radius: 2px;
-  padding: 5px 10px;
-}
-
-.add_button {
-  align-self: flex-start;
-  display: flex;
-  align-items: center;
-  margin-top: 0.5rem;
-  color: rgb(0, 208, 255);
-  border: 1px solid rgb(0, 208, 255);
-}
-
-.remove-btn {
-  color: red;
-  border: 1px solid red;
-}
-
-.services {
-  display: flex;
-  justify-content: space-between;
-}
-
-.ruleBody {
-  border: 0.5px solid #295785;
-  border-radius: 5px;
+.ruleBody,.resultBody {
+  border: 0.5px solid var(--cds-border-color);
+  border-radius: var(--cds-border-radius);
   margin: 2%;
   padding: 0.5%;
 }
 
 .gridBoundary {
-  border: 0.5px solid #295785;
-  border-radius: 5px;
+  border: 0.5px solid var(--cds-border-color);
+  border-radius: var(--cds-border-radius);
   padding: 1%;
-  box-shadow: 4px 2px 4px #d3d3d3;
+  box-shadow: var(--cds-box-shadow);
   margin-bottom: 1%;
 }
 
 .columnBoundary {
-  border: 0.5px solid #295785;
-  border-radius: 5px;
+  border: 0.5px solid var(--cds-border-color);
+  border-radius: var(--cds-border-radius);
   margin: 2%;
   padding: 1%;
   width: 120%;
-}
-
-.inlineDiv {
-  display: flex;
-  margin-top: 2%;
-  margin-bottom: 3%;
-  margin-left: 1%;
-}
-.section {
-  border: 0.5px solid green;
-  border-radius: 3px;
-  margin: 0.5%;
-  padding: 1%;
-}
-
-.errorMessage {
-  font-size: 12px;
-  color: red;
-  width: 150px;
-  margin-top: 0.25rem;
-}
-
-.errorMessage::before {
-  content: " ";
-  font-size: 10px;
 }
 
 .inlineDivBlock > div {
@@ -173,26 +115,22 @@ button {
 
 .middleAlignHorizontal {
   display: flex;
-  /* align-items: center; */
   justify-content: center;
 }
+
 .middleAlignVertical {
   height: 100%;
   display: flex;
   align-items: center;
-  /* justify-content: center; */
 }
+
 .bottomAlign {
   height: 100%;
   display: flex;
   align-items: flex-end;
-  /* justify-content: center; */
 }
 
 .formInlineDiv {
-  /* display: flex;
-  flex-wrap: nowrap;
-  width: 100%; */
   display: grid;
   grid-template-columns: 1fr 1fr;
   grid-column-gap: 2%;
@@ -214,13 +152,11 @@ button {
 }
 
 .sampleInfo {
-  /* margin-left: 0%;  */
   margin-left: 0%;
   margin-right: 0%;
 }
 
 .referralRow {
-  /* margin-right: 50%; */
   margin-left: 5%;
   width: 100%;
 }
@@ -229,55 +165,32 @@ button {
   margin-right: 20px;
 }
 
-/* .resultValue {
- 
-  margin-left: 5%;
-  width: 100%;
-}
-
-.currentResultValue {
- 
-  margin-left: 5%;
-  width: 100%;
-} */
-
 .referralReason {
   margin-left: 25%;
   margin-right: 5%;
   width: 100%;
 }
+
 .institute {
   margin-left: 5%;
   margin-right: 5%;
   width: 100%;
 }
 
-/* Results */
-.inputText {
-  --cds-text-primary: black;
-  width: 100%;
-  --cds-text-secondary: black;
-  /* margin-top: 0.1%; */
-}
-
-.inputText2 {
-  --cds-text-primary: black;
-  width: 380px;
-  --cds-text-secondary: black;
-  padding-left: 1%;
-  /* margin-top: 0.1%; */
-}
-
-.inputSelect {
-  --cds-text-primary: black;
-  width: 100%;
-  --cds-text-secondary: black;
-}
-
+.inputText,
+.inputText2,
+.inputSelect,
 .inputSelect2 {
-  --cds-text-primary: black;
+  color: var(--cds-text-primary);
+}
+
+.inputText,.inputSelect  {
+  width: 100%;
+}
+
+.inputText2,.inputSelect2 {
   width: 380px;
-  --cds-text-secondary: black;
+  padding-left: 1%;
 }
 
 .results {
@@ -310,25 +223,18 @@ button {
   display: flex;
   align-items: center;
   margin-top: 0.5rem;
-  color: rgb(0, 208, 255);
-  border: 1px solid rgb(0, 208, 255);
+  color: var(--cds-addButton-color);
+  border: 1px solid var(--cds-addButton-color);
 }
 
 .remove-btn {
-  color: red;
-  border: 1px solid red;
+  color: var(--cds-error-color);
+  border: 1px solid var(--cds-error-color);
 }
 
 .services {
   display: flex;
   justify-content: space-between;
-}
-
-.resultBody {
-  border: 0.5px solid #295785;
-  border-radius: 5px;
-  margin: 2%;
-  padding: 0.5%;
 }
 
 .inlineDiv {
@@ -339,7 +245,7 @@ button {
 }
 
 .section {
-  border: 0.5px solid green;
+  border: 0.5px solid var(--cds-section-border-color);
   border-radius: 3px;
   margin: 0.5%;
   padding: 1%;
@@ -347,7 +253,7 @@ button {
 
 .errorMessage {
   font-size: 12px;
-  color: red;
+  color: var(--cds-error-color);
   width: 150px;
   margin-top: 0.25rem;
 }
@@ -358,24 +264,24 @@ button {
 }
 
 .requiredFieldIndicator {
-  color: red;
+  color: var(--cds-error-color);
 }
+
 .toastDisplay {
-  position: fixed; /*or fixed*/
+  position: fixed;
   top: 47px;
   right: 0px;
   z-index: 10;
 }
 
 .selectSampleType {
-  --cds-text-primary: black;
+  color: var(--cds-text-primary);
   width: 200px;
-  --cds-text-secondary: black;
   margin-bottom: 20px;
 }
 
 .exampleDiv {
-  background-color: #f1f1f1;
+  background-color: var(--cds-example-background);
   overflow: auto;
   text-align: justify;
   padding: 0.6875rem 1rem;
@@ -383,14 +289,8 @@ button {
 
 .error {
   font-size: 12px;
-  color: red;
+  color: var(--cds-error-color);
   margin-bottom: 0.25rem;
-  /* width: 150px; */
-  /* 
-	  &:before {
-	    content: " ";
-	    font-size: 10px;
-	  } */
 }
 
 .second-row {
@@ -401,10 +301,8 @@ button {
 .first-row {
   max-width: 500px;
 }
-.searchResultsBtn {
-  margin: 10px !important;
-}
-.advancedSearchResultsBtn {
+
+.searchResultsBtn,.advancedSearchResultsBtn {
   margin: 10px !important;
 }
 
@@ -418,11 +316,11 @@ button {
 
 .font1 {
   font-size: 14px;
-  color: #201f1f;
+  color: var(--cds-font-color);
 }
 
 .requiredlabel {
-  color: #ff0000;
+  color: var(--cds-error-color);
 }
 
 .my-custom-table {
@@ -442,11 +340,11 @@ button {
 }
 
 .my-custom-table th {
-  background-color: #f4f4f4;
+  background-color: var(--cds-background-primary);
 }
 
 .my-custom-table tbody tr:nth-child(odd) {
-  background-color: #f9f9f9;
+  background-color: var(--cds-table-background);
 }
 
 .cds--side-nav__link-text {
@@ -460,7 +358,7 @@ button {
   cursor: pointer;
   display: flex;
   align-items: center;
-  background-color: var(--cds-background-hover, #072655);
+  background-color: var(--cds-background-hover);
   color: var(--cds-text-secondary, #ffffff);
   transition:
     color 110ms,
@@ -469,14 +367,11 @@ button {
   -webkit-user-select: none;
   user-select: none;
   width: 100%;
-}
-
-.custom-sidenav-button {
   pointer-events: auto;
 }
 
 .custom-sidenav-button:hover {
-  background-color: var(--cds-background, #295785);
+  background-color: var(--cds-background);
 }
 
 .cds--side-nav__link a {
@@ -485,7 +380,7 @@ button {
 }
 
 .cds--side-nav__link a:hover {
-  background-color: var(--cds-background, #295785);
+  background-color: var(--cds-background);
 }
 
 .reduced-padding-nav-menu-item > a.cds--side-nav__link {
@@ -498,7 +393,7 @@ button {
 }
 
 .top-level-menu-item > a:hover {
-  background-color: var(--cds-background-hover, #072655);
+  background-color: var(--cds-background-hover);
 }
 
 #mainHeader .cds--side-nav__link {
@@ -509,13 +404,16 @@ button {
   .banner h5 {
     font-size: 1.8vw;
   }
+
   .banner p {
     font-size: 1.4vw;
   }
+
   .formInlineDiv {
     grid-template-columns: 1fr;
   }
 }
+
 @media screen and (max-width: 550px) {
   .adminPageContent {
     margin-left: 15%;
@@ -527,6 +425,7 @@ button {
     flex-direction: column;
   }
 }
+
 @media screen and (max-width: 500px) {
   .adminPageContent {
     margin-left: 17%;
@@ -539,7 +438,7 @@ button {
   }
 
   #header-logo {
-    margin-left: 0px;
+    margin-left: 0;
   }
 
   .banner p {
