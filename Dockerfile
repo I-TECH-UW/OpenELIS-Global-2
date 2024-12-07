@@ -16,22 +16,9 @@ ARG DEFAULT_PW="adminADMIN!"
 COPY ./install/createDefaultPassword.sh /build/install/createDefaultPassword.sh
 WORKDIR /build
 RUN ./install/createDefaultPassword.sh -c -p ${DEFAULT_PW}
-
-##
-# Build DataExport
+## 
+# Building the project
 #
-COPY ./dataexport /build/dataexport
-WORKDIR /build/dataexport/dataexport-core
-RUN --mount=type=cache,target=/root/.m2,sharing=locked \
-    mvn dependency:go-offline 
-RUN --mount=type=cache,target=/root/.m2,sharing=locked \
-    mvn clean install -DskipTests
-WORKDIR /build/dataexport/
-RUN --mount=type=cache,target=/root/.m2,sharing=locked \
-    mvn dependency:go-offline 
-RUN --mount=type=cache,target=/root/.m2,sharing=locked \
-    mvn clean install -DskipTests
-
 WORKDIR /build
 
 COPY ./pom.xml /build/pom.xml
