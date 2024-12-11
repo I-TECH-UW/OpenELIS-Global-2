@@ -6,31 +6,15 @@ import {
   Grid,
   Column,
   Section,
-  DataTable,
-  Table,
-  TableHead,
-  TableRow,
-  TableBody,
-  TableHeader,
-  TableCell,
-  TableSelectRow,
-  TableSelectAll,
-  TableContainer,
-  Pagination,
-  Search,
-  Modal,
   TextInput,
-  Dropdown,
   TextArea,
   Checkbox,
 } from "@carbon/react";
 import {
   getFromOpenElisServer,
-  postToOpenElisServerFullResponse,
   postToOpenElisServerJsonResponse,
 } from "../../utils/Utils.js";
 import {
-  ConfigurationContext,
   NotificationContext,
 } from "../../layout/Layout.js";
 import {
@@ -39,8 +23,6 @@ import {
 } from "../../common/CustomNotification.js";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb.js";
-import { ArrowLeft, ArrowRight, Cost } from "@carbon/icons-react";
-import ActionPaginationButtonType from "../../common/ActionPaginationButtonType.js";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -80,8 +62,6 @@ function TestNotificationConfigEdit() {
   ] = useState({});
   const [testNamesList, setTestNamesList] = useState([]);
   const [testName, setTestName] = useState("");
-  const [testNotificationConfigMenuList, setTestNotificationConfigMenuList] =
-    useState([]);
 
   useEffect(() => {
     if (testNotificationConfigEditData) {
@@ -565,7 +545,7 @@ function TestNotificationConfigEdit() {
             </Grid>
             <br />
             <Grid fullWidth={true}>
-              <Column lg={4} md={4} sm={2}>
+              <Column lg={4} md={4} sm={4}>
                 <Button
                   onClick={() => {
                     setIndMsg("0");
@@ -575,7 +555,7 @@ function TestNotificationConfigEdit() {
                   <FormattedMessage id="testnotification.patient.email" />
                 </Button>
               </Column>{" "}
-              <Column lg={4} md={4} sm={2}>
+              <Column lg={4} md={4} sm={4}>
                 <Button
                   onClick={() => {
                     setIndMsg("1");
@@ -585,7 +565,7 @@ function TestNotificationConfigEdit() {
                   <FormattedMessage id="testnotification.patient.sms" />
                 </Button>
               </Column>{" "}
-              <Column lg={4} md={4} sm={2}>
+              <Column lg={4} md={4} sm={4}>
                 <Button
                   onClick={() => {
                     setIndMsg("2");
@@ -595,7 +575,7 @@ function TestNotificationConfigEdit() {
                   <FormattedMessage id="testnotification.provider.email" />
                 </Button>
               </Column>{" "}
-              <Column lg={4} md={4} sm={2}>
+              <Column lg={4} md={4} sm={4}>
                 <Button
                   onClick={() => {
                     setIndMsg("3");
