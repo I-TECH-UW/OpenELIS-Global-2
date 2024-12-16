@@ -256,9 +256,9 @@ function TestManagementConfigMenu() {
                 <br />
                 <ClickableTile>
                   <ListItem
-                  // onClick={() => {
-                  //   window.location.assign("/admin#TestAdd");
-                  // }}
+                  onClick={() => {
+                    window.location.assign("/api/OpenELIS-Global/TestAdd");
+                  }}
                   >
                     <FormattedMessage id="configuration.test.add" />
                     <UnorderedList nested>
@@ -271,9 +271,9 @@ function TestManagementConfigMenu() {
                 <br />
                 <ClickableTile>
                   <ListItem
-                  // onClick={() => {
-                  //   window.location.assign("/admin#TestModifyEntry");
-                  // }}
+                  onClick={() => {
+                    window.location.assign("/api/OpenELIS-Global/TestModifyEntry");
+                  }}
                   >
                     <FormattedMessage id="configuration.test.modify" />
                     <UnorderedList nested>
@@ -286,9 +286,9 @@ function TestManagementConfigMenu() {
                 <br />
                 <ClickableTile>
                   <ListItem
-                  // onClick={() => {
-                  //   window.location.assign("/admin#TestActivation");
-                  // }}
+                  onClick={() => {
+                    window.location.assign("/api/OpenELIS-Global/TestActivation");
+                  }}
                   >
                     <FormattedMessage id="configuration.test.activate" />
                     <UnorderedList nested>
@@ -301,9 +301,9 @@ function TestManagementConfigMenu() {
                 <br />
                 <ClickableTile>
                   <ListItem
-                  // onClick={() => {
-                  //   window.location.assign("/admin#TestOrderability");
-                  // }}
+                  onClick={() => {
+                    window.location.assign("/api/OpenELIS-Global/TestOrderability");
+                  }}
                   >
                     <FormattedMessage id="configuration.test.orderable" />
                     <UnorderedList nested>
@@ -316,9 +316,9 @@ function TestManagementConfigMenu() {
                 <br />
                 <ClickableTile>
                   <ListItem
-                  // onClick={() => {
-                  //   window.location.assign("/admin#TestSectionManagement");
-                  // }}
+                  onClick={() => {
+                    window.location.assign("/api/OpenELIS-Global/TestSectionManagement");
+                  }}
                   >
                     <FormattedMessage id="configuration.testUnit.manage" />
                     <UnorderedList nested>
@@ -331,9 +331,9 @@ function TestManagementConfigMenu() {
                 <br />
                 <ClickableTile>
                   <ListItem
-                  // onClick={() => {
-                  //   window.location.assign("/admin#SampleTypeManagement");
-                  // }}
+                  onClick={() => {
+                    window.location.assign("/api/OpenELIS-Global/SampleTypeManagement");
+                  }}
                   >
                     <FormattedMessage id="configuration.sampleType.manage" />
                     <UnorderedList nested>
@@ -346,9 +346,9 @@ function TestManagementConfigMenu() {
                 <br />
                 <ClickableTile>
                   <ListItem
-                  // onClick={() => {
-                  //   window.location.assign("/admin#UomManagement");
-                  // }}
+                  onClick={() => {
+                    window.location.assign("/api/OpenELIS-Global/UomManagement");
+                  }}
                   >
                     <FormattedMessage id="configuration.uom.manage" />
                     <UnorderedList nested>
@@ -361,9 +361,9 @@ function TestManagementConfigMenu() {
                 <br />
                 <ClickableTile>
                   <ListItem
-                  // onClick={() => {
-                  //   window.location.assign("/admin#PanelManagement");
-                  // }}
+                  onClick={() => {
+                    window.location.assign("/api/OpenELIS-Global/PanelManagement");
+                  }}
                   >
                     <FormattedMessage id="configuration.panel.manage" />
                     <UnorderedList nested>
@@ -376,9 +376,9 @@ function TestManagementConfigMenu() {
                 <br />
                 <ClickableTile>
                   <ListItem
-                  // onClick={() => {
-                  //   window.location.assign("/admin#ResultSelectListAdd");
-                  // }}
+                  onClick={() => {
+                    window.location.assign("/api/OpenELIS-Global/ResultSelectListAdd");
+                  }}
                   >
                     <FormattedMessage id="configuration.selectList.add" />
                     <UnorderedList nested>
@@ -394,9 +394,9 @@ function TestManagementConfigMenu() {
                 <br />
                 <ClickableTile>
                   <ListItem
-                  // onClick={() => {
-                  //   window.location.assign("/admin");
-                  // }}
+                  onClick={() => {
+                    window.location.assign("/admin");
+                  }}
                   >
                     <FormattedMessage id="manage.testing.algorithms.add.reflex.tests" />
                   </ListItem>
