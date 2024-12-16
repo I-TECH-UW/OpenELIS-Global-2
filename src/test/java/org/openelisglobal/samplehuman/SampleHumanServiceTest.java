@@ -40,44 +40,44 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
     @Autowired
     PersonService personService;
 
+    private static final String PATIENT_FIRSTNAME = "John";
+    private static final String PATIENT_LASTNAME = "Doe";
+    private static final String PROVIDER_FIRSTNAME = "Jane";
+    private static final String PROVIDER_LASTNAME = "Loo";
+    private static final String PATIENT_BIRTHDATE = "03/06/1993";
+    private static final String SAMPLE_ACCESSION_NUMBER = "12345";
+    private static final String PATIENT_GENDER = "M";
+    private static final String SAMPLE_RECEIVED_TIMESTAMP = "012/06/2024";
+    private static final String PROVIDER_TYPE = "P";
+    private static final String SAMPLE_ENTERED_DATE = "2024-06-03";
+
     @Before
     public void init() throws Exception {
-        providerService.deleteAll(providerService.getAll());
         humanService.deleteAll(humanService.getAll());
         sampleService.deleteAll(sampleService.getAll());
+        providerService.deleteAll(providerService.getAll());
         patientService.deleteAll(patientService.getAll());
         personService.deleteAll(personService.getAll());
     }
 
     @After
     public void tearDown() throws Exception {
-        providerService.deleteAll(providerService.getAll());
         humanService.deleteAll(humanService.getAll());
         sampleService.deleteAll(sampleService.getAll());
+        providerService.deleteAll(providerService.getAll());
         patientService.deleteAll(patientService.getAll());
         personService.deleteAll(personService.getAll());
     }
 
     @Test
     public void createSampleHuman_shouldCreateNewSampleHuman() throws Exception {
-        String firstname = "John";
-        String lastname = "Doe";
-        String firstname2 = "Jane";
-        String lastname2 = "Loo";
-        String birthdate = "03/06/1993";
-        String accessionNumber = "12345";
-        String gender = "M";
-        String receivedTimestamp = "012/06/2024";
-        String type = "P";
-        String entereddate = "2024-06-03";
-
-        SampleHuman sampleHuman = creatSampleHuman(firstname, lastname, firstname2, lastname2, birthdate,
-                accessionNumber, gender, receivedTimestamp, type, entereddate);
+        SampleHuman sampleHuman = creatSampleHuman(PATIENT_FIRSTNAME, PATIENT_LASTNAME, PROVIDER_FIRSTNAME,
+                PROVIDER_LASTNAME, PATIENT_BIRTHDATE, SAMPLE_ACCESSION_NUMBER, PATIENT_GENDER,
+                SAMPLE_RECEIVED_TIMESTAMP, PROVIDER_TYPE, SAMPLE_ENTERED_DATE);
 
         Assert.assertEquals(0, humanService.getAll().size());
 
-        String sampleHumanId = humanService.insert(sampleHuman);
-        SampleHuman savedSampleHuman = humanService.get(sampleHumanId);
+        humanService.insert(sampleHuman);
 
         Assert.assertEquals(1, humanService.getAll().size());
 
@@ -85,54 +85,34 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void updateSampleHuman_shouldUpdateSampleHuman() throws Exception {
-        String firstname = "John";
-        String lastname = "Doe";
-        String firstname2 = "Jane";
-        String lastname2 = "Loo";
-        String birthdate = "03/06/1993";
-        String accessionNumber = "12345";
-        String gender = "M";
-        String receivedTimestamp = "012/06/2024";
-        String type = "P";
-        String entereddate = "2024-06-03";
 
         Person person = new Person();
-        person.setFirstName(firstname);
-        person.setLastName(lastname);
+        person.setFirstName(PATIENT_FIRSTNAME);
+        person.setLastName(PATIENT_LASTNAME);
         personService.save(person);
 
         Person person2 = new Person();
-        person2.setFirstName(firstname2);
-        person2.setLastName(lastname2);
+        person2.setFirstName(PROVIDER_FIRSTNAME);
+        person2.setLastName(PROVIDER_LASTNAME);
         personService.save(person2);
 
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = dateFormat.parse(birthdate);
-        long time = date.getTime();
-        Timestamp dob = new Timestamp(time);
-
         Patient pat = new Patient();
-        pat.setBirthDate(dob);
+        pat.setBirthDate(new Timestamp(new SimpleDateFormat("dd/MM/yyyy").parse(PATIENT_BIRTHDATE).getTime()));
         pat.setPerson(person);
-        pat.setGender(gender);
+        pat.setGender(PATIENT_GENDER);
         String patId = patientService.insert(pat);
 
         Provider prov = new Provider();
         prov.setPerson(person2);
-        prov.setProviderType(type);
+        prov.setProviderType(PROVIDER_TYPE);
         String providerId = providerService.insert(prov);
-
-        DateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
-        Date date2 = dateFormat2.parse(receivedTimestamp);
-        long time2 = date2.getTime();
-        Timestamp doc = new Timestamp(time2);
-
-        java.sql.Date enteredDate = java.sql.Date.valueOf(entereddate);
+        java.sql.Date enteredDate = java.sql.Date.valueOf(SAMPLE_ENTERED_DATE);
 
         Sample samp = new Sample();
         samp.setEnteredDate(enteredDate);
-        samp.setReceivedTimestamp(doc);
-        samp.setAccessionNumber(accessionNumber);
+        samp.setReceivedTimestamp(
+                new Timestamp(new SimpleDateFormat("dd/MM/yyyy").parse(SAMPLE_RECEIVED_TIMESTAMP).getTime()));
+        samp.setAccessionNumber(SAMPLE_ACCESSION_NUMBER);
         String sampId = sampleService.insert(samp);
 
         SampleHuman sampleHuman = new SampleHuman();
@@ -140,7 +120,7 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         sampleHuman.setProviderId(providerId);
         sampleHuman.setSampleId(sampId);
 
-        String sampleHumanId = humanService.insert(sampleHuman);
+        humanService.insert(sampleHuman);
         Person updateSamplehuman = humanService.getPatientForSample(samp).getPerson();
         updateSamplehuman.setLastName("Nakibinge");
         personService.save(updateSamplehuman);
@@ -151,20 +131,9 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void deleteSampleHuman_shouldDeleteSampleHuman() throws Exception {
-        String firstname = "John";
-        String lastname = "Doe";
-        String firstname2 = "Jane";
-        String lastname2 = "Loo";
-        String birthdate = "03/06/1993";
-        String accessionNumber = "12345";
-        String gender = "M";
-        String receivedTimestamp = "012/06/2024";
-        String type = "P";
-        String entereddate = "2024-06-03";
-
-        SampleHuman sampleHuman = creatSampleHuman(firstname, lastname, firstname2, lastname2, birthdate,
-                accessionNumber, gender, receivedTimestamp, type, entereddate);
-
+        SampleHuman sampleHuman = creatSampleHuman(PATIENT_FIRSTNAME, PATIENT_LASTNAME, PROVIDER_FIRSTNAME,
+                PROVIDER_LASTNAME, PATIENT_BIRTHDATE, SAMPLE_ACCESSION_NUMBER, PATIENT_GENDER,
+                SAMPLE_RECEIVED_TIMESTAMP, PROVIDER_TYPE, SAMPLE_ENTERED_DATE);
         Assert.assertEquals(0, humanService.getAll().size());
 
         String sampleHumanId = humanService.insert(sampleHuman);
@@ -178,23 +147,13 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getAllPatientsWithSampleEntered_shouldReturnPatientsWithSample() throws Exception {
-        String firstname = "John";
-        String lastname = "Doe";
-        String firstname2 = "Jane";
-        String lastname2 = "Loo";
-        String birthdate = "03/06/1993";
-        String accessionNumber = "12345";
-        String gender = "M";
-        String receivedTimestamp = "012/06/2024";
-        String type = "P";
-        String entereddate = "2024-06-03";
-
-        SampleHuman sampleHuman = creatSampleHuman(firstname, lastname, firstname2, lastname2, birthdate,
-                accessionNumber, gender, receivedTimestamp, type, entereddate);
+        SampleHuman sampleHuman = creatSampleHuman(PATIENT_FIRSTNAME, PATIENT_LASTNAME, PROVIDER_FIRSTNAME,
+                PROVIDER_LASTNAME, PATIENT_BIRTHDATE, SAMPLE_ACCESSION_NUMBER, PATIENT_GENDER,
+                SAMPLE_RECEIVED_TIMESTAMP, PROVIDER_TYPE, SAMPLE_ENTERED_DATE);
 
         Assert.assertEquals(0, humanService.getAll().size());
 
-        String sampleHumanId = humanService.insert(sampleHuman);
+        humanService.insert(sampleHuman);
         List<Patient> patients = humanService.getAllPatientsWithSampleEntered();
         ;
 
@@ -215,13 +174,8 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         person2.setLastName(lastname2);
         personService.save(person2);
 
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = dateFormat.parse(birthdate);
-        long time = date.getTime();
-        Timestamp dob = new Timestamp(time);
-
         Patient pat = new Patient();
-        pat.setBirthDate(dob);
+        pat.setBirthDate(new Timestamp(new SimpleDateFormat("dd/MM/yyyy").parse(birthdate).getTime()));
         pat.setPerson(person);
         pat.setGender(gender);
         String patId = patientService.insert(pat);
@@ -231,16 +185,11 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         prov.setProviderType(type);
         String providerId = providerService.insert(prov);
 
-        DateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
-        Date date2 = dateFormat2.parse(receivedTimestamp);
-        long time2 = date2.getTime();
-        Timestamp doc = new Timestamp(time2);
-
-        java.sql.Date enteredDate = java.sql.Date.valueOf(entereddate);
+        java.sql.Date enteredDate = java.sql.Date.valueOf(SAMPLE_ENTERED_DATE);
 
         Sample samp = new Sample();
         samp.setEnteredDate(enteredDate);
-        samp.setReceivedTimestamp(doc);
+        samp.setReceivedTimestamp(new Timestamp(new SimpleDateFormat("dd/MM/yyyy").parse(receivedTimestamp).getTime()));
         samp.setAccessionNumber(accessionNumber);
         String sampId = sampleService.insert(samp);
 
@@ -254,54 +203,34 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getData_shouldReturncopiedPropertiesFromDatabase() throws Exception {
-        String firstname = "John";
-        String lastname = "Doe";
-        String firstname2 = "Jane";
-        String lastname2 = "Loo";
-        String birthdate = "03/06/1993";
-        String accessionNumber = "12345";
-        String gender = "M";
-        String receivedTimestamp = "012/06/2024";
-        String type = "P";
-        String entereddate = "2024-06-03";
-
         Person person = new Person();
-        person.setFirstName(firstname);
-        person.setLastName(lastname);
+        person.setFirstName(PATIENT_FIRSTNAME);
+        person.setLastName(PATIENT_LASTNAME);
         personService.save(person);
 
         Person person2 = new Person();
-        person2.setFirstName(firstname2);
-        person2.setLastName(lastname2);
+        person2.setFirstName(PROVIDER_FIRSTNAME);
+        person2.setLastName(PROVIDER_LASTNAME);
         personService.save(person2);
 
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = dateFormat.parse(birthdate);
-        long time = date.getTime();
-        Timestamp dob = new Timestamp(time);
-
         Patient pat = new Patient();
-        pat.setBirthDate(dob);
+        pat.setBirthDate(new Timestamp(new SimpleDateFormat("dd/MM/yyyy").parse(PATIENT_BIRTHDATE).getTime()));
         pat.setPerson(person);
-        pat.setGender(gender);
+        pat.setGender(PATIENT_GENDER);
         String patId = patientService.insert(pat);
 
         Provider prov = new Provider();
         prov.setPerson(person2);
-        prov.setProviderType(type);
+        prov.setProviderType(PROVIDER_TYPE);
         String providerId = providerService.insert(prov);
 
-        DateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
-        Date date2 = dateFormat2.parse(receivedTimestamp);
-        long time2 = date2.getTime();
-        Timestamp doc = new Timestamp(time2);
-
-        java.sql.Date enteredDate = java.sql.Date.valueOf(entereddate);
+        java.sql.Date enteredDate = java.sql.Date.valueOf(SAMPLE_ENTERED_DATE);
 
         Sample samp = new Sample();
         samp.setEnteredDate(enteredDate);
-        samp.setReceivedTimestamp(doc);
-        samp.setAccessionNumber(accessionNumber);
+        samp.setReceivedTimestamp(
+                new Timestamp(new SimpleDateFormat("dd/MM/yyyy").parse(SAMPLE_RECEIVED_TIMESTAMP).getTime()));
+        samp.setAccessionNumber(SAMPLE_ACCESSION_NUMBER);
         String sampId = sampleService.insert(samp);
 
         SampleHuman sampleHuman = new SampleHuman();
@@ -323,54 +252,33 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getPatientForSample_shouldReturnPatientForSample() throws Exception {
-        String firstname = "John";
-        String lastname = "Doe";
-        String firstname2 = "Jane";
-        String lastname2 = "Loo";
-        String birthdate = "03/06/1993";
-        String accessionNumber = "12345";
-        String gender = "M";
-        String receivedTimestamp = "012/06/2024";
-        String type = "P";
-        String entereddate = "2024-06-03";
-
         Person person = new Person();
-        person.setFirstName(firstname);
-        person.setLastName(lastname);
+        person.setFirstName(PATIENT_FIRSTNAME);
+        person.setLastName(PATIENT_LASTNAME);
         personService.save(person);
 
         Person person2 = new Person();
-        person2.setFirstName(firstname2);
-        person2.setLastName(lastname2);
+        person2.setFirstName(PROVIDER_FIRSTNAME);
+        person2.setLastName(PROVIDER_LASTNAME);
         personService.save(person2);
 
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = dateFormat.parse(birthdate);
-        long time = date.getTime();
-        Timestamp dob = new Timestamp(time);
-
         Patient pat = new Patient();
-        pat.setBirthDate(dob);
+        pat.setBirthDate(new Timestamp(new SimpleDateFormat("dd/MM/yyyy").parse(PATIENT_BIRTHDATE).getTime()));
         pat.setPerson(person);
-        pat.setGender(gender);
+        pat.setGender(PATIENT_GENDER);
         String patId = patientService.insert(pat);
 
         Provider prov = new Provider();
         prov.setPerson(person2);
-        prov.setProviderType(type);
+        prov.setProviderType(PROVIDER_TYPE);
         String providerId = providerService.insert(prov);
-
-        DateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
-        Date date2 = dateFormat2.parse(receivedTimestamp);
-        long time2 = date2.getTime();
-        Timestamp doc = new Timestamp(time2);
-
-        java.sql.Date enteredDate = java.sql.Date.valueOf(entereddate);
+        java.sql.Date enteredDate = java.sql.Date.valueOf(SAMPLE_ENTERED_DATE);
 
         Sample samp = new Sample();
         samp.setEnteredDate(enteredDate);
-        samp.setReceivedTimestamp(doc);
-        samp.setAccessionNumber(accessionNumber);
+        samp.setReceivedTimestamp(
+                new Timestamp(new SimpleDateFormat("dd/MM/yyyy").parse(SAMPLE_RECEIVED_TIMESTAMP).getTime()));
+        samp.setAccessionNumber(SAMPLE_ACCESSION_NUMBER);
         String sampId = sampleService.insert(samp);
 
         SampleHuman sampleHuman = new SampleHuman();
@@ -378,63 +286,44 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         sampleHuman.setProviderId(providerId);
         sampleHuman.setSampleId(sampId);
 
-        String sampleHumanId = humanService.insert(sampleHuman);
+        humanService.insert(sampleHuman);
         Patient samplePatient = humanService.getPatientForSample(samp);
 
-        Assert.assertEquals(firstname, samplePatient.getPerson().getFirstName());
+        Assert.assertEquals(PATIENT_FIRSTNAME, samplePatient.getPerson().getFirstName());
 
     }
 
     @Test
     public void getSamplesForPatient_shouldReturnSamplesForPatient() throws Exception {
-        String firstname = "John";
-        String lastname = "Doe";
-        String firstname2 = "Jane";
-        String lastname2 = "Loo";
-        String birthdate = "03/06/1993";
-        String accessionNumber = "12345";
-        String gender = "M";
-        String receivedTimestamp = "012/06/2024";
-        String type = "P";
-        String entereddate = "2024-06-03";
-
         Person person = new Person();
-        person.setFirstName(firstname);
-        person.setLastName(lastname);
+        person.setFirstName(PATIENT_FIRSTNAME);
+        person.setLastName(PATIENT_LASTNAME);
         personService.save(person);
 
         Person person2 = new Person();
-        person2.setFirstName(firstname2);
-        person2.setLastName(lastname2);
+        person2.setFirstName(PROVIDER_FIRSTNAME);
+        person2.setLastName(PROVIDER_LASTNAME);
         personService.save(person2);
 
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = dateFormat.parse(birthdate);
-        long time = date.getTime();
-        Timestamp dob = new Timestamp(time);
-
         Patient pat = new Patient();
-        pat.setBirthDate(dob);
+        pat.setBirthDate(new Timestamp(new SimpleDateFormat("dd/MM/yyyy").parse(PATIENT_BIRTHDATE).getTime()));
+
         pat.setPerson(person);
-        pat.setGender(gender);
+        pat.setGender(PATIENT_GENDER);
         String patId = patientService.insert(pat);
 
         Provider prov = new Provider();
         prov.setPerson(person2);
-        prov.setProviderType(type);
+        prov.setProviderType(PROVIDER_TYPE);
         String providerId = providerService.insert(prov);
 
-        DateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
-        Date date2 = dateFormat2.parse(receivedTimestamp);
-        long time2 = date2.getTime();
-        Timestamp doc = new Timestamp(time2);
-
-        java.sql.Date enteredDate = java.sql.Date.valueOf(entereddate);
+        java.sql.Date enteredDate = java.sql.Date.valueOf(SAMPLE_ENTERED_DATE);
 
         Sample samp = new Sample();
         samp.setEnteredDate(enteredDate);
-        samp.setReceivedTimestamp(doc);
-        samp.setAccessionNumber(accessionNumber);
+        samp.setReceivedTimestamp(
+                new Timestamp(new SimpleDateFormat("dd/MM/yyyy").parse(SAMPLE_RECEIVED_TIMESTAMP).getTime()));
+        samp.setAccessionNumber(SAMPLE_ACCESSION_NUMBER);
         String sampId = sampleService.insert(samp);
 
         SampleHuman sampleHuman = new SampleHuman();
@@ -442,7 +331,7 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         sampleHuman.setProviderId(providerId);
         sampleHuman.setSampleId(sampId);
 
-        String sampleHumanId = humanService.insert(sampleHuman);
+        humanService.insert(sampleHuman);
         List<Sample> samples = humanService.getSamplesForPatient(patId);
 
         Assert.assertEquals(1, samples.size());
@@ -450,54 +339,39 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void getDataBySample_shouldReturnDataBySample() throws Exception {
-        String firstname = "John";
-        String lastname = "Doe";
-        String firstname2 = "Jane";
-        String lastname2 = "Loo";
-        String birthdate = "03/06/1993";
-        String accessionNumber = "12345";
-        String gender = "M";
-        String receivedTimestamp = "012/06/2024";
-        String type = "P";
-        String entereddate = "2024-06-03";
-
         Person person = new Person();
-        person.setFirstName(firstname);
-        person.setLastName(lastname);
+        person.setFirstName(PATIENT_FIRSTNAME);
+        person.setLastName(PATIENT_LASTNAME);
         personService.save(person);
 
         Person person2 = new Person();
-        person2.setFirstName(firstname2);
-        person2.setLastName(lastname2);
+        person2.setFirstName(PROVIDER_FIRSTNAME);
+        person2.setLastName(PROVIDER_LASTNAME);
         personService.save(person2);
 
-        DateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
-        Date date = dateFormat.parse(birthdate);
-        long time = date.getTime();
-        Timestamp dob = new Timestamp(time);
-
         Patient pat = new Patient();
-        pat.setBirthDate(dob);
+        pat.setBirthDate(new Timestamp(new SimpleDateFormat("dd/MM/yyyy").parse(PATIENT_BIRTHDATE).getTime()));
         pat.setPerson(person);
-        pat.setGender(gender);
+        pat.setGender(PATIENT_GENDER);
         String patId = patientService.insert(pat);
 
         Provider prov = new Provider();
         prov.setPerson(person2);
-        prov.setProviderType(type);
+        prov.setProviderType(PROVIDER_TYPE);
         String providerId = providerService.insert(prov);
 
         DateFormat dateFormat2 = new SimpleDateFormat("dd/MM/yyyy");
-        Date date2 = dateFormat2.parse(receivedTimestamp);
+        Date date2 = dateFormat2.parse(SAMPLE_RECEIVED_TIMESTAMP);
         long time2 = date2.getTime();
         Timestamp doc = new Timestamp(time2);
 
-        java.sql.Date enteredDate = java.sql.Date.valueOf(entereddate);
+        java.sql.Date enteredDate = java.sql.Date.valueOf(SAMPLE_ENTERED_DATE);
 
         Sample samp = new Sample();
         samp.setEnteredDate(enteredDate);
-        samp.setReceivedTimestamp(doc);
-        samp.setAccessionNumber(accessionNumber);
+        samp.setReceivedTimestamp(
+                new Timestamp(new SimpleDateFormat("dd/MM/yyyy").parse(SAMPLE_RECEIVED_TIMESTAMP).getTime()));
+        samp.setAccessionNumber(SAMPLE_ACCESSION_NUMBER);
         String sampId = sampleService.insert(samp);
 
         SampleHuman sampleHuman = new SampleHuman();
@@ -505,7 +379,7 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         sampleHuman.setProviderId(providerId);
         sampleHuman.setSampleId(sampId);
 
-        String sampleHumanId = humanService.insert(sampleHuman);
+        humanService.insert(sampleHuman);
 
         SampleHuman sHumanToUpdate = humanService.getDataBySample(sampleHuman);
 
