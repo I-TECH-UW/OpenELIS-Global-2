@@ -254,7 +254,7 @@
   "sidenav.label.reports.study": "Étude",
   "sidenav.label.admin": "Administration",
   "banner.menu.administration": "Administration",
-  "sidenav.label.admin.testmgt": "Gestion des Tests",
+  "sidenav.label.admin.testmgt": "Configuration des tests réflexes",
   "sidenav.label.admin.testmgt.reflex": "Gestion des tests de réflexes",
   "sidenav.label.admin.testmgt.calculated": "Gestion des tests de valeur calculée",
   "sidenav.label.admin.testmgt.ViewtestCatalog": "Voir le catalogue des tests",

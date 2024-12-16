@@ -121,12 +121,6 @@ function Admin() {
             <SideNavMenuItem href="#calculatedValue">
               <FormattedMessage id="sidenav.label.admin.testmgt.calculated" />
             </SideNavMenuItem>
-            <SideNavMenuItem href="#TestCatalog">
-              <FormattedMessage id="sidenav.label.admin.testmgt.ViewtestCatalog" />
-            </SideNavMenuItem>
-            <SideNavMenuItem href="#MethodManagment">
-              <FormattedMessage id="sidenav.label.admin.testmgt.ManageMethod" />
-            </SideNavMenuItem>
           </SideNavMenu>
           <SideNavLink href="#AnalyzerTestName" renderIcon={ListDropdown}>
             <FormattedMessage id="sidenav.label.admin.analyzerTest" />
@@ -252,7 +246,7 @@ function Admin() {
       <PathRoute path="#TestCatalog">
         <TestCatalog />
       </PathRoute>
-      <PathRoute path="#MethodManagment">
+      <PathRoute path="#MethodManagement">
         <ManageMethod />
       </PathRoute>
       <PathRoute path="#AnalyzerTestName">
@@ -323,9 +317,6 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#TestOrderability">
         <TestOrderability />
-      </PathRoute>
-      <PathRoute path="#MethodManagement">
-        <MethodManagement />
       </PathRoute>
       <PathRoute path="#MethodCreate">
         <MethodCreate />
