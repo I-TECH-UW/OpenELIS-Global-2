@@ -179,26 +179,8 @@ public class AppTestConfig implements WebMvcConfigurer {
 
     @Bean()
     @Profile("test")
-    public FhirUtil fhirUtil() {
-        return mock(FhirUtil.class);
-    }
-
-    @Bean()
-    @Profile("test")
-    public FhirConfig fhirConfig() {
-        return mock(FhirConfig.class);
-    }
-
-    @Bean()
-    @Profile("test")
     public LocalizationDAO localiseDao() {
         return mock(LocalizationDAO.class);
-    }
-
-    @Bean()
-    @Profile("test")
-    public CloseableHttpClient cityStateZipServiceloseableHttpClient() {
-        return mock(CloseableHttpClient.class);
     }
 
     @Bean()
