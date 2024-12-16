@@ -68,7 +68,7 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         String accessionNumber = "12345";
         String gender = "M";
         String receivedTimestamp = "012/06/2024";
-        String type = "Physic";
+        String type = "P";
         String entereddate = "2024-06-03";
 
         SampleHuman sampleHuman = creatSampleHuman(firstname, lastname, firstname2, lastname2, birthdate,
@@ -93,7 +93,7 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         String accessionNumber = "12345";
         String gender = "M";
         String receivedTimestamp = "012/06/2024";
-        String type = "Physic";
+        String type = "P";
         String entereddate = "2024-06-03";
 
         Person person = new Person();
@@ -159,7 +159,7 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         String accessionNumber = "12345";
         String gender = "M";
         String receivedTimestamp = "012/06/2024";
-        String type = "Physic";
+        String type = "P";
         String entereddate = "2024-06-03";
 
         SampleHuman sampleHuman = creatSampleHuman(firstname, lastname, firstname2, lastname2, birthdate,
@@ -186,7 +186,7 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         String accessionNumber = "12345";
         String gender = "M";
         String receivedTimestamp = "012/06/2024";
-        String type = "Physic";
+        String type = "P";
         String entereddate = "2024-06-03";
 
         SampleHuman sampleHuman = creatSampleHuman(firstname, lastname, firstname2, lastname2, birthdate,
@@ -262,7 +262,7 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         String accessionNumber = "12345";
         String gender = "M";
         String receivedTimestamp = "012/06/2024";
-        String type = "Physic";
+        String type = "P";
         String entereddate = "2024-06-03";
 
         Person person = new Person();
@@ -331,7 +331,7 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         String accessionNumber = "12345";
         String gender = "M";
         String receivedTimestamp = "012/06/2024";
-        String type = "Physic";
+        String type = "P";
         String entereddate = "2024-06-03";
 
         Person person = new Person();
@@ -395,7 +395,7 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         String accessionNumber = "12345";
         String gender = "M";
         String receivedTimestamp = "012/06/2024";
-        String type = "Physic";
+        String type = "P";
         String entereddate = "2024-06-03";
 
         Person person = new Person();
@@ -458,7 +458,7 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
         String accessionNumber = "12345";
         String gender = "M";
         String receivedTimestamp = "012/06/2024";
-        String type = "Physic";
+        String type = "P";
         String entereddate = "2024-06-03";
 
         Person person = new Person();
