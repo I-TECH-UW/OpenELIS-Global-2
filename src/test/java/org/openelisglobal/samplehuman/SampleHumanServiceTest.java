@@ -48,7 +48,7 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
     private static final String SAMPLE_ACCESSION_NUMBER = "12345";
     private static final String PATIENT_GENDER = "M";
     private static final String SAMPLE_RECEIVED_TIMESTAMP = "012/06/2024";
-    private static final String PROVIDER_TYPE = "Physic";
+    private static final String PROVIDER_TYPE = "P";
     private static final String SAMPLE_ENTERED_DATE = "2024-06-03";
 
     @Before
