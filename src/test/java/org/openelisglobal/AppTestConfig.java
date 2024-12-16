@@ -32,7 +32,6 @@ import org.openelisglobal.panelitem.service.PanelItemService;
 import org.openelisglobal.program.service.ImmunohistochemistrySampleService;
 import org.openelisglobal.program.service.PathologySampleService;
 import org.openelisglobal.program.service.ProgramSampleService;
-import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.referral.service.ReferralResultService;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.service.ReferralSetService;
@@ -86,9 +85,10 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
         "org.openelisglobal.view", "org.openelisglobal.search.service", "org.openelisglobal.sample",
         "org.openelisglobal.sampleitem.", "org.openelisglobal.analysis", "org.openelisglobal.result.service",
         "org.openelisglobal.result.daoimpl", "org.openelisglobal.resultlimit", "org.openelisglobal.resultlimits",
-        "org.openelisglobal.typeoftestresult", "org.openelisglobal.samplehuman", "org.openelisglobal.role",
-        "org.openelisglobal.organization" }, excludeFilters = {
+        "org.openelisglobal.typeoftestresult", "org.openelisglobal.samplehuman", "org.openelisglobal.provider",
+        "org.openelisglobal.role",  "org.openelisglobal.organization" }, excludeFilters = {
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.patient.controller.*"),
+                @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.provider.controller.*"),
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.organization.controller.*"),
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.sample.controller.*"),
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.dictionary.controller.*.java"),
@@ -103,6 +103,36 @@ public class AppTestConfig implements WebMvcConfigurer {
     @Profile("test")
     public FhirPersistanceService fhirPesistence() {
         return mock(FhirPersistanceService.class);
+    }
+
+    @Bean()
+    @Profile("test")
+    public FhirUtil fhirUtil() {
+        return mock(FhirUtil.class);
+    }
+
+    @Bean()
+    @Profile("test")
+    public FhirConfig fhirConfig() {
+        return mock(FhirConfig.class);
+    }
+
+    @Bean()
+    @Profile("test")
+    public CloseableHttpClient closeableHttpClient() {
+        return mock(CloseableHttpClient.class);
+    }
+
+    @Bean()
+    @Profile("test")
+    public FhirContext fhirContext() {
+        return mock(FhirContext.class);
+    }
+
+    @Bean()
+    @Profile("test")
+    public FhirTransformService fhirTransformServicehirTransformService() {
+        return mock(FhirTransformService.class);
     }
 
     @Bean()
@@ -223,12 +253,6 @@ public class AppTestConfig implements WebMvcConfigurer {
     @Profile("test")
     public TestSectionService testSectionService() {
         return mock(TestSectionService.class);
-    }
-
-    @Bean()
-    @Profile("test")
-    public ProviderService providerService() {
-        return mock(ProviderService.class);
     }
 
     @Bean()
