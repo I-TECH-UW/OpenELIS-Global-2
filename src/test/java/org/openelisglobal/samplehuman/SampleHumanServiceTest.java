@@ -53,18 +53,18 @@ public class SampleHumanServiceTest extends BaseWebContextSensitiveTest {
 
     @Before
     public void init() throws Exception {
-        providerService.deleteAll(providerService.getAll());
         humanService.deleteAll(humanService.getAll());
         sampleService.deleteAll(sampleService.getAll());
+        providerService.deleteAll(providerService.getAll());
         patientService.deleteAll(patientService.getAll());
         personService.deleteAll(personService.getAll());
     }
 
     @After
     public void tearDown() throws Exception {
-        providerService.deleteAll(providerService.getAll());
         humanService.deleteAll(humanService.getAll());
         sampleService.deleteAll(sampleService.getAll());
+        providerService.deleteAll(providerService.getAll());
         patientService.deleteAll(patientService.getAll());
         personService.deleteAll(personService.getAll());
     }
