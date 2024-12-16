@@ -143,12 +143,6 @@ public class AppTestConfig implements WebMvcConfigurer {
 
     @Bean()
     @Profile("test")
-    public FhirContext fhirContext() {
-        return mock(FhirContext.class);
-    }
-
-    @Bean()
-    @Profile("test")
     public FhirTransformService fhirTransformService() {
         return mock(FhirTransformService.class);
     }
@@ -175,18 +169,6 @@ public class AppTestConfig implements WebMvcConfigurer {
     @Profile("test")
     public TestAnalyteService testAnalyteService() {
         return mock(TestAnalyteService.class);
-    }
-
-    @Bean()
-    @Profile("test")
-    public FhirUtil fhirUtil() {
-        return mock(FhirUtil.class);
-    }
-
-    @Bean()
-    @Profile("test")
-    public FhirConfig fhirConfig() {
-        return mock(FhirConfig.class);
     }
 
     @Bean()
