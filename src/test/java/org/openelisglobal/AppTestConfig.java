@@ -179,12 +179,6 @@ public class AppTestConfig implements WebMvcConfigurer {
 
     @Bean()
     @Profile("test")
-    public CloseableHttpClient cityStateZipServiceloseableHttpClient() {
-        return mock(CloseableHttpClient.class);
-    }
-
-    @Bean()
-    @Profile("test")
     public ExternalConnectionService externalConnectService() {
         return mock(ExternalConnectionService.class);
     }
