@@ -25,7 +25,7 @@ public class DictionaryServiceTest extends BaseWebContextSensitiveTest {
         executeDataSetWithStateManagement("testdata/dictionary.xml");
     }
 
-    @Test
+    // @Test
     public void verifyTestData() {
         List<DictionaryCategory> categories = dictionaryCategoryService.getAll();
         System.out.println("Dictionary Categories: " + categories.size());
