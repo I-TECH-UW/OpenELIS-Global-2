@@ -30,6 +30,7 @@ import {
   User,
   BatchJob,
   Popup,
+  Search,
 } from "@carbon/icons-react";
 import PathRoute from "../utils/PathRoute";
 import CalculatedValue from "./calculatedValue/CalculatedValueForm";
@@ -57,6 +58,7 @@ import ManageMethod from "./testManagement/ManageMethod.js";
 import BatchTestReassignmentAndCancelation from "./BatchTestReassignmentAndCancellation/BatchTestReassignmentAndCancelation.js";
 import TestNotificationConfigMenu from "./testNotificationConfigMenu/TestNotificationConfigMenu.js";
 import TestNotificationConfigEdit from "./testNotificationConfigMenu/TestNotificationConfigEdit.js";
+import SearchIndexManagement from "./searchIndexManagement/SearchIndexManagement";
 
 function Admin() {
   const intl = useIntl();
@@ -200,6 +202,9 @@ function Admin() {
           <SideNavLink href="#NotifyUser" renderIcon={Bullhorn}>
             <FormattedMessage id="Notify User" />
           </SideNavLink>
+          <SideNavLink href="#SearchIndexManagement" renderIcon={Search}>
+            <FormattedMessage id="searchindexmanagement.label" />
+          </SideNavLink>
           <SideNavLink
             renderIcon={Catalog}
             target="_blank"
@@ -342,6 +347,9 @@ function Admin() {
       </PathRoute>
       <PathRoute path="#PluginFile">
         <PluginList />
+      </PathRoute>
+      <PathRoute path="#SearchIndexManagement">
+        <SearchIndexManagement />
       </PathRoute>
     </>
   );
