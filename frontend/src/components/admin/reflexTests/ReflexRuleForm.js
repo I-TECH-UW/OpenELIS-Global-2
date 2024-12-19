@@ -459,8 +459,8 @@ function ReflexRule() {
             <Form onSubmit={(e) => handleSubmit(e, index)}>
               <Stack gap={7}>
                 <div className="ruleBody">
-                  <div className="inlineDiv">
-                    <div>
+                  <Grid>
+                    <Column lg={4} md={4} sm={12}>
                       <TextInput
                         name="ruleName"
                         className="reflexInputText"
@@ -473,9 +473,8 @@ function ReflexRule() {
                         onChange={(e) => handleRuleFieldChange(e, index)}
                         required
                       />
-                    </div>
-                    <div>&nbsp; &nbsp;</div>
-                    <div>
+                    </Column>
+                    <Column lg={4} md={4} sm={12}>
                       <Toggle
                         toggled={rule.toggled}
                         aria-label="toggle button"
@@ -486,9 +485,8 @@ function ReflexRule() {
                         onToggle={(e) => toggleRule(e, index)}
                         onClick={handleClick}
                       />
-                    </div>
-                    <div>&nbsp; &nbsp; &nbsp; &nbsp;</div>
-                    <div>
+                    </Column>
+                    <Column lg={4} md={4} sm={12}>
                       <Checkbox
                         labelText={"Active: " + rule.active}
                         name="active"
@@ -501,8 +499,8 @@ function ReflexRule() {
                           setRuleList(list);
                         }}
                       />
-                    </div>
-                  </div>
+                    </Column>
+                  </Grid>
                   {rule.toggled && (
                     <>
                       <div className="section">
@@ -928,13 +926,15 @@ function ReflexRule() {
                         ))}
                       </div>
                       <div className="section">
-                        <div className="inlineDiv">
-                          <div>
-                            <h5>
-                              <FormattedMessage id="rulebuilder.label.perfomActions" />
-                            </h5>
-                          </div>
-                        </div>
+                        <Grid>
+                          <Column lg={4} md={4} sm={12}>
+                            <div>
+                              <h5>
+                                <FormattedMessage id="rulebuilder.label.perfomActions" />
+                              </h5>
+                            </div>
+                          </Column>
+                        </Grid>
                         {rule.actions.map((action, action_index) => (
                           <Grid key={index + "_" + action_index}>
                             <Column lg={3} sm={4}>

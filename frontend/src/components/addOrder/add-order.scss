@@ -123,9 +123,25 @@
 }
 
 .cds--time-picker__input-field {
-  width: 31.875rem !important;
+  width: clamp(15rem, 50vw, 28vw);
 }
 
+.cds--css-grid {
+  padding-left: 0 !important;
+}
+
+.cds--form-item {
+  padding-top: 1.5rem;
+}
+
+.cds--col {
+  padding-top: 1.5rem;
+  padding-left: 0 !important;
+}
+
+.cds--css-grid-column {
+  padding-bottom: 0.5rem;
+}
 .requestTestReferral {
   margin-top: 40px;
   margin-bottom: 10px;

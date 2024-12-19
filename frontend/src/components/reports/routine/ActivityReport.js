@@ -130,36 +130,39 @@ const ActivityReport = ({ report }) => {
                     <FormattedMessage id="select date Range" />
                   </h5>
                 </Section>
-                <div className="inlineDiv">
-                  <CustomDatePicker
-                    id={"startDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.start",
-                      defaultMessage: "Start Date",
-                    })}
-                    autofillDate={true}
-                    value={reportFormValues.startDate}
-                    className="inputDate"
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("startDate", date)
-                    }
-                  />
-                  <CustomDatePicker
-                    id={"endDate"}
-                    labelText={intl.formatMessage({
-                      id: "eorder.date.end",
-                      defaultMessage: "End Date",
-                    })}
-                    className="inputDate"
-                    autofillDate={true}
-                    value={reportFormValues.endDate}
-                    onChange={(date) =>
-                      handleDatePickerChangeDate("endDate", date)
-                    }
-                  />
-                </div>
+                <Grid>
+                  <Column sm={4}>
+                    <CustomDatePicker
+                      id={"startDate"}
+                      labelText={intl.formatMessage({
+                        id: "eorder.date.start",
+                        defaultMessage: "Start Date",
+                      })}
+                      autofillDate={true}
+                      value={reportFormValues.startDate}
+                      className="inputDate"
+                      onChange={(date) =>
+                        handleDatePickerChangeDate("startDate", date)
+                      }
+                    />
+                  </Column>
+                  <Column sm={4}>
+                    <CustomDatePicker
+                      id={"endDate"}
+                      labelText={intl.formatMessage({
+                        id: "eorder.date.end",
+                        defaultMessage: "End Date",
+                      })}
+                      className="inputDate"
+                      autofillDate={true}
+                      value={reportFormValues.endDate}
+                      onChange={(date) =>
+                        handleDatePickerChangeDate("endDate", date)
+                      }
+                    />
+                  </Column>
+                </Grid>
               </Column>
-              <div className="inlineDiv">hihih</div>
               <Row></Row>
               <Column log={15}>
                 {list && list.length > 0 && (
