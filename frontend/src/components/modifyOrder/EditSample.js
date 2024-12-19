@@ -505,15 +505,15 @@ const EditSample = (props) => {
               </div>
             );
           })}
-          <Row>
-            <div className="inlineDiv">
+          <Grid>
+            <Column>
               <Button onClick={handleAddNewSample}>
                 {<FormattedMessage id="sample.add.action" />}
                 &nbsp; &nbsp;
                 <Add size={16} />
               </Button>
-            </div>
-          </Row>
+            </Column>
+          </Grid>
         </div>
       </Stack>
     </>

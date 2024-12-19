@@ -71,8 +71,8 @@ describe("Routine Reports", function () {
   });
 
   it('Should check/uncheck "All" checkbox for priority', () => {
-    reportPage.checkAllCheckboxes(2, 6, ".inlineDiv");
-    reportPage.uncheckCheckbox(2, ".inlineDiv");
+    reportPage.checkAllCheckboxes(2, 6, ".cds--css-grid-column");
+    reportPage.uncheckCheckbox(2, ".cds--css-grid-column");
     reportPage.validateButtonVisible(
       ":nth-child(3) > .cds--sm\\:col-span-4 > :nth-child(2) > :nth-child(1) > .cds--checkbox-label",
     );
