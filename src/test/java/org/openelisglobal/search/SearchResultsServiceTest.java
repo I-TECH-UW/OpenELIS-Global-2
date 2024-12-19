@@ -38,6 +38,7 @@ public class SearchResultsServiceTest extends BaseWebContextSensitiveTest {
     PersonService personService;
 
     @Autowired
+    @Qualifier("DBSearchResultsServiceImpl")
     SearchResultsService DBSearchResultsServiceImpl;
 
     @Autowired
