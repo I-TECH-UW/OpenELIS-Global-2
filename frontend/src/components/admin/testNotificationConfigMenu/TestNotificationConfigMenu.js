@@ -58,7 +58,7 @@ function TestNotificationConfigMenu() {
 
   const componentMounted = useRef(false);
   const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(20);
+  const [pageSize, setPageSize] = useState(25);
   const [loading, setLoading] = useState(true);
   const [saveButton, setSaveButton] = useState(true);
   const [testNamesList, setTestNamesList] = useState([]);
@@ -170,7 +170,7 @@ function TestNotificationConfigMenu() {
 
     setTestNotificationConfigMenuDataPost((prevData) => {
       const updatedMenuList = prevData.menuList.map((item) => {
-        if (item.id === rowId) {
+        if (item.testId === rowId) {
           switch (header) {
             case "patientEmail":
               return {
@@ -225,9 +225,13 @@ function TestNotificationConfigMenu() {
       return (
         <TableCell key={cell.id}>
           <Checkbox
-            id={cell.id}
+            id={`checkbox-${row.id}-${cell.info.header}`}
             labelText=""
-            checked={cell.value === "true"}
+            checked={
+              testNotificationConfigMenuDataPost?.menuList.find(
+                (item) => item.testId === row.id,
+              )?.[cell.info.header]?.active || false
+            }
             onChange={(e) => {
               setSaveButton(false);
               handleCheckboxChange(e, row.id, cell.info.header);
@@ -304,7 +308,7 @@ function TestNotificationConfigMenu() {
                   testNotificationConfigMenuDataPost?.menuList
                     ?.slice((page - 1) * pageSize, page * pageSize)
                     ?.map((item) => ({
-                      id: item.id,
+                      id: item.testId,
                       testId: item.testId,
                       patientEmail: item.patientEmail.active ? "true" : "false",
                       patientSMS: item.patientSMS.active ? "true" : "false",
