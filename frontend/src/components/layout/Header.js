@@ -183,6 +183,25 @@ function OEHeader(props) {
   };
   const generateMenuItems = (menuItem, index, level, path) => {
     if (menuItem.menu.isActive) {
+      const activeChildMenus = menuItem.childMenus.filter(child => child.menu.isActive);
+  
+      // If there is exactly one active submenu, render it as a direct link with the parent's name
+      if (activeChildMenus.length === 1 && level === 0) {
+        const singleChildMenu = activeChildMenus[0];
+        return (
+          <span key={path} id={menuItem.menu.elementId}>
+            <SideNavMenuItem
+              id={menuItem.menu.elementId + "_nav"}
+              href={singleChildMenu.menu.actionURL} // Use the submenu's actionURL
+              target={singleChildMenu.menu.openInNewWindow ? "_blank" : ""}
+              className="top-level-menu-item"
+            >
+              {renderSideNavMenuItemLabel(menuItem, level)} {/* Render parent's name */}
+            </SideNavMenuItem>
+          </span>
+        );
+      }
+  
       if (level === 0 && menuItem.childMenus.length > 0) {
         return (
           <span id={menuItem.menu.elementId} key={path}>
@@ -202,9 +221,6 @@ function OEHeader(props) {
                 })}
                 key={"menu_" + index + "_" + level}
                 defaultExpanded={menuItem.expanded}
-                // onClick={(e) => { // not supported yet, but if it becomes so we can simplify the functionality here by having this here and not have a span around it
-                //   setMenuItemExpanded(e, menuItem, path);
-                // }}
               >
                 <span
                   onClick={(e) => {
@@ -217,7 +233,7 @@ function OEHeader(props) {
                       childMenuItem,
                       index,
                       level + 1,
-                      path + ".childMenus[" + index + "]",
+                      path + ".childMenus[" + index + "]"
                     );
                   })}
                 </span>
@@ -272,7 +288,7 @@ function OEHeader(props) {
                     childMenuItem,
                     index,
                     level + 1,
-                    path + ".childMenus[" + index + "]",
+                    path + ".childMenus[" + index + "]"
                   )}
                 </span>
               );
@@ -284,7 +300,7 @@ function OEHeader(props) {
       return <React.Fragment key={path}></React.Fragment>;
     }
   };
-
+  
   const hasActiveChildMenu = (menuItem) => {
     if (menuItem.menu.elementId === "menu_reports_routine") {
       console.log("reports");
