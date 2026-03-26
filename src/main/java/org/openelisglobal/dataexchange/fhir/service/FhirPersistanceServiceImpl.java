@@ -87,6 +87,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Bundle createFhirResourcesInFhirStore(Map<String, Resource> resources) throws FhirLocalPersistingException {
+        if (localFhirClient == null) {
+            throw new FhirLocalPersistingException("Local FHIR client is not configured");
+        }
         Bundle transactionBundle = makeTransactionBundleForCreate(resources);
         Bundle transactionResponseBundle = new Bundle();
         try {
@@ -100,6 +103,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Bundle updateFhirResourcesInFhirStore(Map<String, Resource> resources) throws FhirLocalPersistingException {
+        if (localFhirClient == null) {
+            throw new FhirLocalPersistingException("Local FHIR client is not configured");
+        }
         Bundle transactionBundle = makeTransactionBundleForUpdate(resources);
         Bundle transactionResponseBundle = new Bundle();
         try {
@@ -114,6 +120,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
     @Override
     public Bundle createUpdateFhirResourcesInFhirStore(Map<String, Resource> createResources,
             Map<String, Resource> updateResources) throws FhirLocalPersistingException {
+        if (localFhirClient == null) {
+            throw new FhirLocalPersistingException("Local FHIR client is not configured");
+        }
         Bundle transactionBundle = new Bundle();
         transactionBundle.setType(BundleType.TRANSACTION);
         addUpdatesToTransactionBundle(updateResources, transactionBundle);
@@ -142,6 +151,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
     @Override
     public Bundle createUpdateFhirResourcesInFhirStore(List<FhirOperations> fhirOperationsList)
             throws FhirLocalPersistingException {
+        if (localFhirClient == null) {
+            throw new FhirLocalPersistingException("Local FHIR client is not configured");
+        }
         Bundle transactionBundle = new Bundle();
         transactionBundle.setType(BundleType.TRANSACTION);
         for (FhirOperations fhirOperations : fhirOperationsList) {
