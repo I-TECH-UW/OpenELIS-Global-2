@@ -110,6 +110,11 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
 
     List<Analysis> getAnalysisCompleteInRange(Timestamp lowDate, Timestamp highDate);
 
+    List<Object[]> getAffectedSampleItemIdsByAnalyzerAndTestCompletedInRange(String analyzerId, String testId,
+            Timestamp lowDate, Timestamp highDate);
+
+    boolean existsAnalysisCompletedBeforeByAnalyzerAndTest(String analyzerId, String testId, Timestamp before);
+
     List<Analysis> getAnalysesForStatusId(String statusId);
 
     List<Analysis> getAnalysesForStatusIdExcludingQc(String statusId);
