@@ -327,7 +327,7 @@ public abstract class ConfigurationProperties {
         ALLOW_BULK_RELEASE_CLEAR("allowBulkReleaseClear", "text"),
         // OGC-1030 (Validation v4 V4, FR-D3): "Send for retest" must carry a note.
         RETEST_NOTE_REQUIRED("retestNoteRequired", "text"),
-        // OGC-1147 FR-C3: does an open QC failure block release, or only warn
+        // OGC-1147: does an open QC failure block release, or only warn
         QC_FAIL_BLOCKS_VALIDATION("qcFailBlocksValidation", "text");
 
         // visible on
