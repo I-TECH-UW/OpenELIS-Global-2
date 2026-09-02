@@ -381,7 +381,10 @@ function LabUnitManagement({ intl }) {
         errors[nameErrorKey] = intl.formatMessage({
           id: "error.labUnit.name.required",
         });
-      } else if (view === "add" && name.length > NAME_MAX_LENGTH) {
+      } else if (name.length > NAME_MAX_LENGTH) {
+        // The cap applies on edit as well as add — it was gated behind
+        // `view === "add"`, so a longer name saved and persisted (OGC-189, QA
+        // LU-W-3).
         errors[nameErrorKey] = intl.formatMessage(
           { id: "error.labUnit.name.maxLength" },
           { max: NAME_MAX_LENGTH },
@@ -397,6 +400,20 @@ function LabUnitManagement({ intl }) {
           id: "error.labUnit.name.duplicate",
         });
       }
+
+      // Every translated name lands in the same name column, so the cap is
+      // per-locale — the server rejects any locale over it (OGC-189).
+      Object.entries(formData.names || {}).forEach(([localeCode, value]) => {
+        if (localeCode === fallbackLocaleCode) {
+          return;
+        }
+        if ((value || "").trim().length > NAME_MAX_LENGTH) {
+          errors[`name-${localeCode}`] = intl.formatMessage(
+            { id: "error.labUnit.name.maxLength" },
+            { max: NAME_MAX_LENGTH },
+          );
+        }
+      });
 
       if (
         formData.description &&
@@ -1143,6 +1160,8 @@ function LabUnitManagement({ intl }) {
                                       }));
                                     }
                                   }}
+                                  maxCount={NAME_MAX_LENGTH}
+                                  enableCounter
                                   invalid={!!formErrors[errorKey]}
                                   invalidText={formErrors[errorKey]}
                                   helperText={

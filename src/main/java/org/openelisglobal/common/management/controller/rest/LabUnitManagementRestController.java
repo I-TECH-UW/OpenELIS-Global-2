@@ -280,9 +280,12 @@ public class LabUnitManagementRestController extends BaseRestController {
             return ResponseEntity.unprocessableEntity().body(
                     new ApiResponse<>(false, "names." + fallbackCode + " (fallback locale name) is required", null));
         }
-        if (identifyingName.length() > NAME_MAX_LENGTH) {
-            return ResponseEntity.unprocessableEntity()
-                    .body(new ApiResponse<>(false, "name must be at most " + NAME_MAX_LENGTH + " characters", null));
+        // Checked across every supplied locale, not just the fallback, so create
+        // and update enforce the same rule (OGC-189).
+        String tooLongLocale = firstNameOverMaxLength(names);
+        if (tooLongLocale != null) {
+            return ResponseEntity.unprocessableEntity().body(new ApiResponse<>(false,
+                    "names." + tooLongLocale + " must be at most " + NAME_MAX_LENGTH + " characters", null));
         }
         String description = trimToNull(labUnitDTO.getDescription());
         if (description == null) {
@@ -368,6 +371,15 @@ public class LabUnitManagementRestController extends BaseRestController {
             if (names != null && names.containsKey(fallbackCode) && trimToNull(names.get(fallbackCode)) == null) {
                 return ResponseEntity.unprocessableEntity().body(new ApiResponse<>(false,
                         "names." + fallbackCode + " (fallback locale name) cannot be blank", null));
+            }
+            // The 20-character cap is a product rule create already enforced;
+            // update skipped it, so a longer name saved and persisted (OGC-189,
+            // QA LU-W-3). Applied to every supplied locale, not just the
+            // fallback: they all render in the same name column.
+            String tooLongLocale = firstNameOverMaxLength(names);
+            if (tooLongLocale != null) {
+                return ResponseEntity.unprocessableEntity().body(new ApiResponse<>(false,
+                        "names." + tooLongLocale + " must be at most " + NAME_MAX_LENGTH + " characters", null));
             }
 
             String userId = getSysUserId(request);
@@ -667,6 +679,24 @@ public class LabUnitManagementRestController extends BaseRestController {
         for (String code : names.keySet()) {
             if (!activeCodes.contains(code)) {
                 return code;
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Returns the first locale code whose name exceeds the 20-character cap, or
+     * null when every supplied name is within it. Blank/absent values are left to
+     * the required-name checks.
+     */
+    private String firstNameOverMaxLength(Map<String, String> names) {
+        if (names == null || names.isEmpty()) {
+            return null;
+        }
+        for (Map.Entry<String, String> entry : names.entrySet()) {
+            String value = trimToNull(entry.getValue());
+            if (value != null && value.length() > NAME_MAX_LENGTH) {
+                return entry.getKey();
             }
         }
         return null;
