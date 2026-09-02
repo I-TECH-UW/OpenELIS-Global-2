@@ -4,7 +4,10 @@ import { IntlProvider } from "react-intl";
 import { MemoryRouter, Route } from "react-router-dom";
 import { vi } from "vitest";
 import LabUnitManagement from "./LabUnitManagement";
-import { getFromOpenElisServer } from "../../utils/Utils";
+import {
+  getFromOpenElisServer,
+  postToOpenElisServerJsonResponse,
+} from "../../utils/Utils";
 import messages from "../../../languages/en.json";
 
 // Serve the endpoints the screen depends on so the test exercises the real
@@ -59,7 +62,12 @@ vi.mock("../../utils/Utils", async (importOriginal) => {
         callback(undefined);
       }
     }),
+    postToOpenElisServerJsonResponse: vi.fn(),
   };
+});
+
+beforeEach(() => {
+  postToOpenElisServerJsonResponse.mockClear();
 });
 
 const mockIntl = {
@@ -121,6 +129,40 @@ describe("LabUnitManagement", () => {
       screen.getByRole("heading", { name: "Lab Unit Management" }),
     ).toBeInTheDocument();
     expect(screen.getByText("Add Lab Unit")).toBeInTheDocument();
+  });
+
+  // OGC-189 (QA LU-W-3): the 20-character cap was gated behind `view === "add"`,
+  // so a 32-character name entered in the editor saved and persisted.
+  test("enforces the 20-character name cap when editing, not just adding", async () => {
+    renderPage();
+
+    fireEvent.click(await screen.findByText("Edit"));
+
+    const nameInput = await screen.findByLabelText(/Name \(English\)/);
+    fireEvent.change(nameInput, { target: { value: "a".repeat(32) } });
+    fireEvent.click(screen.getByText("Save"));
+
+    expect(
+      await screen.findByText("Name must be 20 characters or less"),
+    ).toBeInTheDocument();
+    // Rejected client-side, so no update request is issued.
+    expect(postToOpenElisServerJsonResponse).not.toHaveBeenCalled();
+  });
+
+  test("accepts a name of exactly 20 characters when editing", async () => {
+    renderPage();
+
+    fireEvent.click(await screen.findByText("Edit"));
+
+    const nameInput = await screen.findByLabelText(/Name \(English\)/);
+    fireEvent.change(nameInput, { target: { value: "a".repeat(20) } });
+    fireEvent.click(screen.getByText("Save"));
+
+    // Boundary is inclusive — without this the fix could pass by rejecting
+    // every rename.
+    expect(
+      screen.queryByText("Name must be 20 characters or less"),
+    ).not.toBeInTheDocument();
   });
 
   test("returning to the list refetches it (counts/order changed in editor)", async () => {

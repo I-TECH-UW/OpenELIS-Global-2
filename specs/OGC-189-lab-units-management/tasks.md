@@ -1,0 +1,195 @@
+# Tasks: Lab Units Management Redesign — Increment 2 (OGC-189)
+
+**Epic**: [OGC-189](https://uwdigi.atlassian.net/browse/OGC-189) — In Progress.
+**Increment 1 shipped**: `52937e6f6` (PR #4121, 2026-08-24) — list view, Basic
+Info, Assigned Tests, Display Order. This file covers **what increment 1 left
+undone**, scoped by the 2026-09-03 decisions recorded below.
+
+**Organization**: by **Milestone** (Constitution Principle IX). Detailed
+acceptance criteria are authoritative in the Jira Epic description and comments
+37311 / 37313; tasks reference them, they do not restate them.
+
+**Format**: `- [ ] T### [P?] description — path (AC: …)`.
+`[P]` = parallelizable within its milestone.
+
+**Task-ID ranges** (pre-allocated so inserts never renumber):
+M1 `T001–T049` · M2 `T050–T099` · M3 `T100–T149` · M4 `T150–T199` ·
+M5 `T200–T249` · deferred stubs `T900+`.
+
+---
+
+## Decisions of record (2026-09-03)
+
+These were open questions in Jira comment 37313 §8/§9. Settled; they drive the
+milestone shapes below and should be mirrored into the Epic description.
+
+| # | Question | Decision |
+| --- | --- | --- |
+| D1 | Does an inactive lab unit stop new analyses? | **Yes — gate all order routes.** `effectiveActive = test.active && labUnit.isActive`, enforced server-side in the ordering path: manual, reflex, analyzer, FHIR, incoming electronic orders. Carries the reflex-safety obligation (M4). |
+| D2 | Default deactivation option? | **Reassign when reflex/calculation targets are present**; otherwise the flow's other default. "Keep" is never the default when a clinical rule would silently break. |
+| D3 | Block analyzer results for analyses that already exist? | **No — let them flow.** Completion of existing work is not a new order. Upholds the completion guardrail. |
+| D4 | Do choosers filter out inactive units? | **Partially.** The test editor's lab unit picker filters on `isActive`; **reassign destinations stay unfiltered**, honouring the 2026-09-01 ruling ("fine with moving to a switched off lab") as a deliberate exception. Grandfathered-select still required on the editor picker. |
+
+**Deferred by decision (2026-09-03), not in this increment**: the Workflows,
+Panels, Programs and Projects tabs. See the deferred stubs at the end.
+
+---
+
+## Phase M1 — Shipped-increment defect (Tier A)
+
+**Status: fully elaborated.** Independent of M2–M5; land it first, it is small.
+Regression pinned in `DIGI-UW/OpenELIS-QA` as `LU-W-3`.
+
+The 20-character lab unit name cap is enforced on Add but **not on Edit**, on
+both layers. A 32-character name saves and persists. `test_section.NAME` is
+VARCHAR(20); renames currently write to `localization_value`, which is why this
+has not thrown — confirm no path still writes `section.setName` with an
+unchecked value.
+
+- [ ] T001 RED: failing backend test — `PUT /rest/lab-units-management/{id}` with a 21-char fallback-locale name must return 422 — `src/test/java/.../LabUnitManagementRestControllerSecurityTest.java` (or a new validation slice test)
+- [ ] T002 GREEN: add the `NAME_MAX_LENGTH` check to the update handler — it validates description only at [LabUnitManagementRestController.java:357](../../src/main/java/org/openelisglobal/common/management/controller/rest/LabUnitManagementRestController.java#L357), while create validates the name at [:283](../../src/main/java/org/openelisglobal/common/management/controller/rest/LabUnitManagementRestController.java#L283). Validate every supplied locale's name, not just the fallback
+- [ ] T003 [P] Ungate the client check: drop the `view === "add"` condition at [LabUnitManagement.jsx:384](../../frontend/src/components/admin/labUnitManagement/LabUnitManagement.jsx#L384) so Edit validates too
+- [ ] T004 [P] Add `maxLength={NAME_MAX_LENGTH}` to the Name input — Description already carries `maxlength="60"`; Name carries none
+- [ ] T005 Audit for any remaining `section.setName(...)` write that bypasses the cap — grep the controller and `TestSectionServiceImpl`
+- [ ] T006 Verify `LU-W-3` now fails (flip-when-fixed) and hand the rewrite signal to QA
+
+---
+
+## Phase M2 — Lab unit visibility: chooser / viewer inversion (Tier A)
+
+**Status: fully elaborated.** Depends on nothing; **blocks M3** — this is the
+guard that stops the first populated unit somebody deactivates from stranding
+its pending analyses. Regression: `test-catalog-lab-unit-visibility.spec.ts`
+(`G-1`..`G-4`).
+
+Measured 2026-09-02: the filtering is applied to exactly the wrong half. The
+test's lab unit picker offers all 35 units including 20 inactive ones, while the
+`/Results` viewer filter shows 13 options for 34 units, hiding all 22 inactive —
+including any that still hold in-flight work. Both halves move, in opposite
+directions, per **D4**.
+
+### Viewer half — must land with or before M3
+
+- [ ] T050 RED: failing test — an inactive lab unit that still holds pending analyses must appear in the `/Results` lab unit filter
+- [ ] T051 GREEN: change the viewer endpoint to `isActive OR hasContent` — `/rest/results-entry/lab-units`, consumed at [UnifiedResults.tsx:222](../../frontend/src/components/resultPage/unified/UnifiedResults.tsx#L222). "hasContent" = holds tests OR in-flight analyses, so a unit self-cleans out of the list once its work finishes
+- [ ] T052 [P] Apply the same `isActive OR hasContent` rule to Workplan and the by-unit reports — **not yet checked, likely the same pattern** (comment 37313 §3). Inventory first, then fix
+- [ ] T053 Assert the completion guardrail explicitly: results entry, validation, workplan, by-unit reports, patient history and `/Results` **never** filter analyses on lab unit status. Add a test per surface that survives its unit being deactivated (AC: comment 37313 §2)
+
+### Chooser half — the data-loss guard
+
+- [ ] T054 RED: failing test — the **grandfathered-select** case. A test already assigned to an inactive unit must render that unit as the current value; saving must not write a blank back. This is the OGC-1191 loss class (`G-3`)
+- [ ] T055 GREEN: filter the **test editor's** lab unit picker on `isActive`, with the current value always present, displayed as `Parasitology (inactive)`, disabled, with the lock explanation beneath
+- [ ] T056 Leave **reassign destinations unfiltered** per D4 — add a regression test pinning this as deliberate, not an oversight, so it is not "fixed" later by mistake
+- [ ] T057 Note in the Epic that D4 supersedes comment 37313 §3's blanket "choosers filter on isActive"
+
+---
+
+## Phase M3 — Deactivation guarding flow (Tier A)
+
+**Status: fully elaborated.** Depends on **M2** (viewer half) and **M4**
+(`effectiveActive`, for a truthful impact summary). Regression:
+`test-catalog-lab-unit-management-write.spec.ts` `LU-W-10`.
+
+Today the Basic Info Active toggle saves silently with tests still attached —
+only an inline warning at [LabUnitManagement.jsx:1243](../../frontend/src/components/admin/labUnitManagement/LabUnitManagement.jsx#L1243), whose own
+comment defers the flow to "a later increment of OGC-189". That is this one.
+
+- [ ] T100 Backend: impact-summary endpoint — for a lab unit, return assigned test count, **pending analysis count**, historical analysis count, and the count of tests that are **reflex or calculation targets** (sources: `src/main/java/org/openelisglobal/testreflex/`, `.../testcalculated/`). A flat test count hides the dangerous ones (AC: comment 37313 §6)
+- [ ] T101 RED: failing tests for the three options — keep / deactivate all / reassign — including that **"keep" leaves every test's own `active`/`orderable` config unmutated**
+- [ ] T102 GREEN: implement the three options. Per **D2**, default to **reassign** when reflex/calculation targets are present
+- [ ] T103 Typed confirmation: bulk deactivation requires typing `DEACTIVATE`
+- [ ] T104 When pending analyses > 0, state plainly in the modal that the unit stays in worklists until those complete (follows from T053)
+- [ ] T105 Activate flow: offer to activate inactive assigned items (AC: Epic, Activation/Deactivation)
+- [ ] T106 [P] Frontend: replace the inline warning with the impact-summary modal — `frontend/src/components/admin/labUnitManagement/LabUnitManagement.jsx`
+- [ ] T107 [P] i18n keys in `en.json` **only** (Transifex owns the rest) — impact summary, three options, typed confirmation, reflex-target line
+- [ ] T108 Raise with product: **"keep assignments" may not be worth shipping.** It is the only option producing the awkward state, and all 22 inactive units on the instance hold zero tests — labs already do "empty it, then deactivate" (comment 37313 §6). Decide before T102 rather than building all three
+- [ ] T109 Verify `LU-W-10` flips
+
+---
+
+## Phase M4 — `effectiveActive` cascade (Tier A)
+
+**Status: fully elaborated.** Per **D1**. Depends on **M2/T053** (guardrail
+tests must exist before the gate lands, or in-flight work strands). Regression:
+`test-catalog-orderability-semantics.spec.ts` `TO-1`..`TO-5`, and
+`LU-W-11`/`LU-W-12`.
+
+Measured 2026-09-02: a lab unit's status does not participate in orderability at
+all. `getActiveTestsBySampleTypeIdAndTestUnit` filters on the **test's** active
+flag — [TypeOfSampleServiceImpl.java:101](../../src/main/java/org/openelisglobal/typeofsample/service/TypeOfSampleServiceImpl.java#L101), a single stream filter, which is the
+natural seam for the gate. Called from
+[SampleEntryTestsForTypeProviderRestController.java:157](../../src/main/java/org/openelisglobal/common/rest/provider/SampleEntryTestsForTypeProviderRestController.java#L157) and
+[SampleEntryTestsForTypeProvider.java:100](../../src/main/java/org/openelisglobal/common/provider/query/SampleEntryTestsForTypeProvider.java#L100).
+
+**Derived, never written**: the test's own `active`/`orderable` config is never
+mutated. That is what makes reactivation free and lossless — flip the unit back
+on and every test returns to what its own config says, with no restore step and
+no shadow column.
+
+- [ ] T150 RED: failing test — an active test in an inactive lab unit must NOT be creatable as a new analysis (`LU-W-11`). Include the **positive control** so the exclusion cannot pass vacuously (`TO-2`)
+- [ ] T151 GREEN: implement `effectiveActive = test.active && labUnit.isActive` at the ordering-path seam. Enforce **server-side**, not in the UI
+- [ ] T152 `effectiveOrderable = test.orderable && effectiveActive` for manual picker visibility. Preserve `active: true, orderable: false` as the intentional category it is — reflex-ordered susceptibility, confirmation tests, analyzer CT values (`Genie III` ids 44/45/46, `Stat-Pak` 53/54/55 are live examples)
+- [ ] T153 Cover the non-manual routes D1 commits to: **reflex, analyzer, FHIR, incoming electronic orders**. Inventory the creation points first — the ordering-path seam above covers manual entry only
+- [ ] T154 **D3**: analyzer results for analyses that **already exist** continue to flow. Add an explicit test — an inactive unit must still accept results for a pre-existing analysis
+- [ ] T155 **Reflex safety.** Blocking at the `active` layer means reflexes into a deactivated unit stop firing with no user present to notice; a susceptibility reflex silently not firing is a patient-safety event. Define the behaviour and raise an alert (AC: comment 37313 §7). Do not close M4 without this
+- [ ] T156 Verify `LU-W-11`, `LU-W-12`, `TO-1`..`TO-5` flip
+
+---
+
+## Phase M5 — Remaining Epic ACs (Tier A)
+
+**Status: elaborated.** Independent of M1–M4; parallelizable.
+
+### Import / Export tab
+
+Nothing exists — no export, no import, no `FileUploader` in the surface.
+
+- [ ] T200 Add the `import-export` section to [sectionConfig.js](../../frontend/src/components/admin/labUnitManagement/sectionConfig.js) (currently `basic-info`, `assigned-tests`, `display-order` only) and the contextual SideNav
+- [ ] T201 Export to JSON with the three option sets — config only / with tests / full. **Must include the `domain` field**
+- [ ] T202 [P] Export to CSV for review
+- [ ] T203 Import: validate before applying, **including Domain enum values** (CLINICAL / ENVIRONMENTAL / VECTOR — there is no `BOTH`)
+- [ ] T204 Import preview showing the changes to be applied
+- [ ] T205 Import modes: create only / update only / both
+- [ ] T206 Import handles missing references gracefully (AC: Epic, Import/Export)
+
+### List view gaps
+
+- [ ] T210 [P] Drag-and-drop reordering — not implemented; display order works via the move endpoint only, no drag handlers exist. Backend `moveToSortOrderPosition` (1-based, dense renumber) already supports it, so this is frontend-only — `sections/DisplayOrderSection.jsx`
+- [ ] T211 [P] Domain filter must be a Carbon **`MultiSelect`** combining with other filters via AND. Shipped as a single-value `Select` — [LabUnitManagement.jsx:741](../../frontend/src/components/admin/labUnitManagement/LabUnitManagement.jsx#L741), with `unit.domain === domainFilter` at [:251](../../frontend/src/components/admin/labUnitManagement/LabUnitManagement.jsx#L251)
+- [ ] T212 [P] Quick summary panel showing assignment counts (AC: Epic, List View)
+- [ ] T213 Confirm "display order affects system-wide dropdowns and menus" end-to-end, not just within the admin list
+
+---
+
+## Deferred stubs — not on any branch
+
+Deferred by decision 2026-09-03. Recorded so the Epic's AC set stays honest
+about what remains.
+
+- [ ] T900 DEFERRED — **Workflows tab.** Custom workflows per lab unit, one settable as default. Check first whether a per-section workflow entity exists at all; may be net-new schema
+- [ ] T901 DEFERRED — **Panels tab.** **Likely obsolete as specced**: the 2026-07-13 design ruling (comment 34215) is that panels are *not* scoped to a single lab unit — a panel can span sections and is scoped by Domain instead. Resolve the contradiction with the Epic description before any build; the likely outcome is dropping this tab
+- [ ] T902 DEFERRED — **Programs tab.** Blocked on [OGC-781](https://uwdigi.atlassian.net/browse/OGC-781) (Programs Management Rework, In Progress)
+- [ ] T903 DEFERRED — **Projects tab.** Lab notebook projects, assignable with details visible and removable
+
+---
+
+## Notes
+
+- **Domain is already built.** `test_section.domain` with the CLINICAL /
+  ENVIRONMENTAL / VECTOR check constraint and backfill-to-CLINICAL shipped in
+  [059-results-r1-unified-worklist.xml](../../src/main/resources/liquibase/3.5.x.x/059-results-r1-unified-worklist.xml) via OGC-1020; the default lives on
+  [TestSection.java:57](../../src/main/java/org/openelisglobal/test/valueholder/TestSection.java#L57). The July design comments (34354, 34357) claiming "no
+  `test_section` migration exists in the repo" are **stale** — no Domain
+  migration task is needed, and [OGC-361](https://uwdigi.atlassian.net/browse/OGC-361) is not a blocker.
+- **Terminology**: "Lab Unit" everywhere in user-facing strings, never "test
+  section" (design v2.0). The entity is `TEST_SECTION`; there is **no code
+  field** — no such column exists. Description is NOT NULL / required.
+- **Nothing is ever orphaned in the data sense** — every test has exactly one
+  lab unit, every analysis records its unit. "Orphaned" throughout M2 means
+  unreachable through the UI, which makes it a picker-population problem, not a
+  data-model one.
+- **Sequencing**: M1 anytime · M2 before M3 and M4 · M4/T053 guardrail tests
+  before T151 lands · M5 parallel throughout.
+- **Constitution**: new i18n keys in `en.json` only; `@Transactional` in
+  services not controllers; services compile all data inside the transaction;
+  `mvn spotless:apply` + `npm run format` before every commit.
