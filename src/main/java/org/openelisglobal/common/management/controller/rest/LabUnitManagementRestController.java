@@ -8,6 +8,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import org.apache.commons.validator.GenericValidator;
+import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.domain.Domain;
 import org.openelisglobal.common.exception.LIMSDuplicateRecordException;
@@ -26,8 +28,12 @@ import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
+import org.openelisglobal.testcalculated.service.TestCalculationService;
+import org.openelisglobal.testcalculated.valueholder.Calculation;
 import org.openelisglobal.testconfiguration.service.TestSectionCreateService;
 import org.openelisglobal.testconfiguration.service.TestSectionTestAssignService;
+import org.openelisglobal.testreflex.service.TestReflexService;
+import org.openelisglobal.testreflex.valueholder.TestReflex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -85,6 +91,12 @@ public class LabUnitManagementRestController extends BaseRestController {
 
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private AnalysisService analysisService;
+    @Autowired
+    private TestReflexService testReflexService;
+    @Autowired
+    private TestCalculationService testCalculationService;
 
     /** DTO for the unified Lab Units list and editor. */
     public static class LabUnitManagementDTO {
@@ -608,6 +620,185 @@ public class LabUnitManagementRestController extends BaseRestController {
         }
         refreshLabUnitLists();
         return ResponseEntity.ok(new ApiResponse<>(true, "Tests reassigned successfully", assignedTestDtos(labUnitId)));
+    }
+
+    // ── Deactivation impact summary + guarded deactivation (OGC-189 M3) ──────
+
+    /**
+     * What deactivating this lab unit would affect. Read-only; changes nothing.
+     *
+     * <p>
+     * Reflex and calculation targets are counted <em>separately</em> from the flat
+     * test count on purpose: those are the dangerous ones. A reflex whose target
+     * test sits in a switched-off unit stops firing with nobody present to notice
+     * (decision D5), and a bare "37 tests" hides that entirely.
+     */
+    public static class DeactivationImpactDto {
+        public int testCount;
+        public int activeTestCount;
+        public long pendingAnalysisCount;
+        public long historicalAnalysisCount;
+        public int reflexOrCalculationTargetCount;
+        public List<String> reflexOrCalculationTargetNames = new ArrayList<>();
+        /** Per D2: reassign is the default when reflex/calc targets are present. */
+        public String recommendedOption;
+    }
+
+    @GetMapping(value = "/lab-units-management/{labUnitId}/deactivation-impact", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ApiResponse<DeactivationImpactDto>> getDeactivationImpact(@PathVariable String labUnitId) {
+        if (getManagedSection(labUnitId) == null) {
+            return ResponseEntity.notFound().build();
+        }
+        DeactivationImpactDto dto = new DeactivationImpactDto();
+        List<Test> tests = testSectionService.getTestsInSection(labUnitId);
+        dto.testCount = tests.size();
+        for (Test test : tests) {
+            if ("Y".equals(test.getIsActive())) {
+                dto.activeTestCount++;
+            }
+        }
+
+        long[] analysisCounts = analysisService.countAnalysesForLabUnit(labUnitId);
+        dto.pendingAnalysisCount = analysisCounts[0];
+        dto.historicalAnalysisCount = analysisCounts[1];
+
+        Set<String> targetTestIds = reflexAndCalculationTargetTestIds();
+        for (Test test : tests) {
+            if (targetTestIds.contains(test.getId())) {
+                dto.reflexOrCalculationTargetCount++;
+                dto.reflexOrCalculationTargetNames
+                        .add(org.openelisglobal.test.service.TestServiceImpl.getLocalizedTestNameWithType(test));
+            }
+        }
+
+        // D2: "keep" is never recommended where a clinical rule would silently
+        // break; D6 keeps all three options available regardless.
+        dto.recommendedOption = dto.reflexOrCalculationTargetCount > 0 ? "reassign"
+                : (dto.testCount == 0 ? "keep" : "deactivate_all");
+        return ResponseEntity.ok(new ApiResponse<>(true, "Deactivation impact", dto));
+    }
+
+    /** Every test that is the target of a reflex rule or a calculation. */
+    private Set<String> reflexAndCalculationTargetTestIds() {
+        Set<String> ids = new HashSet<>();
+        try {
+            for (TestReflex reflex : testReflexService.getAllTestReflexs()) {
+                String addedTestId = reflex.getAddedTestId();
+                if (!GenericValidator.isBlankOrNull(addedTestId)) {
+                    ids.add(addedTestId);
+                }
+            }
+        } catch (RuntimeException e) {
+            LogEvent.logWarn("LabUnitManagementRestController", "reflexAndCalculationTargetTestIds",
+                    "Could not read reflex rules: " + e.getMessage());
+        }
+        try {
+            for (Calculation calculation : testCalculationService.getAll()) {
+                if (calculation.getTestId() != null) {
+                    ids.add(String.valueOf(calculation.getTestId()));
+                }
+            }
+        } catch (RuntimeException e) {
+            LogEvent.logWarn("LabUnitManagementRestController", "reflexAndCalculationTargetTestIds",
+                    "Could not read calculations: " + e.getMessage());
+        }
+        return ids;
+    }
+
+    /** Body for the guarded deactivation. */
+    public static class DeactivationRequest {
+        /** "keep", "deactivate_all" or "reassign". */
+        public String option;
+        /** Required when option is "reassign". */
+        public String destinationLabUnitId;
+        /** Must be the literal "DEACTIVATE" — the typed confirmation. */
+        public String confirmation;
+    }
+
+    /**
+     * Deactivates a lab unit through the guarded flow (OGC-189 M3): one of the
+     * three options, behind a typed confirmation.
+     *
+     * <p>
+     * "keep" leaves every test's own configuration untouched (D6). It is still an
+     * effective stop, because M4 derives
+     * {@code effectiveActive = test.active && labUnit.isActive} — the unit stops
+     * taking new work without anything being written to its tests, so reactivation
+     * is lossless.
+     */
+    @PostMapping(value = "/lab-units-management/{labUnitId}/deactivate")
+    public ResponseEntity<ApiResponse<DeactivationImpactDto>> deactivateLabUnit(HttpServletRequest request,
+            @PathVariable String labUnitId, @RequestBody DeactivationRequest body) {
+        TestSection section = getManagedSection(labUnitId);
+        if (section == null) {
+            return ResponseEntity.notFound().build();
+        }
+        if (body == null || !"DEACTIVATE".equals(body.confirmation)) {
+            return ResponseEntity.unprocessableEntity()
+                    .body(new ApiResponse<>(false, "confirmation must be the literal \"DEACTIVATE\"", null));
+        }
+        String option = body.option == null ? "" : body.option.trim();
+        if (!"keep".equals(option) && !"deactivate_all".equals(option) && !"reassign".equals(option)) {
+            return ResponseEntity.unprocessableEntity()
+                    .body(new ApiResponse<>(false, "option must be one of: keep, deactivate_all, reassign", null));
+        }
+
+        // Every input is validated before any work is done or anything is
+        // written: a reassign with nowhere to go must not deactivate the unit
+        // and silently leave its tests behind.
+        if ("reassign".equals(option)) {
+            if (GenericValidator.isBlankOrNull(body.destinationLabUnitId)
+                    || getManagedSection(body.destinationLabUnitId) == null) {
+                return ResponseEntity.unprocessableEntity()
+                        .body(new ApiResponse<>(false, "a valid destinationLabUnitId is required to reassign", null));
+            }
+            if (labUnitId.equals(body.destinationLabUnitId)) {
+                return ResponseEntity.unprocessableEntity()
+                        .body(new ApiResponse<>(false, "destination must differ from the source lab unit", null));
+            }
+        }
+
+        String userId = getSysUserId(request);
+        List<Test> tests = testSectionService.getTestsInSection(labUnitId);
+
+        if ("reassign".equals(option)) {
+            if (!tests.isEmpty()) {
+                List<String> testIds = new ArrayList<>();
+                for (Test test : tests) {
+                    testIds.add(test.getId());
+                }
+                try {
+                    testSectionTestAssignService.assignTestsToSection(testIds, body.destinationLabUnitId, userId);
+                } catch (Exception e) {
+                    LogEvent.logError("LabUnitManagementRestController", "deactivateLabUnit", e.getMessage());
+                    return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                            .body(new ApiResponse<>(false, "Error reassigning tests: " + e.getMessage(), null));
+                }
+            }
+        } else if ("deactivate_all".equals(option)) {
+            // The one option that DOES write to the tests, because the admin
+            // asked for exactly that. Reactivating the unit will not bring
+            // these back on their own.
+            for (Test test : tests) {
+                if ("Y".equals(test.getIsActive())) {
+                    test.setIsActive("N");
+                    test.setSysUserId(userId);
+                    testService.update(test);
+                }
+            }
+        }
+
+        section.setIsActive("N");
+        section.setSysUserId(userId);
+        testSectionService.update(section);
+        refreshLabUnitLists();
+
+        LogEvent.logInfo("LabUnitManagementRestController", "deactivateLabUnit",
+                "Lab unit " + section.getTestSectionName() + " deactivated with option '" + option + "' by " + userId);
+
+        DeactivationImpactDto result = new DeactivationImpactDto();
+        result.testCount = tests.size();
+        return ResponseEntity.ok(new ApiResponse<>(true, "Lab unit deactivated successfully", result));
     }
 
     private List<AssignedTestDto> assignedTestDtos(String labUnitId) {

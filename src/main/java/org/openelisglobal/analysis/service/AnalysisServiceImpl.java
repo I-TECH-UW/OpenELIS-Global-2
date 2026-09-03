@@ -471,10 +471,22 @@ public class AnalysisServiceImpl extends AuditableBaseObjectServiceImpl<Analysis
     @Override
     @Transactional(readOnly = true)
     public Set<String> getTestSectionIdsWithPendingAnalyses() {
+        return new HashSet<>(baseObjectDAO.getTestSectionIdsWithAnalysesNotInStatus(terminalAnalysisStatusIds()));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public long[] countAnalysesForLabUnit(String testSectionId) {
+        return baseObjectDAO.countAnalysesByTestSectionSplitByStatus(testSectionId, terminalAnalysisStatusIds());
+    }
+
+    /**
+     * The analysis statuses that count as finished. Finalized and Canceled are
+     * done; the four rejection statuses are dead ends the lab cannot act on any
+     * further. Anything else is still in flight.
+     */
+    private List<String> terminalAnalysisStatusIds() {
         IStatusService statusService = SpringContext.getBean(IStatusService.class);
-        // "Pending" = not yet reached a terminal state. Finalized and Canceled
-        // are done; the rejection statuses are dead ends the lab cannot act on
-        // any further, so none of them keep a unit on the worklists.
         List<String> terminalStatuses = new ArrayList<>();
         for (StatusService.AnalysisStatus status : new StatusService.AnalysisStatus[] {
                 StatusService.AnalysisStatus.Finalized, StatusService.AnalysisStatus.Canceled,
@@ -485,7 +497,7 @@ public class AnalysisServiceImpl extends AuditableBaseObjectServiceImpl<Analysis
                 terminalStatuses.add(id);
             }
         }
-        return new HashSet<>(baseObjectDAO.getTestSectionIdsWithAnalysesNotInStatus(terminalStatuses));
+        return terminalStatuses;
     }
 
     @Override
