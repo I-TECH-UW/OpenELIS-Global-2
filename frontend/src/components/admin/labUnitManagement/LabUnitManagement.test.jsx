@@ -58,6 +58,19 @@ vi.mock("../../utils/Utils", async (importOriginal) => {
             },
           ],
         });
+      } else if (endpoint.includes("/deactivation-impact")) {
+        callback({
+          success: true,
+          data: {
+            testCount: 4,
+            activeTestCount: 3,
+            pendingAnalysisCount: 2,
+            historicalAnalysisCount: 17,
+            reflexOrCalculationTargetCount: 1,
+            reflexOrCalculationTargetNames: ["Susceptibility"],
+            recommendedOption: "reassign",
+          },
+        });
       } else {
         callback(undefined);
       }
@@ -181,5 +194,104 @@ describe("LabUnitManagement", () => {
     fireEvent.click(screen.getByText("← Back to List"));
 
     expect(listCalls()).toBeGreaterThan(callsAfterLoad);
+  });
+});
+
+/**
+ * OGC-189 (M3) — guarded deactivation.
+ *
+ * The Active toggle used to save silently with tests still attached: no impact
+ * summary, no options, no confirmation (QA LU-W-10). Switching a unit off now
+ * opens the guarded flow instead.
+ */
+describe("LabUnitManagement deactivation flow (OGC-189 M3)", () => {
+  const openFlow = async () => {
+    renderPage();
+    fireEvent.click(await screen.findByText("Edit"));
+    // Carbon renders the Toggle as a button with role="switch"; clicking the
+    // label text does not fire onToggle.
+    const toggle = await screen.findByRole("switch");
+    fireEvent.click(toggle);
+  };
+
+  test("switching a lab unit off opens the impact summary instead of saving", async () => {
+    await openFlow();
+
+    expect(
+      await screen.findByText("This lab unit currently holds:"),
+    ).toBeInTheDocument();
+    // The counts come from the server, not from a cached list.
+    expect(screen.getByText("4 assigned tests (3 active)")).toBeInTheDocument();
+    expect(screen.getByText("2 pending analyses")).toBeInTheDocument();
+    // Nothing is written until the flow is confirmed.
+    expect(postToOpenElisServerJsonResponse).not.toHaveBeenCalled();
+  });
+
+  test("reflex and calculation targets are called out separately", async () => {
+    await openFlow();
+    await screen.findByText("This lab unit currently holds:");
+
+    // A flat test count hides the dangerous ones, so they get their own line
+    // plus a warning naming them (D5).
+    expect(
+      screen.getByText("1 of these tests are reflex or calculation targets"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Reflex rules will stop firing"),
+    ).toBeInTheDocument();
+  });
+
+  test("all three options are offered, defaulting to reassign where reflexes exist", async () => {
+    await openFlow();
+    await screen.findByText("This lab unit currently holds:");
+
+    // D6 — all three ship, including "keep".
+    expect(screen.getByLabelText(/Keep assignments/)).toBeInTheDocument();
+    expect(
+      screen.getByLabelText(/Deactivate all assigned tests/),
+    ).toBeInTheDocument();
+    const reassign = screen.getByLabelText(/Reassign the tests/);
+    expect(reassign).toBeInTheDocument();
+    // D2 — reassign is the default when a clinical rule would otherwise break.
+    expect(reassign).toBeChecked();
+  });
+
+  test("confirmation is required before the unit can be deactivated", async () => {
+    await openFlow();
+    await screen.findByText("This lab unit currently holds:");
+
+    // Carbon's danger Button renders its kind into textContent
+    // ("dangerDeactivate lab unit"), so match on the label substring.
+    const submit = screen.getByRole("button", {
+      name: /Deactivate lab unit$/,
+    });
+    expect(submit).toBeDisabled();
+
+    // Even the right option is not enough on its own.
+    fireEvent.click(screen.getByLabelText(/Keep assignments/));
+    expect(submit).toBeDisabled();
+
+    fireEvent.change(screen.getByLabelText("Type DEACTIVATE to confirm"), {
+      target: { value: "deactivate" },
+    });
+    expect(submit).toBeDisabled();
+
+    fireEvent.change(screen.getByLabelText("Type DEACTIVATE to confirm"), {
+      target: { value: "DEACTIVATE" },
+    });
+    expect(submit).toBeEnabled();
+  });
+
+  test("pending analyses are called out as staying on the worklists", async () => {
+    await openFlow();
+    await screen.findByText("This lab unit currently holds:");
+
+    // M2 guarantees the unit stays reachable until its work finishes; say so
+    // rather than letting the user assume it disappears.
+    expect(
+      screen.getByText(
+        "This lab unit stays on the worklists until its 2 pending analyses are completed.",
+      ),
+    ).toBeInTheDocument();
   });
 });

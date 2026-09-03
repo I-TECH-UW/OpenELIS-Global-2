@@ -88,26 +88,26 @@ directions, per **D4**.
 
 ---
 
-## Phase M3 — Deactivation guarding flow (Tier A)
+## Phase M3 — Deactivation guarding flow (Tier A) ✅ DONE
 
-**Status: fully elaborated.** Depends on **M2** (viewer half) and **M4**
-(`effectiveActive`, for a truthful impact summary). Regression:
-`test-catalog-lab-unit-management-write.spec.ts` `LU-W-10`.
+**Status: complete.** Impact-summary endpoint + guarded deactivation endpoint +
+the editor modal. 5 backend validation cases and 5 component cases, the
+component set verified by inversion against the old silent-save toggle.
 
 Today the Basic Info Active toggle saves silently with tests still attached —
 only an inline warning at [LabUnitManagement.jsx:1243](../../frontend/src/components/admin/labUnitManagement/LabUnitManagement.jsx#L1243), whose own
 comment defers the flow to "a later increment of OGC-189". That is this one.
 
-- [ ] T100 Backend: impact-summary endpoint — for a lab unit, return assigned test count, **pending analysis count**, historical analysis count, and the count of tests that are **reflex or calculation targets** (sources: `src/main/java/org/openelisglobal/testreflex/`, `.../testcalculated/`). A flat test count hides the dangerous ones (AC: comment 37313 §6)
-- [ ] T101 RED: failing tests for the three options — keep / deactivate all / reassign — including that **"keep" leaves every test's own `active`/`orderable` config unmutated**
-- [ ] T102 GREEN: implement the three options. Per **D2**, default to **reassign** when reflex/calculation targets are present
-- [ ] T103 Typed confirmation: bulk deactivation requires typing `DEACTIVATE`
-- [ ] T104 When pending analyses > 0, state plainly in the modal that the unit stays in worklists until those complete (follows from T053)
-- [ ] T105 Activate flow: offer to activate inactive assigned items (AC: Epic, Activation/Deactivation)
-- [ ] T106 [P] Frontend: replace the inline warning with the impact-summary modal — `frontend/src/components/admin/labUnitManagement/LabUnitManagement.jsx`
-- [ ] T107 [P] i18n keys in `en.json` **only** (Transifex owns the rest) — impact summary, three options, typed confirmation, reflex-target line
+- [x] T100 Backend: impact-summary endpoint — for a lab unit, return assigned test count, **pending analysis count**, historical analysis count, and the count of tests that are **reflex or calculation targets** (sources: `src/main/java/org/openelisglobal/testreflex/`, `.../testcalculated/`). A flat test count hides the dangerous ones (AC: comment 37313 §6)
+- [x] T101 RED: failing tests for the three options — keep / deactivate all / reassign — including that **"keep" leaves every test's own `active`/`orderable` config unmutated**
+- [x] T102 GREEN: implement the three options. Per **D2**, default to **reassign** when reflex/calculation targets are present
+- [x] T103 Typed confirmation: bulk deactivation requires typing `DEACTIVATE`
+- [x] T104 When pending analyses > 0, state plainly in the modal that the unit stays in worklists until those complete (follows from T053)
+- [x] T105 Activate flow: offer to activate inactive assigned items (AC: Epic, Activation/Deactivation)
+- [x] T106 [P] Frontend: replace the inline warning with the impact-summary modal — `frontend/src/components/admin/labUnitManagement/LabUnitManagement.jsx`
+- [x] T107 [P] i18n keys in `en.json` **only** (Transifex owns the rest) — impact summary, three options, typed confirmation, reflex-target line
 - [x] T108 **Settled (D6): all three options ship**, including "keep assignments". Reassign remains the default where reflex/calculation targets are present (D2)
-- [ ] T109 Verify `LU-W-10` flips
+- [x] T109 `LU-W-10` should now flip (it asserts "no prompt / no impact summary today"). **Not run by me** — it lives in `DIGI-UW/OpenELIS-QA` against a deployed instance, so QA owns the rewrite signal
 
 ---
 

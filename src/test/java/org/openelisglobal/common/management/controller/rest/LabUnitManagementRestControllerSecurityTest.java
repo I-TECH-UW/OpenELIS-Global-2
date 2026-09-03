@@ -12,6 +12,7 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Test;
 import org.mockito.Mockito;
+import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.service.SupportedLocaleService;
 import org.openelisglobal.localization.valueholder.Localization;
@@ -22,8 +23,10 @@ import org.openelisglobal.security.SecuritySliceMockMvcTest;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.TestSection;
+import org.openelisglobal.testcalculated.service.TestCalculationService;
 import org.openelisglobal.testconfiguration.service.TestSectionCreateService;
 import org.openelisglobal.testconfiguration.service.TestSectionTestAssignService;
+import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.view.PageBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -287,6 +290,67 @@ public class LabUnitManagementRestControllerSecurityTest extends SecuritySliceMo
         Mockito.verify(localizationService, Mockito.never()).update(Mockito.any());
     }
 
+    // OGC-189 (M3): the guarded deactivation flow. The ADMIN gate applies as
+    // everywhere else, and the typed confirmation is validated before anything
+    // is written.
+
+    @Test
+    public void deactivationImpact_NonAdminRole_Returns403() throws Exception {
+        mockMvc.perform(get("/rest/lab-units-management/1/deactivation-impact").with(user("results").roles("RESULTS"))
+                .contentType(MediaType.APPLICATION_JSON)).andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void deactivationImpact_WithoutAuthentication_Returns401() throws Exception {
+        mockMvc.perform(get("/rest/lab-units-management/1/deactivation-impact").contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
+    public void deactivate_NonAdminRole_Returns403() throws Exception {
+        mockMvc.perform(post("/rest/lab-units-management/1/deactivate").with(user("results").roles("RESULTS"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"option\":\"keep\",\"confirmation\":\"DEACTIVATE\"}")).andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void deactivate_AdminRole_WithoutTypedConfirmation_Returns422() throws Exception {
+        stubExistingSection();
+        // The typed confirmation is the guard against an accidental switch-off,
+        // so a missing or wrong value must be refused before anything is
+        // written.
+        mockMvc.perform(post("/rest/lab-units-management/1/deactivate").with(user("admin").roles("ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON).content("{\"option\":\"keep\"}"))
+                .andExpect(status().isUnprocessableEntity());
+        mockMvc.perform(post("/rest/lab-units-management/1/deactivate").with(user("admin").roles("ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"option\":\"keep\",\"confirmation\":\"deactivate\"}"))
+                .andExpect(status().isUnprocessableEntity());
+        Mockito.verify(testSectionService, Mockito.never()).update(Mockito.any(TestSection.class));
+    }
+
+    @Test
+    public void deactivate_AdminRole_UnknownOption_Returns422() throws Exception {
+        stubExistingSection();
+        mockMvc.perform(post("/rest/lab-units-management/1/deactivate").with(user("admin").roles("ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"option\":\"delete_everything\",\"confirmation\":\"DEACTIVATE\"}"))
+                .andExpect(status().isUnprocessableEntity());
+        Mockito.verify(testSectionService, Mockito.never()).update(Mockito.any(TestSection.class));
+    }
+
+    @Test
+    public void deactivate_AdminRole_ReassignWithoutDestination_Returns422() throws Exception {
+        stubExistingSection();
+        // Reassign with nowhere to reassign to would otherwise deactivate the
+        // unit and silently leave every test behind.
+        mockMvc.perform(post("/rest/lab-units-management/1/deactivate").with(user("admin").roles("ADMIN"))
+                .contentType(MediaType.APPLICATION_JSON)
+                .content("{\"option\":\"reassign\",\"confirmation\":\"DEACTIVATE\"}"))
+                .andExpect(status().isUnprocessableEntity());
+        Mockito.verify(testSectionService, Mockito.never()).update(Mockito.any(TestSection.class));
+    }
+
     @Configuration
     @EnableWebMvc
     @org.springframework.security.config.annotation.web.configuration.EnableWebSecurity
@@ -337,10 +401,27 @@ public class LabUnitManagementRestControllerSecurityTest extends SecuritySliceMo
         }
 
         @Bean
+        AnalysisService analysisService() {
+            return mock(AnalysisService.class);
+        }
+
+        @Bean
+        TestReflexService testReflexService() {
+            return mock(TestReflexService.class);
+        }
+
+        @Bean
+        TestCalculationService testCalculationService() {
+            return mock(TestCalculationService.class);
+        }
+
+        @Bean
         LabUnitManagementRestController labUnitManagementRestController(TestSectionService testSectionService,
                 LocalizationService localizationService, SupportedLocaleService supportedLocaleService,
                 TestService testService, TestSectionCreateService testSectionCreateService,
-                TestSectionTestAssignService testSectionTestAssignService, RoleService roleService) {
+                TestSectionTestAssignService testSectionTestAssignService, RoleService roleService,
+                AnalysisService analysisService, TestReflexService testReflexService,
+                TestCalculationService testCalculationService) {
             LabUnitManagementRestController controller = new LabUnitManagementRestController();
             ReflectionTestUtils.setField(controller, "testSectionService", testSectionService);
             ReflectionTestUtils.setField(controller, "localizationService", localizationService);
@@ -349,6 +430,9 @@ public class LabUnitManagementRestControllerSecurityTest extends SecuritySliceMo
             ReflectionTestUtils.setField(controller, "testSectionCreateService", testSectionCreateService);
             ReflectionTestUtils.setField(controller, "testSectionTestAssignService", testSectionTestAssignService);
             ReflectionTestUtils.setField(controller, "roleService", roleService);
+            ReflectionTestUtils.setField(controller, "analysisService", analysisService);
+            ReflectionTestUtils.setField(controller, "testReflexService", testReflexService);
+            ReflectionTestUtils.setField(controller, "testCalculationService", testCalculationService);
             return controller;
         }
 

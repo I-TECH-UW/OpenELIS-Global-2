@@ -90,6 +90,19 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
     List<String> getTestSectionIdsWithAnalysesNotInStatus(List<String> excludedStatusIdList)
             throws LIMSRuntimeException;
 
+    /**
+     * OGC-189 (M3): how many analyses this lab unit holds, split by whether they
+     * are still in flight. Index 0 = pending (status NOT in
+     * {@code terminalStatusIdList}), index 1 = the rest, i.e. history.
+     *
+     * <p>
+     * Counted in the database rather than by loading the analyses, because the
+     * deactivation impact summary only needs the numbers and a busy unit can hold a
+     * great many rows.
+     */
+    long[] countAnalysesByTestSectionSplitByStatus(String testSectionId, List<String> terminalStatusIdList)
+            throws LIMSRuntimeException;
+
     List<Analysis> getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId, List<String> statusIdList)
             throws LIMSRuntimeException;
 

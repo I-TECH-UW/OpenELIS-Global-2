@@ -58,6 +58,12 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
      */
     Set<String> getTestSectionIdsWithPendingAnalyses();
 
+    /**
+     * OGC-189 (M3): analysis counts for a lab unit's deactivation impact summary.
+     * Index 0 = pending (still in flight), index 1 = historical.
+     */
+    long[] countAnalysesForLabUnit(String testSectionId);
+
     List<Analysis> getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem);
 
     List<Analysis> getAnalysisByTestNamesAndCompletedDateRange(List<String> testNames, Date lowDate, Date highDate);

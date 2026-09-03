@@ -180,7 +180,20 @@ function LabUnitManagement({ intl }) {
 
   // Tests assigned to the lab unit currently being edited (drives the
   // deactivate-in-use warning).
-  const [assignedTests, setAssignedTests] = useState([]);
+  // Only the setter is read now: the deactivation impact summary fetches live
+  // counts from the server (M3) rather than deriving them from this cache,
+  // which could be stale relative to what the flow is about to act on.
+  const [, setAssignedTests] = useState([]);
+
+  // OGC-189 M3 — guarded deactivation. Switching a lab unit off opens an
+  // impact summary with three options behind a typed confirmation, instead of
+  // saving silently with tests still attached.
+  const [deactivationOpen, setDeactivationOpen] = useState(false);
+  const [deactivationImpact, setDeactivationImpact] = useState(null);
+  const [deactivationOption, setDeactivationOption] = useState("");
+  const [deactivationDestination, setDeactivationDestination] = useState("");
+  const [deactivationConfirmText, setDeactivationConfirmText] = useState("");
+  const [deactivationBusy, setDeactivationBusy] = useState(false);
 
   const refreshLabUnits = useCallback(async () => {
     return await new Promise((resolve, reject) => {
@@ -602,9 +615,48 @@ function LabUnitManagement({ intl }) {
     [labUnitId],
   );
 
-  const activeAssignedTestCount = assignedTests.filter(
-    (test) => test.active,
-  ).length;
+  const openDeactivationFlow = useCallback(() => {
+    setDeactivationImpact(null);
+    setDeactivationOption("");
+    setDeactivationDestination("");
+    setDeactivationConfirmText("");
+    setDeactivationOpen(true);
+    getFromOpenElisServer(
+      `/rest/lab-units-management/${labUnitId}/deactivation-impact`,
+      (response) => {
+        const impact = response?.data || null;
+        setDeactivationImpact(impact);
+        // The server recommends reassign wherever reflex/calculation targets
+        // are present (D2) — "keep" would silently break a clinical rule.
+        setDeactivationOption(impact?.recommendedOption || "keep");
+      },
+    );
+  }, [labUnitId]);
+
+  const confirmDeactivation = useCallback(() => {
+    setDeactivationBusy(true);
+    postToOpenElisServerJsonResponse(
+      `/rest/lab-units-management/${labUnitId}/deactivate`,
+      JSON.stringify({
+        option: deactivationOption,
+        destinationLabUnitId: deactivationDestination,
+        confirmation: deactivationConfirmText,
+      }),
+      (response) => {
+        setDeactivationBusy(false);
+        if (response?.success) {
+          setDeactivationOpen(false);
+          setEditingUnit((prev) => ({ ...prev, active: false }));
+          setShowSuccess(true);
+        }
+      },
+    );
+  }, [
+    labUnitId,
+    deactivationOption,
+    deactivationDestination,
+    deactivationConfirmText,
+  ]);
 
   // ─── LIST VIEW ────────────────────────────────────────────────
   if (view === "list") {
@@ -1245,32 +1297,22 @@ function LabUnitManagement({ intl }) {
                                     id: "label.active",
                                   })}
                                   toggled={editingUnit?.active}
-                                  onToggle={(checked) =>
+                                  onToggle={(checked) => {
+                                    // OGC-189 M3: switching a unit OFF opens
+                                    // the guarded flow (impact summary + three
+                                    // options + typed confirmation) instead of
+                                    // saving silently. Switching it back ON is
+                                    // not destructive and needs no guard.
+                                    if (!checked) {
+                                      openDeactivationFlow();
+                                      return;
+                                    }
                                     setEditingUnit((prev) => ({
                                       ...prev,
-                                      active: checked,
-                                    }))
-                                  }
+                                      active: true,
+                                    }));
+                                  }}
                                 />
-
-                                {/* Deactivating a unit in use warns but
-                                    proceeds — no cascade, reversible. The
-                                    cascade/impact flow lands in a later
-                                    increment of OGC-189. */}
-                                {!editingUnit?.active &&
-                                  activeAssignedTestCount > 0 && (
-                                    <InlineNotification
-                                      kind="warning"
-                                      lowContrast
-                                      hideCloseButton
-                                      title={intl.formatMessage(
-                                        {
-                                          id: "warning.labUnit.deactivateInUse",
-                                        },
-                                        { count: activeAssignedTestCount },
-                                      )}
-                                    />
-                                  )}
 
                                 <TextArea
                                   id="lu-description"
@@ -1372,6 +1414,218 @@ function LabUnitManagement({ intl }) {
                       <p>
                         <FormattedMessage id="admin.labUnit.domain.confirm.body" />
                       </p>
+                    </Modal>
+
+                    {/* Guarded deactivation (OGC-189 M3): impact summary,
+                        three options, typed confirmation. Replaces the
+                        silent save the Active toggle used to do. */}
+                    <Modal
+                      open={deactivationOpen}
+                      modalHeading={intl.formatMessage({
+                        id: "heading.labUnit.deactivate",
+                      })}
+                      primaryButtonText={intl.formatMessage({
+                        id: "button.labUnit.deactivate.confirm",
+                      })}
+                      secondaryButtonText={intl.formatMessage({
+                        id: "button.cancel",
+                      })}
+                      primaryButtonDisabled={
+                        deactivationBusy ||
+                        deactivationConfirmText !== "DEACTIVATE" ||
+                        !deactivationOption ||
+                        (deactivationOption === "reassign" &&
+                          !deactivationDestination)
+                      }
+                      danger
+                      onRequestClose={() => setDeactivationOpen(false)}
+                      onRequestSubmit={confirmDeactivation}
+                    >
+                      <Stack gap={5}>
+                        {!deactivationImpact ? (
+                          <p>
+                            <FormattedMessage id="label.labUnit.deactivate.loading" />
+                          </p>
+                        ) : (
+                          <>
+                            {/* Impact summary. Reflex/calculation targets get
+                                their own line: they are the dangerous ones and
+                                a flat test count hides them entirely. */}
+                            <div>
+                              <p style={{ fontWeight: 600, margin: 0 }}>
+                                <FormattedMessage id="label.labUnit.deactivate.impact" />
+                              </p>
+                              <ul
+                                style={{
+                                  margin: "var(--cds-spacing-03) 0 0 0",
+                                  paddingLeft: "1.25rem",
+                                }}
+                              >
+                                <li>
+                                  <FormattedMessage
+                                    id="label.labUnit.deactivate.impact.tests"
+                                    values={{
+                                      count: deactivationImpact.testCount,
+                                      active:
+                                        deactivationImpact.activeTestCount,
+                                    }}
+                                  />
+                                </li>
+                                <li>
+                                  <FormattedMessage
+                                    id="label.labUnit.deactivate.impact.pending"
+                                    values={{
+                                      count:
+                                        deactivationImpact.pendingAnalysisCount,
+                                    }}
+                                  />
+                                </li>
+                                <li>
+                                  <FormattedMessage
+                                    id="label.labUnit.deactivate.impact.historical"
+                                    values={{
+                                      count:
+                                        deactivationImpact.historicalAnalysisCount,
+                                    }}
+                                  />
+                                </li>
+                                {deactivationImpact.reflexOrCalculationTargetCount >
+                                  0 && (
+                                  <li style={{ fontWeight: 600 }}>
+                                    <FormattedMessage
+                                      id="label.labUnit.deactivate.impact.reflexTargets"
+                                      values={{
+                                        count:
+                                          deactivationImpact.reflexOrCalculationTargetCount,
+                                      }}
+                                    />
+                                  </li>
+                                )}
+                              </ul>
+                            </div>
+
+                            {/* A reflex that stops firing has no user present
+                                to notice it (D5), so say so plainly. */}
+                            {deactivationImpact.reflexOrCalculationTargetCount >
+                              0 && (
+                              <InlineNotification
+                                kind="warning"
+                                lowContrast
+                                hideCloseButton
+                                title={intl.formatMessage({
+                                  id: "warning.labUnit.deactivate.reflexTargets.title",
+                                })}
+                                subtitle={intl.formatMessage(
+                                  {
+                                    id: "warning.labUnit.deactivate.reflexTargets.body",
+                                  },
+                                  {
+                                    names:
+                                      deactivationImpact.reflexOrCalculationTargetNames.join(
+                                        ", ",
+                                      ),
+                                  },
+                                )}
+                              />
+                            )}
+
+                            {/* An inactive unit stays on the worklists until
+                                its pending work is finished — it is never
+                                stranded (M2). */}
+                            {deactivationImpact.pendingAnalysisCount > 0 && (
+                              <InlineNotification
+                                kind="info"
+                                lowContrast
+                                hideCloseButton
+                                title={intl.formatMessage(
+                                  { id: "info.labUnit.deactivate.pending" },
+                                  {
+                                    count:
+                                      deactivationImpact.pendingAnalysisCount,
+                                  },
+                                )}
+                              />
+                            )}
+
+                            <RadioButtonGroup
+                              legendText={intl.formatMessage({
+                                id: "label.labUnit.deactivate.option",
+                              })}
+                              name="lu-deactivate-option"
+                              orientation="vertical"
+                              valueSelected={deactivationOption}
+                              onChange={(value) => setDeactivationOption(value)}
+                            >
+                              <RadioButton
+                                labelText={intl.formatMessage({
+                                  id: "label.labUnit.deactivate.option.keep",
+                                })}
+                                value="keep"
+                                id="lu-deactivate-keep"
+                              />
+                              <RadioButton
+                                labelText={intl.formatMessage({
+                                  id: "label.labUnit.deactivate.option.deactivateAll",
+                                })}
+                                value="deactivate_all"
+                                id="lu-deactivate-all"
+                              />
+                              <RadioButton
+                                labelText={intl.formatMessage({
+                                  id: "label.labUnit.deactivate.option.reassign",
+                                })}
+                                value="reassign"
+                                id="lu-deactivate-reassign"
+                              />
+                            </RadioButtonGroup>
+
+                            {deactivationOption === "reassign" && (
+                              <Select
+                                id="lu-deactivate-destination"
+                                labelText={intl.formatMessage({
+                                  id: "label.labUnit.tests.reassign.destination",
+                                })}
+                                value={deactivationDestination}
+                                onChange={(e) =>
+                                  setDeactivationDestination(e.target.value)
+                                }
+                              >
+                                <SelectItem
+                                  value=""
+                                  text={intl.formatMessage({
+                                    id: "placeholder.labUnit.tests.reassign.destination",
+                                  })}
+                                />
+                                {labUnits
+                                  .filter(
+                                    (unit) =>
+                                      String(unit.id) !== String(labUnitId),
+                                  )
+                                  .map((unit) => (
+                                    <SelectItem
+                                      key={unit.id}
+                                      value={unit.id}
+                                      text={unit.name}
+                                    />
+                                  ))}
+                              </Select>
+                            )}
+
+                            <TextInput
+                              id="lu-deactivate-confirm"
+                              labelText={intl.formatMessage({
+                                id: "label.labUnit.deactivate.confirm",
+                              })}
+                              placeholder="DEACTIVATE"
+                              value={deactivationConfirmText}
+                              onChange={(e) =>
+                                setDeactivationConfirmText(e.target.value)
+                              }
+                              autoComplete="off"
+                            />
+                          </>
+                        )}
+                      </Stack>
                     </Modal>
                   </div>
                 )}
