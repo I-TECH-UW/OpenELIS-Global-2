@@ -29,15 +29,18 @@ milestone shapes below and should be mirrored into the Epic description.
 | D2 | Default deactivation option? | **Reassign when reflex/calculation targets are present**; otherwise the flow's other default. "Keep" is never the default when a clinical rule would silently break. |
 | D3 | Block analyzer results for analyses that already exist? | **No — let them flow.** Completion of existing work is not a new order. Upholds the completion guardrail. |
 | D4 | Do choosers filter out inactive units? | **Partially.** The test editor's lab unit picker filters on `isActive`; **reassign destinations stay unfiltered**, honouring the 2026-09-01 ruling ("fine with moving to a switched off lab") as a deliberate exception. Grandfathered-select still required on the editor picker. |
+| D5 | Do reflexes fire into a deactivated lab unit? | **No — block, and alert.** A reflex whose target test sits in an inactive unit does not generate an analysis. Because a silently-unfired susceptibility reflex is a patient-safety event, the block must raise a visible alert rather than failing quietly (comment 37313 §7). |
+| D6 | Keep the "keep assignments" deactivation option? | **Yes, keep all three options.** T108 is settled: keep / deactivate all / reassign all ship. Per D2, reassign is still the *default* when reflex or calculation targets are present. |
 
 **Deferred by decision (2026-09-03), not in this increment**: the Workflows,
 Panels, Programs and Projects tabs. See the deferred stubs at the end.
 
 ---
 
-## Phase M1 — Shipped-increment defect (Tier A)
+## Phase M1 — Shipped-increment defect (Tier A) ✅ DONE
 
-**Status: fully elaborated.** Independent of M2–M5; land it first, it is small.
+**Status: complete** — commit `22fa139f5`, branch `fix/ogc-189-m1-name-length-on-edit`.
+Both layers fixed, 5 tests added, each verified by inversion. Independent of M2–M5; land it first, it is small.
 Regression pinned in `DIGI-UW/OpenELIS-QA` as `LU-W-3`.
 
 The 20-character lab unit name cap is enforced on Add but **not on Edit**, on
@@ -46,12 +49,12 @@ VARCHAR(20); renames currently write to `localization_value`, which is why this
 has not thrown — confirm no path still writes `section.setName` with an
 unchecked value.
 
-- [ ] T001 RED: failing backend test — `PUT /rest/lab-units-management/{id}` with a 21-char fallback-locale name must return 422 — `src/test/java/.../LabUnitManagementRestControllerSecurityTest.java` (or a new validation slice test)
-- [ ] T002 GREEN: add the `NAME_MAX_LENGTH` check to the update handler — it validates description only at [LabUnitManagementRestController.java:357](../../src/main/java/org/openelisglobal/common/management/controller/rest/LabUnitManagementRestController.java#L357), while create validates the name at [:283](../../src/main/java/org/openelisglobal/common/management/controller/rest/LabUnitManagementRestController.java#L283). Validate every supplied locale's name, not just the fallback
-- [ ] T003 [P] Ungate the client check: drop the `view === "add"` condition at [LabUnitManagement.jsx:384](../../frontend/src/components/admin/labUnitManagement/LabUnitManagement.jsx#L384) so Edit validates too
-- [ ] T004 [P] Add `maxLength={NAME_MAX_LENGTH}` to the Name input — Description already carries `maxlength="60"`; Name carries none
-- [ ] T005 Audit for any remaining `section.setName(...)` write that bypasses the cap — grep the controller and `TestSectionServiceImpl`
-- [ ] T006 Verify `LU-W-3` now fails (flip-when-fixed) and hand the rewrite signal to QA
+- [x] T001 RED: failing backend test — `PUT /rest/lab-units-management/{id}` with a 21-char fallback-locale name must return 422 — `src/test/java/.../LabUnitManagementRestControllerSecurityTest.java` (or a new validation slice test)
+- [x] T002 GREEN: add the `NAME_MAX_LENGTH` check to the update handler — it validates description only at [LabUnitManagementRestController.java:357](../../src/main/java/org/openelisglobal/common/management/controller/rest/LabUnitManagementRestController.java#L357), while create validates the name at [:283](../../src/main/java/org/openelisglobal/common/management/controller/rest/LabUnitManagementRestController.java#L283). Validate every supplied locale's name, not just the fallback
+- [x] T003 [P] Ungate the client check: drop the `view === "add"` condition at [LabUnitManagement.jsx:384](../../frontend/src/components/admin/labUnitManagement/LabUnitManagement.jsx#L384) so Edit validates too
+- [x] T004 [P] Add `maxLength={NAME_MAX_LENGTH}` to the Name input — Description already carries `maxlength="60"`; Name carries none
+- [x] T005 Audited: `setTestSectionName` is written **only on create** ([controller:310](../../src/main/java/org/openelisglobal/common/management/controller/rest/LabUnitManagementRestController.java#L310)); the update path never touches the VARCHAR(20) column. Renames write `localization_value.value` (`text`, unbounded), which is why the over-length name persisted rather than throwing — the cap is a product rule, not a storage constraint
+- [x] T006 Verify `LU-W-3` now fails (flip-when-fixed) and hand the rewrite signal to QA
 
 ---
 
@@ -102,7 +105,7 @@ comment defers the flow to "a later increment of OGC-189". That is this one.
 - [ ] T105 Activate flow: offer to activate inactive assigned items (AC: Epic, Activation/Deactivation)
 - [ ] T106 [P] Frontend: replace the inline warning with the impact-summary modal — `frontend/src/components/admin/labUnitManagement/LabUnitManagement.jsx`
 - [ ] T107 [P] i18n keys in `en.json` **only** (Transifex owns the rest) — impact summary, three options, typed confirmation, reflex-target line
-- [ ] T108 Raise with product: **"keep assignments" may not be worth shipping.** It is the only option producing the awkward state, and all 22 inactive units on the instance hold zero tests — labs already do "empty it, then deactivate" (comment 37313 §6). Decide before T102 rather than building all three
+- [x] T108 **Settled (D6): all three options ship**, including "keep assignments". Reassign remains the default where reflex/calculation targets are present (D2)
 - [ ] T109 Verify `LU-W-10` flips
 
 ---
@@ -131,7 +134,7 @@ no shadow column.
 - [ ] T152 `effectiveOrderable = test.orderable && effectiveActive` for manual picker visibility. Preserve `active: true, orderable: false` as the intentional category it is — reflex-ordered susceptibility, confirmation tests, analyzer CT values (`Genie III` ids 44/45/46, `Stat-Pak` 53/54/55 are live examples)
 - [ ] T153 Cover the non-manual routes D1 commits to: **reflex, analyzer, FHIR, incoming electronic orders**. Inventory the creation points first — the ordering-path seam above covers manual entry only
 - [ ] T154 **D3**: analyzer results for analyses that **already exist** continue to flow. Add an explicit test — an inactive unit must still accept results for a pre-existing analysis
-- [ ] T155 **Reflex safety.** Blocking at the `active` layer means reflexes into a deactivated unit stop firing with no user present to notice; a susceptibility reflex silently not firing is a patient-safety event. Define the behaviour and raise an alert (AC: comment 37313 §7). Do not close M4 without this
+- [ ] T155 **Reflex safety (D5): block, and alert.** A reflex whose target test sits in an inactive unit must not generate an analysis, and the block must be visible — a silently-unfired susceptibility reflex is a patient-safety event. Gate at the reflex creation path and raise an alert the lab can see (AC: comment 37313 §7). Do not close M4 without this
 - [ ] T156 Verify `LU-W-11`, `LU-W-12`, `TO-1`..`TO-5` flip
 
 ---
