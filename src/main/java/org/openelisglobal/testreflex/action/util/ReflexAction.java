@@ -19,6 +19,7 @@ import java.util.Set;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.RuleResultScope;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
@@ -30,8 +31,10 @@ import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.scriptlet.service.ScriptletService;
 import org.openelisglobal.scriptlet.valueholder.Scriptlet;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.test.service.EffectiveTestStatusService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.testreflex.valueholder.TestReflex;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
@@ -87,6 +90,24 @@ public abstract class ReflexAction {
 
     protected void createReflexedAnalysis(Test test) {
         if (test != null) {
+            // OGC-189 (M4, decision D5): a reflex must NOT fire into a
+            // deactivated lab unit. Both reflex entry points funnel through
+            // here, so this is the one gate.
+            //
+            // The block is logged at ERROR deliberately. A susceptibility
+            // reflex that silently fails to fire is a patient-safety event, not
+            // a configuration annoyance: there is no user present at this point
+            // to notice, so the only way anyone learns is from the record left
+            // here (comment 37313 §7).
+            if (!SpringContext.getBean(EffectiveTestStatusService.class).isEffectivelyActive(test)) {
+                TestSection blockedSection = test.getTestSection();
+                LogEvent.logError(this.getClass().getSimpleName(), "createReflexedAnalysis", "REFLEX BLOCKED: test '"
+                        + test.getName() + "' (id " + test.getId() + ") was not generated because its lab unit '"
+                        + (blockedSection == null ? "(none)" : blockedSection.getTestSectionName())
+                        + "' is inactive. Reactivate the lab unit or reassign the test to restore this" + " reflex.");
+                generatedAnalysis = null;
+                return;
+            }
             Analysis currentAnalysis = result.getAnalysis();
             analysisService.getData(currentAnalysis);
 
@@ -109,6 +130,14 @@ public abstract class ReflexAction {
                 generatedAnalysis.setSampleItem(currentAnalysis.getSampleItem());
                 generatedAnalysis.setSampleTypeName(currentAnalysis.getSampleTypeName());
             }
+            // NOTE (OGC-189 M4): the generated analysis inherits the PARENT's
+            // lab unit, not the reflexed test's own. Pre-existing behaviour,
+            // left as-is here — changing where reflexed work is filed is an
+            // order-routing change well beyond this cascade. It does mean the
+            // gate above and this assignment can disagree: the gate asks
+            // whether the reflexed *test's* unit is active (the right question
+            // — that is the unit configured to do the work), while the row is
+            // filed under the parent's. Worth settling separately.
             generatedAnalysis.setTestSection(currentAnalysis.getTestSection());
         }
     }

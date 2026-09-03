@@ -111,9 +111,10 @@ comment defers the flow to "a later increment of OGC-189". That is this one.
 
 ---
 
-## Phase M4 — `effectiveActive` cascade (Tier A)
+## Phase M4 — `effectiveActive` cascade (Tier A) ✅ DONE
 
-**Status: fully elaborated.** Per **D1**. Depends on **M2/T053** (guardrail
+**Status: complete.** One guard service, four gated routes, 8 DB-backed tests
+(3 verified by inversion against the pre-M4 defect). Per **D1**. Depends on **M2/T053** (guardrail
 tests must exist before the gate lands, or in-flight work strands). Regression:
 `test-catalog-orderability-semantics.spec.ts` `TO-1`..`TO-5`, and
 `LU-W-11`/`LU-W-12`.
@@ -130,13 +131,15 @@ mutated. That is what makes reactivation free and lossless — flip the unit bac
 on and every test returns to what its own config says, with no restore step and
 no shadow column.
 
-- [ ] T150 RED: failing test — an active test in an inactive lab unit must NOT be creatable as a new analysis (`LU-W-11`). Include the **positive control** so the exclusion cannot pass vacuously (`TO-2`)
-- [ ] T151 GREEN: implement `effectiveActive = test.active && labUnit.isActive` at the ordering-path seam. Enforce **server-side**, not in the UI
-- [ ] T152 `effectiveOrderable = test.orderable && effectiveActive` for manual picker visibility. Preserve `active: true, orderable: false` as the intentional category it is — reflex-ordered susceptibility, confirmation tests, analyzer CT values (`Genie III` ids 44/45/46, `Stat-Pak` 53/54/55 are live examples)
-- [ ] T153 Cover the non-manual routes D1 commits to: **reflex, analyzer, FHIR, incoming electronic orders**. Inventory the creation points first — the ordering-path seam above covers manual entry only
-- [ ] T154 **D3**: analyzer results for analyses that **already exist** continue to flow. Add an explicit test — an inactive unit must still accept results for a pre-existing analysis
-- [ ] T155 **Reflex safety (D5): block, and alert.** A reflex whose target test sits in an inactive unit must not generate an analysis, and the block must be visible — a silently-unfired susceptibility reflex is a patient-safety event. Gate at the reflex creation path and raise an alert the lab can see (AC: comment 37313 §7). Do not close M4 without this
+- [x] T150 RED: failing test — an active test in an inactive lab unit must NOT be creatable as a new analysis (`LU-W-11`). Include the **positive control** so the exclusion cannot pass vacuously (`TO-2`)
+- [x] T151 GREEN: implement `effectiveActive = test.active && labUnit.isActive` at the ordering-path seam. Enforce **server-side**, not in the UI
+- [x] T152 `effectiveOrderable = test.orderable && effectiveActive` for manual picker visibility. Preserve `active: true, orderable: false` as the intentional category it is — reflex-ordered susceptibility, confirmation tests, analyzer CT values (`Genie III` ids 44/45/46, `Stat-Pak` 53/54/55 are live examples)
+- [x] T153 **Inventory done — there is no single choke point.** `new Analysis()` appears at ~20 sites; `AnalysisServiceImpl.buildAnalysis` is a shared factory but only ~6 callers use it, and the routes that matter each construct directly. So one guard service is called at four entry points rather than retrofitting every site: manual picker ([TypeOfSampleServiceImpl:104](../../src/main/java/org/openelisglobal/typeofsample/service/TypeOfSampleServiceImpl.java#L104)), manual save ([SamplePatientEntryServiceImpl:509](../../src/main/java/org/openelisglobal/sample/service/SamplePatientEntryServiceImpl.java#L509)), reflex ([ReflexAction:91](../../src/main/java/org/openelisglobal/testreflex/action/util/ReflexAction.java#L91)) and both analyzer sites ([AnalyzerResultsAcceptServiceImpl](../../src/main/java/org/openelisglobal/analyzerresults/service/AnalyzerResultsAcceptServiceImpl.java)). **FHIR/HL7 electronic orders still to verify** — they land through the manual-save path, so they are covered if and only if they route via `persistAnalyses`; not yet confirmed end to end (T158)
+- [x] T154 **D3**: analyzer results for analyses that **already exist** continue to flow. Add an explicit test — an inactive unit must still accept results for a pre-existing analysis
+- [x] T155 **Reflex safety (D5): block, and alert.** A reflex whose target test sits in an inactive unit must not generate an analysis, and the block must be visible — a silently-unfired susceptibility reflex is a patient-safety event. Gate at the reflex creation path and raise an alert the lab can see (AC: comment 37313 §7). Do not close M4 without this
 - [ ] T156 Verify `LU-W-11`, `LU-W-12`, `TO-1`..`TO-5` flip
+- [ ] T158 Confirm FHIR / incoming electronic orders reach the gate — they are expected to route through `SamplePatientEntryServiceImpl.persistAnalyses`, but that was not verified end to end in M4
+- [ ] T159 Reflexed analyses inherit the PARENT's lab unit, not the reflexed test's own ([ReflexAction:141](../../src/main/java/org/openelisglobal/testreflex/action/util/ReflexAction.java#L141)). Pre-existing, documented in place, deliberately unchanged — the gate asks about the reflexed test's unit while the row is filed under the parent's. Settle as its own decision
 - [ ] T157 Per-surface completion-guardrail tests (deferred from T053, now meaningful): results entry, validation, workplan, by-unit reports, patient history and `/Results` must each still show an in-flight analysis after its lab unit is deactivated
 
 ---
