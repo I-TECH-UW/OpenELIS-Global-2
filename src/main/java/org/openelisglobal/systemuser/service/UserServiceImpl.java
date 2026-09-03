@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.log.LogEvent;
@@ -62,6 +63,8 @@ public class UserServiceImpl implements UserService {
     private SystemUserService systemUserService;
     @Autowired
     private RoleService roleService;
+    @Autowired
+    private AnalysisService analysisService;
     @Autowired
     private TypeOfSampleService typeOfSampleService;
     @Autowired
@@ -174,6 +177,47 @@ public class UserServiceImpl implements UserService {
         if (deletedUserRoles.size() > 0) {
             userRoleService.deleteAll(deletedUserRoles);
         }
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<IdValuePair> getUserViewerTestSections(String systemUserId, String roleId) {
+        // Start from the authorized active set, so this can only ever add units
+        // the user is already entitled to see — never widen authorization.
+        List<IdValuePair> active = getUserTestSections(systemUserId, roleId);
+        Set<String> pendingSectionIds = analysisService.getTestSectionIdsWithPendingAnalyses();
+        if (pendingSectionIds.isEmpty()) {
+            return active;
+        }
+        Set<String> alreadyListed = active.stream().map(IdValuePair::getId).collect(Collectors.toSet());
+
+        // Which inactive units may this user see? Re-derive from their lab-unit
+        // roles rather than trusting the caller: an admin (or ALL_LAB_UNITS)
+        // sees every one, anyone else only their assigned units.
+        String adminRoleId = roleService.getRoleByName(Constants.ROLE_GLOBAL_ADMIN).getId();
+        boolean isAdmin = userRoleService.getRoleIdsForUser(systemUserId).contains(adminRoleId);
+        List<String> userLabUnits = new ArrayList<>();
+        UserLabUnitRoles userLabRoles = getUserLabUnitRoles(systemUserId);
+        if (userLabRoles != null) {
+            userLabRoles.getLabUnitRoleMap().forEach(roles -> {
+                if (roleId == null || roles.getRoles().contains(roleId)) {
+                    userLabUnits.add(roles.getLabUnit());
+                }
+            });
+        }
+        boolean allLabUnits = isAdmin || userLabUnits.contains(UnifiedSystemUserController.ALL_LAB_UNITS);
+
+        List<IdValuePair> result = new ArrayList<>(active);
+        for (IdValuePair inactive : DisplayListService.getInstance().getList(ListType.TEST_SECTION_INACTIVE)) {
+            // Only inactive units that still hold in-flight work come back, so
+            // an emptied-then-deactivated unit disappears immediately while one
+            // switched off mid-run stays reachable until that run finishes.
+            if (!alreadyListed.contains(inactive.getId()) && pendingSectionIds.contains(inactive.getId())
+                    && (allLabUnits || userLabUnits.contains(inactive.getId()))) {
+                result.add(inactive);
+            }
+        }
+        return result;
     }
 
     @Override

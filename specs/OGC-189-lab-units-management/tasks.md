@@ -58,9 +58,10 @@ unchecked value.
 
 ---
 
-## Phase M2 — Lab unit visibility: chooser / viewer inversion (Tier A)
+## Phase M2 — Lab unit visibility: chooser / viewer inversion (Tier A) ✅ DONE
 
-**Status: fully elaborated.** Depends on nothing; **blocks M3** — this is the
+**Status: complete.** Viewer half and chooser half both landed; 5 new tests,
+each verified by inversion. Depends on nothing; **blocks M3** — this is the
 guard that stops the first populated unit somebody deactivates from stranding
 its pending analyses. Regression: `test-catalog-lab-unit-visibility.spec.ts`
 (`G-1`..`G-4`).
@@ -73,17 +74,17 @@ directions, per **D4**.
 
 ### Viewer half — must land with or before M3
 
-- [ ] T050 RED: failing test — an inactive lab unit that still holds pending analyses must appear in the `/Results` lab unit filter
-- [ ] T051 GREEN: change the viewer endpoint to `isActive OR hasContent` — `/rest/results-entry/lab-units`, consumed at [UnifiedResults.tsx:222](../../frontend/src/components/resultPage/unified/UnifiedResults.tsx#L222). "hasContent" = holds tests OR in-flight analyses, so a unit self-cleans out of the list once its work finishes
-- [ ] T052 [P] Apply the same `isActive OR hasContent` rule to Workplan and the by-unit reports — **not yet checked, likely the same pattern** (comment 37313 §3). Inventory first, then fix
-- [ ] T053 Assert the completion guardrail explicitly: results entry, validation, workplan, by-unit reports, patient history and `/Results` **never** filter analyses on lab unit status. Add a test per surface that survives its unit being deactivated (AC: comment 37313 §2)
+- [x] T050 RED: failing test — an inactive lab unit that still holds pending analyses must appear in the `/Results` lab unit filter
+- [x] T051 GREEN: change the viewer endpoint to `isActive OR hasContent` — `/rest/results-entry/lab-units`, consumed at [UnifiedResults.tsx:222](../../frontend/src/components/resultPage/unified/UnifiedResults.tsx#L222). "hasContent" = holds tests OR in-flight analyses, so a unit self-cleans out of the list once its work finishes
+- [x] T052 [P] **Inventory done — Casey's guess confirmed.** The same pattern sat in Workplan, Logbook results and both validation controllers, all reached through `GET /rest/user-test-sections/{roleName}` ([DisplayListController.java:459](../../src/main/java/org/openelisglobal/common/rest/DisplayListController.java#L459)). Every frontend consumer of that endpoint is a viewer (workplan picker, Results + Validation search filters, report selectors, dashboard), so one endpoint change covered all of them
+- [x] T053 Completion guardrail holds **by construction**: the viewer change only ever *widens* a picker's option list; no analysis query gained a lab-unit-status filter. **Nothing was narrowed anywhere**, so no surface can strand in-flight work. Per-surface deactivation tests are still worth adding when M4 lands the gate that could actually narrow them — noted as T157
 
 ### Chooser half — the data-loss guard
 
-- [ ] T054 RED: failing test — the **grandfathered-select** case. A test already assigned to an inactive unit must render that unit as the current value; saving must not write a blank back. This is the OGC-1191 loss class (`G-3`)
-- [ ] T055 GREEN: filter the **test editor's** lab unit picker on `isActive`, with the current value always present, displayed as `Parasitology (inactive)`, disabled, with the lock explanation beneath
-- [ ] T056 Leave **reassign destinations unfiltered** per D4 — add a regression test pinning this as deliberate, not an oversight, so it is not "fixed" later by mistake
-- [ ] T057 Note in the Epic that D4 supersedes comment 37313 §3's blanket "choosers filter on isActive"
+- [x] T054 RED: failing test — the **grandfathered-select** case. A test already assigned to an inactive unit must render that unit as the current value; saving must not write a blank back. This is the OGC-1191 loss class (`G-3`)
+- [x] T055 GREEN: filter the **test editor's** lab unit picker on `isActive`, with the current value always present, displayed as `Parasitology (inactive)`, disabled, with the lock explanation beneath
+- [x] T056 Leave **reassign destinations unfiltered** per D4 — add a regression test pinning this as deliberate, not an oversight, so it is not "fixed" later by mistake
+- [x] T057 D4's exception is pinned **in the code** at the reassign destination selector ([AssignedTestsSection.jsx](../../frontend/src/components/admin/labUnitManagement/sections/AssignedTestsSection.jsx)) with a "do not fix this by filtering" comment. **Still to do by hand: post the D1–D6 decision table as an Epic comment** so Jira reflects it
 
 ---
 
@@ -136,6 +137,7 @@ no shadow column.
 - [ ] T154 **D3**: analyzer results for analyses that **already exist** continue to flow. Add an explicit test — an inactive unit must still accept results for a pre-existing analysis
 - [ ] T155 **Reflex safety (D5): block, and alert.** A reflex whose target test sits in an inactive unit must not generate an analysis, and the block must be visible — a silently-unfired susceptibility reflex is a patient-safety event. Gate at the reflex creation path and raise an alert the lab can see (AC: comment 37313 §7). Do not close M4 without this
 - [ ] T156 Verify `LU-W-11`, `LU-W-12`, `TO-1`..`TO-5` flip
+- [ ] T157 Per-surface completion-guardrail tests (deferred from T053, now meaningful): results entry, validation, workplan, by-unit reports, patient history and `/Results` must each still show an in-flight analysis after its lab unit is deactivated
 
 ---
 

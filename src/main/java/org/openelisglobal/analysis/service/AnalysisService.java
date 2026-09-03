@@ -46,6 +46,18 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
     List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<String> statusIdList,
             boolean sortedByDateAndAccession);
 
+    /**
+     * OGC-189 (M2): ids of the lab units (test sections) that still hold in-flight
+     * work — at least one analysis not yet Finalized, Canceled or rejected.
+     *
+     * <p>
+     * Drives the "isActive OR hasContent" rule for viewer controls, so a
+     * deactivated unit stays on worklists until its pending analyses are finished
+     * and then drops out by itself. Never used to gate order entry — choosers
+     * filter on {@code isActive} alone.
+     */
+    Set<String> getTestSectionIdsWithPendingAnalyses();
+
     List<Analysis> getMaxRevisionAnalysesBySampleIncludeCanceled(SampleItem sampleItem);
 
     List<Analysis> getAnalysisByTestNamesAndCompletedDateRange(List<String> testNames, Date lowDate, Date highDate);

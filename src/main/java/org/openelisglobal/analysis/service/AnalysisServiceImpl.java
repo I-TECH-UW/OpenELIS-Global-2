@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
@@ -465,6 +466,26 @@ public class AnalysisServiceImpl extends AuditableBaseObjectServiceImpl<Analysis
     public List<Analysis> getAllAnalysisByTestSectionAndStatus(String sectionId, List<String> statusList,
             boolean sortedByDateAndAccession) {
         return baseObjectDAO.getAllAnalysisByTestSectionAndStatus(sectionId, statusList, sortedByDateAndAccession);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public Set<String> getTestSectionIdsWithPendingAnalyses() {
+        IStatusService statusService = SpringContext.getBean(IStatusService.class);
+        // "Pending" = not yet reached a terminal state. Finalized and Canceled
+        // are done; the rejection statuses are dead ends the lab cannot act on
+        // any further, so none of them keep a unit on the worklists.
+        List<String> terminalStatuses = new ArrayList<>();
+        for (StatusService.AnalysisStatus status : new StatusService.AnalysisStatus[] {
+                StatusService.AnalysisStatus.Finalized, StatusService.AnalysisStatus.Canceled,
+                StatusService.AnalysisStatus.SampleRejected, StatusService.AnalysisStatus.TechnicalRejected,
+                StatusService.AnalysisStatus.BiologistRejected, StatusService.AnalysisStatus.RejectedByReferenceLab }) {
+            String id = statusService.getStatusID(status);
+            if (id != null) {
+                terminalStatuses.add(id);
+            }
+        }
+        return new HashSet<>(baseObjectDAO.getTestSectionIdsWithAnalysesNotInStatus(terminalStatuses));
     }
 
     @Override
