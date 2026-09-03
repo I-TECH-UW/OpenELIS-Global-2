@@ -5563,6 +5563,7 @@
   "label.testCatalog.basicInfo.name.helper": "The display name is translated — edit it in the Localization section.",
   "label.testCatalog.basicInfo.reportingName": "Reporting name",
   "label.testCatalog.basicInfo.labUnit": "Lab Unit",
+  "label.testCatalog.basicInfo.labUnit.inactive": "{name} (inactive)",
   "label.testCatalog.basicInfo.createInactiveHint": "The test is created Inactive. Configure its sections, then activate it to make it orderable.",
   "sidenav.label.environmental.compliance.tooltip": "Environmental Compliance Dashboard",
   "site.search.helper": "Type at least 2 characters to auto-search. Required for routing results back to the requesting site.",

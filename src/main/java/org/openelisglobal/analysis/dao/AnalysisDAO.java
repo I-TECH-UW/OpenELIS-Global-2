@@ -77,6 +77,19 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
     List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<String> statusIdList,
             boolean sortedByDateAndAccession) throws LIMSRuntimeException;
 
+    /**
+     * OGC-189 (M2): the test section ids that still hold at least one analysis
+     * whose status is NOT in {@code excludedStatusIdList} — i.e. in-flight work.
+     *
+     * <p>
+     * Drives the "isActive OR hasContent" rule for viewer controls: a deactivated
+     * lab unit stays visible on worklists exactly as long as it still has work to
+     * finish, then drops out on its own. One query for every section rather than
+     * one per section, because it populates a dropdown.
+     */
+    List<String> getTestSectionIdsWithAnalysesNotInStatus(List<String> excludedStatusIdList)
+            throws LIMSRuntimeException;
+
     List<Analysis> getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId, List<String> statusIdList)
             throws LIMSRuntimeException;
 
