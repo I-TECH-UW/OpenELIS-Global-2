@@ -71,7 +71,7 @@ public class AlertRestController extends ControllerUtills {
             @RequestBody AcknowledgeAlertRequest request, HttpServletRequest httpRequest) {
         try {
             Integer userId = Integer.valueOf(getSysUserId(httpRequest));
-            Alert acknowledgedAlert = alertService.acknowledgeAlert(id, userId);
+            Alert acknowledgedAlert = alertService.acknowledgeAlert(id, userId, request.getNotes());
             return ResponseEntity.ok(convertToDTO(acknowledgedAlert));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().build();
@@ -142,6 +142,7 @@ public class AlertRestController extends ControllerUtills {
         dto.setAcknowledgedAt(alert.getAcknowledgedAt());
         dto.setAcknowledgedBy(
                 alert.getAcknowledgedBy() != null ? Integer.parseInt(alert.getAcknowledgedBy().getId()) : null);
+        dto.setAcknowledgmentNotes(alert.getAcknowledgmentNotes());
         dto.setResolvedAt(alert.getResolvedAt());
         dto.setResolvedBy(alert.getResolvedBy() != null ? Integer.parseInt(alert.getResolvedBy().getId()) : null);
         dto.setResolutionNotes(alert.getResolutionNotes());

@@ -9,6 +9,7 @@ import java.util.stream.Collectors;
 import org.openelisglobal.coldstorage.dao.FreezerDAO;
 import org.openelisglobal.coldstorage.service.FreezerService;
 import org.openelisglobal.coldstorage.valueholder.Freezer;
+import org.openelisglobal.storage.service.CodeGenerationService;
 import org.openelisglobal.storage.service.StorageLocationService;
 import org.openelisglobal.storage.valueholder.StorageDevice;
 import org.springframework.stereotype.Service;
@@ -20,10 +21,13 @@ public class FreezerServiceImpl implements FreezerService {
 
     private final FreezerDAO freezerDAO;
     private final StorageLocationService storageLocationService;
+    private final CodeGenerationService codeGenerationService;
 
-    public FreezerServiceImpl(FreezerDAO freezerDAO, StorageLocationService storageLocationService) {
+    public FreezerServiceImpl(FreezerDAO freezerDAO, StorageLocationService storageLocationService,
+            CodeGenerationService codeGenerationService) {
         this.freezerDAO = freezerDAO;
         this.storageLocationService = storageLocationService;
+        this.codeGenerationService = codeGenerationService;
     }
 
     @Override
@@ -277,37 +281,19 @@ public class FreezerServiceImpl implements FreezerService {
     }
 
     /**
-     * Generates a code for a StorageDevice based on the device name. Converts name
-     * to uppercase, removes non-alphanumeric chars, and truncates to 50 chars.
-     */
-    private String generateDeviceCode(String name) {
-        if (name == null || name.isBlank()) {
-            return "DEV";
-        }
-        String cleanedName = name.toUpperCase().replaceAll("[^A-Z0-9]", "");
-        return cleanedName.substring(0, Math.min(50, cleanedName.length()));
-    }
-
-    /**
-     * generateDeviceCode is a pure function of the name, and deleteFreezer leaves
-     * the old device row in place, so recreating a deleted freezer under the same
-     * name would collide with uk_device_code_in_room (issue #3904). Suffix until
-     * the code is free within the room.
+     * The device code is derived from the name, and deleteFreezer leaves the old
+     * device row in place, so recreating a deleted freezer under the same name
+     * would collide with uk_device_code_in_room (issue #3904).
+     *
+     * <p>
+     * Delegated to CodeGenerationService because the code has to survive
+     * StorageLocationService.insert's validation, which rejects anything over
+     * CodeValidationServiceImpl.MAX_CODE_LENGTH characters - both the base code and
+     * the suffixed retry.
      */
     private String uniqueDeviceCodeInRoom(String name, Integer roomId) {
-        String baseCode = generateDeviceCode(name);
         Set<String> takenCodes = storageLocationService.getDevicesByRoom(roomId).stream().map(StorageDevice::getCode)
-                .filter(Objects::nonNull).collect(Collectors.toSet());
-        if (!takenCodes.contains(baseCode)) {
-            return baseCode;
-        }
-        String truncatedBase = baseCode.substring(0, Math.min(46, baseCode.length()));
-        for (int suffix = 2; suffix < 10000; suffix++) {
-            String candidate = truncatedBase + suffix;
-            if (!takenCodes.contains(candidate)) {
-                return candidate;
-            }
-        }
-        throw new IllegalArgumentException("Unable to derive a free storage device code for name: " + name);
+                .filter(Objects::nonNull).map(String::toUpperCase).collect(Collectors.toSet());
+        return codeGenerationService.generateCodeWithConflictResolution(name, "device", takenCodes);
     }
 }

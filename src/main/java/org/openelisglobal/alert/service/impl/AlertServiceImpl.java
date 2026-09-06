@@ -81,6 +81,12 @@ public class AlertServiceImpl extends BaseObjectServiceImpl<Alert, Long> impleme
     @Override
     @Transactional
     public Alert acknowledgeAlert(Long alertId, Integer userId) {
+        return acknowledgeAlert(alertId, userId, null);
+    }
+
+    @Override
+    @Transactional
+    public Alert acknowledgeAlert(Long alertId, Integer userId, String acknowledgmentNotes) {
         Alert alert = alertDAO.get(alertId)
                 .orElseThrow(() -> new IllegalArgumentException("Alert not found: " + alertId));
 
@@ -92,6 +98,9 @@ public class AlertServiceImpl extends BaseObjectServiceImpl<Alert, Long> impleme
         alert.setStatus(AlertStatus.ACKNOWLEDGED);
         alert.setAcknowledgedAt(OffsetDateTime.now());
         alert.setAcknowledgedBy(user);
+        if (acknowledgmentNotes != null && !acknowledgmentNotes.isBlank()) {
+            alert.setAcknowledgmentNotes(acknowledgmentNotes);
+        }
 
         Alert updatedAlert = alertDAO.update(alert);
         eventPublisher.publishEvent(new AlertAcknowledgedEvent(this, updatedAlert, userId.longValue()));

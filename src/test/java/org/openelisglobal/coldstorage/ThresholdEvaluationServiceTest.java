@@ -238,6 +238,30 @@ public class ThresholdEvaluationServiceTest extends BaseWebContextSensitiveTest 
     }
 
     @Test
+    public void evaluateStatusWithHysteresis_shouldEscalateWhenPollGapExceedsTheLookbackWindow() {
+        // Ultra-Low Freezer Profile (id=100) has min_excursion_minutes=5. A lab polling
+        // every 15 minutes never lands a prior reading inside a lookback window derived
+        // from the profile alone, so the breach would never accumulate any duration.
+        Long freezerId = 100L;
+        Freezer freezer = freezerService.findById(freezerId).orElse(null);
+        assertNotNull("Freezer should exist", freezer);
+        OffsetDateTime now = OffsetDateTime.now();
+        ThresholdProfile profile = thresholdEvaluationService.resolveActiveProfile(freezer, now);
+        assertNotNull("Profile should be resolved", profile);
+
+        BigDecimal criticalTemperature = new BigDecimal("-74.0"); // above critical max (-75.0)
+
+        freezerReadingService.saveReading(freezer, now.minusMinutes(15), criticalTemperature, null, null,
+                FreezerReading.Status.CRITICAL, true, null);
+
+        FreezerReading.Status status = thresholdEvaluationService.evaluateStatus(criticalTemperature, null, profile,
+                freezer, now);
+
+        assertEquals("A breach sustained across a poll gap wider than the lookback window must escalate",
+                FreezerReading.Status.CRITICAL, status);
+    }
+
+    @Test
     public void evaluateStatusWithHysteresis_shouldFallBackToInstantaneousWithoutFreezerContext() {
         ThresholdProfile profile = new ThresholdProfile();
         profile.setCriticalMax(new BigDecimal("-75.0"));

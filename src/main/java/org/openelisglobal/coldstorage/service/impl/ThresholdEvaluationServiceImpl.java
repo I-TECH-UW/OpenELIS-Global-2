@@ -83,20 +83,13 @@ public class ThresholdEvaluationServiceImpl implements ThresholdEvaluationServic
     private FreezerReading.Status applyMinExcursionHysteresis(Freezer freezer, OffsetDateTime timestamp,
             ThresholdProfile profile, FreezerReading.Status instantaneousStatus) {
         int minExcursionMinutes = profile.getMinExcursionMinutes();
-        // Widen the query rather than requiring a reading to land exactly on the window
-        // boundary.
-        OffsetDateTime lookupStart = timestamp.minusMinutes((long) minExcursionMinutes * 2);
         List<FreezerReading> priorReadings;
         try {
-            priorReadings = freezerReadingService.getReadingsBetween(freezer.getId(), lookupStart, timestamp);
+            priorReadings = loadPriorReadings(freezer.getId(), timestamp, minExcursionMinutes);
         } catch (Exception ex) {
             LOGGER.warn("Unable to load recent readings for hysteresis check on freezer {}: {}", freezer.getId(),
                     ex.getMessage());
             return instantaneousStatus;
-        }
-
-        if (priorReadings == null || priorReadings.isEmpty()) {
-            return FreezerReading.Status.NORMAL;
         }
 
         // Walk backward accumulating a continuous same-or-worse-severity streak,
@@ -123,6 +116,29 @@ public class ThresholdEvaluationServiceImpl implements ThresholdEvaluationServic
             return instantaneousStatus;
         }
         return FreezerReading.Status.NORMAL;
+    }
+
+    /**
+     * Readings recorded before {@code timestamp} that the breach streak is measured
+     * over.
+     *
+     * <p>
+     * The poll interval is configured independently of the profile and can be wider
+     * than any profile-derived window, so a window that comes back empty falls back
+     * to the immediately preceding reading however old it is. Without that fallback
+     * a device polled less often than {@code minExcursionMinutes * 2} accumulates
+     * no breach duration on any poll and never alerts.
+     */
+    private List<FreezerReading> loadPriorReadings(Long freezerId, OffsetDateTime timestamp, int minExcursionMinutes) {
+        OffsetDateTime lookupStart = timestamp.minusMinutes((long) minExcursionMinutes * 2);
+        List<FreezerReading> windowReadings = freezerReadingService.getReadingsBetween(freezerId, lookupStart,
+                timestamp);
+        if (windowReadings != null && !windowReadings.isEmpty()) {
+            return windowReadings;
+        }
+        return freezerReadingService.getLatestReading(freezerId)
+                .filter(reading -> reading.getRecordedAt() != null && reading.getRecordedAt().isBefore(timestamp))
+                .map(List::of).orElseGet(List::of);
     }
 
     private FreezerReading.Status evaluateInstantaneousStatus(BigDecimal temperature, BigDecimal humidity,

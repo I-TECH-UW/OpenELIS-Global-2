@@ -4,13 +4,16 @@
   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
   xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
 
+  <property name="now" value="now()" dbms="postgresql"/>
+
   <changeSet id="3.5.0-089-add-freezer-offline-alert-type" author="mherman22">
     <preConditions onFail="MARK_RAN">
       <tableExists schemaName="clinlims" tableName="alert"/>
     </preConditions>
     <comment>Add FREEZER_OFFLINE to alert_type CHECK constraint so an unresponsive device can raise its own alert. The
       constraint is redeclared wholesale by every changeset that touches it, so this list is 086's union plus
-      FREEZER_OFFLINE and this changeset must stay last in base.xml among the changesets that declare it.</comment>
+      FREEZER_OFFLINE and no changeset anywhere in base-changelog.xml may redeclare chk_alert_type after this one -
+      including the analyzer/ and qc/ changelogs, which base-changelog.xml includes after 3.5.x.x/base.xml.</comment>
     <sql>
       ALTER TABLE clinlims.alert DROP CONSTRAINT IF EXISTS chk_alert_type;
       ALTER TABLE clinlims.alert ADD CONSTRAINT chk_alert_type
@@ -131,8 +134,18 @@
   </changeSet>
 
   <changeSet id="3.5.0-089-freezer-name-unique-partial-index" author="mherman22">
+    <!-- Guard on the index this creates, not just on its prerequisite column: this file was renamed from
+         070-cold-storage-monitoring-hardening.xml, and liquibase keys on filename+id+author, so on a database
+         that ran the pre-rename file every changeset here is replayed as new work. Preconditions are outside
+         the changeset checksum, so tightening this one leaves already-recorded runs valid. -->
     <preConditions onFail="MARK_RAN">
-      <columnExists tableName="freezer" columnName="deleted" schemaName="clinlims"/>
+      <and>
+        <columnExists tableName="freezer" columnName="deleted" schemaName="clinlims"/>
+        <sqlCheck expectedResult="0">
+          SELECT COUNT(*) FROM pg_indexes
+          WHERE schemaname = 'clinlims' AND indexname = 'idx_freezer_name_active'
+        </sqlCheck>
+      </and>
     </preConditions>
     <comment>Replace freezer.name's unconditional unique constraint with a partial index scoped to deleted=false so a soft-deleted name can be reused (issue #3904).</comment>
     <!-- freezer.name's unique constraint had no explicit name, so Postgres auto-named it freezer_name_key (see 024-freezer-monitoring-schema.xml). -->

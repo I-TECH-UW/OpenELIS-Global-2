@@ -446,6 +446,18 @@ const AlertDetailModal = ({ intl, alertId, open, onClose }) => {
               </div>
             )}
 
+            {alert.acknowledgmentNotes && (
+              <div className="oe-coldStorage-alertModalField">
+                <p className="oe-coldStorage-alertModalFieldLabel">
+                  <FormattedMessage
+                    id="freezer.alert.detail.acknowledgmentNotes"
+                    defaultMessage="Acknowledgment Notes"
+                  />
+                </p>
+                <p>{alert.acknowledgmentNotes}</p>
+              </div>
+            )}
+
             {alert.resolutionNotes && (
               <div className="oe-coldStorage-alertModalField">
                 <p className="oe-coldStorage-alertModalFieldLabel">

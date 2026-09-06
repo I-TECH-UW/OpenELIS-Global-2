@@ -34,6 +34,7 @@ public class AlertDTO {
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private OffsetDateTime acknowledgedAt;
     private Integer acknowledgedBy;
+    private String acknowledgmentNotes;
     @JsonFormat(shape = JsonFormat.Shape.STRING)
     private OffsetDateTime resolvedAt;
     private Integer resolvedBy;

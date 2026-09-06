@@ -324,6 +324,31 @@ public class AlertFlowIntegrationTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
+    public void testSustainedBreachEscalatesWhenPollGapExceedsHysteresisWindow() throws InterruptedException {
+        // Freezer 102 / profile 3 keeps the default 5-minute minExcursionMinutes,
+        // polled
+        // here every 15 minutes: the second breaching poll has to raise the alert.
+        Long freezerId = 102L;
+        Freezer freezer = freezerService.findById(freezerId).orElse(null);
+        assertNotNull("Freezer should exist", freezer);
+
+        BigDecimal criticalTemp = new BigDecimal("5.0"); // Above -20°C critical max
+        OffsetDateTime firstPoll = OffsetDateTime.now().minusMinutes(15);
+
+        readingIngestionService.ingest(freezer, firstPoll, criticalTemp, null, null, true, null);
+        Thread.sleep(500);
+        assertTrue("Hysteresis should still suppress the alert on the first breach",
+                alertService.getAlertsByEntity("Freezer", freezerId).isEmpty());
+
+        readingIngestionService.ingest(freezer, firstPoll.plusMinutes(15), criticalTemp, null, null, true, null);
+        Thread.sleep(500);
+
+        List<Alert> alerts = alertService.getAlertsByEntity("Freezer", freezerId);
+        assertEquals("A breach still present a poll later must escalate", 1, alerts.size());
+        assertEquals(AlertType.FREEZER_TEMPERATURE, alerts.get(0).getAlertType());
+    }
+
+    @Test
     public void testOfflineAlertRequiresConsecutiveFailures() throws InterruptedException {
         // Default threshold is 3 consecutive transmission failures.
         Long freezerId = 100L;

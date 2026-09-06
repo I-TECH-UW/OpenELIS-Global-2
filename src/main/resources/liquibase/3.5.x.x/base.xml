@@ -393,10 +393,14 @@
   <include relativeToChangelogFile="true" file="097-remove-openelis-analyzer-error-queue.xml"/>
   <include relativeToChangelogFile="true" file="098-remove-superseded-analyzer-schema.xml"/>
 
-  <!-- Cold-storage monitoring hardening (issues #3743/#3904). Runs last because its first
-       changeset redeclares chk_alert_type wholesale (086's union plus FREEZER_OFFLINE);
-       anything that redeclares that constraint after it drops FREEZER_OFFLINE again. -->
+  <!-- Cold-storage monitoring hardening (issues #3743/#3904). Its first changeset redeclares
+       chk_alert_type wholesale (086's union plus FREEZER_OFFLINE), so anything that redeclares that
+       constraint after it - anywhere later in base-changelog.xml, which also includes analyzer/ and
+       qc/ after this file - drops FREEZER_OFFLINE again. -->
   <include relativeToChangelogFile="true" file="089-cold-storage-monitoring-hardening.xml"/>
+
+  <!-- Acknowledgment notes on alert, so the detail modal's notes field is no longer dropped on acknowledge. -->
+  <include relativeToChangelogFile="true" file="090-alert-acknowledgment-notes.xml"/>
 
 
 </databaseChangeLog>

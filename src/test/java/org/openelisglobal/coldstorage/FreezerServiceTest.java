@@ -153,13 +153,41 @@ public class FreezerServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
+    public void createFreezer_shouldAcceptANameLongerThanTheDeviceCodeLimit() {
+        // Issue #3904 item 1: a realistic device name has more than 10 alphanumeric
+        // characters, and the derived storage-device code has to fit the limit the
+        // code validator enforces or the device cannot be created at all.
+        Freezer freezer = new Freezer();
+        freezer.setName("Vaccine Fridge 01");
+        freezer.setProtocol(Freezer.Protocol.TCP);
+        freezer.setHost("192.168.1.205");
+        freezer.setPort(502);
+        freezer.setSlaveId(15);
+        freezer.setTemperatureRegister(0);
+        freezer.setTemperatureScale(BigDecimal.ONE);
+        freezer.setTemperatureOffset(BigDecimal.ZERO);
+        StorageDevice deviceRequest = new StorageDevice();
+        deviceRequest.setType("freezer");
+        freezer.setStorageDevice(deviceRequest);
+
+        Freezer created = freezerService.createFreezer(freezer, 1L, "1");
+
+        assertNotNull("Freezer with a long name should be created", created.getStorageDevice());
+        assertTrue("Derived device code must fit the code-length limit",
+                created.getStorageDevice().getCode().length() <= 10);
+    }
+
+    @Test
     public void createFreezer_shouldNotReuseADeletedDevicesStorageDeviceCode() {
         // Regression test for issue #3904: deleteFreezer only flips freezer.deleted, so
         // the storage_device row it auto-created survives. Recreating the freezer under
         // the same name derived the same code again and collided with
-        // uk_device_code_in_room (parent_room_id, code).
+        // uk_device_code_in_room (parent_room_id, code). The name is deliberately long
+        // enough to fill the 10-character code budget, so the suffixed retry has to
+        // stay
+        // inside it rather than being rejected by the code-length validator.
         Freezer first = new Freezer();
-        first.setName("pcr");
+        first.setName("Freezer001");
         first.setProtocol(Freezer.Protocol.TCP);
         first.setHost("192.168.1.203");
         first.setPort(502);
@@ -176,7 +204,7 @@ public class FreezerServiceTest extends BaseWebContextSensitiveTest {
         freezerService.deleteFreezer(createdFirst.getId());
 
         Freezer second = new Freezer();
-        second.setName("pcr");
+        second.setName("Freezer001");
         second.setProtocol(Freezer.Protocol.TCP);
         second.setHost("192.168.1.204");
         second.setPort(502);

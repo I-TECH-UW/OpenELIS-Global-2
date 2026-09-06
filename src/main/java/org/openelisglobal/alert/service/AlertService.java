@@ -46,6 +46,16 @@ public interface AlertService extends BaseObjectService<Alert, Long> {
     Alert acknowledgeAlert(Long alertId, Integer userId);
 
     /**
+     * Acknowledge an alert, recording the acknowledging user's notes.
+     *
+     * @param alertId             Alert ID
+     * @param userId              User ID who acknowledged the alert
+     * @param acknowledgmentNotes Free-text note, may be null
+     * @return Updated alert
+     */
+    Alert acknowledgeAlert(Long alertId, Integer userId, String acknowledgmentNotes);
+
+    /**
      * Resolve an alert (transition ACKNOWLEDGED → RESOLVED).
      *
      * <p>

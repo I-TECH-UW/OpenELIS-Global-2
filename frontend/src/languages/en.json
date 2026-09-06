@@ -2964,6 +2964,7 @@
   "freezer.alert.detail.acknowledge": "Acknowledge",
   "freezer.alert.detail.acknowledgedAt": "Acknowledged At",
   "freezer.alert.detail.acknowledgedBy": "Acknowledged By",
+  "freezer.alert.detail.acknowledgmentNotes": "Acknowledgment Notes",
   "freezer.alert.detail.actions": "Actions Taken",
   "freezer.alert.detail.close": "Close",
   "freezer.alert.detail.correctiveAction": "Corrective Action",
