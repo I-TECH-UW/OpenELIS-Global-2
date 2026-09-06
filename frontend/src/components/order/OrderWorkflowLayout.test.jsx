@@ -32,7 +32,15 @@ vi.mock("./OrderContext", () => ({
     UNSAVED: "unsaved",
   },
 }));
-vi.mock("../common/PageBreadCrumb", () => ({ default: () => null }));
+vi.mock("../common/PageBreadCrumb", () => ({
+  default: ({ breadcrumbs }) => (
+    <nav>
+      {breadcrumbs.map((crumb) => (
+        <span key={crumb.label}>{messages[crumb.label] || crumb.label}</span>
+      ))}
+    </nav>
+  ),
+}));
 vi.mock("./OrderContextCard", () => ({ default: () => null }));
 vi.mock("./BarcodeScannerBar", () => ({ default: () => null }));
 vi.mock("./SaveNavigationButtons", () => ({ default: () => null }));
@@ -58,6 +66,12 @@ describe("the state after the entry step saves", () => {
     orderContextValue.saveStatus = "saved";
     orderContextValue.isDirty = false;
     orderContextValue.labNumber = "LAB-42";
+  });
+
+  it("leads with the domain action, not a generic order parent", () => {
+    renderLayout();
+    expect(screen.getByText("Add Clinical Order")).toBeInTheDocument();
+    expect(screen.queryByText("Add Generic Order")).not.toBeInTheDocument();
   });
 
   it("names the saved order and offers the next step", async () => {

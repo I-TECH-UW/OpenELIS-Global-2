@@ -194,7 +194,11 @@ remediation iterations below.
    becomes one direct action per domain under the main menu, with the generic
    parent retired, because the authoritative order-entry design requires it and
    the current nesting is drift. Which domains a deployment shows is
-   deployment configuration; AMR shows Add Clinical Order alone. The repository
+   deployment configuration through the existing menu allowlist; the review
+   host shows all three, since hiding domains a build contains would
+   misrepresent it to reviewers (an earlier draft said "AMR shows Add Clinical
+   Order alone"; that clause came from the Codex analysis, not a decision, and
+   was struck on 2026-09-06). The repository
    specification's "supported Add Order workflow" wording is reconciled through
    `/speckit.clarify` before the change lands. The authoritative design's
    longer-term mechanism is per-user visibility driven by the domain of a
@@ -324,7 +328,7 @@ dependencies remain independent work and do not reorder that product sequence.
     and that exact head is deployed to the review host.
   - The first-isolate and no-growth human-review stories are rerun on that
     deployment. The order-entry findings stay open and are answered by R14.
-- [ ] **R14: microbiology data only on qualifying orders.** The order-entry
+- [x] **R14: microbiology data only on qualifying orders.** The order-entry
   invariant. Starts when R13 reaches `[x]`; its branch may start earlier.
 
   1. **Reproduce first, as failing tests.** A culture order followed by a new
@@ -363,7 +367,7 @@ dependencies remain independent work and do not reorder that product sequence.
   checkpoint; that head is deployed to the review host; and the affected
   order-entry review stories are rerun.
 
-- [ ] **R15: clean state, atomic save, and unambiguous completion.** Shared
+- [x] **R15: clean state, atomic save, and unambiguous completion.** Shared
   order-workflow correctness for all three domains, not microbiology-only. The
   authoritative order-entry design already records clean state and
   non-fatal, recoverable validation as defects to fix.
@@ -390,7 +394,7 @@ dependencies remain independent work and do not reorder that product sequence.
   checks are green at the exact head; that head is deployed; and the
   order-entry review stories for all three domains are rerun.
 
-- [ ] **R16: canonical order-entry navigation.** Corrects the navigation drift
+- [x] **R16: canonical order-entry navigation.** Corrects the navigation drift
   for every deployment.
 
   1. **Reconcile the specification first.** Run `/speckit.clarify` so the
@@ -401,16 +405,25 @@ dependencies remain independent work and do not reorder that product sequence.
      workflow and keep their own submenus; the generic parent is retired. This
      is a shipped navigation change, so existing deployments are considered
      and the change is reversible.
-  3. **Each deployment shows the domains it uses.** Deployment configuration
-     selects which order-entry actions appear; the review host shows Add
-     Clinical Order alone and no legacy order entry. Proof: the review host's
-     menu shows exactly one order-entry action, every other entry visible
-     before the change remains visible, and other deployments are unaffected.
+  3. **Each deployment can restrict the domains it shows.** The existing menu
+     allowlist (`volume/menu/menu_config.json` `includes`, enabled by
+     `org.openelisglobal.menu.configuration.autocreate`) lists all three
+     actions so a site can keep the ones it uses; nothing new is invented for
+     this. The review host shows all three. Proof: the sample configuration
+     offers the three actions and cannot select the retired parent; on the
+     review host, a signed-in user sees the three actions directly under
+     Order with their submenus and no generic parent.
   4. **Do not fabricate per-user visibility.** The authoritative design scopes
      order-entry actions by the domain of a user's assigned lab units. That
      depends on lab-unit domain assignment and the department and role scoping
      work; until those exist, deployment configuration is the mechanism and no
      parallel scoping model is invented.
+
+  **Reached `[x]` on 2026-09-06.** Deployed to amr.openelis-global.org at
+  `39dccac646` (health and smoke passed); a signed-in user sees the three domain
+  actions directly under Order with their submenus; UAT story AMR-S01 reads the
+  new path. Required checks green at that head across #4192-#4196. This roadmap
+  commit is the only delta between that deployed head and the branch tip.
 
   **Reaches `[x]` when:** the specification is reconciled; the navigation
   change and its reversal are proven; required checks are green at the exact

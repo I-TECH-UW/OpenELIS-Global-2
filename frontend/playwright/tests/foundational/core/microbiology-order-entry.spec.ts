@@ -390,7 +390,7 @@ test.describe("microbiology order entry on the supported workflow", () => {
     // application, so any state held from the culture order would still be
     // present.
     await page
-      .getByRole("link", { name: "Add Generic Order", exact: true })
+      .getByRole("link", { name: "Add Clinical Order", exact: true })
       .click();
     await expect(page).toHaveURL(/\/order\/clinical$/i, {
       timeout: LONG_TIMEOUT,

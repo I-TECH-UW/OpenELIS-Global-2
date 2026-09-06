@@ -157,9 +157,15 @@ const OrderWorkflowLayout = ({
     return "/order/clinical";
   })();
 
+  const workflowLabel = {
+    "/order/vector": "sidenav.label.vector.order",
+    "/order/environmental": "sidenav.label.environmental.order",
+    "/order/clinical": "sidenav.label.clinical.order",
+  }[workflowRoot];
+
   const breadcrumbs = [
     { label: "home.label", link: "/" },
-    { label: "sidenav.label.addorder", link: workflowRoot },
+    { label: workflowLabel, link: workflowRoot },
     {
       label: steps[activeStep]?.label || "order.step.enter",
       link: steps[activeStep]?.path || `${workflowRoot}/enter`,

@@ -477,4 +477,7 @@
   <!-- OGC-782 R11: capture the explicit clinical or screening culture purpose -->
   <include relativeToChangelogFile="true" file="088-microbiology-culture-purpose.xml"/>
 
+  <!-- OGC-782 R16: one direct order-entry action per domain; the generic parent is retired -->
+  <include relativeToChangelogFile="true" file="089-order-entry-domain-actions.xml"/>
+
 </databaseChangeLog>
