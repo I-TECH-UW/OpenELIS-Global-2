@@ -149,15 +149,19 @@ capability is available; it does not own macro authoring or administration.
 
 ### Target Clinical Order-Entry Behavior
 
-This is the target behavior for the R14 clinical order-entry remediation. It
-does not change `spec.md`; items that depend on a ruling are listed under
-Rulings Required and stay open until Piotr rules.
+This is the target behavior the clinical order-entry remediation delivers,
+across the iterations below. It does not change `spec.md`; the decisions that
+shaped it are recorded under Order-Entry Rulings.
 
-1. Navigation exposes one clinical order-entry action, Add Clinical Order,
-   which opens Enter Order. The legacy Add Order screen stays reachable only
+1. Order entry appears as one action per domain directly under the main menu:
+   Add Clinical Order, Add Environmental Order, Add Vector Order, each opening
+   its own workflow with its own submenus and none of them nested under a
+   generic parent. A deployment shows only the domains it uses, so AMR shows
+   Add Clinical Order alone. The legacy Add Order screen stays reachable only
    through existing direct links and is not extended.
-2. Every new order starts clean, whichever entry point starts it: no selected
-   tests, no derived program, and no microbiology values.
+2. Every new order starts clean, whichever entry point starts it and whichever
+   domain it belongs to. No requester, program, sample, test, or microbiology
+   value from a previous order persists into the next one.
 3. One rule decides microbiology eligibility everywhere: a selected
    culture-workflow test first, an explicitly selected Microbiology program
    only as fallback. The same rule drives the microbiology details tile,
@@ -175,28 +179,45 @@ Rulings Required and stay open until Piotr rules.
    stops qualifying before a case exists. An established case never loses its
    details.
 8. A successful requested-stage save presents one unambiguous completed or
-   next-action state and cannot create a second order by repetition. This item
-   awaits a ruling.
-9. Number of sets means culture collection groups; specimen quantity means
-   count or volume. Their display rule awaits a ruling.
+   next-action state and cannot create a second order by repetition, in the
+   shared save path used by all three domains.
+9. Number of sets means culture collection groups and appears on every
+   microbiology order, bounded one to ten with the specimen-derived default.
+   Specimen quantity means count or volume and stays separate.
 
-### Rulings Required Before the Affected Changes
+### Order-Entry Rulings
 
-Record each answer here and reconcile `spec.md` through `/speckit.clarify`
-before changing the affected code:
+Decided 2026-09-06. These close the open questions and set the scope of the
+remediation iterations below.
 
-1. **Navigation structure.** OpenELIS Work requires a direct per-domain action,
-   Add Clinical Order, rather than a generic parent. `spec.md` FR-002 and
-   SC-001 say "the supported Add Order workflow". Reconcile that wording and
-   confirm that AMR presents Add Clinical Order through configuration only.
-2. **Number of sets display rule.** Show it on every microbiology order, or
-   only for protocols that use sets.
-3. **Post-submit state.** Whether the current successful-save state is the
-   shared order-workflow pattern, in which case the review instruction changes
-   instead of the application.
-4. **Stale microbiology drafts.** Whether measured, ineligible draft rows are
-   cleaned up or left inert. No destructive cleanup happens without this
-   ruling.
+1. **Navigation is corrected for every deployment, not only AMR.** Order entry
+   becomes one direct action per domain under the main menu, with the generic
+   parent retired, because the authoritative order-entry design requires it and
+   the current nesting is drift. Which domains a deployment shows is
+   deployment configuration; AMR shows Add Clinical Order alone. The repository
+   specification's "supported Add Order workflow" wording is reconciled through
+   `/speckit.clarify` before the change lands. The authoritative design's
+   longer-term mechanism is per-user visibility driven by the domain of a
+   user's assigned lab units, which depends on lab-unit domain assignment and
+   the department/role scoping work; deployment configuration is the interim
+   mechanism and does not preclude it.
+2. **Number of sets appears on every microbiology order.** The field keeps its
+   one-to-ten bound and its specimen-derived default. A protocol-conditional
+   display would need per-method catalog metadata that does not exist, and
+   would degrade to always-visible until it did.
+3. **Completion state is fixed in the shared workflow.** A successful
+   requested-stage save must present one unambiguous completed or next-action
+   state and must not allow the same order to be submitted twice. This is the
+   shared save path, so clinical, environmental, and vector all receive the
+   behavior and all three journeys are re-verified. No microbiology-only
+   redirect is introduced.
+4. **No stale-draft cleanup is required.** Verified on 2026-09-06: the
+   microbiology order-detail service, its table, and its migration are absent
+   from the trunk, so no merged or released database can hold these rows. Only
+   the review host and ephemeral development and continuous-integration
+   databases are affected, and the review host is demo data. The server-side
+   eligibility check alone is the fix; no counting task and no destructive
+   cleanup are carried.
 
 ## Roadmap Status
 
@@ -303,82 +324,102 @@ dependencies remain independent work and do not reorder that product sequence.
     and that exact head is deployed to the review host.
   - The first-isolate and no-growth human-review stories are rerun on that
     deployment. The order-entry findings stay open and are answered by R14.
-- [ ] **R14: clinical order-entry remediation.** A small stacked PR on top of
-  R13. It becomes the active iteration when R13 reaches `[x]`; its branch may
-  start earlier. Deliver the Target Clinical Order-Entry Behavior above in this
-  order. Each step names what proves it.
+- [ ] **R14: microbiology data only on qualifying orders.** The order-entry
+  invariant. Starts when R13 reaches `[x]`; its branch may start earlier.
 
-  1. **Reproduce first, as failing tests.** Culture order, start a new order,
+  1. **Reproduce first, as failing tests.** A culture order followed by a new
      normal order; a normal-order requested-stage save on a service-created
      catalog; a failed requested-specimen save after the order saved. Each
      scenario gets one focused test at its natural level. A scenario that does
      not reproduce is recorded as disproved with rerun evidence and changes no
      order behavior.
-  2. **One clinical order-entry action on AMR.** Configuration only: the
-     application menu configuration is carried in R14, and the AMR-only switch
-     is carried in the review-tooling deployment overlay. No database
-     migration. Proof: the Order menu on AMR shows exactly one order-entry
-     action, Add Clinical Order, opening Enter Order; the legacy Add Order,
-     environmental, and vector entries are absent; every other entry visible
-     before the change remains visible; other deployments are unchanged. Do
-     not enable the shipped menu allowlist as it stands; it omits the current
-     order-entry tree and other live entries.
-  3. **One eligibility rule.** Proof: unit coverage for culture-test-first,
+  2. **One eligibility rule.** Proof: unit coverage for culture-test-first,
      program fallback, and neither; the details tile, Program derivation and
      lock, readiness, and the outgoing payload all change together when the
-     rule changes; the legacy screen uses the same rule and is not extended;
-     confirmation before discard and Program returning editable are covered.
-  4. **Fresh order state.** Proof: the sequence test from step 1 passes from
-     every entry point that starts a new order. Introduce fresh-state factories
-     only if step 1 shows values leaking between orders.
-  5. **Microbiology data only when eligible.** Proof: a normal order's
-     requested-stage and collected-stage payloads contain no microbiology
-     detail and a culture order's do; builder tests cover both modes.
-  6. **One saving implementation with requested and collected modes.** Proof:
-     clinical, environmental, and vector orders keep their current behavior
-     under existing component tests and registered Playwright journeys.
-  7. **Atomic requested-order save.** Proof, with an inversion check: a failure
-     persisting a requested specimen leaves no order; saving the requested
-     stage again creates no duplicate requested specimens; the client no longer
-     saves specimens one call at a time.
-  8. **Server-side eligibility and draft lifecycle.** Proof, with inversion
+     rule changes; the legacy screen consults the same rule and is not
+     extended; confirmation before discard and Program returning editable are
+     covered.
+  3. **Microbiology data only when eligible.** Proof: a normal order's
+     requested-stage and collected-stage payloads carry no microbiology detail
+     and a culture order's do; the order defaults no longer carry it.
+  4. **Server-side eligibility and draft lifecycle.** Proof, with inversion
      checks: a normal order save stores no microbiology draft even when the
      request includes microbiology detail; a culture order save stores one;
-     removing eligibility before collection deletes the pre-case draft; an
+     removing eligibility before collection discards the pre-case draft; an
      established case's details are never deleted; reloading a normal order
      returns no microbiology detail.
-  9. **Stale drafts inert and measured.** Proof: no consumer surfaces or acts
-     on a draft for an ineligible order; a repeatable count of ineligible draft
-     rows is produced for the review host; no destructive cleanup in this
-     iteration.
-  10. **Completion state and sets display.** After the pending rulings: one
-      unambiguous completed or next-action state that cannot create a second
-      order by repetition, or a corrected review instruction; and labels and
-      review instructions that use the ruled sets-versus-quantity display rule.
-  11. **Regression coverage.** Unit coverage for the rule and the builder;
-      component coverage for tile visibility and Program lock and discard;
-      service integration coverage for draft absence, presence, and discard,
-      atomic save with rollback, and idempotent re-save; and one registered
-      Playwright journey: culture order, start a new order, normal order, with
-      no microbiology fields, no worklist row, and no microbiology detail on
-      reload.
+  5. **Number of sets.** Present on every microbiology order with its bound and
+     specimen-derived default, described so it cannot be read as specimen
+     quantity, in the workflow and in the review instructions alike.
+  6. **Regression coverage.** Unit coverage for the rule; component coverage
+     for tile visibility, Program lock, and discard; service integration
+     coverage for draft absence, presence, and discard; and one registered
+     end-to-end journey: culture order, start a new order, normal order, with
+     no microbiology fields, no worklist row, and no microbiology detail on
+     reload.
 
-  **Reaches `[x]` when:**
+  **Reaches `[x]` when:** every proof above passes plus one code-qa pass;
+  required checks are green at the exact head, including the end-to-end
+  checkpoint; that head is deployed to the review host; and the affected
+  order-entry review stories are rerun.
 
-  - Every step's proof above passes, plus one code-qa pass at the slice
-    boundary.
-  - Required checks are green at the exact head, including the E2E checkpoint,
-    and that exact head is deployed to the review host.
-  - Unclear or misfiled review instructions in Grist are corrected with
-    submitted answers preserved and each actionable answer linked to R14, and
-    the order-entry human-review stories are rerun. Issue state is not
-    mirrored here.
+- [ ] **R15: clean state, atomic save, and unambiguous completion.** Shared
+  order-workflow correctness for all three domains, not microbiology-only. The
+  authoritative order-entry design already records clean state and
+  non-fatal, recoverable validation as defects to fix.
 
-  **Outside this iteration:** Retiring the legacy Add Order route is
+  1. **Every new order starts clean.** No requester, program, sample, or test
+     value from a previous order persists into the next one, from any entry
+     point that starts a new order, in any domain. Proof: the sequence test
+     from R14 plus per-domain coverage.
+  2. **One submission implementation with requested and collected modes.**
+     Proof: clinical, environmental, and vector keep their current behavior
+     under existing component coverage and registered journeys.
+  3. **The order and its requested specimens save together.** Proof, with an
+     inversion check: a failure persisting a requested specimen leaves no
+     order behind; saving the requested stage again creates no duplicate
+     requested specimens.
+  4. **Validation stays recoverable.** A blocked save surfaces correctable
+     inline errors rather than an unrecoverable failure.
+  5. **Completion is unambiguous.** A successful requested-stage save presents
+     one clear completed or next-action state and cannot submit the same order
+     twice. Proof: per-domain journeys, and the review instruction updated to
+     match the shipped behavior.
+
+  **Reaches `[x]` when:** the proofs pass plus one code-qa pass; required
+  checks are green at the exact head; that head is deployed; and the
+  order-entry review stories for all three domains are rerun.
+
+- [ ] **R16: canonical order-entry navigation.** Corrects the navigation drift
+  for every deployment.
+
+  1. **Reconcile the specification first.** Run `/speckit.clarify` so the
+     specification names the domain-scoped order-entry actions instead of "the
+     supported Add Order workflow", and land that before the navigation change.
+  2. **One action per domain, directly under the main menu.** Add Clinical
+     Order, Add Environmental Order, and Add Vector Order each open their own
+     workflow and keep their own submenus; the generic parent is retired. This
+     is a shipped navigation change, so existing deployments are considered
+     and the change is reversible.
+  3. **Each deployment shows the domains it uses.** Deployment configuration
+     selects which order-entry actions appear; the review host shows Add
+     Clinical Order alone and no legacy order entry. Proof: the review host's
+     menu shows exactly one order-entry action, every other entry visible
+     before the change remains visible, and other deployments are unaffected.
+  4. **Do not fabricate per-user visibility.** The authoritative design scopes
+     order-entry actions by the domain of a user's assigned lab units. That
+     depends on lab-unit domain assignment and the department and role scoping
+     work; until those exist, deployment configuration is the mechanism and no
+     parallel scoping model is invented.
+
+  **Reaches `[x]` when:** the specification is reconciled; the navigation
+  change and its reversal are proven; required checks are green at the exact
+  head; that head is deployed; and the navigation review stories are rerun.
+
+  **Outside these iterations:** Retiring the legacy Add Order route is
   develop-level work outside OGC-782: move its remaining capabilities, repoint
   links and navigation, keep a parameter-preserving redirect, then remove the
-  screen. Rebuilding the shipped menu allowlist against the current menu tree
-  is a distribution task, not an AMR blocker.
+  screen. Stale microbiology draft rows need no cleanup; see the rulings above.
 - [ ] Complete M-09 readiness and repair for patient origins, patient types,
   departments, breakpoint standards, and phenotype flags, reusing each owning
   catalog and avoiding parallel mapping stores.

@@ -8697,6 +8697,7 @@
   "microbiology.orderDetail.cultureMethod": "Culture Protocol",
   "microbiology.orderDetail.hint": "Capture the order context the lab needs for culture setup and critical-result follow-up.",
   "microbiology.orderDetail.numberOfSets": "Number of sets",
+  "microbiology.orderDetail.numberOfSets.helper": "Collection groups, such as two blood-culture sets drawn from different sites. Not the specimen count or volume.",
   "microbiology.orderDetail.patientOrigin": "Patient origin",
   "microbiology.orderDetail.protocolDerived": "Derived",
   "microbiology.orderDetail.protocolHelper": "From the ordered test. Change it at the bench if the workup differs.",

@@ -137,6 +137,15 @@ public class MicroCaseOrderDetailServiceImpl implements MicroCaseOrderDetailServ
         return form;
     }
 
+    @Override
+    @Transactional
+    public void discardOrderDraft(String sampleId) {
+        if (sampleId == null || sampleId.trim().isEmpty()) {
+            return;
+        }
+        orderDetailDAO.deleteDraftBySampleId(sampleId);
+    }
+
     private void apply(MicroCaseOrderDetail detail, MicroCaseOrderDetailRequestForm request,
             boolean requireCulturePurpose) {
         String patientOrigin = request.patientOrigin == null ? null

@@ -197,6 +197,29 @@ describe("MicrobiologyOrderEntrySection", () => {
     );
   });
 
+  it("starts a qualifying order at the clinical purpose the backend requires", () => {
+    renderSection(
+      [
+        {
+          tests: [
+            {
+              id: "2",
+              name: "Blood culture",
+              cultureWorkflowType: "BACTERIOLOGY",
+            },
+          ],
+          sampleTypeName: "Blood",
+        },
+      ],
+      {},
+      vi.fn(),
+    );
+
+    expect(
+      screen.getByRole("radio", { name: "Clinical diagnosis or treatment" }),
+    ).toBeChecked();
+  });
+
   it("shows an unset protocol without adding a blocking input", () => {
     renderSection(
       [

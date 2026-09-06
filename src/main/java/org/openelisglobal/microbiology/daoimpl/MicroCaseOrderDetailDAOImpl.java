@@ -38,6 +38,14 @@ public class MicroCaseOrderDetailDAOImpl extends BaseDAOImpl<MicroCaseOrderDetai
     }
 
     @Override
+    public void deleteDraftBySampleId(String sampleId) {
+        MicroCaseOrderDetail draft = getDraftBySampleId(sampleId);
+        if (draft != null) {
+            delete(draft);
+        }
+    }
+
+    @Override
     @Transactional(readOnly = true)
     public List<MicroCaseOrderDetail> getByCaseIds(List<String> caseIds) {
         if (caseIds == null || caseIds.isEmpty()) {

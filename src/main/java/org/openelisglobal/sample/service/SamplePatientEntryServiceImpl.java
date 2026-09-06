@@ -408,7 +408,12 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
             sampleService.insertDataWithAccessionNumber(updateData.getSample());
         }
 
-        persistMicrobiologyOrderDraft(updateData.getSample(), microbiologyOrderDetail, updateData.getCurrentUserId());
+        if (isMicrobiologyOrder(updateData)) {
+            persistMicrobiologyOrderDraft(updateData.getSample(), microbiologyOrderDetail,
+                    updateData.getCurrentUserId());
+        } else {
+            discardMicrobiologyOrderDraft(updateData.getSample());
+        }
 
         for (SampleAdditionalField field : updateData.getSampleFields()) {
             field.setSample(updateData.getSample());
@@ -529,11 +534,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
                     persistAnalysisNotificationConfigs(analysis, updateData);
                 }
             }
-            boolean microbiologyProgramSelected = updateData.getProgramSample() != null
-                    && updateData.getProgramSample().getProgram() != null
-                    && "MICROBIOLOGY".equalsIgnoreCase(updateData.getProgramSample().getProgram().getCode());
             routeMicrobiologyCases(savedItem, sampleTestCollection, updateData.getCurrentUserId(),
-                    microbiologyOrderDetail, microbiologyProgramSelected);
+                    microbiologyOrderDetail, microbiologyProgramSelected(updateData));
         }
 
         org.openelisglobal.sample.valueholder.Sample submittedSample = updateData.getSample();
@@ -634,12 +636,59 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         return quantity != null && quantity > 0 ? quantity : 1;
     }
 
+    private boolean microbiologyProgramSelected(SamplePatientUpdateData updateData) {
+        return updateData.getProgramSample() != null && updateData.getProgramSample().getProgram() != null
+                && "MICROBIOLOGY".equalsIgnoreCase(updateData.getProgramSample().getProgram().getCode());
+    }
+
+    /**
+     * Order-entry details are microbiology data, so they are kept only for an order
+     * the server itself considers microbiology. A submitted payload never makes an
+     * order microbiology.
+     */
+    private boolean isMicrobiologyOrder(SamplePatientUpdateData updateData) {
+        if (microOrderRoutingService == null) {
+            return false;
+        }
+        // The submitted collection carries id-only tests, so the catalog attributes
+        // that decide the workflow are read from the persisted test.
+        List<Test> orderedTests = new ArrayList<>();
+        if (updateData.getSampleItemsTests() != null) {
+            for (SampleTestCollection sampleTestCollection : updateData.getSampleItemsTests()) {
+                if (sampleTestCollection.tests == null) {
+                    continue;
+                }
+                for (Test submittedTest : sampleTestCollection.tests) {
+                    if (submittedTest == null || submittedTest.getId() == null) {
+                        continue;
+                    }
+                    Test catalogTest = testService.get(submittedTest.getId());
+                    if (catalogTest != null) {
+                        orderedTests.add(catalogTest);
+                    }
+                }
+            }
+        }
+        return microOrderRoutingService.isMicrobiologyOrder(orderedTests, microbiologyProgramSelected(updateData));
+    }
+
     void persistMicrobiologyOrderDraft(org.openelisglobal.sample.valueholder.Sample sample,
             org.openelisglobal.microbiology.form.MicroCaseOrderDetailRequestForm orderDetail, String performedBy) {
         if (microCaseOrderDetailService == null || sample == null || sample.getId() == null || orderDetail == null) {
             return;
         }
         microCaseOrderDetailService.saveOrderDraft(sample, orderDetail, performedBy);
+    }
+
+    /**
+     * An order that stops qualifying before collection loses the details it
+     * captured; once a case exists they belong to the case and stay.
+     */
+    private void discardMicrobiologyOrderDraft(org.openelisglobal.sample.valueholder.Sample sample) {
+        if (microCaseOrderDetailService == null || sample == null || sample.getId() == null) {
+            return;
+        }
+        microCaseOrderDetailService.discardOrderDraft(sample.getId());
     }
 
     private void routeMicrobiologyCases(SampleItem sampleItem, SampleTestCollection sampleTestCollection,

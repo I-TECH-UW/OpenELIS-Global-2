@@ -4,6 +4,7 @@ import { useIntl } from "react-intl";
 import { formatMicrobiologyEnum } from "./MicrobiologyLabels";
 import MicrobiologyOrderDetailFields, {
   emptyMicrobiologyOrderDetail,
+  newMicrobiologyOrderDetail,
 } from "./MicrobiologyOrderDetailFields";
 import { getPatientOrigins } from "./MicrobiologyService";
 
@@ -62,10 +63,14 @@ const MicrobiologyOrderEntrySection = ({
     return Array.from(byId.values());
   }, [methodSourceTests]);
 
-  const existingFields = {
-    ...emptyMicrobiologyOrderDetail,
-    ...orderFormValues.microbiologyOrderDetail,
-  };
+  // A qualifying order starts from fresh values; an order that already carries
+  // details keeps exactly what it has, including a historically unset purpose.
+  const existingFields = orderFormValues.microbiologyOrderDetail
+    ? {
+        ...emptyMicrobiologyOrderDetail,
+        ...orderFormValues.microbiologyOrderDetail,
+      }
+    : newMicrobiologyOrderDetail();
   const defaultMethod = methods.find((method) => method.isDefault);
   const isBloodCulture = samples.some((sample) =>
     sample.sampleTypeName?.toLowerCase().includes("blood"),

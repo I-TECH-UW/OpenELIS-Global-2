@@ -10,5 +10,11 @@ public interface MicroCaseOrderDetailDAO extends BaseDAO<MicroCaseOrderDetail, S
 
     MicroCaseOrderDetail getDraftBySampleId(String sampleId);
 
+    /**
+     * Removes the pre-case draft for a sample. Details already tied to a case are
+     * never touched.
+     */
+    void deleteDraftBySampleId(String sampleId);
+
     List<MicroCaseOrderDetail> getByCaseIds(List<String> caseIds);
 }

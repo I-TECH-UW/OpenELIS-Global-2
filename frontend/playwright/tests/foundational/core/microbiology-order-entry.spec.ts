@@ -375,6 +375,37 @@ test.describe("microbiology order entry on the supported workflow", () => {
     });
   });
 
+  test("starts a clean order after a culture order", async ({ page }) => {
+    test.setTimeout(180_000);
+    const seeded = await seedOrderCatalog(page);
+
+    await startSupportedOrder(page, seeded);
+    await selectTest(page, cultureTestName);
+    await fillMicrobiologyDetails(page);
+    await saveEntryAndOpenCollect(page);
+    await collectAndRoute(page);
+
+    const routineLabNumber = await startSupportedOrder(page, seeded);
+    await expect(
+      page.getByTestId("microbiology-order-entry-section"),
+    ).toHaveCount(0);
+    await selectTest(page, nonCultureTestName);
+    await expect(
+      page.getByTestId("microbiology-order-entry-section"),
+    ).toHaveCount(0);
+    await expect(page.getByRole("combobox", { name: "Program" })).toBeEnabled();
+    await saveEntryAndOpenCollect(page);
+    await collectAndRoute(page);
+
+    await page.goto(
+      `/Microbiology/worklist?q=${encodeURIComponent(routineLabNumber)}`,
+      { waitUntil: "domcontentloaded" },
+    );
+    await expect(page.getByText(/No cultures match/)).toBeVisible({
+      timeout: LONG_TIMEOUT,
+    });
+  });
+
   test("confirms before discarding details with the final culture test", async ({
     page,
   }) => {

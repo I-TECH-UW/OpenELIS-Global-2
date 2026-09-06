@@ -17,6 +17,10 @@ import { getFromOpenElisServer } from "../../../utils/Utils";
 import Questionnaire from "../../../common/Questionnaire";
 import VectorFieldSurveyPanel from "./VectorFieldSurveyPanel";
 import MicrobiologyOrderEntrySection from "../../../microbiology/MicrobiologyOrderEntrySection";
+import {
+  hasCultureWorkflowTest,
+  isMicrobiologyOrder,
+} from "../../orderDataUtils";
 
 /**
  * ProgramSection - Program selection with dynamic additional fields
@@ -43,9 +47,7 @@ const ProgramSection = ({
   );
   const [pendingProgram, setPendingProgram] = useState(undefined);
 
-  const hasCultureWorkflow = samples.some((sample) =>
-    (sample.tests || []).some((test) => test.cultureWorkflowType),
-  );
+  const hasCultureWorkflow = hasCultureWorkflowTest(samples);
   const microbiologyProgram = programs.find(
     (program) => program.code?.toUpperCase() === "MICROBIOLOGY",
   );
@@ -60,6 +62,11 @@ const ProgramSection = ({
     ) || null;
   const microbiologyProgramSelected =
     selectedProgram?.code?.toUpperCase() === "MICROBIOLOGY";
+  // The shared rule reads the order, which only names the Microbiology program
+  // once a selection has been written back to it. This section has the resolved
+  // program list, so it also recognises a program selected or loaded by id.
+  const isMicroOrder =
+    isMicrobiologyOrder(orderData, samples) || microbiologyProgramSelected;
   const displayedQuestionnaire = microbiologyProgramSelected
     ? null
     : questionnaire;
@@ -214,6 +221,9 @@ const ProgramSection = ({
   ]);
 
   const applyProgramChange = (selectedItem, discardMicrobiologyDetail) => {
+    const discardedMicrobiologyDetail = discardMicrobiologyDetail
+      ? { microbiologyOrderDetail: undefined }
+      : {};
     if (selectedItem) {
       setOrderData((prev) => ({
         ...prev,
@@ -226,18 +236,7 @@ const ProgramSection = ({
               ? selectedItem.id
               : undefined,
         },
-        ...(discardMicrobiologyDetail
-          ? {
-              microbiologyOrderDetail: {
-                cultureMethodId: "",
-                patientOrigin: "",
-                admissionDate: "",
-                numberOfSets: "",
-                clinicalHistory: "",
-                antibioticExposure: false,
-              },
-            }
-          : {}),
+        ...discardedMicrobiologyDetail,
       }));
       if (selectedItem.code?.toUpperCase() === "MICROBIOLOGY") {
         setQuestionnaire(null);
@@ -253,18 +252,7 @@ const ProgramSection = ({
           additionalQuestions: null,
           microbiologyProgramId: undefined,
         },
-        ...(discardMicrobiologyDetail
-          ? {
-              microbiologyOrderDetail: {
-                cultureMethodId: "",
-                patientOrigin: "",
-                admissionDate: "",
-                numberOfSets: "",
-                clinicalHistory: "",
-                antibioticExposure: false,
-              },
-            }
-          : {}),
+        ...discardedMicrobiologyDetail,
       }));
       setQuestionnaire(null);
     }
@@ -658,15 +646,13 @@ const ProgramSection = ({
         />
       )}
 
-      {(hasCultureWorkflow || microbiologyProgramSelected) && (
-        <MicrobiologyOrderEntrySection
-          samples={samples}
-          orderFormValues={orderData}
-          setOrderFormValues={setOrderData}
-          enabled={hasCultureWorkflow || microbiologyProgramSelected}
-          isReadOnly={isReadOnly}
-        />
-      )}
+      <MicrobiologyOrderEntrySection
+        samples={samples}
+        orderFormValues={orderData}
+        setOrderFormValues={setOrderData}
+        enabled={isMicroOrder}
+        isReadOnly={isReadOnly}
+      />
 
       {/* Additional Order Information - Program Specific */}
       {selectedProgram && (
