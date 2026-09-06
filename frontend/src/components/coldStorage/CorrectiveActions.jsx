@@ -48,7 +48,8 @@ import { NotificationContext } from "../layout/Layout";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { useIntl, FormattedMessage } from "react-intl";
 import AddDeviceModal from "./shared/AddDeviceModal";
-import { toDate } from "./shared/dateUtils";
+import { toDate } from "./shared/timeUtils";
+import { hasRole, Roles } from "../utils/Utils";
 
 const getColumns = (intl) => [
   {
@@ -263,6 +264,9 @@ export default function CorrectiveActions() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
+  // PUT .../retract is @PreAuthorize(hasRole('ADMIN')); showing the button to
+  // anyone else only offers them a 403.
+  const isAdminUser = hasRole(userSessionDetails, Roles.GLOBAL_ADMIN);
 
   const notify = useCallback(
     ({ kind = NotificationKinds.info, title, subtitle, message }) => {
@@ -952,7 +956,8 @@ export default function CorrectiveActions() {
                             >
                               View
                             </Button>
-                            {action &&
+                            {isAdminUser &&
+                              action &&
                               action.status !== "COMPLETED" &&
                               action.status !== "RETRACTED" &&
                               action.status !== "CANCELLED" && (

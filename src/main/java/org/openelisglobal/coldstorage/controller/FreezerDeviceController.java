@@ -178,8 +178,6 @@ public class FreezerDeviceController extends BaseRestController {
         FreezerReading latest = freezerReadingService.getLatestReading(freezer.getId()).orElse(null);
         ThresholdProfile profile = resolveActiveProfile(freezer,
                 latest != null ? latest.getRecordedAt() : OffsetDateTime.now());
-        // Threshold-averaging math lives in ThresholdEvaluationService, not here -
-        // controllers are a thin delegation layer per the 5-layer architecture.
         BigDecimal targetTemperature = thresholdEvaluationService != null
                 ? thresholdEvaluationService.deriveTargetTemperature(profile)
                 : null;

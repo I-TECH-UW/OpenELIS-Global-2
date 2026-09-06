@@ -40,6 +40,17 @@ public class FreezerDAOImpl extends BaseDAOImpl<Freezer, Long> implements Freeze
         return entityManager.unwrap(Session.class).createQuery(hql, Freezer.class).list();
     }
 
+    /**
+     * Includes soft-deleted devices: a report covering a period when a device was
+     * in service must still show its readings after someone tidies it out of the
+     * settings list.
+     */
+    @Override
+    public List<Freezer> getAllFreezersIncludingDeleted() {
+        String hql = "SELECT DISTINCT f FROM Freezer f LEFT JOIN FETCH f.storageDevice ORDER BY f.name";
+        return entityManager.unwrap(Session.class).createQuery(hql, Freezer.class).list();
+    }
+
     @Override
     public List<Freezer> searchFreezers(String search) {
         String hql = "SELECT DISTINCT f FROM Freezer f LEFT JOIN FETCH f.storageDevice "

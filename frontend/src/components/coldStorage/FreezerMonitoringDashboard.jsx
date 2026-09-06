@@ -55,7 +55,6 @@ import DeviceHistoryExpansion from "./DeviceHistoryExpansion";
 import { toDate, formatDuration } from "./shared/timeUtils";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
-import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 
 // Dashboard auto-refresh interval. The backend default Modbus poll cycle is
 // 5 minutes; refreshing every 60s is meaningfully fresher than "never" while
@@ -297,8 +296,6 @@ const formatHumidityDisplay = (value) =>
 function FreezerMonitoringDashboard({ intl }) {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
-  const { userSessionDetails } = useContext(UserSessionDetailsContext);
-  const currentUserId = userSessionDetails?.userId;
   const notify = useCallback(
     ({ kind = NotificationKinds.info, title, subtitle, message }) => {
       setNotificationVisible(true);
@@ -422,24 +419,30 @@ function FreezerMonitoringDashboard({ intl }) {
           [];
 
       setStorageUnits(unitsArray.map(normalizeUnit));
-      setActiveAlerts(alertsArray.map(normalizeAlert));
+      // /rest/alerts returns every alert ever raised against a freezer; a
+      // resolved one is history, not an active alert.
+      setActiveAlerts(
+        alertsArray
+          .map(normalizeAlert)
+          .filter((alert) => alert.status !== "RESOLVED"),
+      );
       setLastUpdated(new Date().toISOString());
     } catch (error) {
-      const isForbidden = error?.status === 403;
+      // getFromOpenElisServerV2 rejects with a plain string, so there is no
+      // status to branch on here - the reads themselves are RECEPTION-or-ADMIN,
+      // the same roles the page is routed to.
       notify({
         kind: NotificationKinds.error,
-        title: isForbidden
-          ? "Access denied"
-          : "Unable to update cold storage data",
-        subtitle: isForbidden
-          ? "You do not have permission to view cold storage monitoring data."
-          : error.message || "Unable to load cold storage monitoring data.",
+        title: intl.formatMessage({ id: "coldStorage.error.updateFailed" }),
+        subtitle:
+          error.message ||
+          intl.formatMessage({ id: "coldStorage.error.loadFailed" }),
       });
     } finally {
       setDashboardLoading(false);
       isFetchingRef.current = false;
     }
-  }, [notify]);
+  }, [notify, intl]);
 
   useEffect(() => {
     loadDashboardData();
@@ -457,52 +460,48 @@ function FreezerMonitoringDashboard({ intl }) {
 
   const handleAlertAction = useCallback(
     async (alertId, action) => {
-      if (!currentUserId) {
-        notify({
-          kind: NotificationKinds.error,
-          title: "Unable to identify current user",
-          subtitle: "Please sign in again before actioning alerts.",
-        });
-        return;
-      }
       setActionInFlight(alertId);
       try {
         if (action === "acknowledge") {
           await acknowledgeAlert(
             alertId,
-            currentUserId,
             "Acknowledged via Cold Storage dashboard",
           );
         } else if (action === "resolve") {
-          await resolveAlert(
-            alertId,
-            currentUserId,
-            "Resolved via Cold Storage dashboard",
-          );
+          await resolveAlert(alertId, "Resolved via Cold Storage dashboard");
         }
         await loadDashboardData();
         notify({
           kind: NotificationKinds.success,
-          title: "Success",
+          title: intl.formatMessage({ id: "notification.success" }),
           subtitle:
             action === "acknowledge"
-              ? "Alert acknowledged successfully"
-              : "Alert resolved successfully",
+              ? intl.formatMessage({ id: "coldStorage.alert.acknowledged" })
+              : intl.formatMessage({ id: "coldStorage.alert.resolved" }),
         });
       } catch (error) {
         const isForbidden = error?.status === 403;
         notify({
           kind: NotificationKinds.error,
-          title: isForbidden ? "Access denied" : "Error",
+          title: isForbidden
+            ? intl.formatMessage({ id: "coldStorage.error.accessDenied" })
+            : intl.formatMessage({ id: "error.title" }),
           subtitle: isForbidden
-            ? `You do not have permission to ${action} this alert.`
-            : error.message || `Unable to ${action} alert ${alertId}`,
+            ? intl.formatMessage(
+                { id: "coldStorage.alert.noActionPermission" },
+                { action },
+              )
+            : error.message ||
+              intl.formatMessage(
+                { id: "coldStorage.alert.actionFailed" },
+                { action, alertId },
+              ),
         });
       } finally {
         setActionInFlight(null);
       }
     },
-    [loadDashboardData, notify, currentUserId],
+    [loadDashboardData, notify, intl],
   );
 
   const handleAcknowledgeAlert = useCallback(
@@ -1171,8 +1170,7 @@ function FreezerMonitoringDashboard({ intl }) {
                                                       size="sm"
                                                       disabled={
                                                         actionInFlight ===
-                                                          alert.id ||
-                                                        !currentUserId
+                                                        alert.id
                                                       }
                                                       onClick={(e) => {
                                                         e.stopPropagation();

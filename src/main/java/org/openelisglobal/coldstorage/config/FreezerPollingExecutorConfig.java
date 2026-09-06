@@ -4,8 +4,10 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
+import org.openelisglobal.security.DaemonContextExecutor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.concurrent.DelegatingSecurityContextExecutorService;
 
 /**
  * Dedicated thread pool for per-device Modbus polling fan-out.
@@ -29,8 +31,16 @@ public class FreezerPollingExecutorConfig {
      */
     private static final int POLL_POOL_SIZE = 8;
 
+    /**
+     * Wrapped in a daemon SecurityContext exactly as
+     * {@code SchedulerConfig.taskExecutor()} wraps the {@code @Scheduled} pool:
+     * ingest() raises alerts through {@code @Async} listeners, and
+     * {@link org.openelisglobal.config.UserContextPropagatingTaskDecorator} rejects
+     * an {@code @Async} submission whose calling thread has no authenticated
+     * context, so a bare pool thread would fail every alert.
+     */
     @Bean(name = "freezerPollingExecutor", destroyMethod = "shutdown")
-    public ExecutorService freezerPollingExecutor() {
+    public ExecutorService freezerPollingExecutor(DaemonContextExecutor daemonContextExecutor) {
         ThreadFactory threadFactory = new ThreadFactory() {
             private final AtomicInteger counter = new AtomicInteger(1);
 
@@ -41,6 +51,7 @@ public class FreezerPollingExecutorConfig {
                 return thread;
             }
         };
-        return Executors.newFixedThreadPool(POLL_POOL_SIZE, threadFactory);
+        return new DelegatingSecurityContextExecutorService(Executors.newFixedThreadPool(POLL_POOL_SIZE, threadFactory),
+                daemonContextExecutor.createDaemonSecurityContext());
     }
 }

@@ -238,8 +238,9 @@ public class SystemConfigService {
     /**
      * Live-read kill switch for {@code ModbusPollingService}'s poll cycle - a plain
      * DB row rather than a static property so an admin can toggle monitoring
-     * without a restart. Defaults to enabled so a fresh install behaves the same as
-     * the previous static-property default.
+     * without a restart. Absent row means enabled, matching the shipped
+     * common.properties, which set the replaced property to true. A site that wants
+     * polling off turns it off on the Site Information screen.
      */
     @Transactional(readOnly = true)
     public boolean isMonitoringEnabled() {

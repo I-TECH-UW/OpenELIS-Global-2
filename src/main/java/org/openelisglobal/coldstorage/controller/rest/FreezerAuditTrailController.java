@@ -67,7 +67,7 @@ public class FreezerAuditTrailController extends BaseRestController {
     @Autowired
     private CorrectiveActionService correctiveActionService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    @PreAuthorize("hasAnyRole('RECEPTION', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<Map<String, Object>>> getAuditTrail(@RequestParam(required = false) Long freezerId,
             @RequestParam(required = false) String start, @RequestParam(required = false) String end) {
@@ -94,7 +94,7 @@ public class FreezerAuditTrailController extends BaseRestController {
                 Freezer freezer = freezerService.findById(freezerId).orElse(null);
                 freezersToCheck = freezer != null ? List.of(freezer) : List.of();
             } else {
-                freezersToCheck = freezerService.getAllFreezers("");
+                freezersToCheck = freezerService.getAllFreezersForReporting();
             }
 
             // Get reference table IDs

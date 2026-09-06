@@ -59,7 +59,7 @@ const postColdStorageJson = (path, payload) =>
     );
   });
 
-export const acknowledgeAlert = async (alertId, userId, notes = "") => {
+export const acknowledgeAlert = async (alertId, notes = "") => {
   return new Promise((resolve, reject) => {
     fetch(`${config.serverBaseUrl}/rest/alerts/${alertId}/acknowledge`, {
       credentials: "include",
@@ -68,7 +68,7 @@ export const acknowledgeAlert = async (alertId, userId, notes = "") => {
         "Content-Type": "application/json",
         "X-CSRF-Token": localStorage.getItem("CSRF"),
       },
-      body: JSON.stringify({ userId, notes }),
+      body: JSON.stringify({ notes }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -92,7 +92,7 @@ export const acknowledgeAlert = async (alertId, userId, notes = "") => {
   });
 };
 
-export const resolveAlert = async (alertId, userId, resolutionNotes) => {
+export const resolveAlert = async (alertId, resolutionNotes) => {
   return new Promise((resolve, reject) => {
     fetch(`${config.serverBaseUrl}/rest/alerts/${alertId}/resolve`, {
       credentials: "include",
@@ -101,7 +101,7 @@ export const resolveAlert = async (alertId, userId, resolutionNotes) => {
         "Content-Type": "application/json",
         "X-CSRF-Token": localStorage.getItem("CSRF"),
       },
-      body: JSON.stringify({ userId, resolutionNotes }),
+      body: JSON.stringify({ resolutionNotes }),
     })
       .then((response) => {
         if (!response.ok) {
@@ -175,16 +175,31 @@ export const createCorrectiveAction = async (
 
 export const updateCorrectiveAction = async (actionId, description, status) => {
   return new Promise((resolve, reject) => {
-    putToOpenElisServer(
+    putToOpenElisServerFullResponse(
       `/rest/coldstorage/corrective-actions/${actionId}`,
       JSON.stringify({ description, status }),
       (response) => {
-        try {
-          const json = JSON.parse(response);
-          resolve(json);
-        } catch (e) {
-          resolve({ success: true });
+        if (!response) {
+          reject(
+            new Error("Failed to update corrective action: network error"),
+          );
+          return;
         }
+        response
+          .json()
+          .catch(() => ({}))
+          .then((json) => {
+            if (!response.ok) {
+              const error = new Error(
+                json.message ||
+                  `Failed to update corrective action: HTTP ${response.status}`,
+              );
+              error.status = response.status;
+              reject(error);
+            } else {
+              resolve(json);
+            }
+          });
       },
     );
   });
@@ -192,16 +207,31 @@ export const updateCorrectiveAction = async (actionId, description, status) => {
 
 export const completeCorrectiveAction = async (actionId, completionNotes) => {
   return new Promise((resolve, reject) => {
-    putToOpenElisServer(
+    putToOpenElisServerFullResponse(
       `/rest/coldstorage/corrective-actions/${actionId}/complete`,
       JSON.stringify({ completionNotes }),
       (response) => {
-        try {
-          const json = JSON.parse(response);
-          resolve(json);
-        } catch (e) {
-          resolve({ success: true });
+        if (!response) {
+          reject(
+            new Error("Failed to complete corrective action: network error"),
+          );
+          return;
         }
+        response
+          .json()
+          .catch(() => ({}))
+          .then((json) => {
+            if (!response.ok) {
+              const error = new Error(
+                json.message ||
+                  `Failed to complete corrective action: HTTP ${response.status}`,
+              );
+              error.status = response.status;
+              reject(error);
+            } else {
+              resolve(json);
+            }
+          });
       },
     );
   });
@@ -209,16 +239,31 @@ export const completeCorrectiveAction = async (actionId, completionNotes) => {
 
 export const retractCorrectiveAction = async (actionId, retractionReason) => {
   return new Promise((resolve, reject) => {
-    putToOpenElisServer(
+    putToOpenElisServerFullResponse(
       `/rest/coldstorage/corrective-actions/${actionId}/retract`,
       JSON.stringify({ retractionReason }),
       (response) => {
-        try {
-          const json = JSON.parse(response);
-          resolve(json);
-        } catch (e) {
-          resolve({ success: true });
+        if (!response) {
+          reject(
+            new Error("Failed to retract corrective action: network error"),
+          );
+          return;
         }
+        response
+          .json()
+          .catch(() => ({}))
+          .then((json) => {
+            if (!response.ok) {
+              const error = new Error(
+                json.message ||
+                  `Failed to retract corrective action: HTTP ${response.status}`,
+              );
+              error.status = response.status;
+              reject(error);
+            } else {
+              resolve(json);
+            }
+          });
       },
     );
   });
@@ -400,12 +445,6 @@ export const fetchFilteredAlerts = async (filters = {}) => {
   if (filters.status) {
     params.append("status", filters.status);
   }
-  if (filters.page !== undefined && filters.page !== null) {
-    params.append("page", filters.page);
-  }
-  if (filters.size !== undefined && filters.size !== null) {
-    params.append("size", filters.size);
-  }
 
   const queryString = params.toString() ? `?${params.toString()}` : "";
   return getFromOpenElisServerV2(`/rest/alerts${queryString}`).then(
@@ -450,15 +489,13 @@ export const fetchAlertDetails = async (alertId) => {
   return getFromOpenElisServerV2(`/rest/alerts/${alertId}`);
 };
 
-export const bulkAcknowledgeAlerts = async (alertIds, userId, notes = "") => {
-  const promises = alertIds.map((id) => acknowledgeAlert(id, userId, notes));
+export const bulkAcknowledgeAlerts = async (alertIds, notes = "") => {
+  const promises = alertIds.map((id) => acknowledgeAlert(id, notes));
   return Promise.all(promises).then(() => ({ success: true }));
 };
 
-export const bulkResolveAlerts = async (alertIds, userId, resolutionNotes) => {
-  const promises = alertIds.map((id) =>
-    resolveAlert(id, userId, resolutionNotes),
-  );
+export const bulkResolveAlerts = async (alertIds, resolutionNotes) => {
+  const promises = alertIds.map((id) => resolveAlert(id, resolutionNotes));
   return Promise.all(promises).then(() => ({ success: true }));
 };
 

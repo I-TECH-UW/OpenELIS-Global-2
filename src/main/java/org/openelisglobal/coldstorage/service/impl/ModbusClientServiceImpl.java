@@ -11,7 +11,6 @@ import com.digitalpetri.modbus.pdu.ReadHoldingRegistersResponse;
 import com.digitalpetri.modbus.serial.client.SerialPortClientTransport;
 import com.digitalpetri.modbus.tcp.client.NettyTcpClientTransport;
 import com.fazecast.jSerialComm.SerialPort;
-import io.netty.channel.ChannelOption;
 import java.math.BigDecimal;
 import java.time.Duration;
 import java.util.Optional;
@@ -113,11 +112,6 @@ public class ModbusClientServiceImpl implements ModbusClientService {
             cfg.setHostname(freezer.getHost());
             cfg.setPort(freezer.getPort());
             cfg.setConnectTimeout(Duration.ofMillis(Math.max(timeoutMillis, MIN_CONNECT_TIMEOUT_MILLIS)));
-            // SO_KEEPALIVE so a routed/VPN path that silently drops idle connections
-            // (NAT/firewall connection-tracking expiry) is detected and torn down by the
-            // OS instead of leaving a half-open socket that fails opaquely on next use
-            // (GitHub issue #3904 cross-subnet disconnection reports).
-            cfg.setBootstrapCustomizer(bootstrap -> bootstrap.option(ChannelOption.SO_KEEPALIVE, true));
         });
 
         ModbusTcpClient client = ModbusTcpClient.create(transport,
@@ -215,9 +209,7 @@ public class ModbusClientServiceImpl implements ModbusClientService {
     /**
      * Decodes 1 or 2 raw 16-bit Modbus holding registers into a signed value,
      * according to the freezer's configured register width and word order, before
-     * applying scale/offset. Defaults (1 register, big-endian/signed short) match
-     * the original hardcoded behavior, so existing configured devices are
-     * unaffected.
+     * applying scale/offset.
      */
     private double convertScaledValue(ReadHoldingRegistersResponse response, int registerCount,
             Freezer.WordOrder wordOrder, BigDecimal scale, BigDecimal offset) throws ModbusResponseException {

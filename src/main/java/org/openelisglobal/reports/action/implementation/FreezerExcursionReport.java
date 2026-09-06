@@ -104,7 +104,7 @@ public class FreezerExcursionReport extends Report implements IReportCreator {
                 }
             } else {
                 // All freezers report
-                List<Freezer> allFreezers = freezerService.getAllFreezers("");
+                List<Freezer> allFreezers = freezerService.getAllFreezersForReporting();
                 for (Freezer freezer : allFreezers) {
                     List<FreezerReading> readings = freezerReadingService.getReadingsBetween(freezer.getId(), start,
                             end);

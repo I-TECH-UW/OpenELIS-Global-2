@@ -432,9 +432,14 @@ function Reports({ devices = [] }) {
           }
           notify({
             kind: NotificationKinds.error,
-            title: "Unable to load excursion history",
+            title: intl.formatMessage({
+              id: "coldStorage.error.loadExcursions",
+            }),
             subtitle:
-              error.message || "Unexpected error while loading excursions.",
+              error.message ||
+              intl.formatMessage({
+                id: "coldStorage.error.loadExcursionsDetail",
+              }),
           });
         } finally {
           if (!controller.signal.aborted) {
@@ -443,7 +448,7 @@ function Reports({ devices = [] }) {
         }
       })();
     },
-    [rangeParams, selectedFreezerId, notify, normalizeArray],
+    [rangeParams, selectedFreezerId, notify, normalizeArray, intl],
   );
 
   const loadAuditTrail = useCallback(
@@ -466,9 +471,14 @@ function Reports({ devices = [] }) {
           }
           notify({
             kind: NotificationKinds.error,
-            title: "Unable to load audit trail",
+            title: intl.formatMessage({
+              id: "coldStorage.error.loadAuditTrail",
+            }),
             subtitle:
-              error.message || "Unexpected error while loading audit records.",
+              error.message ||
+              intl.formatMessage({
+                id: "coldStorage.error.loadAuditTrailDetail",
+              }),
           });
         } finally {
           if (!controller.signal.aborted) {
@@ -477,7 +487,7 @@ function Reports({ devices = [] }) {
         }
       })();
     },
-    [selectedFreezerId, notify, normalizeArray],
+    [selectedFreezerId, notify, normalizeArray, intl],
   );
 
   useEffect(() => {

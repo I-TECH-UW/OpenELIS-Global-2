@@ -42,12 +42,9 @@ public class FreezerReportDataController extends BaseRestController {
                 Freezer freezer = freezerService.findById(freezerId).orElse(null);
                 freezersToCheck = freezer != null ? List.of(freezer) : List.of();
             } else {
-                freezersToCheck = freezerService.getAllFreezers("");
+                freezersToCheck = freezerService.getAllFreezersForReporting();
             }
 
-            // Excursion-grouping business logic lives in FreezerReadingService, not
-            // here - controllers are a thin delegation layer per the 5-layer
-            // architecture.
             for (Freezer freezer : freezersToCheck) {
                 excursions.addAll(freezerReadingService.findExcursions(freezer, startTime, endTime));
             }

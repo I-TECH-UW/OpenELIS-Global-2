@@ -151,8 +151,7 @@ public class ThresholdEvaluationServiceImpl implements ThresholdEvaluationServic
 
     private boolean isWarningTemperature(BigDecimal temperature, ThresholdProfile profile) {
         // No bound against critical needed: isCriticalTemperature runs first, so a
-        // value beyond critical never reaches here (an earlier version bounded this
-        // too, leaving the exact critical value unclassified by either method).
+        // value beyond critical never reaches here.
         boolean warningLow = profile.getWarningMin() != null && temperature.compareTo(profile.getWarningMin()) <= 0;
         boolean warningHigh = profile.getWarningMax() != null && temperature.compareTo(profile.getWarningMax()) >= 0;
         return warningLow || warningHigh;

@@ -15,6 +15,7 @@ import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
 import org.openelisglobal.coldstorage.service.FreezerService;
 import org.openelisglobal.coldstorage.valueholder.Freezer;
+import org.openelisglobal.storage.valueholder.StorageDevice;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class FreezerServiceTest extends BaseWebContextSensitiveTest {
@@ -25,6 +26,8 @@ public class FreezerServiceTest extends BaseWebContextSensitiveTest {
     @Before
     public void setup() throws Exception {
         executeDataSetWithStateManagement("testdata/freezer.xml");
+        // The fixture seeds storage_device ids 1-3 without advancing the sequence.
+        resyncSequence("clinlims.storage_device_seq", "clinlims.storage_device");
     }
 
     @Test
@@ -150,6 +153,49 @@ public class FreezerServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
+    public void createFreezer_shouldNotReuseADeletedDevicesStorageDeviceCode() {
+        // Regression test for issue #3904: deleteFreezer only flips freezer.deleted, so
+        // the storage_device row it auto-created survives. Recreating the freezer under
+        // the same name derived the same code again and collided with
+        // uk_device_code_in_room (parent_room_id, code).
+        Freezer first = new Freezer();
+        first.setName("pcr");
+        first.setProtocol(Freezer.Protocol.TCP);
+        first.setHost("192.168.1.203");
+        first.setPort(502);
+        first.setSlaveId(13);
+        first.setTemperatureRegister(0);
+        first.setTemperatureScale(BigDecimal.ONE);
+        first.setTemperatureOffset(BigDecimal.ZERO);
+        StorageDevice firstDeviceRequest = new StorageDevice();
+        firstDeviceRequest.setType("freezer");
+        first.setStorageDevice(firstDeviceRequest);
+
+        Freezer createdFirst = freezerService.createFreezer(first, 1L, "1");
+        String firstCode = createdFirst.getStorageDevice().getCode();
+        freezerService.deleteFreezer(createdFirst.getId());
+
+        Freezer second = new Freezer();
+        second.setName("pcr");
+        second.setProtocol(Freezer.Protocol.TCP);
+        second.setHost("192.168.1.204");
+        second.setPort(502);
+        second.setSlaveId(14);
+        second.setTemperatureRegister(0);
+        second.setTemperatureScale(BigDecimal.ONE);
+        second.setTemperatureOffset(BigDecimal.ZERO);
+        StorageDevice secondDeviceRequest = new StorageDevice();
+        secondDeviceRequest.setType("freezer");
+        second.setStorageDevice(secondDeviceRequest);
+
+        Freezer createdSecond = freezerService.createFreezer(second, 1L, "1");
+
+        assertNotNull("Recreated freezer should have an auto-created storage device", createdSecond.getStorageDevice());
+        assertNotEquals("Recreated device must not reuse the deleted device's code in the same room", firstCode,
+                createdSecond.getStorageDevice().getCode());
+    }
+
+    @Test
     public void createFreezer_shouldCreateNewFreezer() {
         Freezer newFreezer = new Freezer();
         newFreezer.setName("New Test Freezer");
@@ -243,6 +289,19 @@ public class FreezerServiceTest extends BaseWebContextSensitiveTest {
                 freezerService.getAllFreezers("").stream().noneMatch(f -> freezerId.equals(f.getId())));
         assertTrue("Deleted freezer should not appear in the active list",
                 freezerService.getActiveFreezers().stream().noneMatch(f -> freezerId.equals(f.getId())));
+    }
+
+    @Test
+    public void getAllFreezersForReporting_shouldStillIncludeDeletedFreezers() {
+        // A device list cleanup must not remove a device's reading history from the
+        // daily-log/excursion/audit-trail reports an inspector pulls.
+        Long freezerId = 100L;
+        freezerService.deleteFreezer(freezerId);
+
+        assertTrue("Deleted freezer must remain visible to the reporting paths",
+                freezerService.getAllFreezersForReporting().stream().anyMatch(f -> freezerId.equals(f.getId())));
+        assertTrue("Deleted freezer must stay out of the settings/dashboard list",
+                freezerService.getAllFreezers("").stream().noneMatch(f -> freezerId.equals(f.getId())));
     }
 
     @Test

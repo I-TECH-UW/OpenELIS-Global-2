@@ -372,6 +372,9 @@ function DeviceManagement() {
             : null,
         temperatureScale2: parseFloat(formData.temperatureScale2),
         temperatureOffset2: parseFloat(formData.temperatureOffset2),
+        registerCount: parseInt(formData.registerCount),
+        rs485DelayBeforeMs: parseInt(formData.rs485DelayBeforeMs),
+        rs485DelayAfterMs: parseInt(formData.rs485DelayAfterMs),
       };
       // Remove deviceType from top level (it's in storageDevice object)
       delete deviceData.deviceType;

@@ -7,6 +7,7 @@ import "@carbon/charts/styles.css";
 import "./HistoricalTrends.scss";
 import { fetchHistoricalReadings } from "./api";
 import { toDate } from "./shared/timeUtils";
+import { useIntl } from "react-intl";
 
 const TIME_RANGE_OPTIONS = [
   "Last 24 Hours",
@@ -15,25 +16,30 @@ const TIME_RANGE_OPTIONS = [
   "All Time",
 ];
 
-const METRIC_OPTIONS = ["Temperature", "Humidity", "Temperature (Probe 2)"];
-
+// Keyed on a stable identifier, not on the displayed label, so the label can
+// be translated without changing what the chart reads or exports.
 const METRIC_CONFIG = {
-  Temperature: {
+  temperature: {
     field: "temperatureCelsius",
     unit: "°C",
-    axisTitle: "Temperature (°C)",
+    labelId: "coldStorage.trends.metric.temperature",
+    axisTitleId: "coldStorage.trends.axis.temperature",
   },
-  Humidity: {
+  humidity: {
     field: "humidityPercentage",
     unit: "%",
-    axisTitle: "Humidity (%)",
+    labelId: "coldStorage.trends.metric.humidity",
+    axisTitleId: "coldStorage.trends.axis.humidity",
   },
-  "Temperature (Probe 2)": {
+  temperature2: {
     field: "temperatureCelsius2",
     unit: "°C",
-    axisTitle: "Temperature - Probe 2 (°C)",
+    labelId: "coldStorage.trends.metric.temperature2",
+    axisTitleId: "coldStorage.trends.axis.temperature2",
   },
 };
+
+const METRIC_OPTIONS = Object.keys(METRIC_CONFIG);
 
 const RANGE_TO_DURATION = {
   "Last 24 Hours": 24 * 60 * 60 * 1000,
@@ -70,11 +76,20 @@ export default function HistoricalTrends({
   initialSelectedFreezerId = null,
   onFreezerSelected,
 }) {
+  const intl = useIntl();
+  const metricLabel = useCallback(
+    (metric) => intl.formatMessage({ id: METRIC_CONFIG[metric].labelId }),
+    [intl],
+  );
+  const metricAxisTitle = useCallback(
+    (metric) => intl.formatMessage({ id: METRIC_CONFIG[metric].axisTitleId }),
+    [intl],
+  );
   const [selectedFreezer, setSelectedFreezer] = useState(
     initialSelectedFreezerId || "All Freezers",
   );
   const [timeRange, setTimeRange] = useState("Last 24 Hours");
-  const [selectedMetric, setSelectedMetric] = useState("Temperature");
+  const [selectedMetric, setSelectedMetric] = useState("temperature");
   const [chartData, setChartData] = useState([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -236,7 +251,7 @@ export default function HistoricalTrends({
           scaleType: "labels",
         },
         left: {
-          title: METRIC_CONFIG[selectedMetric].axisTitle,
+          title: metricAxisTitle(selectedMetric),
           mapsTo: "value",
           scaleType: "linear",
         },
@@ -249,7 +264,7 @@ export default function HistoricalTrends({
         showTotal: false,
       },
     }),
-    [zoomLevel, selectedMetric],
+    [zoomLevel, selectedMetric, metricAxisTitle],
   );
 
   const handleZoomIn = useCallback(() => {
@@ -271,11 +286,7 @@ export default function HistoricalTrends({
     }
 
     // Create CSV content
-    const headers = [
-      "Freezer",
-      "Timestamp",
-      METRIC_CONFIG[selectedMetric].axisTitle,
-    ];
+    const headers = ["Freezer", "Timestamp", metricAxisTitle(selectedMetric)];
     const rows = chartData.map((item) => [item.group, item.key, item.value]);
 
     const csvContent = [
@@ -297,7 +308,7 @@ export default function HistoricalTrends({
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
-  }, [chartData, selectedMetric]);
+  }, [chartData, selectedMetric, metricAxisTitle]);
 
   return (
     <div className="hist-trends-page">
@@ -336,9 +347,10 @@ export default function HistoricalTrends({
         <Column lg={4} md={4} sm={4}>
           <Dropdown
             id="metric-filter"
-            titleText="Metric"
-            label={selectedMetric}
+            titleText={intl.formatMessage({ id: "coldStorage.trends.metric" })}
+            label={metricLabel(selectedMetric)}
             items={METRIC_OPTIONS}
+            itemToString={(item) => (item ? metricLabel(item) : "")}
             selectedItem={selectedMetric}
             onChange={({ selectedItem }) => setSelectedMetric(selectedItem)}
           />
@@ -403,7 +415,12 @@ export default function HistoricalTrends({
       <Grid fullWidth className="hist-kpis">
         <Column lg={4} md={4} sm={4}>
           <div className="hist-kpi-card">
-            <p className="hist-kpi-label">Average {selectedMetric}</p>
+            <p className="hist-kpi-label">
+              {intl.formatMessage(
+                { id: "coldStorage.trends.averageMetric" },
+                { metric: metricLabel(selectedMetric) },
+              )}
+            </p>
             <p className="hist-kpi-value">
               {stats.avg === "-"
                 ? "-"
@@ -413,7 +430,12 @@ export default function HistoricalTrends({
         </Column>
         <Column lg={4} md={4} sm={4}>
           <div className="hist-kpi-card">
-            <p className="hist-kpi-label">Min {selectedMetric}</p>
+            <p className="hist-kpi-label">
+              {intl.formatMessage(
+                { id: "coldStorage.trends.minMetric" },
+                { metric: metricLabel(selectedMetric) },
+              )}
+            </p>
             <p className="hist-kpi-value hist-kpi-min">
               {stats.min === "-"
                 ? "-"
@@ -423,7 +445,12 @@ export default function HistoricalTrends({
         </Column>
         <Column lg={4} md={4} sm={4}>
           <div className="hist-kpi-card">
-            <p className="hist-kpi-label">Max {selectedMetric}</p>
+            <p className="hist-kpi-label">
+              {intl.formatMessage(
+                { id: "coldStorage.trends.maxMetric" },
+                { metric: metricLabel(selectedMetric) },
+              )}
+            </p>
             <p className="hist-kpi-value hist-kpi-max">
               {stats.max === "-"
                 ? "-"

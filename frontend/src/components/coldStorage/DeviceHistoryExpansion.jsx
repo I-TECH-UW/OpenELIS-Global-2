@@ -37,7 +37,7 @@ import {
   fetchFilteredAlerts,
   fetchHistoricalReadings,
 } from "./api";
-import { toDate } from "./shared/dateUtils";
+import { toDate } from "./shared/timeUtils";
 import { FormattedMessage, useIntl } from "react-intl";
 
 const EVENT_TYPE_OPTIONS = [
@@ -117,8 +117,6 @@ function DeviceHistoryExpansion({ device }) {
             fetchFilteredAlerts({
               entityType: "Freezer",
               entityId: freezerId,
-              page: 0,
-              size: 100,
             }),
           ]);
           if (controller.signal.aborted) {

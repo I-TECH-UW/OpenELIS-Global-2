@@ -87,8 +87,12 @@ public class FreezerReadingServiceImpl implements FreezerReadingService {
         FreezerReading.Status currentStatus = null;
 
         for (FreezerReading reading : readings) {
-            if (reading.getStatus() == FreezerReading.Status.WARNING
-                    || reading.getStatus() == FreezerReading.Status.CRITICAL) {
+            // A failed poll is persisted as CRITICAL with no temperature, so without this
+            // guard every offline window is reported as a temperature excursion with blank
+            // min/max. Offline is alerted separately (FREEZER_OFFLINE).
+            boolean transmissionFailed = Boolean.FALSE.equals(reading.getTransmissionOk());
+            if (!transmissionFailed && (reading.getStatus() == FreezerReading.Status.WARNING
+                    || reading.getStatus() == FreezerReading.Status.CRITICAL)) {
                 if (currentExcursion.isEmpty() || reading.getStatus() == currentStatus) {
                     currentExcursion.add(reading);
                     currentStatus = reading.getStatus();

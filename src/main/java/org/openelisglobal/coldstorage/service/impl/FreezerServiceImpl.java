@@ -2,7 +2,10 @@ package org.openelisglobal.coldstorage.service.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.stream.Collectors;
 import org.openelisglobal.coldstorage.dao.FreezerDAO;
 import org.openelisglobal.coldstorage.service.FreezerService;
 import org.openelisglobal.coldstorage.valueholder.Freezer;
@@ -54,6 +57,12 @@ public class FreezerServiceImpl implements FreezerService {
             return freezerDAO.searchFreezers(search);
         }
         return freezerDAO.getAllFreezers();
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Freezer> getAllFreezersForReporting() {
+        return freezerDAO.getAllFreezersIncludingDeleted();
     }
 
     @Override
@@ -227,7 +236,7 @@ public class FreezerServiceImpl implements FreezerService {
 
         StorageDevice device = new StorageDevice();
         device.setName(freezer.getName());
-        device.setCode(generateDeviceCode(freezer.getName()));
+        device.setCode(uniqueDeviceCodeInRoom(freezer.getName(), room.getId()));
         device.setType(freezer.getStorageDevice().getType());
         device.setActive(true);
         device.setParentRoom(room);
@@ -268,9 +277,8 @@ public class FreezerServiceImpl implements FreezerService {
     }
 
     /**
-     * Generates a unique code for a StorageDevice based on the device name.
-     * Converts name to uppercase, removes non-alphanumeric chars, and truncates to
-     * 50 chars.
+     * Generates a code for a StorageDevice based on the device name. Converts name
+     * to uppercase, removes non-alphanumeric chars, and truncates to 50 chars.
      */
     private String generateDeviceCode(String name) {
         if (name == null || name.isBlank()) {
@@ -278,5 +286,28 @@ public class FreezerServiceImpl implements FreezerService {
         }
         String cleanedName = name.toUpperCase().replaceAll("[^A-Z0-9]", "");
         return cleanedName.substring(0, Math.min(50, cleanedName.length()));
+    }
+
+    /**
+     * generateDeviceCode is a pure function of the name, and deleteFreezer leaves
+     * the old device row in place, so recreating a deleted freezer under the same
+     * name would collide with uk_device_code_in_room (issue #3904). Suffix until
+     * the code is free within the room.
+     */
+    private String uniqueDeviceCodeInRoom(String name, Integer roomId) {
+        String baseCode = generateDeviceCode(name);
+        Set<String> takenCodes = storageLocationService.getDevicesByRoom(roomId).stream().map(StorageDevice::getCode)
+                .filter(Objects::nonNull).collect(Collectors.toSet());
+        if (!takenCodes.contains(baseCode)) {
+            return baseCode;
+        }
+        String truncatedBase = baseCode.substring(0, Math.min(46, baseCode.length()));
+        for (int suffix = 2; suffix < 10000; suffix++) {
+            String candidate = truncatedBase + suffix;
+            if (!takenCodes.contains(candidate)) {
+                return candidate;
+            }
+        }
+        throw new IllegalArgumentException("Unable to derive a free storage device code for name: " + name);
     }
 }

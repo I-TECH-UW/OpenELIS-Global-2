@@ -27,7 +27,7 @@ import {
 } from "./api";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { hasRole, Roles } from "../utils/Utils";
-import { formatDateTime as formatIsoDateTime } from "./shared/dateUtils";
+import { formatDateTime as formatIsoDateTime } from "./shared/timeUtils";
 
 const CORRECTIVE_ACTION_TYPES = [
   { id: "TEMPERATURE_ADJUSTMENT", label: "Temperature Adjustment" },
@@ -41,7 +41,6 @@ const CORRECTIVE_ACTION_TYPES = [
 
 const AlertDetailModal = ({ intl, alertId, open, onClose }) => {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
-  const currentUserId = userSessionDetails?.userId;
   const isAdminUser = hasRole(userSessionDetails, Roles.GLOBAL_ADMIN);
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -79,20 +78,10 @@ const AlertDetailModal = ({ intl, alertId, open, onClose }) => {
     formatIsoDateTime(dateTimeString, "-");
 
   const handleAcknowledge = async () => {
-    if (!currentUserId) {
-      setError(
-        intl.formatMessage({
-          id: "freezer.alert.detail.noUser",
-          defaultMessage:
-            "Unable to identify current user. Please sign in again.",
-        }),
-      );
-      return;
-    }
     setActionInProgress(true);
     setError(null);
     try {
-      await acknowledgeAlert(alertId, currentUserId, notes);
+      await acknowledgeAlert(alertId, notes);
       setNotes("");
       onClose(); // Close modal immediately after successful action
     } catch (err) {
@@ -102,20 +91,10 @@ const AlertDetailModal = ({ intl, alertId, open, onClose }) => {
   };
 
   const handleResolve = async () => {
-    if (!currentUserId) {
-      setError(
-        intl.formatMessage({
-          id: "freezer.alert.detail.noUser",
-          defaultMessage:
-            "Unable to identify current user. Please sign in again.",
-        }),
-      );
-      return;
-    }
     setActionInProgress(true);
     setError(null);
     try {
-      await resolveAlert(alertId, currentUserId, notes || "Resolved");
+      await resolveAlert(alertId, notes || "Resolved");
       setNotes("");
       onClose(); // Close modal immediately after successful action
     } catch (err) {
@@ -293,7 +272,7 @@ const AlertDetailModal = ({ intl, alertId, open, onClose }) => {
             : undefined
       }
       onSecondarySubmit={onClose}
-      primaryButtonDisabled={actionInProgress || loading || !currentUserId}
+      primaryButtonDisabled={actionInProgress || loading}
     >
       {loading && <Loading />}
 

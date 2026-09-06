@@ -393,14 +393,10 @@
   <include relativeToChangelogFile="true" file="097-remove-openelis-analyzer-error-queue.xml"/>
   <include relativeToChangelogFile="true" file="098-remove-superseded-analyzer-schema.xml"/>
 
-  <!-- Cold storage monitoring audit: offline alert type, deleted flag, register/RS-485
-      config, reading uniqueness, decimal precision, name-reuse index, second probe,
-      and admin-editable enabled/timeout settings (issues #3743, #3904) -->
-  <include relativeToChangelogFile="true" file="070-cold-storage-monitoring-hardening.xml"/>
+  <!-- Cold-storage monitoring hardening (issues #3743/#3904). Runs last because its first
+       changeset redeclares chk_alert_type wholesale (086's union plus FREEZER_OFFLINE);
+       anything that redeclares that constraint after it drops FREEZER_OFFLINE again. -->
+  <include relativeToChangelogFile="true" file="089-cold-storage-monitoring-hardening.xml"/>
 
-  <!-- Cold storage monitoring audit: offline alert type, deleted flag, register/RS-485
-      config, reading uniqueness, decimal precision, name-reuse index, second probe,
-      and admin-editable enabled/timeout settings (issues #3743, #3904) -->
-  <include relativeToChangelogFile="true" file="070-cold-storage-monitoring-hardening.xml"/>
 
 </databaseChangeLog>

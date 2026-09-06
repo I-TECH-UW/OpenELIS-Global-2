@@ -1,8 +1,7 @@
 // The Cold Storage REST API serializes every timestamp as an unambiguous
-// ISO-8601 string (see shared/dateUtils.js) - `new Date(value)` parses those
-// correctly on its own. The numeric-seconds branch below is defensive only
-// (kept in case a caller ever passes a raw epoch value); do not assume the
-// backend sends epoch numbers.
+// ISO-8601 string - `new Date(value)` parses those correctly on its own. The
+// numeric-seconds branch below is defensive only (kept in case a caller ever
+// passes a raw epoch value); do not assume the backend sends epoch numbers.
 const SECONDS_TO_MILLIS_THRESHOLD = 1e12;
 
 export const toDate = (value) => {
@@ -40,4 +39,12 @@ export const formatDuration = (seconds) => {
     return `${minutes}m`;
   }
   return `${secs}s`;
+};
+
+// Placeholder for a timestamp that is missing or unparseable.
+const NO_VALUE = "—";
+
+export const formatDateTime = (value, placeholder = NO_VALUE) => {
+  const date = toDate(value);
+  return date ? date.toLocaleString() : placeholder;
 };

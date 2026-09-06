@@ -7,10 +7,12 @@ import {
   Select,
   SelectItem,
   Button,
+  Checkbox,
   FormLabel,
   NumberInput,
 } from "@carbon/react";
 import { Add } from "@carbon/icons-react";
+import { useIntl } from "react-intl";
 
 const DEVICE_TYPE_OPTIONS = [
   { value: "freezer", label: "Freezer" },
@@ -54,6 +56,14 @@ const INITIAL_FORM_DATA = {
   temperatureRegister2: null,
   temperatureScale2: 1.0,
   temperatureOffset2: 0.0,
+  registerCount: 1,
+  wordOrder: "BIG_ENDIAN",
+  rs485Mode: false,
+  rs485RtsActiveHigh: false,
+  rs485Termination: false,
+  rs485RxDuringTx: false,
+  rs485DelayBeforeMs: 0,
+  rs485DelayAfterMs: 0,
 };
 
 export default function AddDeviceModal({
@@ -64,6 +74,7 @@ export default function AddDeviceModal({
   onAddRoom,
   editingDevice = null,
 }) {
+  const intl = useIntl();
   const [formData, setFormData] = useState(INITIAL_FORM_DATA);
 
   useEffect(() => {
@@ -305,6 +316,96 @@ export default function AddDeviceModal({
                         />
                       ))}
                     </Select>
+
+                    <div
+                      style={{
+                        backgroundColor: "#f4f4f4",
+                        padding: "1rem",
+                        borderRadius: "4px",
+                      }}
+                    >
+                      <FormLabel
+                        style={{
+                          marginBottom: "0.75rem",
+                          fontSize: "0.8125rem",
+                          fontWeight: "500",
+                        }}
+                      >
+                        {intl.formatMessage({ id: "coldStorage.device.rs485" })}
+                      </FormLabel>
+                      <Stack gap={4}>
+                        <Checkbox
+                          id="rs485Mode"
+                          labelText={intl.formatMessage({
+                            id: "coldStorage.device.rs485.mode",
+                          })}
+                          checked={Boolean(formData.rs485Mode)}
+                          onChange={(e, { checked }) =>
+                            handleFormChange("rs485Mode", checked)
+                          }
+                        />
+                        {formData.rs485Mode && (
+                          <>
+                            <Checkbox
+                              id="rs485RtsActiveHigh"
+                              labelText={intl.formatMessage({
+                                id: "coldStorage.device.rs485.rtsActiveHigh",
+                              })}
+                              checked={Boolean(formData.rs485RtsActiveHigh)}
+                              onChange={(e, { checked }) =>
+                                handleFormChange("rs485RtsActiveHigh", checked)
+                              }
+                            />
+                            <Checkbox
+                              id="rs485Termination"
+                              labelText={intl.formatMessage({
+                                id: "coldStorage.device.rs485.termination",
+                              })}
+                              checked={Boolean(formData.rs485Termination)}
+                              onChange={(e, { checked }) =>
+                                handleFormChange("rs485Termination", checked)
+                              }
+                            />
+                            <Checkbox
+                              id="rs485RxDuringTx"
+                              labelText={intl.formatMessage({
+                                id: "coldStorage.device.rs485.rxDuringTx",
+                              })}
+                              checked={Boolean(formData.rs485RxDuringTx)}
+                              onChange={(e, { checked }) =>
+                                handleFormChange("rs485RxDuringTx", checked)
+                              }
+                            />
+                            <NumberInput
+                              id="rs485DelayBeforeMs"
+                              label={intl.formatMessage({
+                                id: "coldStorage.device.rs485.delayBefore",
+                              })}
+                              value={formData.rs485DelayBeforeMs}
+                              onChange={(e, { value }) =>
+                                handleFormChange("rs485DelayBeforeMs", value)
+                              }
+                              min={0}
+                              max={10000}
+                              step={1}
+                            />
+                            <NumberInput
+                              id="rs485DelayAfterMs"
+                              label={intl.formatMessage({
+                                id: "coldStorage.device.rs485.delayAfter",
+                              })}
+                              value={formData.rs485DelayAfterMs}
+                              onChange={(e, { value }) =>
+                                handleFormChange("rs485DelayAfterMs", value)
+                              }
+                              min={0}
+                              max={10000}
+                              step={1}
+                            />
+                          </>
+                        )}
+                      </Stack>
+                    </div>
                   </>
                 )}
               </Stack>
@@ -347,6 +448,50 @@ export default function AddDeviceModal({
                   min={1}
                   max={255}
                 />
+
+                <NumberInput
+                  id="registerCount"
+                  label={intl.formatMessage({
+                    id: "coldStorage.device.registerCount",
+                  })}
+                  helperText={intl.formatMessage({
+                    id: "coldStorage.device.registerCount.help",
+                  })}
+                  value={formData.registerCount}
+                  onChange={(e, { value }) =>
+                    handleFormChange("registerCount", value)
+                  }
+                  min={1}
+                  max={2}
+                  step={1}
+                />
+
+                <Select
+                  id="wordOrder"
+                  labelText={intl.formatMessage({
+                    id: "coldStorage.device.wordOrder",
+                  })}
+                  helperText={intl.formatMessage({
+                    id: "coldStorage.device.wordOrder.help",
+                  })}
+                  value={formData.wordOrder}
+                  onChange={(e) =>
+                    handleFormChange("wordOrder", e.target.value)
+                  }
+                >
+                  <SelectItem
+                    value="BIG_ENDIAN"
+                    text={intl.formatMessage({
+                      id: "coldStorage.device.wordOrder.bigEndian",
+                    })}
+                  />
+                  <SelectItem
+                    value="LITTLE_ENDIAN"
+                    text={intl.formatMessage({
+                      id: "coldStorage.device.wordOrder.littleEndian",
+                    })}
+                  />
+                </Select>
 
                 <div
                   style={{
@@ -470,13 +615,19 @@ export default function AddDeviceModal({
                       fontWeight: "500",
                     }}
                   >
-                    Second Temperature Probe (Optional)
+                    {intl.formatMessage({
+                      id: "coldStorage.device.secondProbe",
+                    })}
                   </FormLabel>
                   <Stack gap={4}>
                     <NumberInput
                       id="temperatureRegister2"
-                      label="Temperature Register 2"
-                      helperText="Modbus register address for a second, independent temperature probe"
+                      label={intl.formatMessage({
+                        id: "coldStorage.device.secondProbe.register",
+                      })}
+                      helperText={intl.formatMessage({
+                        id: "coldStorage.device.secondProbe.registerHelp",
+                      })}
                       value={formData.temperatureRegister2 ?? ""}
                       onChange={(e, { value }) =>
                         handleFormChange(
@@ -491,8 +642,12 @@ export default function AddDeviceModal({
 
                     <NumberInput
                       id="temperatureScale2"
-                      label="Temperature Scale 2"
-                      helperText="Scaling factor (e.g., 0.1 to divide by 10)"
+                      label={intl.formatMessage({
+                        id: "coldStorage.device.secondProbe.scale",
+                      })}
+                      helperText={intl.formatMessage({
+                        id: "coldStorage.device.secondProbe.scaleHelp",
+                      })}
                       value={formData.temperatureScale2}
                       onChange={(e, { value }) =>
                         handleFormChange("temperatureScale2", value)
@@ -503,8 +658,12 @@ export default function AddDeviceModal({
 
                     <NumberInput
                       id="temperatureOffset2"
-                      label="Base Temperature 2 (°C)"
-                      helperText="Base offset for the second probe"
+                      label={intl.formatMessage({
+                        id: "coldStorage.device.secondProbe.offset",
+                      })}
+                      helperText={intl.formatMessage({
+                        id: "coldStorage.device.secondProbe.offsetHelp",
+                      })}
                       value={formData.temperatureOffset2}
                       onChange={(e, { value }) =>
                         handleFormChange("temperatureOffset2", value)

@@ -58,20 +58,11 @@ public class ModbusPollingService {
 
     /**
      * Polls every active freezer concurrently on a small dedicated pool (see
-     * {@link org.openelisglobal.coldstorage.config.FreezerPollingExecutorConfig}).
-     *
-     * <p>
-     * Previously this loop was sequential: one slow/unreachable device (up to
-     * timeout x retries) delayed polling of every other device in the same cycle,
-     * and - since scheduling uses {@code fixedDelay} - pushed back the start of the
-     * next cycle for every freezer. Each device is now polled on its own thread and
-     * fully isolated in its own try/catch so a single failing device can never
-     * abort or delay polling of the others. The poll cycle itself is still
-     * triggered by the existing {@code @Scheduled} mechanism; this method blocks
-     * (via {@link CompletableFuture#join()}) only until every in-flight device poll
-     * for this cycle completes, which keeps {@code fixedDelay} semantics intact (no
-     * overlapping cycles) while making the cycle duration bounded by the slowest
-     * single device instead of the sum of all devices.
+     * {@link org.openelisglobal.coldstorage.config.FreezerPollingExecutorConfig}),
+     * so one unreachable device costs the cycle its own timeout rather than
+     * delaying every other device. Blocks on {@link CompletableFuture#join()} until
+     * the cycle's polls finish, which keeps {@code fixedDelay} from overlapping
+     * cycles.
      */
     @Scheduled(initialDelayString = "#{T(java.time.Duration).parse('${org.openelisglobal.freezermonitoring.modbus.initial-delay:PT15S}').toMillis()}", fixedDelayString = "#{T(java.time.Duration).parse('${org.openelisglobal.freezermonitoring.modbus.poll-interval:PT5M}').toMillis()}")
     public void pollDevices() {
@@ -130,25 +121,30 @@ public class ModbusPollingService {
     /**
      * Deletes freezer_reading rows older than the configured retention window
      * (default 400 days - generous so nobody's data silently vanishes on upgrade).
-     * Runs once a day by default (see
-     * {@code org.openelisglobal.freezermonitoring.retention-cron}). This is a
-     * straightforward age-based batch delete, not a partitioning system: alerts and
-     * corrective actions reference {@code freezer_id}, not individual
+     * Gated on the same monitoring flag as the poll cycle, so a site that turned
+     * cold-chain monitoring off keeps its history untouched. Runs once a day by
+     * default (see {@code org.openelisglobal.freezermonitoring.retention-cron}).
+     * This is a straightforward age-based batch delete, not a partitioning system:
+     * alerts and corrective actions reference {@code freezer_id}, not individual
      * {@code freezer_reading} rows, so there is no foreign key to violate by
      * deleting old readings.
      */
     @Scheduled(cron = "${org.openelisglobal.freezermonitoring.retention-cron:0 30 2 * * ?}")
     public void cleanupOldReadings() {
-        int retentionDays = RETENTION_DAYS;
-        OffsetDateTime cutoff = OffsetDateTime.now().minusDays(retentionDays);
+        if (!systemConfigService.isMonitoringEnabled()) {
+            LOGGER.debug("Skipping freezer reading retention cleanup - monitoring disabled");
+            return;
+        }
+
+        OffsetDateTime cutoff = OffsetDateTime.now().minusDays(RETENTION_DAYS);
         try {
             int deleted = freezerReadingService.deleteReadingsOlderThan(cutoff);
             if (deleted > 0) {
                 LOGGER.info("Freezer reading retention cleanup deleted {} reading(s) older than {} ({} day(s))",
-                        deleted, cutoff, retentionDays);
+                        deleted, cutoff, RETENTION_DAYS);
             } else {
                 LOGGER.debug("Freezer reading retention cleanup found nothing older than {} ({} day(s))", cutoff,
-                        retentionDays);
+                        RETENTION_DAYS);
             }
         } catch (Exception ex) {
             LOGGER.error("Freezer reading retention cleanup failed", ex);

@@ -54,20 +54,11 @@ public class FreezerReportServiceImpl implements FreezerReportService {
     private static final DateTimeFormatter MONTH_DAY_FORMATTER = DateTimeFormatter.ofPattern("MMM dd", Locale.ENGLISH);
     // Single locale source for all week-number/label math and display, so
     // boundary calculations (weekOfMonth) and rendered labels never disagree.
-    // TODO: this uses Locale.ENGLISH for both, same as the display formatters
-    // above. If OpenELIS grows an app-wide "lab timezone/locale" configuration
-    // concept in the future (none currently exists - see ZoneId.systemDefault()
-    // usage below), this should be revisited to source both together from it.
     private static final Locale REPORT_LOCALE = Locale.ENGLISH;
     private static final WeekFields WEEK_FIELDS = WeekFields.of(REPORT_LOCALE);
 
     @Override
     public List<FreezerDailyLogData> generateDailyLogData(Long freezerId, LocalDate startDate, LocalDate endDate) {
-        // TODO: uses the server's system default timezone. OpenELIS has no existing
-        // app-wide "lab timezone" configuration concept (checked SystemConfiguration
-        // and siteinformation for one) so this is left as the pre-existing behavior
-        // rather than inventing a new global config mechanism as a side effect of
-        // this fix. If/when one is added, report boundaries should switch to it.
         ZoneId zone = ZoneId.systemDefault();
         OffsetDateTime startDateTime = startDate.atStartOfDay(zone).toOffsetDateTime();
         // Exclusive next-midnight boundary (minus 1ns so the underlying inclusive
@@ -78,7 +69,7 @@ public class FreezerReportServiceImpl implements FreezerReportService {
 
         List<Freezer> freezersToCheck = freezerId != null
                 ? freezerService.findById(freezerId).map(List::of).orElse(List.of())
-                : freezerService.getAllFreezers("");
+                : freezerService.getAllFreezersForReporting();
 
         List<FreezerDailyLogData> result = new ArrayList<>();
         for (Freezer freezer : freezersToCheck) {

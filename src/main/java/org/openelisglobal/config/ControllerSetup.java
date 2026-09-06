@@ -31,7 +31,10 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-@Order(Ordered.HIGHEST_PRECEDENCE)
+// One step below HIGHEST_PRECEDENCE so a package-scoped @ControllerAdvice can
+// actually be ordered ahead of this app-wide fallback: equal @Order values leave
+// the winner to bean registration order (see FreezerMonitoringExceptionHandler).
+@Order(Ordered.HIGHEST_PRECEDENCE + 1)
 @ControllerAdvice
 public class ControllerSetup extends ResponseEntityExceptionHandler {
 
