@@ -221,6 +221,11 @@ import {
   VectorDeconvolutionWorklist,
 } from "./components/vectorIdentification";
 
+export const ANALYZER_RESULTS_ROLES = [
+  Roles.GLOBAL_ADMIN,
+  Roles.ANALYSER_IMPORT,
+];
+
 export default function App() {
   // The stored preference, or the browser's full tag (region kept: fr-MG
   // resolves to its own bundle, not just fr). The resolver accepts either
@@ -1574,7 +1579,7 @@ export default function App() {
                       </Suspense>
                     </RouteErrorBoundary>
                   )}
-                  role={Roles.ANALYSER_IMPORT}
+                  role={ANALYZER_RESULTS_ROLES}
                 />
                 <Route path="*" component={() => <RedirectOldUI />} />
               </Switch>
