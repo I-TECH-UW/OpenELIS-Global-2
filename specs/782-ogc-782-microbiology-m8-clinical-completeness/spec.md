@@ -1,8 +1,10 @@
 # Feature Specification: Microbiology Clinical Completeness and Qualification
 
-**Feature branch**: `feat/782-ogc-782-microbiology-m8-clinical-completeness`
-**Parent feature**: OGC-782 routine bacteriology MVP
-**Related product work**: OGC-783, OGC-784, OGC-790, OGC-791
+**Feature branch**: `feat/782-ogc-782-microbiology-m8-clinical-completeness`  
+**Parent feature**: OGC-782 routine bacteriology MVP  
+**Related product work**: OGC-783, OGC-784, OGC-790, OGC-791  
+**Status**: Implementation in progress; base lot traceability implemented,
+requiredness policy awaiting product ruling
 **Created**: 2026-08-03
 
 ## Purpose
@@ -46,8 +48,7 @@ implementation leakage, contradictions, or engineering decisions.
 3. Culture-media, AST-card, and AST-disc lot traceability at the bench action
    where each lot was used.
 4. Accessibility qualification of the implemented worklist and case workflow.
-5. Repeatable scale and performance qualification at representative laboratory
-   volume.
+5. Repeatable scale and performance qualification using service-created data.
 
 ### Excluded
 
@@ -57,6 +58,19 @@ implementation leakage, contradictions, or engineering decisions.
 - Reagent inventory administration or Test Catalog reagent-link authoring
 - A new browser-support policy for OpenELIS as a whole
 - Rewriting the existing Inventory or Test Catalog modules
+
+### Delivery Status
+
+Amendment/re-identification history, repeat/retest AST, accessibility
+qualification, measured capacity, and policy-neutral reagent/card-lot
+traceability are implemented and evidenced on the M8 branch. Bench users can
+choose eligible lots, see FEFO guidance and named ineligibility reasons, and
+review the exact culture or AST action that consumed each lot. The source
+artifacts still conflict on whether existing `PRIMARY / SECONDARY` Test Catalog
+roles represent the requiredness policy described as
+`REQUIRED / OPTIONAL / SUBSTITUTE`. The implementation does not infer that
+mapping, so mandatory/optional/substitute enforcement and full US4 acceptance
+remain open.
 
 ## User Stories and Acceptance Scenarios
 
@@ -185,22 +199,24 @@ As a laboratory manager, I can review repeatable performance evidence at the
 defined workload, so capacity claims are measured rather than inferred from a
 small demo fixture.
 
-**Independent test**: Select an approved qualification profile, run it at the
-named workload, and produce a repeatable report that identifies the environment,
-measurements, thresholds, and outcome.
+**Independent test**: Create the qualification datasets through application
+services, run the named measurements, and produce machine-readable and human
+readable evidence tied to a commit and environment description.
 
 **Acceptance scenarios**:
 
-1. The selected profile identifies the worklist and dense-case workload before
-   the run begins.
-2. The selected profile identifies the acceptable user-visible loading,
-   filtering, paging, and save thresholds before the run begins.
-3. The report distinguishes server response time from browser-ready and
-   interaction time.
-4. Repeating the same profile in the same environment produces comparable
-   measurements and the same pass/fail interpretation.
-5. The report identifies the environment, workload, warm-up and sampling policy,
-   percentile calculation, thresholds, and outcome.
+1. A 200-case worklist loads in under 2 seconds.
+2. A case containing 5 isolates, 80 AST readings, and at least 30 timeline
+   events loads in under 1 second.
+3. Worklist search returns in under 500 ms and a filter/page change completes
+   in under 300 ms at the defined dataset size.
+4. Saving an isolate, an AST reading, or a timeline event completes in under
+   500 ms at the defined dataset size.
+5. Qualification data is created through services, is property-gated, can be
+   removed safely, and does not use direct SQL, fixed primary keys, or a
+   production-exposed fixture endpoint.
+6. Evidence records warm-up policy, iteration count, percentile calculation,
+   browser/server versions, database size, commit, and pass/fail result.
 
 ## Functional Requirements
 
@@ -221,23 +237,25 @@ measurements, thresholds, and outcome.
 - **FR-008**: The implemented microbiology workflow shall meet the accessibility
   scenarios in US5.
 - **FR-009**: Performance claims shall be produced by a repeatable qualification
-  procedure using an approved profile and the evidence described in US6.
+  procedure at the workloads and thresholds in US6.
 - **FR-010**: Audit and clinical-history records shall not be editable or
-  deletable through supported application actions.
+  deletable through supported application endpoints.
 
 ## Success Criteria
 
-- **SC-001**: An authorized reviewer can demonstrate original and amended report
-  versions, re-identification history, and the post-release lock.
-- **SC-002**: A repeat-AST review shows two distinct attempts and an explicit
-  reportable-attempt decision.
-- **SC-003**: Reagent use shows earliest-expiry guidance, invalid-lot rejection,
+- **SC-001**: The amendment Playwright journey proves original and amended
+  report versions, re-identification history, and the post-release lock.
+- **SC-002**: The repeat-AST journey proves two distinct attempts and an
+  explicit reportable-attempt decision.
+- **SC-003**: The reagent journey proves FEFO lot choice, invalid-lot rejection,
   persisted traceability, and historical display.
-- **SC-004**: Every named Microbiology state is operable by keyboard, exposes
-  meaningful labels and status, and has no detectable WCAG 2.1 AA violation.
-- **SC-005**: A qualification report records the approved profile, environment,
-  raw measurements, interpretation, and whether each predeclared threshold
-  passed.
+- **SC-004**: The registered accessibility suite reports zero detectable WCAG
+  2.1 AA violations on every named Microbiology state and the keyboard journey
+  passes without mouse input.
+- **SC-005**: The registered qualification suite produces a JSON result in
+  which every US6 threshold passes on the documented baseline environment.
+- **SC-006**: Focused new backend code meets the repository coverage target and
+  all schema mappings load in the ORM validation test.
 
 ## Clarifications and Defaults
 

@@ -1,7 +1,7 @@
 # Implementation Plan: M8 Clinical Completeness and Qualification
 
-**Branch**: `feat/782-ogc-782-microbiology-m8-clinical-completeness`
-**Stack base**: OGC-782 release and reporting layer (#4136)
+**Branch**: `feat/782-ogc-782-microbiology-m8-clinical-completeness`  
+**Stack base**: PR #3789 head `6aafb05a9345525e04a0749e01ba09a3e41b5c2d`  
 **Target after MVP merge**: `develop`
 
 ## Technical Context
@@ -142,6 +142,8 @@ only if query-plan and measurement evidence demonstrates a data-model need.
 
 ## Delivery
 
-M8 is owned by #3972 and remains stacked on the release and reporting layer in
-#4136. Amendment history, repeat AST metadata, reagent/card-lot traceability,
-accessibility, and performance qualification form one coherent product slice.
+M8 remains stacked on #3789 until the MVP spec and milestone PRs merge. It must
+not be retargeted directly to the unmerged spec branch as a way to bypass the
+MVP acceptance gate. The first review checkpoint is Slice A with focused tests;
+Slices B and C may be split into follow-up PRs if review size exceeds a
+coherent validation milestone.
