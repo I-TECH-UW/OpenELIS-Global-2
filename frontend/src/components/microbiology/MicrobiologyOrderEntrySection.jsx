@@ -4,7 +4,7 @@ import { useIntl } from "react-intl";
 import { formatMicrobiologyEnum } from "./MicrobiologyLabels";
 import MicrobiologyOrderDetailFields, {
   emptyMicrobiologyOrderDetail,
-  newMicrobiologyOrderDetail,
+  defaultMicrobiologyOrderDetail,
 } from "./MicrobiologyOrderDetailFields";
 import { getPatientOrigins } from "./MicrobiologyService";
 
@@ -70,7 +70,7 @@ const MicrobiologyOrderEntrySection = ({
         ...emptyMicrobiologyOrderDetail,
         ...orderFormValues.microbiologyOrderDetail,
       }
-    : newMicrobiologyOrderDetail();
+    : { ...defaultMicrobiologyOrderDetail };
   const defaultMethod = methods.find((method) => method.isDefault);
   const isBloodCulture = samples.some((sample) =>
     sample.sampleTypeName?.toLowerCase().includes("blood"),

@@ -1,7 +1,13 @@
 import React from "react";
-import { Stack, Button, Tag, InlineLoading } from "@carbon/react";
+import {
+  Stack,
+  Button,
+  Tag,
+  InlineLoading,
+  ActionableNotification,
+} from "@carbon/react";
 import { Edit } from "@carbon/icons-react";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { FormattedMessage, useIntl } from "react-intl";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 import OrderStepper, {
@@ -72,6 +78,45 @@ const SaveStatusIndicator = () => {
     <Tag type="green" size="sm" className="save-status-indicator">
       <FormattedMessage id="order.saveStatus.saved" defaultMessage="Saved" />
     </Tag>
+  );
+};
+
+/**
+ * After the entry step saves, the screen states plainly that the order exists
+ * and what comes next, instead of a passing toast.
+ */
+const SavedNextAction = ({ steps, activeStep }) => {
+  const intl = useIntl();
+  const history = useHistory();
+  const { saveStatus, isDirty, labNumber } = useOrderContext();
+  const next = steps[activeStep + 1];
+  if (
+    activeStep !== 0 ||
+    isDirty ||
+    saveStatus !== SaveStatus.SAVED ||
+    !labNumber ||
+    !next
+  ) {
+    return null;
+  }
+  return (
+    <ActionableNotification
+      kind="success"
+      lowContrast
+      hideCloseButton
+      inline
+      className="order-saved-next-action"
+      title={intl.formatMessage(
+        { id: "order.saved.title", defaultMessage: "Order {labNumber} saved" },
+        { labNumber },
+      )}
+      subtitle={intl.formatMessage(
+        { id: "order.saved.next", defaultMessage: "Next: {step}" },
+        { step: intl.formatMessage({ id: next.label }) },
+      )}
+      actionButtonLabel={intl.formatMessage({ id: next.label })}
+      onActionButtonClick={() => history.push(next.path)}
+    />
   );
 };
 
@@ -186,6 +231,8 @@ const OrderWorkflowLayout = ({
           {(labNumber || orderData?.sampleOrderItems?.labNo) && (
             <OrderContextCard className="order-context-section" />
           )}
+
+          <SavedNextAction steps={steps} activeStep={activeStep} />
 
           {/* Main Content Area */}
           <div

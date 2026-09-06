@@ -1,32 +1,31 @@
-import { SampleOrderFormValues } from "../formModel/innitialValues/OrderEntryFormValues";
-import { newMicrobiologyOrderDetail } from "../microbiology/MicrobiologyOrderDetailFields";
+import { createSampleOrderFormValues } from "../formModel/innitialValues/OrderEntryFormValues";
+import { defaultMicrobiologyOrderDetail } from "../microbiology/MicrobiologyOrderDetailFields";
 
 export const buildLoadedOrderData = (response, prior = {}) => {
+  const defaults = createSampleOrderFormValues();
   // The server returns microbiology details only for an order it considers
   // microbiology, so their absence is meaningful and is preserved here.
   const loadedMicrobiologyOrderDetail = {
     ...(response.orderData?.microbiologyOrderDetail || {}),
     ...(response.microbiologyOrderDetail || {}),
   };
-  const hasLoadedMicrobiologyOrderDetail =
-    Object.keys(loadedMicrobiologyOrderDetail).length > 0;
   let microbiologyOrderDetail;
-  if (hasLoadedMicrobiologyOrderDetail) {
+  if (Object.keys(loadedMicrobiologyOrderDetail).length > 0) {
     microbiologyOrderDetail = {
-      ...newMicrobiologyOrderDetail(),
+      ...defaultMicrobiologyOrderDetail,
       ...loadedMicrobiologyOrderDetail,
       culturePurpose: Object.prototype.hasOwnProperty.call(
         loadedMicrobiologyOrderDetail,
         "culturePurpose",
       )
         ? loadedMicrobiologyOrderDetail.culturePurpose || ""
-        : newMicrobiologyOrderDetail().culturePurpose,
+        : defaultMicrobiologyOrderDetail.culturePurpose,
     };
     delete microbiologyOrderDetail.criticalNotificationPreference;
   }
 
   return {
-    ...SampleOrderFormValues,
+    ...defaults,
     sampleTypes: prior.sampleTypes,
     testSectionList: prior.testSectionList,
     rejectReasonList: prior.rejectReasonList,
@@ -35,14 +34,14 @@ export const buildLoadedOrderData = (response, prior = {}) => {
     ...(response.orderData || {}),
     ...(microbiologyOrderDetail ? { microbiologyOrderDetail } : {}),
     patientProperties: {
-      ...SampleOrderFormValues.patientProperties,
+      ...defaults.patientProperties,
       ...(response.patientProperties || {}),
       ...(response.orderData?.patientProperties || {}),
       patientUpdateStatus:
         response.patientProperties?.patientUpdateStatus || "NO_ACTION",
     },
     sampleOrderItems: {
-      ...SampleOrderFormValues.sampleOrderItems,
+      ...defaults.sampleOrderItems,
       ...(response.sampleOrderItems || {}),
       environmentalFields: {
         ...(prior.sampleOrderItems?.environmentalFields || {}),
@@ -90,17 +89,10 @@ export const buildSubmittedMicrobiologyOrderDetail = (orderData, samples) =>
     : undefined;
 
 export const isMicrobiologyOrderReady = (orderData, samples) => {
-  const hasCultureWorkflow = hasCultureWorkflowTest(samples);
-  const sampleOrderItems = orderData?.sampleOrderItems || {};
-  const microbiologyProgramSelected =
-    Boolean(sampleOrderItems.microbiologyProgramId) &&
-    String(sampleOrderItems.programId || "") ===
-      String(sampleOrderItems.microbiologyProgramId);
-
-  if (!hasCultureWorkflow && !microbiologyProgramSelected) {
+  if (!isMicrobiologyOrder(orderData, samples)) {
     return true;
   }
-
+  const sampleOrderItems = orderData?.sampleOrderItems || {};
   return (
     String(sampleOrderItems.programId || "") ===
     String(sampleOrderItems.microbiologyProgramId || "")

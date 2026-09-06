@@ -10,6 +10,7 @@ import {
   seedMicrobiologyOrderCatalog as seedOrderCatalog,
   selectMicrobiologyOrderTest as selectTest,
   startMicrobiologyOrder as startSupportedOrder,
+  fillMicrobiologyOrderHeader as startSupportedOrderInPlace,
 } from "../../../helpers/microbiology-order-entry";
 import { LONG_TIMEOUT } from "../../../helpers/timeouts";
 
@@ -385,15 +386,31 @@ test.describe("microbiology order entry on the supported workflow", () => {
     await saveEntryAndOpenCollect(page);
     await collectAndRoute(page);
 
-    const routineLabNumber = await startSupportedOrder(page, seeded);
-    await expect(
-      page.getByTestId("microbiology-order-entry-section"),
-    ).toHaveCount(0);
-    await selectTest(page, nonCultureTestName);
+    // Start the next order the way a user does, without leaving the
+    // application, so any state held from the culture order would still be
+    // present.
+    await page
+      .getByRole("link", { name: "Add Generic Order", exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/order\/clinical$/i, {
+      timeout: LONG_TIMEOUT,
+    });
+    await page.getByRole("button", { name: "New Order" }).click();
+    await expect(page).toHaveURL(/\/order\/clinical\/enter$/i, {
+      timeout: LONG_TIMEOUT,
+    });
+
     await expect(
       page.getByTestId("microbiology-order-entry-section"),
     ).toHaveCount(0);
     await expect(page.getByRole("combobox", { name: "Program" })).toBeEnabled();
+    await expect(page.getByLabel("Clinical History")).toHaveCount(0);
+
+    const routineLabNumber = await startSupportedOrderInPlace(page, seeded);
+    await selectTest(page, nonCultureTestName);
+    await expect(
+      page.getByTestId("microbiology-order-entry-section"),
+    ).toHaveCount(0);
     await saveEntryAndOpenCollect(page);
     await collectAndRoute(page);
 

@@ -9,15 +9,15 @@ import React, {
 import { useLocation } from "react-router-dom";
 import {
   getFromOpenElisServer,
-  postToOpenElisServer,
+  postToOpenElisServerFullResponse,
   putToOpenElisServer,
 } from "../utils/Utils";
 import {
-  createRequestsForSamples,
+  toRequestedSampleTypes,
   getRequestsBySample,
   convertRequestsToSamples,
 } from "./api/sampleTypeRequestApi";
-import { SampleOrderFormValues } from "../formModel/innitialValues/OrderEntryFormValues";
+import { createSampleOrderFormValues } from "../formModel/innitialValues/OrderEntryFormValues";
 import { ConfigurationContext } from "../layout/Layout";
 import {
   buildLoadedOrderData,
@@ -187,18 +187,19 @@ const flattenSampleManifestFields = (
  * Date fields will be populated from API response.
  * @param {string} workflowType - Pre-seeded workflow type ("clinical" | "environmental" | "vector")
  */
-const getInitialOrderData = (workflowType = "clinical") => {
+export const getInitialOrderData = (workflowType = "clinical") => {
+  const defaults = createSampleOrderFormValues();
   return {
-    ...SampleOrderFormValues,
+    ...defaults,
     currentDate: "",
     sampleOrderItems: {
-      ...SampleOrderFormValues.sampleOrderItems,
+      ...defaults.sampleOrderItems,
       requestDate: "",
       receivedDateForDisplay: "",
       receivedTime: getCurrentTime(),
       paymentOptionSelection: "",
       environmentalFields: {
-        ...SampleOrderFormValues.sampleOrderItems?.environmentalFields,
+        ...defaults.sampleOrderItems?.environmentalFields,
         workflowType,
       },
     },
@@ -225,6 +226,7 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
   const [saveStatus, setSaveStatus] = useState(SaveStatus.SAVED);
   const [isDirty, setIsDirty] = useState(false);
   const [error, setError] = useState(null);
+  const [fieldErrors, setFieldErrors] = useState({});
   const [stepProgress, setStepProgress] = useState({
     enter: false,
     collect: false,
@@ -575,6 +577,37 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
   }, []);
 
   /**
+   * Reads a blocked save so the screen can show what to correct: the server's
+   * message plus one entry per rejected field.
+   */
+  const readSaveFailure = async (response) => {
+    let body = {};
+    try {
+      body = (await response.json()) || {};
+    } catch (parseError) {
+      body = {};
+    }
+    const byField = {};
+    (body.fieldErrors || []).forEach((fieldError) => {
+      if (fieldError?.field) {
+        byField[fieldError.field] =
+          fieldError.defaultMessage || "invalid value";
+      }
+    });
+    const globalMessages = (body.globalErrors || [])
+      .map((globalError) =>
+        typeof globalError === "string"
+          ? globalError
+          : globalError?.defaultMessage || "",
+      )
+      .filter(Boolean);
+    return {
+      message: body.error || globalMessages[0] || "Failed to save order",
+      fieldErrors: byField,
+    };
+  };
+
+  /**
    * Save the current order state.
    * Can be called at any step to persist progress.
    *
@@ -612,9 +645,6 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
       const useReferral = referralItems.length > 0;
 
       // Prepare order data for submission in the format expected by SamplePatientEntry
-      const submittedMicrobiologyOrderDetail =
-        buildSubmittedMicrobiologyOrderDetail(orderData, effectiveSamples);
-
       const submitData = {
         ...orderData,
         sampleXML: sampleXML,
@@ -626,9 +656,10 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
         sampleOrderItems: buildSubmissionSampleOrderItems(
           orderData.sampleOrderItems,
         ),
-        ...(submittedMicrobiologyOrderDetail
-          ? { microbiologyOrderDetail: submittedMicrobiologyOrderDetail }
-          : {}),
+        microbiologyOrderDetail: buildSubmittedMicrobiologyOrderDetail(
+          orderData,
+          effectiveSamples,
+        ),
         initialSampleConditionList: [],
         testSectionList: [],
       };
@@ -646,123 +677,137 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
           };
         }
 
-        postToOpenElisServer(endpoint, JSON.stringify(submitData), (status) => {
-          if (!silent) {
-            setIsSubmitting(false);
-          }
-
-          if (status === 200 || status === 201) {
-            setIsDirty(false);
-            setSaveStatus(SaveStatus.SAVED);
-            setError(null);
-            lastSavedDataRef.current = JSON.stringify({
-              orderData,
-              samples,
-            });
-
-            // Reload order to get created sampleItemIds and orderId for subsequent saves
-            const labNo = orderData?.sampleOrderItems?.labNo;
-            if (labNo && !skipReload) {
-              getFromOpenElisServer(
-                `/rest/order/search?labNumber=${encodeURIComponent(labNo)}`,
-                (response) => {
-                  if (response) {
-                    // CRITICAL: Update orderId from the response - needed for Step 2 to work correctly
-                    // The orderId is used to set sampleOrderItems.sampleId which tells the backend
-                    // this is an UPDATE (not insert), so it loads the existing sample and skips
-                    // accession number validation
-                    if (response.id) {
-                      setOrderId(response.id);
-                    }
-                    if (response.labNumber) {
-                      setLabNumber(response.labNumber);
-                    }
-                    // Only replace samples state when the server returns actual
-                    // sample_items (which carry all field values back). The
-                    // sample_type_request DTO only carries typeOfSampleId/
-                    // quantity/tests — per-sample fields like collectionDate,
-                    // container, gpsLatitude, and labPerformedSampling are not
-                    // stored there, so we keep the current samples state.
-                    const hasSampleItems =
-                      response.samples &&
-                      response.samples.length > 0 &&
-                      response.samples.some((s) => s.sampleItemId);
-                    if (hasSampleItems) {
-                      setSamplesState(
-                        flattenSampleManifestFields(
-                          response.samples,
-                          envFields,
-                          dateLocale,
-                        ),
-                      );
-                    } else if (response.id) {
-                      getRequestsBySample(response.id)
-                        .then((requests) => {
-                          if (requests && requests.length > 0) {
-                            setSamplesState(
-                              flattenSampleManifestFields(
-                                convertRequestsToSamples(requests),
-                                envFields,
-                                dateLocale,
-                              ),
-                            );
-                          } else if (
-                            response.samples &&
-                            response.samples.length > 0
-                          ) {
-                            setSamplesState(
-                              flattenSampleManifestFields(
-                                response.samples,
-                                envFields,
-                                dateLocale,
-                              ),
-                            );
-                          }
-                        })
-                        .catch(() => {
-                          if (response.samples && response.samples.length > 0) {
-                            setSamplesState(
-                              flattenSampleManifestFields(
-                                response.samples,
-                                envFields,
-                                dateLocale,
-                              ),
-                            );
-                          }
-                        });
-                    }
-                    // No else: keep current samples state as-is when only
-                    // sample_type_requests exist.
-                    // CRITICAL: Update patientUpdateStatus to NO_ACTION after first save
-                    // This prevents "stale state" errors when saving again (patient already exists)
-                    setOrderDataState((prev) => ({
-                      ...prev,
-                      patientProperties: {
-                        ...prev.patientProperties,
-                        patientUpdateStatus: "NO_ACTION",
-                        // Also update patientPK if available
-                        patientPK:
-                          response.patientProperties?.patientPK ||
-                          prev.patientProperties?.patientPK,
-                      },
-                    }));
-                  }
-                  // Return the freshly-loaded samples (with sampleItemIds) so
-                  // callers can immediately use them for downstream actions
-                  // like storage assignment, without waiting for the next render.
-                  resolve({ success: true, samples: response?.samples || [] });
-                },
-              );
-            } else {
-              resolve({ success: true, samples: effectiveSamples });
+        postToOpenElisServerFullResponse(
+          endpoint,
+          JSON.stringify(submitData),
+          async (response) => {
+            if (!silent) {
+              setIsSubmitting(false);
             }
-          } else {
-            setSaveStatus(SaveStatus.ERROR);
-            const errorMsg = "Failed to save order";
-            setError(errorMsg);
-            reject(new Error(errorMsg));
-          }
-        });
+
+            if (response && response.ok) {
+              setIsDirty(false);
+              setSaveStatus(SaveStatus.SAVED);
+              setError(null);
+              setFieldErrors({});
+              lastSavedDataRef.current = JSON.stringify({
+                orderData,
+                samples,
+              });
+
+              // Reload order to get created sampleItemIds and orderId for subsequent saves
+              const labNo = orderData?.sampleOrderItems?.labNo;
+              if (labNo && !skipReload) {
+                getFromOpenElisServer(
+                  `/rest/order/search?labNumber=${encodeURIComponent(labNo)}`,
+                  (response) => {
+                    if (response) {
+                      // CRITICAL: Update orderId from the response - needed for Step 2 to work correctly
+                      // The orderId is used to set sampleOrderItems.sampleId which tells the backend
+                      // this is an UPDATE (not insert), so it loads the existing sample and skips
+                      // accession number validation
+                      if (response.id) {
+                        setOrderId(response.id);
+                      }
+                      if (response.labNumber) {
+                        setLabNumber(response.labNumber);
+                      }
+                      // Only replace samples state when the server returns actual
+                      // sample_items (which carry all field values back). The
+                      // sample_type_request DTO only carries typeOfSampleId/
+                      // quantity/tests — per-sample fields like collectionDate,
+                      // container, gpsLatitude, and labPerformedSampling are not
+                      // stored there, so we keep the current samples state.
+                      const hasSampleItems =
+                        response.samples &&
+                        response.samples.length > 0 &&
+                        response.samples.some((s) => s.sampleItemId);
+                      if (hasSampleItems) {
+                        setSamplesState(
+                          flattenSampleManifestFields(
+                            response.samples,
+                            envFields,
+                            dateLocale,
+                          ),
+                        );
+                      } else if (response.id) {
+                        getRequestsBySample(response.id)
+                          .then((requests) => {
+                            if (requests && requests.length > 0) {
+                              setSamplesState(
+                                flattenSampleManifestFields(
+                                  convertRequestsToSamples(requests),
+                                  envFields,
+                                  dateLocale,
+                                ),
+                              );
+                            } else if (
+                              response.samples &&
+                              response.samples.length > 0
+                            ) {
+                              setSamplesState(
+                                flattenSampleManifestFields(
+                                  response.samples,
+                                  envFields,
+                                  dateLocale,
+                                ),
+                              );
+                            }
+                          })
+                          .catch(() => {
+                            if (
+                              response.samples &&
+                              response.samples.length > 0
+                            ) {
+                              setSamplesState(
+                                flattenSampleManifestFields(
+                                  response.samples,
+                                  envFields,
+                                  dateLocale,
+                                ),
+                              );
+                            }
+                          });
+                      }
+                      // No else: keep current samples state as-is when only
+                      // sample_type_requests exist.
+                      // CRITICAL: Update patientUpdateStatus to NO_ACTION after first save
+                      // This prevents "stale state" errors when saving again (patient already exists)
+                      setOrderDataState((prev) => ({
+                        ...prev,
+                        patientProperties: {
+                          ...prev.patientProperties,
+                          patientUpdateStatus: "NO_ACTION",
+                          // Also update patientPK if available
+                          patientPK:
+                            response.patientProperties?.patientPK ||
+                            prev.patientProperties?.patientPK,
+                        },
+                      }));
+                    }
+                    // Return the freshly-loaded samples (with sampleItemIds) so
+                    // callers can immediately use them for downstream actions
+                    // like storage assignment, without waiting for the next render.
+                    resolve({
+                      success: true,
+                      samples: response?.samples || [],
+                    });
+                  },
+                );
+              } else {
+                resolve({ success: true, samples: effectiveSamples });
+              }
+            } else {
+              const failure = response
+                ? await readSaveFailure(response)
+                : { message: "Failed to save order", fieldErrors: {} };
+              setSaveStatus(SaveStatus.ERROR);
+              setFieldErrors(failure.fieldErrors);
+              setError(failure.message);
+              reject(new Error(failure.message));
+            }
+          },
+        );
       });
     },
     [
@@ -786,229 +831,189 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
    * - Step 1: Order metadata + requested sample types
    * - Step 2: Physical sample collection (creates sample_item records)
    *
-   * @param {boolean} silent - If true, no loading indicator is shown
    */
-  const saveOrderEntry = useCallback(
-    async (silent = false) => {
-      if (isReadOnly && !isEditMode) {
-        return Promise.reject(new Error("Cannot save in read-only mode"));
-      }
+  const saveOrderEntry = useCallback(async () => {
+    if (isReadOnly && !isEditMode) {
+      return Promise.reject(new Error("Cannot save in read-only mode"));
+    }
 
-      if (!silent) {
-        setIsSubmitting(true);
-      }
-      setSaveStatus(SaveStatus.SAVING);
-      setError(null);
+    setIsSubmitting(true);
+    setSaveStatus(SaveStatus.SAVING);
+    setError(null);
 
-      // For Step 1, we send empty sampleXML - sample types will be saved as requests
-      const envFields = {
-        ...(orderData?.sampleOrderItems?.environmentalFields || {}),
-      };
-      const workflowType = envFields.workflowType || "clinical";
+    // For Step 1, we send empty sampleXML - sample types will be saved as requests
+    const envFields = {
+      ...(orderData?.sampleOrderItems?.environmentalFields || {}),
+    };
+    const workflowType = envFields.workflowType || "clinical";
 
-      // For vector orders, stamp today's date/time on each sample and map
-      // per-sample vectorFields (collectionVolume, vecLifecycleStage, vecTrapTypeId).
-      let entrySampleXML = "";
-      if (workflowType === "vector" && samples.some((s) => s.sampleTypeId)) {
-        const now = new Date();
-        const todayIso = now.toISOString().slice(0, 10); // YYYY-MM-DD
-        const currentTime = now.toTimeString().slice(0, 5); // HH:MM
-        const providerFirst =
-          orderData?.sampleOrderItems?.providerFirstName || "";
-        const providerLast =
-          orderData?.sampleOrderItems?.providerLastName || "";
-        const providerName = `${providerFirst} ${providerLast}`.trim();
+    // For vector orders, stamp today's date/time on each sample and map
+    // per-sample vectorFields (collectionVolume, vecLifecycleStage, vecTrapTypeId).
+    let entrySampleXML = "";
+    if (workflowType === "vector" && samples.some((s) => s.sampleTypeId)) {
+      const now = new Date();
+      const todayIso = now.toISOString().slice(0, 10); // YYYY-MM-DD
+      const currentTime = now.toTimeString().slice(0, 5); // HH:MM
+      const providerFirst =
+        orderData?.sampleOrderItems?.providerFirstName || "";
+      const providerLast = orderData?.sampleOrderItems?.providerLastName || "";
+      const providerName = `${providerFirst} ${providerLast}`.trim();
 
-        const stampedSamples = samples.map((s) =>
-          s.sampleTypeId
-            ? {
-                ...s,
-                collectionDate: s.collectionDate || todayIso,
-                collectionTime: s.collectionTime || currentTime,
-                receivedDate: s.receivedDate || todayIso,
-                receivedTime: s.receivedTime || currentTime,
-                quantity: s.vectorFields?.collectionVolume || s.quantity || "",
-                collectorId: s.collectorId || providerName,
-              }
-            : s,
-        );
-        // Merge vector observation fields from first sample into environmentalFields
-        const firstVectorFields =
-          samples.find((s) => s.sampleTypeId)?.vectorFields || {};
-        if (
-          firstVectorFields.vecLifecycleStage ||
-          firstVectorFields.vecTrapTypeId ||
-          firstVectorFields.vecTrapCount ||
-          firstVectorFields.vecTrapNights
-        ) {
-          envFields.vecLifecycleStage =
-            firstVectorFields.vecLifecycleStage || envFields.vecLifecycleStage;
-          envFields.vecTrapTypeId =
-            firstVectorFields.vecTrapTypeId || envFields.vecTrapTypeId;
-          envFields.vecTrapCount =
-            firstVectorFields.vecTrapCount || envFields.vecTrapCount;
-          envFields.vecTrapNights =
-            firstVectorFields.vecTrapNights || envFields.vecTrapNights;
-        }
-        entrySampleXML = buildSampleXML(stampedSamples, envFields);
-      }
-      // Prepare order data WITHOUT sample items
-      const submitData = {
-        ...orderData,
-        sampleXML: entrySampleXML,
-        referralItems: [],
-        useReferral: false,
-        orderEntryOnly: true, // Flag for backend to skip sample validation
-        sampleOrderItems: buildSubmissionSampleOrderItems({
-          ...orderData.sampleOrderItems,
-          // Include per-sample vector observations merged above.
-          environmentalFields: envFields,
-        }),
-        ...(buildSubmittedMicrobiologyOrderDetail(orderData, samples)
+      const stampedSamples = samples.map((s) =>
+        s.sampleTypeId
           ? {
-              microbiologyOrderDetail: buildSubmittedMicrobiologyOrderDetail(
-                orderData,
-                samples,
-              ),
+              ...s,
+              collectionDate: s.collectionDate || todayIso,
+              collectionTime: s.collectionTime || currentTime,
+              receivedDate: s.receivedDate || todayIso,
+              receivedTime: s.receivedTime || currentTime,
+              quantity: s.vectorFields?.collectionVolume || s.quantity || "",
+              collectorId: s.collectorId || providerName,
             }
-          : {}),
-        initialSampleConditionList: [],
-        testSectionList: [],
-      };
+          : s,
+      );
+      // Merge vector observation fields from first sample into environmentalFields
+      const firstVectorFields =
+        samples.find((s) => s.sampleTypeId)?.vectorFields || {};
+      if (
+        firstVectorFields.vecLifecycleStage ||
+        firstVectorFields.vecTrapTypeId ||
+        firstVectorFields.vecTrapCount ||
+        firstVectorFields.vecTrapNights
+      ) {
+        envFields.vecLifecycleStage =
+          firstVectorFields.vecLifecycleStage || envFields.vecLifecycleStage;
+        envFields.vecTrapTypeId =
+          firstVectorFields.vecTrapTypeId || envFields.vecTrapTypeId;
+        envFields.vecTrapCount =
+          firstVectorFields.vecTrapCount || envFields.vecTrapCount;
+        envFields.vecTrapNights =
+          firstVectorFields.vecTrapNights || envFields.vecTrapNights;
+      }
+      entrySampleXML = buildSampleXML(stampedSamples, envFields);
+    }
+    // Prepare order data WITHOUT sample items
+    const submitData = {
+      ...orderData,
+      sampleXML: entrySampleXML,
+      referralItems: [],
+      useReferral: false,
+      orderEntryOnly: true, // Flag for backend to skip sample validation
+      sampleOrderItems: buildSubmissionSampleOrderItems({
+        ...orderData.sampleOrderItems,
+        // Include per-sample vector observations merged above.
+        environmentalFields: envFields,
+      }),
+      microbiologyOrderDetail: buildSubmittedMicrobiologyOrderDetail(
+        orderData,
+        samples,
+      ),
+      requestedSampleTypes: toRequestedSampleTypes(samples),
+      initialSampleConditionList: [],
+      testSectionList: [],
+    };
 
-      return new Promise((resolve, reject) => {
-        const endpoint = "/rest/SamplePatientEntry";
+    return new Promise((resolve, reject) => {
+      const endpoint = "/rest/SamplePatientEntry";
 
-        if (orderId) {
-          submitData.sampleOrderItems = {
-            ...submitData.sampleOrderItems,
-            sampleId: orderId,
-          };
-        }
+      if (orderId) {
+        submitData.sampleOrderItems = {
+          ...submitData.sampleOrderItems,
+          sampleId: orderId,
+        };
+      }
 
-        postToOpenElisServer(
-          endpoint,
-          JSON.stringify(submitData),
-          async (status) => {
-            if (status === 200 || status === 201) {
-              // Reload order to get the created sample ID
-              const labNo = orderData?.sampleOrderItems?.labNo;
-              if (labNo) {
-                getFromOpenElisServer(
-                  `/rest/order/search?labNumber=${encodeURIComponent(labNo)}`,
-                  async (response) => {
-                    if (response) {
-                      const sampleId = response.id;
-                      setOrderId(sampleId);
+      postToOpenElisServerFullResponse(
+        endpoint,
+        JSON.stringify(submitData),
+        async (response) => {
+          if (response && response.ok) {
+            setFieldErrors({});
+            // Reload order to get the created sample ID
+            const labNo = orderData?.sampleOrderItems?.labNo;
+            if (labNo) {
+              setLabNumber(labNo);
+              getFromOpenElisServer(
+                `/rest/order/search?labNumber=${encodeURIComponent(labNo)}`,
+                async (response) => {
+                  if (response) {
+                    const sampleId = response.id;
+                    setOrderId(sampleId);
 
-                      // Create sample_type_requests for each selected sample type
-                      const samplesWithTypes = samples.filter(
-                        (s) => s.sampleTypeId,
+                    // Pull the persisted sample_items back into context so
+                    // downstream steps (Label & Store, QA, Complete) see
+                    // the post-fan-out organism rows instead of the user's
+                    // original "pool of N" entry. Vector orders fan-out
+                    // server-side: the placeholder is deleted and N
+                    // organism siblings take its place; without this
+                    // reload Step 2 would still render one Sample Label
+                    // row instead of N.
+                    // Only replace samples state when the server returns
+                    // actual sample_items (which carry all field values back).
+                    // When falling back to sample_type_requests, the request
+                    // DTO only carries typeOfSampleId/quantity/tests — fields
+                    // like collectionDate, container, gpsLatitude, and
+                    // labPerformedSampling are not stored there, so we keep
+                    // the current samples state to avoid resetting the form.
+                    const hasSampleItems =
+                      response.samples &&
+                      response.samples.length > 0 &&
+                      response.samples.some((s) => s.sampleItemId);
+                    if (hasSampleItems) {
+                      setSamplesState(
+                        flattenSampleManifestFields(
+                          response.samples,
+                          envFields,
+                          dateLocale,
+                        ),
                       );
-                      if (samplesWithTypes.length > 0 && sampleId) {
-                        try {
-                          await createRequestsForSamples(
-                            sampleId,
-                            samplesWithTypes,
-                          );
-                        } catch (err) {
-                          // Reject with error so UI shows failure
-                          if (!silent) {
-                            setIsSubmitting(false);
-                          }
-                          setSaveStatus(SaveStatus.ERROR);
-                          setError("Failed to save sample type requests");
-                          reject(
-                            new Error(
-                              "Failed to save sample type requests: " +
-                                err.message,
-                            ),
-                          );
-                          return;
-                        }
-                      }
-
-                      // Pull the persisted sample_items back into context so
-                      // downstream steps (Label & Store, QA, Complete) see
-                      // the post-fan-out organism rows instead of the user's
-                      // original "pool of N" entry. Vector orders fan-out
-                      // server-side: the placeholder is deleted and N
-                      // organism siblings take its place; without this
-                      // reload Step 2 would still render one Sample Label
-                      // row instead of N.
-                      // Only replace samples state when the server returns
-                      // actual sample_items (which carry all field values back).
-                      // When falling back to sample_type_requests, the request
-                      // DTO only carries typeOfSampleId/quantity/tests — fields
-                      // like collectionDate, container, gpsLatitude, and
-                      // labPerformedSampling are not stored there, so we keep
-                      // the current samples state to avoid resetting the form.
-                      const hasSampleItems =
-                        response.samples &&
-                        response.samples.length > 0 &&
-                        response.samples.some((s) => s.sampleItemId);
-                      if (hasSampleItems) {
-                        setSamplesState(
-                          flattenSampleManifestFields(
-                            response.samples,
-                            envFields,
-                            dateLocale,
-                          ),
-                        );
-                      }
-                      // No else: keep current samples state as-is when only
-                      // sample_type_requests exist — all user-entered fields
-                      // are already in the React state and don't need reloading.
-
-                      // Update state
-                      setIsDirty(false);
-                      setSaveStatus(SaveStatus.SAVED);
-                      setOrderDataState((prev) => ({
-                        ...prev,
-                        patientProperties: {
-                          ...prev.patientProperties,
-                          patientUpdateStatus: "NO_ACTION",
-                          patientPK:
-                            response.patientProperties?.patientPK ||
-                            prev.patientProperties?.patientPK,
-                        },
-                      }));
-
-                      if (!silent) {
-                        setIsSubmitting(false);
-                      }
-                      resolve({ success: true, sampleId });
-                    } else {
-                      if (!silent) {
-                        setIsSubmitting(false);
-                      }
-                      resolve({ success: true });
                     }
-                  },
-                );
-              } else {
-                if (!silent) {
-                  setIsSubmitting(false);
-                }
-                setIsDirty(false);
-                setSaveStatus(SaveStatus.SAVED);
-                resolve({ success: true });
-              }
+                    // No else: keep current samples state as-is when only
+                    // sample_type_requests exist — all user-entered fields
+                    // are already in the React state and don't need reloading.
+
+                    // Update state
+                    setIsDirty(false);
+                    setSaveStatus(SaveStatus.SAVED);
+                    setOrderDataState((prev) => ({
+                      ...prev,
+                      patientProperties: {
+                        ...prev.patientProperties,
+                        patientUpdateStatus: "NO_ACTION",
+                        patientPK:
+                          response.patientProperties?.patientPK ||
+                          prev.patientProperties?.patientPK,
+                      },
+                    }));
+
+                    setIsSubmitting(false);
+                    resolve({ success: true, sampleId });
+                  } else {
+                    setIsSubmitting(false);
+                    resolve({ success: true });
+                  }
+                },
+              );
             } else {
-              if (!silent) {
-                setIsSubmitting(false);
-              }
-              setSaveStatus(SaveStatus.ERROR);
-              const errorMsg = "Failed to save order";
-              setError(errorMsg);
-              reject(new Error(errorMsg));
+              setIsSubmitting(false);
+              setIsDirty(false);
+              setSaveStatus(SaveStatus.SAVED);
+              resolve({ success: true });
             }
-          },
-        );
-      });
-    },
-    [orderId, orderData, samples, isReadOnly, isEditMode, dateLocale],
-  );
+          } else {
+            const failure = response
+              ? await readSaveFailure(response)
+              : { message: "Failed to save order", fieldErrors: {} };
+            setIsSubmitting(false);
+            setSaveStatus(SaveStatus.ERROR);
+            setFieldErrors(failure.fieldErrors);
+            setError(failure.message);
+            reject(new Error(failure.message));
+          }
+        },
+      );
+    });
+  }, [orderId, orderData, samples, isReadOnly, isEditMode, dateLocale]);
 
   /**
    * Enable edit mode for a read-only order
@@ -1294,6 +1299,7 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
     saveStatus,
     isDirty,
     error,
+    fieldErrors,
     stepProgress,
     storageSkipped,
     testSampleAssignments,

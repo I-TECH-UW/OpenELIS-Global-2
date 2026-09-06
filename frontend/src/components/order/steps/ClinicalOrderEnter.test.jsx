@@ -8,7 +8,7 @@ import messages from "../../../languages/en.json";
 const { orderContextValue, programSectionProps } = vi.hoisted(() => ({
   orderContextValue: {
     orderData: {
-      patientProperties: {},
+      patientProperties: { lastName: "Ada" },
       sampleOrderItems: {
         environmentalFields: { workflowType: "clinical" },
       },
@@ -26,7 +26,11 @@ const { orderContextValue, programSectionProps } = vi.hoisted(() => ({
       },
     ],
     setSamples: vi.fn(),
-    labNumber: "",
+    labNumber: "LAB-1",
+    isSubmitting: false,
+    saveStatus: "saved",
+    error: null,
+    fieldErrors: {},
     saveOrderEntry: vi.fn(),
     markStepComplete: vi.fn(),
     isReadOnly: false,
@@ -43,6 +47,12 @@ vi.mock("react-router-dom", () => ({
 
 vi.mock("../OrderContext", () => ({
   useOrderContext: () => orderContextValue,
+  SaveStatus: {
+    SAVED: "saved",
+    SAVING: "saving",
+    ERROR: "error",
+    UNSAVED: "unsaved",
+  },
 }));
 
 vi.mock("../../layout/Layout", () => ({
@@ -63,7 +73,12 @@ vi.mock("../../utils/Utils", () => ({
 }));
 
 vi.mock("../OrderWorkflowLayout", () => ({
-  default: ({ children }) => <div>{children}</div>,
+  default: ({ children, extraButtons }) => (
+    <div>
+      {children}
+      {extraButtons}
+    </div>
+  ),
 }));
 
 vi.mock("./sections/PatientSearchSection", () => ({
@@ -94,6 +109,52 @@ import ClinicalOrderEnter from "./ClinicalOrderEnter";
 describe("ClinicalOrderEnter", () => {
   beforeEach(() => {
     programSectionProps.mockClear();
+  });
+
+  it("does not offer a second draft save while one is in flight", () => {
+    orderContextValue.isSubmitting = true;
+    const { unmount } = render(
+      <IntlProvider locale="en" messages={messages}>
+        <ClinicalOrderEnter />
+      </IntlProvider>,
+    );
+
+    expect(screen.getByRole("button", { name: "Save Draft" })).toBeDisabled();
+    unmount();
+
+    orderContextValue.isSubmitting = false;
+    render(
+      <IntlProvider locale="en" messages={messages}>
+        <ClinicalOrderEnter />
+      </IntlProvider>,
+    );
+
+    expect(screen.getByRole("button", { name: "Save Draft" })).toBeEnabled();
+  });
+
+  it("marks the lab number and lists the rest when the server blocks the save", () => {
+    orderContextValue.saveStatus = "error";
+    orderContextValue.error = "sampleOrderItems.labNo: must not be blank";
+    orderContextValue.fieldErrors = {
+      "sampleOrderItems.labNo": "must not be blank",
+      "sampleOrderItems.receivedDateForDisplay": "invalid date",
+    };
+    render(
+      <IntlProvider locale="en" messages={messages}>
+        <ClinicalOrderEnter />
+      </IntlProvider>,
+    );
+
+    expect(screen.getByRole("textbox", { name: /Lab Number/ })).toBeInvalid();
+    expect(screen.getByText("must not be blank")).toBeInTheDocument();
+    expect(screen.getByText("The order was not saved")).toBeInTheDocument();
+    expect(
+      screen.getByText("sampleOrderItems.receivedDateForDisplay: invalid date"),
+    ).toBeInTheDocument();
+
+    orderContextValue.saveStatus = "saved";
+    orderContextValue.error = null;
+    orderContextValue.fieldErrors = {};
   });
 
   it("shares selected samples with the Program section", () => {

@@ -32,11 +32,10 @@ export const emptyMicrobiologyOrderDetail = {
 };
 
 // Starting values for an order that qualifies for the microbiology workflow.
-// Built per order; never shared between orders.
-export const newMicrobiologyOrderDetail = () => ({
+export const defaultMicrobiologyOrderDetail = {
   ...emptyMicrobiologyOrderDetail,
   culturePurpose: "CLINICAL_DIAGNOSTIC",
-});
+};
 
 export const formatAdmissionDateForPicker = formatIsoDateForBackend;
 export const formatAdmissionDateForApi = formatPickerDateForIso;

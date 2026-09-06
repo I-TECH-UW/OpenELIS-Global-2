@@ -3,6 +3,7 @@ package org.openelisglobal.sample.service;
 import jakarta.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -68,6 +69,7 @@ import org.openelisglobal.requester.service.SampleRequesterService;
 import org.openelisglobal.requester.valueholder.SampleRequester;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
 import org.openelisglobal.sample.form.SamplePatientEntryForm;
+import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sample.valueholder.SampleAdditionalField;
 import org.openelisglobal.sample.valueholder.SampleComplianceStandard;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
@@ -75,11 +77,17 @@ import org.openelisglobal.samplehuman.valueholder.SampleHuman;
 import org.openelisglobal.sampleitem.dao.SampleItemDAO;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.sampletyperequest.dto.SampleTypeRequestDTO;
+import org.openelisglobal.sampletyperequest.service.SampleTypeRequestService;
+import org.openelisglobal.sampletyperequest.valueholder.SampleTypeRequest;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.unitofmeasure.service.UnitOfMeasureService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -117,6 +125,12 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private AnalysisService analysisService;
     @Autowired
     private TestService testService;
+    @Autowired
+    private SampleTypeRequestService sampleTypeRequestService;
+    @Autowired
+    private TypeOfSampleService typeOfSampleService;
+    @Autowired
+    private UnitOfMeasureService unitOfMeasureService;
     @Autowired
     private SampleRequesterService sampleRequesterService;
     @Autowired
@@ -175,6 +189,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         persistProviderData(updateData);
         persistRequestorContactData(updateData);
         persistSampleData(updateData, form.getMicrobiologyOrderDetail());
+        persistRequestedSampleTypes(updateData.getSample(), form.getRequestedSampleTypes(),
+                updateData.getCurrentUserId());
 
         // Only persist requester data and observations if sample was successfully
         // created
@@ -634,6 +650,87 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 
     private int normalizeLabelQuantity(Integer quantity) {
         return quantity != null && quantity > 0 ? quantity : 1;
+    }
+
+    /**
+     * Saves the specimens requested at order entry alongside the order itself, in
+     * the same transaction. Re-saving reuses the pending rows in order, so
+     * repeating a save updates them in place, and specimens removed from the order
+     * are cancelled rather than left behind. A save that does not carry the list at
+     * all, such as one made from a later stage, leaves the specimens untouched.
+     */
+    private void persistRequestedSampleTypes(Sample sample, List<SampleTypeRequestDTO> requestedSampleTypes,
+            String currentUserId) {
+        if (sample == null || sample.getId() == null || requestedSampleTypes == null) {
+            return;
+        }
+
+        // A specimen already collected still satisfies its entry in the list, so it
+        // is paired and left alone rather than requested a second time.
+        List<SampleTypeRequest> reusable = new ArrayList<>();
+        for (SampleTypeRequest existing : sampleTypeRequestService.getRequestsBySampleId(sample.getId())) {
+            if (existing.getStatus() != SampleTypeRequest.Status.CANCELLED) {
+                reusable.add(existing);
+            }
+        }
+
+        int sortOrder = 0;
+        for (SampleTypeRequestDTO requested : requestedSampleTypes) {
+            if (requested == null || GenericValidator.isBlankOrNull(requested.getTypeOfSampleId())) {
+                continue;
+            }
+            TypeOfSample typeOfSample = typeOfSampleService.getTypeOfSampleById(requested.getTypeOfSampleId());
+            if (typeOfSample == null) {
+                throw new IllegalArgumentException("Unknown requested sample type: " + requested.getTypeOfSampleId());
+            }
+
+            // Matching the specimen rather than the position keeps a cancellation
+            // pointing at the specimen that was actually taken off the order.
+            SampleTypeRequest request = takePendingRequestFor(reusable, typeOfSample);
+            if (request != null && request.getStatus() == SampleTypeRequest.Status.COLLECTED) {
+                sortOrder++;
+                continue;
+            }
+            boolean isNew = request == null;
+            if (isNew) {
+                request = new SampleTypeRequest();
+                request.setSample(sample);
+                request.setCreatedDate(new Timestamp(System.currentTimeMillis()));
+            }
+            request.setTypeOfSample(typeOfSample);
+            request.setSortOrder(sortOrder);
+            request.setRequestedQuantity(requested.getRequestedQuantity());
+            request.setRequestedTests(requested.getRequestedTests());
+            request.setRequestedPanels(requested.getRequestedPanels());
+            request.setStatus(SampleTypeRequest.Status.REQUESTED);
+            request.setSysUserId(currentUserId);
+            request.setUnitOfMeasure(GenericValidator.isBlankOrNull(requested.getUnitOfMeasureId()) ? null
+                    : unitOfMeasureService.get(requested.getUnitOfMeasureId()));
+
+            if (isNew) {
+                sampleTypeRequestService.insert(request);
+            } else {
+                sampleTypeRequestService.update(request);
+            }
+            sortOrder++;
+        }
+
+        for (SampleTypeRequest removed : reusable) {
+            if (removed.getStatus() == SampleTypeRequest.Status.REQUESTED) {
+                sampleTypeRequestService.cancelRequest(removed.getId());
+            }
+        }
+    }
+
+    private SampleTypeRequest takePendingRequestFor(List<SampleTypeRequest> reusable, TypeOfSample typeOfSample) {
+        for (Iterator<SampleTypeRequest> pending = reusable.iterator(); pending.hasNext();) {
+            SampleTypeRequest request = pending.next();
+            if (request.getTypeOfSample() != null && typeOfSample.getId().equals(request.getTypeOfSample().getId())) {
+                pending.remove();
+                return request;
+            }
+        }
+        return null;
     }
 
     private boolean microbiologyProgramSelected(SamplePatientUpdateData updateData) {

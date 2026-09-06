@@ -45,6 +45,17 @@ export async function startMicrobiologyOrder(
   seeded: MicrobiologyOrderCatalog,
 ) {
   await page.goto("/order/enter", { waitUntil: "domcontentloaded" });
+  return fillMicrobiologyOrderHeader(page, seeded);
+}
+
+/**
+ * Fills the order header for a caller already sitting on Enter Order, so a
+ * second order can be started without leaving the application.
+ */
+export async function fillMicrobiologyOrderHeader(
+  page: Page,
+  seeded: MicrobiologyOrderCatalog,
+) {
   await expect(page.getByRole("heading", { name: "Enter Order" })).toBeVisible({
     timeout: LONG_TIMEOUT,
   });
