@@ -375,5 +375,14 @@
   <!-- OGC-1030 (Validation v4 V4): site flag requiring a note when sending a result for retest. -->
   <include relativeToChangelogFile="true" file="088-validation-retest-note-flag.xml"/>
 
+  <!-- OGC-782 M1: microbiology catalog/reference foundations. The historical
+       filename is retained so already-applied demo migrations keep identity. -->
+  <include relativeToChangelogFile="true" file="051-microbiology-reference-foundations.xml"/>
+
+  <!-- OGC-782 M2: microbiology case core -->
+  <include relativeToChangelogFile="true" file="052-microbiology-case-core.xml"/>
+
+  <!-- OGC-782 M3: microbiology order details -->
+  <include relativeToChangelogFile="true" file="055-microbiology-order-detail.xml"/>
 
 </databaseChangeLog>
