@@ -8,6 +8,7 @@ import static org.junit.Assert.fail;
 
 import jakarta.servlet.http.HttpServletRequest;
 import java.lang.reflect.Method;
+import java.sql.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -93,6 +94,44 @@ public class EQACycleStateMachineIntegrationTest extends EQASpineTestBase {
 
         assertEquals(EQACycleStatus.CLOSED, readBack(cycle.getId()).getStatus());
         assertEquals(path.length, cycleService.getTransitions(cycle.getId()).size());
+    }
+
+    /**
+     * A cycle records when it actually ran, not only when it was planned to.
+     * Nothing had ever written either column, so a scored cycle carried no scoring
+     * date and anything wanting to print one had nothing to read.
+     */
+    @Test
+    public void aCycleRecordsWhenItStartedAndWhenItWasScored() {
+        EQACycle cycle = newCycle();
+        assertNull("a planned cycle has not started", readBack(cycle.getId()).getActualStartDate());
+        assertNull("nor been scored", readBack(cycle.getId()).getActualEndDate());
+
+        cycleService.transition(cycle.getId(), EQACycleStatus.PANEL_RECEIVED, EQAStateMachine.PARTICIPANT,
+                EQATriggerType.AUTO, EQATriggerEvent.PANEL_RECEIPT, null, null, USER);
+
+        Date started = readBack(cycle.getId()).getActualStartDate();
+        assertNotNull("leaving PLANNED is when it started", started);
+        assertNull("and it is not scored yet", readBack(cycle.getId()).getActualEndDate());
+
+        for (EQACycleStatus next : new EQACycleStatus[] { EQACycleStatus.TESTING, EQACycleStatus.READY_TO_SUBMIT,
+                EQACycleStatus.SUBMITTED, EQACycleStatus.SCORED }) {
+            cycleService.transition(cycle.getId(), next, EQAStateMachine.PARTICIPANT, EQATriggerType.AUTO,
+                    EQATriggerEvent.LAST_VALIDATED_RESULT, null, null, USER);
+        }
+
+        EQACycle scored = readBack(cycle.getId());
+        assertNotNull("reaching SCORED is when it was judged", scored.getActualEndDate());
+        assertEquals("and the start date is not moved by later transitions", started.toString(),
+                scored.getActualStartDate().toString());
+
+        // Closing it afterwards must not restamp either date: they record when the
+        // cycle ran, not when it was last touched.
+        cycleService.transition(cycle.getId(), EQACycleStatus.CLOSED, EQAStateMachine.PARTICIPANT, EQATriggerType.AUTO,
+                EQATriggerEvent.SCHEDULED_JOB, null, null, USER);
+        EQACycle closed = readBack(cycle.getId());
+        assertEquals(scored.getActualEndDate().toString(), closed.getActualEndDate().toString());
+        assertEquals(started.toString(), closed.getActualStartDate().toString());
     }
 
     @Test

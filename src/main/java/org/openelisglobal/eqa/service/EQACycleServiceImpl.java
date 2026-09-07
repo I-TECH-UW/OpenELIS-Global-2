@@ -216,6 +216,32 @@ public class EQACycleServiceImpl extends BaseObjectServiceImpl<EQACycle, Long> i
         return Optional.of(cycle);
     }
 
+    /**
+     * When the cycle actually ran, as opposed to when it was planned to.
+     *
+     * <p>
+     * Both columns have existed since the spine and nothing ever wrote either — a
+     * grep for {@code setActualEndDate} came back empty — so a scored cycle
+     * recorded no scoring date at all, and anything wanting to print one had
+     * nothing to read. Stamped here rather than in the scoring service so every
+     * machine and every caller gets it from the one place they all route through.
+     *
+     * <p>
+     * Neither is ever overwritten: the first time a cycle leaves PLANNED is when it
+     * started, and the first time it reaches SCORED is when it was judged. A
+     * re-score cannot move the date.
+     */
+    private static void stampActualDates(EQACycle cycle, EQACycleStatus priorState, EQACycleStatus newState) {
+        // The columns are DATE, and the cycle's own dates are days elsewhere too.
+        Date today = new Date(System.currentTimeMillis());
+        if (priorState == PLANNED && cycle.getActualStartDate() == null) {
+            cycle.setActualStartDate(today);
+        }
+        if (newState == SCORED && cycle.getActualEndDate() == null) {
+            cycle.setActualEndDate(today);
+        }
+    }
+
     private static Set<EQACycleStatus> legalNextStates(EQACycleStatus from, EQAStateMachine machine) {
         Map<EQACycleStatus, Set<EQACycleStatus>> edges = machine == EQAStateMachine.PROVIDER ? PROVIDER_EDGES
                 : PARTICIPANT_EDGES;
@@ -252,6 +278,7 @@ public class EQACycleServiceImpl extends BaseObjectServiceImpl<EQACycle, Long> i
         enforcePrepGate(cycle, priorState, newState, machine);
 
         cycle.setStatus(newState);
+        stampActualDates(cycle, priorState, newState);
         cycle.setSysUserId(sysUserId);
         EQACycle updated = eqaCycleDAO.update(cycle);
 
