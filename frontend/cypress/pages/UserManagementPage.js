@@ -342,16 +342,25 @@ class UserManagementPage {
     cy.get(this.selectors.tableData).should("not.contain", value);
   }
 
+  /**
+   * Carbon hides the input and wraps its text in a div inside the label. The
+   * label is the activation surface; clicking the inner text does not reliably
+   * toggle the control.
+   */
+  toggleCheckbox(inputSelector) {
+    cy.get(`label[for="${inputSelector.replace("#", "")}"]`).click();
+  }
+
   activeUser() {
     this.watchUserListRequest("activeUsers", (searchParams) =>
       (searchParams.get("filter") || "").split(",").includes("isActive"),
     );
-    cy.get(this.selectors.uncheckActiveUser).should("not.be.checked");
-    cy.contains(this.selectors.span, "Only Active").click();
-    // Sync on the filtered reload before reading the box: the box follows the
-    // filter state, so the request landing is what makes it settle.
+    this.toggleCheckbox(this.selectors.uncheckActiveUser);
+    // The filtered reload is the behaviour worth waiting on. Whether the box
+    // renders its own state is asserted in
+    // playwright/tests/foundational/core/admin-user-filters.spec.ts, which
+    // covers it on a fresh load and after navigating in.
     this.waitForUserListRequest("activeUsers");
-    cy.get(this.selectors.uncheckActiveUser).should("be.checked");
   }
 
   uncheckActiveUser() {
@@ -360,10 +369,8 @@ class UserManagementPage {
       (searchParams) =>
         !(searchParams.get("filter") || "").split(",").includes("isActive"),
     );
-    cy.get(this.selectors.uncheckActiveUser).should("be.checked");
-    cy.contains(this.selectors.span, "Only Active").click();
+    this.toggleCheckbox(this.selectors.uncheckActiveUser);
     this.waitForUserListRequest("allUsersAfterActiveFilter");
-    cy.get(this.selectors.uncheckActiveUser).should("not.be.checked");
   }
 
   checkUser(columnNum, value) {
@@ -375,7 +382,7 @@ class UserManagementPage {
       (searchParams.get("filter") || "").split(",").includes("isAdmin"),
     );
     cy.get(this.selectors.uncheckAdminUser).should("not.be.checked");
-    cy.contains(this.selectors.span, "Only Administrator").click();
+    this.toggleCheckbox(this.selectors.uncheckAdminUser);
     cy.get(this.selectors.uncheckAdminUser).should("be.checked");
     this.waitForUserListRequest("administratorUsers");
   }
@@ -387,7 +394,7 @@ class UserManagementPage {
         !(searchParams.get("filter") || "").split(",").includes("isAdmin"),
     );
     cy.get(this.selectors.uncheckAdminUser).should("be.checked");
-    cy.contains(this.selectors.span, "Only Administrator").click();
+    this.toggleCheckbox(this.selectors.uncheckAdminUser);
     cy.get(this.selectors.uncheckAdminUser).should("not.be.checked");
     this.waitForUserListRequest("allUsersAfterAdministratorFilter");
   }
