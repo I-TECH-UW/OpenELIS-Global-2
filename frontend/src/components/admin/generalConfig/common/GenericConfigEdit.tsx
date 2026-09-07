@@ -15,10 +15,13 @@ import {
   Checkbox,
 } from "@carbon/react";
 import {
-  getFromOpenElisServer,
   postToOpenElisServer,
   postToOpenElisServerFormData,
 } from "../../../utils/Utils";
+import {
+  useInvalidateServerData,
+  useServerData,
+} from "../../../utils/useServerData";
 import {
   AlertDialog,
   NotificationKinds,
@@ -30,6 +33,8 @@ import { FormattedMessage, useIntl } from "react-intl";
 interface GenericConfigEditProps {
   menuType: string;
   ID: string;
+  /** Called when the editor is finished with, saved or abandoned. */
+  onDone: () => void;
 }
 
 interface ConfigLocalization {
@@ -58,7 +63,11 @@ interface NotificationContextValue {
   }) => void;
 }
 
-const GenericConfigEdit = ({ menuType, ID }: GenericConfigEditProps) => {
+const GenericConfigEdit = ({
+  menuType,
+  ID,
+  onDone,
+}: GenericConfigEditProps) => {
   const intl = useIntl();
 
   const [FormEntryConfig, setFormEntryConfig] =
@@ -77,42 +86,38 @@ const GenericConfigEdit = ({ menuType, ID }: GenericConfigEditProps) => {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext) as NotificationContextValue;
 
-  useEffect(() => {
-    setIsLoading(true);
-    getFromOpenElisServer(`/rest/${menuType}?ID=${ID}`, handleMenuItems);
-  }, [menuType, ID]);
+  const { data: storedConfig, isLoading: configLoading } =
+    useServerData<FormEntryConfig>(`/rest/${menuType}?ID=${ID}`);
+  const invalidateServerData = useInvalidateServerData();
 
-  const handleMenuItems = (res?: FormEntryConfig) => {
-    if (!res) {
-      setIsLoading(false);
-      return;
-    }
+  // A logo is held apart from the rest of the config, so it is a second read,
+  // held off until the config says there is one.
+  const { data: storedLogo } = useServerData<{ value: string }>(
+    storedConfig?.valueType === "logoUpload"
+      ? `/dbImage/siteInformation/${storedConfig.paramName}`
+      : null,
+  );
+
+  const seedFrom = (res?: FormEntryConfig, logo?: { value: string }) => {
+    if (!res) return;
     setFormEntryConfig(res);
-    if (res.localization) {
-      setTextInputEnglishValue(
-        res.localization.english || res.localization.localeValues?.en || "",
-      );
-      setTextInputFrenchValue(
-        res.localization.french || res.localization.localeValues?.fr || "",
-      );
-    }
-    if (res.valueType === "boolean") {
-      setRadioValue(res.value);
-    }
-    if (res.valueType === "dictionary") {
-      setSelectedDictionaryValue(res.value);
-    }
-    if (res.valueType === "logoUpload") {
-      getFromOpenElisServer(
-        `/dbImage/siteInformation/${res.paramName}`,
-        (res: { value: string }) => {
-          setImg(res.value);
-        },
-      );
-    }
+    setTextInputEnglishValue(
+      res.localization?.english || res.localization?.localeValues?.en || "",
+    );
+    setTextInputFrenchValue(
+      res.localization?.french || res.localization?.localeValues?.fr || "",
+    );
+    setRadioValue(res.valueType === "boolean" ? res.value : "");
+    setSelectedDictionaryValue(res.valueType === "dictionary" ? res.value : "");
     setTextInputValue(res.value);
-    setIsLoading(false);
+    setImg(logo?.value ?? null);
+    setFile(null);
+    setRemoveImage(false);
   };
+
+  useEffect(() => {
+    seedFrom(storedConfig, storedLogo);
+  }, [storedConfig, storedLogo]);
 
   const updateFormEntryConfig = (newState: Partial<FormEntryConfig>) => {
     setFormEntryConfig((prevState) => ({
@@ -170,6 +175,7 @@ const GenericConfigEdit = ({ menuType, ID }: GenericConfigEditProps) => {
   };
 
   const handleSubmitButton = () => {
+    setIsLoading(true);
     if (FormEntryConfig!.valueType === "logoUpload") {
       const formData = new FormData();
       if (!removeImage) {
@@ -215,12 +221,14 @@ const GenericConfigEdit = ({ menuType, ID }: GenericConfigEditProps) => {
   };
 
   const handleSubmit = (status: number) => {
+    setIsLoading(false);
     if (status === 200) {
       showAlertMessage(
         intl.formatMessage({ id: "save.config.success.msg" }),
         NotificationKinds.success,
       );
-      window.location.reload();
+      invalidateServerData();
+      onDone();
     } else {
       showAlertMessage(
         intl.formatMessage({ id: "server.error.msg" }),
@@ -231,7 +239,7 @@ const GenericConfigEdit = ({ menuType, ID }: GenericConfigEditProps) => {
 
   return (
     <div className="adminPageContent">
-      {isLoading && (
+      {(isLoading || configLoading) && (
         <Loading
           description={intl.formatMessage({ id: "loading.description" })}
         />
@@ -440,10 +448,7 @@ const GenericConfigEdit = ({ menuType, ID }: GenericConfigEditProps) => {
                   </Button>
                 </Column>
                 <Column lg={2}>
-                  <Button
-                    data-cy="exit-Button"
-                    onClick={() => window.location.reload()}
-                  >
+                  <Button data-cy="exit-Button" onClick={onDone}>
                     <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.exit" />
                   </Button>
                 </Column>
