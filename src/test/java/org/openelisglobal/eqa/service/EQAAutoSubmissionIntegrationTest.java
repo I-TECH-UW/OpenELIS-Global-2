@@ -12,6 +12,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.math.BigDecimal;
+import java.sql.Timestamp;
 import java.time.Clock;
 import java.time.Duration;
 import java.util.List;
@@ -409,6 +410,68 @@ public class EQAAutoSubmissionIntegrationTest extends EQASpineTestBase {
         cycleSubmissionService.advanceCycle(cycle.getId());
         assertEquals(5, attempts(cycle.getId()));
         assertEquals(1, failureAlerts(cycle.getId()));
+    }
+
+    /**
+     * The counter had only ever been incremented, so a cycle that failed its way to
+     * the ceiling could never be submitted automatically again. A submission that
+     * gets through spends none of the budget, which is also what makes the ceiling
+     * a limit on consecutive failures rather than on a cycle's whole life.
+     */
+    @Test
+    public void aSubmissionThatSucceeds_givesTheRetryBudgetBack() {
+        EQAProgram scheme = externalScheme(false);
+        EQACycle cycle = readBack(insertCycle(scheme, 21));
+        Long roundId = insertRound(cycle, 1, "OPEN");
+        eqaOrder(cycle, roundId);
+        finalizedAnalysis(VL_TEST, VL_ANALYTE, "4.75");
+
+        when(fhirStub.submitCycleViaFhir(anyLong(), anyLong())).thenReturn(false);
+        windowElapsed();
+        cycleSubmissionService.advanceCycle(cycle.getId());
+        target.setClock(Clock.offset(Clock.systemDefaultZone(), Duration.ofHours(3)));
+        cycleSubmissionService.advanceCycle(cycle.getId());
+        assertEquals("two of five spent", 2, attempts(cycle.getId()));
+
+        when(fhirStub.submitCycleViaFhir(anyLong(), anyLong())).thenReturn(true);
+        target.setClock(Clock.offset(Clock.systemDefaultZone(), Duration.ofHours(5)));
+        cycleSubmissionService.advanceCycle(cycle.getId());
+
+        assertEquals(EQACycleStatus.SUBMITTED, readBack(cycle.getId()).getStatus());
+        assertEquals("the budget is whole again", 0, attempts(cycle.getId()));
+        assertNull("and nothing is holding the next attempt off",
+                jdbc.queryForObject("SELECT last_submission_attempt_at FROM clinlims.eqa_cycle WHERE id = ?",
+                        Timestamp.class, cycle.getId()));
+    }
+
+    /**
+     * The dead end F-22 recorded: with the budget spent the sweep never tries
+     * again, so the manual endpoint is the only way out — and it has to leave the
+     * cycle able to submit automatically next time.
+     */
+    @Test
+    public void aManualSubmission_recoversACycleWhoseRetriesAreSpent() {
+        EQAProgram scheme = externalScheme(false);
+        EQACycle cycle = readBack(insertCycle(scheme, 22));
+        Long roundId = insertRound(cycle, 1, "OPEN");
+        eqaOrder(cycle, roundId);
+        finalizedAnalysis(VL_TEST, VL_ANALYTE, "4.75");
+        when(fhirStub.submitCycleViaFhir(anyLong(), anyLong())).thenReturn(false);
+
+        long[] hoursOut = { 2, 3, 5, 8, 12 };
+        for (long hours : hoursOut) {
+            target.setClock(Clock.offset(Clock.systemDefaultZone(), Duration.ofHours(hours)));
+            cycleSubmissionService.advanceCycle(cycle.getId());
+        }
+        assertEquals(5, attempts(cycle.getId()));
+        assertEquals(EQACycleStatus.READY_TO_SUBMIT, readBack(cycle.getId()).getStatus());
+
+        EQACycle submitted = cycleSubmissionService.submitManually(cycle.getId(), ENROLLMENT, "NHLS-2026-0099", USER);
+
+        assertEquals(EQACycleStatus.SUBMITTED, submitted.getStatus());
+        assertEquals("MANUAL", participantResults(cycle.getId()).get(0).get("submission_channel"));
+        assertEquals("NHLS-2026-0099", participantResults(cycle.getId()).get(0).get("manual_submission_reference"));
+        assertEquals("the spent budget does not follow the cycle around", 0, attempts(cycle.getId()));
     }
 
     @Test

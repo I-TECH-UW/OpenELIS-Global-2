@@ -41,6 +41,7 @@ import {
   fetchMyPrograms,
   importScoresCsv,
   submitCycle,
+  submitCycleManually,
 } from "./cyclesApi";
 
 const breadcrumbs = [
@@ -90,6 +91,14 @@ const resultEntryUrl = (labNo) =>
 // only while a review-gated scheme sits at ready_to_submit.
 const reviewGateOpen = (cycle) =>
   cycle.requiresCycleReview && cycle.status === "ready_to_submit";
+
+// The automatic channel gives up after five attempts and never tries again, so
+// from here on the only way out is a submission recorded by hand. The alert the
+// sweep raises says exactly that; this is where it can now be acted on.
+const MAX_SUBMISSION_ATTEMPTS = 5;
+const retriesSpent = (cycle) =>
+  cycle.status === "ready_to_submit" &&
+  (cycle.submissionAttempts || 0) >= MAX_SUBMISSION_ATTEMPTS;
 
 // A validation is a real instant, so it renders in the viewer's timezone —
 // unlike deadlines, which are end-of-day values read as UTC (formatDateOnly).
@@ -148,6 +157,7 @@ const MyCyclesPage = () => {
   // Scores from a provider that is not an OpenELIS arrive as a file; a provider
   // OpenELIS delivers them through the FHIR store on its own.
   const [scoreImport, setScoreImport] = useState(null);
+  const [manualSubmit, setManualSubmit] = useState(null);
   const [importNotice, setImportNotice] = useState(null);
 
   const handleImportScores = () => {
@@ -272,6 +282,40 @@ const MyCyclesPage = () => {
     });
   };
 
+  const handleManualSubmit = () => {
+    setManualSubmit({ ...manualSubmit, busy: true, error: null });
+    submitCycleManually(
+      manualSubmit.cycle.id,
+      manualSubmit.reference,
+      (result) => {
+        if (!result.ok) {
+          setManualSubmit({
+            ...manualSubmit,
+            busy: false,
+            error: result.error,
+          });
+          return;
+        }
+        setManualSubmit(null);
+        setCycles((prev) =>
+          prev.map((c) =>
+            c.id === manualSubmit.cycle.id ? { ...c, status: "submitted" } : c,
+          ),
+        );
+        setSubmitNotice({
+          kind: "success",
+          text: t(
+            "eqa.cycle.submitManual.success",
+            "Recorded as submitted by hand, with the provider's reference.",
+          ),
+        });
+      },
+    );
+  };
+
+  const openManualSubmit = (cycle) =>
+    setManualSubmit({ cycle, reference: "", error: null, busy: false });
+
   // Lab-wide KPIs — deliberately NOT filtered; they describe the whole lab.
   const activeCount = cycles.filter((c) =>
     BUCKETS.active.includes(c.status),
@@ -321,6 +365,15 @@ const MyCyclesPage = () => {
             {t("eqa.cycle.importScores", "Import scores (CSV)")}
           </Button>
         )}
+        {cycle.status === "ready_to_submit" && (
+          <Button
+            kind="ghost"
+            size="sm"
+            onClick={() => openManualSubmit(cycle)}
+          >
+            {t("eqa.cycle.submitManual", "Submit by hand")}
+          </Button>
+        )}
         <Button
           kind="ghost"
           size="sm"
@@ -330,6 +383,25 @@ const MyCyclesPage = () => {
           {t("eqa.report.download", "Download performance report")}
         </Button>
       </div>
+      {retriesSpent(cycle) && (
+        <ActionableNotification
+          kind="error"
+          lowContrast
+          hideCloseButton
+          inline
+          title={t(
+            "eqa.cycle.retriesSpent.title",
+            "Automatic submission has stopped for this cycle.",
+          )}
+          subtitle={t(
+            "eqa.cycle.retriesSpent.body",
+            "It failed {attempts} times and will not be retried. Send the results to the provider yourself — the export bundle is on the scheme's page — and record their reference here.",
+            { attempts: cycle.submissionAttempts },
+          )}
+          actionButtonLabel={t("eqa.cycle.submitManual", "Submit by hand")}
+          onActionButtonClick={() => openManualSubmit(cycle)}
+        />
+      )}
       {cycle.hasNce && (
         <InlineNotification
           kind="error"
@@ -1004,6 +1076,51 @@ const MyCyclesPage = () => {
               setScoreImport({ ...scoreImport, csv: e.target.value })
             }
             rows={5}
+          />
+        </Modal>
+      )}
+      {manualSubmit && (
+        <Modal
+          open
+          size="sm"
+          modalHeading={t(
+            "eqa.cycle.submitManual.heading",
+            "Record a submission made by hand",
+          )}
+          primaryButtonText={t("eqa.cycle.submitManual", "Submit by hand")}
+          secondaryButtonText={t("eqa.queue.cancel", "Cancel")}
+          primaryButtonDisabled={
+            manualSubmit.busy || !manualSubmit.reference.trim()
+          }
+          onRequestClose={() => setManualSubmit(null)}
+          onSecondarySubmit={() => setManualSubmit(null)}
+          onRequestSubmit={handleManualSubmit}
+        >
+          <p style={{ color: "#525252", marginBottom: "1rem" }}>
+            {t(
+              "eqa.cycle.submitManual.help",
+              "Use this once the results have reached the provider some other way. The reference they gave you is what makes this a record rather than a claim, so it is required.",
+            )}
+          </p>
+          {manualSubmit.error && (
+            <InlineNotification
+              kind="error"
+              lowContrast
+              hideCloseButton
+              title={manualSubmit.error}
+              style={{ marginBottom: "1rem" }}
+            />
+          )}
+          <TextInput
+            id="manual-submission-reference"
+            labelText={t(
+              "eqa.cycle.submitManual.reference",
+              "Provider's reference",
+            )}
+            value={manualSubmit.reference}
+            onChange={(e) =>
+              setManualSubmit({ ...manualSubmit, reference: e.target.value })
+            }
           />
         </Modal>
       )}

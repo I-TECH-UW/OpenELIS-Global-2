@@ -216,6 +216,49 @@ describe("ProgramForm", () => {
     expect(JSON.parse(payload).schemeType).toBe("REGIONAL_PT");
   });
 
+  // F-21: the review gate is read by the auto-submit sweep, the cycle DTO and My
+  // Cycles, and no screen could set it — so outside the test suite it could only
+  // ever be its column default of false.
+  test("the review gate is reachable from the dialog and rides the payload", () => {
+    const { container } = renderWithIntl(
+      <ProgramForm program={null} onClose={vi.fn()} />,
+    );
+
+    fireEvent.change(container.querySelector("#program-name"), {
+      target: { value: "Regional serology" },
+    });
+    fireEvent.change(container.querySelector("#program-scheme-type"), {
+      target: { value: "REGIONAL_PT" },
+    });
+    fireEvent.change(container.querySelector("#program-provider"), {
+      target: { value: "CPHL" },
+    });
+    fireEvent.click(container.querySelector("#program-requires-cycle-review"));
+    fireEvent.click(screen.getByText("Add Program"));
+
+    const [, payload] = postToOpenElisServerFullResponse.mock.calls[0];
+    expect(JSON.parse(payload).requiresCycleReview).toBe(true);
+  });
+
+  test("a scheme already holding for review opens with the toggle on", () => {
+    const { container } = renderWithIntl(
+      <ProgramForm
+        program={{
+          id: 1,
+          name: "Chemistry PT",
+          provider: "CAP",
+          isActive: true,
+          requiresCycleReview: true,
+        }}
+        onClose={vi.fn()}
+      />,
+    );
+
+    expect(
+      container.querySelector("#program-requires-cycle-review"),
+    ).toBeChecked();
+  });
+
   test("renders create mode with correct heading", () => {
     renderWithIntl(<ProgramForm program={null} onClose={vi.fn()} />);
     expect(screen.getByText("Add New EQA Program")).toBeTruthy();

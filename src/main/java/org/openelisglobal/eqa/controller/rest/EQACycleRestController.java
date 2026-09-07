@@ -622,6 +622,9 @@ public class EQACycleRestController extends BaseRestController {
         }
         dto.put("distributionMethod",
                 cycle.getDistributionMethod() == null ? null : cycle.getDistributionMethod().name());
+        // What the automatic channel has spent. My Cycles offers a manual
+        // submission from the point the sweep gives up, and says why.
+        dto.put("submissionAttempts", cycle.getSubmissionAttempts() == null ? 0 : cycle.getSubmissionAttempts());
         dto.put("plannedStartDate",
                 cycle.getPlannedStartDate() == null ? null : cycle.getPlannedStartDate().toString());
         dto.put("plannedEndDate", cycle.getPlannedEndDate() == null ? null : cycle.getPlannedEndDate().toString());

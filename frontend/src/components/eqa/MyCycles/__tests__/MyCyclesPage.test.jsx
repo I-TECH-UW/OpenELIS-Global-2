@@ -204,6 +204,82 @@ describe("MyCyclesPage", () => {
     ).toBeInTheDocument();
   });
 
+  // F-22: the automatic channel gives up after five attempts and never tries
+  // again, and the alert it raises says "submit manually" — which nothing in
+  // the UI could do.
+  test("a cycle whose retries are spent offers a manual submission and records the reference", async () => {
+    const stuck = {
+      ...MOCK_CYCLES[0],
+      id: 31,
+      status: "READY_TO_SUBMIT",
+      participantState: "READY_TO_SUBMIT",
+      requiresCycleReview: false,
+      submissionAttempts: 5,
+      samples: [],
+    };
+    renderPage(UNCYCLED_ORDERS, [stuck]);
+    fireEvent.click(screen.getByTestId("cycle-row-31"));
+
+    expect(
+      screen.getByText("Automatic submission has stopped for this cycle."),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/failed 5 times and will not be retried/),
+    ).toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getAllByRole("button", { name: "Submit by hand" })[0],
+    );
+    // The provider's reference is what makes this a record rather than a claim,
+    // so the action holds until there is one.
+    const dialog = screen.getByRole("dialog");
+    const confirm = within(dialog).getByRole("button", {
+      name: "Submit by hand",
+    });
+    expect(confirm).toBeDisabled();
+
+    fireEvent.change(screen.getByLabelText("Provider's reference"), {
+      target: { value: "NHLS-2026-0099" },
+    });
+    postToOpenElisServerFullResponse.mockImplementation((url, body, cb) =>
+      cb({ ok: true, json: () => Promise.resolve({ status: "SUBMITTED" }) }),
+    );
+    fireEvent.click(confirm);
+
+    const [url, body] = postToOpenElisServerFullResponse.mock.calls[0];
+    expect(url).toBe("/rest/eqa/cycles/31/submit-manual");
+    expect(JSON.parse(body)).toEqual({
+      manualSubmissionReference: "NHLS-2026-0099",
+    });
+    expect(
+      await screen.findByText(
+        "Recorded as submitted by hand, with the provider's reference.",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  test("a cycle with retries left is not told automatic submission has stopped", () => {
+    const trying = {
+      ...MOCK_CYCLES[0],
+      id: 32,
+      status: "READY_TO_SUBMIT",
+      participantState: "READY_TO_SUBMIT",
+      requiresCycleReview: false,
+      submissionAttempts: 2,
+      samples: [],
+    };
+    renderPage(UNCYCLED_ORDERS, [trying]);
+    fireEvent.click(screen.getByTestId("cycle-row-32"));
+
+    expect(
+      screen.queryByText("Automatic submission has stopped for this cycle."),
+    ).toBeNull();
+    // The manual route is still offered — it is the fallback, not a last rite.
+    expect(
+      screen.getByRole("button", { name: "Submit by hand" }),
+    ).toBeInTheDocument();
+  });
+
   test("row expansion reveals sample progress with result-entry deep links", () => {
     renderPage();
     fireEvent.click(screen.getByTestId("cycle-row-1"));

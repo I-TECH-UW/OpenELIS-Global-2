@@ -35,6 +35,9 @@ const ProgramForm = ({ program, onClose }) => {
   const [description, setDescription] = useState(program?.description || "");
   const [isActive, setIsActive] = useState(program?.isActive !== false);
   const [perAnalyst, setPerAnalyst] = useState(program?.perAnalyst === true);
+  const [requiresCycleReview, setRequiresCycleReview] = useState(
+    program?.requiresCycleReview === true,
+  );
   const [schemeType, setSchemeType] = useState(
     program?.schemeType || "INTERNATIONAL_PT",
   );
@@ -158,6 +161,7 @@ const ProgramForm = ({ program, onClose }) => {
       provider: providerRequired ? provider : "",
       description,
       perAnalyst,
+      requiresCycleReview,
       schemeType,
     };
 
@@ -293,6 +297,21 @@ const ProgramForm = ({ program, onClose }) => {
           labelB={intl.formatMessage({ id: "eqa.program.perAnalyst.on" })}
           toggled={perAnalyst}
           onToggle={(toggled) => setPerAnalyst(toggled)}
+        />
+        <Toggle
+          id="program-requires-cycle-review"
+          labelText={intl.formatMessage({
+            id: "eqa.program.requiresCycleReview",
+            defaultMessage: "Hold each cycle for review before submitting",
+          })}
+          labelA={intl.formatMessage({
+            id: "eqa.program.requiresCycleReview.off",
+          })}
+          labelB={intl.formatMessage({
+            id: "eqa.program.requiresCycleReview.on",
+          })}
+          toggled={requiresCycleReview}
+          onToggle={(toggled) => setRequiresCycleReview(toggled)}
         />
         {isEditing && (
           <Toggle
