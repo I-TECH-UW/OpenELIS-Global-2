@@ -59,7 +59,7 @@ const postColdStorageJson = (path, payload) =>
     );
   });
 
-export const acknowledgeAlert = async (alertId, notes = "") => {
+export const acknowledgeAlert = async (alertId, notes) => {
   return new Promise((resolve, reject) => {
     fetch(`${config.serverBaseUrl}/rest/alerts/${alertId}/acknowledge`, {
       credentials: "include",

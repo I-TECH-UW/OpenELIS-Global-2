@@ -109,19 +109,12 @@ const AlertDetailModal = ({ intl, alertId, open, onClose }) => {
       await deleteAlert(alertId);
       onClose();
     } catch (err) {
-      const isForbidden = err?.status === 403;
       setError(
-        isForbidden
-          ? intl.formatMessage({
-              id: "freezer.alert.detail.deleteForbidden",
-              defaultMessage:
-                "You do not have permission to delete this alert.",
-            })
-          : err.message ||
-              intl.formatMessage({
-                id: "freezer.alert.detail.deleteFailed",
-                defaultMessage: "Failed to delete alert",
-              }),
+        err.message ||
+          intl.formatMessage({
+            id: "freezer.alert.detail.deleteFailed",
+            defaultMessage: "Failed to delete alert",
+          }),
       );
       setActionInProgress(false);
     }

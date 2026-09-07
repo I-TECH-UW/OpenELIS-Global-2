@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
+import org.hibernate.ObjectNotFoundException;
 import org.openelisglobal.alert.form.AcknowledgeAlertRequest;
 import org.openelisglobal.alert.form.AlertDTO;
 import org.openelisglobal.alert.form.FreezerDTO;
@@ -45,6 +46,10 @@ public class AlertRestController extends ControllerUtills {
      * reads {@code ?entityType=ANALYSIS&entityId=N} here on the unified results and
      * validation pages. EQAAlertRestController serves the acknowledge half of that
      * same flow under RECEPTION/RESULTS/VALIDATION.
+     *
+     * <p>
+     * The expression gates the method rather than the query, so RESULTS and
+     * VALIDATION also reach {@code ?entityType=Freezer} and the unscoped listing.
      */
     @PreAuthorize("hasAnyRole('RECEPTION', 'RESULTS', 'VALIDATION', 'ADMIN')")
     @GetMapping
@@ -122,14 +127,15 @@ public class AlertRestController extends ControllerUtills {
     public ResponseEntity<Void> deleteAlert(@PathVariable Long id, HttpServletRequest httpRequest) {
         try {
             Alert alert = alertService.get(id);
-            if (alert == null) {
-                return ResponseEntity.notFound().build();
-            }
             if (!FREEZER_ENTITY_TYPE.equals(alert.getAlertEntityType())) {
                 return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
             alertService.delete(id, getSysUserId(httpRequest));
             return ResponseEntity.noContent().build();
+        } catch (ObjectNotFoundException e) {
+            // alertService.get throws rather than returning null, so an id already
+            // cleared by another admin lands here.
+            return ResponseEntity.notFound().build();
         } catch (Exception e) {
             return ResponseEntity.status(500).build();
         }

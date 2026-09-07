@@ -462,13 +462,12 @@ function FreezerMonitoringDashboard({ intl }) {
     async (alertId, action) => {
       setActionInFlight(alertId);
       try {
+        // These row actions offer no note field, and a note that arrives is
+        // stored and shown back as the operator's own words.
         if (action === "acknowledge") {
-          await acknowledgeAlert(
-            alertId,
-            "Acknowledged via Cold Storage dashboard",
-          );
+          await acknowledgeAlert(alertId);
         } else if (action === "resolve") {
-          await resolveAlert(alertId, "Resolved via Cold Storage dashboard");
+          await resolveAlert(alertId);
         }
         await loadDashboardData();
         notify({
@@ -480,22 +479,15 @@ function FreezerMonitoringDashboard({ intl }) {
               : intl.formatMessage({ id: "coldStorage.alert.resolved" }),
         });
       } catch (error) {
-        const isForbidden = error?.status === 403;
         notify({
           kind: NotificationKinds.error,
-          title: isForbidden
-            ? intl.formatMessage({ id: "coldStorage.error.accessDenied" })
-            : intl.formatMessage({ id: "error.title" }),
-          subtitle: isForbidden
-            ? intl.formatMessage(
-                { id: "coldStorage.alert.noActionPermission" },
-                { action },
-              )
-            : error.message ||
-              intl.formatMessage(
-                { id: "coldStorage.alert.actionFailed" },
-                { action, alertId },
-              ),
+          title: intl.formatMessage({ id: "error.title" }),
+          subtitle:
+            error.message ||
+            intl.formatMessage(
+              { id: "coldStorage.alert.actionFailed" },
+              { action, alertId },
+            ),
         });
       } finally {
         setActionInFlight(null);

@@ -2,6 +2,7 @@ package org.openelisglobal.alert.controller.rest;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
@@ -94,5 +95,10 @@ public class AlertRestControllerTest extends BaseWebContextSensitiveTest {
         mockMvc.perform(get("/rest/alerts").param("entityType", "Freezer").session(session)).andExpect(status().isOk())
                 .andExpect(jsonPath("$[?(@.id == " + freezerAlert.getId() + ")]").exists())
                 .andExpect(jsonPath("$[?(@.id == " + analysisAlert.getId() + ")]").doesNotExist());
+    }
+
+    @Test
+    public void deleteAlert_withUnknownId_shouldReturn404() throws Exception {
+        mockMvc.perform(delete("/rest/alerts/99999").session(session)).andExpect(status().isNotFound());
     }
 }
