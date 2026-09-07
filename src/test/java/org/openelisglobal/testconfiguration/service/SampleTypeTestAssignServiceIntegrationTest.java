@@ -47,7 +47,7 @@ public class SampleTypeTestAssignServiceIntegrationTest extends BaseWebContextSe
     }
 
     @Test
-    public void updateShouldDeleteExistingTypeOfSampleTestsWhenDeleteFlagIsTrue() {
+    public void updateShouldDeleteExistingTypeOfSampleTestsAndInsertNewAssignmentWhenDeleteFlagIsTrue() {
         TypeOfSample sampleType = typeOfSampleService.get("9900");
         String testId = "9901";
 
