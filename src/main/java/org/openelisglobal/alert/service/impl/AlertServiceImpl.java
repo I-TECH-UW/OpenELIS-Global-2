@@ -98,9 +98,12 @@ public class AlertServiceImpl extends BaseObjectServiceImpl<Alert, Long> impleme
         alert.setStatus(AlertStatus.ACKNOWLEDGED);
         alert.setAcknowledgedAt(OffsetDateTime.now());
         alert.setAcknowledgedBy(user);
-        if (acknowledgmentNotes != null && !acknowledgmentNotes.isBlank()) {
-            alert.setAcknowledgmentNotes(acknowledgmentNotes);
-        }
+        // Assigned unconditionally, as resolveAlert does with resolutionNotes: a
+        // re-acknowledgment moves acknowledgedAt forward, so leaving an earlier note
+        // in place would attribute it to an acknowledgment that did not produce it,
+        // and a note entered by mistake could never be cleared.
+        alert.setAcknowledgmentNotes(
+                acknowledgmentNotes == null || acknowledgmentNotes.isBlank() ? null : acknowledgmentNotes);
 
         Alert updatedAlert = alertDAO.update(alert);
         eventPublisher.publishEvent(new AlertAcknowledgedEvent(this, updatedAlert, userId.longValue()));

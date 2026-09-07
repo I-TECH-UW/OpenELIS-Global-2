@@ -402,5 +402,9 @@
   <!-- Acknowledgment notes on alert, so the detail modal's notes field is no longer dropped on acknowledge. -->
   <include relativeToChangelogFile="true" file="090-alert-acknowledgment-notes.xml"/>
 
+  <!-- Repair value_type on a freezer.monitoring.enabled row seeded by the pre-rename 070 file, whose
+       existence makes 089's guarded insert MARK_RAN. -->
+  <include relativeToChangelogFile="true" file="091-freezer-monitoring-enabled-value-type.xml"/>
+
 
 </databaseChangeLog>

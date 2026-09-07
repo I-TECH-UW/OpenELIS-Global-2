@@ -2,14 +2,10 @@ package org.openelisglobal.coldstorage.service.impl;
 
 import java.math.BigDecimal;
 import java.util.List;
-import java.util.Objects;
 import java.util.Optional;
-import java.util.Set;
-import java.util.stream.Collectors;
 import org.openelisglobal.coldstorage.dao.FreezerDAO;
 import org.openelisglobal.coldstorage.service.FreezerService;
 import org.openelisglobal.coldstorage.valueholder.Freezer;
-import org.openelisglobal.storage.service.CodeGenerationService;
 import org.openelisglobal.storage.service.StorageLocationService;
 import org.openelisglobal.storage.valueholder.StorageDevice;
 import org.springframework.stereotype.Service;
@@ -21,13 +17,10 @@ public class FreezerServiceImpl implements FreezerService {
 
     private final FreezerDAO freezerDAO;
     private final StorageLocationService storageLocationService;
-    private final CodeGenerationService codeGenerationService;
 
-    public FreezerServiceImpl(FreezerDAO freezerDAO, StorageLocationService storageLocationService,
-            CodeGenerationService codeGenerationService) {
+    public FreezerServiceImpl(FreezerDAO freezerDAO, StorageLocationService storageLocationService) {
         this.freezerDAO = freezerDAO;
         this.storageLocationService = storageLocationService;
-        this.codeGenerationService = codeGenerationService;
     }
 
     @Override
@@ -240,7 +233,9 @@ public class FreezerServiceImpl implements FreezerService {
 
         StorageDevice device = new StorageDevice();
         device.setName(freezer.getName());
-        device.setCode(uniqueDeviceCodeInRoom(freezer.getName(), room.getId()));
+        // Code deliberately left unset: StorageLocationService.insert derives a
+        // room-unique one from the name, and a code set here would instead be
+        // validated against the 10-character cap and rejected (issue #3904).
         device.setType(freezer.getStorageDevice().getType());
         device.setActive(true);
         device.setParentRoom(room);
@@ -280,20 +275,4 @@ public class FreezerServiceImpl implements FreezerService {
         storageLocationService.update(device);
     }
 
-    /**
-     * The device code is derived from the name, and deleteFreezer leaves the old
-     * device row in place, so recreating a deleted freezer under the same name
-     * would collide with uk_device_code_in_room (issue #3904).
-     *
-     * <p>
-     * Delegated to CodeGenerationService because the code has to survive
-     * StorageLocationService.insert's validation, which rejects anything over
-     * CodeValidationServiceImpl.MAX_CODE_LENGTH characters - both the base code and
-     * the suffixed retry.
-     */
-    private String uniqueDeviceCodeInRoom(String name, Integer roomId) {
-        Set<String> takenCodes = storageLocationService.getDevicesByRoom(roomId).stream().map(StorageDevice::getCode)
-                .filter(Objects::nonNull).map(String::toUpperCase).collect(Collectors.toSet());
-        return codeGenerationService.generateCodeWithConflictResolution(name, "device", takenCodes);
-    }
 }

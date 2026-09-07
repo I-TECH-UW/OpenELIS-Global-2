@@ -1,5 +1,12 @@
-import React, { useEffect, useState, useContext, useCallback } from "react";
+import React, {
+  useEffect,
+  useState,
+  useContext,
+  useCallback,
+  useMemo,
+} from "react";
 import {
+  Button,
   Modal,
   Loading,
   InlineNotification,
@@ -25,23 +32,15 @@ import {
   deleteAlert,
   createCorrectiveAction,
 } from "./api";
+import { getActionTypes } from "./CorrectiveActions";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { hasRole, Roles } from "../utils/Utils";
 import { formatDateTime as formatIsoDateTime } from "./shared/timeUtils";
 
-const CORRECTIVE_ACTION_TYPES = [
-  { id: "TEMPERATURE_ADJUSTMENT", label: "Temperature Adjustment" },
-  { id: "EQUIPMENT_REPAIR", label: "Equipment Repair" },
-  { id: "SAMPLE_RELOCATION", label: "Sample Relocation" },
-  { id: "CALIBRATION", label: "Calibration" },
-  { id: "ITEM_REORDER", label: "Item Reorder" },
-  { id: "MAINTENANCE", label: "Maintenance" },
-  { id: "OTHER", label: "Other" },
-];
-
 const AlertDetailModal = ({ intl, alertId, open, onClose }) => {
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
   const isAdminUser = hasRole(userSessionDetails, Roles.GLOBAL_ADMIN);
+  const correctiveActionTypes = useMemo(() => getActionTypes(intl), [intl]);
   const [alert, setAlert] = useState(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
@@ -510,7 +509,7 @@ const AlertDetailModal = ({ intl, alertId, open, onClose }) => {
                             defaultMessage: "Select type",
                           })
                     }
-                    items={CORRECTIVE_ACTION_TYPES}
+                    items={correctiveActionTypes}
                     itemToString={(item) => (item ? item.label : "")}
                     selectedItem={correctiveActionType}
                     onChange={({ selectedItem }) =>

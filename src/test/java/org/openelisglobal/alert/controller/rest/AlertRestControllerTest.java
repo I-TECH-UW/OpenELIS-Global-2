@@ -1,6 +1,8 @@
 package org.openelisglobal.alert.controller.rest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -64,5 +66,33 @@ public class AlertRestControllerTest extends BaseWebContextSensitiveTest {
 
         assertEquals("Acknowledgment notes must survive on the alert row", notes,
                 alertService.get(alert.getId()).getAcknowledgmentNotes());
+    }
+
+    @Test
+    public void acknowledgeAlert_withoutNotes_shouldClearANotePreviouslyRecorded() throws Exception {
+        Alert alert = alertService.createAlert(AlertType.FREEZER_TEMPERATURE, "Freezer", 100L, AlertSeverity.CRITICAL,
+                "Temperature threshold violated", "{}");
+        mockMvc.perform(put("/rest/alerts/" + alert.getId() + "/acknowledge").session(session)
+                .contentType(MediaType.APPLICATION_JSON).content("{\"notes\":\"entered by mistake\"}"))
+                .andExpect(status().isOk());
+
+        mockMvc.perform(put("/rest/alerts/" + alert.getId() + "/acknowledge").session(session)
+                .contentType(MediaType.APPLICATION_JSON).content("{}")).andExpect(status().isOk())
+                .andExpect(jsonPath("$.acknowledgmentNotes").doesNotExist());
+
+        assertNull("A re-acknowledgment carrying no note must not leave the earlier one behind",
+                alertService.get(alert.getId()).getAcknowledgmentNotes());
+    }
+
+    @Test
+    public void getAlerts_withEntityTypeAndNoEntityId_shouldNotLeakOtherEntityTypes() throws Exception {
+        Alert freezerAlert = alertService.createAlert(AlertType.FREEZER_TEMPERATURE, "Freezer", 100L,
+                AlertSeverity.CRITICAL, "Temperature threshold violated", "{}");
+        Alert analysisAlert = alertService.createAlert(AlertType.CRITICAL_RESULT, "ANALYSIS", 777L,
+                AlertSeverity.CRITICAL, "Critical result awaiting notification", "{}");
+
+        mockMvc.perform(get("/rest/alerts").param("entityType", "Freezer").session(session)).andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.id == " + freezerAlert.getId() + ")]").exists())
+                .andExpect(jsonPath("$[?(@.id == " + analysisAlert.getId() + ")]").doesNotExist());
     }
 }

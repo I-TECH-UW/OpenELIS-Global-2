@@ -419,8 +419,8 @@ function FreezerMonitoringDashboard({ intl }) {
           [];
 
       setStorageUnits(unitsArray.map(normalizeUnit));
-      // /rest/alerts returns every alert ever raised against a freezer; a
-      // resolved one is history, not an active alert.
+      // /rest/alerts?entityType=Freezer returns every alert ever raised against
+      // a freezer, whatever its status; a resolved one is history, not active.
       setActiveAlerts(
         alertsArray
           .map(normalizeAlert)

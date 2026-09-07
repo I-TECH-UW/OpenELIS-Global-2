@@ -103,7 +103,7 @@ const getColumns = (intl) => [
   },
 ];
 
-const getActionTypes = (intl) => [
+export const getActionTypes = (intl) => [
   {
     id: "TEMPERATURE_ADJUSTMENT",
     label: intl.formatMessage({

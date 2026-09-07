@@ -15,6 +15,7 @@ import org.openelisglobal.coldstorage.service.FreezerService;
 import org.openelisglobal.coldstorage.valueholder.Freezer;
 import org.openelisglobal.common.util.ControllerUtills;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -30,20 +31,32 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/rest/alerts")
 public class AlertRestController extends ControllerUtills {
 
+    private static final String FREEZER_ENTITY_TYPE = "Freezer";
+
     @Autowired
     private AlertService alertService;
 
     @Autowired
     private FreezerService freezerService;
 
-    @PreAuthorize("hasAnyRole('RECEPTION', 'ADMIN')")
+    /**
+     * Open to every role that owns a page listing alerts: RECEPTION and ADMIN for
+     * the Cold Storage dashboard, RESULTS and VALIDATION for CriticalBanner, which
+     * reads {@code ?entityType=ANALYSIS&entityId=N} here on the unified results and
+     * validation pages. EQAAlertRestController serves the acknowledge half of that
+     * same flow under RECEPTION/RESULTS/VALIDATION.
+     */
+    @PreAuthorize("hasAnyRole('RECEPTION', 'RESULTS', 'VALIDATION', 'ADMIN')")
     @GetMapping
     public ResponseEntity<List<AlertDTO>> getAlerts(@RequestParam(required = false) String entityType,
             @RequestParam(required = false) Long entityId) {
 
         List<Alert> alerts;
 
-        if (entityType != null && entityId != null) {
+        // entityId is optional: getAlertsByEntity filters on entityType alone when it
+        // is null. Requiring both here made ?entityType=Freezer fall through to
+        // getAll() and hand the caller every alert in the system.
+        if (entityType != null) {
             alerts = alertService.getAlertsByEntity(entityType, entityId);
         } else {
             alerts = alertService.getAll();
@@ -96,10 +109,13 @@ public class AlertRestController extends ControllerUtills {
     }
 
     /**
-     * Deletes an alert record outright. Restricted to ADMIN: unlike
-     * acknowledge/resolve (which preserve the record with an audit trail), this
-     * permanently removes it, so it needs a stricter bar than routine alert triage
-     * (issue #3743, item 2 — no way to clear an alert from Active Alerts).
+     * Deletes an alert record outright. Restricted to ADMIN and to freezer alerts:
+     * unlike acknowledge/resolve (which preserve the record), AlertService.delete
+     * is a hard row delete with no audit trail and nothing referencing alert(id),
+     * so a CRITICAL_RESULT or referral alert removed here is unrecoverable. Only
+     * the Cold Storage dashboard asks for this (issue #3743, item 2 — no way to
+     * clear an alert from Active Alerts), and it raises alerts under "Freezer"
+     * alone.
      */
     @PreAuthorize("hasRole('ADMIN')")
     @DeleteMapping("/{id}")
@@ -108,6 +124,9 @@ public class AlertRestController extends ControllerUtills {
             Alert alert = alertService.get(id);
             if (alert == null) {
                 return ResponseEntity.notFound().build();
+            }
+            if (!FREEZER_ENTITY_TYPE.equals(alert.getAlertEntityType())) {
+                return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
             }
             alertService.delete(id, getSysUserId(httpRequest));
             return ResponseEntity.noContent().build();
@@ -149,7 +168,7 @@ public class AlertRestController extends ControllerUtills {
         dto.setDuplicateCount(alert.getDuplicateCount());
         dto.setLastDuplicateTime(alert.getLastDuplicateTime());
 
-        if ("Freezer".equals(alert.getAlertEntityType()) && alert.getAlertEntityId() != null) {
+        if (FREEZER_ENTITY_TYPE.equals(alert.getAlertEntityType()) && alert.getAlertEntityId() != null) {
             try {
                 Freezer freezer = freezerService.findById(alert.getAlertEntityId()).orElse(null);
                 if (freezer != null) {

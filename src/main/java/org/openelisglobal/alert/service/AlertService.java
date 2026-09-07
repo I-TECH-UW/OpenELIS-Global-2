@@ -39,6 +39,9 @@ public interface AlertService extends BaseObjectService<Alert, Long> {
      * <p>
      * Publishes AlertAcknowledgedEvent upon successful acknowledgment.
      *
+     * <p>
+     * Equivalent to passing a null note, which clears any note already recorded.
+     *
      * @param alertId Alert ID
      * @param userId  User ID who acknowledged the alert
      * @return Updated alert
@@ -50,7 +53,8 @@ public interface AlertService extends BaseObjectService<Alert, Long> {
      *
      * @param alertId             Alert ID
      * @param userId              User ID who acknowledged the alert
-     * @param acknowledgmentNotes Free-text note, may be null
+     * @param acknowledgmentNotes Free-text note; null or blank clears any note
+     *                            already recorded
      * @return Updated alert
      */
     Alert acknowledgeAlert(Long alertId, Integer userId, String acknowledgmentNotes);
