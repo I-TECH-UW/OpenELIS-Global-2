@@ -281,9 +281,15 @@ public class EQACycleRestController extends BaseRestController {
     }
 
     /**
-     * Progress and per-sample entry state for a cycle, at analysis grain: an
-     * analyte counts as entered once its analysis is finalized in the standard
-     * pipeline — the same gate T-14 will auto-submit on.
+     * Progress and per-sample entry state for a cycle, at analysis grain.
+     *
+     * <p>
+     * What counts as entered depends on the lane, because the two lanes have
+     * different gates. An external analyte counts once its analysis is finalized in
+     * the standard pipeline, which is what auto-submit waits on (FR-V2.2-07). An
+     * in-house one counts as soon as a result exists: that lane scores from the
+     * unblind and never goes through validation at all, so the Finalized rule left
+     * a fully answered and scored panel reading <i>0 of 6</i>.
      *
      * <p>
      * When the scheme's review gate is on, each analyte also carries what the lab
@@ -303,6 +309,7 @@ public class EQACycleRestController extends BaseRestController {
         String finalizedId = statusService.getStatusID(AnalysisStatus.Finalized);
         String notStartedId = statusService.getStatusID(AnalysisStatus.NotStarted);
         boolean withReportedValues = Boolean.TRUE.equals(dto.get("requiresCycleReview"));
+        boolean inHouse = EQASchemeType.IN_HOUSE.name().equals(dto.get("schemeType"));
 
         int entered = 0;
         int total = 0;
@@ -319,12 +326,18 @@ public class EQACycleRestController extends BaseRestController {
             List<Map<String, Object>> analytes = new ArrayList<>();
             boolean allFinalized = !analyses.isEmpty();
             boolean anyStarted = false;
+            int enteredHere = 0;
             for (Analysis analysis : analyses) {
                 total++;
                 boolean finalized = finalizedId.equals(analysis.getStatusId());
-                if (finalized) {
+                // In-house: answered is the gate, and an answer is a result. Reading
+                // the status instead would count a cancelled analysis as entered.
+                boolean answered = inHouse ? hasResult(analysis) : finalized;
+                if (answered) {
                     entered++;
-                } else {
+                    enteredHere++;
+                }
+                if (!finalized) {
                     allFinalized = false;
                 }
                 if (!notStartedId.equals(analysis.getStatusId())) {
@@ -339,11 +352,28 @@ public class EQACycleRestController extends BaseRestController {
             sampleDto.put("id", link.getEqaProviderSampleId());
             sampleDto.put("labNo", order.getAccessionNumber());
             sampleDto.put("analytes", analytes);
-            sampleDto.put("entryStatus", allFinalized ? "entered" : anyStarted ? "in_progress" : "empty");
+            sampleDto.put("entryStatus",
+                    (inHouse ? enteredHere == analyses.size() && !analyses.isEmpty() : allFinalized) ? "entered"
+                            : anyStarted ? "in_progress" : "empty");
             sampleDtos.add(sampleDto);
         }
         dto.put("progress", Map.of("entered", entered, "total", total));
         dto.put("samples", sampleDtos);
+    }
+
+    /**
+     * Whether the bench has answered this analysis. One query per in-house
+     * analysis, which is the same order of cost as the surrounding loop already
+     * pays per order; an in-house panel carries a handful of samples.
+     */
+    private boolean hasResult(Analysis analysis) {
+        for (Result result : resultService.getResultsByAnalysis(analysis)) {
+            String rendered = resultService.getSimpleResultValue(result);
+            if (rendered != null && !rendered.isBlank()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     /**

@@ -29,6 +29,7 @@ import org.openelisglobal.eqa.service.EQABlindingService.BlindOrderSpec;
 import org.openelisglobal.eqa.service.EQALabelPDFService;
 import org.openelisglobal.eqa.service.EQAPanelService;
 import org.openelisglobal.eqa.valueholder.EQACycle;
+import org.openelisglobal.eqa.valueholder.EQACycleStatus;
 import org.openelisglobal.eqa.valueholder.EQAPanel;
 import org.openelisglobal.eqa.valueholder.EQAPanelSample;
 import org.openelisglobal.eqa.valueholder.EQAPanelStatus;
@@ -422,6 +423,51 @@ public class EQABlindingIntegrationTest extends EQASpineTestBase {
         java.util.Set<String> reported = new java.util.HashSet<>();
         summary.get("unacceptable").forEach(node -> reported.add(node.get("reported").asText()));
         assertEquals(java.util.Set.of("92", "140", "Negative"), reported);
+    }
+
+    /**
+     * The cycle follows its panel. An unblinded and scored in-house cycle used to
+     * stay at PLANNED, so My Cycles read a finished round as untouched while the
+     * same cycle's performance report showed every verdict.
+     */
+    @Test
+    public void unblind_movesTheInHouseCycleToScoredAndLeavesASecondPanelAlone() {
+        seedEnrollment(9901, "IH Cycle State Scheme");
+        EQAProgram scheme = inHouseScheme("IH Cycle State Scheme");
+        EQACycle cycle = readBack(insertCycle(scheme, 1));
+        Long roundId = insertRound(cycle, 1, "OPEN");
+        EQAPanel first = panelWith(scheme, cycle, EQAPanelStatus.DISTRIBUTED, LocalDate.now().minusDays(1));
+        Long firstSample = insertPanelSample(first, "IH-01", "IHSTATE-1", NUMERIC_ANALYTE, "100", "95", "105");
+        insertResult(cycle, roundId, 9901, NUMERIC_ANALYTE, EQASubmissionStatus.SUBMITTED, "102", 1L, firstSample);
+        EQAPanel second = panelWith(scheme, cycle, EQAPanelStatus.DISTRIBUTED, LocalDate.now().minusDays(1));
+        Long secondSample = insertPanelSample(second, "IH-02", "IHSTATE-2", NUMERIC_ANALYTE, "100", "95", "105");
+        insertResult(cycle, roundId, 9901, NUMERIC_ANALYTE, EQASubmissionStatus.SUBMITTED, "99", 1L, secondSample);
+
+        assertEquals("the cycle starts where the wizard leaves it", EQACycleStatus.PLANNED,
+                readBack(cycle.getId()).getStatus());
+
+        blindingService.unblindAndScore(first.getId(), USER, EQAUnblindMethod.MANUAL);
+
+        assertEquals("the cycle follows its panel", EQACycleStatus.SCORED, readBack(cycle.getId()).getStatus());
+        List<Map<String, Object>> audit = jdbc
+                .queryForList("SELECT prior_state, new_state, trigger_type, trigger_event, triggered_by"
+                        + " FROM clinlims.eqa_cycle_state_transition WHERE cycle_id = ?", cycle.getId());
+        assertEquals("one audit row for one act, not a walk through the external lane's states", 1, audit.size());
+        assertEquals("PLANNED", audit.get(0).get("prior_state"));
+        assertEquals("SCORED", audit.get(0).get("new_state"));
+        assertEquals("AUTO", audit.get(0).get("trigger_type"));
+        assertEquals("PANEL_UNBLIND", audit.get(0).get("trigger_event"));
+        assertNull("the system acted, so no actor", audit.get(0).get("triggered_by"));
+
+        // A cycle may carry several panels; the second one finds it already scored.
+        blindingService.unblindAndScore(second.getId(), USER, EQAUnblindMethod.MANUAL);
+
+        assertEquals("still scored", EQACycleStatus.SCORED, readBack(cycle.getId()).getStatus());
+        assertEquals("and no second audit row", 1,
+                jdbc.queryForObject("SELECT count(*) FROM clinlims.eqa_cycle_state_transition WHERE cycle_id = ?",
+                        Integer.class, cycle.getId()).intValue());
+        assertEquals("both panels scored", EQAPanelStatus.SCORED,
+                eqaPanelDAO.get(second.getId()).orElseThrow(AssertionError::new).getStatus());
     }
 
     @Test

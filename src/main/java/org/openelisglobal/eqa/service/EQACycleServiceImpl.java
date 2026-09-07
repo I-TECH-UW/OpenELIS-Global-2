@@ -50,6 +50,7 @@ import org.openelisglobal.eqa.valueholder.EQAParticipantResult;
 import org.openelisglobal.eqa.valueholder.EQAProgram;
 import org.openelisglobal.eqa.valueholder.EQAProgramEnrollment;
 import org.openelisglobal.eqa.valueholder.EQARound;
+import org.openelisglobal.eqa.valueholder.EQASchemeType;
 import org.openelisglobal.eqa.valueholder.EQAStateMachine;
 import org.openelisglobal.eqa.valueholder.EQASubmissionStatus;
 import org.openelisglobal.eqa.valueholder.EQATriggerEvent;
@@ -76,6 +77,17 @@ public class EQACycleServiceImpl extends BaseObjectServiceImpl<EQACycle, Long> i
     /** FR-V2.1-18. Terminal: CLOSED. */
     private static final Map<EQACycleStatus, Set<EQACycleStatus>> PROVIDER_EDGES = new EnumMap<>(EQACycleStatus.class);
 
+    /**
+     * The in-house lane's own edges. Its cycle-level events are the unblind and the
+     * close: a blinded panel is dealt to the bench, answered through standard
+     * result entry and scored at the unblind, so the external lane's intermediate
+     * states — panel received, ready to submit, submitted — describe nothing that
+     * happens here. Walking them to reach SCORED would write five audit rows for
+     * one act, and leaving the cycle at PLANNED is what made a fully scored panel
+     * read as untouched on My Cycles.
+     */
+    private static final Map<EQACycleStatus, Set<EQACycleStatus>> IN_HOUSE_EDGES = new EnumMap<>(EQACycleStatus.class);
+
     static {
         PARTICIPANT_EDGES.put(PLANNED, EnumSet.of(PANEL_RECEIVED));
         PARTICIPANT_EDGES.put(PANEL_RECEIVED, EnumSet.of(TESTING));
@@ -99,6 +111,9 @@ public class EQACycleServiceImpl extends BaseObjectServiceImpl<EQACycle, Long> i
         PROVIDER_EDGES.put(SUBMISSIONS_CLOSED, EnumSet.of(SCORING));
         PROVIDER_EDGES.put(SCORING, EnumSet.of(SCORED));
         PROVIDER_EDGES.put(SCORED, EnumSet.of(CLOSED));
+
+        IN_HOUSE_EDGES.put(PLANNED, EnumSet.of(SCORED));
+        IN_HOUSE_EDGES.put(SCORED, EnumSet.of(CLOSED));
     }
 
     @Autowired
@@ -242,10 +257,21 @@ public class EQACycleServiceImpl extends BaseObjectServiceImpl<EQACycle, Long> i
         }
     }
 
-    private static Set<EQACycleStatus> legalNextStates(EQACycleStatus from, EQAStateMachine machine) {
-        Map<EQACycleStatus, Set<EQACycleStatus>> edges = machine == EQAStateMachine.PROVIDER ? PROVIDER_EDGES
-                : PARTICIPANT_EDGES;
+    private static Set<EQACycleStatus> legalNextStates(EQACycle cycle, EQACycleStatus from, EQAStateMachine machine) {
+        Map<EQACycleStatus, Set<EQACycleStatus>> edges;
+        if (machine == EQAStateMachine.PROVIDER) {
+            edges = PROVIDER_EDGES;
+        } else if (isInHouse(cycle)) {
+            edges = IN_HOUSE_EDGES;
+        } else {
+            edges = PARTICIPANT_EDGES;
+        }
         return edges.getOrDefault(from, EnumSet.noneOf(EQACycleStatus.class));
+    }
+
+    private static boolean isInHouse(EQACycle cycle) {
+        return cycle != null && cycle.getScheme() != null
+                && cycle.getScheme().getSchemeType() == EQASchemeType.IN_HOUSE;
     }
 
     @Override
@@ -258,7 +284,7 @@ public class EQACycleServiceImpl extends BaseObjectServiceImpl<EQACycle, Long> i
                 .orElseThrow(() -> new ObjectNotFoundException(cycleId, EQACycle.class.getName()));
 
         EQACycleStatus priorState = cycle.getStatus();
-        if (!legalNextStates(priorState, machine).contains(newState)) {
+        if (!legalNextStates(cycle, priorState, machine).contains(newState)) {
             throw new EQAInvalidTransitionException(priorState, newState,
                     "Cannot move a " + machine + " cycle from " + priorState + " to " + newState);
         }
