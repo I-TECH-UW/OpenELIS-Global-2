@@ -118,6 +118,25 @@ public class EQACycleRestController extends BaseRestController {
     }
 
     /**
+     * The provider's copy of the report for one participating laboratory, built
+     * from what that laboratory reported into this cycle. Same grain as the scores
+     * CSV beside it on the workbench, so the two cannot disagree.
+     */
+    @GetMapping(value = "/cycles/{cycleId}/participants/{organizationId}/performance-report", produces = MediaType.APPLICATION_PDF_VALUE)
+    public ResponseEntity<byte[]> participantPerformanceReport(@PathVariable Long cycleId,
+            @PathVariable Long organizationId) {
+        byte[] pdf;
+        try {
+            pdf = performanceReportService.generateParticipantPerformanceReport(cycleId, organizationId);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+        String filename = "eqa-performance-report-cycle-" + cycleId + "-org-" + organizationId + ".pdf";
+        return ResponseEntity.ok().header("Content-Disposition", "inline; filename=\"" + filename + "\"")
+                .contentType(MediaType.APPLICATION_PDF).body(pdf);
+    }
+
+    /**
      * OGC-934: the pre-approved comment library the picker offers. Maintained as a
      * dictionary category, so an installation edits the wording without a release.
      */

@@ -33,6 +33,7 @@ import {
   saveIntake,
   scoreCycle,
   scoresCsvUrl,
+  participantReportUrl,
   sendRepeat,
 } from "./workbenchApi";
 
@@ -524,6 +525,17 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
                             href={scoresCsvUrl(cycleId, row.organizationId)}
                           >
                             {t("eqa.score.downloadCsv", "Scores CSV")}
+                          </Button>
+                          <Button
+                            kind="ghost"
+                            size="sm"
+                            href={participantReportUrl(
+                              cycleId,
+                              row.organizationId,
+                            )}
+                            target="_blank"
+                          >
+                            {t("eqa.score.downloadReport", "Report PDF")}
                           </Button>
                         </>
                       )}

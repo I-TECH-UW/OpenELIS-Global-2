@@ -2,6 +2,7 @@ package org.openelisglobal.eqa.service;
 
 import java.util.List;
 import java.util.Map;
+import org.openelisglobal.eqa.valueholder.EQAResult;
 import org.openelisglobal.eqa.valueholder.EQASubmissionMethod;
 
 /**
@@ -40,6 +41,23 @@ public interface EQAProviderScoringService {
 
     /** One participant's scores as CSV (FR-V2.5-04 manual return channel). */
     String buildScoreCsv(Long cycleId, Long organizationId);
+
+    /**
+     * What one participating laboratory reported into this cycle, as scored. Shared
+     * with the per-participant performance report so the PDF and the scores CSV
+     * cannot disagree about which rows belong to a laboratory.
+     */
+    List<EQAResult> reportedResultsFor(Long cycleId, Long organizationId);
+
+    /**
+     * The sealed target for each of the cycle's tests, keyed by test id, as a word
+     * or a number. {@code eqa_result.target_value} is numeric, so a qualitative
+     * target lives only on the panel sample that sealed it — the report reads it
+     * here rather than deriving the panel a second time. Where a panel seals two
+     * samples against one analyte the last wins, which is the same reading the
+     * scoring pass itself takes.
+     */
+    Map<Long, String> sealedTargetsByTest(Long cycleId);
 
     /**
      * The intake grid for one participant: the scheme's tests with the value

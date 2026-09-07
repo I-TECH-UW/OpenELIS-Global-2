@@ -190,6 +190,10 @@ export const distributeScores = (cycleId, organizationId, callback) =>
 export const scoresCsvUrl = (cycleId, organizationId) =>
   `${config.serverBaseUrl}/rest/eqa/cycles/${cycleId}/scores/${organizationId}/csv`;
 
+/** The same rows as the scores CSV, printed as the report a participant is sent. */
+export const participantReportUrl = (cycleId, organizationId) =>
+  `${config.serverBaseUrl}/rest/eqa/cycles/${cycleId}/participants/${organizationId}/performance-report`;
+
 // --- Provider-side result intake (phoned/emailed results, export bundles) ---
 
 /** The scheme's tests with what this participant has reported so far. */

@@ -37,19 +37,27 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.eqa.dao.EQACycleDAO;
 import org.openelisglobal.eqa.dao.EQAPanelSampleDAO;
 import org.openelisglobal.eqa.dao.EQAParticipantResultDAO;
+import org.openelisglobal.eqa.dao.EQARoundDAO;
 import org.openelisglobal.eqa.valueholder.EQACycle;
+import org.openelisglobal.eqa.valueholder.EQADistribution;
 import org.openelisglobal.eqa.valueholder.EQAPanelSample;
 import org.openelisglobal.eqa.valueholder.EQAParticipantResult;
 import org.openelisglobal.eqa.valueholder.EQAPerformanceStatus;
 import org.openelisglobal.eqa.valueholder.EQAProgram;
+import org.openelisglobal.eqa.valueholder.EQAResult;
+import org.openelisglobal.eqa.valueholder.EQARound;
 import org.openelisglobal.eqa.valueholder.EQASchemeType;
 import org.openelisglobal.eqa.valueholder.EQASubmissionStatus;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.organization.service.OrganizationService;
+import org.openelisglobal.organization.valueholder.Organization;
 import org.openelisglobal.qaevent.service.EqaScoreNceService;
 import org.openelisglobal.qaevent.service.NCEventService;
 import org.openelisglobal.qaevent.valueholder.NcEvent;
 import org.openelisglobal.systemuser.dao.SystemUserDAO;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -87,27 +95,59 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
     private NCEventService ncEventService;
     @Autowired
     private EQAReportCommentService reportCommentService;
+    @Autowired
+    private EQAProviderScoringService providerScoringService;
+    @Autowired
+    private EQARoundDAO eqaRoundDAO;
+    @Autowired
+    private TestService testService;
+    @Autowired
+    private OrganizationService organizationService;
 
     @Override
     public byte[] generatePerformanceReport(Long cycleId) {
-        EQACycle cycle = eqaCycleDAO.get(cycleId)
-                .orElseThrow(() -> new IllegalArgumentException("Unknown cycle " + cycleId));
-        EQAProgram scheme = cycle.getScheme();
-
+        EQACycle cycle = cycleOrThrow(cycleId);
         // Everything the PDF prints is resolved inside this transaction: the
         // renderer runs after the session would otherwise be gone.
-        List<Row> rows = collectRows(cycleId);
+        return render(cycle, collectRows(cycleId), null, true);
+    }
 
+    /**
+     * The provider's copy for one participating laboratory. Its rows come from
+     * {@code eqa_result} — where a remote laboratory's submissions land — rather
+     * than from {@code eqa_participant_result}, which holds only this instance's
+     * own participation, so a provider cycle prints the results its Receipts tab
+     * shows instead of an empty report.
+     */
+    @Override
+    public byte[] generateParticipantPerformanceReport(Long cycleId, Long organizationId) {
+        EQACycle cycle = cycleOrThrow(cycleId);
+        return render(cycle, collectProviderRows(cycle, organizationId), participantName(organizationId), false);
+    }
+
+    private EQACycle cycleOrThrow(Long cycleId) {
+        return eqaCycleDAO.get(cycleId).orElseThrow(() -> new IllegalArgumentException("Unknown cycle " + cycleId));
+    }
+
+    /**
+     * One layout, two data sources. {@code includeLabColumns} drops the three
+     * columns a provider's copy cannot fill — NCE and Analyst belong to the
+     * laboratory that reported the result rather than to the provider judging it,
+     * and {@code eqa_result} carries no per-row scoring stamp — rather than
+     * printing them empty, because a column that is always blank reads as a missing
+     * value.
+     */
+    private byte[] render(EQACycle cycle, List<Row> rows, String participant, boolean includeLabColumns) {
         ByteArrayOutputStream out = new ByteArrayOutputStream();
         Document document = new Document(PageSize.A4.rotate(), 36, 36, 42, 42);
         try {
             PdfWriter.getInstance(document, out);
             document.open();
-            addHeader(document, cycle, scheme, rows.size());
+            addHeader(document, cycle, cycle.getScheme(), rows.size(), participant);
             addProgrammeSummary(document, rows);
             addSectionSummary(document, rows);
-            addScoringTable(document, rows);
-            addInterpretiveComments(document, cycleId);
+            addScoringTable(document, rows, includeLabColumns);
+            addInterpretiveComments(document, cycle.getId());
             addSignOff(document);
             document.close();
         } catch (DocumentException e) {
@@ -179,7 +219,89 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
         return rows;
     }
 
-    private void addHeader(Document document, EQACycle cycle, EQAProgram scheme, int rowCount)
+    /**
+     * The provider's view of one laboratory's submissions. Everything the layout
+     * needs is on {@code eqa_result} or derivable from its test: the round through
+     * the distribution, the section through the test, and the analyte through the
+     * test's own name — the route the submission bridge already resolves analytes
+     * by, so both instances name the same one.
+     */
+    private List<Row> collectProviderRows(EQACycle cycle, Long organizationId) {
+        // A numeric target is copied onto the result when it is scored; a
+        // qualitative one is numeric-typed there and so lives only on the panel
+        // sample that sealed it.
+        Map<Long, String> sealedTargets = providerScoringService.sealedTargetsByTest(cycle.getId());
+        List<Row> rows = new ArrayList<>();
+        for (EQAResult result : providerScoringService.reportedResultsFor(cycle.getId(), organizationId)) {
+            Test test = testOf(result.getTestId());
+            rows.add(new Row(roundNumberOf(result), sectionOf(test), analyteLabelOf(test, result.getTestId()),
+                    reportedOf(result), targetOf(result, sealedTargets), null, result.getZScore(),
+                    result.getPerformanceStatus(), null, null,
+                    result.getSubmissionDate() == null ? null : formatDay(result.getSubmissionDate()), null));
+        }
+        rows.sort(Comparator.comparing(Row::round, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(Row::section, Comparator.nullsLast(Comparator.naturalOrder()))
+                .thenComparing(Row::analyte, Comparator.nullsLast(Comparator.naturalOrder())));
+        return rows;
+    }
+
+    /**
+     * A numeric target is copied onto the result when it is scored, so that is the
+     * value it was actually judged against. The sealed target is consulted only for
+     * a qualitative answer, whose target is a word that {@code target_value} —
+     * numeric — cannot hold: falling back for a number as well would guess, since a
+     * panel may seal two samples against one analyte.
+     */
+    private static String targetOf(EQAResult result, Map<Long, String> sealedTargets) {
+        if (result.getResultText() != null) {
+            return sealedTargets.get(result.getTestId());
+        }
+        return number(result.getTargetValue());
+    }
+
+    /** Numeric results carry the value; a qualitative one carries its text. */
+    private static String reportedOf(EQAResult result) {
+        return result.getResultText() != null ? result.getResultText() : number(result.getResultValue());
+    }
+
+    private static String number(BigDecimal value) {
+        return value == null ? null : value.stripTrailingZeros().toPlainString();
+    }
+
+    private Integer roundNumberOf(EQAResult result) {
+        EQADistribution distribution = result.getEqaDistribution();
+        if (distribution == null || distribution.getRoundId() == null) {
+            return null;
+        }
+        return eqaRoundDAO.get(distribution.getRoundId()).map(EQARound::getRoundNumber).orElse(null);
+    }
+
+    private Test testOf(Long testId) {
+        return testId == null ? null : testService.get(String.valueOf(testId));
+    }
+
+    private String sectionOf(Test test) {
+        return test == null || test.getTestSection() == null ? null : test.getTestSection().getTestSectionName();
+    }
+
+    /**
+     * An id that resolves to no test still prints as the id, the way the
+     * participant's report does: a blank cell would hide which row the data fault
+     * is on.
+     */
+    private String analyteLabelOf(Test test, Long testId) {
+        return test == null ? key(testId) : test.getName();
+    }
+
+    private String participantName(Long organizationId) {
+        if (organizationId == null) {
+            return null;
+        }
+        Organization organization = organizationService.get(String.valueOf(organizationId));
+        return organization == null ? String.valueOf(organizationId) : organization.getOrganizationName();
+    }
+
+    private void addHeader(Document document, EQACycle cycle, EQAProgram scheme, int rowCount, String participant)
             throws DocumentException {
         document.add(paragraph(MessageUtil.getMessage("eqa.report.title"), TITLE_FONT, 6f));
 
@@ -194,6 +316,12 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
         metaCell(meta, MessageUtil.getMessage("eqa.report.period"), period(cycle));
         metaCell(meta, MessageUtil.getMessage("eqa.report.laboratory"), siteName());
         metaCell(meta, MessageUtil.getMessage("eqa.report.generated"), formatDate(new Date()));
+        if (participant != null) {
+            // Whose results these are. On the provider's copy the Laboratory cell
+            // above names the provider, so without this line the two would be
+            // indistinguishable.
+            metaCell(meta, MessageUtil.getMessage("eqa.report.participant"), participant);
+        }
         document.add(meta);
 
         if (rowCount == 0) {
@@ -250,22 +378,32 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
      * A cycle can run several rounds, and the same analyte is reported in each. The
      * round column is what keeps two such rows apart.
      */
-    private void addScoringTable(Document document, List<Row> rows) throws DocumentException {
+    private void addScoringTable(Document document, List<Row> rows, boolean includeLabColumns)
+            throws DocumentException {
         if (rows.isEmpty()) {
             return;
         }
         document.add(paragraph(MessageUtil.getMessage("eqa.report.table.title"), SECTION_FONT, 14f));
 
-        PdfPTable table = new PdfPTable(new float[] { 0.8f, 2f, 1.5f, 1.5f, 0.9f, 1.4f, 1.4f, 1.4f, 1.2f, 1.2f });
+        float[] widths = includeLabColumns ? new float[] { 0.8f, 2f, 1.5f, 1.5f, 0.9f, 1.4f, 1.4f, 1.4f, 1.2f, 1.2f }
+                : new float[] { 0.8f, 2.4f, 1.7f, 1.7f, 1f, 1.6f, 1.4f };
+        int columns = widths.length;
+        PdfPTable table = new PdfPTable(widths);
         table.setWidthPercentage(100);
         table.setHeaderRows(1);
-        headerRow(table, MessageUtil.getMessage("eqa.report.table.round"),
+        List<String> headers = new ArrayList<>(List.of(MessageUtil.getMessage("eqa.report.table.round"),
                 MessageUtil.getMessage("eqa.report.table.analyte"), MessageUtil.getMessage("eqa.report.table.reported"),
                 MessageUtil.getMessage("eqa.report.table.target"), MessageUtil.getMessage("eqa.report.table.zscore"),
-                MessageUtil.getMessage("eqa.report.table.performance"), MessageUtil.getMessage("eqa.report.table.nce"),
-                MessageUtil.getMessage("eqa.report.table.analyst"),
-                MessageUtil.getMessage("eqa.report.table.submitted"),
-                MessageUtil.getMessage("eqa.report.table.scored"));
+                MessageUtil.getMessage("eqa.report.table.performance")));
+        if (includeLabColumns) {
+            headers.add(MessageUtil.getMessage("eqa.report.table.nce"));
+            headers.add(MessageUtil.getMessage("eqa.report.table.analyst"));
+        }
+        headers.add(MessageUtil.getMessage("eqa.report.table.submitted"));
+        if (includeLabColumns) {
+            headers.add(MessageUtil.getMessage("eqa.report.table.scored"));
+        }
+        headerRow(table, headers.toArray(new String[0]));
 
         // Section rides above its rows as a banner rather than repeating in every
         // line: as a column it wrapped each row onto two lines and made the table
@@ -275,14 +413,22 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
             if (!row.sectionLabel().equals(currentSection)) {
                 currentSection = row.sectionLabel();
                 PdfPCell banner = new PdfPCell(new Phrase(currentSection, SECTION_ROW_FONT));
-                banner.setColspan(10);
+                banner.setColspan(columns);
                 banner.setBackgroundColor(SECTION_BG);
                 banner.setPadding(4f);
                 table.addCell(banner);
             }
-            bodyRow(table, row.roundLabel(), row.analyteLabel(), row.reportedLabel(), row.targetLabel(), row.zLabel(),
-                    row.performanceLabel(), dash(row.nceNumber()), dash(row.analyst()), dash(row.submittedAt()),
-                    dash(row.scoredAt()));
+            List<String> cells = new ArrayList<>(List.of(row.roundLabel(), row.analyteLabel(), row.reportedLabel(),
+                    row.targetLabel(), row.zLabel(), row.performanceLabel()));
+            if (includeLabColumns) {
+                cells.add(dash(row.nceNumber()));
+                cells.add(dash(row.analyst()));
+            }
+            cells.add(dash(row.submittedAt()));
+            if (includeLabColumns) {
+                cells.add(dash(row.scoredAt()));
+            }
+            bodyRow(table, cells.toArray(new String[0]));
         }
         document.add(table);
     }
