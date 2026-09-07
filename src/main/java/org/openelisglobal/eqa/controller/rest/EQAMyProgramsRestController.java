@@ -112,8 +112,10 @@ public class EQAMyProgramsRestController extends ControllerUtills {
             List<Long> testIds = toLongList(body.get("testIds"));
             List<Long> panelIds = toLongList(body.get("panelIds"));
 
+            // An absent testAnalytes leaves the stored map alone; an empty one clears it.
+            Object testAnalytes = body.get("testAnalytes");
             EQALabProgramEnrollment result = enrollmentService.updateEnrollment(id, updated, labUnitIds, testIds,
-                    panelIds, toLongMap(body.get("testAnalytes")));
+                    panelIds, testAnalytes == null ? null : toLongMap(testAnalytes));
             return ResponseEntity.ok(toDto(result));
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();

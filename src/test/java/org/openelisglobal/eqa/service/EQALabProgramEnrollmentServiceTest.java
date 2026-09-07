@@ -3,6 +3,7 @@ package org.openelisglobal.eqa.service;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.verify;
@@ -12,6 +13,7 @@ import jakarta.persistence.EntityManager;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -21,6 +23,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openelisglobal.eqa.dao.EQALabProgramEnrollmentDAO;
+import org.openelisglobal.eqa.valueholder.EQALabEnrollmentTestMap;
 import org.openelisglobal.eqa.valueholder.EQALabProgramEnrollment;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -163,6 +166,76 @@ public class EQALabProgramEnrollmentServiceTest {
         assertEquals("New Name", result.getProgramName());
         assertEquals("New Provider", result.getProvider());
         assertNotNull(result.getLastModified());
+    }
+
+    /**
+     * A status toggle sends no reporting-analyte map, and the update clears and
+     * rebuilds the test maps — so the stored analyte has to survive it. The
+     * participant's submission bridge resolves the analyte through this map.
+     */
+    @Test
+    public void testUpdateEnrollment_AbsentTestAnalytesKeepsStoredAnalyte() {
+        EQALabProgramEnrollment existing = enrollmentWithTestAnalyte(191L, 103L);
+
+        when(enrollmentDAO.get(1L)).thenReturn(Optional.of(existing));
+        when(enrollmentDAO.update(any(EQALabProgramEnrollment.class))).thenReturn(existing);
+
+        EQALabProgramEnrollment updated = new EQALabProgramEnrollment();
+        updated.setProgramName("Viral Load PT");
+        updated.setProvider("CPHL");
+        updated.setIsActive(false);
+        updated.setSysUserId("1");
+
+        EQALabProgramEnrollment result = service.updateEnrollment(1L, updated, null, List.of(191L), null, null);
+
+        assertFalse(result.getIsActive());
+        assertEquals(1, result.getTestMaps().size());
+        EQALabEnrollmentTestMap map = result.getTestMaps().iterator().next();
+        assertEquals(Long.valueOf(191L), map.getTestId());
+        assertEquals(Long.valueOf(103L), map.getAnalyteId());
+    }
+
+    /**
+     * An explicit empty map still means "no analytes", so deselecting one keeps
+     * working.
+     */
+    @Test
+    public void testUpdateEnrollment_EmptyTestAnalytesClearsStoredAnalyte() {
+        EQALabProgramEnrollment existing = enrollmentWithTestAnalyte(191L, 103L);
+
+        when(enrollmentDAO.get(1L)).thenReturn(Optional.of(existing));
+        when(enrollmentDAO.update(any(EQALabProgramEnrollment.class))).thenReturn(existing);
+
+        EQALabProgramEnrollment updated = new EQALabProgramEnrollment();
+        updated.setProgramName("Viral Load PT");
+        updated.setProvider("CPHL");
+        updated.setIsActive(true);
+        updated.setSysUserId("1");
+
+        EQALabProgramEnrollment result = service.updateEnrollment(1L, updated, null, List.of(191L), null, Map.of());
+
+        assertEquals(1, result.getTestMaps().size());
+        EQALabEnrollmentTestMap map = result.getTestMaps().iterator().next();
+        assertEquals(Long.valueOf(191L), map.getTestId());
+        assertNull(map.getAnalyteId());
+    }
+
+    private EQALabProgramEnrollment enrollmentWithTestAnalyte(Long testId, Long analyteId) {
+        EQALabProgramEnrollment existing = new EQALabProgramEnrollment();
+        existing.setId(1L);
+        existing.setProgramName("Viral Load PT");
+        existing.setProvider("CPHL");
+        existing.setIsActive(true);
+        existing.setSysUserId("1");
+        existing.setLabUnits(new HashSet<>());
+        existing.setTestMaps(new HashSet<>());
+
+        EQALabEnrollmentTestMap stored = new EQALabEnrollmentTestMap();
+        stored.setEnrollment(existing);
+        stored.setTestId(testId);
+        stored.setAnalyteId(analyteId);
+        existing.getTestMaps().add(stored);
+        return existing;
     }
 
     @Test(expected = IllegalArgumentException.class)
