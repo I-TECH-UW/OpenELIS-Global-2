@@ -29,6 +29,68 @@ describe("CaseTimelinePanel", () => {
     expect(trigger).toHaveFocus();
   });
 
+  it("names the media, incubation and atmosphere a recorded inoculation used", () => {
+    render(
+      <IntlProvider locale="en" messages={messages}>
+        <CaseTimelinePanel
+          timelineSectionId="timeline"
+          activities={[
+            {
+              id: "a1",
+              activityType: "INOCULATION_RECORDED",
+              note: "UAT-DEMO-BOTTLE-1 - Blood culture bottle",
+              occurredAt: "2026-09-07T10:00:00Z",
+              structuredData: JSON.stringify({
+                inoculationId: "i1",
+                containerIdentifier: "UAT-DEMO-BOTTLE-1",
+                media: "Blood culture bottle",
+                incubation: "35 C for 24 hours",
+                atmosphere: "Ambient",
+              }),
+            },
+          ]}
+          onAddNote={vi.fn()}
+        />
+      </IntlProvider>,
+    );
+
+    expect(
+      screen.getByText("Media or bottle: Blood culture bottle"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Incubation: 35 C for 24 hours"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Atmosphere: Ambient")).toBeInTheDocument();
+  });
+
+  it("leaves out a field the inoculation did not record", () => {
+    render(
+      <IntlProvider locale="en" messages={messages}>
+        <CaseTimelinePanel
+          timelineSectionId="timeline"
+          activities={[
+            {
+              id: "a2",
+              activityType: "SUBCULTURE_RECORDED",
+              note: "PLATE-2 - Blood agar",
+              occurredAt: "2026-09-07T11:00:00Z",
+              structuredData: JSON.stringify({
+                media: "Blood agar",
+                incubation: "",
+                atmosphere: "",
+              }),
+            },
+          ]}
+          onAddNote={vi.fn()}
+        />
+      </IntlProvider>,
+    );
+
+    expect(screen.getByText("Media or bottle: Blood agar")).toBeInTheDocument();
+    expect(screen.queryByText(/^Incubation:/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/^Atmosphere:/)).not.toBeInTheDocument();
+  });
+
   it("offers only a note action and labels system versus manual history", async () => {
     const user = userEvent.setup();
     const onAddNote = vi.fn().mockResolvedValue({});

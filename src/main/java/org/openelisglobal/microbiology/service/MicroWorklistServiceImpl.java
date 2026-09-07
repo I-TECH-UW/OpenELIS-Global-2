@@ -68,7 +68,8 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
 
     public MicroWorklistServiceImpl(MicroCaseDAO caseDAO, MicroCaseOrderDetailDAO caseOrderDetailDAO,
             MicroIsolateDAO isolateDAO, MicroAstRunDAO astRunDAO, MicroCriticalCommunicationDAO communicationDAO,
-            MicroWorklistContextDAO contextDAO, MicroAstPanelDAO panelDAO, MicroPatientOriginDAO patientOriginDAO, MicroOrganismDAO organismDAO) {
+            MicroWorklistContextDAO contextDAO, MicroAstPanelDAO panelDAO, MicroPatientOriginDAO patientOriginDAO,
+            MicroOrganismDAO organismDAO) {
         this.caseDAO = caseDAO;
         this.caseOrderDetailDAO = caseOrderDetailDAO;
         this.isolateDAO = isolateDAO;
@@ -612,13 +613,13 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
     }
 
     /**
-     * An isolate keeps only its organism id once identified, so rows carry that
-     * id as their display text. Surveillance controls are read by people, so the
+     * An isolate keeps only its organism id once identified, so rows carry that id
+     * as their display text. Surveillance controls are read by people, so the
      * catalog name replaces it wherever one exists.
      */
     private void applyOrganismLabels(List<MicroWorklistRowForm> rows) {
-        List<String> ids = rows.stream().map(row -> row.organismId)
-                .filter(value -> value != null && !value.isBlank()).distinct().toList();
+        List<String> ids = rows.stream().map(row -> row.organismId).filter(value -> value != null && !value.isBlank())
+                .distinct().toList();
         if (ids.isEmpty()) {
             return;
         }

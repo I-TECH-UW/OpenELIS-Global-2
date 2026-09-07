@@ -20,11 +20,35 @@ const parseStructuredData = (structuredData) => {
   }
 };
 
+// A recorded inoculation keeps the media, incubation and atmosphere it was set
+// up with. The timeline is where the case's history is read, so it names them
+// rather than leaving them only in the audit payload.
+const INOCULATION_DETAIL_LABELS = [
+  ["media", "microbiology.case.media"],
+  ["incubation", "microbiology.case.incubation"],
+  ["atmosphere", "microbiology.case.atmosphere"],
+];
+
+const inoculationDetails = (intl, activity) => {
+  if (
+    activity.activityType !== "INOCULATION_RECORDED" &&
+    activity.activityType !== "SUBCULTURE_RECORDED"
+  ) {
+    return [];
+  }
+  const data = parseStructuredData(activity.structuredData);
+  return INOCULATION_DETAIL_LABELS.filter(([field]) => data[field]).map(
+    ([field, labelId]) =>
+      `${intl.formatMessage({ id: labelId })}: ${data[field]}`,
+  );
+};
+
 const activityPresentation = (intl, activity) => {
   if (activity.activityType !== "CULTURE_PURPOSE_CHANGED") {
     return {
       title: formatMicrobiologyEnum(activity.activityType, intl),
       note: formatMicrobiologyActivityNote(activity, intl),
+      details: inoculationDetails(intl, activity),
     };
   }
   const data = parseStructuredData(activity.structuredData);
@@ -196,6 +220,13 @@ const CaseTimelinePanel = ({
                     ) : (
                       `: ${presentation.note}`
                     ))}
+                  {(presentation.details || []).length > 0 && (
+                    <ul className="microbiology-list__details">
+                      {presentation.details.map((detail) => (
+                        <li key={detail}>{detail}</li>
+                      ))}
+                    </ul>
+                  )}
                   {(activity.performedByDisplay ||
                     activity.performedBy ||
                     activity.occurredAt) && (

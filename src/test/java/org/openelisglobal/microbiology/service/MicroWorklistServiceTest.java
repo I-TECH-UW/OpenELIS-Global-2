@@ -44,8 +44,8 @@ import org.openelisglobal.microbiology.valueholder.MicroCaseStage;
 import org.openelisglobal.microbiology.valueholder.MicroCriticalCommunication;
 import org.openelisglobal.microbiology.valueholder.MicroCriticalCommunicationStatus;
 import org.openelisglobal.microbiology.valueholder.MicroIsolate;
-import org.openelisglobal.microbiology.valueholder.MicroOrganism;
 import org.openelisglobal.microbiology.valueholder.MicroIsolateSignificance;
+import org.openelisglobal.microbiology.valueholder.MicroOrganism;
 import org.openelisglobal.microbiology.valueholder.MicroPatientOrigin;
 import org.openelisglobal.microbiology.valueholder.MicroWorkflowType;
 
