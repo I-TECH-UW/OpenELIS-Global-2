@@ -46,6 +46,9 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
     public void setUp() throws Exception {
 
         executeDataSetWithStateManagement("testdata/facade-device.xml");
+        // The fixture seeds analyzer ids 1-3 without advancing analyzer_seq; resync so
+        // a created Device does not collide on analyzer_pk.
+        resyncSequence("clinlims.analyzer_seq", "clinlims.analyzer");
 
         servletContext = new MockServletContext();
 
@@ -229,8 +232,13 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
         assertEquals("UPDATED-SERIAL-123", analyzer.getMachineId());
     }
 
+    /**
+     * HAPI enforces the FHIR PUT contract before the provider runs: the body must
+     * carry an id matching the URL. Nothing may be created or changed on the way to
+     * that 400.
+     */
     @Test
-    public void updateDevice_withoutBodyId_shouldUpdateResourceAddressedByUrl() throws Exception {
+    public void updateDevice_withoutBodyId_shouldReturn400AndChangeNothing() throws Exception {
 
         String updateJson = """
                 {
@@ -247,10 +255,9 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
 
         MockHttpServletResponse response = serve(put(ABL800_UUID, updateJson));
 
-        assertEquals(200, response.getStatus());
-        assertEquals("update must not create a second analyzer", before, analyzerService.getAll().size());
-        assertEquals("ABL800 renamed", analyzerByUuid(ABL800_UUID).getName());
-        assertEquals(ABL800_UUID, objectMapper.readTree(response.getContentAsString()).get("id").asText());
+        assertEquals(400, response.getStatus());
+        assertEquals(before, analyzerService.getAll().size());
+        assertEquals("ABL800 FLEX", analyzerByUuid(ABL800_UUID).getName());
     }
 
     @Test
@@ -280,12 +287,13 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
         String updateJson = """
                 {
                   "resourceType": "Device",
+                  "id": "%s",
                   "deviceName": [{
                     "name": "Ghost",
                     "type": "user-friendly-name"
                   }]
                 }
-                """;
+                """.formatted(UNKNOWN_UUID);
 
         int before = analyzerService.getAll().size();
 
