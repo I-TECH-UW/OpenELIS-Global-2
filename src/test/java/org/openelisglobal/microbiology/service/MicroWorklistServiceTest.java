@@ -22,6 +22,7 @@ import org.openelisglobal.microbiology.dao.MicroCaseDAO;
 import org.openelisglobal.microbiology.dao.MicroCaseOrderDetailDAO;
 import org.openelisglobal.microbiology.dao.MicroCriticalCommunicationDAO;
 import org.openelisglobal.microbiology.dao.MicroIsolateDAO;
+import org.openelisglobal.microbiology.dao.MicroOrganismDAO;
 import org.openelisglobal.microbiology.dao.MicroPatientOriginDAO;
 import org.openelisglobal.microbiology.dao.MicroReviewedAstWorklistQuery;
 import org.openelisglobal.microbiology.dao.MicroReviewedAstWorklistRow;
@@ -43,6 +44,7 @@ import org.openelisglobal.microbiology.valueholder.MicroCaseStage;
 import org.openelisglobal.microbiology.valueholder.MicroCriticalCommunication;
 import org.openelisglobal.microbiology.valueholder.MicroCriticalCommunicationStatus;
 import org.openelisglobal.microbiology.valueholder.MicroIsolate;
+import org.openelisglobal.microbiology.valueholder.MicroOrganism;
 import org.openelisglobal.microbiology.valueholder.MicroIsolateSignificance;
 import org.openelisglobal.microbiology.valueholder.MicroPatientOrigin;
 import org.openelisglobal.microbiology.valueholder.MicroWorkflowType;
@@ -74,6 +76,9 @@ public class MicroWorklistServiceTest {
     @Mock
     private MicroPatientOriginDAO patientOriginDAO;
 
+    @Mock
+    private MicroOrganismDAO organismDAO;
+
     private MicroWorklistService service;
 
     @Before
@@ -88,7 +93,7 @@ public class MicroWorklistServiceTest {
         when(caseOrderDetailDAO.getByCaseIds(anyList())).thenReturn(List.of());
         when(patientOriginDAO.getByCodes(anyList())).thenReturn(List.of());
         service = new MicroWorklistServiceImpl(caseDAO, caseOrderDetailDAO, isolateDAO, astRunDAO, communicationDAO,
-                contextDAO, panelDAO, patientOriginDAO);
+                contextDAO, panelDAO, patientOriginDAO, organismDAO);
     }
 
     @Test
@@ -481,6 +486,32 @@ public class MicroWorklistServiceTest {
         assertEquals("the reviewed view must offer the specimen types its rows carry", 1,
                 page.filterOptions.specimenTypes.size());
         assertEquals("Blood", page.filterOptions.specimenTypes.get(0).label);
+    }
+
+    @Test
+    public void surveillanceFiltersNameTheOrganismRatherThanItsId() {
+        MicroCase microCase = microCase("case-ast", "sample-1", MicroWorkflowType.BACTERIOLOGY,
+                MicroCaseStage.REVIEW_READY, "ROUTINE");
+        MicroIsolate isolate = significantIsolate("iso-1");
+        isolate.setCaseId("case-ast");
+        isolate.setOrganismId("org-1");
+        MicroAstRun reviewed = astRun("run-reviewed", "iso-1", MicroAstRunStatus.REVIEWED);
+        MicroOrganism organism = new MicroOrganism();
+        organism.setId("org-1");
+        organism.setDisplayName("Escherichia coli (UAT)");
+        when(astRunDAO.getReviewedWorklistPage(any(MicroReviewedAstWorklistQuery.class)))
+                .thenReturn(List.of(new MicroReviewedAstWorklistRow(microCase, isolate, reviewed)));
+        when(astRunDAO.countReviewedWorklist(any(MicroReviewedAstWorklistQuery.class))).thenReturn(1L);
+        when(organismDAO.getByIds(List.of("org-1"))).thenReturn(List.of(organism));
+
+        MicroWorklistQueryForm reviewedQuery = new MicroWorklistQueryForm();
+        reviewedQuery.grain = "ast";
+        reviewedQuery.status = "reviewed";
+        MicroWorklistPageForm page = service.getWorklistPage(reviewedQuery);
+
+        assertEquals("Escherichia coli (UAT)", page.rows.get(0).organismDisplay);
+        assertEquals(1, page.filterOptions.organisms.size());
+        assertEquals("Escherichia coli (UAT)", page.filterOptions.organisms.get(0).label);
     }
 
     @Test
