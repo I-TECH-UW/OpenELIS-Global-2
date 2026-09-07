@@ -10,14 +10,8 @@ import UserSessionDetailsContext from "../../UserSessionDetailsContext";
 import { ConfigurationContext, NotificationContext } from "./Layout";
 import messages from "../../languages/en.json";
 import { getFromOpenElisServer } from "../utils/Utils";
-import { navigateTo } from "../utils/appNavigation";
 
 // Mock Utils
-vi.mock("../utils/appNavigation", () => ({
-  navigateTo: vi.fn(),
-  softReload: vi.fn(),
-}));
-
 vi.mock("../utils/Utils", async () => {
   const actualUtils = await vi.importActual("../utils/Utils");
   return {
@@ -917,7 +911,10 @@ describe("Header Component - M2b Enhancement Tests", () => {
     });
 
     test("change password item navigates to /ChangePasswordLogin", async () => {
-      navigateTo.mockClear();
+      const originalLocation = window.location;
+      delete window.location;
+      window.location = { ...originalLocation, href: "" };
+
       const { container } = renderHeader();
       await waitFor(() => {
         expect(
@@ -928,8 +925,9 @@ describe("Header Component - M2b Enhancement Tests", () => {
       fireEvent.click(
         container.querySelector('[data-cy="headerChangePassword"]'),
       );
+      expect(window.location.href).toBe("/ChangePasswordLogin");
 
-      expect(navigateTo).toHaveBeenCalledWith("/ChangePasswordLogin");
+      window.location = originalLocation;
     });
 
     test("logout item calls the session logout", async () => {

@@ -20,7 +20,6 @@ import {
 } from "../../common/CustomNotification";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
-import { softReload } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -115,7 +114,7 @@ function ResultReportingConfiguration() {
       },
     );
     setTimeout(() => {
-      softReload();
+      window.location.reload();
     }, 1000);
   }
 

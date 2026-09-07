@@ -27,7 +27,6 @@ import { ConfigurationContext } from "../layout/Layout";
 import { convertAlphaNumLabNumForDisplay } from "../utils/Utils";
 import { jpSet } from "../utils/JsonPath";
 import config from "../../config.json";
-import { navigateTo } from "../utils/appNavigation";
 
 export const buildAnalyzerResultsRedirectUrl = (queryMode, queryValue) => {
   if (!queryValue) {
@@ -157,11 +156,9 @@ const AnalyserResults = (props) => {
     if (response.status == 200) {
       message = intl.formatMessage({ id: "validation.save.success" });
       kind = NotificationKinds.success;
-      navigateTo(
-        buildAnalyzerResultsRedirectUrl(
-          props.queryMode,
-          props.queryValue || props.type,
-        ),
+      window.location.href = buildAnalyzerResultsRedirectUrl(
+        props.queryMode,
+        props.queryValue || props.type,
       );
     } else {
       const detail = await response.text().catch(() => "");

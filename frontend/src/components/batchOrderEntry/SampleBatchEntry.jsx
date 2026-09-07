@@ -27,7 +27,6 @@ import PatientInfo from "../addOrder/PatientInfo";
 import { createOrderEntryValidationSchema } from "../formModel/validationSchema/OrderEntryValidationSchema";
 import LabelsSection from "../barcodeWorkflow/LabelsSection";
 import PostSavePrintDialog from "../barcodeWorkflow/PostSavePrintDialog";
-import { navigateTo } from "../utils/appNavigation";
 
 const normalizeQuantity = (value) => {
   const parsed = Number.parseInt(value, 10);
@@ -651,7 +650,9 @@ const SampleBatchEntry = (props) => {
               <Grid>
                 <Button
                   data-cy="finishButton"
-                  onClick={() => navigateTo("/SampleBatchEntrySetup")}
+                  onClick={() =>
+                    (window.location.href = "/SampleBatchEntrySetup")
+                  }
                 >
                   <FormattedMessage id="label.button.finish" />
                 </Button>

@@ -24,7 +24,6 @@ import {
   SortableTestList,
   SortableSampleTypeList,
 } from "./sortableListComponent/SortableList";
-import { softReload } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -631,7 +630,7 @@ function TestActivation() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        softReload();
+        window.location.reload();
       }, 200);
     } else {
       addNotification({
@@ -641,7 +640,7 @@ function TestActivation() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        softReload();
+        window.location.reload();
       }, 200);
     }
   }
@@ -713,7 +712,7 @@ function TestActivation() {
     );
 
     if (!sampleType) {
-      softReload();
+      window.location.reload();
       return;
     }
 
@@ -1023,7 +1022,7 @@ function TestActivation() {
                 <FormattedMessage id="label.button.submit" />
               </Button>{" "}
               <Button
-                onClick={() => softReload()}
+                onClick={() => window.location.reload()}
                 kind="tertiary"
                 type="button"
               >
@@ -1194,7 +1193,7 @@ function TestActivation() {
                 <FormattedMessage id="label.button.submit" />
               </Button>{" "}
               <Button
-                onClick={() => softReload()}
+                onClick={() => window.location.reload()}
                 kind="tertiary"
                 type="button"
               >
@@ -1217,7 +1216,7 @@ function TestActivation() {
         }}
         onRequestClose={() => {
           setIsConfirmModalOpen(false);
-          softReload();
+          window.location.reload();
         }}
         preventCloseOnClickOutside={true}
         shouldSubmitOnEnter={true}

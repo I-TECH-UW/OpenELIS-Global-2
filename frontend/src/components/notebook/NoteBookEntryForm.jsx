@@ -53,7 +53,6 @@ import {
 } from "../utils/Utils";
 import { Add } from "@carbon/icons-react";
 import { sampleTypeTestsStructure } from "../data/SampleEntryTestsForTypeProvider";
-import { navigateTo } from "../utils/appNavigation";
 
 const NoteBookEntryForm = () => {
   let breadcrumbs = [
@@ -226,7 +225,7 @@ const NoteBookEntryForm = () => {
         message: intl.formatMessage({ id: "error.save.msg" }),
       });
     }
-    navigateTo("/NoteBookEntryForm/" + body.id);
+    window.location.href = "/NoteBookEntryForm/" + body.id;
   };
 
   const [showPageModal, setShowPageModal] = useState(false);

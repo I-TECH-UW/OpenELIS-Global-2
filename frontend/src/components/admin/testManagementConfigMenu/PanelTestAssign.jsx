@@ -21,7 +21,6 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import { CustomSharedList } from "./CustomSharedList";
-import { softReload } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -54,7 +53,7 @@ function PanelTestAssign() {
 
   const handlePostPanelTestTestAssignListCall = () => {
     if (!panelId || !selectedPanelIdData) {
-      softReload();
+      window.location.reload();
       return;
     }
     postToOpenElisServerJsonResponse(
@@ -86,7 +85,7 @@ function PanelTestAssign() {
         kind: NotificationKinds.success,
       });
       setTimeout(() => {
-        softReload();
+        window.location.reload();
       }, 200);
     } else {
       addNotification({
@@ -96,14 +95,14 @@ function PanelTestAssign() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        softReload();
+        window.location.reload();
       }, 200);
     }
   };
 
   const handleSelectedPanelTestList = (res) => {
     if (!res) {
-      softReload();
+      window.location.reload();
     } else {
       setSelectedPanelIdData(res);
     }

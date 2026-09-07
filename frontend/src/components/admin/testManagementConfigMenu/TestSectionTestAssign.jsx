@@ -21,7 +21,6 @@ import {
 } from "../../common/CustomNotification";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
-import { softReload } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -73,7 +72,7 @@ function TestSectionTestAssign() {
       !testSectionTestAssignPost.testId ||
       !testSectionTestAssignPost.testSectionIdNew
     ) {
-      softReload();
+      window.location.reload();
       return;
     }
     postToOpenElisServerJsonResponse(
@@ -102,7 +101,7 @@ function TestSectionTestAssign() {
         kind: NotificationKinds.success,
       });
       setTimeout(() => {
-        softReload();
+        window.location.reload();
       }, 200);
     } else {
       addNotification({
@@ -112,7 +111,7 @@ function TestSectionTestAssign() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        softReload();
+        window.location.reload();
       }, 200);
     }
   };
@@ -271,7 +270,7 @@ function TestSectionTestAssign() {
         }}
         onRequestClose={() => {
           setTestSectionTestAssignModal(false);
-          softReload();
+          window.location.reload();
         }}
         preventCloseOnClickOutside={true}
         shouldSubmitOnEnter={true}

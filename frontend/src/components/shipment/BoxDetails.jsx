@@ -38,7 +38,6 @@ import "./BoxDetails.css";
 import SampleAssignmentModal from "./SampleAssignmentModal";
 import ShipmentNavigation from "./ShipmentNavigation";
 import { generateLabelPDF, generateManifestPDF } from "./utils/pdfGenerator";
-import { navigateTo } from "../utils/appNavigation";
 
 const BoxDetails = () => {
   const intl = useIntl();
@@ -566,9 +565,7 @@ const BoxDetails = () => {
                       actions={
                         <NotificationActionButton
                           onClick={() =>
-                            navigateTo(
-                              `/SampleShipment/reference-lab-results?view=returned&boxId=${boxId}`,
-                            )
+                            (window.location.href = `/SampleShipment/reference-lab-results?view=returned&boxId=${boxId}`)
                           }
                         >
                           {intl.formatMessage({

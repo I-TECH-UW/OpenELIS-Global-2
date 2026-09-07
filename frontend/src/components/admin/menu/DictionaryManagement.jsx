@@ -35,7 +35,6 @@ import {
   postToOpenElisServer,
   postToOpenElisServerFullResponse,
 } from "../../utils/Utils";
-import { softReload } from "../../utils/appNavigation";
 
 function DictionaryManagement() {
   const intl = useIntl();
@@ -260,7 +259,7 @@ function DictionaryManagement() {
         message: intl.formatMessage({ id: "error.add.edited.msg" }),
       });
     }
-    softReload();
+    window.location.reload();
   }
 
   const handleSubmitModal = (e) => {
@@ -419,7 +418,7 @@ function DictionaryManagement() {
         message: intl.formatMessage({ id: "dictionary.menu.deactivate.fail" }),
       });
     }
-    softReload();
+    window.location.reload();
   };
 
   const handlePanelSearchChange = (event) => {

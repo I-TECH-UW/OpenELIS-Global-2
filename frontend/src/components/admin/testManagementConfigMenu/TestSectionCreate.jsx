@@ -23,7 +23,6 @@ import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import { Formik, Form } from "formik";
 import * as Yup from "yup";
-import { softReload } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -93,7 +92,7 @@ function TestSectionCreate() {
           kind: NotificationKinds.success,
         });
         setTimeout(() => {
-          softReload();
+          window.location.reload();
         }, 200);
         setNotificationVisible(true);
       }
@@ -370,7 +369,7 @@ function TestSectionCreate() {
                       type="button"
                       kind="tertiary"
                       onClick={() => {
-                        softReload();
+                        window.location.reload();
                       }}
                     >
                       {bothFilled ? (

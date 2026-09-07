@@ -31,7 +31,6 @@ import {
   hydrateDictionaryFromInitial,
   resolveDictionaryItemId,
 } from "./testStepDictionaryMatching";
-import { softReload } from "../../../utils/appNavigation";
 
 export const TestStepForm = ({
   initialData,
@@ -895,7 +894,7 @@ export const StepOneTestNameAndTestSection = ({
                       if (cancelCall) {
                         cancelCall();
                       } else {
-                        softReload();
+                        window.location.reload();
                       }
                     }}
                     kind="tertiary"

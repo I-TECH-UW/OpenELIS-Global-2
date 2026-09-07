@@ -63,7 +63,6 @@ import { isStorageAssignmentSuccess } from "../storage/LocationPicker/storageAss
 import GenericSampleOrder from "../genericSample/GenericSampleOrder";
 import GenericSampleOrderEdit from "../genericSample/GenericSampleOrderEdit";
 import GenericSampleOrderImport from "../genericSample/GenericSampleOrderImport";
-import { navigateTo } from "../utils/appNavigation";
 
 const NoteBookInstanceEntryForm = () => {
   let breadcrumbs = [
@@ -203,7 +202,7 @@ const NoteBookInstanceEntryForm = () => {
         message: intl.formatMessage({ id: "error.save.msg" }),
       });
     }
-    navigateTo("/NoteBookInstanceEditForm/" + body.id);
+    window.location.href = "/NoteBookInstanceEditForm/" + body.id;
   };
 
   // Check if a sample is already added (by sampleItemId)
@@ -564,7 +563,7 @@ const NoteBookInstanceEntryForm = () => {
       setNotificationVisible(true);
       // Redirect back to dashboard
       setTimeout(() => {
-        navigateTo("/NoteBookDashboard");
+        window.location.href = "/NoteBookDashboard";
       }, 100);
       return false;
     }

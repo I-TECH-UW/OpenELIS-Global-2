@@ -22,7 +22,6 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import { SortableResultSelectionOptionList } from "./sortableListComponent/SortableList";
-import { softReload } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -134,7 +133,7 @@ function ResultSelectListAdd() {
         kind: NotificationKinds.success,
       });
       setTimeout(() => {
-        softReload();
+        window.location.reload();
       }, 200);
     } else {
       addNotification({
@@ -144,7 +143,7 @@ function ResultSelectListAdd() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        softReload();
+        window.location.reload();
       }, 200);
     }
   };
@@ -366,7 +365,7 @@ function ResultSelectListAdd() {
                 type="button"
                 kind="tertiary"
                 onClick={() => {
-                  softReload();
+                  window.location.reload();
                 }}
               >
                 <FormattedMessage id="label.button.cancel" />
@@ -479,7 +478,7 @@ function ResultSelectListAdd() {
                       type="button"
                       kind="tertiary"
                       onClick={() => {
-                        softReload();
+                        window.location.reload();
                       }}
                     >
                       <FormattedMessage id="label.button.cancel" />
@@ -505,7 +504,7 @@ function ResultSelectListAdd() {
         }}
         onRequestClose={() => {
           setIsConfirmModalOpen(false);
-          softReload();
+          window.location.reload();
         }}
         preventCloseOnClickOutside={true}
         shouldSubmitOnEnter={true}

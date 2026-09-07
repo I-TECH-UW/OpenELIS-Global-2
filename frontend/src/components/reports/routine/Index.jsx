@@ -9,7 +9,6 @@ import ReferredOut from "./ReferredOut";
 import ReportByDate from "../common/ReportByDate";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import { RoutineReportsMenu } from "../Routine";
-import { navigateTo } from "../../utils/appNavigation";
 
 // The routine side nav already pairs every report URL with its title message,
 // so derive the leaf breadcrumb from it rather than duplicating the mapping.
@@ -126,7 +125,7 @@ const RoutineIndex = () => {
     if (paramType && paramReport) {
       setIsLoading(false);
     } else {
-      navigateTo("/RoutineReports");
+      window.location.href = "/RoutineReports";
     }
   }, []);
 

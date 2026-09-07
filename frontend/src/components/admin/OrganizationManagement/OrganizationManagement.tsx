@@ -30,7 +30,6 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import ActionPaginationButtonType from "../../common/ActionPaginationButtonType";
-import { softReload } from "../../utils/appNavigation";
 
 interface OrganizationMenuItem {
   id: string;
@@ -169,7 +168,7 @@ function OrganizationManagement() {
       kind: NotificationKinds.success,
     });
     setTimeout(() => {
-      softReload();
+      window.location.reload();
     }, 200);
   };
 

@@ -20,7 +20,6 @@ import {
 } from "../../common/CustomNotification";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
-import { softReload } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -112,7 +111,7 @@ function SelectListRenameEntry() {
       setNotificationVisible(true);
       setIsAddModalOpen(false);
       setTimeout(() => {
-        softReload();
+        window.location.reload();
       }, 10);
     } else {
       addNotification({
@@ -122,7 +121,7 @@ function SelectListRenameEntry() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        softReload();
+        window.location.reload();
       }, 200);
     }
   }

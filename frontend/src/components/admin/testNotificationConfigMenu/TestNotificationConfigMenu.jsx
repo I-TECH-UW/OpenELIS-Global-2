@@ -33,7 +33,6 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import { Settings } from "@carbon/icons-react";
-import { navigateTo } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -158,7 +157,9 @@ function TestNotificationConfigMenu() {
   }, [testNamesList]);
 
   const handleEditButtonClick = (id) => {
-    navigateTo(`/MasterListsPage/testNotificationConfig?testId=${id}`);
+    window.location.assign(
+      `/MasterListsPage/testNotificationConfig?testId=${id}`,
+    );
   };
 
   function testNotificationConfigMenuSavePostCall() {
@@ -318,7 +319,9 @@ function TestNotificationConfigMenu() {
                 </Button>{" "}
                 <Button
                   onClick={() =>
-                    navigateTo("/MasterListsPage/testNotificationConfigMenu")
+                    window.location.assign(
+                      "/MasterListsPage/testNotificationConfigMenu",
+                    )
                   }
                   kind="tertiary"
                   type="button"
@@ -553,7 +556,9 @@ function TestNotificationConfigMenu() {
               </Button>{" "}
               <Button
                 onClick={() =>
-                  navigateTo("/MasterListsPage/testNotificationConfigMenu")
+                  window.location.assign(
+                    "/MasterListsPage/testNotificationConfigMenu",
+                  )
                 }
                 kind="tertiary"
                 type="button"

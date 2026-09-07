@@ -25,7 +25,6 @@ import PageBreadCrumb from "../common/PageBreadCrumb";
 import { FormattedMessage, useIntl } from "react-intl";
 import { ArrowLeft, ArrowRight } from "@carbon/icons-react";
 import AsyncAvatar from "../patient/photoManagement/photoAvatar/AyncAvatar";
-import { navigateTo } from "../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -93,7 +92,7 @@ const ProgramDashboard = () => {
   };
 
   const handleRowClick = (programSampleId) => {
-    navigateTo(`/programView/${programSampleId}`);
+    window.location.href = `/programView/${programSampleId}`;
   };
 
   useEffect(() => {

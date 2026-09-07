@@ -12,7 +12,6 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import RenameModelBox from "./renameModel/RenameModelBox";
-import { softReload } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -123,7 +122,7 @@ function PanelRenameEntry() {
       setNotificationVisible(true);
       setIsAddModalOpen(false);
       setTimeout(() => {
-        softReload();
+        window.location.reload();
       }, 10);
     } else {
       addNotification({
@@ -133,7 +132,7 @@ function PanelRenameEntry() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        softReload();
+        window.location.reload();
       }, 200);
     }
   }

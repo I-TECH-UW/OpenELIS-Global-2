@@ -36,7 +36,6 @@ import {
   NotificationKinds,
 } from "../../common/CustomNotification";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
-import { softReload } from "../../utils/appNavigation";
 
 const breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -240,7 +239,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "delete.success.msg" }),
       });
-      softReload();
+      window.location.reload();
     } else {
       addNotification({
         kind: NotificationKinds.error,

@@ -54,7 +54,6 @@ import ESignatureButton, {
   SignatureMeaning,
 } from "../esignature/ESignatureButton";
 import AcceptUnconditionallyGuard from "./AcceptUnconditionallyGuard";
-import { navigateTo } from "../utils/appNavigation";
 
 /**
  * Value for `labNumber` on /rest/LogbookResults. Strips only the legacy
@@ -2751,13 +2750,12 @@ export function SearchResults(props) {
         kind: NotificationKinds.success,
       });
       if (props.refreshOnSubmit) {
-        navigateTo(
+        window.location.href =
           "/result?type=" +
-            props.searchBy.type +
-            "&doRange=" +
-            props.searchBy.doRange +
-            props.extraParams,
-        );
+          props.searchBy.type +
+          "&doRange=" +
+          props.searchBy.doRange +
+          props.extraParams;
       }
     } else {
       addNotification({

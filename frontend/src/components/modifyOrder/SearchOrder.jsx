@@ -3,7 +3,6 @@ import SearchPatientForm from "../patient/SearchPatientForm";
 import { Button, Column, Grid, Form } from "@carbon/react";
 import { FormattedMessage } from "react-intl";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
-import { navigateTo } from "../utils/appNavigation";
 
 function SearchOrder() {
   const [selectedPatient, setSelectedPatient] = useState({});
@@ -26,14 +25,14 @@ function SearchOrder() {
 
   const openPatientResults = (patientId) => {
     if (patientId) {
-      navigateTo("/ModifyOrder?patientId=" + patientId);
+      window.location.href = "/ModifyOrder?patientId=" + patientId;
     }
   };
 
   const handleSearch = (e) => {
     e.preventDefault();
     var labNumber = accessionNumber ? accessionNumber.split("-")[0] : "";
-    navigateTo("/ModifyOrder?accessionNumber=" + labNumber);
+    window.location.href = "/ModifyOrder?accessionNumber=" + labNumber;
   };
 
   return (

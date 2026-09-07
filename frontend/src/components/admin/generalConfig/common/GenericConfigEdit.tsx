@@ -26,7 +26,6 @@ import {
 import { NotificationContext } from "../../../layout/Layout";
 
 import { FormattedMessage, useIntl } from "react-intl";
-import { softReload } from "../../../utils/appNavigation";
 
 interface GenericConfigEditProps {
   menuType: string;
@@ -221,7 +220,7 @@ const GenericConfigEdit = ({ menuType, ID }: GenericConfigEditProps) => {
         intl.formatMessage({ id: "save.config.success.msg" }),
         NotificationKinds.success,
       );
-      softReload();
+      window.location.reload();
     } else {
       showAlertMessage(
         intl.formatMessage({ id: "server.error.msg" }),
@@ -441,7 +440,10 @@ const GenericConfigEdit = ({ menuType, ID }: GenericConfigEditProps) => {
                   </Button>
                 </Column>
                 <Column lg={2}>
-                  <Button data-cy="exit-Button" onClick={() => softReload()}>
+                  <Button
+                    data-cy="exit-Button"
+                    onClick={() => window.location.reload()}
+                  >
                     <FormattedMessage id="admin.page.configuration.formEntryConfigMenu.button.exit" />
                   </Button>
                 </Column>

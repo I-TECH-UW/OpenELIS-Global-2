@@ -33,7 +33,6 @@ import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import { useLocation } from "react-router-dom";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AutoComplete from "../../common/AutoComplete";
-import { navigateTo } from "../../utils/appNavigation";
 
 interface OrganizationType {
   id: string;
@@ -175,7 +174,7 @@ function OrganizationAddModify() {
       );
     } else {
       setTimeout(() => {
-        navigateTo("/MasterListsPage/organizationManagement");
+        window.location.assign("/MasterListsPage/organizationManagement");
       }, 1000);
     }
     return () => {
@@ -471,7 +470,7 @@ function OrganizationAddModify() {
       kind: NotificationKinds.success,
     });
     setTimeout(() => {
-      navigateTo("/MasterListsPage/organizationManagement");
+      window.location.assign("/MasterListsPage/organizationManagement");
     }, 200);
     setNotificationVisible(true);
   };
@@ -911,7 +910,9 @@ function OrganizationAddModify() {
               </Button>{" "}
               <Button
                 onClick={() =>
-                  navigateTo("/MasterListsPage/organizationManagement")
+                  window.location.assign(
+                    "/MasterListsPage/organizationManagement",
+                  )
                 }
                 kind="tertiary"
                 type="button"

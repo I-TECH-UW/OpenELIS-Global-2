@@ -20,7 +20,6 @@ import {
 } from "../../common/CustomNotification";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
-import { softReload } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -70,7 +69,7 @@ function UomCreate() {
 
   const handleUomCreatePostResponseCallBack = (res) => {
     if (!res) {
-      softReload();
+      window.location.reload();
     } else {
       setNotificationVisible(true);
       addNotification({
@@ -83,7 +82,7 @@ function UomCreate() {
         }),
       });
       setTimeout(() => {
-        softReload();
+        window.location.reload();
       }, 200);
     }
   };
