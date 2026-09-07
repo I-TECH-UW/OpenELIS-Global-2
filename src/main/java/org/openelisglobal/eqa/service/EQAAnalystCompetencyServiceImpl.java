@@ -77,6 +77,21 @@ public class EQAAnalystCompetencyServiceImpl implements EQAAnalystCompetencyServ
             EQACompetencyEventType.IN_HOUSE_MISSED_DEADLINE, EQACompetencyEventType.DISMISSED_TRANSCRIPTION,
             EQACompetencyEventType.DISMISSED_OTHER, EQACompetencyEventType.ESCALATED_TO_NCE);
 
+    /**
+     * The triage verdicts: a supervisor's finding <i>about</i> a score, recorded
+     * after it. Whichever of these lands last decides how the sample counts,
+     * because triage is the later and better-informed statement -- which is what
+     * lets the two excusing categories excuse anything at all.
+     *
+     * <p>
+     * ESCALATED_TO_NCE is deliberately not one of them. An escalation is an extra
+     * fact about a sample the score already made evaluable, not a decision about
+     * whether it counts.
+     */
+    private static final Set<EQACompetencyEventType> TRIAGE_VERDICT = Set.of(EQACompetencyEventType.DISMISSED_EQUIPMENT,
+            EQACompetencyEventType.DISMISSED_TRANSCRIPTION, EQACompetencyEventType.DISMISSED_ACCEPTABLE_ON_REVIEW,
+            EQACompetencyEventType.DISMISSED_OTHER);
+
     private static final Map<EQAPerformanceStatus, String> VERDICT = Map.of(EQAPerformanceStatus.ACCEPTABLE,
             EQACompetencyRow.ACCEPTABLE, EQAPerformanceStatus.QUESTIONABLE, EQACompetencyRow.QUESTIONABLE,
             EQAPerformanceStatus.UNACCEPTABLE, EQACompetencyRow.UNACCEPTABLE);
@@ -186,6 +201,7 @@ public class EQAAnalystCompetencyServiceImpl implements EQAAnalystCompetencyServ
         row.cycleId = event.getCycleId();
         row.participantResultId = event.getParticipantResultId();
         row.date = date;
+        row.eventId = event.getId();
         row.eventType = event.getEventType();
         row.counted = EVALUABLE.contains(event.getEventType());
         row.failure = FAILING.contains(event.getEventType());
@@ -343,39 +359,84 @@ public class EQAAnalystCompetencyServiceImpl implements EQAAnalystCompetencyServ
 
     /**
      * The de-duplication FR-V2.3-06 asks for: rows about one sample collapse to one
-     * fact. An escalated unacceptable score is a single failed sample, and a
-     * dismissal that does not count against the analyst clears the sample it
-     * dismisses rather than sitting beside it.
+     * fact, and the FRS names the winner -- "the event is the canonical row".
      */
     private List<EQACompetencyRow> facts(List<EQACompetencyRow> rows) {
-        Map<String, EQACompetencyRow> byFact = new LinkedHashMap<>();
+        Map<String, List<EQACompetencyRow>> byFact = new LinkedHashMap<>();
         int index = 0;
         for (EQACompetencyRow row : rows) {
-            String key = row.factKey(index++);
-            EQACompetencyRow known = byFact.get(key);
-            if (known == null) {
-                byFact.put(key, copy(row));
-                continue;
-            }
-            known.counted |= row.counted;
-            known.failure |= row.failure;
-            known.escalation |= row.escalation;
-            if (row.date.isAfter(known.date)) {
-                known.date = row.date;
-            }
-            if (severity(row.outcome) > severity(known.outcome)) {
-                known.outcome = row.outcome;
-            }
+            byFact.computeIfAbsent(row.factKey(index++), key -> new ArrayList<>()).add(row);
         }
 
         List<EQACompetencyRow> facts = new ArrayList<>();
-        for (EQACompetencyRow row : byFact.values()) {
-            // A sample only excused by a non-counting dismissal leaves both totals.
-            if (row.counted || row.failure) {
-                facts.add(row);
+        for (List<EQACompetencyRow> group : byFact.values()) {
+            EQACompetencyRow fact = collapse(group);
+            // A sample excused by a non-counting dismissal leaves both totals.
+            if (fact.counted || fact.failure) {
+                facts.add(fact);
             }
         }
         return facts;
+    }
+
+    /**
+     * One sample is one fact, and the latest statement about it decides how it
+     * counts. Scoring is the instrument's verdict; a triage verdict is the
+     * supervisor's finding about that verdict and is recorded after it, so it
+     * replaces the score's counting decision rather than being OR-ed with it.
+     *
+     * <p>
+     * OR-ing them was the defect: the score event always lands first, so its flags
+     * survived whatever triage decided, and the two categories the FRS says do not
+     * count against the analyst could only ever excuse a sample that had not
+     * failed. An equipment fault was never lifted off the analyst who happened to
+     * run the sample.
+     *
+     * <p>
+     * Nothing leaves the record. The evidence table under each analyst still lists
+     * every event with its date and category, so an assessor sees that the sample
+     * failed and sees why it was excused; only the counts move. Excusing pulls the
+     * denominator down, which can band an analyst Under Review for thin evidence
+     * rather than Competent -- a broken analyser means less evidence about the
+     * person, not more, and FR-V2.3-06's own worked example is exactly that case.
+     */
+    private EQACompetencyRow collapse(List<EQACompetencyRow> group) {
+        EQACompetencyRow fact = copy(group.get(0));
+        for (EQACompetencyRow row : group) {
+            fact.escalation |= row.escalation;
+            if (row.date.isAfter(fact.date)) {
+                fact.date = row.date;
+            }
+            if (severity(row.outcome) > severity(fact.outcome)) {
+                fact.outcome = row.outcome;
+            }
+        }
+
+        EQACompetencyRow verdict = latestTriageVerdict(group);
+        if (verdict != null) {
+            fact.counted = verdict.counted;
+            fact.failure = verdict.failure;
+        } else {
+            // No triage: the score rows speak for the sample, and an escalation
+            // beside one of them adds the failure without a second denominator.
+            fact.counted = group.stream().anyMatch(row -> row.counted);
+            fact.failure = group.stream().anyMatch(row -> row.failure);
+        }
+        return fact;
+    }
+
+    /**
+     * The last triage verdict about a sample, ordered by date and then by event id
+     * -- a bad score and the triage answering it usually land on the same day, so
+     * the date alone cannot order them.
+     */
+    private static EQACompetencyRow latestTriageVerdict(List<EQACompetencyRow> group) {
+        // Set.of throws on a null probe, and a row derived from a result has no
+        // event type at all.
+        return group.stream().filter(row -> row.eventType != null && TRIAGE_VERDICT.contains(row.eventType))
+                .max(Comparator.<EQACompetencyRow, LocalDate>comparing(row -> row.date)
+                        .thenComparing(row -> row.eventId == null ? 0L : row.eventId))
+                .orElse(null);
     }
 
     /**
@@ -393,6 +454,7 @@ public class EQAAnalystCompetencyServiceImpl implements EQAAnalystCompetencyServ
         clone.cycleId = row.cycleId;
         clone.participantResultId = row.participantResultId;
         clone.date = row.date;
+        clone.eventId = row.eventId;
         clone.eventType = row.eventType;
         clone.outcome = row.outcome;
         clone.counted = row.counted;
