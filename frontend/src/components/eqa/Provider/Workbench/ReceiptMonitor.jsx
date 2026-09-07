@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useState } from "react";
+import React, { useCallback, useContext, useEffect, useState } from "react";
 import {
   Button,
   InlineNotification,
@@ -15,7 +15,12 @@ import {
 } from "@carbon/react";
 import { useIntl } from "react-intl";
 import { Link as RouterLink } from "react-router-dom";
-import { formatDateOnly, resolveApiErrorMessage } from "../../../utils/Utils";
+import {
+  formatDateOnly,
+  hasQaPermission,
+  resolveApiErrorMessage,
+} from "../../../utils/Utils";
+import UserSessionDetailsContext from "../../../../UserSessionDetailsContext";
 import { hintStyle } from "../../eqaCommon";
 import {
   distributeScores,
@@ -66,6 +71,13 @@ const dateCell = (value) =>
  */
 const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
   const intl = useIntl();
+  const { userSessionDetails } = useContext(UserSessionDetailsContext);
+  // Gate each action on the grant its own endpoint asks for, so what is on
+  // offer is what this user can actually do. Provider covers reception,
+  // repeats, provider-side result entry and score return; manage covers
+  // scoring the cycle and the audited override that opens submissions.
+  const isProvider = hasQaPermission(userSessionDetails, "qa.eqa.provider");
+  const canManage = hasQaPermission(userSessionDetails, "qa.manage.eqa");
   const t = (id, defaultMessage, values) =>
     intl.formatMessage({ id, defaultMessage }, values);
 
@@ -94,11 +106,31 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
    * {success: false, error} when the store refuses the bundle, and reporting
    * that as sent is the D-LIVE-1 mistake in a new place.
    */
-  const report = ({ ok, body }, successKey, successText, failKey) => {
+  const report = (
+    { ok, status, body },
+    successKey,
+    successText,
+    failKey,
+    grant,
+  ) => {
     setBusy(null);
     if (ok && body?.success !== false) {
       refresh();
       onNotice({ kind: "success", text: t(successKey, successText) });
+      return;
+    }
+    // A refusal names the action and the grant that carries it. The actions are
+    // hidden without the grant, so this is reachable only when one is revoked
+    // mid-session — which is exactly when "Forbidden" explains least.
+    if (status === 403) {
+      onNotice({
+        kind: "error",
+        text: t(
+          "eqa.action.forbidden",
+          "This action needs the {grant} permission, which your account does not have. Ask an administrator for it.",
+          { grant },
+        ),
+      });
       return;
     }
     onNotice({
@@ -115,6 +147,7 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
         "eqa.receipt.delivered",
         "Delivery recorded.",
         "eqa.receipt.deliveredFailed",
+        "qa.eqa.provider",
       ),
     );
   };
@@ -129,6 +162,7 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
         "eqa.receipt.repeatSent",
         "Repeat panel dispatched.",
         "eqa.receipt.repeatFailed",
+        "qa.eqa.provider",
       );
     });
   };
@@ -149,6 +183,7 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
         "eqa.receipt.submissionsOpened",
         "Submissions are open.",
         "eqa.receipt.submissionsOpenFailed",
+        "qa.manage.eqa",
       );
     });
   };
@@ -264,6 +299,7 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
         "eqa.score.scored",
         "Cycle scored. Unacceptable participants are in the follow-up register.",
         "eqa.score.scoreFailed",
+        "qa.manage.eqa",
       ),
     );
   };
@@ -276,6 +312,7 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
         "eqa.score.distributed",
         "Scores placed in the FHIR store for the participant to collect.",
         "eqa.score.distributeFailed",
+        "qa.eqa.provider",
       ),
     );
   };
@@ -298,6 +335,22 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
         />
       ) : (
         <>
+          {!isProvider && !canManage && (
+            <InlineNotification
+              kind="info"
+              lowContrast
+              hideCloseButton
+              title={t(
+                "eqa.receipt.readOnly.title",
+                "Read-only view of receipts and scores",
+              )}
+              subtitle={t(
+                "eqa.receipt.readOnly.body",
+                "Recording a delivery, dispatching a repeat, entering results and returning scores all need the provider grant; scoring the cycle needs the manage grant. The table below is the whole cycle either way.",
+              )}
+              style={{ marginBottom: "0.75rem" }}
+            />
+          )}
           <div
             style={{
               display: "flex",
@@ -306,12 +359,13 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
               marginBottom: "0.75rem",
             }}
           >
-            {SCORABLE.includes(cycleStatus) && (
+            {canManage && SCORABLE.includes(cycleStatus) && (
               <Button size="sm" disabled={busy !== null} onClick={handleScore}>
                 {t("eqa.score.scoreCycle", "Score cycle")}
               </Button>
             )}
-            {["SHIPPED", "DELIVERED"].includes(cycleStatus) &&
+            {canManage &&
+              ["SHIPPED", "DELIVERED"].includes(cycleStatus) &&
               rows.some(
                 (row) =>
                   row.receiptStatus === "DELIVERED" ||
@@ -419,7 +473,7 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
                         : "—"}
                     </TableCell>
                     <TableCell>
-                      {!delivered && row.shipmentId && (
+                      {isProvider && !delivered && row.shipmentId && (
                         <Button
                           kind="ghost"
                           size="sm"
@@ -429,7 +483,7 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
                           {t("eqa.receipt.markReceived", "Mark received")}
                         </Button>
                       )}
-                      {row.shipmentId && (
+                      {isProvider && row.shipmentId && (
                         <Button
                           kind="ghost"
                           size="sm"
@@ -442,24 +496,28 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
                           {t("eqa.receipt.sendRepeat", "Send repeat")}
                         </Button>
                       )}
-                      <Button
-                        kind="ghost"
-                        size="sm"
-                        disabled={busy !== null}
-                        onClick={() => openIntake(row)}
-                      >
-                        {t("eqa.intake.enterResults", "Enter results")}
-                      </Button>
+                      {isProvider && (
+                        <Button
+                          kind="ghost"
+                          size="sm"
+                          disabled={busy !== null}
+                          onClick={() => openIntake(row)}
+                        >
+                          {t("eqa.intake.enterResults", "Enter results")}
+                        </Button>
+                      )}
                       {score && score.resultCount > 0 && (
                         <>
-                          <Button
-                            kind="ghost"
-                            size="sm"
-                            disabled={busy === row.organizationId}
-                            onClick={() => handleDistribute(row)}
-                          >
-                            {t("eqa.score.sendScores", "Send scores")}
-                          </Button>
+                          {isProvider && (
+                            <Button
+                              kind="ghost"
+                              size="sm"
+                              disabled={busy === row.organizationId}
+                              onClick={() => handleDistribute(row)}
+                            >
+                              {t("eqa.score.sendScores", "Send scores")}
+                            </Button>
+                          )}
                           <Button
                             kind="ghost"
                             size="sm"
