@@ -300,139 +300,142 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
    * Used when user scans a barcode or enters a lab number.
    * Loads in read-only mode by default (user must click Edit to modify).
    */
-  const loadOrder = useCallback(async (searchLabNumber, readOnly = true) => {
-    setIsLoading(true);
-    setError(null);
+  const loadOrder = useCallback(
+    async (searchLabNumber, readOnly = true) => {
+      setIsLoading(true);
+      setError(null);
 
-    return new Promise((resolve, reject) => {
-      getFromOpenElisServer(
-        `/rest/order/search?labNumber=${encodeURIComponent(searchLabNumber)}`,
-        (response) => {
-          setIsLoading(false);
+      return new Promise((resolve, reject) => {
+        getFromOpenElisServer(
+          `/rest/order/search?labNumber=${encodeURIComponent(searchLabNumber)}`,
+          (response) => {
+            setIsLoading(false);
 
-          if (response && response.labNumber) {
-            setOrderId(response.id);
-            setLabNumber(response.labNumber);
+            if (response && response.labNumber) {
+              setOrderId(response.id);
+              setLabNumber(response.labNumber);
 
-            // Capture reference-data lists already loaded by the mount fetch
-            // ( /rest/SamplePatientEntry ) — /rest/order/search does not return
-            // them, so without this we'd clobber referralOrganizations,
-            // referralReasons, sampleTypes, etc. to null on every load.
-            const prior = orderDataRef.current || {};
-            const preservedRefData = {
-              sampleTypes: prior.sampleTypes,
-              testSectionList: prior.testSectionList,
-              rejectReasonList: prior.rejectReasonList,
-              referralOrganizations: prior.referralOrganizations,
-              referralReasons: prior.referralReasons,
-            };
+              // Capture reference-data lists already loaded by the mount fetch
+              // ( /rest/SamplePatientEntry ) — /rest/order/search does not return
+              // them, so without this we'd clobber referralOrganizations,
+              // referralReasons, sampleTypes, etc. to null on every load.
+              const prior = orderDataRef.current || {};
+              const preservedRefData = {
+                sampleTypes: prior.sampleTypes,
+                testSectionList: prior.testSectionList,
+                rejectReasonList: prior.rejectReasonList,
+                referralOrganizations: prior.referralOrganizations,
+                referralReasons: prior.referralReasons,
+              };
 
-            // Build order data by merging response fields with defaults
-            // The backend returns patientProperties at top level and inside orderData
-            const loadedOrderData = {
-              ...SampleOrderFormValues,
-              ...preservedRefData,
-              ...(response.orderData || {}),
-              patientProperties: {
-                ...SampleOrderFormValues.patientProperties,
-                ...(response.patientProperties || {}),
-                ...(response.orderData?.patientProperties || {}),
-                // Keep patient status from response or default to NO_ACTION for subsequent saves
-                // Only set UPDATE when patient data has actually been modified
-                patientUpdateStatus:
-                  response.patientProperties?.patientUpdateStatus ||
-                  "NO_ACTION",
-              },
-              sampleOrderItems: {
-                ...SampleOrderFormValues.sampleOrderItems,
-                ...(response.sampleOrderItems || {}),
-                environmentalFields: {
-                  ...(prior?.sampleOrderItems?.environmentalFields || {}),
-                  ...(response.sampleOrderItems?.environmentalFields || {}),
+              // Build order data by merging response fields with defaults
+              // The backend returns patientProperties at top level and inside orderData
+              const loadedOrderData = {
+                ...SampleOrderFormValues,
+                ...preservedRefData,
+                ...(response.orderData || {}),
+                patientProperties: {
+                  ...SampleOrderFormValues.patientProperties,
+                  ...(response.patientProperties || {}),
+                  ...(response.orderData?.patientProperties || {}),
+                  // Keep patient status from response or default to NO_ACTION for subsequent saves
+                  // Only set UPDATE when patient data has actually been modified
+                  patientUpdateStatus:
+                    response.patientProperties?.patientUpdateStatus ||
+                    "NO_ACTION",
                 },
-                labNo: response.labNumber,
-              },
-            };
+                sampleOrderItems: {
+                  ...SampleOrderFormValues.sampleOrderItems,
+                  ...(response.sampleOrderItems || {}),
+                  environmentalFields: {
+                    ...(prior?.sampleOrderItems?.environmentalFields || {}),
+                    ...(response.sampleOrderItems?.environmentalFields || {}),
+                  },
+                  labNo: response.labNumber,
+                },
+              };
 
-            setOrderDataState(loadedOrderData);
+              setOrderDataState(loadedOrderData);
 
-            // Load sample type requests if no sample_items exist (decoupled workflow)
-            // This handles Step 1 edit where samples are stored as requests, not items
-            const hasSampleItems =
-              response.samples &&
-              response.samples.length > 0 &&
-              response.samples.some((s) => s.sampleItemId);
+              // Load sample type requests if no sample_items exist (decoupled workflow)
+              // This handles Step 1 edit where samples are stored as requests, not items
+              const hasSampleItems =
+                response.samples &&
+                response.samples.length > 0 &&
+                response.samples.some((s) => s.sampleItemId);
 
-            const loadedEnvFields =
-              loadedOrderData?.sampleOrderItems?.environmentalFields || {};
-            const injectVectorFields = (samplesList) =>
-              flattenSampleManifestFields(
-                samplesList,
-                loadedEnvFields,
-                isDayFirst,
+              const loadedEnvFields =
+                loadedOrderData?.sampleOrderItems?.environmentalFields || {};
+              const injectVectorFields = (samplesList) =>
+                flattenSampleManifestFields(
+                  samplesList,
+                  loadedEnvFields,
+                  isDayFirst,
+                );
+
+              setIsReadOnly(readOnly);
+              setIsEditMode(false);
+              setIsDirty(false);
+              setSaveStatus(SaveStatus.SAVED);
+
+              setStepProgress(
+                response.stepProgress || {
+                  enter: false,
+                  collect: false,
+                  label: false,
+                  qa: false,
+                },
               );
 
-            setIsReadOnly(readOnly);
-            setIsEditMode(false);
-            setIsDirty(false);
-            setSaveStatus(SaveStatus.SAVED);
+              // Load storageSkipped from backend response
+              const savedStorageSkipped = response.storageSkipped === true;
+              setStorageSkippedState(savedStorageSkipped);
 
-            setStepProgress(
-              response.stepProgress || {
-                enter: false,
-                collect: false,
-                label: false,
-                qa: false,
-              },
-            );
+              setError(null);
+              lastSavedDataRef.current = JSON.stringify({
+                orderData: loadedOrderData,
+                samples: response.samples,
+              });
 
-            // Load storageSkipped from backend response
-            const savedStorageSkipped = response.storageSkipped === true;
-            setStorageSkippedState(savedStorageSkipped);
-
-            setError(null);
-            lastSavedDataRef.current = JSON.stringify({
-              orderData: loadedOrderData,
-              samples: response.samples,
-            });
-
-            if (!hasSampleItems && response.id) {
-              // Load sample type requests and resolve only after samples are set,
-              // so callers that await loadOrder() see the full samples state.
-              getRequestsBySample(response.id)
-                .then((requests) => {
-                  if (requests && requests.length > 0) {
-                    setSamplesState(
-                      injectVectorFields(convertRequestsToSamples(requests)),
-                    );
-                  } else {
+              if (!hasSampleItems && response.id) {
+                // Load sample type requests and resolve only after samples are set,
+                // so callers that await loadOrder() see the full samples state.
+                getRequestsBySample(response.id)
+                  .then((requests) => {
+                    if (requests && requests.length > 0) {
+                      setSamplesState(
+                        injectVectorFields(convertRequestsToSamples(requests)),
+                      );
+                    } else {
+                      setSamplesState(
+                        injectVectorFields(response.samples || [sampleObject]),
+                      );
+                    }
+                    resolve(response);
+                  })
+                  .catch(() => {
                     setSamplesState(
                       injectVectorFields(response.samples || [sampleObject]),
                     );
-                  }
-                  resolve(response);
-                })
-                .catch(() => {
-                  setSamplesState(
-                    injectVectorFields(response.samples || [sampleObject]),
-                  );
-                  resolve(response);
-                });
+                    resolve(response);
+                  });
+              } else {
+                setSamplesState(
+                  injectVectorFields(response.samples || [sampleObject]),
+                );
+                resolve(response);
+              }
             } else {
-              setSamplesState(
-                injectVectorFields(response.samples || [sampleObject]),
-              );
-              resolve(response);
+              const errorMsg = "Order not found";
+              setError(errorMsg);
+              reject(new Error(errorMsg));
             }
-          } else {
-            const errorMsg = "Order not found";
-            setError(errorMsg);
-            reject(new Error(errorMsg));
-          }
-        },
-      );
-    });
-  }, []);
+          },
+        );
+      });
+    },
+    [isDayFirst],
+  );
 
   /**
    * Convert samples array to XML format expected by backend
@@ -453,6 +456,7 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
 
       const orderRequiredBy = convertBackendDateToIso(
         orderData?.sampleOrderItems?.requiredBy || "",
+        isDayFirst,
       );
       let sampleXmlString = '<?xml version="1.0" encoding="utf-8"?>';
       sampleXmlString += `<samples requiredBy='${orderRequiredBy}'>`;
@@ -1031,6 +1035,7 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
                           flattenSampleManifestFields(
                             response.samples,
                             envFields,
+                            isDayFirst,
                           ),
                         );
                       }
@@ -1085,7 +1090,7 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
         );
       });
     },
-    [orderId, orderData, samples, isReadOnly, isEditMode],
+    [orderId, orderData, samples, isReadOnly, isEditMode, isDayFirst],
   );
 
   /**
@@ -1311,14 +1316,23 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
     });
   }, []);
 
-  // On mount (and on refresh), if ?order=<labNumber> is in the URL and the
-  // path prefix matches this provider's workflowType, auto-load the order.
+  // On mount (and on refresh), if the URL addresses an order — ?order=<labNumber>,
+  // or ?labNumber= as the dashboards push it — and the path prefix matches this
+  // provider's workflowType, auto-load the order. The load waits for the site's
+  // date locale, because backend dates are parsed with its day/month order;
+  // loading before it arrives transposed day and month (OGC-1192). The layout
+  // publishes the anonymous configuration first, which has no date locale, so a
+  // non-empty configuration alone is not enough to go on.
   // After load, if the order's workflowType doesn't match this provider's
   // (e.g. a clinical ?order= carried into the environmental provider), strip
   // the param and reset so the form starts clean.
+  const configurationReady =
+    configurationProperties?.DEFAULT_DATE_LOCALE !== undefined;
+  const urlOrderLoadStarted = useRef(false);
   useEffect(() => {
+    if (urlOrderLoadStarted.current || !configurationReady) return;
     const params = new URLSearchParams(location.search);
-    const orderParam = params.get("order");
+    const orderParam = params.get("order") || params.get("labNumber");
     if (!orderParam || orderId) return;
 
     const path = location.pathname;
@@ -1330,8 +1344,9 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
 
     if (pathWorkflow !== workflowType) return;
 
+    urlOrderLoadStarted.current = true;
     loadOrder(orderParam, false); // eslint-disable-line react-hooks/set-state-in-effect
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+  }, [configurationReady]); // eslint-disable-line react-hooks/exhaustive-deps
 
   /**
    * Auto-save effect - saves every 30 seconds if form is dirty and has minimum required data.
