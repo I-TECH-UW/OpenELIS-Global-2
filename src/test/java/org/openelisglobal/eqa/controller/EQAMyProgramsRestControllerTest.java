@@ -1,6 +1,7 @@
 package org.openelisglobal.eqa.controller;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
@@ -19,6 +20,7 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
@@ -194,7 +196,7 @@ public class EQAMyProgramsRestControllerTest {
     @Test
     public void testUpdateMyProgram_Success() {
         when(enrollmentService.updateEnrollment(
-                        eq(1L), any(EQALabProgramEnrollment.class), anyList(), anyList(), anyList(), anyMap()))
+                        eq(1L), any(EQALabProgramEnrollment.class), anyList(), anyList(), anyList(), any()))
                 .thenReturn(enrollment1);
 
         Map<String, Object> body = new HashMap<>();
@@ -207,6 +209,52 @@ public class EQAMyProgramsRestControllerTest {
         ResponseEntity<?> response = controller.updateMyProgram(request, 1L, body);
 
         assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+    /**
+     * A status toggle omits testAnalytes, and the service reads a null map as
+     * "leave the stored one alone" — so the omission must not arrive as an empty map,
+     * which would clear every reporting analyte on the enrollment.
+     */
+    @Test
+    public void testUpdateMyProgram_AbsentTestAnalytesPassesNull() {
+        when(enrollmentService.updateEnrollment(
+                        eq(1L), any(EQALabProgramEnrollment.class), any(), any(), any(), any()))
+                .thenReturn(enrollment1);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("programName", "Chemistry PT");
+        body.put("provider", "WHO");
+        body.put("isActive", Boolean.FALSE);
+        body.put("testIds", List.of(200));
+
+        controller.updateMyProgram(request, 1L, body);
+
+        ArgumentCaptor<Map<Long, Long>> captor = ArgumentCaptor.forClass(Map.class);
+        verify(enrollmentService).updateEnrollment(
+                eq(1L), any(EQALabProgramEnrollment.class), any(), any(), any(), captor.capture());
+        assertNull(captor.getValue());
+    }
+
+    /** An explicit map still arrives parsed, so the Edit form keeps setting analytes. */
+    @Test
+    public void testUpdateMyProgram_ExplicitTestAnalytesPassedThrough() {
+        when(enrollmentService.updateEnrollment(
+                        eq(1L), any(EQALabProgramEnrollment.class), any(), any(), any(), any()))
+                .thenReturn(enrollment1);
+
+        Map<String, Object> body = new HashMap<>();
+        body.put("programName", "Chemistry PT");
+        body.put("provider", "WHO");
+        body.put("testIds", List.of(191));
+        body.put("testAnalytes", Map.of("191", 103));
+
+        controller.updateMyProgram(request, 1L, body);
+
+        ArgumentCaptor<Map<Long, Long>> captor = ArgumentCaptor.forClass(Map.class);
+        verify(enrollmentService).updateEnrollment(
+                eq(1L), any(EQALabProgramEnrollment.class), any(), any(), any(), captor.capture());
+        assertEquals(Map.of(191L, 103L), captor.getValue());
     }
 
     @Test

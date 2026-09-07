@@ -4,6 +4,7 @@ import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
@@ -68,6 +69,12 @@ public class EQALabProgramEnrollmentServiceImpl extends BaseObjectServiceImpl<EQ
         EQALabProgramEnrollment existing = enrollmentDAO.get(id)
                 .orElseThrow(() -> new IllegalArgumentException("Enrollment not found: " + id));
 
+        // The test maps are cleared and rebuilt below, so a caller that omits the
+        // reporting-analyte map must mean "leave it as it is" rather than "clear it".
+        // Toggling an enrollment's status has no business rewriting the map, and the
+        // participant's submission bridge resolves the analyte through it.
+        Map<Long, Long> effectiveAnalytes = testAnalytes != null ? testAnalytes : storedTestAnalytes(existing);
+
         existing.setProgramName(updated.getProgramName());
         existing.setProvider(updated.getProvider());
         existing.setDescription(updated.getDescription());
@@ -80,7 +87,7 @@ public class EQALabProgramEnrollmentServiceImpl extends BaseObjectServiceImpl<EQ
         existing = enrollmentDAO.update(existing);
         entityManager.flush();
 
-        setMappings(existing, labUnitIds, testIds, panelIds, testAnalytes);
+        setMappings(existing, labUnitIds, testIds, panelIds, effectiveAnalytes);
         enrollmentDAO.update(existing);
         entityManager.flush();
         entityManager.clear();
@@ -101,6 +108,20 @@ public class EQALabProgramEnrollmentServiceImpl extends BaseObjectServiceImpl<EQ
     @Transactional(readOnly = true)
     public List<String> getDistinctProviders() {
         return enrollmentDAO.findDistinctProviders();
+    }
+
+    /**
+     * The analyte currently recorded against each test, keyed the way setMappings
+     * reads it.
+     */
+    private Map<Long, Long> storedTestAnalytes(EQALabProgramEnrollment enrollment) {
+        Map<Long, Long> analytes = new HashMap<>();
+        for (EQALabEnrollmentTestMap map : enrollment.getTestMaps()) {
+            if (map.getTestId() != null && map.getAnalyteId() != null) {
+                analytes.put(map.getTestId(), map.getAnalyteId());
+            }
+        }
+        return analytes;
     }
 
     private void setMappings(EQALabProgramEnrollment enrollment, List<Long> labUnitIds, List<Long> testIds,
