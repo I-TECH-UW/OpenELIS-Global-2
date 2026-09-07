@@ -71,6 +71,10 @@ public class EQAProgramRestController extends ControllerUtills {
             program.setSchemeType(schemeTypeOf(schemeType));
             program.setProvider(blankToNull((String) body.get("provider")));
             program.setPerAnalyst(Boolean.TRUE.equals(body.get("perAnalyst")));
+            // FR-V2.2-07's review gate. Read at three layers — the auto-submit sweep,
+            // the cycle DTO and My Cycles — and until now written nowhere, so outside
+            // the test suite it could only ever be its column default of false.
+            program.setRequiresCycleReview(Boolean.TRUE.equals(body.get("requiresCycleReview")));
             program.setIsActive(true);
             program.setSysUserId(getSysUserId(request));
 
@@ -145,6 +149,10 @@ public class EQAProgramRestController extends ControllerUtills {
 
             if (body.containsKey("perAnalyst")) {
                 program.setPerAnalyst(Boolean.TRUE.equals(body.get("perAnalyst")));
+            }
+
+            if (body.containsKey("requiresCycleReview")) {
+                program.setRequiresCycleReview(Boolean.TRUE.equals(body.get("requiresCycleReview")));
             }
 
             program = programService.update(program);
@@ -290,6 +298,9 @@ public class EQAProgramRestController extends ControllerUtills {
         // FR-V2.3-04: result entry reads this to decide whether to show the
         // Analyst column, so the scheme list has to carry it.
         dto.put("perAnalyst", Boolean.TRUE.equals(program.getPerAnalyst()));
+        // FR-V2.2-07: with this on, a participant's cycle holds at ready-to-submit
+        // for a human to review rather than submitting itself.
+        dto.put("requiresCycleReview", Boolean.TRUE.equals(program.getRequiresCycleReview()));
         dto.put("fhirUuid", program.getFhirUuid() != null ? program.getFhirUuid().toString() : null);
         dto.put("participantCount", enrollmentService.countActiveEnrollments(program.getId()));
         return dto;

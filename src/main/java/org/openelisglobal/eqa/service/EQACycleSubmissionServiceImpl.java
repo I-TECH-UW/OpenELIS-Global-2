@@ -496,6 +496,7 @@ public class EQACycleSubmissionServiceImpl implements EQACycleSubmissionService 
             for (Long enrollmentId : enrollments) {
                 markSent(cycle.getId(), enrollmentId, EQASubmissionChannel.FHIR, null, SCHEDULER_USER);
             }
+            clearRetryBudget(cycle, SCHEDULER_USER);
             advanceTo(cycle, SUBMITTED, EQATriggerType.AUTO, EQATriggerEvent.FHIR_SUBMIT_SUCCESS, null, null,
                     SCHEDULER_USER);
             return true;
@@ -517,6 +518,23 @@ public class EQACycleSubmissionServiceImpl implements EQACycleSubmissionService 
             }
         }
         return readyAt;
+    }
+
+    /**
+     * A submission that got through spends none of the budget. The counter had only
+     * ever been incremented, so a cycle that failed its way to the ceiling once
+     * could never be submitted automatically again for the rest of its life — and
+     * the same would have been true of the next cycle to reach the ceiling after a
+     * transient outage.
+     */
+    private void clearRetryBudget(EQACycle cycle, String sysUserId) {
+        if (cycle.getSubmissionAttempts() == null || cycle.getSubmissionAttempts() == 0) {
+            return;
+        }
+        cycle.setSubmissionAttempts(0);
+        cycle.setLastSubmissionAttemptAt(null);
+        cycle.setSysUserId(sysUserId);
+        cycleDAO.update(cycle);
     }
 
     private void recordFailedAttempt(EQACycle cycle, int attempts) {
@@ -581,6 +599,7 @@ public class EQACycleSubmissionServiceImpl implements EQACycleSubmissionService 
         if (sent == 0) {
             throw new IllegalArgumentException("No validated result to submit for cycle " + cycleId);
         }
+        clearRetryBudget(cycle, sysUserId);
         advanceTo(cycle, SUBMITTED, EQATriggerType.MANUAL, EQATriggerEvent.MANUAL_OVERRIDE, actingUser(sysUserId),
                 "Manual submission, provider reference " + reference.trim(), sysUserId);
         return cycleDAO.get(cycleId).orElseThrow();

@@ -8587,5 +8587,22 @@
   "eqa.labperf.kpi.nceOpenCount": "Of those, still open",
   "eqa.queue.source.all": "Every source",
   "eqa.queue.countFiltered": "Queue · {count} of {total} items",
-  "eqa.queue.emptyForSource": "Nothing from this source is awaiting triage. The queue holds {total} items from other sources."
+  "eqa.queue.emptyForSource": "Nothing from this source is awaiting triage. The queue holds {total} items from other sources.",
+  "eqa.program.requiresCycleReview": "Hold each cycle for review before submitting",
+  "eqa.program.requiresCycleReview.off": "Submit automatically",
+  "eqa.program.requiresCycleReview.on": "Hold for review",
+  "eqa.cycle.submitManual": "Submit by hand",
+  "eqa.cycle.submitManual.heading": "Record a submission made by hand",
+  "eqa.cycle.submitManual.help": "Use this once the results have reached the provider some other way. The reference they gave you is what makes this a record rather than a claim, so it is required.",
+  "eqa.cycle.submitManual.reference": "Provider's reference",
+  "eqa.cycle.submitManual.success": "Recorded as submitted by hand, with the provider's reference.",
+  "eqa.cycle.retriesSpent.title": "Automatic submission has stopped for this cycle.",
+  "eqa.cycle.retriesSpent.body": "It failed {attempts} times and will not be retried. Send the results to the provider yourself - the export bundle is on the scheme's page - and record their reference here.",
+  "alerts.type.eqa_submission_failed": "EQA Submission Failed",
+  "alerts.type.freezer_temperature": "Freezer Temperature",
+  "alerts.type.equipment_failure": "Equipment Failure",
+  "alerts.type.inventory_low": "Inventory Low",
+  "alerts.type.sample_tracking": "Sample Tracking",
+  "alerts.type.critical_result": "Critical Result",
+  "alerts.type.other": "Other"
 }

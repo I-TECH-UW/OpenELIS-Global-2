@@ -46,6 +46,31 @@ export const submitCycle = (cycleId, callback) => {
   );
 };
 
+// FR-V2.2-06 manual fallback, reachable at last. The automatic channel spends a
+// finite retry budget and then stops for good, and the alert it raises says
+// "submit manually" — this is what that sentence now points at. The provider's
+// reference is mandatory server-side: without it a manual submission is a claim
+// rather than a record.
+export const submitCycleManually = (cycleId, reference, callback) => {
+  postToOpenElisServerFullResponse(
+    `/rest/eqa/cycles/${cycleId}/submit-manual`,
+    JSON.stringify({ manualSubmissionReference: reference }),
+    (response) => {
+      response
+        .json()
+        .catch(() => ({}))
+        .then((payload) => {
+          callback({
+            ok: response.ok,
+            error: response.ok
+              ? null
+              : payload?.error || payload?.message || response.statusText,
+          });
+        });
+    },
+  );
+};
+
 // Programmes this lab has enrolled in (My Programs); the "New cycle" form
 // offers exactly these, by name, because the participant-created cycle is
 // matched to a local programme of the same name on the server.
