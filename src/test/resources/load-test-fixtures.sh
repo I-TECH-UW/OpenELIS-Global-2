@@ -23,7 +23,6 @@ SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 PROJECT_ROOT="$(cd "$SCRIPT_DIR/../../.." && pwd)"
 FOUNDATIONAL_SQL_FILE="$SCRIPT_DIR/e2e-foundational-data.sql"
 ANALYZER_MINIMAL_SQL_FILE="$SCRIPT_DIR/analyzer-minimal.sql"
-FILE_IMPORT_E2E_SQL="$SCRIPT_DIR/fixtures/file-import-e2e.sql"
 ANALYZER_HARNESS_LANE_SQL_FILE="$SCRIPT_DIR/fixtures/analyzer-harness-lane-data.sql"
 STORAGE_IN_PROGRESS_ORDER_SQL="$SCRIPT_DIR/fixtures/storage-in-progress-order.sql"
 RESET_SCRIPT="$SCRIPT_DIR/reset-test-database.sh"
@@ -348,10 +347,6 @@ load_profile_fixtures() {
     # a separate SQL fixture — the external_id/national_id columns are
     # unique and a duplicate insert would conflict.
 
-    # Analyzer cleanup/deactivation is part of both lanes today.
-    if [ -f "$FILE_IMPORT_E2E_SQL" ]; then
-        load_sql_file "$FILE_IMPORT_E2E_SQL" "file-import-e2e.sql (cleanup + dashboard deactivation)"
-    fi
 }
 
 # Runs AFTER storage-e2e.xml, for fixtures that FK-reference storage patients.
