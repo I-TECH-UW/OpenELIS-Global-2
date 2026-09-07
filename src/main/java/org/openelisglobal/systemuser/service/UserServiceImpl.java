@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 import org.apache.commons.lang3.ObjectUtils;
 import org.apache.commons.lang3.StringUtils;
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.constants.Constants;
@@ -409,6 +410,39 @@ public class UserServiceImpl implements UserService {
         return userSampleTypes;
     }
 
+    /**
+     * OGC-189: whether the analysis behind a result row belongs to one of
+     * {@code allowedUnitIds}, judged by the analysis's OWN lab unit.
+     *
+     * <p>
+     * The row's test may be configured for a different unit than the analysis was
+     * filed under — a reflexed analysis inherits the parent's unit — so matching
+     * via the test hid reflexed work that was sitting in a perfectly active unit.
+     * Falls back to the test's configured unit when the analysis cannot be
+     * resolved, so a row is never dropped for lack of information.
+     */
+    private boolean analysisIsInAllowedUnit(String analysisId, String testId, Set<String> allowedUnitIds) {
+        if (!GenericValidator.isBlankOrNull(analysisId)) {
+            try {
+                Analysis analysis = analysisService.get(analysisId);
+                if (analysis != null && analysis.getTestSection() != null
+                        && analysis.getTestSection().getId() != null) {
+                    return allowedUnitIds.contains(analysis.getTestSection().getId());
+                }
+            } catch (RuntimeException e) {
+                // Unresolvable id — fall through to the test's configured unit.
+            }
+        }
+        if (GenericValidator.isBlankOrNull(testId)) {
+            return true;
+        }
+        Test test = testService.getTestById(testId);
+        if (test == null || test.getTestSection() == null || test.getTestSection().getId() == null) {
+            return true;
+        }
+        return allowedUnitIds.contains(test.getTestSection().getId());
+    }
+
     @Override
     public List<TestResultItem> filterResultsByLabUnitRoles(String systemUserId, List<TestResultItem> results,
             String roleName) {
@@ -427,16 +461,14 @@ public class UserServiceImpl implements UserService {
                 "User " + systemUserId + " has " + (testSections != null ? testSections.size() : 0) + " test sections: "
                         + testUnitIds);
 
-        List<Test> allTests = testService.getAllTestsByTestSectionIds(testUnitIds);
-        List<String> allTestsIds = new ArrayList<>();
-        allTests.forEach(test -> allTestsIds.add(test.getId()));
-        // Log which test IDs are in the results and which are allowed
-        List<String> resultTestIds = results.stream().map(r -> r.getTestId()).collect(Collectors.toList());
+        Set<String> allowedUnitIds = new HashSet<>(testUnitIds);
+        List<TestResultItem> allowed = results.stream()
+                .filter(r -> analysisIsInAllowedUnit(r.getAnalysisId(), r.getTestId(), allowedUnitIds))
+                .collect(Collectors.toList());
         org.openelisglobal.common.log.LogEvent.logInfo(this.getClass().getSimpleName(), "filterResultsByLabUnitRoles",
-                "Input results: " + results.size() + " (test IDs: " + resultTestIds + "), Allowed test IDs: "
-                        + allTestsIds.size() + ", Filtered results: "
-                        + results.stream().filter(result -> allTestsIds.contains(result.getTestId())).count());
-        return results.stream().filter(result -> allTestsIds.contains(result.getTestId())).collect(Collectors.toList());
+                "Input results: " + results.size() + ", allowed units: " + allowedUnitIds.size()
+                        + ", Filtered results: " + allowed.size());
+        return allowed;
     }
 
     @Override
@@ -473,10 +505,10 @@ public class UserServiceImpl implements UserService {
             testSections.forEach(testSection -> testUnitIds.add(testSection.getId()));
         }
 
-        List<Test> allTests = testService.getAllTestsByTestSectionIds(testUnitIds);
-        List<String> allTestsIds = new ArrayList<>();
-        allTests.forEach(test -> allTestsIds.add(test.getId()));
-        return results.stream().filter(result -> allTestsIds.contains(result.getTestId())).collect(Collectors.toList());
+        // Same as the TestResultItem variant: judge by the analysis's own unit.
+        Set<String> allowedUnitIds = new HashSet<>(testUnitIds);
+        return results.stream().filter(r -> analysisIsInAllowedUnit(r.getAnalysisId(), r.getTestId(), allowedUnitIds))
+                .collect(Collectors.toList());
     }
 
     @Override
@@ -491,11 +523,23 @@ public class UserServiceImpl implements UserService {
             testSections.forEach(testSection -> testUnitIds.add(testSection.getId()));
         }
 
-        List<Test> allTests = testService.getAllTestsByTestSectionIds(testUnitIds);
-        List<String> allTestsIds = new ArrayList<>();
-        allTests.forEach(test -> allTestsIds.add(test.getId()));
-        return results.stream().filter(result -> allTestsIds.contains(result.getTest().getId()))
-                .collect(Collectors.toList());
+        // OGC-189: judge each analysis by ITS OWN lab unit, not by the unit its
+        // test is configured for. A reflexed analysis is filed under the parent's
+        // unit, so the two differ: matching via the test made a reflexed analysis
+        // sitting in an active unit invisible because its test is configured
+        // elsewhere (a deactivated unit).
+        Set<String> allowedUnitIds = new HashSet<>(testUnitIds);
+        return results.stream().filter(analysis -> {
+            TestSection section = analysis.getTestSection();
+            // No section recorded: fall back to the test's configured unit
+            // rather than dropping the row.
+            if (section == null || section.getId() == null) {
+                Test test = analysis.getTest();
+                return test == null || test.getTestSection() == null
+                        || allowedUnitIds.contains(test.getTestSection().getId());
+            }
+            return allowedUnitIds.contains(section.getId());
+        }).collect(Collectors.toList());
     }
 
     @Override
