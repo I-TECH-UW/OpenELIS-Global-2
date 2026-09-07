@@ -203,7 +203,9 @@ describe("User Management", function () {
 
     it("Validate active/inactive users", function () {
       userManagement.activeUser(); //checks active users
-      userManagement.inactiveUser(usersData[0].fName);
+      // Both users were saved active, so the filter keeps both. A user actually
+      // being hidden once deactivated is covered by "Validate deactivated user".
+      userManagement.validateColumnContent("2", usersData[0].fName);
       userManagement.validateColumnContent("2", usersData[1].fName);
       cy.reload();
     });
