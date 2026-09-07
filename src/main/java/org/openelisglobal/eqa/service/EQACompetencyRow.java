@@ -30,6 +30,14 @@ class EQACompetencyRow {
     Long cycleId;
     Long participantResultId;
     LocalDate date;
+
+    /**
+     * The logged event's own id, or null for a row derived from a result. Two
+     * events about one sample very often share a date -- a bad score and the triage
+     * that answers it usually land the same day -- so the id is what orders them.
+     */
+    Long eventId;
+
     EQACompetencyEventType eventType;
     String outcome;
 

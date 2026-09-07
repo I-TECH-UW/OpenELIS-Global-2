@@ -167,6 +167,83 @@ public class EQAAnalystCompetencyIntegrationTest extends EQASpineTestBase {
         assertEquals("excused samples are not assessed samples", 4, analyst.get("sampleCount"));
     }
 
+    /**
+     * FR-V2.3-06's own worked example, seeded the way production writes it: the
+     * score event lands first and triage answers it. OR-ing the two let the score
+     * event's flags survive whatever triage decided, so an equipment fault was
+     * never lifted off the analyst who happened to run the sample -- the excusing
+     * categories could only ever excuse a sample that had not failed.
+     */
+    @Test
+    public void anEquipmentFaultIsLiftedOffTheAnalystWhoRanTheSample() {
+        for (int i = 0; i < 2; i++) {
+            scoredResult(EQAPerformanceStatus.ACCEPTABLE, ANALYTE);
+        }
+        recordOn(EQAPerformanceStatus.UNACCEPTABLE, EQACompetencyEventType.UNACCEPTABLE_SCORE, ANALYTE);
+        for (int i = 0; i < 3; i++) {
+            scoredThenTriaged(EQAPerformanceStatus.UNACCEPTABLE, EQACompetencyEventType.DISMISSED_EQUIPMENT, ANALYTE);
+        }
+
+        Map<String, Object> analyst = onlyAnalyst();
+        // Two acceptables plus the one unanswered failure. The three equipment
+        // faults leave both totals, which pulls the denominator below the
+        // evidence floor -- a broken analyser means less evidence about the
+        // person, not more.
+        assertEquals("the excused samples leave the denominator", 3, analyst.get("evaluableCount"));
+        assertEquals("and the numerator", 1, analyst.get("failureCount"));
+        assertEquals(UNDER_REVIEW, analyst.get("status"));
+    }
+
+    /** Acceptable-on-review is the other excusing verdict, and behaves the same. */
+    @Test
+    public void acceptableOnReviewExcusesTheSampleItReviewed() {
+        for (int i = 0; i < 4; i++) {
+            scoredResult(EQAPerformanceStatus.ACCEPTABLE, ANALYTE);
+        }
+        scoredThenTriaged(EQAPerformanceStatus.QUESTIONABLE, EQACompetencyEventType.DISMISSED_ACCEPTABLE_ON_REVIEW,
+                ANALYTE);
+
+        Map<String, Object> analyst = onlyAnalyst();
+        assertEquals(4, analyst.get("evaluableCount"));
+        assertEquals("triage found nothing to answer for", 0, analyst.get("failureCount"));
+        assertEquals(COMPETENT, analyst.get("status"));
+    }
+
+    /**
+     * The counting categories are unaffected either way -- the point is that they
+     * count once, not twice, for a sample that carries both events.
+     */
+    @Test
+    public void aTranscriptionDismissalCountsOnceForASampleThatAlsoHasItsScore() {
+        for (int i = 0; i < 3; i++) {
+            scoredResult(EQAPerformanceStatus.ACCEPTABLE, ANALYTE);
+        }
+        scoredThenTriaged(EQAPerformanceStatus.UNACCEPTABLE, EQACompetencyEventType.DISMISSED_TRANSCRIPTION, ANALYTE);
+
+        Map<String, Object> analyst = onlyAnalyst();
+        assertEquals("one sample, one denominator entry", 4, analyst.get("evaluableCount"));
+        assertEquals("one sample, one failure", 1, analyst.get("failureCount"));
+        assertEquals(COMPETENT, analyst.get("status"));
+    }
+
+    /**
+     * An escalation is not a counting decision: the score it escalates is already
+     * the evaluable row, so it must not take the sample out of the denominator the
+     * way a triage verdict does.
+     */
+    @Test
+    public void anEscalationLeavesTheSampleInTheDenominator() {
+        for (int i = 0; i < 3; i++) {
+            scoredResult(EQAPerformanceStatus.ACCEPTABLE, ANALYTE);
+        }
+        Long failed = recordOn(EQAPerformanceStatus.UNACCEPTABLE, EQACompetencyEventType.UNACCEPTABLE_SCORE, ANALYTE);
+        escalate(failed, insertNce("Closed"));
+
+        Map<String, Object> analyst = onlyAnalyst();
+        assertEquals("the escalated sample is still an assessed sample", 4, analyst.get("evaluableCount"));
+        assertEquals("and fails once, not twice", 1, analyst.get("failureCount"));
+    }
+
     @Test
     public void transcriptionAndOtherDismissalsDoCountAgainstTheAnalyst() {
         for (int i = 0; i < 2; i++) {
@@ -353,6 +430,30 @@ public class EQAAnalystCompetencyIntegrationTest extends EQASpineTestBase {
         };
         EQAAnalystCompetencyEvent event = competencyService.record(result, type, null, category, null, USER);
         assertTrue("the writer must produce an event for an assigned analyst", event != null);
+        return result.getId();
+    }
+
+    /**
+     * The shape that actually arises in production: a bad score writes its own
+     * event, and triage answers that same result afterwards. Two events, one sample
+     * -- which is the case no acceptance criterion seeds, because they all seed
+     * bare events.
+     */
+    private Long scoredThenTriaged(EQAPerformanceStatus performance, EQACompetencyEventType triageType,
+            long analyteId) {
+        EQAParticipantResult result = result(performance, analyteId);
+        EQACompetencyEventType scoreType = performance == EQAPerformanceStatus.UNACCEPTABLE
+                ? EQACompetencyEventType.UNACCEPTABLE_SCORE
+                : EQACompetencyEventType.QUESTIONABLE_SCORE;
+        competencyService.record(result, scoreType, null, null, null, USER);
+        EQADismissalCategory category = switch (triageType) {
+        case DISMISSED_EQUIPMENT -> EQADismissalCategory.KNOWN_EQUIPMENT_ISSUE;
+        case DISMISSED_TRANSCRIPTION -> EQADismissalCategory.TRANSCRIPTION_ERROR;
+        case DISMISSED_ACCEPTABLE_ON_REVIEW -> EQADismissalCategory.ACCEPTABLE_ON_REVIEW;
+        case DISMISSED_OTHER -> EQADismissalCategory.OTHER;
+        default -> null;
+        };
+        competencyService.record(result, triageType, null, category, null, USER);
         return result.getId();
     }
 

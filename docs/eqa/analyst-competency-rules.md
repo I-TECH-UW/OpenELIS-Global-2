@@ -31,9 +31,34 @@ before any counting. This matters because an unacceptable score that is then
 escalated writes **two** events about **one** sample; counting both would fail
 the analyst twice for it.
 
-The collapsed fact counts if any of its rows count, fails if any of its rows
-fail, and carries the worst outcome of its rows. An event with no result behind
-it (a cross-cycle event) is its own fact.
+**The latest statement about a sample decides how it counts.** Scoring is the
+instrument's verdict; a triage verdict is the supervisor's finding _about_ that
+verdict, and it is recorded afterwards, so it replaces the score's counting
+decision rather than being OR-ed with it. FR-V2.3-06 says as much — "the event
+is the canonical row" — and one canonical row per result is not the same thing
+as the OR across every row about it.
+
+An escalation is not a counting decision: the score it escalates is already the
+evaluable row, so it contributes the failure and the open-non-conformity flag
+and leaves the denominator alone.
+
+The collapsed fact carries the **worst** outcome of its rows and the latest of
+their dates, so the evidence table still shows what happened. An event with no
+result behind it (a cross-cycle event) is its own fact.
+
+A sample's whole history, then:
+
+| Sample's history                                                            | In `evaluable_n` | In `failure_n`              |
+| --------------------------------------------------------------------------- | ---------------- | --------------------------- |
+| scored acceptable, no triage                                                | yes              | no                          |
+| scored badly, no triage                                                     | yes              | yes                         |
+| scored badly → dismissed equipment / pending re-test / acceptable on review | no               | no                          |
+| scored badly → dismissed transcription / other                              | yes              | yes (once, not twice)       |
+| scored badly → escalated                                                    | yes              | yes, plus the open-NCE band |
+
+Two events about one sample very often share a date — a bad score and the triage
+answering it usually land the same day — so triage verdicts are ordered by date
+**and then by event id**.
 
 ## Counted, failing, excused
 
@@ -58,9 +83,20 @@ into one sample anyway.
 
 `DISMISSED_EQUIPMENT` and `DISMISSED_ACCEPTABLE_ON_REVIEW` leave **both**
 totals. Equipment fault is not the analyst's, and acceptable-on-review means
-triage found nothing to answer for. An excused sample therefore does not drag
-the denominator down, which would otherwise make an analyst look under-evidenced
-for someone else's broken analyser.
+triage found nothing to answer for.
+
+Because these are triage verdicts, they excuse the sample they dismiss —
+including one that had already failed, which is the only case that arises in
+production: a queue row exists only after a bad score. An excused sample
+therefore **does** pull the denominator down, and that is the intended outcome
+rather than a side effect. A broken analyser means less evidence about the
+person, not more, so an analyst whose only failures were equipment faults bands
+**Under review** for thin evidence rather than Competent. FR-V2.3-06's own
+worked example is exactly that case: one unacceptable, three equipment
+dismissals and two acceptables gives `evaluable_n` 3 and `failure_n` 1 — Under
+review by the evidence floor, which is the answer the example states. Counting
+the excused samples would give `evaluable_n` 6 and `failure_n` 1, which is
+Competent, and the example is built to show the denominator falling below four.
 
 ## The bands, in precedence order
 
