@@ -113,13 +113,26 @@ behaviour is reverted.
 
 Baseline is run `33887282951` on develop `d6bab7a5a`, every job green.
 
-| Job           | Baseline | Branch | Checkpoint |
-| ------------- | -------- | ------ | ---------- |
-| Shared Build  | green    | green  | `fbab7a6`  |
-| Static        | green    | green  | `fbab7a6`  |
-| Image         | green    | green  | `fbab7a6`  |
-| Cypress ×3    | green    | queued | `fbab7a6`  |
-| Playwright ×4 | green    | queued | `fbab7a6`  |
+| Job                    | Baseline | Branch |
+| ---------------------- | -------- | ------ |
+| Cypress / Admin        | green    | green  |
+| Cypress / Core         | green    | green  |
+| Cypress / Independent  | green    | green  |
+| Playwright Core 1/2    | green    | green  |
+| Playwright Core 2/2    | green    | green  |
+| Playwright Harness 1/2 | green    | green  |
+| Playwright Harness 2/2 | green    | green  |
+| E2E Suite Gate         | green    | green  |
+| Shared Build           | green    | green  |
+| Static                 | green    | green  |
+| Image                  | green    | green  |
+
+Branch results are run `34161231563` on `cb4370260`, the order-screen fix, and
+cover everything up to it: the query client at the root, the reloads removed
+from error paths, and the order, rename and `UserManagement` screens. Both jobs
+that broke on the reverted attempt — Cypress Admin and Playwright Harness, the
+analyzer accept-results flows — are green. The checkpoint also passed on
+`fbab7a6` and `4811c01e`. Later pushes are still queued.
 
 `E2E / Tests` runs as a `workflow_run`, so it reports develop's branch and sha
 and never appears against the PR's own commit: read it through the
