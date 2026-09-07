@@ -77,7 +77,7 @@ Counts, non-test source:
 |                                                  | Start | Now | In scope |
 | ------------------------------------------------ | ----- | --- | -------- |
 | `window.location.reload()`                       | 84    | 2   | 0        |
-| same-route / cross-screen `assign()` or `href =` | 85    | 66  | 49       |
+| same-route / cross-screen `assign()` or `href =` | 85    | 62  | 45       |
 
 Criterion 2 is met: no `window.location.reload()` remains outside the session
 and error-recovery set. The two that stay are the CSRF-expiry reload in
