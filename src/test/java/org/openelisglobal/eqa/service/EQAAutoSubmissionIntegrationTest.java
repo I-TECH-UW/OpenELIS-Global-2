@@ -43,8 +43,10 @@ import org.springframework.test.util.ReflectionTestUtils;
  * {@code test_analyte} — rather than writing
  * {@code eqa_participant_result.result_value} directly. Writing that column in
  * a test is what previously hid the fact that nothing in production filled it.
- * {@link #analysisWithNoAnalyte_neverSubmitsAPartialSet()} pins the other half:
- * a result the bridge cannot map must stop the submission, not shrink it.
+ * {@link #analysisWhoseTestTheCatalogNeverMapped_isBridgedUnderAnAnalyteNamedAfterTheTest()}
+ * pins the other half: a test the lab never declared is still bridged, under an
+ * analyte derived from the test's own name, because that name is what the
+ * provider matches the result by.
  *
  * <p>
  * The FHIR post itself is stubbed. What matters here is what the workflow does
@@ -58,6 +60,11 @@ public class EQAAutoSubmissionIntegrationTest extends EQASpineTestBase {
     private static final long SEROLOGY_ANALYTE = 9801L;
     private static final long VL_TEST = 9702L;
     private static final long SEROLOGY_TEST = 9701L;
+    /**
+     * A test deliberately outside the spine fixture, so no analyte shares its name.
+     */
+    private static final long UNNAMED_TEST = 9703L;
+    private static final String UNNAMED_TEST_NAME = "EQA derived-analyte probe";
     private static final long SAMPLE = 9901L;
     private static final long SAMPLE_ITEM = 9901L;
     private static final long SAMPLE_EQA = 9901L;
@@ -183,6 +190,15 @@ public class EQAAutoSubmissionIntegrationTest extends EQASpineTestBase {
         jdbc.update("DELETE FROM clinlims.sample_eqa WHERE sample_id = ?", SAMPLE);
         jdbc.update("DELETE FROM clinlims.sample_item WHERE id = ?", SAMPLE_ITEM);
         jdbc.update("DELETE FROM clinlims.sample WHERE id = ?", SAMPLE);
+        // Last, and in this order: the bridge mints a test_analyte link — and for the
+        // probe test an analyte too — for a test the catalog never mapped, and the
+        // analyses that reference them have to go first. Dropping them keeps the next
+        // class from inheriting catalog rows this one invented. The two fixture
+        // analytes stay: adopting one again is what the resolution is meant to do.
+        jdbc.update("DELETE FROM clinlims.test_analyte WHERE test_id IN (?, ?, ?) AND analyte_id NOT IN (?, ?)",
+                SEROLOGY_TEST, VL_TEST, UNNAMED_TEST, SEROLOGY_ANALYTE, VL_ANALYTE);
+        jdbc.update("DELETE FROM clinlims.analyte WHERE name = ?", UNNAMED_TEST_NAME);
+        jdbc.update("DELETE FROM clinlims.test WHERE id = ?", UNNAMED_TEST);
     }
 
     // ---- fixture builders ----
@@ -451,26 +467,64 @@ public class EQAAutoSubmissionIntegrationTest extends EQASpineTestBase {
     }
 
     /**
-     * The inversion of the happy path: {@code analyte_id} is a NOT NULL FK, so a
-     * result the bridge cannot map produces no row — and the cycle must then stop
-     * short rather than submit a set that is missing an analyte the provider
-     * expects.
+     * A lab that never declared a test in its enrollment still reports it. The
+     * analyte comes from the test itself, and an analyte already carrying that name
+     * is adopted rather than duplicated — two analytes of one name would reach the
+     * provider as two different measurements.
      */
     @Test
-    public void analysisWithNoAnalyte_neverSubmitsAPartialSet() {
+    public void analysisWhoseTestTheCatalogNeverMapped_isBridgedUnderAnAnalyteNamedAfterTheTest() {
         EQAProgram scheme = externalScheme(false);
         EQACycle cycle = readBack(insertCycle(scheme, 9));
         Long roundId = insertRound(cycle, 1, "OPEN");
         eqaOrder(cycle, roundId);
+        mapTestToSchemeAnalyte(VL_TEST, VL_ANALYTE);
         finalizedAnalysis(VL_TEST, VL_ANALYTE, "4.75");
-        analysis(SEROLOGY_TEST, SEROLOGY_ANALYTE, "Positive", AnalysisStatus.Finalized, false);
+        long unmapped = analysis(SEROLOGY_TEST, SEROLOGY_ANALYTE, "Positive", AnalysisStatus.Finalized, false);
+        when(fhirStub.submitCycleViaFhir(anyLong(), anyLong())).thenReturn(true);
         windowElapsed();
 
         cycleSubmissionService.advanceCycle(cycle.getId());
 
-        assertEquals("only the mappable analyte is bridged", 1, participantResults(cycle.getId()).size());
-        assertEquals(EQACycleStatus.TESTING, readBack(cycle.getId()).getStatus());
-        verify(fhirStub, never()).submitCycleViaFhir(anyLong(), anyLong());
+        assertEquals("both analyses are bridged, not just the declared one", 2,
+                participantResults(cycle.getId()).size());
+        Map<String, Object> derived = participantResults(cycle.getId()).stream()
+                .filter(row -> unmapped == ((Number) row.get("analysis_id")).longValue()).findFirst()
+                .orElseThrow(AssertionError::new);
+
+        // The name is the whole point. A result crosses to the provider under its
+        // analyte name, and the provider derives its own from the same test name, so
+        // the two agree only if this one is taken from the test rather than invented.
+        assertEquals("the analyte is named after the test it reports", nameOfTest(SEROLOGY_TEST),
+                nameOfAnalyte(((Number) derived.get("analyte_id")).longValue()));
+        assertEquals("an analyte of that name already existed, so it is adopted rather than duplicated", 1,
+                countAnalytesNamed(nameOfTest(SEROLOGY_TEST)));
+        assertEquals("a declared mapping still wins for the test that has one", VL_ANALYTE,
+                participantResults(cycle.getId()).stream()
+                        .filter(row -> unmapped != ((Number) row.get("analysis_id")).longValue())
+                        .mapToLong(row -> ((Number) row.get("analyte_id")).longValue()).findFirst()
+                        .orElseThrow(AssertionError::new));
+
+        assertEquals("nothing is left unbridged, so the set is complete and submits", EQACycleStatus.SUBMITTED,
+                readBack(cycle.getId()).getStatus());
+        verify(fhirStub).submitCycleViaFhir(cycle.getId(), ENROLLMENT);
+    }
+
+    private String nameOfTest(long testId) {
+        return jdbc.queryForObject("SELECT name FROM clinlims.test WHERE id = ?", String.class, testId);
+    }
+
+    private String nameOfAnalyte(long analyteId) {
+        return jdbc.queryForObject("SELECT name FROM clinlims.analyte WHERE id = ?", String.class, analyteId);
+    }
+
+    private int countAnalytesNamed(String name) {
+        return jdbc.queryForObject("SELECT count(*) FROM clinlims.analyte WHERE name = ?", Integer.class, name);
+    }
+
+    private int countTestAnalyteLinks(long testId) {
+        return jdbc.queryForObject("SELECT count(*) FROM clinlims.test_analyte WHERE test_id = ?", Integer.class,
+                testId);
     }
 
     /**
@@ -502,26 +556,44 @@ public class EQAAutoSubmissionIntegrationTest extends EQASpineTestBase {
     }
 
     /**
-     * An unmapped test stays unbridgeable: the mapping is the only source once the
-     * result carries no analyte, so the cycle holds rather than submitting a set
-     * the provider cannot reconcile.
+     * The other half of the same rule: where no analyte carries the test's name,
+     * one is created from it, once. A second sweep must adopt that one rather than
+     * add another — the provider matches on the name, so a test with two of them
+     * reports as two measurements.
      */
     @Test
-    public void aTestWithNoSchemeMapping_holdsTheCycle() {
+    public void aTestWithNoAnalyteOfItsName_getsOneCreatedAndThenReused() {
         EQAProgram scheme = externalScheme(false);
         EQACycle cycle = readBack(insertCycle(scheme, 17));
         Long roundId = insertRound(cycle, 1, "OPEN");
         eqaOrder(cycle, roundId);
-        mapTestToSchemeAnalyte(VL_TEST, VL_ANALYTE);
-        analysis(VL_TEST, VL_ANALYTE, "4.75", AnalysisStatus.Finalized, false);
-        analysis(SEROLOGY_TEST, SEROLOGY_ANALYTE, "Positive", AnalysisStatus.Finalized, false);
+        seedUnnamedTest();
+        analysis(UNNAMED_TEST, VL_ANALYTE, "7.1", AnalysisStatus.Finalized, false);
+        when(fhirStub.submitCycleViaFhir(anyLong(), anyLong())).thenReturn(true);
         windowElapsed();
+        assertEquals("no analyte carries this test's name yet", 0, countAnalytesNamed(UNNAMED_TEST_NAME));
 
         cycleSubmissionService.advanceCycle(cycle.getId());
+        long created = ((Number) participantResults(cycle.getId()).get(0).get("analyte_id")).longValue();
+        cycleSubmissionService.advanceCycle(cycle.getId());
 
-        assertEquals("only the mapped test is bridged", 1, participantResults(cycle.getId()).size());
-        assertEquals(EQACycleStatus.TESTING, readBack(cycle.getId()).getStatus());
-        verify(fhirStub, never()).submitCycleViaFhir(anyLong(), anyLong());
+        assertEquals("the analyte is created from the test's name", UNNAMED_TEST_NAME, nameOfAnalyte(created));
+        assertEquals("once, not once per sweep", 1, countAnalytesNamed(UNNAMED_TEST_NAME));
+        assertEquals("and one link from the test to it", 1, countTestAnalyteLinks(UNNAMED_TEST));
+        assertEquals("the same analyte is reused", created,
+                ((Number) participantResults(cycle.getId()).get(0).get("analyte_id")).longValue());
+    }
+
+    /**
+     * A catalog test no analyte is named after, so the resolution has to create
+     * one.
+     */
+    private void seedUnnamedTest() {
+        jdbc.update(
+                "INSERT INTO clinlims.test (id, name, description, is_active, guid, lastupdated)"
+                        + " SELECT ?, ?, ?, 'Y', 'eqa-t14-derived', now()"
+                        + " WHERE NOT EXISTS (SELECT 1 FROM clinlims.test WHERE id = ?)",
+                UNNAMED_TEST, UNNAMED_TEST_NAME, UNNAMED_TEST_NAME, UNNAMED_TEST);
     }
 
     @Test
