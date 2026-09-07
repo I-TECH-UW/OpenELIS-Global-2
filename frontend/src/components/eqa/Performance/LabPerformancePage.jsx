@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
+  Button,
   ClickableTile,
   Column,
   ContentSwitcher,
@@ -22,8 +23,11 @@ import { useIntl } from "react-intl";
 import { useHistory } from "react-router-dom";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import { formatDateOnly } from "../../utils/Utils";
+import { Download } from "@carbon/icons-react";
 import {
+  csvCell,
   CycleStatusTag,
+  downloadCsv,
   hintStyle,
   kpiLabelStyle,
   kpiValueStyle,
@@ -72,6 +76,122 @@ const percent = (value) =>
  * it (Recent Cycles). Both views read one rollup, so the KPI row cannot
  * disagree with the table under it.
  */
+/**
+ * The KPI block both exports carry above their rows. These are the numbers being
+ * attested for ISO 15189 §7.7.2, so a file that omitted them would invite a
+ * screenshot beside it — which is what this export exists to replace.
+ */
+const kpiLines = (kpis, labelOf) => [
+  [
+    labelOf("acceptance", "Acceptance rate (12 mo)"),
+    percent(kpis.acceptanceRate),
+  ],
+  [labelOf("onTime", "On-time submission rate"), percent(kpis.onTimeRate)],
+  // The tiles' own "late of total" and "open" lines are parameterised
+  // sentences, so the file uses plain column names for those two counts.
+  [labelOf("lateCount", "Late submissions"), kpis.lateCount ?? 0],
+  [labelOf("submitted", "Submitted cycles"), kpis.submittedCount ?? 0],
+  [labelOf("nce", "EQA-triggered NCEs (12 mo)"), kpis.eqaNceCount ?? 0],
+  [labelOf("nceOpenCount", "Of those, still open"), kpis.eqaNceOpenCount ?? 0],
+  [
+    labelOf("uncovered", "Accredited tests without EQA"),
+    kpis.uncoveredTestCount ?? 0,
+  ],
+];
+
+/**
+ * One row per section × scheme, its cycle cells and its acceptance rate — the
+ * matrix on screen, cell for cell. Cells are right-aligned on the most recent
+ * cycle exactly as the table pads them, so a scheme with fewer than four cycles
+ * lines up with the header rather than against another scheme's oldest.
+ */
+export const coverageCsv = (
+  kpis,
+  coverage,
+  gaps,
+  columns,
+  labelOf,
+  headerOf,
+) => {
+  const lines = kpiLines(kpis, labelOf).map((pair) =>
+    pair.map(csvCell).join(","),
+  );
+  lines.push("");
+  const header = [headerOf("section", "Section"), headerOf("scheme", "Scheme")];
+  for (let i = 0; i < columns; i++) {
+    header.push(
+      i === columns - 1
+        ? headerOf("mostRecent", "Most recent")
+        : `${headerOf("cycle", "Cycle")} -${columns - 1 - i}`,
+    );
+  }
+  header.push(headerOf("acceptanceRate", "Acceptance rate"));
+  lines.push(header.map(csvCell).join(","));
+
+  coverage.forEach((row) => {
+    const offset = columns - row.cells.length;
+    const cells = Array.from({ length: columns }, (_, i) => {
+      const cell = i < offset ? null : row.cells[i - offset];
+      return cell ? `${cell.cycleLabel}: ${cell.verdict}` : "";
+    });
+    lines.push(
+      [row.section || "", row.schemeName, ...cells, percent(row.acceptanceRate)]
+        .map(csvCell)
+        .join(","),
+    );
+  });
+
+  if (gaps.length > 0) {
+    lines.push("");
+    lines.push(
+      [
+        headerOf("gapTitle", "Accredited without EQA cover:"),
+        gaps.map((gap) => gap.testName).join("; "),
+      ]
+        .map(csvCell)
+        .join(","),
+    );
+  }
+  return lines.join("\n");
+};
+
+/** The Recent Cycles table, honouring whatever scheme filter is applied. */
+export const recentCyclesCsv = (kpis, cycles, labelOf, headerOf) => {
+  const lines = kpiLines(kpis, labelOf).map((pair) =>
+    pair.map(csvCell).join(","),
+  );
+  lines.push("");
+  lines.push(
+    [
+      headerOf("scheme", "Scheme"),
+      headerOf("cycle", "Cycle"),
+      headerOf("status", "Status"),
+      headerOf("acceptableOf", "Acceptable of scored"),
+      headerOf("performance", "Performance"),
+      headerOf("submitted", "Submitted"),
+    ]
+      .map(csvCell)
+      .join(","),
+  );
+  cycles.forEach((cycle) => {
+    lines.push(
+      [
+        cycle.schemeName || "",
+        cycle.cycleLabel,
+        cycle.status,
+        cycle.scoredCount
+          ? `${cycle.acceptableCount} of ${cycle.scoredCount}`
+          : "",
+        cycle.performance || "",
+        cycle.submittedAt ? formatDateOnly(cycle.submittedAt) : "",
+      ]
+        .map(csvCell)
+        .join(","),
+    );
+  });
+  return lines.join("\n");
+};
+
 const LabPerformancePage = ({ view = "coverage" }) => {
   const intl = useIntl();
   const t = (id, defaultMessage, values) =>
@@ -103,6 +223,23 @@ const LabPerformancePage = ({ view = "coverage" }) => {
   const sectionLabel = (section) =>
     section || t("eqa.labperf.unassignedSection", "Unassigned section");
   const cycleColumns = Math.max(0, ...coverage.map((row) => row.cells.length));
+
+  // The export reads its headings from the same message ids as the table, so a
+  // renamed column cannot leave the file describing the old one.
+  const kpiLabelOf = (key, fallback) => t(`eqa.labperf.kpi.${key}`, fallback);
+  const headerOf = (key, fallback) => t(`eqa.labperf.${key}`, fallback);
+
+  const exportButton = (onClick) => (
+    <Button
+      kind="ghost"
+      size="sm"
+      renderIcon={Download}
+      style={{ marginBottom: "0.5rem" }}
+      onClick={onClick}
+    >
+      {t("eqa.labperf.exportCsv", "Export CSV")}
+    </Button>
+  );
 
   return (
     <>
@@ -239,6 +376,19 @@ const LabPerformancePage = ({ view = "coverage" }) => {
 
           {view === "coverage" ? (
             <>
+              {exportButton(() =>
+                downloadCsv(
+                  coverageCsv(
+                    kpis,
+                    coverage,
+                    gaps,
+                    cycleColumns,
+                    kpiLabelOf,
+                    headerOf,
+                  ),
+                  "eqa-coverage.csv",
+                ),
+              )}
               <p style={{ ...hintStyle, marginBottom: "0.5rem" }}>
                 {t(
                   "eqa.labperf.legendIntro",
@@ -349,6 +499,12 @@ const LabPerformancePage = ({ view = "coverage" }) => {
             </>
           ) : (
             <>
+              {exportButton(() =>
+                downloadCsv(
+                  recentCyclesCsv(kpis, cycles, kpiLabelOf, headerOf),
+                  "eqa-recent-cycles.csv",
+                ),
+              )}
               <Search
                 size="sm"
                 labelText={t("eqa.labperf.filterScheme", "Filter scheme")}
