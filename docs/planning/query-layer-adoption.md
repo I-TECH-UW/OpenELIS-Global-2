@@ -44,14 +44,52 @@ v4 is the React 17 line; v5 needs React 18.
 3. Every same-route `window.location.assign()` (Validation, AnalyserResults,
    SearchResultForm, TestOrderability, BatchTestReassignment, report indexes) is
    a refetch, not a navigation. Genuine cross-screen moves use `history.push`.
-4. Login, `SecureRoute`, `LandingPage`, `RedirectOldUI` and the CSRF-expiry
-   reload in `Utils.ts` are unchanged.
+4. Login, `SecureRoute`, `LandingPage`, `RedirectOldUI`, the CSRF-expiry reload
+   in `Utils.ts` and the recovery button in `RouteErrorBoundary` are unchanged.
+   The last one reloads after an error boundary has tripped, when component
+   state is no longer usable and there is nothing to refetch into.
 5. Each converted screen keeps a unit test proving the write triggers the
    refetch (or the form reset) — Red first.
 6. **Per-job E2E comparison against the pre-branch baseline**: no job that was
    green goes red. The analyzer accept-results flows and Cypress admin are the
    canaries; both broke last time.
 7. Constitution and AGENTS.md describe the layer that is actually installed.
+
+## Status
+
+Draft PR #4213, opened once the pattern was fixed so per-job E2E accumulates
+while the conversion continues. The E2E workflow sets `cancel-in-progress: true`
+keyed on the PR, so every push kills the run before it. Pushes are therefore
+grouped into checkpoints and each run is allowed to finish, otherwise criterion
+6 collects nothing.
+
+| Step                                                        | State                           |
+| ----------------------------------------------------------- | ------------------------------- |
+| 1 Dependency, provider, shared query function, first screen | done                            |
+| 2 Stop reloading on error                                   | done — 20 sites across 17 files |
+| 3 List/queue screens refetch after a write                  | in progress                     |
+| 4 Same-route `assign()` becomes a refetch                   | not started                     |
+| 5 Cross-screen `assign()` becomes `history.push`            | not started                     |
+| 6 Per-job E2E comparison                                    | accumulating on #4213           |
+
+Counts, non-test source:
+
+|                                                  | Start | Now | In scope |
+| ------------------------------------------------ | ----- | --- | -------- |
+| `window.location.reload()`                       | 84    | 48  | 46       |
+| same-route / cross-screen `assign()` or `href =` | 85    | 72  | 55       |
+
+Converted: `UserManagement`, `PanelOrder`, `SampleTypeOrder`,
+`TestSectionOrder`, and the five rename screens (`Panel`, `SampleType`,
+`TestSection`, `Uom`, `Method`).
+
+### Per-job E2E, branch vs baseline
+
+Baseline is run `33887282951` on develop `d6bab7a5a`, every job green.
+
+| Job                           | Baseline | Branch | Checkpoint |
+| ----------------------------- | -------- | ------ | ---------- |
+| _to be filled per checkpoint_ |          |        |            |
 
 ## Plan
 
