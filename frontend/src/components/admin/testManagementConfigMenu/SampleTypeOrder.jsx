@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect } from "react";
+import React, { useContext, useState } from "react";
 import { Heading, Button, Loading, Grid, Column, Section } from "@carbon/react";
 import { postToOpenElisServerJsonResponse } from "../../utils/Utils";
 import {
@@ -37,11 +37,11 @@ function SampleTypeOrder() {
 
   const intl = useIntl();
   const [confirmSelection, setConfirmSelection] = useState(false);
-  const [sampleTypeOrderList, setSampleTypeOrderList] = useState({});
+  const [pendingOrder, setPendingOrder] = useState(null);
   const [sampleTypeOrderListPost, setSampleTypeOrderListPost] = useState([]);
 
   const handleSampleTypeOrderListCall = () => {
-    if (!sampleTypeOrderListPost) {
+    if (!sampleTypeOrderListPost?.length) {
       // Nothing to save: read the order again rather than post an empty change.
       refreshSampleTypeOrderList("/rest/SampleTypeOrder");
       return;
@@ -71,6 +71,7 @@ function SampleTypeOrder() {
           }),
           kind: NotificationKinds.success,
         });
+        setPendingOrder(null);
         refreshSampleTypeOrderList("/rest/SampleTypeOrder");
         setNotificationVisible(true);
       }
@@ -92,11 +93,10 @@ function SampleTypeOrder() {
   } = useServerData("/rest/SampleTypeOrder");
   const refreshSampleTypeOrderList = useInvalidateServerData();
 
-  useEffect(() => {
-    if (fetchedSampleTypeOrderList) {
-      setSampleTypeOrderList(fetchedSampleTypeOrderList);
-    }
-  }, [fetchedSampleTypeOrderList]);
+  // A pending reorder sits on top of the stored order, so discarding it is
+  // clearing it: the stored array comes back as the same reference the list
+  // was seeded from, which is a change the list can see.
+  const shownOrder = pendingOrder ?? fetchedSampleTypeOrderList?.sampleTypeList;
 
   if (sampleTypeOrderListFetching && !fetchedSampleTypeOrderList) {
     return (
@@ -158,26 +158,21 @@ function SampleTypeOrder() {
           <br />
           <Grid fullWidth={true}>
             <Column lg={16} md={8} sm={4}>
-              {sampleTypeOrderList &&
-                sampleTypeOrderList?.sampleTypeList &&
-                sampleTypeOrderList?.sampleTypeList?.length > 0 && (
-                  <CustomCommonSortableOrderList
-                    test={sampleTypeOrderList?.sampleTypeList}
-                    onSort={(updatedList) => {
-                      setSampleTypeOrderList((prev) => ({
-                        ...prev,
-                        sampleTypeList: updatedList,
-                      }));
-                      setSampleTypeOrderListPost(
-                        updatedList.map(({ id, sortOrder }) => ({
-                          id: Number(id),
-                          sortOrder,
-                        })),
-                      );
-                    }}
-                    disableSorting={confirmSelection}
-                  />
-                )}
+              {shownOrder?.length > 0 && (
+                <CustomCommonSortableOrderList
+                  test={shownOrder}
+                  onSort={(updatedList) => {
+                    setPendingOrder(updatedList);
+                    setSampleTypeOrderListPost(
+                      updatedList.map(({ id, sortOrder }) => ({
+                        id: Number(id),
+                        sortOrder,
+                      })),
+                    );
+                  }}
+                  disableSorting={confirmSelection}
+                />
+              )}
             </Column>
           </Grid>
           {confirmSelection && (
@@ -220,6 +215,7 @@ function SampleTypeOrder() {
                 kind="tertiary"
                 onClick={() => {
                   // Discard the pending reordering and show what is stored.
+                  setPendingOrder(null);
                   setSampleTypeOrderListPost([]);
                   setConfirmSelection(false);
                   refreshSampleTypeOrderList("/rest/SampleTypeOrder");

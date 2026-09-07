@@ -83,13 +83,37 @@ Converted: `UserManagement`, `PanelOrder`, `SampleTypeOrder`,
 `TestSectionOrder`, and the five rename screens (`Panel`, `SampleType`,
 `TestSection`, `Uom`, `Method`).
 
+### One constraint the conversion has to respect
+
+TanStack's structural sharing returns the same object reference when a refetch
+produces deep-equal data, so an effect keyed on that data does not run again
+after `invalidateQueries`. Seeding local state from a read that way therefore
+never re-seeds. What a screen shows has to be derived — the pending edit on top
+of the read, `pendingEdits ?? data?.field` — and the edit cleared explicitly on
+save and on discard. Reloading the document used to clear it.
+
+The three order screens were converted the mirrored way first and lost the
+ability to throw a pending reorder away: discarding is exactly the case where
+the stored order has not changed. Their test passed because it changed the
+stored order first, which is the one thing discarding never does.
+
 ### Per-job E2E, branch vs baseline
 
 Baseline is run `33887282951` on develop `d6bab7a5a`, every job green.
 
-| Job                           | Baseline | Branch | Checkpoint |
-| ----------------------------- | -------- | ------ | ---------- |
-| _to be filled per checkpoint_ |          |        |            |
+| Job           | Baseline | Branch | Checkpoint |
+| ------------- | -------- | ------ | ---------- |
+| Shared Build  | green    | green  | `fbab7a6`  |
+| Static        | green    | green  | `fbab7a6`  |
+| Image         | green    | green  | `fbab7a6`  |
+| Cypress ×3    | green    | queued | `fbab7a6`  |
+| Playwright ×4 | green    | queued | `fbab7a6`  |
+
+`E2E / Tests` runs as a `workflow_run`, so it reports develop's branch and sha
+and never appears against the PR's own commit: read it through the
+`03 Checkpoint - E2E` status instead of `gh pr checks`. Its concurrency is keyed
+on the triggering run's sha, so a run already started survives a later push;
+only `03 - E2E` itself cancels per PR.
 
 ## Plan
 
