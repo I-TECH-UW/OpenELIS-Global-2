@@ -59,6 +59,26 @@ public interface AnalysisService extends BaseObjectService<Analysis, String> {
     Set<String> getTestSectionIdsWithPendingAnalyses();
 
     /**
+     * OGC-189: ids of the lab units that hold <em>any</em> analysis, whatever its
+     * status — including finalized, canceled and rejected.
+     *
+     * <p>
+     * This is the "hasContent" half of the viewer rule. It deliberately counts
+     * completed work: the guardrail requires that "ALL tests should be able to be
+     * completed, <b>and the historical data viewed</b>, regardless of these
+     * settings" (comment 37313 §2). Counting only pending analyses meant a
+     * finalized result in a deactivated unit became invisible on the results pages
+     * and unreachable for reporting the moment it was entered — the data was there,
+     * and nobody could retrieve it.
+     *
+     * <p>
+     * Consequence, accepted deliberately: a unit that has ever processed work stays
+     * in viewer lists for good. Its results are permanent records, so that is the
+     * correct trade against a shorter dropdown.
+     */
+    Set<String> getTestSectionIdsWithAnyAnalyses();
+
+    /**
      * OGC-189 (M3): analysis counts for a lab unit's deactivation impact summary.
      * Index 0 = pending (still in flight), index 1 = historical.
      */

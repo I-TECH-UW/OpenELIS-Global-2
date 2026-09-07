@@ -185,7 +185,12 @@ public class UserServiceImpl implements UserService {
         // Start from the authorized active set, so this can only ever add units
         // the user is already entitled to see — never widen authorization.
         List<IdValuePair> active = getUserTestSections(systemUserId, roleId);
-        Set<String> pendingSectionIds = analysisService.getTestSectionIdsWithPendingAnalyses();
+        // "hasContent" counts EVERY analysis, not just in-flight ones. Counting
+        // only pending work meant a finalized result in a deactivated unit
+        // vanished from the results pages and from reporting the instant it was
+        // entered — the guardrail covers viewing historical data too, not only
+        // completing pending work.
+        Set<String> pendingSectionIds = analysisService.getTestSectionIdsWithAnyAnalyses();
         if (pendingSectionIds.isEmpty()) {
             return active;
         }
