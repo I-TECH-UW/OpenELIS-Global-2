@@ -1,24 +1,19 @@
 import config from "../../config.json";
 
-type SoftReloadListener = () => void;
 type RouteNavigator = (target: string) => void;
 
-let softReloadListener: SoftReloadListener | null = null;
 let routeNavigator: RouteNavigator | null = null;
 
 /**
- * The router side of the app registers itself here once. Until it does, both
- * helpers fall back to a document load, so calling them before mount — or from
- * a test that renders a component on its own — still behaves sensibly.
+ * The router side of the app registers itself here once. Until it does,
+ * navigation falls back to a document load, so calling it before mount — or
+ * from a test that renders a component on its own — still behaves sensibly.
  */
 export const registerAppNavigation = (handlers: {
-  onSoftReload: SoftReloadListener;
   onNavigate: RouteNavigator;
 }): (() => void) => {
-  softReloadListener = handlers.onSoftReload;
   routeNavigator = handlers.onNavigate;
   return () => {
-    softReloadListener = null;
     routeNavigator = null;
   };
 };
@@ -36,16 +31,17 @@ export const isInAppRoute = (target: string): boolean => {
 };
 
 /**
- * Show the current screen's data again after a write, by remounting the routed
- * subtree rather than re-downloading the application. A document load discards
- * every bit of client state and, because it lands whenever the browser gets to
- * it, races anything already in flight.
+ * Show the current screen's data again after a write.
+ *
+ * This reloads the document. Remounting the routed subtree instead is not
+ * equivalent: screens whose state or fetches live above that subtree keep
+ * showing what they had, which is how analyzer result acceptance came to leave
+ * its staged rows on screen. Converting a screen to a real refetch has to be
+ * done per screen, with its own coverage; until then the callers keep the
+ * behaviour they were written against, through one helper rather than 83
+ * scattered calls.
  */
 export const softReload = (): void => {
-  if (softReloadListener) {
-    softReloadListener();
-    return;
-  }
   window.location.reload();
 };
 

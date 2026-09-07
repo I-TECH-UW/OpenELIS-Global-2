@@ -229,25 +229,22 @@ export const ANALYZER_RESULTS_ROLES = [
 ];
 
 /**
- * Lets code anywhere ask for a refresh or a route change without reaching for
- * window.location. Bumping the key remounts the routed subtree, which re-runs
- * its data loading; a document load would instead discard all client state and
- * arrive whenever the browser got to it, cancelling requests in flight.
+ * Lets code anywhere move to another screen without reaching for
+ * window.location, so a save no longer queues a document load that lands
+ * mid-flight and cancels whatever was in progress.
  */
 function AppNavigationBridge({ children }) {
   const history = useHistory();
-  const [remountKey, setRemountKey] = useState(0);
 
   useEffect(
     () =>
       registerAppNavigation({
-        onSoftReload: () => setRemountKey((key) => key + 1),
         onNavigate: (target) => history.push(target),
       }),
     [history],
   );
 
-  return <React.Fragment key={remountKey}>{children}</React.Fragment>;
+  return children;
 }
 
 export default function App() {

@@ -153,21 +153,12 @@ test("E-Signature — full result entry and validation flow", async ({
       { timeout: LONG_TIMEOUT },
     );
 
-    // Saving results sends the browser back to /result itself
-    // (SearchResultForm.setResponse, refreshOnSubmit). Navigating while that
-    // reload is still committing makes Chromium abort one of the two
-    // navigations, so the spec waits for the app's reload to land first.
-    const reloadedAfterSave = page.waitForEvent("load", {
-      timeout: LONG_TIMEOUT,
-    });
-
     // Click Sign
     await modal.getByRole("button", { name: /sign/i }).click();
 
     // Modal should close after successful signature
     await expect(modal).toBeHidden({ timeout: LONG_TIMEOUT });
     await resultsSaved;
-    await reloadedAfterSave;
   });
 
   // ── Step 4: Validation — VALIDATED_AND_RELEASED signature ─────
