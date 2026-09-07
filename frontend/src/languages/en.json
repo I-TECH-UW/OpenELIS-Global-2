@@ -8584,5 +8584,8 @@
   "eqa.labperf.kpi.submitted": "Submitted cycles",
   "eqa.labperf.acceptableOf": "Acceptable of scored",
   "eqa.labperf.kpi.lateCount": "Late submissions",
-  "eqa.labperf.kpi.nceOpenCount": "Of those, still open"
+  "eqa.labperf.kpi.nceOpenCount": "Of those, still open",
+  "eqa.queue.source.all": "Every source",
+  "eqa.queue.countFiltered": "Queue · {count} of {total} items",
+  "eqa.queue.emptyForSource": "Nothing from this source is awaiting triage. The queue holds {total} items from other sources."
 }

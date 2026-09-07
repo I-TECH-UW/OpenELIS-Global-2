@@ -683,6 +683,7 @@ export default function App() {
                   exact
                   component={() => <NonConformIndex form="NceDashboard" />}
                   role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  permission="qa.view.eqa"
                 />
                 <SecureRoute
                   path="/ReportNonConformingEvent"
@@ -691,6 +692,7 @@ export default function App() {
                     <NonConformIndex form="ReportNonConformingEvent" />
                   )}
                   role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  permission="qa.view.eqa"
                 />
                 <SecureRoute
                   path="/ViewNonConformingEvent"
@@ -699,6 +701,7 @@ export default function App() {
                     <NonConformIndex form="ViewNonConformingEvent" />
                   )}
                   role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  permission="qa.view.eqa"
                 />
 
                 <SecureRoute
@@ -708,6 +711,7 @@ export default function App() {
                     <NonConformIndex form="NCECorrectiveAction" />
                   )}
                   role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  permission="qa.view.eqa"
                 />
 
                 <SecureRoute
@@ -1010,6 +1014,7 @@ export default function App() {
                     <NonConformIndex form="ViewNonConformingEvent" />
                   )}
                   role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  permission="qa.view.qms"
                 />
                 <SecureRoute
                   path="/qa/qms/audit-trail"
