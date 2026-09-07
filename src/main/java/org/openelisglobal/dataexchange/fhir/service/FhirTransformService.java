@@ -107,6 +107,8 @@ public interface FhirTransformService {
 
     ServiceRequest transformToServiceRequest(String anlaysisId);
 
+    Specimen transformToSpecimen(SampleItem sampleItem);
+
     SampleOrderItem buildSampleOrderItemFromServiceRequest(ServiceRequest serviceRequest, String sysUserId)
             throws Exception;
 
@@ -114,10 +116,6 @@ public interface FhirTransformService {
             throws Exception;
 
     List<Test> resolveTestsFromCodeableConcept(CodeableConcept codeableConcept);
-
-    ResultsUpdateDataSet createResultUpdateDataSetFromReport(DiagnosticReport report, String sysuserId);
-
-    Specimen transformToSpecimen(SampleItem sampleItem);
 
     Specimen transformToSpecimen(String sampleItemId);
 

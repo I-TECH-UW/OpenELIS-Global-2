@@ -50,6 +50,7 @@ import org.openelisglobal.testconfiguration.service.TestModifyService;
 import org.openelisglobal.testconfiguration.validator.TestModifyEntryFormValidator;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.typeofsample.dao.TypeOfSampleDAO.SampleDomain;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
@@ -128,25 +129,40 @@ public class TestModifyEntryRestController extends BaseController {
         allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_ACTIVE));
         allSampleTypesList.addAll(DisplayListService.getInstance().getList(ListType.SAMPLE_TYPE_INACTIVE));
 
+        // Add environmental sample types to the list
+        List<TypeOfSample> envTypes = typeOfSampleService.getTypesForDomainBySortOrder(SampleDomain.ENVIRONMENTAL);
+        List<String> envIds = new ArrayList<>();
+        for (TypeOfSample envType : envTypes) {
+            if (envType.isActive()) {
+                envIds.add(envType.getId());
+                // Add to the main list if not already present
+                boolean alreadyPresent = allSampleTypesList.stream()
+                        .anyMatch(pair -> pair.getId().equals(envType.getId()));
+                if (!alreadyPresent) {
+                    allSampleTypesList.add(new IdValuePair(envType.getId(), envType.getLocalizedName()));
+                }
+            }
+        }
+
         form.setSampleTypeList(allSampleTypesList);
+        form.setEnvironmentalSampleTypeIds(envIds);
         form.setPanelList(DisplayListService.getInstance().getList(ListType.PANELS));
         form.setResultTypeList(DisplayListService.getInstance().getList(ListType.RESULT_TYPE_LOCALIZED));
         form.setUomList(DisplayListService.getInstance().getList(ListType.UNIT_OF_MEASURE));
         form.setLabUnitList(DisplayListService.getInstance().getList(ListType.TEST_SECTION_ACTIVE));
         form.setAgeRangeList(SpringContext.getBean(ResultLimitService.class).getPredefinedAgeRanges());
         form.setDictionaryList(DisplayListService.getInstance().getList(ListType.DICTIONARY_TEST_RESULTS));
-        form.setGroupedDictionaryList(createGroupedDictionaryList());
         // form.setTestList(DisplayListService.getInstance().getFreshList(DisplayListService.ListType.ALL_TESTS));
 
-        // Only include testCatBeanList when a filter is applied to avoid returning the
-        // full catalogue on initial page load
-        List<TestCatalogBean> testCatBeanList = new ArrayList<>();
+        // Only include testCatBeanList and grouped dictionary when a filter is applied
+        // to avoid expensive full-catalogue queries on initial page load
         if (StringUtils.isBlank(sampleTypeParam) && StringUtils.isBlank(testSectionParam)) {
-            testCatBeanList = new ArrayList<>();
+            form.setGroupedDictionaryList(new ArrayList<>());
+            form.setTestCatBeanList(new ArrayList<>());
         } else {
-            testCatBeanList = createTestCatBeanList(sampleTypeParam, testSectionParam);
+            form.setGroupedDictionaryList(createGroupedDictionaryList());
+            form.setTestCatBeanList(createTestCatBeanList(sampleTypeParam, testSectionParam));
         }
-        form.setTestCatBeanList(testCatBeanList);
     }
 
     private List<TestCatalogBean> createTestCatBeanList(String sampleTypeParam, String testSectionParam) {
@@ -178,6 +194,7 @@ public class TestModifyEntryRestController extends BaseController {
             bean.setResultType(resultType);
             TypeOfSample typeOfSample = testService.getTypeOfSample(test);
             bean.setSampleType(typeOfSample != null ? typeOfSample.getLocalizedName() : "n/a");
+            bean.setSampleTypeId(typeOfSample != null ? typeOfSample.getId() : null);
             Boolean orderable = test.getOrderable();
             bean.setOrderable(orderable != null && orderable ? "Orderable" : "Not orderable");
             Boolean notifyResults = test.isNotifyResults();
@@ -185,6 +202,18 @@ public class TestModifyEntryRestController extends BaseController {
             bean.setInLabOnly(test.isInLabOnly());
             Boolean antimicrobialResistance = test.getAntimicrobialResistance();
             bean.setAntimicrobialResistance(antimicrobialResistance != null ? antimicrobialResistance : false);
+            testService.getQcThreshold(test.getId()).ifPresent(tqc -> {
+                if (tqc.getBlankThreshold() != null) {
+                    bean.setQcBlankThreshold(tqc.getBlankThreshold().toPlainString());
+                }
+                if (tqc.getRpdThreshold() != null) {
+                    bean.setQcRpdThreshold(tqc.getRpdThreshold().toPlainString());
+                }
+                if (tqc.getRecoveryWindowPct() != null) {
+                    bean.setQcRecoveryWindowPct(tqc.getRecoveryWindowPct().toPlainString());
+                }
+            });
+            bean.setTimeHolding(test.getTimeHolding() != null ? test.getTimeHolding() : "");
             bean.setLoinc(test.getLoinc());
             bean.setActive(test.isActive() ? "Active" : "Not active");
             bean.setUom(testService.getUOM(test, false));
@@ -264,14 +293,25 @@ public class TestModifyEntryRestController extends BaseController {
     }
 
     private String createReferenceValueForDictionaryType(Test test) {
-        List<ResultLimit> resultLimits = SpringContext.getBean(ResultLimitService.class).getResultLimits(test);
-
-        if (resultLimits.isEmpty()) {
+        ResultLimit limit = dictionaryResultLimit(test);
+        if (limit == null) {
             return "n/a";
         }
+        return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(limit, null, null);
+    }
 
-        return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(resultLimits.get(0), null,
-                null);
+    // A test converted from a numeric type keeps its stale numeric result_limit
+    // (low/high, no dictionaryNormalId). For the dictionary view only a limit that
+    // actually carries a dictionary normal is meaningful; using get(0) blindly
+    // would
+    // render the numeric range (e.g. "36.0null50.0").
+    private ResultLimit dictionaryResultLimit(Test test) {
+        for (ResultLimit limit : SpringContext.getBean(ResultLimitService.class).getResultLimits(test)) {
+            if (!GenericValidator.isBlankOrNull(limit.getDictionaryNormalId())) {
+                return limit;
+            }
+        }
+        return null;
     }
 
     private List<String> createDictionaryValues(TestService testService, Test test) {
@@ -287,7 +327,13 @@ public class TestModifyEntryRestController extends BaseController {
     private String getDictionaryValue(TestResult testResult) {
 
         if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+            if (GenericValidator.isBlankOrNull(testResult.getValue())) {
+                return null;
+            }
             Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
+            if (dictionary == null) {
+                return null;
+            }
             String displayValue = dictionary.getLocalizedName();
 
             if ("unknown".equals(displayValue)) {
@@ -306,14 +352,11 @@ public class TestModifyEntryRestController extends BaseController {
     }
 
     private String createReferenceIdForDictionaryType(Test test) {
-        List<ResultLimit> resultLimits = SpringContext.getBean(ResultLimitService.class).getResultLimits(test);
-
-        if (resultLimits.isEmpty()) {
+        ResultLimit limit = dictionaryResultLimit(test);
+        if (limit == null) {
             return "n/a";
         }
-
-        return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(resultLimits.get(0), null,
-                null);
+        return SpringContext.getBean(ResultLimitService.class).getDisplayReferenceRange(limit, null, null);
     }
 
     private List<String> createDictionaryIds(TestService testService, Test test) {
@@ -344,7 +387,13 @@ public class TestModifyEntryRestController extends BaseController {
     private String getDictionaryId(TestResult testResult) {
 
         if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+            if (GenericValidator.isBlankOrNull(testResult.getValue())) {
+                return null;
+            }
             Dictionary dictionary = dictionaryService.getDataForId(testResult.getValue());
+            if (dictionary == null) {
+                return null;
+            }
             String displayId = dictionary.getId();
 
             if ("unknown".equals(displayId)) {
@@ -414,7 +463,8 @@ public class TestModifyEntryRestController extends BaseController {
         String currentTestId = null;
         String dictionaryIdGroup = null;
         for (TestResult testResult : testResults) {
-            if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())) {
+            if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(testResult.getTestResultType())
+                    && !GenericValidator.isBlankOrNull(testResult.getValue())) {
                 if (testResult.getTest().getId().equals(currentTestId)) {
                     dictionaryIdGroup += "," + testResult.getValue();
                 } else {
@@ -505,6 +555,12 @@ public class TestModifyEntryRestController extends BaseController {
 
         testService.refreshTestNames();
         SpringContext.getBean(TypeOfSampleService.class).clearCache();
+        // Modifying a test may have activated its (previously inactive) test section
+        // (see TestModifyServiceImpl.updateTestSets); refresh the cached section lists
+        // so the section — and its now-assigned tests — surface on Test Section
+        // Management and the order-entry section filter (OGC-1116).
+        DisplayListService.getInstance().refreshList(ListType.TEST_SECTION_ACTIVE);
+        DisplayListService.getInstance().refreshList(ListType.TEST_SECTION_INACTIVE);
 
         // return findForward(FWD_SUCCESS_INSERT, form);
         return form;
@@ -603,6 +659,7 @@ public class TestModifyEntryRestController extends BaseController {
             test.setNotifyResults("Y".equals(testAddParams.notifyResults));
             test.setInLabOnly("Y".equals(testAddParams.inLabOnly));
             test.setAntimicrobialResistance("Y".equals(testAddParams.antimicrobialResistance));
+            test.setTimeHolding(testAddParams.timeHolding);
             test.setIsReportable("N");
             test.setTestSection(testSection);
             if (GenericValidator.isBlankOrNull(test.getGuid())) {
@@ -707,6 +764,10 @@ public class TestModifyEntryRestController extends BaseController {
             testAddParams.notifyResults = (String) obj.get("notifyResults");
             testAddParams.inLabOnly = (String) obj.get("inLabOnly");
             testAddParams.antimicrobialResistance = (String) obj.get("antimicrobialResistance");
+            testAddParams.qcBlankThreshold = (String) obj.get("qcBlankThreshold");
+            testAddParams.qcRpdThreshold = (String) obj.get("qcRpdThreshold");
+            testAddParams.qcRecoveryWindowPct = (String) obj.get("qcRecoveryWindowPct");
+            testAddParams.timeHolding = (String) obj.get("timeHolding");
             if (TypeOfTestResultServiceImpl.ResultType.isNumericById(testAddParams.resultTypeId)) {
                 testAddParams.lowValid = obj.get("lowValid").toString();
                 testAddParams.highValid = obj.get("highValid").toString();

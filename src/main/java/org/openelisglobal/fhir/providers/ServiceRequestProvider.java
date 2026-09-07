@@ -289,7 +289,7 @@ public class ServiceRequestProvider implements IResourceProvider {
                 fhirTransformService.transformPersistOrderEntryFhirObjects(updateData, patientInfo, false, null);
             } catch (Exception fhirEx) {
                 LogEvent.logWarn(this.getClass().getSimpleName(), method,
-                        "FHIR sync failed during delete (non-blocking): " + safeMessage(fhirEx));
+                        "FHIR sync failed during delete (non-blocking): " + FhirProviderUtils.safeMessage(fhirEx));
             }
             final ServiceRequest created = requireNonNull(extractCreatedServiceRequest(updateData),
                     "Failed to transform created Analysis to ServiceRequest");
@@ -300,17 +300,17 @@ public class ServiceRequestProvider implements IResourceProvider {
             return outcome;
 
         } catch (InvalidRequestException | ResourceNotFoundException e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, safeMessage(e));
+            LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
             throw e;
 
         } catch (InternalErrorException e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, safeMessage(e));
+            LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
             throw e;
 
         } catch (Exception e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, safeMessage(e));
-            throw new InternalErrorException("Unexpected server error while creating ServiceRequest: " + safeMessage(e),
-                    e);
+            LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
+            throw new InternalErrorException(
+                    "Unexpected server error while creating ServiceRequest: " + FhirProviderUtils.safeMessage(e), e);
         }
     }
 
@@ -440,14 +440,14 @@ public class ServiceRequestProvider implements IResourceProvider {
                             "Optimistic locking failed - resource was modified by another user");
                 }
                 LogEvent.logDebug(e);
-                throw new InternalErrorException("Error updating sample: " + safeMessage(e), e);
+                throw new InternalErrorException("Error updating sample: " + FhirProviderUtils.safeMessage(e), e);
             }
 
             try {
                 fhirTransformService.transformAnalysisByIds(sampleEditService.getUpdatedAnalysisList());
             } catch (Exception fhirEx) {
                 LogEvent.logWarn(this.getClass().getSimpleName(), method,
-                        "FHIR sync failed during delete (non-blocking): " + safeMessage(fhirEx));
+                        "FHIR sync failed during delete (non-blocking): " + FhirProviderUtils.safeMessage(fhirEx));
             }
 
             final ServiceRequest updatedServiceRequest = requireNonNull(
@@ -462,13 +462,13 @@ public class ServiceRequestProvider implements IResourceProvider {
             return outcome;
 
         } catch (InvalidRequestException | ResourceNotFoundException e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, safeMessage(e));
+            LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
             throw e;
 
         } catch (Exception e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, safeMessage(e));
-            throw new InternalErrorException("Unexpected server error while updating ServiceRequest: " + safeMessage(e),
-                    e);
+            LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
+            throw new InternalErrorException(
+                    "Unexpected server error while updating ServiceRequest: " + FhirProviderUtils.safeMessage(e), e);
         }
     }
 
@@ -503,7 +503,7 @@ public class ServiceRequestProvider implements IResourceProvider {
                 fhirTransformService.transformAnalysisByIds(List.of(updatedAnalysis.getId()));
             } catch (Exception fhirEx) {
                 LogEvent.logWarn(this.getClass().getSimpleName(), method,
-                        "FHIR sync failed during delete (non-blocking): " + safeMessage(fhirEx));
+                        "FHIR sync failed during delete (non-blocking): " + FhirProviderUtils.safeMessage(fhirEx));
             }
 
             MethodOutcome outcome = new MethodOutcome();
@@ -511,13 +511,16 @@ public class ServiceRequestProvider implements IResourceProvider {
             return outcome;
 
         } catch (InvalidRequestException | ResourceNotFoundException e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, "Client error: " + safeMessage(e));
+            LogEvent.logError(this.getClass().getSimpleName(), method,
+                    "Client error: " + FhirProviderUtils.safeMessage(e));
             throw e;
         } catch (InternalErrorException e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, "Internal error: " + safeMessage(e));
+            LogEvent.logError(this.getClass().getSimpleName(), method,
+                    "Internal error: " + FhirProviderUtils.safeMessage(e));
             throw e;
         } catch (Exception e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, "Unhandled exception: " + safeMessage(e));
+            LogEvent.logError(this.getClass().getSimpleName(), method,
+                    "Unhandled exception: " + FhirProviderUtils.safeMessage(e));
             throw new InternalErrorException("Unexpected server error while deleting ServiceRequest: " + e.getMessage(),
                     e);
         }
@@ -584,9 +587,6 @@ public class ServiceRequestProvider implements IResourceProvider {
     /**
      * Prevents NPE when logging exception messages
      */
-    private String safeMessage(Exception e) {
-        return (e == null || e.getMessage() == null) ? "No error message available" : e.getMessage();
-    }
 
     private String formatErrors(Errors errors) {
         if (!errors.hasErrors()) {

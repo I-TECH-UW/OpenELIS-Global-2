@@ -58,6 +58,8 @@ public class ResultValidationItem implements ResultItem, Serializable {
     private String resultType;
 
     private boolean isModified = false;
+    private boolean critical = false;
+    private String criticalRange = "";
     private Analysis analysis;
     private String resultId;
     private Result result;
@@ -85,6 +87,7 @@ public class ResultValidationItem implements ResultItem, Serializable {
     private String patientName;
     private double lowerCritical;
     private double higherCritical;
+    private String expandedUncertainty;
 
     @Override
     public String getAccessionNumber() {
@@ -296,6 +299,9 @@ public class ResultValidationItem implements ResultItem, Serializable {
         } else {
             setResultId(result.getId());
             setResultValue(result.getValue());
+            if (result.getExpandedUncertainty() != null) {
+                this.expandedUncertainty = result.getExpandedUncertainty().stripTrailingZeros().toPlainString();
+            }
         }
 
         this.result = result;
@@ -385,6 +391,22 @@ public class ResultValidationItem implements ResultItem, Serializable {
 
     public void setReflexGroup(boolean isReflexGroup) {
         this.isReflexGroup = isReflexGroup;
+    }
+
+    public boolean isCritical() {
+        return critical;
+    }
+
+    public void setCritical(boolean critical) {
+        this.critical = critical;
+    }
+
+    public String getCriticalRange() {
+        return criticalRange;
+    }
+
+    public void setCriticalRange(String criticalRange) {
+        this.criticalRange = criticalRange;
     }
 
     public boolean isChildReflex() {
@@ -481,5 +503,13 @@ public class ResultValidationItem implements ResultItem, Serializable {
 
     public void setHigherCritical(double higherCritical) {
         this.higherCritical = higherCritical;
+    }
+
+    public String getExpandedUncertainty() {
+        return expandedUncertainty;
+    }
+
+    public void setExpandedUncertainty(String expandedUncertainty) {
+        this.expandedUncertainty = expandedUncertainty;
     }
 }

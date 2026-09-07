@@ -59,6 +59,7 @@ import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.referral.action.beanitems.ReferralItem;
+import org.openelisglobal.referral.service.ReferralTypeService;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.referral.valueholder.ReferralSet;
@@ -101,7 +102,58 @@ public class ResultUtil {
     private static String RESULT_EDIT_ROLE_ID;
     private static String REFERRAL_CONFORMATION_ID;
 
+    /**
+     * The "Confirmation" referral type id, resolved on first use. The field was
+     * never assigned in this class, so every referral built here reached the insert
+     * with a null referral_type_id and died on its NOT NULL constraint (OGC-1023) —
+     * the legacy JSP controller only ever populated its own copy.
+     */
+    private static String confirmationReferralTypeId() {
+        if (REFERRAL_CONFORMATION_ID == null) {
+            org.openelisglobal.referral.valueholder.ReferralType referralType = SpringContext
+                    .getBean(ReferralTypeService.class).getReferralTypeByName("Confirmation");
+            if (referralType != null) {
+                REFERRAL_CONFORMATION_ID = referralType.getId();
+            }
+        }
+        return REFERRAL_CONFORMATION_ID;
+    }
+
     private static final String RESULT_SUBJECT = "Result Note";
+
+    /** OGC-1021 (R2, FR-J1) — subject records the auto-set context axis. */
+    private static final String RESULT_MODIFICATION_SUBJECT = "Result Note (Modification)";
+
+    /** OGC-1026 (R7, FR-G1) — interpretation notes are filterable by subject. */
+    private static final String INTERPRETATION_SUBJECT = "Interpretation";
+
+    /**
+     * Visibility axis of the dual-axis note (FR-J1): "E" = send with result
+     * (external), anything else = internal — the legacy default.
+     */
+    private static NoteType noteTypeForVisibility(TestResultItem item) {
+        return "E".equals(item.getNoteVisibility()) ? NoteType.EXTERNAL : NoteType.INTERNAL;
+    }
+
+    /**
+     * Context axis of the dual-axis note (FR-J1): auto-set by the client's
+     * edit-state machine. Entry keeps the legacy subject byte-for-byte.
+     */
+    private static String noteSubjectForContext(TestResultItem item) {
+        return "MODIFICATION".equals(item.getNoteContext()) ? RESULT_MODIFICATION_SUBJECT : RESULT_SUBJECT;
+    }
+
+    /**
+     * OGC-811 — a note authored from a component row belongs to that component;
+     * items without a component (single-component tests, legacy pages) keep the
+     * historic analysis-level scope (null).
+     */
+    private static Note scopedToComponent(Note note, TestResultItem item) {
+        if (note != null && !GenericValidator.isBlankOrNull(item.getTestResultComponentId())) {
+            note.setTestResultComponentId(item.getTestResultComponentId());
+        }
+        return note;
+    }
 
     public static String getStringValueOfResult(Result result) {
         if (TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(result.getResultType())) {
@@ -217,10 +269,27 @@ public class ResultUtil {
         return !GenericValidator.isBlankOrNull(item.getForceTechApproval());
     }
 
+    /**
+     * Multi-component analyses post one TestResultItem per component, all sharing
+     * the same analysisId. The same detached Analysis instance must be reused
+     * across those items so the analysis is registered for update (and later
+     * merged) only once per save; merging a second detached copy after the first
+     * merge flushes fails the optimistic lock on lastupdated and rolls back the
+     * whole transaction.
+     */
+    public static Analysis resolveModifiedAnalysis(ResultsUpdateDataSet actionDataSet, String analysisId) {
+        Analysis analysis = actionDataSet.findModifiedAnalysis(analysisId);
+        if (analysis == null) {
+            analysis = analysisService.get(analysisId);
+            actionDataSet.getModifiedAnalysis().add(analysis);
+        }
+        return analysis;
+    }
+
     public static void createAnalysisOnlyUpdates(ResultsUpdateDataSet actionDataSet, HttpServletRequest request) {
         for (TestResultItem testResultItem : actionDataSet.getAnalysisOnlyChangeResults()) {
 
-            Analysis analysis = analysisService.get(testResultItem.getAnalysisId());
+            Analysis analysis = resolveModifiedAnalysis(actionDataSet, testResultItem.getAnalysisId());
             analysis.setSysUserId(ControllerUtills.getSysUserId(request));
             analysis.setCompletedDate(DateUtil.convertStringDateToTimestampLenient(testResultItem.getTestDate()));
             if (testResultItem.getAnalysisMethod() != null) {
@@ -235,7 +304,6 @@ public class ResultUtil {
                     analysis.setResultFile(resultFile);
                 }
             }
-            actionDataSet.getModifiedAnalysis().add(analysis);
         }
     }
 
@@ -257,26 +325,56 @@ public class ResultUtil {
             }
         }
 
+        Set<String> correctedFlagComputedIds = new HashSet<>();
+
         for (TestResultItem testResultItem : actionDataSet.getModifiedItems()) {
 
-            Analysis analysis = analysisService.get(testResultItem.getAnalysisId());
+            Analysis analysis = resolveModifiedAnalysis(actionDataSet, testResultItem.getAnalysisId());
             analysis.setStatusId(getStatusForTestResult(testResultItem, alwaysValidate));
             analysis.setSysUserId(ControllerUtills.getSysUserId(request));
             if (!GenericValidator.isBlankOrNull(testResultItem.getTestMethod())) {
                 analysis.setMethod(methodService.get(testResultItem.getTestMethod()));
             }
-            actionDataSet.getModifiedAnalysis().add(analysis);
+            // OGC-1021 (R2, FR-B1/B2): the instrument instance is its own field.
+            // null = the client did not send it (legacy pages) — never clears;
+            // blank = an explicit "no instrument" chosen in the unified panel.
+            if (testResultItem.getAnalyzerId() != null) {
+                analysis.setAnalyzerId(GenericValidator.isBlankOrNull(testResultItem.getAnalyzerId()) ? null
+                        : testResultItem.getAnalyzerId());
+            }
 
-            actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL,
-                    testResultItem.getNote(), RESULT_SUBJECT, ControllerUtills.getSysUserId(request)));
+            actionDataSet.addToNoteList(scopedToComponent(noteService.createSavableNote(analysis,
+                    noteTypeForVisibility(testResultItem), testResultItem.getNote(),
+                    noteSubjectForContext(testResultItem), ControllerUtills.getSysUserId(request)), testResultItem));
+
+            // OGC-1021 (R2, FR-D5): a dilution changes the reported value, so the
+            // factor and the raw measured value are preserved as an internal
+            // provenance note (reuse-first — no new schema).
+            if (!GenericValidator.isBlankOrNull(testResultItem.getDilutionFactor())) {
+                actionDataSet.addToNoteList(scopedToComponent(noteService.createSavableNote(analysis, NoteType.INTERNAL,
+                        MessageUtil.getMessage("note.dilution.applied",
+                                new String[] { testResultItem.getDilutionFactor(),
+                                        GenericValidator.isBlankOrNull(testResultItem.getMeasuredValue()) ? "?"
+                                                : testResultItem.getMeasuredValue(),
+                                        testResultItem.getResultValue() }),
+                        RESULT_SUBJECT, ControllerUtills.getSysUserId(request)), testResultItem));
+            }
 
             // OGC-745: persist unconditional-acceptance justification as a
             // distinct note type so supervisor audit review can filter on it.
             if (ResultUtil.isForcedToAcceptance(testResultItem)
                     && !GenericValidator.isBlankOrNull(testResultItem.getForceTechApprovalNote())) {
-                actionDataSet.addToNoteList(noteService.createSavableNote(analysis,
+                actionDataSet.addToNoteList(scopedToComponent(noteService.createSavableNote(analysis,
                         NoteType.UNCONDITIONAL_ACCEPTANCE_REASON, testResultItem.getForceTechApprovalNote(),
-                        RESULT_SUBJECT, ControllerUtills.getSysUserId(request)));
+                        RESULT_SUBJECT, ControllerUtills.getSysUserId(request)), testResultItem));
+            }
+
+            // OGC-1026 (R7, FR-G1): the clinical interpretation goes with the
+            // result to the report — an EXTERNAL note under its own subject
+            if (!GenericValidator.isBlankOrNull(testResultItem.getInterpretation())) {
+                actionDataSet.addToNoteList(scopedToComponent(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
+                        testResultItem.getInterpretation().trim(), INTERPRETATION_SUBJECT,
+                        ControllerUtills.getSysUserId(request)), testResultItem));
             }
 
             if (testResultItem.isShadowRejected()) {
@@ -285,8 +383,9 @@ public class ResultUtil {
                 String rejectedReasonId = testResultItem.getRejectReasonId();
                 for (IdValuePair rejectReason : DisplayListService.getInstance().getList(ListType.REJECTION_REASONS)) {
                     if (rejectedReasonId.equals(rejectReason.getId())) {
-                        actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.REJECTION_REASON,
-                                rejectReason.getValue(), RESULT_SUBJECT, ControllerUtills.getSysUserId(request)));
+                        actionDataSet.addToNoteList(scopedToComponent(noteService.createSavableNote(analysis,
+                                NoteType.REJECTION_REASON, rejectReason.getValue(), RESULT_SUBJECT,
+                                ControllerUtills.getSysUserId(request)), testResultItem));
                         break;
                     }
                 }
@@ -299,17 +398,22 @@ public class ResultUtil {
             List<Result> results = resultSaveService.createResultsFromTestResultItem(bean,
                     actionDataSet.getDeletableResults());
 
-            analysis.setCorrectedSincePatientReport(
-                    resultSaveService.isUpdatedResult() && analysisService.patientReportHasBeenDone(analysis));
+            boolean correctedSinceReport = resultSaveService.isUpdatedResult()
+                    && analysisService.patientReportHasBeenDone(analysis);
+            if (correctedFlagComputedIds.add(analysis.getId())) {
+                analysis.setCorrectedSincePatientReport(correctedSinceReport);
+            } else if (correctedSinceReport) {
+                analysis.setCorrectedSincePatientReport(true);
+            }
 
             if (analysisService.hasBeenCorrectedSinceLastPatientReport(analysis)) {
                 Note note = noteService.createSavableNote(analysis, NoteType.EXTERNAL,
                         MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT,
                         ControllerUtills.getSysUserId(request));
                 if (!noteService.duplicateNoteExists(note)) {
-                    actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.EXTERNAL,
-                            MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT,
-                            ControllerUtills.getSysUserId(request)));
+                    actionDataSet.addToNoteList(scopedToComponent(noteService.createSavableNote(analysis,
+                            NoteType.EXTERNAL, MessageUtil.getMessage("note.corrected.result"), RESULT_SUBJECT,
+                            ControllerUtills.getSysUserId(request)), testResultItem));
                 }
             }
 
@@ -330,6 +434,7 @@ public class ResultUtil {
         }
     }
 
+    @SuppressWarnings("deprecation")
     public static void handleReferrals(TestResultItem testResultItem, ReferralItem referralItem, List<Result> results,
             Analysis analysis, ResultsUpdateDataSet actionDataSet, HttpServletRequest request) {
         // List<Referral> referrals = new ArrayList<>();
@@ -337,7 +442,7 @@ public class ResultUtil {
         referral.setFhirUuid(UUID.randomUUID());
         referral.setStatus(ReferralStatus.SENT);
         referral.setSysUserId(actionDataSet.getCurrentUserId());
-        referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
+        referral.setReferralTypeId(confirmationReferralTypeId());
         referral.setRequesterName(testResultItem.getTechnician());
 
         referral.setRequestDate(new Timestamp(new Date().getTime()));
@@ -379,8 +484,8 @@ public class ResultUtil {
             originalResultNote = originalResultNote + testResultItem.getResultValue();
         }
 
-        actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL, originalResultNote,
-                RESULT_SUBJECT, ControllerUtills.getSysUserId(request)));
+        actionDataSet.addToNoteList(scopedToComponent(noteService.createSavableNote(analysis, NoteType.INTERNAL,
+                originalResultNote, RESULT_SUBJECT, ControllerUtills.getSysUserId(request)), testResultItem));
     }
 
     public static boolean analysisShouldBeUpdated(TestResultItem testResultItem, Result result,
