@@ -173,6 +173,7 @@
         <class>org.openelisglobal.labelpreset.valueholder.TestLabelPresetLink</class>
         <class>org.openelisglobal.labelpreset.valueholder.OrderLabelRequest</class>
 
+
         <!-- SampleNewborn entity (migrated from HBM to JPA annotations) -->
         <class>org.openelisglobal.samplenewborn.valueholder.SampleNewborn</class>
 
@@ -181,6 +182,16 @@
 
         <!-- SampleProject entity (migrated from HBM to JPA annotations) -->
         <class>org.openelisglobal.sampleproject.valueholder.SampleProject</class>
+
+        <!-- Questionnaire / QuestionnaireResponse local storage -->
+        <class>org.openelisglobal.questionnaire.valueholder.Questionnaire</class>
+        <class>org.openelisglobal.questionnaire.valueholder.QuestionnaireItem</class>
+        <class>org.openelisglobal.questionnaire.valueholder.QuestionnaireAnswerOption</class>
+        <class>org.openelisglobal.questionnaire.valueholder.QuestionnaireItemInitial</class>
+        <class>org.openelisglobal.questionnaire.valueholder.QuestionnaireResponse</class>
+        <class>org.openelisglobal.questionnaire.valueholder.QuestionnaireResponseItem</class>
+        <class>org.openelisglobal.questionnaire.valueholder.QuestionnaireResponseAnswer</class>
+
 
         <properties>
             <property name="hibernate.cfg_xml_file"
