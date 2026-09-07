@@ -150,6 +150,28 @@ public class EQAParticipantResultServiceImpl extends BaseObjectServiceImpl<EQAPa
     }
 
     @Override
+    public EQAParticipantResult recordLateScore(Long resultId, String reportedValue, EQAPerformanceStatus performance,
+            String sysUserId) {
+        EQAParticipantResult result = get(resultId);
+        if (result.getSubmissionStatus() != EQASubmissionStatus.MISSED_DEADLINE) {
+            throw new IllegalStateException(
+                    "A late score belongs to a MISSED_DEADLINE result; this one is " + result.getSubmissionStatus());
+        }
+        if (performance == null) {
+            throw new IllegalArgumentException("A score needs a performance verdict");
+        }
+
+        // The status stays MISSED_DEADLINE: it is the lateness flag, not a
+        // "resolved, do not look again" marker. Only the verdict and the value
+        // the bench reported are added.
+        result.setResultValue(reportedValue);
+        result.setPerformanceStatus(performance);
+        result.setScoreReceivedAt(now());
+        result.setSysUserId(sysUserId);
+        return eqaParticipantResultDAO.update(result);
+    }
+
+    @Override
     public EQAParticipantResult markMissedDeadline(Long resultId, String sysUserId) {
         EQAParticipantResult result = get(resultId);
         EQASubmissionStatus from = result.getSubmissionStatus();
