@@ -370,6 +370,22 @@ public class EQAProviderScoringServiceImpl implements EQAProviderScoringService 
     /**
      * The targets this cycle's panel material sealed, by the analyte each answers.
      */
+    @Override
+    @Transactional(readOnly = true)
+    public Map<Long, String> sealedTargetsByTest(Long cycleId) {
+        EQACycle cycle = cycle(cycleId);
+        Map<Long, EQAPanelSample> byAnalyte = sealedTargetsByAnalyte(cycle);
+        Map<Long, String> byTest = new HashMap<>();
+        for (EQAProgramTest assignment : eqaProgramService.getTestAssignments(cycle.getScheme().getId())) {
+            Long analyteId = analyteIdOrNull(assignment.getTestId());
+            EQAPanelSample sample = analyteId == null ? null : byAnalyte.get(analyteId);
+            if (sample != null) {
+                byTest.put(assignment.getTestId(), sample.getTargetValue());
+            }
+        }
+        return byTest;
+    }
+
     private Map<Long, EQAPanelSample> sealedTargetsByAnalyte(EQACycle cycle) {
         Map<Long, EQAPanelSample> targetByAnalyte = new HashMap<>();
         for (EQAPanel panel : eqaPanelDAO.getAllMatching("cycle.id", cycle.getId())) {
@@ -527,6 +543,12 @@ public class EQAProviderScoringServiceImpl implements EQAProviderScoringService 
             byOrganization.computeIfAbsent(result.getParticipantOrganizationId(), key -> new ArrayList<>()).add(result);
         }
         return byOrganization;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<EQAResult> reportedResultsFor(Long cycleId, Long organizationId) {
+        return resultsFor(cycleId, organizationId);
     }
 
     private List<EQAResult> resultsFor(Long cycleId, Long organizationId) {

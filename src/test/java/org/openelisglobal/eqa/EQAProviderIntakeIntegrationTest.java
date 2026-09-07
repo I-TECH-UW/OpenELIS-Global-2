@@ -5,6 +5,9 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
+import com.itextpdf.text.pdf.PdfReader;
+import com.itextpdf.text.pdf.parser.PdfTextExtractor;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.List;
 import java.util.Map;
@@ -12,6 +15,7 @@ import java.util.UUID;
 import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.eqa.dao.EQAPanelSampleDAO;
+import org.openelisglobal.eqa.service.EQAPerformanceReportPDFService;
 import org.openelisglobal.eqa.service.EQAProviderScoringService;
 import org.openelisglobal.eqa.valueholder.EQACycle;
 import org.openelisglobal.eqa.valueholder.EQAPanel;
@@ -42,6 +46,8 @@ public class EQAProviderIntakeIntegrationTest extends EQASpineTestBase {
     private EQAProviderScoringService scoringService;
     @Autowired
     private EQAPanelSampleDAO eqaPanelSampleDAO;
+    @Autowired
+    private EQAPerformanceReportPDFService reportService;
 
     private EQAProgram scheme;
     private EQACycle cycle;
@@ -198,6 +204,63 @@ public class EQAProviderIntakeIntegrationTest extends EQASpineTestBase {
         assertEquals("the failure reaches the follow-up register", Integer.valueOf(1),
                 jdbc.queryForObject("SELECT count(*) FROM clinlims.eqa_participant_followup WHERE cycle_id = ?",
                         Integer.class, cycle.getId()));
+    }
+
+    /**
+     * The provider's own copy of the performance report. It reads
+     * {@code eqa_result} — where a remote laboratory's submissions land — so a
+     * provider cycle prints the results its Receipts tab shows rather than the
+     * empty report the participant-table build produced for every external cycle.
+     */
+    @Test
+    public void theProviderPrintsAPerParticipantReportFromWhatTheLaboratoryReported() throws IOException {
+        for (int i = 0; i < ORGS; i++) {
+            scoringService.takeIn(cycle.getId(), FIRST_ORG + i,
+                    Map.of(TEST_SERO, i == ORGS - 1 ? "Non-reactive" : "reactive"), EQASubmissionMethod.MANUAL, USER);
+        }
+        scoringService.scoreCycle(cycle.getId(), USER);
+        long failing = FIRST_ORG + ORGS - 1;
+
+        String text = providerReportText(failing);
+
+        assertTrue("the report names the laboratory it is about, not just the provider",
+                text.contains("Intake lab " + failing));
+        assertTrue("the analyte the laboratory reported", text.contains("Intake HIV serology test"));
+        assertTrue("the value it reported", text.contains("Non-reactive"));
+        assertTrue("the target it was judged against", text.contains("Reactive"));
+        assertTrue("its verdict", text.contains("Unacceptable"));
+        assertTrue("the scoring detail renders rather than the empty-report notice", text.contains("Scoring detail"));
+        assertTrue("the empty-report notice is gone",
+                !text.contains("No participant results have been recorded for this cycle"));
+
+        // The two columns that belong to the reporting laboratory rather than to the
+        // provider judging it are dropped, not printed empty: a column that can only
+        // ever be blank on this lane reads as a missing value.
+        assertTrue("no NCE column on a provider's copy", !text.contains("NCE"));
+        assertTrue("no Analyst column on a provider's copy", !text.contains("Analyst"));
+        assertTrue("no Scored on column either: eqa_result carries no per-row scoring stamp",
+                !text.contains("Scored on"));
+
+        // Same grain as the scores CSV beside it on the workbench, so the two cannot
+        // disagree about which rows belong to a laboratory.
+        assertTrue("another laboratory's value is not on this report",
+                !providerReportText(FIRST_ORG).contains("Non-reactive"));
+        assertEquals("one printed row per scores-CSV row", 1,
+                scoringService.buildScoreCsv(cycle.getId(), failing).lines().count() - 1);
+    }
+
+    private String providerReportText(long organizationId) throws IOException {
+        byte[] pdf = reportService.generateParticipantPerformanceReport(cycle.getId(), organizationId);
+        PdfReader reader = new PdfReader(pdf);
+        try {
+            StringBuilder text = new StringBuilder();
+            for (int page = 1; page <= reader.getNumberOfPages(); page++) {
+                text.append(PdfTextExtractor.getTextFromPage(reader, page)).append('\n');
+            }
+            return text.toString();
+        } finally {
+            reader.close();
+        }
     }
 
     @Test

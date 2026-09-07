@@ -8578,5 +8578,6 @@
   "eqa.receipt.readOnly.title": "Read-only view of receipts and scores",
   "eqa.receipt.readOnly.body": "Recording a delivery, dispatching a repeat, entering results and returning scores all need the provider grant; scoring the cycle needs the manage grant. The table below is the whole cycle either way.",
   "eqa.inhouse.readOnly.title": "Read-only view of in-house panels",
-  "eqa.inhouse.readOnly.body": "Designing and sealing a blinded panel needs the manage grant. The panels below are the whole picture either way."
+  "eqa.inhouse.readOnly.body": "Designing and sealing a blinded panel needs the manage grant. The panels below are the whole picture either way.",
+  "eqa.score.downloadReport": "Report PDF"
 }
