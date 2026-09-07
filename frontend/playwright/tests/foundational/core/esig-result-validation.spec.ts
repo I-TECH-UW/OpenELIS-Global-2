@@ -154,11 +154,11 @@ test("E-Signature — full result entry and validation flow", async ({
         response.request().method() === "POST",
       { timeout: LONG_TIMEOUT },
     );
-    const resultsReloaded = page.waitForRequest(
-      (request) =>
-        request.isNavigationRequest() && request.url().includes("/result?"),
-      { timeout: LONG_TIMEOUT },
-    );
+    const resultsReloaded = page.waitForEvent("framenavigated", {
+      predicate: (frame) =>
+        frame === page.mainFrame() && frame.url().includes("/result?"),
+      timeout: LONG_TIMEOUT,
+    });
 
     // Click Sign
     await modal.getByRole("button", { name: /sign/i }).click();
@@ -232,11 +232,11 @@ test("E-Signature — full result entry and validation flow", async ({
 
     // A successful release reloads the validation page; wait for that
     // navigation so the cleanup step's own navigation cannot collide with it.
-    const queueReloaded = page.waitForRequest(
-      (request) =>
-        request.isNavigationRequest() && request.url().includes("/validation"),
-      { timeout: LONG_TIMEOUT },
-    );
+    const queueReloaded = page.waitForEvent("framenavigated", {
+      predicate: (frame) =>
+        frame === page.mainFrame() && frame.url().includes("/validation"),
+      timeout: LONG_TIMEOUT,
+    });
     await modal.getByRole("button", { name: /sign/i }).click();
 
     await expect(modal).toBeHidden({ timeout: LONG_TIMEOUT });
