@@ -19,6 +19,10 @@ vi.mock("../../../../utils/Utils", () => ({
   resolveApiErrorMessage: (_intl, payload, fallbackId) =>
     payload?.error || fallbackId,
   toLocalIsoDate: (d) => (d ? "2026-09-01" : ""),
+  // The workbench renders the stored ISO date through this, so the picker
+  // parses what its own dateFormat says it will.
+  formatDateOnly: (value) =>
+    value ? String(value).slice(0, 10).split("-").reverse().join("/") : "",
 }));
 
 vi.mock("../../../../common/PageBreadCrumb", () => ({

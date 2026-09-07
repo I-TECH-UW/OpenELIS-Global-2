@@ -70,8 +70,30 @@ const renderWizard = () => {
 const next = () =>
   fireEvent.click(screen.getByRole("button", { name: "Next" }));
 
+/**
+ * Step 0's required fields: a cycle needs a name, and the date pair its
+ * reminders are sent against. A name already typed is left alone.
+ */
+const completeCycleStep = () => {
+  const name = screen.getByLabelText("Cycle name");
+  if (!name.value) {
+    fireEvent.change(name, { target: { value: "2026 Round 4" } });
+  }
+  // flatpickr only publishes a typed date on Enter (its blur path sets the
+  // date without firing onChange), so each half of the range needs both events.
+  typeDate("Distribution date", "01/09/2026");
+  typeDate("Submission deadline", "01/10/2026");
+};
+
+const typeDate = (label, value) => {
+  const input = screen.getByLabelText(label);
+  fireEvent.change(input, { target: { value } });
+  fireEvent.keyDown(input, { key: "Enter", keyCode: 13 });
+};
+
 /** Steps 0 → 2, with the panel step completed on the way through. */
 const throughPanelStep = () => {
+  completeCycleStep();
   next();
   fireEvent.change(screen.getByLabelText("Panel name"), {
     target: { value: "HIV VL panel" },
@@ -95,8 +117,35 @@ describe("CycleWizard", () => {
     vi.clearAllMocks();
   });
 
+  test("step 1 holds until the cycle has a name and both its dates", () => {
+    renderWizard();
+    const nextButton = () => screen.getByRole("button", { name: "Next" });
+
+    expect(nextButton()).toBeDisabled();
+
+    fireEvent.change(screen.getByLabelText("Cycle name"), {
+      target: { value: "2026 Round 4" },
+    });
+    expect(nextButton()).toBeDisabled();
+
+    typeDate("Distribution date", "01/09/2026");
+    // The submission deadline is what the reminder digest keys on, so the step
+    // is still incomplete with only the distribution date on it.
+    expect(nextButton()).toBeDisabled();
+
+    typeDate("Submission deadline", "01/10/2026");
+    expect(nextButton()).toBeEnabled();
+
+    // And a name cleared after the fact closes the step again.
+    fireEvent.change(screen.getByLabelText("Cycle name"), {
+      target: { value: "  " },
+    });
+    expect(nextButton()).toBeDisabled();
+  });
+
   test("only tests that carry an analyte are offered", () => {
     renderWizard();
+    completeCycleStep();
     next();
 
     // A panel target is stored against an analyte, so a test without one is a
@@ -107,6 +156,7 @@ describe("CycleWizard", () => {
 
   test("the panel step cannot be left until a panel name and a full sample exist", () => {
     renderWizard();
+    completeCycleStep();
     next();
 
     expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();

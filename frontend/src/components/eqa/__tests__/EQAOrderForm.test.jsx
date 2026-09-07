@@ -3,7 +3,7 @@ import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { IntlProvider } from "react-intl";
 import messages from "../../../languages/en.json";
-import EQAOrderForm from "../EQAOrderForm";
+import EQAOrderForm, { eqaReceiptNoteMissing } from "../EQAOrderForm";
 import { getFromOpenElisServer } from "../../utils/Utils";
 
 vi.mock("../../utils/Utils", async (importOriginal) => {
@@ -183,5 +183,98 @@ describe("EQAOrderForm inbound consignment", () => {
     expect(
       screen.queryByLabelText(messages["eqa.order.receipt.consignment"]),
     ).toBeNull();
+  });
+});
+
+describe("EQAOrderForm panel integrity", () => {
+  const PROGRAMS = [{ id: 7, programName: "CPHL National HIV Viral Load EQA" }];
+  const CYCLES = [
+    {
+      id: 12,
+      cycleName: "Round 1",
+      schemeName: "CPHL National HIV Viral Load EQA",
+    },
+  ];
+
+  const Harness = () => {
+    const [orderFormValues, setOrderFormValues] = useState({
+      sampleOrderItems: {
+        isEQASample: true,
+        eqaProgramId: "7",
+        eqaCycleId: "12",
+      },
+    });
+    return (
+      <EQAOrderForm
+        orderFormValues={orderFormValues}
+        setOrderFormValues={setOrderFormValues}
+      />
+    );
+  };
+
+  const renderForm = () => {
+    window.history.pushState({}, "", "/SamplePatientEntry?isEQA=true");
+    getFromOpenElisServer.mockImplementation((url, cb) => {
+      if (url.startsWith("/rest/eqa/my-programs")) cb(PROGRAMS);
+      else if (url.startsWith("/rest/eqa/cycles/mine")) cb(CYCLES);
+      else if (url.startsWith("/rest/shipping-box/by-state/IN_TRANSIT")) cb([]);
+    });
+    return render(
+      <IntlProvider locale="en" messages={messages}>
+        <Harness />
+      </IntlProvider>,
+    );
+  };
+
+  // AC-V2.2-13: the one receipt an accreditation record needs prose on is the
+  // one saying the material arrived compromised.
+  test("unticking intact demands the note, and filling it clears the alert", async () => {
+    renderForm();
+    const alert = messages["eqa.order.receipt.notes.required"];
+
+    expect(await screen.findByLabelText("Integrity notes")).toBeInTheDocument();
+    expect(screen.queryByText(alert)).toBeNull();
+
+    fireEvent.click(screen.getByLabelText("Panel arrived intact"));
+    expect(screen.getByText(alert)).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Integrity notes"), {
+      target: { value: "Two vials cracked in transit" },
+    });
+    expect(screen.queryByText(alert)).toBeNull();
+
+    // Whitespace is not an explanation.
+    fireEvent.change(screen.getByLabelText("Integrity notes"), {
+      target: { value: "   " },
+    });
+    expect(screen.getByText(alert)).toBeInTheDocument();
+  });
+});
+
+describe("eqaReceiptNoteMissing", () => {
+  const order = (sampleOrderItems) => ({ sampleOrderItems });
+
+  test("holds only an EQA receipt that says not-intact with no note", () => {
+    expect(
+      eqaReceiptNoteMissing(
+        order({ isEQASample: true, eqaIntegrityOk: false }),
+      ),
+    ).toBe(true);
+    expect(
+      eqaReceiptNoteMissing(
+        order({
+          isEQASample: true,
+          eqaIntegrityOk: false,
+          eqaIntegrityNotes: "Cracked",
+        }),
+      ),
+    ).toBe(false);
+    // Intact, unanswered, and non-EQA orders are none of this rule's business.
+    expect(
+      eqaReceiptNoteMissing(order({ isEQASample: true, eqaIntegrityOk: true })),
+    ).toBe(false);
+    expect(eqaReceiptNoteMissing(order({ isEQASample: true }))).toBe(false);
+    expect(eqaReceiptNoteMissing(order({ eqaIntegrityOk: false }))).toBe(false);
+    expect(eqaReceiptNoteMissing(undefined)).toBe(false);
   });
 });

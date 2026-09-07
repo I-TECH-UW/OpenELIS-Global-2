@@ -5,6 +5,7 @@ import java.sql.Date;
 import java.sql.Timestamp;
 import java.util.List;
 import java.util.Map;
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.eqa.dao.EQAPanelReceiptDAO;
 import org.openelisglobal.eqa.valueholder.EQACycle;
@@ -64,6 +65,14 @@ public class EQAPanelReceiptServiceImpl extends BaseObjectServiceImpl<EQAPanelRe
             BigDecimal receivedTempC, Boolean integrityOk, String integrityNotes, Long receivedBy, String sysUserId) {
         if (receivedBy == null) {
             throw new IllegalArgumentException("A receipt requires the receiving user");
+        }
+
+        // A receipt saying the material arrived compromised is the one receipt
+        // that needs prose, so the note is required exactly there — the same
+        // shape as the write-off a failed homogeneity QC already demands.
+        if (Boolean.FALSE.equals(integrityOk) && GenericValidator.isBlankOrNull(integrityNotes)) {
+            throw new IllegalArgumentException(
+                    "The panel was not received intact, so the receipt requires a written note");
         }
 
         // Idempotency: the DB unique constraint is the backstop; this read is what

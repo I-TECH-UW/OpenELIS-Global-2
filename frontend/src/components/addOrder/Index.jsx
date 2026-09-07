@@ -24,7 +24,7 @@ import {
 import OrderEntryAdditionalQuestions from "./OrderEntryAdditionalQuestions";
 import OrderSuccessMessage from "./OrderSuccessMessage";
 import EQASampleEntry from "../eqa/EQASampleEntry";
-import EQAOrderForm from "../eqa/EQAOrderForm";
+import EQAOrderForm, { eqaReceiptNoteMissing } from "../eqa/EQAOrderForm";
 import { FormattedMessage, useIntl } from "react-intl";
 import { createOrderEntryValidationSchema } from "../formModel/validationSchema/OrderEntryValidationSchema";
 import config from "../../config.json";
@@ -954,6 +954,10 @@ const Index = () => {
                 <Button
                   kind="primary"
                   className="forwardButton"
+                  disabled={
+                    page === programPageNumber &&
+                    eqaReceiptNoteMissing(orderFormValues)
+                  }
                   onClick={() => navigateForward()}
                 >
                   <FormattedMessage id="next.action.button" />

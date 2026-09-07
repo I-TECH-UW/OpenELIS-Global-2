@@ -13,7 +13,16 @@ import {
 import { useIntl } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
 
-const InlineEnrollmentForm = ({ enrollment, onSave, onCancel }) => {
+// The "my scheme is not on this list" option: an enrollment may name a provider
+// whose schemes this instance does not carry, so free text stays available.
+const NOT_LISTED = "__notListed__";
+
+const InlineEnrollmentForm = ({
+  enrollment,
+  enrollments = [],
+  onSave,
+  onCancel,
+}) => {
   const intl = useIntl();
   const isEdit = !!enrollment;
 
@@ -38,6 +47,13 @@ const InlineEnrollmentForm = ({ enrollment, onSave, onCancel }) => {
   const [testAnalytes, setTestAnalytes] = useState({});
   const [dataReady, setDataReady] = useState(false);
 
+  // The schemes this instance carries, and this laboratory's cycles. The first
+  // is what the picker offers; the second is why the pair freezes — a renamed
+  // enrollment detaches from every cycle that matched it by name.
+  const [schemes, setSchemes] = useState([]);
+  const [myCycles, setMyCycles] = useState([]);
+  const [schemeChoice, setSchemeChoice] = useState(NOT_LISTED);
+
   const [labUnits, setLabUnits] = useState([]);
   const [tests, setTests] = useState([]);
   const [panels, setPanels] = useState([]);
@@ -49,6 +65,18 @@ const InlineEnrollmentForm = ({ enrollment, onSave, onCancel }) => {
       loaded++;
       if (loaded >= 4) setDataReady(true);
     };
+
+    getFromOpenElisServer("/rest/eqa/programs", (data) => {
+      const items = (data || []).filter((scheme) => scheme.name);
+      setSchemes(items);
+      if (enrollment && items.some((s) => s.name === enrollment.programName)) {
+        setSchemeChoice(enrollment.programName);
+      }
+    });
+
+    getFromOpenElisServer("/rest/eqa/cycles/mine", (data) => {
+      setMyCycles(Array.isArray(data) ? data : []);
+    });
 
     getFromOpenElisServer("/rest/displayList/TEST_SECTION_ACTIVE", (data) => {
       if (data) {
@@ -129,6 +157,35 @@ const InlineEnrollmentForm = ({ enrollment, onSave, onCancel }) => {
     onSave(payload);
   };
 
+  // A scheme already enrolled is not on offer, deactivated enrollments included:
+  // reactivating one through Edit is the way back, not a second row for the same
+  // scheme. The enrollment being edited keeps its own scheme, or the picker would
+  // drop what it is showing.
+  const offeredSchemes = schemes.filter(
+    (scheme) =>
+      !enrollments.some(
+        (other) =>
+          other.id !== (enrollment ? enrollment.id : null) &&
+          (other.programName || "") === scheme.name,
+      ),
+  );
+
+  // Cycles are matched to an enrollment by programme name — there is no scheme
+  // foreign key — so renaming one silently detaches it from its own cycles.
+  const frozen =
+    isEdit &&
+    myCycles.some((cycle) => cycle.schemeName === enrollment.programName);
+
+  const pickScheme = (value) => {
+    setSchemeChoice(value);
+    if (value === NOT_LISTED) {
+      return;
+    }
+    const scheme = schemes.find((s) => s.name === value);
+    setProgramName(value);
+    setProvider(scheme && scheme.provider ? scheme.provider : "");
+  };
+
   const isValid = programName.trim() !== "" && provider.trim() !== "";
 
   return (
@@ -150,12 +207,39 @@ const InlineEnrollmentForm = ({ enrollment, onSave, onCancel }) => {
 
       <Grid condensed>
         <Column lg={5} md={4} sm={4}>
+          <Select
+            id="enrollment-scheme"
+            labelText={intl.formatMessage({ id: "eqa.enrollment.scheme" })}
+            helperText={intl.formatMessage({
+              id: frozen
+                ? "eqa.enrollment.scheme.frozen"
+                : "eqa.enrollment.scheme.helper",
+            })}
+            value={schemeChoice}
+            disabled={frozen}
+            onChange={(e) => pickScheme(e.target.value)}
+          >
+            {offeredSchemes.map((scheme) => (
+              <SelectItem
+                key={scheme.id}
+                value={scheme.name}
+                text={scheme.name}
+              />
+            ))}
+            <SelectItem
+              value={NOT_LISTED}
+              text={intl.formatMessage({ id: "eqa.enrollment.scheme.other" })}
+            />
+          </Select>
+        </Column>
+        <Column lg={5} md={4} sm={4}>
           <TextInput
             id="enrollment-program-name"
             labelText={intl.formatMessage({
               id: "eqa.enrollment.programName",
             })}
             value={programName}
+            disabled={frozen}
             onChange={(e) => setProgramName(e.target.value)}
             placeholder={intl.formatMessage({
               id: "eqa.enrollment.programName.placeholder",
@@ -167,6 +251,7 @@ const InlineEnrollmentForm = ({ enrollment, onSave, onCancel }) => {
             id="enrollment-provider"
             labelText={intl.formatMessage({ id: "eqa.enrollment.provider" })}
             value={provider}
+            disabled={frozen}
             onChange={(e) => setProvider(e.target.value)}
             placeholder={intl.formatMessage({
               id: "eqa.enrollment.provider.placeholder",

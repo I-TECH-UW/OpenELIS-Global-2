@@ -364,6 +364,16 @@ public class EQACycleServiceImpl extends BaseObjectServiceImpl<EQACycle, Long> i
         if (request == null || request.schemeId() == null) {
             throw new IllegalArgumentException("A cycle needs a scheme");
         }
+        if (GenericValidator.isBlankOrNull(request.cycleName())) {
+            throw new IllegalArgumentException("A cycle needs a name");
+        }
+        // The distribution date and the submission deadline are what the cycle is
+        // scheduled by: the deadline is the only thing the 7/3/1-day digest can key
+        // on, so a cycle created without one would be invisible to every reminder
+        // for its whole life. Refusing it here is cheaper than explaining later.
+        if (request.plannedStartDate() == null || request.plannedEndDate() == null) {
+            throw new IllegalArgumentException("A cycle needs a distribution date and a submission deadline");
+        }
         if (GenericValidator.isBlankOrNull(request.panelName())) {
             throw new IllegalArgumentException("A cycle needs a panel name");
         }
@@ -422,26 +432,18 @@ public class EQACycleServiceImpl extends BaseObjectServiceImpl<EQACycle, Long> i
         // so a cycle with no round is invisible to it however close its deadline is.
         // The planned end date is that deadline, and this is the only place it is
         // known, so round 1 is written here rather than left to blinding.
-        //
-        // Only when a deadline was actually given: with none, there is nothing to
-        // remind anyone about, and leaving the row out keeps the existing behaviour
-        // where blinding creates round 1 and derives the deadline from the panel's
-        // unblind date.
-        if (request.plannedEndDate() != null) {
-            EQARound round = new EQARound();
-            round.setFhirUuid(UUID.randomUUID());
-            round.setCycle(cycle);
-            round.setRoundNumber(1);
-            // Step 1's date pair IS the FRS's "distribution date, submission deadline"
-            // (FR-V2.5-02); the cycle keeps them as planned_start/planned_end, the
-            // round carries them under their real names for the digest and reports.
-            if (request.plannedStartDate() != null) {
-                round.setDistributionDate(new Timestamp(request.plannedStartDate().getTime()));
-            }
-            round.setSubmissionDeadline(new Timestamp(request.plannedEndDate().getTime()));
-            round.setSysUserId(sysUserId);
-            eqaRoundDAO.insert(round);
-        }
+        EQARound round = new EQARound();
+        round.setFhirUuid(UUID.randomUUID());
+        round.setCycle(cycle);
+        round.setRoundNumber(1);
+        // Step 1's date pair IS the FRS's "distribution date, submission deadline"
+        // (FR-V2.5-02); the cycle keeps them as planned_start/planned_end, the round
+        // carries them under their real names for the digest and reports. Both are
+        // required above, so the round is unconditional.
+        round.setDistributionDate(new Timestamp(request.plannedStartDate().getTime()));
+        round.setSubmissionDeadline(new Timestamp(request.plannedEndDate().getTime()));
+        round.setSysUserId(sysUserId);
+        eqaRoundDAO.insert(round);
 
         // Step 5 is "confirm & begin prep", so the wizard leaves the cycle where the
         // prep workbench expects it. A person clicked this, so it is recorded as a

@@ -15,7 +15,11 @@ import {
   TextInput,
 } from "@carbon/react";
 import { useIntl } from "react-intl";
-import { resolveApiErrorMessage, toLocalIsoDate } from "../../../utils/Utils";
+import {
+  formatDateOnly,
+  resolveApiErrorMessage,
+  toLocalIsoDate,
+} from "../../../utils/Utils";
 import { hintStyle } from "../../eqaCommon";
 import {
   generateLabelPDF,
@@ -349,7 +353,11 @@ const ShipmentWorkbench = ({ cycleId, prep, rows, onChanged, onNotice }) => {
                       <DatePicker
                         datePickerType="single"
                         dateFormat="d/m/Y"
-                        value={draft.estimatedDeliveryDate}
+                        // The draft holds the ISO date the API takes; the
+                        // picker parses its value with dateFormat, so a bare
+                        // ISO string reads as nonsense under d/m/Y and
+                        // flatpickr normalises every row to the same day.
+                        value={formatDateOnly(draft.estimatedDeliveryDate)}
                         onChange={(dates) =>
                           setDraft(row.organizationId, {
                             estimatedDeliveryDate: dates[0]
