@@ -348,8 +348,10 @@ class UserManagementPage {
     );
     cy.get(this.selectors.uncheckActiveUser).should("not.be.checked");
     cy.contains(this.selectors.span, "Only Active").click();
-    cy.get(this.selectors.uncheckActiveUser).should("be.checked");
+    // Sync on the filtered reload before reading the box: the box follows the
+    // filter state, so the request landing is what makes it settle.
     this.waitForUserListRequest("activeUsers");
+    cy.get(this.selectors.uncheckActiveUser).should("be.checked");
   }
 
   uncheckActiveUser() {
@@ -360,8 +362,8 @@ class UserManagementPage {
     );
     cy.get(this.selectors.uncheckActiveUser).should("be.checked");
     cy.contains(this.selectors.span, "Only Active").click();
-    cy.get(this.selectors.uncheckActiveUser).should("not.be.checked");
     this.waitForUserListRequest("allUsersAfterActiveFilter");
+    cy.get(this.selectors.uncheckActiveUser).should("not.be.checked");
   }
 
   checkUser(columnNum, value) {

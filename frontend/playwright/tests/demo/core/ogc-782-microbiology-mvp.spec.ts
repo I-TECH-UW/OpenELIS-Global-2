@@ -116,7 +116,9 @@ test.describe("OGC-782 microbiology MVP", () => {
         "ogc-782-02-inoculation-ready",
       );
       await setup.getByRole("button", { name: "Save media" }).click();
-      await expect(caseStatusTag(page, "Setup Recorded")).toBeVisible({
+      // Recording an inoculation starts incubation, so the case moves straight
+      // from Received to Incubating.
+      await expect(caseStatusTag(page, "Incubating")).toBeVisible({
         timeout: LONG_TIMEOUT,
       });
       await accordionButton(page, "Timeline").click();

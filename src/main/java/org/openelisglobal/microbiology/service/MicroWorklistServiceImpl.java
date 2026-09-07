@@ -169,6 +169,9 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
                 orderDetails);
 
         MicroWorklistPageForm page = new MicroWorklistPageForm();
+        // The surveillance filters are driven by what the rows carry, so this view
+        // has to publish them too or its filter controls come up empty.
+        page.filterOptions = surveillanceFilterOptions(rows, patientOriginLabels(rows));
         page.total = (int) Math.min(Integer.MAX_VALUE, astRunDAO.countReviewedWorklist(reviewedQuery));
         page.page = query.page;
         page.pageSize = query.pageSize;

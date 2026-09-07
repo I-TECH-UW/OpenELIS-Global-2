@@ -460,6 +460,30 @@ public class MicroWorklistServiceTest {
     }
 
     @Test
+    public void reviewedViewOffersTheSurveillanceFiltersItsRowsSupport() {
+        MicroCase microCase = microCase("case-ast", "sample-1", MicroWorkflowType.BACTERIOLOGY,
+                MicroCaseStage.REVIEW_READY, "ROUTINE");
+        MicroIsolate isolate = significantIsolate("iso-1");
+        isolate.setCaseId("case-ast");
+        MicroAstRun reviewed = astRun("run-reviewed", "iso-1", MicroAstRunStatus.REVIEWED);
+        when(astRunDAO.getReviewedWorklistPage(any(MicroReviewedAstWorklistQuery.class)))
+                .thenReturn(List.of(new MicroReviewedAstWorklistRow(microCase, isolate, reviewed)));
+        when(astRunDAO.countReviewedWorklist(any(MicroReviewedAstWorklistQuery.class))).thenReturn(1L);
+        when(contextDAO.getSpecimenContexts(List.of("sample-1"))).thenReturn(List
+                .of(new MicroWorklistSpecimenContext("sample-1", "LAB-1001", "Mendez, Olivia", "Blood", null, "7")));
+
+        MicroWorklistQueryForm reviewedQuery = new MicroWorklistQueryForm();
+        reviewedQuery.grain = "ast";
+        reviewedQuery.status = "reviewed";
+        MicroWorklistPageForm page = service.getWorklistPage(reviewedQuery);
+
+        assertEquals(1, page.rows.size());
+        assertEquals("the reviewed view must offer the specimen types its rows carry", 1,
+                page.filterOptions.specimenTypes.size());
+        assertEquals("Blood", page.filterOptions.specimenTypes.get(0).label);
+    }
+
+    @Test
     public void reviewedViewIncludesReviewedRunsFromReleasedCases() {
         MicroCase releasedCase = microCase("case-released", "sample-1", MicroWorkflowType.BACTERIOLOGY,
                 MicroCaseStage.REVIEW_READY, "ROUTINE");
