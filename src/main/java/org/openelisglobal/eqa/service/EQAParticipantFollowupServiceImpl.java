@@ -197,6 +197,21 @@ public class EQAParticipantFollowupServiceImpl extends BaseObjectServiceImpl<EQA
 
     @Override
     @Transactional(readOnly = true)
+    public Map<Long, Long> countOpenProviderFollowupsByOrganization() {
+        Long self = selfOrganizationId();
+        Map<Long, Long> open = new LinkedHashMap<>();
+        for (EQAParticipantFollowup followup : followupDAO.getAll()) {
+            EQAFollowupStatus status = followup.getFollowupStatus();
+            if ((self == null || !self.equals(followup.getParticipantOrgId())) && status != EQAFollowupStatus.RESOLVED
+                    && status != EQAFollowupStatus.REMOVED_FROM_PROGRAM) {
+                open.merge(followup.getParticipantOrgId(), 1L, Long::sum);
+            }
+        }
+        return open;
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public List<Map<String, Object>> getProviderRegisterRows() {
         Long self = selfOrganizationId();
         List<EQAParticipantFollowup> theirs = new ArrayList<>();

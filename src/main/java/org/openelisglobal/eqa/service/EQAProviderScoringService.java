@@ -60,6 +60,18 @@ public interface EQAProviderScoringService {
     Map<Long, String> sealedTargetsByTest(Long cycleId);
 
     /**
+     * FR-V2.5-05: one row per laboratory enrolled in the scheme, carrying its
+     * rolling pass rate over its last four scored cycles, its most recent verdict
+     * and its open follow-up count, plus the cycle history behind the rate so a row
+     * can be drilled into without a second read.
+     *
+     * <p>
+     * The provider could previously see one cycle at a time and never the trend,
+     * which is the judgement this exists to support — which laboratory is drifting.
+     */
+    List<Map<String, Object>> getParticipantPerformance(Long schemeId);
+
+    /**
      * The intake grid for one participant: the scheme's tests with the value
      * already on file for each, so phoned and emailed results can be keyed on the
      * provider side.

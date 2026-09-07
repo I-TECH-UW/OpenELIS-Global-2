@@ -8607,5 +8607,20 @@
   "alerts.type.other": "Other",
   "eqa.provider.wizard.sampleCode.duplicate": "Every sample code on a panel must be different.",
   "eqa.provider.wizard.rangeHigh.backwards": "The high end of an acceptance range cannot be below the low end.",
-  "eqa.shipment.packList.panelColumn": "Panel"
+  "eqa.shipment.packList.panelColumn": "Panel",
+  "eqa.provider.schemes.performance": "Performance",
+  "eqa.performance.title": "Participant performance",
+  "eqa.performance.subtitle": "Each laboratory\u2019s pass rate over its last four scored cycles in this scheme. Expand a row for the cycles behind the rate.",
+  "eqa.performance.laboratory": "Laboratory",
+  "eqa.performance.region": "Region",
+  "eqa.performance.enrollment": "Enrollment",
+  "eqa.performance.passRate": "Pass rate (last 4)",
+  "eqa.performance.mostRecent": "Most recent",
+  "eqa.performance.openFollowups": "Open follow-ups",
+  "eqa.performance.expand": "Cycle history",
+  "eqa.performance.ofJudged": "{accepted} of {judged}",
+  "eqa.performance.noRate": "No scored cycle yet",
+  "eqa.performance.noCycles": "This laboratory has not reported into a scored cycle yet.",
+  "eqa.performance.empty": "No laboratory is enrolled in this scheme yet.",
+  "eqa.performance.loadFailed": "Could not load participant performance"
 }

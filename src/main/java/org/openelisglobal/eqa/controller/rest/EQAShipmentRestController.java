@@ -58,6 +58,21 @@ public class EQAShipmentRestController extends BaseRestController {
         return shipmentService.getProviderSchemes();
     }
 
+    /**
+     * FR-V2.5-05: one row per laboratory enrolled in the scheme, with its rolling
+     * pass rate over its last four scored cycles, its most recent verdict and its
+     * open follow-up count. Each row carries the cycle history behind its rate, so
+     * the drill-in costs no second read.
+     */
+    @GetMapping(value = "/provider/schemes/{schemeId}/performance", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<Map<String, Object>>> participantPerformance(@PathVariable Long schemeId) {
+        try {
+            return ResponseEntity.ok(scoringService.getParticipantPerformance(schemeId));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
     @GetMapping(value = "/cycles/{cycleId}/prep", produces = MediaType.APPLICATION_JSON_VALUE)
     public Map<String, Object> prepStatus(@PathVariable Long cycleId) {
         return shipmentService.getPrepStatus(cycleId);

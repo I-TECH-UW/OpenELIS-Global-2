@@ -1,8 +1,10 @@
 package org.openelisglobal.eqa.service;
 
 import java.math.BigDecimal;
+import java.math.RoundingMode;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -20,6 +22,7 @@ import org.openelisglobal.eqa.dao.EQACycleDAO;
 import org.openelisglobal.eqa.dao.EQADistributionDAO;
 import org.openelisglobal.eqa.dao.EQAPanelDAO;
 import org.openelisglobal.eqa.dao.EQAPanelSampleDAO;
+import org.openelisglobal.eqa.dao.EQAProgramEnrollmentDAO;
 import org.openelisglobal.eqa.dao.EQAResultDAO;
 import org.openelisglobal.eqa.dao.EQARoundDAO;
 import org.openelisglobal.eqa.valueholder.EQACycle;
@@ -29,6 +32,7 @@ import org.openelisglobal.eqa.valueholder.EQADistributionStatus;
 import org.openelisglobal.eqa.valueholder.EQAPanel;
 import org.openelisglobal.eqa.valueholder.EQAPanelSample;
 import org.openelisglobal.eqa.valueholder.EQAPerformanceStatus;
+import org.openelisglobal.eqa.valueholder.EQAProgramEnrollment;
 import org.openelisglobal.eqa.valueholder.EQAProgramTest;
 import org.openelisglobal.eqa.valueholder.EQAResult;
 import org.openelisglobal.eqa.valueholder.EQARound;
@@ -54,6 +58,11 @@ public class EQAProviderScoringServiceImpl implements EQAProviderScoringService 
     /** FR-V2.5-07: unacceptable in 2 of the last 3 cycles is persistent failure. */
     private static final int PERSISTENT_FAILURE_WINDOW = 3;
     private static final int PERSISTENT_FAILURE_THRESHOLD = 2;
+
+    /** FR-V2.5-05's window: a laboratory's last four scored cycles. */
+    private static final int ROLLING_WINDOW = 4;
+
+    private static final String ACTIVE_ENROLLMENT = "Active";
 
     /**
      * The provider machine from submissions_open to scored, walked one edge at a
@@ -101,6 +110,8 @@ public class EQAProviderScoringServiceImpl implements EQAProviderScoringService 
     private EQAPanelSampleDAO eqaPanelSampleDAO;
     @Autowired
     private EQAPanelService eqaPanelService;
+    @Autowired
+    private EQAProgramEnrollmentDAO eqaProgramEnrollmentDAO;
 
     @Override
     @Transactional(readOnly = true)
@@ -549,6 +560,135 @@ public class EQAProviderScoringServiceImpl implements EQAProviderScoringService 
     @Transactional(readOnly = true)
     public List<EQAResult> reportedResultsFor(Long cycleId, Long organizationId) {
         return resultsFor(cycleId, organizationId);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
+    public List<Map<String, Object>> getParticipantPerformance(Long schemeId) {
+        if (eqaProgramService.get(schemeId) == null) {
+            throw new IllegalArgumentException("Unknown scheme " + schemeId);
+        }
+
+        // Newest first: the rolling window is the last four cycles a laboratory
+        // actually reported into, not the last four the scheme ran, so a lab that
+        // sat one out is judged on the four it took part in.
+        List<EQACycle> scoredCycles = eqaCycleDAO.findBySchemeIds(List.of(schemeId)).stream().filter(
+                cycle -> cycle.getStatus() == EQACycleStatus.SCORED || cycle.getStatus() == EQACycleStatus.CLOSED)
+                .sorted(Comparator.comparing(EQACycle::getCycleNumber,
+                        Comparator.nullsFirst(Comparator.reverseOrder())))
+                .toList();
+        Map<Long, Long> openFollowups = followupService.countOpenProviderFollowupsByOrganization();
+
+        List<Map<String, Object>> rows = new ArrayList<>();
+        for (EQAProgramEnrollment enrollment : currentEnrollments(schemeId)) {
+            rows.add(participantRow(enrollment, scoredCycles, openFollowups));
+        }
+        rows.sort(Comparator.comparing(row -> String.valueOf(row.get("organizationName")),
+                String.CASE_INSENSITIVE_ORDER));
+        return rows;
+    }
+
+    /**
+     * One enrollment per laboratory: the current one. Withdrawal is terminal
+     * (BR-013), so a laboratory re-admitted after leaving holds two rows, and the
+     * page must show it once with the status it holds now — otherwise a re-admitted
+     * participant appears twice with identical figures, since the rate is a
+     * property of the organization rather than of the paperwork.
+     */
+    private List<EQAProgramEnrollment> currentEnrollments(Long schemeId) {
+        Map<Long, EQAProgramEnrollment> byOrganization = new LinkedHashMap<>();
+        for (EQAProgramEnrollment enrollment : eqaProgramEnrollmentDAO.findByProgramId(schemeId)) {
+            byOrganization.merge(enrollment.getOrganizationId(), enrollment,
+                    (kept, candidate) -> supersedes(candidate, kept) ? candidate : kept);
+        }
+        return new ArrayList<>(byOrganization.values());
+    }
+
+    /** An active enrollment wins; otherwise the one enrolled later. */
+    private static boolean supersedes(EQAProgramEnrollment candidate, EQAProgramEnrollment kept) {
+        boolean candidateActive = ACTIVE_ENROLLMENT.equalsIgnoreCase(candidate.getStatus());
+        boolean keptActive = ACTIVE_ENROLLMENT.equalsIgnoreCase(kept.getStatus());
+        if (candidateActive != keptActive) {
+            return candidateActive;
+        }
+        if (candidate.getEnrollmentDate() == null || kept.getEnrollmentDate() == null) {
+            return candidate.getEnrollmentDate() != null;
+        }
+        return candidate.getEnrollmentDate().after(kept.getEnrollmentDate());
+    }
+
+    private Map<String, Object> participantRow(EQAProgramEnrollment enrollment, List<EQACycle> scoredCycles,
+            Map<Long, Long> openFollowups) {
+        Long organizationId = enrollment.getOrganizationId();
+        Organization organization = organizationService.get(String.valueOf(organizationId));
+
+        List<Map<String, Object>> history = new ArrayList<>();
+        int accepted = 0;
+        int judged = 0;
+        String mostRecent = null;
+        for (EQACycle cycle : scoredCycles) {
+            List<EQAResult> reported = resultsFor(cycle.getId(), organizationId);
+            if (reported.isEmpty()) {
+                continue; // this laboratory did not report into that cycle
+            }
+            Map<String, Object> cycleRow = new LinkedHashMap<>();
+            cycleRow.put("cycleId", cycle.getId());
+            cycleRow.put("cycleNumber", cycle.getCycleNumber());
+            cycleRow.put("cycleName", cycle.getCycleName());
+            List<Map<String, Object>> analytes = new ArrayList<>();
+            for (EQAResult result : reported) {
+                Map<String, Object> analyte = new LinkedHashMap<>();
+                analyte.put("test", testName(result.getTestId()));
+                analyte.put("reported", reportedOf(result));
+                analyte.put("zScore", result.getZScore());
+                analyte.put("performance",
+                        result.getPerformanceStatus() == null ? null : result.getPerformanceStatus().name());
+                analytes.add(analyte);
+                if (result.getPerformanceStatus() == null) {
+                    continue;
+                }
+                if (history.size() < ROLLING_WINDOW) {
+                    judged++;
+                    if (result.getPerformanceStatus() == EQAPerformanceStatus.ACCEPTABLE) {
+                        accepted++;
+                    }
+                }
+                if (mostRecent == null) {
+                    mostRecent = result.getPerformanceStatus().name();
+                }
+            }
+            cycleRow.put("analytes", analytes);
+            history.add(cycleRow);
+        }
+
+        Map<String, Object> row = new LinkedHashMap<>();
+        row.put("organizationId", organizationId);
+        row.put("organizationName",
+                organization == null ? String.valueOf(organizationId) : organization.getOrganizationName());
+        // The nearest thing the schema has to a region: an organization carries a
+        // city and a state, and no administrative area beyond them.
+        row.put("region", organization == null ? null : region(organization));
+        row.put("enrollmentStatus", enrollment.getStatus());
+        row.put("cyclesCounted", Math.min(history.size(), ROLLING_WINDOW));
+        row.put("accepted", accepted);
+        row.put("judged", judged);
+        // Null rather than 0% where nothing has been judged: a laboratory with no
+        // scored cycle has no rate, and printing zero would read as total failure.
+        row.put("passRate", judged == 0 ? null
+                : BigDecimal.valueOf(accepted * 100L).divide(BigDecimal.valueOf(judged), 1, RoundingMode.HALF_UP));
+        row.put("mostRecentPerformance", mostRecent);
+        row.put("openFollowups", openFollowups.getOrDefault(organizationId, 0L));
+        row.put("cycles", history.subList(0, Math.min(history.size(), ROLLING_WINDOW)));
+        return row;
+    }
+
+    private static String region(Organization organization) {
+        String city = organization.getCity();
+        String state = organization.getState();
+        if (GenericValidator.isBlankOrNull(city)) {
+            return GenericValidator.isBlankOrNull(state) ? null : state;
+        }
+        return GenericValidator.isBlankOrNull(state) ? city : city + ", " + state;
     }
 
     private List<EQAResult> resultsFor(Long cycleId, Long organizationId) {
