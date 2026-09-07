@@ -357,7 +357,7 @@ test.describe("OGC-782 microbiology MVP", () => {
       await accordionButton(page, "Isolates").click();
       await expect(page).toHaveURL(/section=isolates/);
       await expect(
-        page.getByRole("button", { name: "Update identification" }),
+        page.getByRole("button", { name: "Edit isolate" }),
       ).toBeDisabled();
       await expect(
         page.getByRole("button", { name: "Create isolate" }),
