@@ -1,7 +1,6 @@
 # Unified Playwright E2E executor — parameterized for both core and harness.
-# Called by e2e-authoritative-reusable.yml twice: once for core projects
-# (build.docker-compose.yml only) and once for harness projects (with
-# analyzer bridge overlay). Runs test shards, merges blob reports into
+# Called for core and analyzer harness projects.
+# Runs test shards, merges blob reports into
 # a single HTML report, and enforces a gate.
 name: E2E / Playwright (Reusable)
 
@@ -16,6 +15,11 @@ on:
         description: "Prefix for artifact names (e.g. core, harness)"
         required: true
         type: string
+      shard_indices:
+        description: "JSON array of shard indices; use [1] for a single story"
+        required: false
+        type: string
+        default: "[1,2]"
       compose_files:
         description: "Comma-separated Docker Compose files to start"
         required: false
@@ -122,7 +126,7 @@ jobs:
 
   # ─── Test Shards ────────────────────────────────────────────────────────────
   test-shards:
-    name: ${{ inputs.artifact_prefix }} ${{ matrix.shard_index }}/2
+    name: ${{ inputs.artifact_prefix }} ${{ matrix.shard_index }}/${{ strategy.job-total }}
     needs: pre-warm-playwright
     runs-on: ubuntu-latest
     permissions:
@@ -132,7 +136,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        shard_index: [1, 2]
+        shard_index: ${{ fromJSON(inputs.shard_indices) }}
     steps:
       - name: Checkout code
         uses: actions/checkout@v6
@@ -350,7 +354,7 @@ jobs:
           for p in "${PROJECTS[@]}"; do
             CMD+=("--project=$p")
           done
-          CMD+=("--shard=${{ matrix.shard_index }}/2")
+          CMD+=("--shard=${{ matrix.shard_index }}/${{ strategy.job-total }}")
           if [[ "${{ inputs.setup_analyzer_harness }}" == "true" ]]; then
             CMD+=("--workers=1")
           fi

@@ -46,7 +46,7 @@ public class DeviceTransformServiceImpl implements DeviceTransformService {
                 List<Analyzer> analyzers = analyzerService.getAllMatching("fhirUuid", uuid);
 
                 if (!analyzers.isEmpty()) {
-                    analyzer = analyzerService.getWithType(analyzers.get(0).getId()).orElse(analyzers.get(0));
+                    analyzer = analyzerService.getWithBinding(analyzers.get(0).getId()).orElse(analyzers.get(0));
                 } else {
                     analyzer.setFhirUuid(uuid);
                 }
