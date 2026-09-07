@@ -90,26 +90,42 @@ public abstract class ReflexAction {
 
     protected void createReflexedAnalysis(Test test) {
         if (test != null) {
-            // OGC-189 (M4, decision D5): a reflex must NOT fire into a
-            // deactivated lab unit. Both reflex entry points funnel through
-            // here, so this is the one gate.
+            Analysis currentAnalysis = result.getAnalysis();
+            analysisService.getData(currentAnalysis);
+
+            // OGC-189 (M4, decision D5): a reflex must never file work into a
+            // deactivated lab unit. The rule is about WHERE THE WORK LANDS, and
+            // a reflexed analysis is filed under the PARENT's lab unit (see the
+            // note on setTestSection below) — so that is the unit to test, not
+            // the reflexed test's own configured one.
             //
-            // The block is logged at ERROR deliberately. A susceptibility
-            // reflex that silently fails to fire is a patient-safety event, not
-            // a configuration annoyance: there is no user present at this point
-            // to notice, so the only way anyone learns is from the record left
-            // here (comment 37313 §7).
-            if (!SpringContext.getBean(EffectiveTestStatusService.class).isEffectivelyActive(test)) {
-                TestSection blockedSection = test.getTestSection();
-                LogEvent.logError(this.getClass().getSimpleName(), "createReflexedAnalysis", "REFLEX BLOCKED: test '"
-                        + test.getName() + "' (id " + test.getId() + ") was not generated because its lab unit '"
-                        + (blockedSection == null ? "(none)" : blockedSection.getTestSectionName())
-                        + "' is inactive. Reactivate the lab unit or reassign the test to restore this" + " reflex.");
+            // Gating on the reflexed test's own unit instead would get both
+            // edge cases wrong: it would block a reflex that was going to land
+            // in a perfectly active parent unit, and let one through into a
+            // deactivated parent unit.
+            //
+            // The test's own active flag still applies — an inactive test is
+            // not orderable by any route.
+            EffectiveTestStatusService effectiveTestStatus = SpringContext.getBean(EffectiveTestStatusService.class);
+            TestSection owningSection = currentAnalysis == null ? null : currentAnalysis.getTestSection();
+            boolean testItselfInactive = !"Y".equals(test.getIsActive());
+            boolean owningSectionInactive = effectiveTestStatus.isLabUnitInactive(owningSection);
+            if (testItselfInactive || owningSectionInactive) {
+                // Logged at ERROR deliberately. A susceptibility reflex that
+                // silently fails to fire is a patient-safety event, not a
+                // configuration annoyance: no user is present at this point, so
+                // the only way anyone learns is from the record left here
+                // (comment 37313 §7).
+                String reason = testItselfInactive ? "the test itself is inactive"
+                        : "its lab unit '" + (owningSection == null ? "(none)" : owningSection.getTestSectionName())
+                                + "' is inactive";
+                LogEvent.logError(this.getClass().getSimpleName(), "createReflexedAnalysis",
+                        "REFLEX BLOCKED: test '" + test.getName() + "' (id " + test.getId()
+                                + ") was not generated because " + reason
+                                + ". Reactivate it, or reassign the test, to restore this reflex.");
                 generatedAnalysis = null;
                 return;
             }
-            Analysis currentAnalysis = result.getAnalysis();
-            analysisService.getData(currentAnalysis);
 
             generatedAnalysis = new Analysis();
             generatedAnalysis.setTest(test);
@@ -130,14 +146,11 @@ public abstract class ReflexAction {
                 generatedAnalysis.setSampleItem(currentAnalysis.getSampleItem());
                 generatedAnalysis.setSampleTypeName(currentAnalysis.getSampleTypeName());
             }
-            // NOTE (OGC-189 M4): the generated analysis inherits the PARENT's
-            // lab unit, not the reflexed test's own. Pre-existing behaviour,
-            // left as-is here — changing where reflexed work is filed is an
-            // order-routing change well beyond this cascade. It does mean the
-            // gate above and this assignment can disagree: the gate asks
-            // whether the reflexed *test's* unit is active (the right question
-            // — that is the unit configured to do the work), while the row is
-            // filed under the parent's. Worth settling separately.
+            // The generated analysis inherits the PARENT's lab unit rather than
+            // the reflexed test's own — pre-existing routing, deliberately
+            // unchanged. The gate above tests this same unit, so the check and
+            // the filing now agree: a reflex fires only when the unit it will
+            // actually land in is active (OGC-189 T159).
             generatedAnalysis.setTestSection(currentAnalysis.getTestSection());
         }
     }
