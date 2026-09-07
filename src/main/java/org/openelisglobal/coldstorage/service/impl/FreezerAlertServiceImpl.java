@@ -7,10 +7,13 @@ import java.util.Map;
 import org.openelisglobal.alert.service.AlertService;
 import org.openelisglobal.alert.valueholder.Alert;
 import org.openelisglobal.alert.valueholder.AlertSeverity;
+import org.openelisglobal.alert.valueholder.AlertStatus;
 import org.openelisglobal.alert.valueholder.AlertType;
 import org.openelisglobal.coldstorage.event.FreezerTemperatureThresholdViolatedEvent;
 import org.openelisglobal.coldstorage.event.FreezerTransmissionFailedEvent;
+import org.openelisglobal.coldstorage.event.FreezerTransmissionRecoveredEvent;
 import org.openelisglobal.coldstorage.service.FreezerAlertService;
+import org.openelisglobal.common.util.UserContextHolder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +31,9 @@ public class FreezerAlertServiceImpl implements FreezerAlertService {
 
     @Autowired
     private AlertService alertService;
+
+    @Autowired
+    private UserContextHolder userContextHolder;
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
@@ -78,6 +84,35 @@ public class FreezerAlertServiceImpl implements FreezerAlertService {
             createFreezerOfflineAlert(event.getFreezerId(), event.getErrorMessage());
         } catch (Exception e) {
             logger.error("Error creating freezer offline alert for freezer ID: {}", event.getFreezerId(), e);
+        }
+    }
+
+    @Override
+    @Transactional
+    public void resolveFreezerOfflineAlerts(Long freezerId) {
+        for (Alert alert : alertService.getAlertsByEntity("Freezer", freezerId)) {
+            if (alert.getAlertType() != AlertType.FREEZER_OFFLINE) {
+                continue;
+            }
+            if (alert.getStatus() != AlertStatus.OPEN && alert.getStatus() != AlertStatus.ACKNOWLEDGED) {
+                continue;
+            }
+            alertService.resolveAlert(alert.getId(), Integer.valueOf(userContextHolder.requireSysUserId()),
+                    "Freezer resumed responding to monitoring polls");
+        }
+    }
+
+    // AFTER_COMMIT for the same reason alert creation is: a rolled-back ingest()
+    // must not resolve an alert whose recovery reading was never stored.
+    @Override
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Async
+    public void handleFreezerTransmissionRecovered(FreezerTransmissionRecoveredEvent event) {
+        try {
+            resolveFreezerOfflineAlerts(event.getFreezerId());
+        } catch (Exception e) {
+            logger.error("Error resolving freezer offline alerts for freezer ID: {}", event.getFreezerId(), e);
         }
     }
 

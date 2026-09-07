@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import org.openelisglobal.alert.valueholder.Alert;
 import org.openelisglobal.coldstorage.event.FreezerTemperatureThresholdViolatedEvent;
 import org.openelisglobal.coldstorage.event.FreezerTransmissionFailedEvent;
+import org.openelisglobal.coldstorage.event.FreezerTransmissionRecoveredEvent;
 
 public interface FreezerAlertService {
 
@@ -47,4 +48,19 @@ public interface FreezerAlertService {
      * @param event The transmission failure event
      */
     void handleFreezerTransmissionFailed(FreezerTransmissionFailedEvent event);
+
+    /**
+     * Resolve every open or acknowledged offline alert for a freezer that has
+     * resumed responding, so a later outage raises a fresh alert of its own.
+     *
+     * @param freezerId Freezer ID
+     */
+    void resolveFreezerOfflineAlerts(Long freezerId);
+
+    /**
+     * Event listener for FreezerTransmissionRecoveredEvent.
+     *
+     * @param event The transmission recovery event
+     */
+    void handleFreezerTransmissionRecovered(FreezerTransmissionRecoveredEvent event);
 }

@@ -3,6 +3,7 @@ package org.openelisglobal.coldstorage.service.impl;
 import java.math.BigDecimal;
 import java.time.OffsetDateTime;
 import java.util.List;
+import org.openelisglobal.coldstorage.event.FreezerTransmissionRecoveredEvent;
 import org.openelisglobal.coldstorage.service.FreezerReadingService;
 import org.openelisglobal.coldstorage.service.ReadingIngestionService;
 import org.openelisglobal.coldstorage.service.ThresholdEvaluationService;
@@ -57,6 +58,8 @@ public class ReadingIngestionServiceImpl implements ReadingIngestionService {
                 ? thresholdEvaluationService.evaluateStatus(temperature, humidity, profile, freezer, recordedAt)
                 : null;
 
+        boolean recoveredFromOffline = transmissionOk && lastPollFailed(freezer.getId());
+
         FreezerReading savedReading = freezerReadingService.saveReading(freezer, recordedAt, temperature, humidity,
                 temperature2, instantaneousStatus, transmissionOk, errorMessage);
 
@@ -65,6 +68,10 @@ public class ReadingIngestionServiceImpl implements ReadingIngestionService {
                 publishTransmissionFailedEvent(freezer.getId(), errorMessage, savedReading.getId());
             }
             return;
+        }
+
+        if (recoveredFromOffline) {
+            publishTransmissionRecoveredEvent(freezer.getId());
         }
 
         if (profile != null) {
@@ -83,6 +90,20 @@ public class ReadingIngestionServiceImpl implements ReadingIngestionService {
             return false;
         }
         return recent.stream().allMatch(reading -> Boolean.FALSE.equals(reading.getTransmissionOk()));
+    }
+
+    /**
+     * Whether the poll before this one failed. Read before the current reading is
+     * saved, or it would answer about this poll instead of the previous one.
+     */
+    private boolean lastPollFailed(Long freezerId) {
+        List<FreezerReading> previous = freezerReadingService.getRecentReadings(freezerId, 1);
+        return !previous.isEmpty() && Boolean.FALSE.equals(previous.get(0).getTransmissionOk());
+    }
+
+    private void publishTransmissionRecoveredEvent(Long freezerId) {
+        eventPublisher.publishEvent(new FreezerTransmissionRecoveredEvent(this, freezerId));
+        LOGGER.info("Published transmission recovery event for freezer {}", freezerId);
     }
 
     private void publishTransmissionFailedEvent(Long freezerId, String errorMessage, Long readingId) {

@@ -205,6 +205,8 @@ public class AlertNotificationService {
         switch (alertType) {
         case FREEZER_TEMPERATURE:
             return NotificationNature.FREEZER_TEMPERATURE_ALERT;
+        // A dead sensor is an equipment failure: no new nature or toggle.
+        case FREEZER_OFFLINE:
         case EQUIPMENT_FAILURE:
             return NotificationNature.EQUIPMENT_ALERT;
         case INVENTORY_LOW:

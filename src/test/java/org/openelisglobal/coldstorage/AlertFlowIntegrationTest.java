@@ -38,6 +38,9 @@ public class AlertFlowIntegrationTest extends BaseWebContextSensitiveTest {
     @Before
     public void setUp() throws Exception {
         executeDataSetWithStateManagement("testdata/alert_flow_integration.xml");
+        // The fixture replaces system_user with its own testuser, so auto-resolution
+        // has no resolvable identity unless the principal matches a fixture row.
+        authenticateAs("testuser");
     }
 
     @Test
@@ -369,5 +372,68 @@ public class AlertFlowIntegrationTest extends BaseWebContextSensitiveTest {
         List<Alert> alerts = alertService.getAlertsByEntity("Freezer", freezerId);
         assertEquals("Third consecutive failure should raise the offline alert", 1, alerts.size());
         assertEquals(AlertType.FREEZER_OFFLINE, alerts.get(0).getAlertType());
+    }
+
+    @Test
+    public void testOfflineAlertResolvesWhenTransmissionRecovers() throws InterruptedException {
+        Long freezerId = 100L;
+        Freezer freezer = freezerService.findById(freezerId).orElse(null);
+        assertNotNull("Freezer should exist", freezer);
+
+        OffsetDateTime firstPoll = OffsetDateTime.now().minusMinutes(10);
+        ingestFailedPolls(freezer, firstPoll, 3);
+        Thread.sleep(500);
+
+        List<Alert> raised = alertService.getAlertsByEntity("Freezer", freezerId);
+        assertEquals("Three consecutive failures should raise one offline alert", 1, raised.size());
+        assertEquals(AlertStatus.OPEN, raised.get(0).getStatus());
+
+        // -40C sits inside profile 1's warning band, so this poll raises no
+        // temperature alert of its own.
+        readingIngestionService.ingest(freezer, firstPoll.plusMinutes(3), new BigDecimal("-40.0"), null, null, true,
+                null);
+        Thread.sleep(500);
+
+        List<Alert> afterRecovery = alertService.getAlertsByEntity("Freezer", freezerId);
+        assertEquals("Recovery should not add an alert", 1, afterRecovery.size());
+        Alert offlineAlert = afterRecovery.get(0);
+        assertEquals(AlertType.FREEZER_OFFLINE, offlineAlert.getAlertType());
+        assertEquals("A device answering again must end the offline alert's lifecycle", AlertStatus.RESOLVED,
+                offlineAlert.getStatus());
+        assertNotNull("Resolution should record when the alert ended", offlineAlert.getEndTime());
+    }
+
+    @Test
+    public void testOutageAfterRecoveryRaisesItsOwnOfflineAlert() throws InterruptedException {
+        Long freezerId = 100L;
+        Freezer freezer = freezerService.findById(freezerId).orElse(null);
+        assertNotNull("Freezer should exist", freezer);
+
+        OffsetDateTime firstPoll = OffsetDateTime.now().minusMinutes(20);
+        ingestFailedPolls(freezer, firstPoll, 3);
+        Thread.sleep(500);
+
+        readingIngestionService.ingest(freezer, firstPoll.plusMinutes(3), new BigDecimal("-40.0"), null, null, true,
+                null);
+        Thread.sleep(500);
+
+        ingestFailedPolls(freezer, firstPoll.plusMinutes(4), 3);
+        Thread.sleep(500);
+
+        List<Alert> alerts = alertService.getAlertsByEntity("Freezer", freezerId);
+        assertEquals("A second outage must raise its own alert, not bump a duplicate count", 2, alerts.size());
+        for (Alert alert : alerts) {
+            assertEquals(AlertType.FREEZER_OFFLINE, alert.getAlertType());
+        }
+        assertEquals("The first outage's alert should still be resolved", 1,
+                alerts.stream().filter(alert -> alert.getStatus() == AlertStatus.RESOLVED).count());
+        assertEquals("The second outage should leave one open alert", 1,
+                alerts.stream().filter(alert -> alert.getStatus() == AlertStatus.OPEN).count());
+    }
+
+    private void ingestFailedPolls(Freezer freezer, OffsetDateTime firstPoll, int count) {
+        for (int i = 0; i < count; i++) {
+            readingIngestionService.ingest(freezer, firstPoll.plusMinutes(i), null, null, null, false, "timeout");
+        }
     }
 }
