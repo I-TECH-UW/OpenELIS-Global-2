@@ -68,6 +68,12 @@
   <!-- QA Phase D.2 — OGC-686: accreditation page menu row -->
   <include file="liquibase/qa/014-add-accreditation-menu.xml" />
 
+  <!-- A name for the point the EQA V2 set begins, so a rollback can say where to
+       stop rather than counting backwards through whatever core changesets sit
+       above it. Included here rather than in file order for that reason: the tag
+       has to be applied before the first EQA V2 changeset, not after the last. -->
+  <include file="liquibase/qa/040-eqa-v2-start-tag.xml" />
+
   <!-- EQA V2.1 T-08 — OGC-609: cycle/round/state-transition-audit spine -->
   <include file="liquibase/qa/015-create-eqa-cycle-tables.xml" />
 

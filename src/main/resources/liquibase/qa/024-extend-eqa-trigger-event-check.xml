@@ -31,6 +31,14 @@
         </sql>
         <rollback>
             <sql>
+                <!-- The narrow CHECK cannot come back over rows carrying the value
+                     this changeset widened it for, and the table is full of them on
+                     any installation that used the feature. Those rows belong to the
+                     feature being removed, so deleting them is the rollback rather
+                     than collateral damage, and the table itself is dropped later
+                     in the same rollback anyway. -->
+                DELETE FROM clinlims.eqa_cycle_state_transition WHERE trigger_event = 'PANEL_RECEIPT';
+
                 ALTER TABLE clinlims.eqa_cycle_state_transition
                 DROP CONSTRAINT eqa_cycle_state_transition_trigger_event_chk;
 

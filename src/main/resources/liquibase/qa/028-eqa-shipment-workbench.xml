@@ -64,6 +64,10 @@
         </sql>
         <rollback>
             <sql>
+                <!-- Same trap as qa/024: the value this changeset widened the CHECK
+                     for has to go before the narrow definition returns. -->
+                DELETE FROM clinlims.eqa_cycle_state_transition WHERE trigger_event = 'FIRST_SHIPMENT_SENT';
+
                 ALTER TABLE clinlims.eqa_cycle_state_transition
                 DROP CONSTRAINT eqa_cycle_state_transition_trigger_event_chk;
 

@@ -36,6 +36,13 @@
         </sql>
         <rollback>
             <sql>
+                <!-- The backfill's own rollback removes the V1_BACKFILL rows with the
+                     synthetic cycles they mark, and it runs before this one. This is
+                     the belt: if it refused (a backfilled cycle that has since been
+                     used), those rows are still here and the narrow CHECK would fail
+                     on them with a constraint name rather than an explanation. -->
+                DELETE FROM clinlims.eqa_cycle_state_transition WHERE trigger_event = 'V1_BACKFILL';
+
                 ALTER TABLE clinlims.eqa_cycle_state_transition
                 DROP CONSTRAINT eqa_cycle_state_transition_trigger_event_chk;
 
