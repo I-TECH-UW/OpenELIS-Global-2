@@ -36,21 +36,27 @@ describe("appNavigation", () => {
     expect(isInAppRoute("")).toBe(false);
   });
 
-  it("reloads the document when a screen asks to show its data again", () => {
+  it("remounts through the router instead of reloading the document", () => {
     const { reload } = stubWindowLocation();
-    unregister = registerAppNavigation({ onNavigate: vi.fn() });
+    const onSoftReload = vi.fn();
+    unregister = registerAppNavigation({
+      onSoftReload,
+      onNavigate: vi.fn(),
+    });
 
     softReload();
 
-    // Remounting the routed subtree is not equivalent for screens whose state
-    // lives above it, so this stays a real reload until each is converted.
-    expect(reload).toHaveBeenCalledTimes(1);
+    expect(onSoftReload).toHaveBeenCalledTimes(1);
+    expect(reload).not.toHaveBeenCalled();
   });
 
   it("routes an in-app target and leaves the app for anything else", () => {
     const { assign } = stubWindowLocation();
     const onNavigate = vi.fn();
-    unregister = registerAppNavigation({ onNavigate });
+    unregister = registerAppNavigation({
+      onSoftReload: vi.fn(),
+      onNavigate,
+    });
 
     navigateTo("/MasterListsPage/userManagement");
     expect(onNavigate).toHaveBeenCalledWith("/MasterListsPage/userManagement");
@@ -61,10 +67,12 @@ describe("appNavigation", () => {
   });
 
   it("falls back to a document load before the router registers", () => {
-    const { assign } = stubWindowLocation();
+    const { assign, reload } = stubWindowLocation();
 
+    softReload();
     navigateTo("/MasterListsPage/userManagement");
 
+    expect(reload).toHaveBeenCalledTimes(1);
     expect(assign).toHaveBeenCalledWith("/MasterListsPage/userManagement");
   });
 });
