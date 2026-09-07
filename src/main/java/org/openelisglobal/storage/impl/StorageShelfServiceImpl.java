@@ -1,6 +1,5 @@
 package org.openelisglobal.storage.impl;
 
-import jakarta.transaction.Transactional;
 import java.util.List;
 import java.util.Optional;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
@@ -10,6 +9,7 @@ import org.openelisglobal.storage.valueholder.StorageDevice;
 import org.openelisglobal.storage.valueholder.StorageShelf;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class StorageShelfServiceImpl extends BaseObjectServiceImpl<StorageShelf, Integer>

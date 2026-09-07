@@ -1,6 +1,5 @@
 package org.openelisglobal.storage.impl;
 
-import jakarta.transaction.Transactional;
 import java.util.Optional;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
 import org.openelisglobal.storage.dao.StorageRoomDAO;
@@ -8,6 +7,7 @@ import org.openelisglobal.storage.service.StorageRoomService;
 import org.openelisglobal.storage.valueholder.StorageRoom;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class StorageRoomServiceImpl extends BaseObjectServiceImpl<StorageRoom, Integer> implements StorageRoomService {

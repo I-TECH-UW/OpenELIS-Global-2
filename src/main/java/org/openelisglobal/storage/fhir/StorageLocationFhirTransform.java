@@ -1,5 +1,6 @@
 package org.openelisglobal.storage.fhir;
 
+import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import java.math.BigDecimal;
 import java.util.HashMap;
 import java.util.List;
@@ -63,7 +64,8 @@ public class StorageLocationFhirTransform {
 
     private static final String OPENELIS_STORAGE_CODE_SYSTEM = "http://openelis.org/storage-location-code";
     private static final String MCSD_PROFILE = "http://ihe.net/fhir/StructureDefinition/IHE.mCSD.Location";
-    private static final String STORAGE_HIERARCHY_TAG_SYSTEM = "http://openelis.org/fhir/tag/storage-hierarchy";
+    public static final String STORAGE_HIERARCHY_TAG_SYSTEM = "http://openelis.org/fhir/tag/storage-hierarchy";
+    public static final String STORAGE_BOX_TYPE_SYSTEM = "http://openelis.org/fhir/CodeSystem/storage-box-type";
 
     // Extension URLs
     private static final String EXT_STORAGE_TEMPERATURE = "http://openelis.org/fhir/extension/storage-temperature";
@@ -93,10 +95,6 @@ public class StorageLocationFhirTransform {
         }
         if (location.hasName()) {
             room.setName(location.getName());
-            String generatedCode = codeGenerationService.generateCodeFromName(location.getName(), "room");
-            if (GenericValidator.isBlankOrNull(room.getCode())) {
-                room.setCode(generatedCode);
-            }
         }
         if (location.hasDescription()) {
             room.setDescription(location.getDescription());
@@ -131,6 +129,7 @@ public class StorageLocationFhirTransform {
         coding.setCode("ro");
         coding.setDisplay("Room");
         physicalType.addCoding(coding);
+        physicalType.setText("Storage Room");
         location.setPhysicalType(physicalType);
 
         // Meta profile
@@ -158,27 +157,16 @@ public class StorageLocationFhirTransform {
 
         if (location.hasName()) {
             device.setName(location.getName());
-            String generatedCode = codeGenerationService.generateCodeFromName(location.getName(), "device");
-            if (GenericValidator.isBlankOrNull(device.getCode())) {
-                device.setCode(generatedCode);
-            }
-
         }
 
         if (location.hasStatus()) {
             device.setActive(location.getStatus() == LocationStatus.ACTIVE);
         }
 
-        if (!location.getIdentifier().isEmpty()) {
-            device.setCode(location.getIdentifierFirstRep().getValue());
-        }
-
-        if (location.hasPartOf() && location.getPartOf().hasReference()) {
-            String refId = location.getPartOf().getReferenceElement().getIdPart();
-            if (refId != null) {
-                StorageRoom room = getItemByFhirId(UUID.fromString(refId), storageRoomService);
-                device.setParentRoom(room);
-            }
+        if (hasPartOf(location)) {
+            device.setParentRoom(resolveParent(location, storageRoomService, "Storage Room"));
+        } else if (device.getParentRoom() == null) {
+            throw new InvalidRequestException("Storage Equipment requires partOf referencing its Storage Room");
         }
 
         if (!location.getType().isEmpty()) {
@@ -187,6 +175,10 @@ public class StorageLocationFhirTransform {
                 String typeCode = typeConcept.getCodingFirstRep().getCode();
                 device.setType(typeCode);
             }
+        }
+        if (GenericValidator.isBlankOrNull(device.getType())) {
+            throw new InvalidRequestException(
+                    "Storage Equipment requires Location.type with a storage-device-type coding (e.g. freezer)");
         }
 
         for (Extension ext : location.getExtension()) {
@@ -322,23 +314,16 @@ public class StorageLocationFhirTransform {
 
         if (location.hasName()) {
             shelf.setLabel(location.getName());
-            String generatedCode = codeGenerationService.generateCodeFromName(location.getName(), "shelf");
-            if (GenericValidator.isBlankOrNull(shelf.getCode())) {
-                shelf.setCode(generatedCode);
-            }
         }
 
         if (location.hasStatus()) {
             shelf.setActive(location.getStatus() == LocationStatus.ACTIVE);
         }
 
-        if (location.hasPartOf() && location.getPartOf().hasReference()) {
-            String refId = location.getPartOf().getReferenceElement().getIdPart();
-
-            if (refId != null) {
-                StorageDevice device = getItemByFhirId(UUID.fromString(refId), storageDeviceService);
-                shelf.setParentDevice(device);
-            }
+        if (hasPartOf(location)) {
+            shelf.setParentDevice(resolveParent(location, storageDeviceService, "Storage Equipment"));
+        } else if (shelf.getParentDevice() == null) {
+            throw new InvalidRequestException("Storage Shelf requires partOf referencing its Storage Equipment");
         }
         for (Extension ext : location.getExtension()) {
 
@@ -416,9 +401,8 @@ public class StorageLocationFhirTransform {
 
         if (location.hasName()) {
             rack.setLabel(location.getName());
-            String generatedCode = codeGenerationService.generateCodeFromName(location.getName(), "rack");
             if (GenericValidator.isBlankOrNull(rack.getCode())) {
-                rack.setCode(generatedCode);
+                rack.setCode(codeGenerationService.generateCodeFromName(location.getName(), "rack"));
             }
         }
 
@@ -426,13 +410,10 @@ public class StorageLocationFhirTransform {
             rack.setActive(location.getStatus() == LocationStatus.ACTIVE);
         }
 
-        if (location.hasPartOf() && location.getPartOf().hasReference()) {
-            String refId = location.getPartOf().getReferenceElement().getIdPart();
-
-            if (refId != null) {
-                StorageShelf shelf = getItemByFhirId(UUID.fromString(refId), storageShelfService);
-                rack.setParentShelf(shelf);
-            }
+        if (hasPartOf(location)) {
+            rack.setParentShelf(resolveParent(location, storageShelfService, "Storage Shelf"));
+        } else if (rack.getParentShelf() == null) {
+            throw new InvalidRequestException("Storage Rack requires partOf referencing its Storage Shelf");
         }
 
         return rack;
@@ -510,17 +491,21 @@ public class StorageLocationFhirTransform {
             box.setActive(location.getStatus() == LocationStatus.ACTIVE);
         }
 
-        if (location.hasPartOf() && location.getPartOf().hasReference()) {
-            String refId = location.getPartOf().getReferenceElement().getIdPart();
-
-            if (refId != null) {
-                StorageRack rack = getItemByFhirId(UUID.fromString(refId), storageRackService);
-                box.setParentRack(rack);
-            }
+        if (hasPartOf(location)) {
+            box.setParentRack(resolveParent(location, storageRackService, "Storage Rack"));
+        } else if (box.getParentRack() == null) {
+            throw new InvalidRequestException("Storage Box requires partOf referencing its Storage Rack");
         }
 
-        if (location.hasPhysicalType() && location.getPhysicalType().hasText()) {
-            box.setType(location.getPhysicalType().getText());
+        // physicalType.text names the storage level; the container format (96-well,
+        // 9x9) travels in Location.type so a round-trip cannot confuse the two.
+        if (!location.getType().isEmpty()) {
+            CodeableConcept typeConcept = location.getTypeFirstRep();
+            if (typeConcept.hasCoding() && typeConcept.getCodingFirstRep().hasCode()) {
+                box.setType(typeConcept.getCodingFirstRep().getCode());
+            } else if (typeConcept.hasText()) {
+                box.setType(typeConcept.getText());
+            }
         }
 
         Integer rows = null;
@@ -567,7 +552,8 @@ public class StorageLocationFhirTransform {
         Location location = new Location();
 
         location.setId(box.getFhirUuidAsString());
-        location.setStatus(LocationStatus.ACTIVE);
+        location.setStatus(
+                box.getActive() != null && box.getActive() ? LocationStatus.ACTIVE : LocationStatus.INACTIVE);
         location.setMode(LocationMode.INSTANCE);
 
         StorageRack rack = box.getParentRack();
@@ -594,8 +580,15 @@ public class StorageLocationFhirTransform {
         coding.setCode("co");
         coding.setDisplay("Container");
         physicalType.addCoding(coding);
-        physicalType.setText(box.getType() != null ? box.getType() : "Storage Box");
+        physicalType.setText("Storage Box");
         location.setPhysicalType(physicalType);
+
+        if (!GenericValidator.isBlankOrNull(box.getType())) {
+            CodeableConcept boxType = new CodeableConcept();
+            boxType.addCoding(new Coding().setSystem(STORAGE_BOX_TYPE_SYSTEM).setCode(box.getType()));
+            boxType.setText(box.getType());
+            location.addType(boxType);
+        }
 
         location.setPartOf(partOf);
 
@@ -646,6 +639,21 @@ public class StorageLocationFhirTransform {
             return str;
         }
         return str.substring(0, 1).toUpperCase() + str.substring(1).toLowerCase();
+    }
+
+    /**
+     * Mirrors an already-built Location to the FHIR store. Callers that also return
+     * the Location should build it once and pass it here: the entity overloads
+     * below re-run the transform on another thread, and a Hibernate entity read
+     * from two threads at once is not safe.
+     */
+    @Async
+    public void syncToFhir(Location location, boolean isCreate) {
+        try {
+            persistLocation(location, isCreate);
+        } catch (Exception e) {
+            LogEvent.logError("Error syncing Location to FHIR: " + e.getMessage(), e);
+        }
     }
 
     /**
@@ -732,6 +740,30 @@ public class StorageLocationFhirTransform {
             LogEvent.logError("Error persisting Location to FHIR server: " + e.getMessage(), e);
             throw new FhirLocalPersistingException(e);
         }
+    }
+
+    private static boolean hasPartOf(Location location) {
+        return location.hasPartOf() && location.getPartOf().hasReference();
+    }
+
+    /**
+     * Resolves the parent named by partOf, answering 400 rather than letting a null
+     * parent surface later as a database constraint violation.
+     */
+    private <T extends BaseObject<?>> T resolveParent(Location location, BaseObjectService<T, ?> service,
+            String parentCategory) {
+        String refId = location.getPartOf().getReferenceElement().getIdPart();
+        UUID uuid;
+        try {
+            uuid = UUID.fromString(refId);
+        } catch (IllegalArgumentException | NullPointerException e) {
+            throw new InvalidRequestException("partOf reference is not a valid Location id: " + refId);
+        }
+        T parent = getItemByFhirId(uuid, service);
+        if (parent == null) {
+            throw new InvalidRequestException(parentCategory + " not found for partOf reference: " + refId);
+        }
+        return parent;
     }
 
     public <T extends BaseObject<?>> T getItemByFhirId(UUID fhirUuid, BaseObjectService<T, ?> service) {
