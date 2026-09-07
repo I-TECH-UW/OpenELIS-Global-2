@@ -23,6 +23,8 @@ vi.mock("../../../../utils/Utils", () => ({
   // parses what its own dateFormat says it will.
   formatDateOnly: (value) =>
     value ? String(value).slice(0, 10).split("-").reverse().join("/") : "",
+  // This suite is about dispatch and the manifest, not about grants.
+  hasQaPermission: () => true,
 }));
 
 vi.mock("../../../../common/PageBreadCrumb", () => ({

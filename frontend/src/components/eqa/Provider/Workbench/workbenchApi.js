@@ -48,15 +48,21 @@ export const fetchShipmentRows = (cycleId, callback) =>
  * Every write answers with {ok, body}: on failure the body is the server's
  * own {error: "..."} so the operator reads the actual refusal, not a guess.
  */
+// The status travels with the body: a 403 needs a sentence naming the grant the
+// action wanted, and Spring's own body for one says only "Forbidden".
 const withBody = (callback) => (response) => {
   if (!response) {
-    callback({ ok: false, body: null });
+    callback({ ok: false, status: 0, body: null });
     return;
   }
   response
     .json()
-    .then((body) => callback({ ok: response.ok, body }))
-    .catch(() => callback({ ok: response.ok, body: null }));
+    .then((body) =>
+      callback({ ok: response.ok, status: response.status, body }),
+    )
+    .catch(() =>
+      callback({ ok: response.ok, status: response.status, body: null }),
+    );
 };
 
 /**

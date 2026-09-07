@@ -6,6 +6,7 @@ import { IntlProvider } from "react-intl";
 import { MemoryRouter } from "react-router-dom";
 import messages from "../../../../../languages/en.json";
 import ReceiptMonitor from "../ReceiptMonitor";
+import UserSessionDetailsContext from "../../../../../UserSessionDetailsContext";
 import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
@@ -64,17 +65,35 @@ const SCORES = [
 
 const jsonResponse = (ok, body) => ({ ok, json: () => Promise.resolve(body) });
 
-const renderTab = (cycleStatus = "SUBMISSIONS_OPEN") =>
+const PROVIDER_AND_MANAGER = [
+  "qa.view.eqa",
+  "qa.eqa.provider",
+  "qa.manage.eqa",
+];
+
+const renderTab = (
+  cycleStatus = "SUBMISSIONS_OPEN",
+  { permissions = PROVIDER_AND_MANAGER, onNotice = vi.fn() } = {},
+) =>
   render(
     <IntlProvider locale="en" messages={messages}>
-      <MemoryRouter>
-        <ReceiptMonitor
-          cycleId="9"
-          cycleStatus={cycleStatus}
-          onChanged={vi.fn()}
-          onNotice={vi.fn()}
-        />
-      </MemoryRouter>
+      <UserSessionDetailsContext.Provider
+        value={{
+          userSessionDetails: { authenticated: true, roles: [], permissions },
+          errorLoadingSessionDetails: false,
+          isCheckingLogin: () => false,
+          logout: vi.fn(),
+        }}
+      >
+        <MemoryRouter>
+          <ReceiptMonitor
+            cycleId="9"
+            cycleStatus={cycleStatus}
+            onChanged={vi.fn()}
+            onNotice={onNotice}
+          />
+        </MemoryRouter>
+      </UserSessionDetailsContext.Provider>
     </IntlProvider>,
   );
 
@@ -149,18 +168,7 @@ describe("ReceiptMonitor", () => {
       ),
     );
     const onNotice = vi.fn();
-    render(
-      <IntlProvider locale="en" messages={messages}>
-        <MemoryRouter>
-          <ReceiptMonitor
-            cycleId="9"
-            cycleStatus="SCORED"
-            onChanged={vi.fn()}
-            onNotice={onNotice}
-          />
-        </MemoryRouter>
-      </IntlProvider>,
-    );
+    renderTab("SCORED", { onNotice });
 
     await screen.findByText("Iringa District Lab");
     fireEvent.click(screen.getByRole("button", { name: "Send scores" }));
@@ -169,6 +177,70 @@ describe("ReceiptMonitor", () => {
       expect(onNotice).toHaveBeenCalledWith(
         expect.objectContaining({ kind: "error" }),
       ),
+    );
+  });
+
+  // F-27: as a persona with the read umbrella and the participant grant only,
+  // every write action on this tab rendered and was enabled, and pressing one
+  // answered 403 with the single word "Forbidden".
+  it("offers no write action to a persona without either grant", async () => {
+    renderTab("SUBMISSIONS_OPEN", {
+      permissions: ["qa.view.eqa", "qa.eqa.participant"],
+    });
+
+    await screen.findByText("Mbeya Regional Lab");
+    for (const action of [
+      "Mark received",
+      "Send repeat",
+      "Enter results",
+      "Send scores",
+      "Score cycle",
+    ]) {
+      expect(screen.queryByRole("button", { name: action })).toBeNull();
+    }
+    // Read value is kept, and the missing actions are explained rather than
+    // silently absent -- the pattern the provider scheme board already uses.
+    expect(
+      screen.getByText("Read-only view of receipts and scores"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Iringa District Lab")).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Scores CSV" }),
+    ).toBeInTheDocument();
+  });
+
+  it("offers the provider actions but not scoring to a provider without the manage grant", async () => {
+    renderTab("SUBMISSIONS_OPEN", {
+      permissions: ["qa.view.eqa", "qa.eqa.provider"],
+    });
+
+    await screen.findByText("Mbeya Regional Lab");
+    expect(
+      screen.getAllByRole("button", { name: "Send repeat" }).length,
+    ).toBeGreaterThan(0);
+    expect(screen.queryByRole("button", { name: "Score cycle" })).toBeNull();
+    expect(
+      screen.queryByText("Read-only view of receipts and scores"),
+    ).toBeNull();
+  });
+
+  it("names the grant when a refusal still reaches the user", async () => {
+    // Reachable when a grant is revoked mid-session, which is exactly when
+    // "Forbidden" explains least.
+    postToOpenElisServerFullResponse.mockImplementation((_url, _body, cb) =>
+      cb({ ok: false, status: 403, json: () => Promise.resolve({}) }),
+    );
+    const onNotice = vi.fn();
+    renderTab("SCORED", { onNotice });
+
+    await screen.findByText("Iringa District Lab");
+    fireEvent.click(screen.getByRole("button", { name: "Send scores" }));
+
+    await waitFor(() =>
+      expect(onNotice).toHaveBeenCalledWith({
+        kind: "error",
+        text: "This action needs the qa.eqa.provider permission, which your account does not have. Ask an administrator for it.",
+      }),
     );
   });
 

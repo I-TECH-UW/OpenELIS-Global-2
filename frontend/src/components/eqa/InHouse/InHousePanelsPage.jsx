@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   Button,
   Column,
@@ -19,6 +19,8 @@ import { Locked } from "@carbon/react/icons";
 import { useIntl } from "react-intl";
 import { useHistory } from "react-router-dom";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+import UserSessionDetailsContext from "../../../UserSessionDetailsContext";
+import { hasQaPermission } from "../../utils/Utils";
 import {
   downloadLabelSheet,
   fetchInHouseSchemes,
@@ -42,6 +44,9 @@ const STATUS_TAG = {
 };
 
 const InHousePanelsPage = () => {
+  const { userSessionDetails } = useContext(UserSessionDetailsContext);
+  // Sealing a panel is a manage-grant write; the wizard's every step ends there.
+  const canManage = hasQaPermission(userSessionDetails, "qa.manage.eqa");
   const intl = useIntl();
   const history = useHistory();
   const [schemes, setSchemes] = useState([]);
@@ -150,9 +155,27 @@ const InHousePanelsPage = () => {
           </Select>
         </Column>
         <Column lg={8} md={4} sm={4}>
-          <Button onClick={() => history.push("/qa/eqa/in-house/new")}>
-            {label("eqa.inhouse.launchWizard", "Launch blinding wizard")}
-          </Button>
+          {canManage ? (
+            <Button onClick={() => history.push("/qa/eqa/in-house/new")}>
+              {label("eqa.inhouse.launchWizard", "Launch blinding wizard")}
+            </Button>
+          ) : (
+            // Four steps of panel design in front of a seal this persona cannot
+            // perform is worse than no launcher at all.
+            <InlineNotification
+              kind="info"
+              lowContrast
+              hideCloseButton
+              title={label(
+                "eqa.inhouse.readOnly.title",
+                "Read-only view of in-house panels",
+              )}
+              subtitle={label(
+                "eqa.inhouse.readOnly.body",
+                "Designing and sealing a blinded panel needs the manage grant. The panels below are the whole picture either way.",
+              )}
+            />
+          )}
         </Column>
 
         {panels.length > 0 &&
