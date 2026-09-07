@@ -2,7 +2,6 @@ package org.openelisglobal.testconfiguration.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -34,63 +33,83 @@ public class SampleTypeTestAssignServiceIntegrationTest extends BaseWebContextSe
 
     @Test
     public void updateShouldInsertNewTypeOfSampleTestWhenGivenValidInputs() {
-        TypeOfSample sampleType = typeOfSampleService.get("9901");
-        String testId = "9900";
+        List<TypeOfSampleTest> preCondition = typeOfSampleTestService.getTypeOfSampleTestsForSampleType("9901");
+        assertEquals("Fixture must start with no assignments for Urine (9901)", 0, preCondition.size());
 
-        sampleTypeTestAssignService.update(sampleType, testId, Collections.emptyList(), sampleType.getId(), false,
+        TypeOfSample sampleType = typeOfSampleService.get("9901");
+        assertEquals("Pre-condition: sample type description must be Urine", "Urine", sampleType.getDescription());
+        assertEquals("Pre-condition: sample type abbreviation must be U", "U", sampleType.getLocalAbbreviation());
+
+        sampleTypeTestAssignService.update(sampleType, "9900", Collections.emptyList(), sampleType.getId(), false,
                 false, null, "1");
 
         List<TypeOfSampleTest> testsForSampleType = typeOfSampleTestService.getTypeOfSampleTestsForSampleType("9901");
-        assertEquals(1, testsForSampleType.size());
-        assertEquals("9900", testsForSampleType.get(0).getTestId());
-        assertEquals("9901", testsForSampleType.get(0).getTypeOfSampleId());
+        assertEquals("Exactly 1 assignment must exist for Urine (9901) after insert", 1, testsForSampleType.size());
+        assertEquals("Assigned test ID must be GeneXpert (9900)", "9900", testsForSampleType.get(0).getTestId());
+        assertEquals("Sample type ID on the new assignment must be Urine (9901)", "9901",
+                testsForSampleType.get(0).getTypeOfSampleId());
     }
 
     @Test
     public void updateShouldDeleteExistingTypeOfSampleTestsAndInsertNewAssignmentWhenDeleteFlagIsTrue() {
+        List<TypeOfSampleTest> existingLinks = typeOfSampleTestService.getTypeOfSampleTestsForSampleType("9900");
+        assertEquals("Fixture must start with exactly 1 assignment for Blood (9900)", 1, existingLinks.size());
+        assertEquals("Existing assignment ID must be 9900", "9900", existingLinks.get(0).getId());
+        assertEquals("Existing assignment must link to GeneXpert (9900)", "9900", existingLinks.get(0).getTestId());
+
         TypeOfSample sampleType = typeOfSampleService.get("9900");
-        String testId = "9901";
-
-        List<TypeOfSampleTest> existing = typeOfSampleTestService.getTypeOfSampleTestsForSampleType("9900");
-        assertEquals(1, existing.size());
-        assertEquals("9900", existing.get(0).getId());
-
         List<String> idsToDelete = new ArrayList<>();
         idsToDelete.add("9900");
 
-        sampleTypeTestAssignService.update(sampleType, testId, idsToDelete, sampleType.getId(), true, false, null, "1");
+        sampleTypeTestAssignService.update(sampleType, "9901", idsToDelete, sampleType.getId(), true, false, null, "1");
 
-        List<TypeOfSampleTest> testsForSampleType = typeOfSampleTestService.getTypeOfSampleTestsForSampleType("9900");
-        assertEquals("Should only have the newly assigned test", 1, testsForSampleType.size());
-        assertEquals("9901", testsForSampleType.get(0).getTestId());
+        List<TypeOfSampleTest> deletedLinks = typeOfSampleTestService.getTypeOfSampleTestsForSampleType("9900");
+        assertEquals("Exactly 1 assignment must remain for Blood (9900) after delete+insert", 1, deletedLinks.size());
+        assertEquals("Remaining assignment must link to SputumCulture (9901), not the deleted GeneXpert (9900)", "9901",
+                deletedLinks.get(0).getTestId());
+        assertEquals("Remaining assignment must still belong to Blood (9900)", "9900",
+                deletedLinks.get(0).getTypeOfSampleId());
     }
 
     @Test
-    public void updateShouldUpdateTypeOfSampleWhenUpdateFlagIsTrue() {
+    public void updateShouldUpdateTypeOfSampleDescriptionWhenUpdateFlagIsTrue() {
         TypeOfSample sampleType = typeOfSampleService.get("9900");
-        sampleType.setDescription("Updated Blood");
-        String testId = "9901";
+        assertEquals("Pre-condition: description must be Blood before update", "Blood", sampleType.getDescription());
 
-        sampleTypeTestAssignService.update(sampleType, testId, Collections.emptyList(), sampleType.getId(), false, true,
+        sampleType.setDescription("Updated Blood");
+
+        sampleTypeTestAssignService.update(sampleType, "9901", Collections.emptyList(), sampleType.getId(), false, true,
                 null, "1");
 
         TypeOfSample updatedSampleType = typeOfSampleService.get("9900");
-        assertEquals("Updated Blood", updatedSampleType.getDescription());
+        assertEquals("Description must be persisted as 'Updated Blood' after update", "Updated Blood",
+                updatedSampleType.getDescription());
+        assertEquals("Abbreviation must remain unchanged as 'B' after description-only update", "B",
+                updatedSampleType.getLocalAbbreviation());
+        assertEquals("Domain must remain unchanged as 'H' after description-only update", "H",
+                updatedSampleType.getDomain());
     }
 
     @Test
     public void updateShouldDeactivateTypeOfSampleWhenDeactivateObjectIsProvided() {
+        TypeOfSample preCondition = typeOfSampleService.get("9902");
+        assertEquals("Pre-condition: Legacy Sputum (9902) must be active before deactivation", true,
+                preCondition.isActive());
+        assertEquals("Pre-condition: Legacy Sputum description must be 'Legacy Sputum'", "Legacy Sputum",
+                preCondition.getDescription());
+
         TypeOfSample sampleType = typeOfSampleService.get("9901");
         TypeOfSample deActivateTypeOfSample = typeOfSampleService.get("9902");
         deActivateTypeOfSample.setActive(false);
-        String testId = "9900";
 
-        assertTrue(typeOfSampleService.get("9902").isActive());
-
-        sampleTypeTestAssignService.update(sampleType, testId, Collections.emptyList(), sampleType.getId(), false,
+        sampleTypeTestAssignService.update(sampleType, "9900", Collections.emptyList(), sampleType.getId(), false,
                 false, deActivateTypeOfSample, "1");
 
         TypeOfSample updatedDeactivated = typeOfSampleService.get("9902");
-        assertFalse("Should be deactivated", updatedDeactivated.isActive());
+        assertFalse("Legacy Sputum (9902) must be inactive after deactivation", updatedDeactivated.isActive());
+        assertEquals("Legacy Sputum (9902) description must remain 'Legacy Sputum' after deactivation", "Legacy Sputum",
+                updatedDeactivated.getDescription());
+        assertEquals("Legacy Sputum (9902) domain must remain 'E' after deactivation", "E",
+                updatedDeactivated.getDomain());
     }
 }
