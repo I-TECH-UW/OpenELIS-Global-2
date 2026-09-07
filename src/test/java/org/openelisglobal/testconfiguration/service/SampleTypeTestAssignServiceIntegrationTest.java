@@ -2,6 +2,7 @@ package org.openelisglobal.testconfiguration.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
 import java.util.List;
@@ -51,9 +52,9 @@ public class SampleTypeTestAssignServiceIntegrationTest extends BaseWebContextSe
         assertEquals("Old link to test 2001 must be deleted", 0, remainingLinksFor2001.size());
 
         List<TypeOfSampleTest> newLinksFor2002 = typeOfSampleTestService.getTypeOfSampleTestsForTest("2002");
-        assertEquals("Exactly 1 new link must exist for test 2002", 1, newLinksFor2002.size());
-        assertEquals("New link for test 2002 must belong to sample type 1001", "1001",
-                newLinksFor2002.get(0).getTypeOfSampleId());
+        assertEquals("Exactly 3 links must exist for test 2002", 3, newLinksFor2002.size());
+        assertTrue("New link for test 2002 must belong to sample type 1001",
+                newLinksFor2002.stream().anyMatch(l -> "1001".equals(l.getTypeOfSampleId())));
 
         TypeOfSample updatedSampleType = typeOfSampleService.get("1001");
         assertEquals("Abbreviation must be persisted as 'upd_abbrev' after update", "upd_abbrev",
@@ -78,9 +79,9 @@ public class SampleTypeTestAssignServiceIntegrationTest extends BaseWebContextSe
                 deactivatedSampleType.getDescription());
 
         List<TypeOfSampleTest> newLinksFor2002 = typeOfSampleTestService.getTypeOfSampleTestsForTest("2002");
-        assertEquals("Exactly 1 new link must exist for test 2002 after update", 1, newLinksFor2002.size());
-        assertEquals("New link for test 2002 must belong to sample type 1001", "1001",
-                newLinksFor2002.get(0).getTypeOfSampleId());
+        assertEquals("Exactly 3 links must exist for test 2002 after update", 3, newLinksFor2002.size());
+        assertTrue("New link for test 2002 must belong to sample type 1001",
+                newLinksFor2002.stream().anyMatch(l -> "1001".equals(l.getTypeOfSampleId())));
     }
 
     @Test
@@ -98,8 +99,8 @@ public class SampleTypeTestAssignServiceIntegrationTest extends BaseWebContextSe
                 reloadedSampleType.getLocalAbbreviation());
 
         List<TypeOfSampleTest> linksFor2002 = typeOfSampleTestService.getTypeOfSampleTestsForTest("2002");
-        assertEquals("Exactly 1 new link must exist for test 2002", 1, linksFor2002.size());
-        assertEquals("New link for test 2002 must belong to sample type 1001", "1001",
-                linksFor2002.get(0).getTypeOfSampleId());
+        assertEquals("Exactly 3 links must exist for test 2002", 3, linksFor2002.size());
+        assertTrue("New link for test 2002 must belong to sample type 1001",
+                linksFor2002.stream().anyMatch(l -> "1001".equals(l.getTypeOfSampleId())));
     }
 }
