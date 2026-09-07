@@ -422,7 +422,7 @@ public class UserServiceImpl implements UserService {
                 "User " + systemUserId + " has " + (testSections != null ? testSections.size() : 0) + " test sections: "
                         + testUnitIds);
 
-        List<Test> allTests = testService.getTestsByTestSectionIds(testUnitIds);
+        List<Test> allTests = testService.getAllTestsByTestSectionIds(testUnitIds);
         List<String> allTestsIds = new ArrayList<>();
         allTests.forEach(test -> allTestsIds.add(test.getId()));
         // Log which test IDs are in the results and which are allowed
@@ -468,7 +468,7 @@ public class UserServiceImpl implements UserService {
             testSections.forEach(testSection -> testUnitIds.add(testSection.getId()));
         }
 
-        List<Test> allTests = testService.getTestsByTestSectionIds(testUnitIds);
+        List<Test> allTests = testService.getAllTestsByTestSectionIds(testUnitIds);
         List<String> allTestsIds = new ArrayList<>();
         allTests.forEach(test -> allTestsIds.add(test.getId()));
         return results.stream().filter(result -> allTestsIds.contains(result.getTestId())).collect(Collectors.toList());
@@ -486,7 +486,7 @@ public class UserServiceImpl implements UserService {
             testSections.forEach(testSection -> testUnitIds.add(testSection.getId()));
         }
 
-        List<Test> allTests = testService.getTestsByTestSectionIds(testUnitIds);
+        List<Test> allTests = testService.getAllTestsByTestSectionIds(testUnitIds);
         List<String> allTestsIds = new ArrayList<>();
         allTests.forEach(test -> allTestsIds.add(test.getId()));
         return results.stream().filter(result -> allTestsIds.contains(result.getTest().getId()))
