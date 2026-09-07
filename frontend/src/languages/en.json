@@ -8579,5 +8579,10 @@
   "eqa.receipt.readOnly.body": "Recording a delivery, dispatching a repeat, entering results and returning scores all need the provider grant; scoring the cycle needs the manage grant. The table below is the whole cycle either way.",
   "eqa.inhouse.readOnly.title": "Read-only view of in-house panels",
   "eqa.inhouse.readOnly.body": "Designing and sealing a blinded panel needs the manage grant. The panels below are the whole picture either way.",
-  "eqa.score.downloadReport": "Report PDF"
+  "eqa.score.downloadReport": "Report PDF",
+  "eqa.labperf.exportCsv": "Export CSV",
+  "eqa.labperf.kpi.submitted": "Submitted cycles",
+  "eqa.labperf.acceptableOf": "Acceptable of scored",
+  "eqa.labperf.kpi.lateCount": "Late submissions",
+  "eqa.labperf.kpi.nceOpenCount": "Of those, still open"
 }
