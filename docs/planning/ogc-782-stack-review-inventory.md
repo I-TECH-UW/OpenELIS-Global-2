@@ -27,16 +27,42 @@ touched; the user force-merges them once the top is green.
 6. No Co-Authored-By; no translated i18n files touched; no workflow files
    touched (they cannot take effect pre-merge anyway — see E).
 
-## Plan (in order) and status
+## Outcome
 
-| Step | Work                                                                                                         | Status                                                                                                            |
-| ---- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| 1    | E2E fixes, section E (6)                                                                                     | 4 done (ingress creds, region landmark, stale demo testid, WHONET listbox wait); esig + Cypress pending diagnosis |
-| 2    | Commit bucket B (3, already validated)                                                                       | in tree, uncommitted                                                                                              |
-| 3    | Bucket C (6): T27, T22, T25, T28, T29, T16r                                                                  | **all 6 done, Red-proven where behavioural**                                                                      |
-| 4    | Bucket D (11): 9 done (T17, T7, T4, T13, T9, T15, T21, T6, T23); T18 pending; T12 stale-as-filed (see below) |
-| 5    | Local validation per criterion 4, then one push, then `gh pr checks 4196`                                    | pending                                                                                                           |
-| 6    | Draft bucket-A replies → Piotr approves → post + resolve; reply/resolve B–D                                  | pending                                                                                                           |
+All **146 review threads across the 26 PRs are resolved** (32 were open at the
+start of this pass; each got a reply naming the fixing code). Every E2E failure
+on the top of the stack was root-caused and fixed.
+
+| Item                                 | Resolution                                                                                                                                                                                                                                            |
+| ------------------------------------ | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Analyzer-ingress seed (2 specs)      | Credentials fall back `ANALYZER_INGRESS_*` -> `TEST_*` -> the `admin` fixture account, which `add_admin_default_roles.xml` grants Analyser Import. A workflow edit could not help: `E2E / Tests` is `workflow_run` and runs the default branch's YAML |
+| esig `/validation` `ERR_ABORTED`     | Saving results sent the browser to `/result` itself; that navigation raced the spec's. Now routed                                                                                                                                                     |
+| `Critical communication` strict mode | `CaseSectionFocusTarget` and four panels each rendered a landmark with the same name; each section is one landmark now                                                                                                                                |
+| WHONET handoff (`f9990`)             | `getReviewedAstWorklistPage` never published `filterOptions`, so the reviewed view's controls were empty; then organism labels were raw ids                                                                                                           |
+| Demo AST (`3f6cc`)                   | Waited for `Setup Recorded`, a stage no service ever assigns (inoculation goes straight to INCUBATING); then the timeline never surfaced the media/incubation/atmosphere it had persisted                                                             |
+| Cypress `#only-active`               | Clicked the text inside the label rather than the label. Widget-state coverage moved to `admin-user-filters.spec.ts` (fresh load and navigated-in); the spec keeps the filtered-reload assertion. Spec now 27/27                                      |
+| 133 full-page navigations            | One `softReload` / `navigateTo` pair, registered by `AppNavigationBridge`; session, login and legacy targets still take a real load                                                                                                                   |
+| FHIR image build                     | Removed an unused `curl` install whose arm64 deb was rotated out; it had broken all local CI parity                                                                                                                                                   |
+
+Corrected rather than implemented: **T12** — the N+1 the comment describes does
+not exist (the culture path is fully batched; `toCultureRows`/`toRow` issue no
+DAO calls). The residue is that `getOpenCases()` loads every open case and pages
+in memory, which is deliberate because the summary and filter options are
+queue-wide aggregates. Left as an architectural item.
+
+Not root-caused: in a long Cypress session a `filter=isActive` request fires
+while the rendering instance's `filters` is `[]` (table at 5 of 5). Playwright
+on a fresh load, Playwright arriving by navigation, and a vitest test on the
+real component all pass, so the coverage moved rather than the cause being
+found.
+
+---- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
+| 1 | E2E fixes, section E (6) | 4 done (ingress creds, region landmark, stale demo testid, WHONET listbox wait); esig + Cypress pending diagnosis |
+| 2 | Commit bucket B (3, already validated) | in tree, uncommitted |
+| 3 | Bucket C (6): T27, T22, T25, T28, T29, T16r | **all 6 done, Red-proven where behavioural** |
+| 4 | Bucket D (11): 9 done (T17, T7, T4, T13, T9, T15, T21, T6, T23); T18 pending; T12 stale-as-filed (see below) |
+| 5 | Local validation per criterion 4, then one push, then `gh pr checks 4196` | pending |
+| 6 | Draft bucket-A replies → Piotr approves → post + resolve; reply/resolve B–D | pending |
 
 Rejected on 2026-09-06: deferring bucket D to a follow-up PR "to protect the one
 CI run". Backend CI is already green at the top and every D item has a local
