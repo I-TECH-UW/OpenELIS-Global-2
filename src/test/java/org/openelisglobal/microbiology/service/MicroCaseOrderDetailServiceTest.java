@@ -54,6 +54,17 @@ public class MicroCaseOrderDetailServiceTest {
     }
 
     @Test
+    public void discardingADraftRecordsTheActorInsteadOfDeletingIt() {
+        service.discardOrderDraft("42", "7");
+
+        ArgumentCaptor<java.sql.Timestamp> discardedAt = ArgumentCaptor.forClass(java.sql.Timestamp.class);
+        verify(orderDetailDAO).discardDraftBySampleId(org.mockito.ArgumentMatchers.eq("42"), discardedAt.capture(),
+                org.mockito.ArgumentMatchers.eq("7"));
+        org.junit.Assert.assertNotNull("a discard must carry the moment it happened", discardedAt.getValue());
+        verify(orderDetailDAO, never()).delete(any(MicroCaseOrderDetail.class));
+    }
+
+    @Test
     public void saveOrderDetailCreatesRecordWhenNoneExists() {
         MicroCase microCase = new MicroCase();
         microCase.setId("case-1");
@@ -129,7 +140,7 @@ public class MicroCaseOrderDetailServiceTest {
 
     @Test
     public void saveOrderDraftPersistsPreCaseDetailBySample() {
-        when(orderDetailDAO.getDraftBySampleId("99")).thenReturn(null);
+        when(orderDetailDAO.getAnyDraftBySampleId("99")).thenReturn(null);
         Sample sample = new Sample();
         sample.setId("99");
         MicroCaseOrderDetailRequestForm request = new MicroCaseOrderDetailRequestForm();
@@ -179,7 +190,7 @@ public class MicroCaseOrderDetailServiceTest {
 
     @Test
     public void saveOrderDraftClearsAdmissionDateForOutpatientContext() {
-        when(orderDetailDAO.getDraftBySampleId("99")).thenReturn(null);
+        when(orderDetailDAO.getAnyDraftBySampleId("99")).thenReturn(null);
         Sample sample = new Sample();
         sample.setId("99");
         MicroCaseOrderDetailRequestForm request = new MicroCaseOrderDetailRequestForm();
@@ -194,7 +205,7 @@ public class MicroCaseOrderDetailServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void saveOrderDraftRejectsMalformedAdmissionDate() {
-        when(orderDetailDAO.getDraftBySampleId("99")).thenReturn(null);
+        when(orderDetailDAO.getAnyDraftBySampleId("99")).thenReturn(null);
         Sample sample = new Sample();
         sample.setId("99");
         MicroCaseOrderDetailRequestForm request = new MicroCaseOrderDetailRequestForm();
@@ -219,7 +230,7 @@ public class MicroCaseOrderDetailServiceTest {
 
     @Test(expected = IllegalArgumentException.class)
     public void saveOrderDraftRejectsMissingCulturePurposeForANewOrder() {
-        when(orderDetailDAO.getDraftBySampleId("99")).thenReturn(null);
+        when(orderDetailDAO.getAnyDraftBySampleId("99")).thenReturn(null);
         Sample sample = new Sample();
         sample.setId("99");
 
@@ -227,11 +238,33 @@ public class MicroCaseOrderDetailServiceTest {
     }
 
     @Test
+    public void reQualifyingRevivesTheRetiredDraftInsteadOfInsertingASecondOne() {
+        MicroCaseOrderDetail retired = new MicroCaseOrderDetail();
+        retired.setId("detail-1");
+        retired.setSampleId("99");
+        retired.setDiscardedAt(new java.sql.Timestamp(System.currentTimeMillis()));
+        retired.setDiscardedBy("3");
+        when(orderDetailDAO.getAnyDraftBySampleId("99")).thenReturn(retired);
+        Sample sample = new Sample();
+        sample.setId("99");
+        MicroCaseOrderDetailRequestForm request = new MicroCaseOrderDetailRequestForm();
+        request.clinicalHistory = "Culture ordered again";
+
+        MicroCaseOrderDetail saved = service.saveOrderDraft(sample, request, "7");
+
+        org.junit.Assert.assertNull("a revived draft is no longer retired", saved.getDiscardedAt());
+        org.junit.Assert.assertNull(saved.getDiscardedBy());
+        assertEquals("Culture ordered again", saved.getClinicalHistory());
+        verify(orderDetailDAO).update(retired);
+        verify(orderDetailDAO, never()).insert(any(MicroCaseOrderDetail.class));
+    }
+
+    @Test
     public void saveOrderDraftAllowsHistoricalDraftToRemainUnclassified() {
         MicroCaseOrderDetail existing = new MicroCaseOrderDetail();
         existing.setId("detail-1");
         existing.setSampleId("99");
-        when(orderDetailDAO.getDraftBySampleId("99")).thenReturn(existing);
+        when(orderDetailDAO.getAnyDraftBySampleId("99")).thenReturn(existing);
         Sample sample = new Sample();
         sample.setId("99");
         MicroCaseOrderDetailRequestForm request = new MicroCaseOrderDetailRequestForm();

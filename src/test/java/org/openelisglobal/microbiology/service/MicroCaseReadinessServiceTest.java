@@ -80,6 +80,29 @@ public class MicroCaseReadinessServiceTest {
     }
 
     @Test
+    public void unreviewedRepeatRunBlocksFinalReleaseDespiteAnEarlierReviewedRun() {
+        MicroCase microCase = new MicroCase();
+        microCase.setId("case-1");
+        MicroIsolate isolate = significantIsolate();
+        MicroAstRun reviewed = new MicroAstRun();
+        reviewed.setId("run-1");
+        reviewed.setStatus(MicroAstRunStatus.REVIEWED.name());
+        reviewed.setReportable(true);
+        MicroAstRun repeat = new MicroAstRun();
+        repeat.setId("run-2");
+        repeat.setStatus(MicroAstRunStatus.IN_PROGRESS.name());
+        when(caseDAO.get("case-1")).thenReturn(java.util.Optional.of(microCase));
+        when(isolateDAO.getByCaseId("case-1")).thenReturn(List.of(isolate));
+        when(communicationDAO.getByCaseId("case-1")).thenReturn(List.of());
+        when(astRunDAO.getByIsolateId("iso-1")).thenReturn(List.of(reviewed, repeat));
+
+        MicroCaseReadinessForm readiness = service.getReadiness("case-1");
+
+        assertFalse(readiness.finalReleaseReady);
+        assertTrue(readiness.blockers.contains("AST_REVIEW_REQUIRED"));
+    }
+
+    @Test
     public void reviewedAstAllowsFinalRelease() {
         MicroCase microCase = new MicroCase();
         microCase.setId("case-1");

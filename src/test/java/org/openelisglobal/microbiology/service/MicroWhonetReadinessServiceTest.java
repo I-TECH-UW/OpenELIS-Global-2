@@ -22,6 +22,7 @@ import org.openelisglobal.microbiology.valueholder.MicroAntibiotic;
 import org.openelisglobal.microbiology.valueholder.MicroAstReading;
 import org.openelisglobal.microbiology.valueholder.MicroAstRun;
 import org.openelisglobal.microbiology.valueholder.MicroCase;
+import org.openelisglobal.microbiology.valueholder.MicroCaseFinalReleaseState;
 import org.openelisglobal.microbiology.valueholder.MicroIsolate;
 import org.openelisglobal.microbiology.valueholder.MicroOrganism;
 
@@ -73,6 +74,7 @@ public class MicroWhonetReadinessServiceTest {
     public void mappedIsolateWithAstReadingIsWhonetReady() {
         MicroCase microCase = new MicroCase();
         microCase.setId("case-1");
+        microCase.setFinalReleaseState(MicroCaseFinalReleaseState.FINAL_RELEASED.name());
         MicroIsolate isolate = new MicroIsolate();
         isolate.setId("iso-1");
         isolate.setOrganismId("org-1");
@@ -95,6 +97,40 @@ public class MicroWhonetReadinessServiceTest {
 
         assertTrue(readiness.whonetReady);
         assertTrue(readiness.blockers.isEmpty());
+    }
+
+    /**
+     * The export itself only reads finalized cases
+     * (MicroCaseDAOImpl#getFinalizedBacteriologyByCollectionDateRange), so
+     * readiness must not advertise a case the export would silently skip.
+     */
+    @Test
+    public void anUnfinalizedCaseIsNotWhonetReadyEvenWhenFullyMapped() {
+        MicroCase microCase = new MicroCase();
+        microCase.setId("case-1");
+        microCase.setFinalReleaseState(MicroCaseFinalReleaseState.PRELIMINARY_RELEASED.name());
+        MicroIsolate isolate = new MicroIsolate();
+        isolate.setId("iso-1");
+        isolate.setOrganismId("org-1");
+        MicroAstRun run = new MicroAstRun();
+        run.setId("run-1");
+        MicroAstReading reading = new MicroAstReading();
+        reading.setAntibioticId("abx-1");
+        MicroOrganism organism = new MicroOrganism();
+        organism.setWhonetCode("eco");
+        MicroAntibiotic antibiotic = new MicroAntibiotic();
+        antibiotic.setWhonetCode("cip");
+        when(caseDAO.get("case-1")).thenReturn(java.util.Optional.of(microCase));
+        when(isolateDAO.getByCaseId("case-1")).thenReturn(List.of(isolate));
+        when(organismDAO.get("org-1")).thenReturn(Optional.of(organism));
+        when(astRunDAO.getByIsolateId("iso-1")).thenReturn(List.of(run));
+        when(astReadingDAO.getByRunId("run-1")).thenReturn(List.of(reading));
+        when(antibioticDAO.get("abx-1")).thenReturn(Optional.of(antibiotic));
+
+        MicroWhonetReadinessForm readiness = service.getReadiness("case-1");
+
+        assertFalse(readiness.whonetReady);
+        assertTrue(readiness.blockers.contains("CASE_FINALIZATION_REQUIRED"));
     }
 
     @Test

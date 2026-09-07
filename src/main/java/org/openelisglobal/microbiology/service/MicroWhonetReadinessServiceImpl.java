@@ -12,6 +12,8 @@ import org.openelisglobal.microbiology.form.MicroWhonetReadinessForm;
 import org.openelisglobal.microbiology.valueholder.MicroAntibiotic;
 import org.openelisglobal.microbiology.valueholder.MicroAstReading;
 import org.openelisglobal.microbiology.valueholder.MicroAstRun;
+import org.openelisglobal.microbiology.valueholder.MicroCase;
+import org.openelisglobal.microbiology.valueholder.MicroCaseFinalReleaseState;
 import org.openelisglobal.microbiology.valueholder.MicroIsolate;
 import org.openelisglobal.microbiology.valueholder.MicroOrganism;
 import org.springframework.stereotype.Service;
@@ -41,10 +43,15 @@ public class MicroWhonetReadinessServiceImpl implements MicroWhonetReadinessServ
     @Transactional(readOnly = true)
     public MicroWhonetReadinessForm getReadiness(String caseId) {
         MicroCaseServiceImpl.requireText(caseId, "caseId");
-        caseDAO.get(caseId).orElseThrow(() -> new IllegalArgumentException("Case not found"));
+        MicroCase microCase = caseDAO.get(caseId).orElseThrow(() -> new IllegalArgumentException("Case not found"));
         MicroWhonetReadinessForm readiness = new MicroWhonetReadinessForm();
         readiness.caseId = caseId;
         readiness.whonetReady = true;
+        // The export reads only finalized cases, so readiness has to agree or it
+        // advertises data the export would silently skip.
+        if (!MicroCaseFinalReleaseState.FINAL_RELEASED.name().equals(microCase.getFinalReleaseState())) {
+            addBlocker(readiness, "CASE_FINALIZATION_REQUIRED");
+        }
         List<MicroIsolate> isolates = isolateDAO.getByCaseId(caseId);
         if (isolates.isEmpty()) {
             readiness.whonetReady = false;

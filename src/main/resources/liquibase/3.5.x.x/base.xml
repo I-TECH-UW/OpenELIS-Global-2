@@ -480,4 +480,9 @@
   <!-- OGC-782 R16: one direct order-entry action per domain; the generic parent is retired -->
   <include relativeToChangelogFile="true" file="089-order-entry-domain-actions.xml"/>
 
+  <!-- OGC-782 R16: finish the move on a database that holds only some of the actions -->
+  <include relativeToChangelogFile="true" file="090-order-entry-domain-actions-guard.xml"/>
+
+  <include relativeToChangelogFile="true" file="091-microbiology-order-draft-discard-audit.xml"/>
+
 </databaseChangeLog>

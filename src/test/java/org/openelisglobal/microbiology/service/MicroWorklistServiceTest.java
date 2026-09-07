@@ -406,6 +406,25 @@ public class MicroWorklistServiceTest {
     }
 
     @Test
+    public void significantIsolateWithOnlyReviewedRunsAdvancesToCaseReview() {
+        MicroCase microCase = microCase("case-ast", "sample-1", MicroWorkflowType.BACTERIOLOGY,
+                MicroCaseStage.REVIEW_READY, "ROUTINE");
+        MicroIsolate isolate = significantIsolate("iso-1");
+        isolate.setCaseId("case-ast");
+        MicroAstRun reviewed = astRun("run-reviewed", "iso-1", MicroAstRunStatus.REVIEWED);
+        when(caseDAO.getOpenCases()).thenReturn(List.of(microCase));
+        when(caseDAO.getBySampleItemIds(List.of("sample-1"))).thenReturn(List.of(microCase));
+        when(isolateDAO.getByCaseIds(List.of("case-ast"))).thenReturn(List.of(isolate));
+        when(astRunDAO.getByIsolateIds(List.of("iso-1"))).thenReturn(List.of(reviewed));
+        when(communicationDAO.getByCaseIds(List.of("case-ast"))).thenReturn(List.of());
+
+        List<MicroWorklistRowForm> rows = service.getWorklistPage(new MicroWorklistQueryForm()).rows;
+
+        assertEquals("case-ast", rows.get(0).caseId);
+        assertEquals("CASE_REVIEW", rows.get(0).dueAction);
+    }
+
+    @Test
     public void reviewedRunsLeaveDefaultActionQueueAndRemainInReviewedView() {
         MicroCase microCase = microCase("case-ast", "sample-1", MicroWorkflowType.BACTERIOLOGY,
                 MicroCaseStage.REVIEW_READY, "ROUTINE");

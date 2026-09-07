@@ -99,8 +99,14 @@ public class MicroCaseOrderDetailServiceImpl implements MicroCaseOrderDetailServ
         if (request == null) {
             throw new IllegalArgumentException("Microbiology order detail is required");
         }
-        MicroCaseOrderDetail detail = orderDetailDAO.getDraftBySampleId(sample.getId());
+        MicroCaseOrderDetail detail = orderDetailDAO.getAnyDraftBySampleId(sample.getId());
         boolean isNew = detail == null;
+        if (detail != null && detail.getDiscardedAt() != null) {
+            // The order qualifies again, so the retired draft comes back rather
+            // than a second row fighting the one-draft-per-sample constraint.
+            detail.setDiscardedAt(null);
+            detail.setDiscardedBy(null);
+        }
         if (isNew) {
             detail = new MicroCaseOrderDetail();
             detail.setSampleId(sample.getId());
@@ -139,11 +145,11 @@ public class MicroCaseOrderDetailServiceImpl implements MicroCaseOrderDetailServ
 
     @Override
     @Transactional
-    public void discardOrderDraft(String sampleId) {
+    public void discardOrderDraft(String sampleId, String performedBy) {
         if (sampleId == null || sampleId.trim().isEmpty()) {
             return;
         }
-        orderDetailDAO.deleteDraftBySampleId(sampleId);
+        orderDetailDAO.discardDraftBySampleId(sampleId, MicroCaseServiceImpl.now(), performedBy);
     }
 
     private void apply(MicroCaseOrderDetail detail, MicroCaseOrderDetailRequestForm request,

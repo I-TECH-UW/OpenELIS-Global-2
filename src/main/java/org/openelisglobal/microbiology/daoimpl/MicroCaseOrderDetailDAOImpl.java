@@ -1,5 +1,6 @@
 package org.openelisglobal.microbiology.daoimpl;
 
+import java.sql.Timestamp;
 import java.util.List;
 import org.hibernate.Session;
 import org.hibernate.query.Query;
@@ -30,6 +31,20 @@ public class MicroCaseOrderDetailDAOImpl extends BaseDAOImpl<MicroCaseOrderDetai
     @Override
     @Transactional(readOnly = true)
     public MicroCaseOrderDetail getDraftBySampleId(String sampleId) {
+        Query<MicroCaseOrderDetail> query = entityManager.unwrap(Session.class)
+                .createQuery("from MicroCaseOrderDetail d where d.sampleId = :sampleId and d.caseId is null"
+                        + " and d.discardedAt is null", MicroCaseOrderDetail.class);
+        query.setParameter("sampleId", sampleId);
+        return query.uniqueResultOptional().orElse(null);
+    }
+
+    /**
+     * Includes a retired draft, because the sample owns at most one draft row and
+     * re-qualifying reuses it rather than inserting a second one.
+     */
+    @Override
+    @Transactional(readOnly = true)
+    public MicroCaseOrderDetail getAnyDraftBySampleId(String sampleId) {
         Query<MicroCaseOrderDetail> query = entityManager.unwrap(Session.class).createQuery(
                 "from MicroCaseOrderDetail d where d.sampleId = :sampleId and d.caseId is null",
                 MicroCaseOrderDetail.class);
@@ -38,10 +53,12 @@ public class MicroCaseOrderDetailDAOImpl extends BaseDAOImpl<MicroCaseOrderDetai
     }
 
     @Override
-    public void deleteDraftBySampleId(String sampleId) {
+    public void discardDraftBySampleId(String sampleId, Timestamp discardedAt, String discardedBy) {
         MicroCaseOrderDetail draft = getDraftBySampleId(sampleId);
         if (draft != null) {
-            delete(draft);
+            draft.setDiscardedAt(discardedAt);
+            draft.setDiscardedBy(discardedBy);
+            update(draft);
         }
     }
 

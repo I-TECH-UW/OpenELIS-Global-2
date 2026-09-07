@@ -11,6 +11,9 @@ public class OrderEntryDomainActionsLiquibaseRollbackTest {
 
     private static final String CHANGE_LOG = "src/main/resources/liquibase/3.5.x.x/089-order-entry-domain-actions.xml";
 
+    private static final String GUARD_CHANGE_LOG = "src/main/resources/liquibase/3.5.x.x/"
+            + "090-order-entry-domain-actions-guard.xml";
+
     @Test
     public void eachDomainActionMovesDirectlyUnderTheOrderMenuAndTheGenericParentIsRetired() throws Exception {
         String changeLog = Files.readString(Path.of(CHANGE_LOG));
@@ -42,6 +45,23 @@ public class OrderEntryDomainActionsLiquibaseRollbackTest {
             assertTrue(sibling + " gets its order back",
                     rollback.contains("<where>element_id = '" + sibling + "'</where>"));
         }
+    }
+
+    /**
+     * 089 moves the actions only when all three are still nested, so a database
+     * holding one or two keeps a mixed tree until this follow-up finishes it.
+     */
+    @Test
+    public void aPartiallyMigratedDatabaseIsFinishedByTheFollowUpChangeset() throws Exception {
+        String guard = Files.readString(Path.of(GUARD_CHANGE_LOG));
+
+        assertTrue("the follow-up must re-parent whichever actions remain nested",
+                guard.contains("SET parent_id = (SELECT id FROM clinlims.menu WHERE element_id = 'menu_sample')")
+                        && guard.contains(
+                                "parent_id = (SELECT id FROM clinlims.menu WHERE element_id =" + " 'menu_add_order')"));
+        assertTrue("the follow-up must retire the parent", guard.contains("SET is_active = false"));
+        assertTrue("it must be safe to run on an already-migrated database, so it takes no count precondition",
+                !guard.contains("expectedResult"));
     }
 
     private static int countOf(String text, String needle) {

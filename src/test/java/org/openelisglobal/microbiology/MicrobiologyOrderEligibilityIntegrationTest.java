@@ -174,6 +174,20 @@ public class MicrobiologyOrderEligibilityIntegrationTest extends BaseWebContextS
                 orderDetailService.getOrderDetail(caseId));
     }
 
+    @Test
+    public void requestedStageQualifiesFromRequestedSampleTypesWhenNoProgramIsSelected() {
+        Sample sample = newSample();
+        SamplePatientUpdateData update = orderUpdateWithoutTests(sample);
+        org.openelisglobal.sampletyperequest.dto.SampleTypeRequestDTO requested = new org.openelisglobal.sampletyperequest.dto.SampleTypeRequestDTO();
+        requested.setTypeOfSampleId(sampleType.getId());
+        requested.setRequestedTests(cultureTest.getId());
+
+        persist(update, orderDetail(), java.util.List.of(requested));
+
+        assertNotNull("requested culture tests must qualify the order before the program loads",
+                orderDetailService.getOrderDraft(sample.getId()));
+    }
+
     private ProgramSample microbiologyProgramSample() {
         Program program = new Program();
         program.setCode("MICROBIOLOGY");
@@ -220,11 +234,17 @@ public class MicrobiologyOrderEligibilityIntegrationTest extends BaseWebContextS
     }
 
     private void persist(SamplePatientUpdateData updateData, MicroCaseOrderDetailRequestForm orderDetail) {
+        persist(updateData, orderDetail, null);
+    }
+
+    private void persist(SamplePatientUpdateData updateData, MicroCaseOrderDetailRequestForm orderDetail,
+            java.util.List<org.openelisglobal.sampletyperequest.dto.SampleTypeRequestDTO> requestedSampleTypes) {
         PatientManagementInfo patientInfo = new PatientManagementInfo();
         patientInfo.setPatientPK(patient.getId());
         SamplePatientEntryForm form = new SamplePatientEntryForm();
         form.setPatientProperties(patientInfo);
         form.setMicrobiologyOrderDetail(orderDetail);
+        form.setRequestedSampleTypes(requestedSampleTypes);
 
         PatientManagementUpdate patientUpdate = SpringContext.getBean(PatientManagementUpdate.class);
         samplePatientEntryService.persistData(updateData, patientUpdate, patientInfo, form,

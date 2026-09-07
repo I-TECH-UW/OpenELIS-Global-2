@@ -18,5 +18,5 @@ public interface MicroCaseOrderDetailService {
      * Drops the details captured before a case existed. An order that no longer
      * qualifies as microbiology keeps nothing; an established case is unaffected.
      */
-    void discardOrderDraft(String sampleId);
+    void discardOrderDraft(String sampleId, String performedBy);
 }

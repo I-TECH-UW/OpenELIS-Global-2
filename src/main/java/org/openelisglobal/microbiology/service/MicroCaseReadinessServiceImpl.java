@@ -65,8 +65,11 @@ public class MicroCaseReadinessServiceImpl implements MicroCaseReadinessService 
                 readiness.finalReleaseReady = false;
                 addBlocker(readiness, "ISOLATE_IDENTIFICATION_REQUIRED");
             }
+            // A repeat or retest still in flight is the current AST work, so an
+            // earlier reviewed run does not make the isolate releasable.
+            boolean unreviewedWork = activeRuns.size() != reviewedRuns.size();
             if (MicroIsolateSignificance.CLINICALLY_SIGNIFICANT.name().equals(isolate.getSignificance())
-                    && reviewedRuns.isEmpty()) {
+                    && (reviewedRuns.isEmpty() || unreviewedWork)) {
                 readiness.finalReleaseReady = false;
                 addBlocker(readiness, "AST_REVIEW_REQUIRED");
                 if (identified && activeRuns.isEmpty()) {

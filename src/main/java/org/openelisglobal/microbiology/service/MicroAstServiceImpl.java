@@ -57,8 +57,8 @@ import org.springframework.transaction.annotation.Transactional;
 @Service
 public class MicroAstServiceImpl implements MicroAstService {
 
-    private static final String DEFAULT_BREAKPOINT_AUTHORITY = "CLSI";
-    private static final String DEFAULT_BREAKPOINT_VERSION = "2026";
+    private final String defaultBreakpointAuthority;
+    private final String defaultBreakpointVersion;
 
     private final MicroAstRunDAO runDAO;
     private final MicroAstReadingDAO readingDAO;
@@ -84,7 +84,11 @@ public class MicroAstServiceImpl implements MicroAstService {
             MicroReagentLotService reagentLotService, MicroOrganismDAO organismDAO, SampleItemService sampleItemService,
             MicroAstPanelDAO panelDAO, MicroAstOverrideEventDAO overrideEventDAO, SystemUserService systemUserService,
             MicroAstPanelAntibioticDAO panelAntibioticDAO, MicroAstRunAntibioticDAO runAntibioticDAO,
-            MicroAntibioticDAO antibioticDAO) {
+            MicroAntibioticDAO antibioticDAO,
+            @org.springframework.beans.factory.annotation.Value("${org.openelisglobal.microbiology.defaultBreakpointAuthority:CLSI}") String defaultBreakpointAuthority,
+            @org.springframework.beans.factory.annotation.Value("${org.openelisglobal.microbiology.defaultBreakpointVersion:2026}") String defaultBreakpointVersion) {
+        this.defaultBreakpointAuthority = defaultBreakpointAuthority;
+        this.defaultBreakpointVersion = defaultBreakpointVersion;
         this.runDAO = runDAO;
         this.readingDAO = readingDAO;
         this.isolateDAO = isolateDAO;
@@ -344,6 +348,7 @@ public class MicroAstServiceImpl implements MicroAstService {
         String runId = run.getId();
         MicroCaseServiceImpl.requireText(runId, "runId");
         MicroCaseServiceImpl.requireText(antibioticId, "antibioticId");
+        requireUnreviewedRun(run);
         if (runAntibioticDAO.getByRunIdAndAntibioticId(runId, antibioticId).isEmpty()) {
             throw new MicroAstConflictException("AST_ANTIBIOTIC_NOT_ORDERED");
         }
@@ -386,6 +391,7 @@ public class MicroAstServiceImpl implements MicroAstService {
                 .orElseThrow(() -> new IllegalArgumentException("AST reading not found"));
         MicroAstRun run = runDAO.get(reading.getAstRunId())
                 .orElseThrow(() -> new IllegalArgumentException("AST run not found"));
+        requireUnreviewedRun(run);
         MicroIsolate isolate = isolateDAO.get(run.getIsolateId())
                 .orElseThrow(() -> new IllegalArgumentException("Isolate not found"));
         requireMutableRun(run, isolate.getCaseId());
@@ -888,8 +894,8 @@ public class MicroAstServiceImpl implements MicroAstService {
             String antibioticId, MicroAstMethod method) {
         String standardId = run.getBreakpointStandardId();
         if (standardId == null || standardId.trim().isEmpty()) {
-            MicroBreakpointStandard standard = breakpointService.getActiveStandard(DEFAULT_BREAKPOINT_AUTHORITY,
-                    DEFAULT_BREAKPOINT_VERSION);
+            MicroBreakpointStandard standard = breakpointService.getActiveStandard(defaultBreakpointAuthority,
+                    defaultBreakpointVersion);
             if (standard == null) {
                 return null;
             }
@@ -1068,6 +1074,16 @@ public class MicroAstServiceImpl implements MicroAstService {
         MicroCase microCase = caseDAO.get(caseId).orElseThrow(() -> new IllegalArgumentException("Case not found"));
         MicroCaseMutationGuard.requireMutable(microCase);
         return microCase;
+    }
+
+    /**
+     * A reviewed run is a released clinical statement; further results belong to a
+     * repeat or retest run, which carries its own review.
+     */
+    private void requireUnreviewedRun(MicroAstRun run) {
+        if (MicroAstRunStatus.REVIEWED.name().equals(run.getStatus())) {
+            throw new MicroAstConflictException("AST_RUN_ALREADY_REVIEWED");
+        }
     }
 
     private MicroCase requireMutableRun(MicroAstRun run, String caseId) {
