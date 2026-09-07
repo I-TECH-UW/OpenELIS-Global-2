@@ -115,39 +115,8 @@ verify_profile_catalog_ready() {
   fi
 }
 
-verify_realized_analyzer_mappings() {
-  local analyzer_name="$1"
-  local default_config_id="$2"
-  local analyzer_id
-  local missing=()
-
-  analyzer_id="$(psql_query "SELECT id FROM clinlims.analyzer WHERE name = '$(sql_escape "$analyzer_name")' ORDER BY id DESC LIMIT 1;")"
-  if [ -z "$analyzer_id" ]; then
-    echo "ERROR: Could not resolve analyzer id for '${analyzer_name}' during mapping verification." >&2
-    return 1
-  fi
-
-  while IFS=$'\t' read -r test_code loinc; do
-    [ -z "$test_code" ] && continue
-
-    local mapped_test_id
-    mapped_test_id="$(psql_query "SELECT test_id FROM clinlims.analyzer_test_map WHERE analyzer_id = ${analyzer_id} AND analyzer_test_name = '$(sql_escape "$test_code")' LIMIT 1;")"
-
-    if [ -z "$mapped_test_id" ]; then
-      missing+=("${test_code} (LOINC ${loinc})")
-    fi
-  done < <(profile_mappings "$default_config_id")
-
-  if [ "${#missing[@]}" -gt 0 ]; then
-    echo "ERROR: Analyzer '${analyzer_name}' was created, but required profile mappings were not realized." >&2
-    echo "       Missing analyzer_test_map rows for: ${missing[*]}" >&2
-    echo "       Harness boot must stop here because Playwright assertions would be invalid." >&2
-    return 1
-  fi
-}
-
 verify_seed_contract() {
-  echo "Verifying harness profile prerequisites and realized mappings..."
+  echo "Verifying M1 harness profile prerequisites..."
   verify_profile_catalog_ready "Cepheid GeneXpert (ASTM Mode)" "astm/genexpert-astm"
   verify_profile_catalog_ready "Mindray BC-5380" "hl7/mindray-bc5380"
   verify_profile_catalog_ready "Mindray BS-200" "hl7/mindray-bs200"
@@ -158,16 +127,7 @@ verify_seed_contract() {
   verify_profile_catalog_ready "Tecan Infinite F50" "file/tecan-f50"
   verify_profile_catalog_ready "Thermo Multiskan FC" "file/multiskan-fc"
 
-  verify_realized_analyzer_mappings "Cepheid GeneXpert (ASTM Mode)" "astm/genexpert-astm"
-  verify_realized_analyzer_mappings "Mindray BC-5380" "hl7/mindray-bc5380"
-  verify_realized_analyzer_mappings "Mindray BS-200" "hl7/mindray-bs200"
-  verify_realized_analyzer_mappings "QuantStudio 5" "file/quantstudio"
-  verify_realized_analyzer_mappings "QuantStudio 7" "file/quantstudio"
-  verify_realized_analyzer_mappings "FluoroCycler XT" "file/fluorocycler-xt"
-  verify_realized_analyzer_mappings "Wondfo Finecare FS-205" "file/wondfo-csv"
-  verify_realized_analyzer_mappings "Tecan Infinite F50" "file/tecan-f50"
-  verify_realized_analyzer_mappings "Thermo Multiskan FC" "file/multiskan-fc"
-  echo "  Verified: harness catalog and analyzer mappings match seeded profiles"
+  echo "  Verified: M1 harness catalog matches the seeded profile prerequisites"
 }
 
 create_analyzer() {

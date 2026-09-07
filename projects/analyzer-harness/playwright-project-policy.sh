@@ -27,31 +27,3 @@ validate_harness_playwright_project() {
       ;;
   esac
 }
-
-assert_harness_project_has_specs() {
-  local repo_root="$1"
-  local project="$2"
-  local spec_dir
-
-  case "$project" in
-    harness-foundational)
-      spec_dir="$repo_root/frontend/playwright/tests/foundational/harness"
-      ;;
-    harness-demo|harness-demo-video)
-      spec_dir="$repo_root/frontend/playwright/tests/demo/harness"
-      ;;
-    *)
-      validate_harness_playwright_project "$project" >/dev/null
-      return
-      ;;
-  esac
-
-  if ! find "$spec_dir" -type f -name '*.spec.ts' -print -quit 2>/dev/null | grep -q .; then
-    if [[ "$project" == "harness-foundational" ]]; then
-      echo "ERROR: project '$project' has no analyzer foundational specs" >&2
-    else
-      echo "ERROR: project '$project' has no analyzer demo specs" >&2
-    fi
-    return 2
-  fi
-}

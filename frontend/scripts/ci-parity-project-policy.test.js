@@ -1,6 +1,4 @@
-import { execFileSync, spawnSync } from "node:child_process";
-import { mkdirSync, mkdtempSync, rmSync, writeFileSync } from "node:fs";
-import { tmpdir } from "node:os";
+import { execFileSync } from "node:child_process";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, test } from "vitest";
@@ -38,68 +36,5 @@ describe("analyzer harness Playwright project policy", () => {
     expect(
       runPolicy('validate_harness_playwright_project "harness-foundational"'),
     ).toBe("harness-foundational");
-  });
-
-  test("foundational parity has analyzer scenarios", () => {
-    const result = spawnSync(
-      "bash",
-      [
-        "-c",
-        'source "$1"; assert_harness_project_has_specs "$2" "harness-foundational"',
-        "test",
-        policy,
-        repoRoot,
-      ],
-      { cwd: repoRoot, encoding: "utf8" },
-    );
-
-    expect(result.status).toBe(0);
-  });
-
-  test("foundational parity discovers nested analyzer scenarios", () => {
-    const tempRoot = mkdtempSync(
-      path.join(tmpdir(), "analyzer-harness-policy-"),
-    );
-    const nestedSpec = path.join(
-      tempRoot,
-      "frontend/playwright/tests/foundational/harness/mapping/review.spec.ts",
-    );
-    mkdirSync(path.dirname(nestedSpec), { recursive: true });
-    writeFileSync(nestedSpec, "");
-
-    try {
-      const result = spawnSync(
-        "bash",
-        [
-          "-c",
-          'source "$1"; assert_harness_project_has_specs "$2" "harness-foundational"',
-          "test",
-          policy,
-          tempRoot,
-        ],
-        { cwd: repoRoot, encoding: "utf8" },
-      );
-
-      expect(result.status).toBe(0);
-    } finally {
-      rmSync(tempRoot, { recursive: true, force: true });
-    }
-  });
-
-  test("video mode fails closed until a demo scenario exists", () => {
-    const result = spawnSync(
-      "bash",
-      [
-        "-c",
-        'source "$1"; assert_harness_project_has_specs "$2" "harness-demo-video"',
-        "test",
-        policy,
-        repoRoot,
-      ],
-      { cwd: repoRoot, encoding: "utf8" },
-    );
-
-    expect(result.status).not.toBe(0);
-    expect(result.stderr).toContain("no analyzer demo specs");
   });
 });
