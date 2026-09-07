@@ -38,11 +38,11 @@ import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 import { ConfigurationContext } from "../layout/Layout";
 
+// An empty search: what the screen showed after reloading itself.
+const NO_SAMPLE = { sampleItems: [], accessionNumber: "" };
+
 function AliquotPage() {
-  const [sampleForm, setSampleForm] = useState({
-    sampleItems: [],
-    accessionNumber: "",
-  });
+  const [sampleForm, setSampleForm] = useState(NO_SAMPLE);
   const [searchBy, setSearchBy] = useState({ type: "", doRange: false });
   const [param, setParam] = useState("&accessionNumber=");
 
@@ -552,7 +552,9 @@ export function SampleItemsDisplay(props) {
         message: intl.formatMessage({ id: "aliquot.save.success" }),
         kind: NotificationKinds.success,
       });
-      window.location.reload();
+      props.setSampleData(NO_SAMPLE);
+      setExpandedRows({});
+      setSelectedAliquotValues({});
     } else {
       addNotification({
         title: intl.formatMessage({ id: "notification.title" }),

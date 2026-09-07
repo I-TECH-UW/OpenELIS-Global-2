@@ -76,19 +76,23 @@ Counts, non-test source:
 
 |                                                  | Start | Now | In scope |
 | ------------------------------------------------ | ----- | --- | -------- |
-| `window.location.reload()`                       | 84    | 5   | 3        |
-| same-route / cross-screen `assign()` or `href =` | 85    | 70  | 53       |
+| `window.location.reload()`                       | 84    | 2   | 0        |
+| same-route / cross-screen `assign()` or `href =` | 85    | 66  | 49       |
 
-Converted: `UserManagement`; the three order screens; the five rename screens
-plus `Test` and `SelectList`, which complete the family; the four create
-screens; the three test-assign screens; `TestActivation` and `TestOrderability`;
-the general-configuration editor; `ResultSelectListAdd`;
-`ResultReportingConfiguration`; `AnalyzerTestName`; the provider,
-external-connection and organization menus; and `TestAdd` with the test step
-form. What is left is three screens with one reload each. Two more were removed
-rather than converted: the reflex-rule and calculated-value forms each carried a
-delete handler nothing called, reachable from no button, whose success path
-reloaded.
+Criterion 2 is met: no `window.location.reload()` remains outside the session
+and error-recovery set. The two that stay are the CSRF-expiry reload in
+`Utils.ts` and the recovery button in `RouteErrorBoundary`, both listed in
+criterion 4.
+
+Two were removed rather than converted: the reflex-rule and calculated-value
+forms each carried a delete handler nothing called, reachable from no button,
+whose success path reloaded.
+
+Criterion 3 and 5 have started. `TestOrderability` and batch test reassignment
+each had Cancel buttons that navigated to the screen they were already on to
+forget a pending change; those are resets now. `UomCreate` and `UserAddModify`
+left their screen by downloading the app again to reach a route the router
+already serves; those are `history.push`.
 
 `TestOrderability` also carried the first two same-route `assign()` calls to go:
 both were Cancel buttons that navigated to the screen they were already on in

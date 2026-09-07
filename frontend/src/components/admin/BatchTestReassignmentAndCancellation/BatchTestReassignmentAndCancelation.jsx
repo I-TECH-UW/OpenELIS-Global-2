@@ -249,9 +249,7 @@ function BatchTestReassignmentAndCancelation() {
         kind: NotificationKinds.success,
       });
       setNotificationVisible(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
+      resetToDefault();
     } else {
       addNotification({
         kind: NotificationKinds.error,
@@ -799,12 +797,7 @@ function BatchTestReassignmentAndCancelation() {
               </Button>{" "}
               <Button
                 data-cy="cancelButton"
-                onClick={() => {
-                  resetToDefault();
-                  window.location.assign(
-                    "/MasterListsPage/batchTestReassignment",
-                  );
-                }}
+                onClick={resetToDefault}
                 kind="tertiary"
                 type="button"
               >
@@ -1009,11 +1002,7 @@ function BatchTestReassignmentAndCancelation() {
                     <FormattedMessage id="column.name.accept" />
                   </Button>{" "}
                   <Button
-                    onClick={() =>
-                      window.location.assign(
-                        "/MasterListsPage/batchTestReassignment",
-                      )
-                    }
+                    onClick={resetToDefault}
                     kind="tertiary"
                     type="button"
                   >
