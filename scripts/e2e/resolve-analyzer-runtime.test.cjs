@@ -10,10 +10,10 @@ test("plugin builds retain their artifacts and existing analyzer stories", () =>
   });
 });
 
-test("Bridge builds run setup and assembled traffic without plugin artifacts", () => {
+test("Bridge builds isolate setup from the required unresolved-traffic story", () => {
   assert.deepEqual(resolveAnalyzerRuntime("bridge"), {
     include_plugin_jars: "false",
-    analyzer_projects: "harness-demo,harness-mvp",
+    analyzer_projects: "harness-demo",
     seed_analyzer_traffic: "true",
   });
 });

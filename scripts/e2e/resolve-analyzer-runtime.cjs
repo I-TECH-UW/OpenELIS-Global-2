@@ -11,7 +11,7 @@ function resolveAnalyzerRuntime(runtime = "plugins") {
     case "bridge":
       return {
         include_plugin_jars: "false",
-        analyzer_projects: "harness-demo,harness-mvp",
+        analyzer_projects: "harness-demo",
         seed_analyzer_traffic: "true",
       };
     default:
