@@ -459,7 +459,12 @@ public class UserServiceImpl implements UserService {
     public List<AnalysisItem> filterAnalysisResultsByLabUnitRoles(String SystemUserId, List<AnalysisItem> results,
             String roleName) {
         String resultsRoleId = roleService.getRoleByName(roleName).getId();
-        List<IdValuePair> testSections = getUserTestSections(SystemUserId, resultsRoleId);
+        // OGC-189 (M2): a VIEWER over work that already exists, so it must use
+        // the isActive-OR-hasContent set. getUserTestSections returns active
+        // units only, which silently dropped every pending analysis whose lab
+        // unit had since been switched off — the dashboard counted the work but
+        // the page came back empty, and it could no longer be completed.
+        List<IdValuePair> testSections = getUserViewerTestSections(SystemUserId, resultsRoleId);
         List<String> testUnitIds = new ArrayList<>();
         if (testSections != null) {
             testSections.forEach(testSection -> testUnitIds.add(testSection.getId()));
@@ -474,7 +479,10 @@ public class UserServiceImpl implements UserService {
     @Override
     public List<Analysis> filterAnalysesByLabUnitRoles(String SystemUserId, List<Analysis> results, String roleName) {
         String resultsRoleId = roleService.getRoleByName(roleName).getId();
-        List<IdValuePair> testSections = getUserTestSections(SystemUserId, resultsRoleId);
+        // OGC-189 (M2): viewer semantics — see the note on
+        // filterAnalysisResultsByLabUnitRoles above. Completion of existing
+        // work is never gated on the lab unit's status.
+        List<IdValuePair> testSections = getUserViewerTestSections(SystemUserId, resultsRoleId);
         List<String> testUnitIds = new ArrayList<>();
         if (testSections != null) {
             testSections.forEach(testSection -> testUnitIds.add(testSection.getId()));
