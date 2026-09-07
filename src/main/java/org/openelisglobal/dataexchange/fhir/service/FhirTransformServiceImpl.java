@@ -3180,7 +3180,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
         Test requestedTest = null;
         if (serviceRequest.hasCode()) {
-            List<Test> foundTests = resolveTestsFromServiceRequest(serviceRequest);
+            List<Test> foundTests = resolveTestsFromCodeableConcept(serviceRequest.getCode());
             // OGC-1145: the ServiceRequest's specimen was resolved above —
             // prefer the candidate test associated with that sample type
             // instead of first-match, so a shared code (or a test spanning
@@ -3442,14 +3442,14 @@ public class FhirTransformServiceImpl implements FhirTransformService {
     }
 
     @Override
-    public List<Test> resolveTestsFromServiceRequest(ServiceRequest serviceRequest) {
+    public List<Test> resolveTestsFromCodeableConcept(CodeableConcept codeableConcept) {
         List<Test> resolvedTests = new ArrayList<>();
 
-        if (serviceRequest == null || !serviceRequest.hasCode() || !serviceRequest.getCode().hasCoding()) {
+        if (codeableConcept == null || !codeableConcept.hasCoding()) {
             return resolvedTests;
         }
 
-        serviceRequest.getCode().getCoding().forEach(coding -> {
+        codeableConcept.getCoding().forEach(coding -> {
 
             if ("http://loinc.org".equalsIgnoreCase(coding.getSystem()) && coding.hasCode()) {
 
