@@ -2,6 +2,7 @@ package org.openelisglobal.fhir;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertNotNull;
 
 import ca.uhn.fhir.context.FhirContext;
@@ -14,6 +15,7 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
 import org.openelisglobal.analyzer.service.AnalyzerService;
+import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.fhir.providers.DeviceProvider;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.mock.web.MockHttpServletRequest;
@@ -22,6 +24,13 @@ import org.springframework.mock.web.MockServletConfig;
 import org.springframework.mock.web.MockServletContext;
 
 public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
+
+    /** analyzer id=1 (Cobas 6800) in facade-device.xml. */
+    private static final String COBAS_UUID = "2d335c87-1def-42e9-a610-2748b9872a1c";
+    /** analyzer id=2 (ABL800 FLEX) in facade-device.xml. */
+    private static final String ABL800_UUID = "2d335c87-1def-42e9-a610-2748b9872a2c";
+    private static final String UNKNOWN_UUID = "2d335c87-1def-42e9-a610-2748b9872a8c";
+
     private RestfulServer fhirServlet;
     private ObjectMapper objectMapper;
 
@@ -53,69 +62,55 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
     @Test
     public void readDevice_shouldReturnSuccess() throws Exception {
 
-        String fhirUuid = "2d335c87-1def-42e9-a610-2748b9872a1c";
-
-        MockHttpServletRequest request = buildFhirRequest("GET", "/Device/" + fhirUuid);
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        fhirServlet.service(request, response);
+        MockHttpServletResponse response = serve(buildFhirRequest("GET", "/Device/" + COBAS_UUID));
 
         assertEquals(200, response.getStatus());
 
         JsonNode jsonResponse = objectMapper.readTree(response.getContentAsString());
 
         assertEquals("Device", jsonResponse.get("resourceType").asText());
-
+        assertEquals(COBAS_UUID, jsonResponse.get("id").asText());
+        assertEquals("COBAS6800-001", jsonResponse.get("serialNumber").asText());
     }
 
     @Test
-    public void readDevice_shouldWithInvalidFhirIdShouldReturn400() throws Exception {
+    public void readDevice_withInvalidFhirId_shouldReturn400() throws Exception {
 
-        String fhirUuid = "00000000-000000-0000000-000000";
-
-        MockHttpServletRequest request = buildFhirRequest("GET", "/Device/" + fhirUuid);
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        fhirServlet.service(request, response);
+        MockHttpServletResponse response = serve(buildFhirRequest("GET", "/Device/00000000-000000-0000000-000000"));
 
         assertEquals(400, response.getStatus());
-
     }
 
     @Test
-    public void readDevice_shouldWithValidFhirIdWithoutItemShouldReturn404() throws Exception {
+    public void readDevice_withUnknownFhirId_shouldReturn404() throws Exception {
 
-        String fhirUuid = "d335c87-1def-42e9-a610-2748b9872a8c";
-
-        MockHttpServletRequest request = buildFhirRequest("GET", "/Device/" + fhirUuid);
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        fhirServlet.service(request, response);
+        MockHttpServletResponse response = serve(buildFhirRequest("GET", "/Device/" + UNKNOWN_UUID));
 
         assertEquals(404, response.getStatus());
-
     }
 
     @Test
-    public void deleteDevice_shouldSetAnalyzerInactive() throws Exception {
+    public void deleteDevice_shouldDeactivateAnalyzerAndReportInactive() throws Exception {
 
-        String fhirUuid = "2d335c87-1def-42e9-a610-2748b9872a1c";
-
-        MockHttpServletRequest request = buildFhirRequest("DELETE", "/Device/" + fhirUuid);
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        fhirServlet.service(request, response);
+        MockHttpServletResponse response = serve(buildFhirRequest("DELETE", "/Device/" + COBAS_UUID));
 
         assertEquals(204, response.getStatus());
 
-        org.openelisglobal.analyzer.valueholder.Analyzer analyzer = analyzerService
-                .getAllMatching("fhirUuid", UUID.fromString(fhirUuid)).getFirst();
+        Analyzer analyzer = analyzerByUuid(COBAS_UUID);
         assertFalse(analyzer.isActive());
+        assertEquals(Analyzer.AnalyzerStatus.INACTIVE, analyzer.getStatus());
 
+        JsonNode device = objectMapper
+                .readTree(serve(buildFhirRequest("GET", "/Device/" + COBAS_UUID)).getContentAsString());
+        assertEquals("deleted device must not read back as active", "inactive", device.get("status").asText());
+    }
+
+    @Test
+    public void deleteDevice_withUnknownFhirId_shouldReturn404() throws Exception {
+
+        MockHttpServletResponse response = serve(buildFhirRequest("DELETE", "/Device/" + UNKNOWN_UUID));
+
+        assertEquals(404, response.getStatus());
     }
 
     @Test
@@ -140,12 +135,7 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
                 }
                 """;
 
-        MockHttpServletRequest request = buildFhirRequest("POST", "/Device");
-        request.setContent(deviceJson.getBytes());
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        fhirServlet.service(request, response);
+        MockHttpServletResponse response = serve(post(deviceJson));
 
         assertEquals(201, response.getStatus());
 
@@ -153,19 +143,72 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
 
         assertEquals("Device", jsonResponse.get("resourceType").asText());
         assertNotNull(jsonResponse.get("id"));
-        org.openelisglobal.analyzer.valueholder.Analyzer analyzer = analyzerService.getAll().getFirst();
+        Analyzer analyzer = analyzerService.getAll().getFirst();
         assertEquals("Test Device", analyzer.getName());
+    }
+
+    @Test
+    public void createDevice_withClientSuppliedExistingId_shouldCreateNewAnalyzerNotUpdate() throws Exception {
+
+        int before = analyzerService.getAll().size();
+
+        String deviceJson = """
+                {
+                  "resourceType": "Device",
+                  "id": "%s",
+                  "serialNumber": "IMPOSTOR-001",
+                  "deviceName": [{
+                    "name": "Impostor Device",
+                    "type": "user-friendly-name"
+                  }]
+                }
+                """.formatted(COBAS_UUID);
+
+        MockHttpServletResponse response = serve(post(deviceJson));
+
+        assertEquals(201, response.getStatus());
+
+        String newId = objectMapper.readTree(response.getContentAsString()).get("id").asText();
+        assertNotEquals("server must assign its own id on create", COBAS_UUID, newId);
+        assertEquals(before + 1, analyzerService.getAll().size());
+        assertEquals("existing analyzer must be untouched", "Cobas 6800", analyzerByUuid(COBAS_UUID).getName());
+        assertEquals("Impostor Device", analyzerByUuid(newId).getName());
+    }
+
+    @Test
+    public void createDevice_withUnknownCommunicationMode_shouldReturn422() throws Exception {
+
+        String deviceJson = """
+                {
+                  "resourceType": "Device",
+                  "extension": [{
+                    "url": "http://openelis.org/fhir/StructureDefinition/analyzer-communication-mode",
+                    "valueCodeableConcept": {
+                      "coding": [{
+                        "system": "http://openelis.org/fhir/CodeSystem/analyzer-communication-mode",
+                        "code": "CARRIER_PIGEON"
+                      }]
+                    }
+                  }],
+                  "deviceName": [{
+                    "name": "Bad Mode Device",
+                    "type": "user-friendly-name"
+                  }]
+                }
+                """;
+
+        MockHttpServletResponse response = serve(post(deviceJson));
+
+        assertEquals(422, response.getStatus());
     }
 
     @Test
     public void updateDevice_shouldModifyAnalyzer() throws Exception {
 
-        String fhirUuid = "2d335c87-1def-42e9-a610-2748b9872a1c";
-
         String updateJson = """
                 {
                   "resourceType": "Device",
-                  "id": "2d335c87-1def-42e9-a610-2748b9872a1c",
+                  "id": "%s",
                   "serialNumber": "UPDATED-SERIAL-123",
                   "deviceName": [{
                     "name": "Updated Device",
@@ -175,21 +218,103 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
                     "text": "MOLECULAR"
                   }
                 }
-                """;
+                """.formatted(COBAS_UUID);
 
-        MockHttpServletRequest request = buildFhirRequest("PUT", "/Device/" + fhirUuid);
-        request.setContent(updateJson.getBytes());
-
-        MockHttpServletResponse response = new MockHttpServletResponse();
-
-        fhirServlet.service(request, response);
+        MockHttpServletResponse response = serve(put(COBAS_UUID, updateJson));
 
         assertEquals(200, response.getStatus());
 
-        org.openelisglobal.analyzer.valueholder.Analyzer analyzer = analyzerService
-                .getAllMatching("fhirUuid", UUID.fromString(fhirUuid)).getFirst();
+        Analyzer analyzer = analyzerByUuid(COBAS_UUID);
         assertEquals("Updated Device", analyzer.getName());
+        assertEquals("UPDATED-SERIAL-123", analyzer.getMachineId());
+    }
 
+    @Test
+    public void updateDevice_withoutBodyId_shouldUpdateResourceAddressedByUrl() throws Exception {
+
+        String updateJson = """
+                {
+                  "resourceType": "Device",
+                  "serialNumber": "ABL800-999",
+                  "deviceName": [{
+                    "name": "ABL800 renamed",
+                    "type": "user-friendly-name"
+                  }]
+                }
+                """;
+
+        int before = analyzerService.getAll().size();
+
+        MockHttpServletResponse response = serve(put(ABL800_UUID, updateJson));
+
+        assertEquals(200, response.getStatus());
+        assertEquals("update must not create a second analyzer", before, analyzerService.getAll().size());
+        assertEquals("ABL800 renamed", analyzerByUuid(ABL800_UUID).getName());
+        assertEquals(ABL800_UUID, objectMapper.readTree(response.getContentAsString()).get("id").asText());
+    }
+
+    @Test
+    public void updateDevice_withMismatchedBodyId_shouldReturn400() throws Exception {
+
+        String updateJson = """
+                {
+                  "resourceType": "Device",
+                  "id": "%s",
+                  "deviceName": [{
+                    "name": "Wrong Target",
+                    "type": "user-friendly-name"
+                  }]
+                }
+                """.formatted(ABL800_UUID);
+
+        MockHttpServletResponse response = serve(put(COBAS_UUID, updateJson));
+
+        assertEquals(400, response.getStatus());
+        assertEquals("Cobas 6800", analyzerByUuid(COBAS_UUID).getName());
+        assertEquals("ABL800 FLEX", analyzerByUuid(ABL800_UUID).getName());
+    }
+
+    @Test
+    public void updateDevice_withUnknownId_shouldReturn404() throws Exception {
+
+        String updateJson = """
+                {
+                  "resourceType": "Device",
+                  "deviceName": [{
+                    "name": "Ghost",
+                    "type": "user-friendly-name"
+                  }]
+                }
+                """;
+
+        int before = analyzerService.getAll().size();
+
+        MockHttpServletResponse response = serve(put(UNKNOWN_UUID, updateJson));
+
+        assertEquals(404, response.getStatus());
+        assertEquals("update of an unknown id must not create an analyzer", before, analyzerService.getAll().size());
+    }
+
+    private Analyzer analyzerByUuid(String uuid) {
+        return analyzerService.getAllMatching("fhirUuid", UUID.fromString(uuid)).getFirst();
+    }
+
+    private MockHttpServletRequest post(String body) {
+        MockHttpServletRequest request = buildFhirRequest("POST", "/Device");
+        request.setContent(body.getBytes());
+        return request;
+    }
+
+    private MockHttpServletRequest put(String uuid, String body) {
+        MockHttpServletRequest request = buildFhirRequest("PUT", "/Device/" + uuid);
+        request.setContent(body.getBytes());
+        return request;
+    }
+
+    private MockHttpServletResponse serve(MockHttpServletRequest request) throws Exception {
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        fhirServlet.service(request, response);
+        return response;
     }
 
 }

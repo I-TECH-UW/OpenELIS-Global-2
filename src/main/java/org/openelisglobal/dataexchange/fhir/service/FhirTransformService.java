@@ -108,6 +108,8 @@ public interface FhirTransformService {
 
     ServiceRequest transformToServiceRequest(String anlaysisId);
 
+    Specimen transformToSpecimen(SampleItem sampleItem);
+
     SampleOrderItem buildSampleOrderItemFromServiceRequest(ServiceRequest serviceRequest, String sysUserId)
             throws Exception;
 
@@ -119,8 +121,6 @@ public interface FhirTransformService {
     Device transformAnalyzerToDevice(Analyzer analyzer);
 
     Analyzer transformDeviceToAnalyzer(Device device);
-
-    Specimen transformToSpecimen(SampleItem sampleItem);
 
     Specimen transformToSpecimen(String sampleItemId);
 
