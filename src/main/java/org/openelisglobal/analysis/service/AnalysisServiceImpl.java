@@ -476,6 +476,13 @@ public class AnalysisServiceImpl extends AuditableBaseObjectServiceImpl<Analysis
 
     @Override
     @Transactional(readOnly = true)
+    public Set<String> getTestSectionIdsWithAnyAnalyses() {
+        // Empty exclusion list = every analysis counts, terminal or not.
+        return new HashSet<>(baseObjectDAO.getTestSectionIdsWithAnalysesNotInStatus(new ArrayList<>()));
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public long[] countAnalysesForLabUnit(String testSectionId) {
         return baseObjectDAO.countAnalysesByTestSectionSplitByStatus(testSectionId, terminalAnalysisStatusIds());
     }

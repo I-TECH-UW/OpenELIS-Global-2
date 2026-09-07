@@ -1032,6 +1032,38 @@ public class AnalysisServiceTest extends BaseWebContextSensitiveTest {
      * set, so a section with only Finalized/Canceled/rejected work no longer counts
      * as holding content.
      */
+    /**
+     * OGC-189: the viewer rule must keep a lab unit visible once its work is
+     * FINISHED, not only while it is pending.
+     *
+     * <p>
+     * Counting pending analyses alone meant that entering a result in a deactivated
+     * unit made it vanish from the results pages and from reporting at the moment
+     * of saving — the guardrail covers viewing historical data, not just completing
+     * pending work.
+     *
+     * <p>
+     * Exercised on the DAO exclusion directly: the fixture seeds only statuses 1
+     * and 2, so excluding status 1 stands in for "this section's work has reached a
+     * terminal state".
+     */
+    @Test
+    public void anyAnalyses_stillIncludesASectionWhosePendingWorkIsExcluded() {
+        // Seeded analysis 1 is in section 1 at status 1.
+        List<String> pendingOnly = analysisDAO.getTestSectionIdsWithAnalysesNotInStatus(Arrays.asList("1"));
+        List<String> anyStatus = analysisDAO.getTestSectionIdsWithAnalysesNotInStatus(new ArrayList<>());
+
+        // The pending-only view drops section 1 — the old behaviour that hid a
+        // finalized result. The unfiltered view keeps it, which is what makes
+        // the result reachable for viewing and reporting.
+        Assert.assertFalse("excluding its only status drops the section", pendingOnly.contains("1"));
+        Assert.assertTrue("the viewer rule must still include it", anyStatus.contains("1"));
+        // Positive control: section 2 is unaffected either way, so a query
+        // returning nothing (or everything) cannot satisfy both assertions.
+        Assert.assertTrue(pendingOnly.contains("2"));
+        Assert.assertTrue(anyStatus.contains("2"));
+    }
+
     @Test
     public void getTestSectionIdsWithPendingAnalyses_returnsSectionsHoldingNonTerminalWork() {
         Set<String> pending = aService.getTestSectionIdsWithPendingAnalyses();
