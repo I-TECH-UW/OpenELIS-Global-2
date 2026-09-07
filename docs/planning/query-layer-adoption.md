@@ -76,15 +76,16 @@ Counts, non-test source:
 
 |                                                  | Start | Now | In scope |
 | ------------------------------------------------ | ----- | --- | -------- |
-| `window.location.reload()`                       | 84    | 15  | 13       |
+| `window.location.reload()`                       | 84    | 13  | 11       |
 | same-route / cross-screen `assign()` or `href =` | 85    | 72  | 55       |
 
 Converted: `UserManagement`, the three order screens, the five rename screens,
 the four create screens (`Panel`, `SampleType`, `TestSection`, `Uom`) and the
 three test-assign screens, `TestActivation`, the general-configuration editor
-`ResultSelectListAdd`, `AnalyzerTestName` and `ProviderMenu`. What is left is
-thirteen screens with one reload each. The one `window.location.replace` in the
-frontend went with them.
+`ResultSelectListAdd`, `AnalyzerTestName` and `ProviderMenu`. The rename family
+is complete with `Test` and `SelectList`. What is left is eleven screens with
+one reload each. The one `window.location.replace` in the frontend went with
+them.
 
 ### One constraint the conversion has to respect
 
