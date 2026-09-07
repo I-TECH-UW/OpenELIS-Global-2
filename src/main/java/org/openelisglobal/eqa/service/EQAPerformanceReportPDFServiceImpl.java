@@ -79,6 +79,12 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
     /** Printed wherever a value is absent, so a blank cell never reads as zero. */
     private static final String DASH = "—";
 
+    private static final BigDecimal ONE_HUNDRED = new BigDecimal("100");
+
+    /** The numeric head of a value that may carry its unit inline, e.g. "100 %". */
+    private static final java.util.regex.Pattern LEADING_NUMBER = java.util.regex.Pattern
+            .compile("^[-+]?\\d+(?:\\.\\d+)?");
+
     @Autowired
     private EQACycleDAO eqaCycleDAO;
     @Autowired
@@ -146,7 +152,7 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
             addHeader(document, cycle, cycle.getScheme(), rows.size(), participant);
             addProgrammeSummary(document, rows);
             addSectionSummary(document, rows);
-            addScoringTable(document, rows, includeLabColumns);
+            addScoringTable(document, rows, includeLabColumns, hasPeerGroup(cycle));
             addInterpretiveComments(document, cycle.getId());
             addSignOff(document);
             document.close();
@@ -211,7 +217,8 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
                     result.getPerformanceStatus(), nceNumbers.get(result.getId()),
                     analysts.getOrDefault(analystKey, analystKey),
                     result.getSubmittedAt() == null ? null : formatDay(result.getSubmittedAt()),
-                    result.getScoreReceivedAt() == null ? null : formatDay(result.getScoreReceivedAt())));
+                    result.getScoreReceivedAt() == null ? null : formatDay(result.getScoreReceivedAt()),
+                    result.getSubmissionStatus() == EQASubmissionStatus.MISSED_DEADLINE));
         }
         rows.sort(Comparator.comparing(Row::round, Comparator.nullsLast(Comparator.naturalOrder()))
                 .thenComparing(Row::section, Comparator.nullsLast(Comparator.naturalOrder()))
@@ -237,7 +244,8 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
             rows.add(new Row(roundNumberOf(result), sectionOf(test), analyteLabelOf(test, result.getTestId()),
                     reportedOf(result), targetOf(result, sealedTargets), null, result.getZScore(),
                     result.getPerformanceStatus(), null, null,
-                    result.getSubmissionDate() == null ? null : formatDay(result.getSubmissionDate()), null));
+                    result.getSubmissionDate() == null ? null : formatDay(result.getSubmissionDate()), null,
+                    Boolean.TRUE.equals(result.getIsLateSubmission())));
         }
         rows.sort(Comparator.comparing(Row::round, Comparator.nullsLast(Comparator.naturalOrder()))
                 .thenComparing(Row::section, Comparator.nullsLast(Comparator.naturalOrder()))
@@ -378,22 +386,42 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
      * A cycle can run several rounds, and the same analyte is reported in each. The
      * round column is what keeps two such rows apart.
      */
-    private void addScoringTable(Document document, List<Row> rows, boolean includeLabColumns)
+    /**
+     * Whether a Z-score can exist for this cycle at all. The in-house lane has no
+     * peer group — one laboratory's own analysts answering its own panel — so it
+     * computes none, and a Z column that is present and always empty reads as a
+     * missing value rather than as a lane that has nothing to put there. The column
+     * is therefore labelled rather than filled with a figure that is not a peer
+     * statistic.
+     */
+    private boolean hasPeerGroup(EQACycle cycle) {
+        return cycle.getScheme() == null || cycle.getScheme().getSchemeType() != EQASchemeType.IN_HOUSE;
+    }
+
+    private void addScoringTable(Document document, List<Row> rows, boolean includeLabColumns, boolean hasPeerGroup)
             throws DocumentException {
         if (rows.isEmpty()) {
             return;
         }
         document.add(paragraph(MessageUtil.getMessage("eqa.report.table.title"), SECTION_FONT, 14f));
 
-        float[] widths = includeLabColumns ? new float[] { 0.8f, 2f, 1.5f, 1.5f, 0.9f, 1.4f, 1.4f, 1.4f, 1.2f, 1.2f }
-                : new float[] { 0.8f, 2.4f, 1.7f, 1.7f, 1f, 1.6f, 1.4f };
+        // Eleven columns are tight on A4 landscape: the difference column is kept
+        // narrow (its content is "-8 (-8%)") and its room comes off the analyte,
+        // which already wraps on a long name either way. Widening it instead
+        // wrapped the reported value and its unit onto a second line, which is the
+        // fault the section column was moved out of the table to avoid.
+        float[] widths = includeLabColumns
+                ? new float[] { 0.7f, 1.5f, 1.5f, 1.3f, 1f, 0.95f, 1.4f, 1.4f, 1.35f, 1.1f, 1.1f }
+                : new float[] { 0.7f, 1.9f, 1.6f, 1.4f, 1.1f, 1.1f, 1.5f, 1.2f };
         int columns = widths.length;
         PdfPTable table = new PdfPTable(widths);
         table.setWidthPercentage(100);
         table.setHeaderRows(1);
         List<String> headers = new ArrayList<>(List.of(MessageUtil.getMessage("eqa.report.table.round"),
                 MessageUtil.getMessage("eqa.report.table.analyte"), MessageUtil.getMessage("eqa.report.table.reported"),
-                MessageUtil.getMessage("eqa.report.table.target"), MessageUtil.getMessage("eqa.report.table.zscore"),
+                MessageUtil.getMessage("eqa.report.table.target"), MessageUtil.getMessage("eqa.report.table.delta"),
+                MessageUtil
+                        .getMessage(hasPeerGroup ? "eqa.report.table.zscore" : "eqa.report.table.zscore.noPeerGroup"),
                 MessageUtil.getMessage("eqa.report.table.performance")));
         if (includeLabColumns) {
             headers.add(MessageUtil.getMessage("eqa.report.table.nce"));
@@ -419,7 +447,7 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
                 table.addCell(banner);
             }
             List<String> cells = new ArrayList<>(List.of(row.roundLabel(), row.analyteLabel(), row.reportedLabel(),
-                    row.targetLabel(), row.zLabel(), row.performanceLabel()));
+                    row.targetLabel(), row.deltaLabel(), row.zLabel(), row.performanceLabel()));
             if (includeLabColumns) {
                 cells.add(dash(row.nceNumber()));
                 cells.add(dash(row.analyst()));
@@ -431,6 +459,12 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
             bodyRow(table, cells.toArray(new String[0]));
         }
         document.add(table);
+
+        if (!hasPeerGroup) {
+            // Said once under the table rather than in the column head: a header
+            // long enough to explain itself wraps four ways in a numeric column.
+            document.add(paragraph(MessageUtil.getMessage("eqa.report.table.zscore.noPeerGroupNote"), META_FONT, 4f));
+        }
     }
 
     /**
@@ -652,7 +686,7 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
 
     private record Row(Integer round, String section, String analyte, String reported, String target, String unit,
             BigDecimal zScore, EQAPerformanceStatus performance, String nceNumber, String analyst, String submittedAt,
-            String scoredAt) {
+            String scoredAt, boolean late) {
 
         String reportedLabel() {
             return dash(withUnit(reported, unit));
@@ -660,6 +694,49 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
 
         String targetLabel() {
             return dash(target);
+        }
+
+        /**
+         * How far off the bench was, signed, with the same distance as a share of the
+         * target beside it. For a numeric panel this is the point of the exercise — not
+         * merely whether the answer passed — and leaving the reader to subtract two
+         * columns is what AC-V2.4-10 calls a missing delta. A categorical answer has no
+         * distance, so it prints nothing.
+         */
+        String deltaLabel() {
+            BigDecimal reportedNumber = number(reported);
+            BigDecimal targetNumber = number(target);
+            if (reportedNumber == null || targetNumber == null) {
+                return DASH;
+            }
+            BigDecimal difference = reportedNumber.subtract(targetNumber);
+            String signed = (difference.signum() > 0 ? "+" : "") + difference.stripTrailingZeros().toPlainString();
+            if (targetNumber.signum() == 0) {
+                return signed; // a share of nothing is not a number
+            }
+            BigDecimal percent = difference.multiply(ONE_HUNDRED).divide(targetNumber.abs(), 1, RoundingMode.HALF_UP);
+            return signed + " (" + (percent.signum() > 0 ? "+" : "") + percent.stripTrailingZeros().toPlainString()
+                    + "%)";
+        }
+
+        /**
+         * The leading number of a value that may carry its unit inline ("100 %"), or
+         * null when the value is a word. Nothing is coerced: a categorical answer must
+         * not come out as a delta of zero.
+         */
+        private static BigDecimal number(String value) {
+            if (GenericValidator.isBlankOrNull(value)) {
+                return null;
+            }
+            java.util.regex.Matcher leading = LEADING_NUMBER.matcher(value.trim());
+            if (!leading.find()) {
+                return null;
+            }
+            try {
+                return new BigDecimal(leading.group());
+            } catch (NumberFormatException e) {
+                return null;
+            }
         }
 
         String roundLabel() {
@@ -679,9 +756,18 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
             return zScore == null ? DASH : zScore.stripTrailingZeros().toPlainString();
         }
 
+        /**
+         * A late answer carries its verdict and says so. The row keeps MISSED_DEADLINE
+         * in the record, but on the page the empty Submitted cell was the only hint,
+         * and a reader cannot be asked to infer lateness from a dash.
+         */
         String performanceLabel() {
-            return performance == null ? MessageUtil.getMessage("eqa.report.summary.unscored")
-                    : MessageUtil.getMessage("eqa.performanceStatus." + performance.name().toLowerCase(Locale.ROOT));
+            if (performance == null) {
+                return MessageUtil.getMessage("eqa.report.summary.unscored");
+            }
+            String verdict = MessageUtil
+                    .getMessage("eqa.performanceStatus." + performance.name().toLowerCase(Locale.ROOT));
+            return late ? verdict + " " + MessageUtil.getMessage("eqa.report.table.lateSuffix") : verdict;
         }
     }
 

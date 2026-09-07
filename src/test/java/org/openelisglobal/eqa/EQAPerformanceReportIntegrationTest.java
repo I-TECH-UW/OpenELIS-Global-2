@@ -438,6 +438,73 @@ public class EQAPerformanceReportIntegrationTest extends EQASpineTestBase {
         return resultId;
     }
 
+    /**
+     * AC-V2.4-10 asks the post-unblind view for targets <b>and deltas</b>. Targets
+     * were right; there was no delta anywhere, so a reader had to subtract two
+     * columns — and for a numeric in-house panel the distance is the point of the
+     * exercise, not merely whether the answer passed.
+     */
+    @Test
+    public void numericRowsCarryASignedDifferenceAndCategoricalOnesDoNot() throws IOException {
+        // A delta needs a target, and only an unblinded panel reveals one.
+        resultAgainstPanel(EQAPanelStatus.SCORED, java.sql.Timestamp.valueOf("2026-09-21 09:00:00"), "92", "100");
+        String detail = block(reportText(), SCORING_DETAIL, SIGN_OFF);
+
+        assertTrue("the difference column is printed", detail.contains("Difference"));
+        assertTrue("a value below target reads as a signed difference and a share of it",
+                rowIn(detail, "92", "100", "-8 (-8%)"));
+
+        // A categorical answer has no distance, and coercing a word to a number
+        // would print one as a delta of zero.
+        assertTrue("the categorical row is present", rowIn(detail, "Syphilis RPR", "Negative"));
+        for (String line : detail.split("\n")) {
+            if (line.contains("Syphilis RPR")) {
+                assertFalse("a word carries no difference", line.contains("%)"));
+            }
+        }
+    }
+
+    /**
+     * The in-house lane has no peer group, so it computes no Z. The column used to
+     * be present and always empty, which reads as a missing value; it now says so
+     * in its own header rather than being filled with a figure that is not a peer
+     * statistic.
+     */
+    @Test
+    public void theZScoreColumnSaysItHasNoPeerGroupOnAnInHouseReport() throws IOException {
+        assertTrue("the external cycle's Z column is unqualified",
+                reportText().contains("Z-score") && !reportText().contains("no peer group"));
+
+        // The scoring table only renders where there are rows, so the in-house
+        // cycle needs one of its own.
+        EQAProgram inHouse = insertScheme("In-house Z label " + System.nanoTime(), EQASchemeType.IN_HOUSE, null);
+        EQACycle inHouseCycle = readBack(insertCycle(inHouse, 9));
+        Long inHouseRound = insertRound(inHouseCycle, 1, "OPEN");
+        seedEnrollment(9902, inHouse.getName());
+        insertParticipantResult(inHouseCycle, eqaRoundDAO.get(inHouseRound).orElseThrow(AssertionError::new), 9902,
+                HIV_ANALYTE, EQASubmissionStatus.SUBMITTED, "42");
+        String text = pdfText(reportService.generatePerformanceReport(inHouseCycle.getId()));
+
+        assertTrue("the in-house report has rows to label", text.contains(SCORING_DETAIL));
+        assertTrue("the column head says the figure does not apply", text.contains("(n/a)"));
+        assertTrue("and the reason is stated once under the table", text.replace("\n", " ").contains("no peer group"));
+    }
+
+    /**
+     * A late answer carries its verdict and says so. The record keeps
+     * MISSED_DEADLINE, but on the page an empty Submitted cell was the only hint.
+     */
+    @Test
+    public void aLateAnswerPrintsItsVerdictMarkedLate() throws IOException {
+        jdbc.update("UPDATE clinlims.eqa_participant_result SET submission_status = 'MISSED_DEADLINE',"
+                + " performance_status = 'ACCEPTABLE' WHERE analyte_id = ?", PENDING_ANALYTE);
+
+        String text = reportText();
+
+        assertTrue("the verdict is printed", text.contains("Acceptable"));
+        assertTrue("and marked as late", text.contains("(late)"));
+    }
+
     @Test
     public void anUnknownCycleIsRejected() {
         try {
@@ -719,7 +786,10 @@ public class EQAPerformanceReportIntegrationTest extends EQASpineTestBase {
     }
 
     private String reportText() throws IOException {
-        byte[] pdf = reportService.generatePerformanceReport(cycle.getId());
+        return pdfText(reportService.generatePerformanceReport(cycle.getId()));
+    }
+
+    private String pdfText(byte[] pdf) throws IOException {
         PdfReader reader = new PdfReader(pdf);
         try {
             StringBuilder text = new StringBuilder();
