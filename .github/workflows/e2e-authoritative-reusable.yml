@@ -36,6 +36,16 @@ on:
         required: false
         type: string
         default: "true"
+      analyzer_projects:
+        description: "Analyzer projects selected by the build contract"
+        required: false
+        type: string
+        default: "harness-foundational,harness-demo"
+      seed_analyzer_traffic:
+        description: "Prepare real Bridge traffic before assembled analyzer stories"
+        required: false
+        type: string
+        default: "false"
       is_fork:
         description: "Whether execution context is fork-native"
         required: false
@@ -88,18 +98,19 @@ jobs:
   # Runs harness-foundational and harness-demo projects on the analyzer harness.
   playwright-harness:
     name: Playwright Harness
-    if: inputs.include_plugin_jars == 'true'
     uses: ./.github/workflows/e2e-playwright-reusable.yml
     permissions:
       contents: read
       packages: read
       actions: read
     with:
-      projects: "harness-foundational,harness-demo"
+      projects: ${{ inputs.analyzer_projects }}
       artifact_prefix: "harness"
       compose_files: "build.docker-compose.yml,projects/analyzer-harness/docker-compose.base.yml,.github/ci/ci.analyzer-harness.yml"
       fixture_mode: "harness"
       setup_analyzer_harness: true
+      include_plugin_jars: ${{ inputs.include_plugin_jars == 'true' }}
+      seed_analyzer_traffic: ${{ inputs.seed_analyzer_traffic == 'true' }}
       build_run_id: ${{ inputs.build_run_id }}
       artifact_source_mode: ${{ inputs.artifact_source_mode }}
       checkout_ref: ${{ inputs.checkout_ref }}
@@ -134,7 +145,7 @@ jobs:
             echo "Playwright Core failed: ${{ needs.playwright-core.result }}"
             exit 1
           fi
-          if [[ "${{ needs.playwright-harness.result }}" != "success" && "${{ needs.playwright-harness.result }}" != "skipped" ]]; then
+          if [[ "${{ needs.playwright-harness.result }}" != "success" ]]; then
             echo "Playwright Harness failed: ${{ needs.playwright-harness.result }}"
             exit 1
           fi

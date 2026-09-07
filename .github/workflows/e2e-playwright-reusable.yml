@@ -31,6 +31,16 @@ on:
         required: false
         type: boolean
         default: false
+      include_plugin_jars:
+        description: "Restore plugin artifacts required by the selected application build"
+        required: false
+        type: boolean
+        default: true
+      seed_analyzer_traffic:
+        description: "Prepare ASTM and FILE traffic before the browser stories"
+        required: false
+        type: boolean
+        default: false
       # Standard passthrough inputs
       build_run_id:
         description: "Build workflow run id for cross-run artifact downloads"
@@ -224,7 +234,7 @@ jobs:
           path: /tmp/e2e-image-map
 
       - name: Download plugin jars (cross-run)
-        if: inputs.setup_analyzer_harness && inputs.artifact_source_mode == 'cross_run'
+        if: inputs.setup_analyzer_harness && inputs.include_plugin_jars && inputs.artifact_source_mode == 'cross_run'
         uses: actions/download-artifact@v6
         with:
           name: e2e-plugin-jars
@@ -233,14 +243,14 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download plugin jars (same-run)
-        if: inputs.setup_analyzer_harness && inputs.artifact_source_mode == 'same_run'
+        if: inputs.setup_analyzer_harness && inputs.include_plugin_jars && inputs.artifact_source_mode == 'same_run'
         uses: actions/download-artifact@v6
         with:
           name: e2e-plugin-jars
           path: /tmp/e2e-plugin-jars
 
       - name: Restore plugin jars for runtime loading
-        if: inputs.setup_analyzer_harness
+        if: inputs.setup_analyzer_harness && inputs.include_plugin_jars
         run: |
           mkdir -p volume/plugins
           rm -rf volume/plugins/*
@@ -341,6 +351,15 @@ jobs:
           sudo chmod -R a+rwX projects/analyzer-harness/volume/analyzer-imports
 
       # ── Memory Instrumentation ─────────────────────────────────────────────
+
+      - name: Prepare assembled analyzer traffic
+        if: inputs.setup_analyzer_harness && inputs.seed_analyzer_traffic
+        run: bash projects/analyzer-harness/seed-mvp-traffic.sh
+        env:
+          BASE_URL: https://localhost
+          TEST_USER: ${{ inputs.test_user || vars.TEST_USER || 'admin' }}
+          TEST_PASS: ${{ inputs.test_pass || vars.TEST_PASS || 'adminADMIN!' }}
+          DB_CONTAINER: openelisglobal-database
 
       - name: Memory snapshot (pre-test)
         run: |

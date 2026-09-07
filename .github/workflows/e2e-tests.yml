@@ -35,9 +35,18 @@ jobs:
       artifact_source_mode: ${{ steps.context.outputs.artifact_source_mode }}
       transfer_mode: ${{ steps.context.outputs.transfer_mode }}
       artifact_map_kind: ${{ steps.context.outputs.artifact_map_kind }}
-      include_plugin_jars: ${{ steps.context.outputs.include_plugin_jars }}
+      include_plugin_jars: ${{ steps.analyzer_runtime.outputs.include_plugin_jars }}
+      analyzer_projects: ${{ steps.analyzer_runtime.outputs.analyzer_projects }}
+      seed_analyzer_traffic: ${{ steps.analyzer_runtime.outputs.seed_analyzer_traffic }}
       checkpoint_context: ${{ steps.context.outputs.checkpoint_context }}
     steps:
+      - name: Checkout trusted workflow helpers
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ github.sha }}
+          persist-credentials: false
+          sparse-checkout: scripts/e2e
+
       - name: Download early build context artifact
         id: download_context
         uses: actions/download-artifact@v6
@@ -71,7 +80,6 @@ jobs:
             echo "artifact_source_mode=none" >> "$GITHUB_OUTPUT"
             echo "transfer_mode=none" >> "$GITHUB_OUTPUT"
             echo "artifact_map_kind=base" >> "$GITHUB_OUTPUT"
-            echo "include_plugin_jars=true" >> "$GITHUB_OUTPUT"
             echo "checkpoint_context=03 Checkpoint - E2E" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -115,10 +123,13 @@ jobs:
           echo "artifact_source_mode=$ARTIFACT_SOURCE_MODE" >> "$GITHUB_OUTPUT"
           echo "transfer_mode=$IMAGE_TRANSFER" >> "$GITHUB_OUTPUT"
           echo "artifact_map_kind=base" >> "$GITHUB_OUTPUT"
-          echo "include_plugin_jars=true" >> "$GITHUB_OUTPUT"
           echo "checkpoint_context=03 Checkpoint - E2E" >> "$GITHUB_OUTPUT"
 
           echo "Build context: is_fork=$IS_FORK transfer_mode=$IMAGE_TRANSFER artifact_source_mode=$ARTIFACT_SOURCE_MODE pr=#$PR_NUMBER checkout_ref=$CHECKOUT_REF"
+
+      - name: Resolve analyzer build contract
+        id: analyzer_runtime
+        run: node scripts/e2e/resolve-analyzer-runtime.cjs /tmp/e2e-build-context/analyzer_runtime >> "$GITHUB_OUTPUT"
 
   set-pending-status:
     name: Set Pending Status
@@ -168,6 +179,7 @@ jobs:
           github-token: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Download plugin jars from build workflow
+        if: needs.setup.outputs.include_plugin_jars == 'true'
         uses: actions/download-artifact@v6
         with:
           name: e2e-plugin-jars
@@ -255,6 +267,7 @@ jobs:
           cat /tmp/e2e-image-map.txt
 
       - name: Upload plugin jars artifact
+        if: needs.setup.outputs.include_plugin_jars == 'true'
         uses: actions/upload-artifact@v6
         with:
           name: e2e-plugin-jars
@@ -314,6 +327,8 @@ jobs:
       artifact_source_mode: ${{ needs.setup.outputs.artifact_source_mode }}
       artifact_map_kind: ${{ needs.setup.outputs.artifact_map_kind }}
       include_plugin_jars: ${{ needs.setup.outputs.include_plugin_jars }}
+      analyzer_projects: ${{ needs.setup.outputs.analyzer_projects }}
+      seed_analyzer_traffic: ${{ needs.setup.outputs.seed_analyzer_traffic }}
       is_fork: ${{ needs.setup.outputs.is_fork }}
       pr_number: ${{ needs.setup.outputs.pr_number }}
       checkpoint_context: ${{ needs.setup.outputs.checkpoint_context }}
