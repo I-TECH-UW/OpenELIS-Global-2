@@ -23,10 +23,8 @@ import org.openelisglobal.security.SecuritySliceMockMvcTest;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.TestSection;
-import org.openelisglobal.testcalculated.service.TestCalculationService;
 import org.openelisglobal.testconfiguration.service.TestSectionCreateService;
 import org.openelisglobal.testconfiguration.service.TestSectionTestAssignService;
-import org.openelisglobal.testreflex.service.TestReflexService;
 import org.openelisglobal.view.PageBuilderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -406,22 +404,11 @@ public class LabUnitManagementRestControllerSecurityTest extends SecuritySliceMo
         }
 
         @Bean
-        TestReflexService testReflexService() {
-            return mock(TestReflexService.class);
-        }
-
-        @Bean
-        TestCalculationService testCalculationService() {
-            return mock(TestCalculationService.class);
-        }
-
-        @Bean
         LabUnitManagementRestController labUnitManagementRestController(TestSectionService testSectionService,
                 LocalizationService localizationService, SupportedLocaleService supportedLocaleService,
                 TestService testService, TestSectionCreateService testSectionCreateService,
                 TestSectionTestAssignService testSectionTestAssignService, RoleService roleService,
-                AnalysisService analysisService, TestReflexService testReflexService,
-                TestCalculationService testCalculationService) {
+                AnalysisService analysisService) {
             LabUnitManagementRestController controller = new LabUnitManagementRestController();
             ReflectionTestUtils.setField(controller, "testSectionService", testSectionService);
             ReflectionTestUtils.setField(controller, "localizationService", localizationService);
@@ -431,8 +418,6 @@ public class LabUnitManagementRestControllerSecurityTest extends SecuritySliceMo
             ReflectionTestUtils.setField(controller, "testSectionTestAssignService", testSectionTestAssignService);
             ReflectionTestUtils.setField(controller, "roleService", roleService);
             ReflectionTestUtils.setField(controller, "analysisService", analysisService);
-            ReflectionTestUtils.setField(controller, "testReflexService", testReflexService);
-            ReflectionTestUtils.setField(controller, "testCalculationService", testCalculationService);
             return controller;
         }
 

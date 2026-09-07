@@ -1489,45 +1489,8 @@ function LabUnitManagement({ intl }) {
                                     }}
                                   />
                                 </li>
-                                {deactivationImpact.reflexOrCalculationTargetCount >
-                                  0 && (
-                                  <li style={{ fontWeight: 600 }}>
-                                    <FormattedMessage
-                                      id="label.labUnit.deactivate.impact.reflexTargets"
-                                      values={{
-                                        count:
-                                          deactivationImpact.reflexOrCalculationTargetCount,
-                                      }}
-                                    />
-                                  </li>
-                                )}
                               </ul>
                             </div>
-
-                            {/* A reflex that stops firing has no user present
-                                to notice it (D5), so say so plainly. */}
-                            {deactivationImpact.reflexOrCalculationTargetCount >
-                              0 && (
-                              <InlineNotification
-                                kind="warning"
-                                lowContrast
-                                hideCloseButton
-                                title={intl.formatMessage({
-                                  id: "warning.labUnit.deactivate.reflexTargets.title",
-                                })}
-                                subtitle={intl.formatMessage(
-                                  {
-                                    id: "warning.labUnit.deactivate.reflexTargets.body",
-                                  },
-                                  {
-                                    names:
-                                      deactivationImpact.reflexOrCalculationTargetNames.join(
-                                        ", ",
-                                      ),
-                                  },
-                                )}
-                              />
-                            )}
 
                             {/* An inactive unit stays on the worklists until
                                 its pending work is finished — it is never

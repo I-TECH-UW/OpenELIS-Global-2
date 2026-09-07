@@ -28,12 +28,8 @@ import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
-import org.openelisglobal.testcalculated.service.TestCalculationService;
-import org.openelisglobal.testcalculated.valueholder.Calculation;
 import org.openelisglobal.testconfiguration.service.TestSectionCreateService;
 import org.openelisglobal.testconfiguration.service.TestSectionTestAssignService;
-import org.openelisglobal.testreflex.service.TestReflexService;
-import org.openelisglobal.testreflex.valueholder.TestReflex;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -93,10 +89,6 @@ public class LabUnitManagementRestController extends BaseRestController {
     private RoleService roleService;
     @Autowired
     private AnalysisService analysisService;
-    @Autowired
-    private TestReflexService testReflexService;
-    @Autowired
-    private TestCalculationService testCalculationService;
 
     /** DTO for the unified Lab Units list and editor. */
     public static class LabUnitManagementDTO {
@@ -638,8 +630,6 @@ public class LabUnitManagementRestController extends BaseRestController {
         public int activeTestCount;
         public long pendingAnalysisCount;
         public long historicalAnalysisCount;
-        public int reflexOrCalculationTargetCount;
-        public List<String> reflexOrCalculationTargetNames = new ArrayList<>();
         /** Per D2: reassign is the default when reflex/calc targets are present. */
         public String recommendedOption;
     }
@@ -662,47 +652,17 @@ public class LabUnitManagementRestController extends BaseRestController {
         dto.pendingAnalysisCount = analysisCounts[0];
         dto.historicalAnalysisCount = analysisCounts[1];
 
-        Set<String> targetTestIds = reflexAndCalculationTargetTestIds();
-        for (Test test : tests) {
-            if (targetTestIds.contains(test.getId())) {
-                dto.reflexOrCalculationTargetCount++;
-                dto.reflexOrCalculationTargetNames
-                        .add(org.openelisglobal.test.service.TestServiceImpl.getLocalizedTestNameWithType(test));
-            }
-        }
-
-        // D2: "keep" is never recommended where a clinical rule would silently
-        // break; D6 keeps all three options available regardless.
-        dto.recommendedOption = dto.reflexOrCalculationTargetCount > 0 ? "reassign"
-                : (dto.testCount == 0 ? "keep" : "deactivate_all");
+        // The reflex-target warning was removed (2026-09-07, user decision). It
+        // named the tests ASSIGNED to this unit that are reflex targets, which
+        // stopped matching reality once the reflex gate moved to the unit the
+        // work lands in (T159): it warned about reflexes that keep firing, and
+        // stayed silent on the ones that break. Recomputing it against trigger
+        // tests was possible; the warning was dropped instead.
+        //
+        // recommendedOption therefore no longer has a reflex-risk input. D6
+        // keeps all three options available regardless of the default.
+        dto.recommendedOption = dto.testCount == 0 ? "keep" : "deactivate_all";
         return ResponseEntity.ok(new ApiResponse<>(true, "Deactivation impact", dto));
-    }
-
-    /** Every test that is the target of a reflex rule or a calculation. */
-    private Set<String> reflexAndCalculationTargetTestIds() {
-        Set<String> ids = new HashSet<>();
-        try {
-            for (TestReflex reflex : testReflexService.getAllTestReflexs()) {
-                String addedTestId = reflex.getAddedTestId();
-                if (!GenericValidator.isBlankOrNull(addedTestId)) {
-                    ids.add(addedTestId);
-                }
-            }
-        } catch (RuntimeException e) {
-            LogEvent.logWarn("LabUnitManagementRestController", "reflexAndCalculationTargetTestIds",
-                    "Could not read reflex rules: " + e.getMessage());
-        }
-        try {
-            for (Calculation calculation : testCalculationService.getAll()) {
-                if (calculation.getTestId() != null) {
-                    ids.add(String.valueOf(calculation.getTestId()));
-                }
-            }
-        } catch (RuntimeException e) {
-            LogEvent.logWarn("LabUnitManagementRestController", "reflexAndCalculationTargetTestIds",
-                    "Could not read calculations: " + e.getMessage());
-        }
-        return ids;
     }
 
     /** Body for the guarded deactivation. */
