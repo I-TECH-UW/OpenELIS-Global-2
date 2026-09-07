@@ -209,6 +209,7 @@ public class OrderSearchRestController extends BaseRestController {
      * "true" leaves the list unscoped.
      */
     private static final String RESTRICT_RECENT_ORDERS_PROPERTY = "restrictRecentOrdersByTestSection";
+    private static final int MAX_DASHBOARD_PAGE_SIZE = 500;
 
     private String ADDRESS_PART_VILLAGE_ID;
     private String ADDRESS_PART_COMMUNE_ID;
@@ -250,9 +251,13 @@ public class OrderSearchRestController extends BaseRestController {
             String currentSysUserId = getSysUserId(request);
             Set<String> allowedSectionIds = resolveAllowedSectionIds(currentSysUserId);
 
-            // Get recent samples - getPageOfSamples expects 1-based startingRecNo
-            int startingRecNo = ((page - 1) * pageSize) + 1;
-            List<Sample> samples = sampleService.getPageOfSamples(startingRecNo);
+            // Newest orders first, in pages of the requested size (1-based startingRecNo).
+            // The system-default paging walks samples oldest-first in pages of
+            // page.defaultPageSize, which never reaches a freshly created order once the
+            // lab has more samples than that (OGC-1192).
+            int effectivePageSize = Math.min(Math.max(pageSize, 1), MAX_DASHBOARD_PAGE_SIZE);
+            int startingRecNo = ((Math.max(page, 1) - 1) * effectivePageSize) + 1;
+            List<Sample> samples = sampleService.getSamplesNewestFirst(startingRecNo, effectivePageSize);
 
             // Apply filters
             for (Sample sample : samples) {
