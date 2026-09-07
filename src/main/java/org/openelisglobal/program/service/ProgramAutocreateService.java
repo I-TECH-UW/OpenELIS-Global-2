@@ -22,12 +22,10 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
 import org.openelisglobal.common.util.validator.GenericValidator;
-import org.openelisglobal.dataexchange.fhir.FhirConfig;
-import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
-import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.fhir.springserialization.QuestionnaireDeserializer;
 import org.openelisglobal.program.controller.EditProgramForm;
 import org.openelisglobal.program.valueholder.Program;
+import org.openelisglobal.questionnaire.service.QuestionnaireStorageService;
 import org.openelisglobal.security.DaemonContextExecutor;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
@@ -54,9 +52,7 @@ public class ProgramAutocreateService {
     @Autowired
     private TestSectionService testSectionService;
     @Autowired
-    private FhirPersistanceService fhirPersistanceService;
-    @Autowired
-    private FhirConfig fhirConfig;
+    private QuestionnaireStorageService questionnaireStorageService;
     @Autowired
     private DaemonContextExecutor daemonContextExecutor;
 
@@ -99,7 +95,7 @@ public class ProgramAutocreateService {
     }
 
     private void doAutocreateProgram() {
-        if (autocreateOn && StringUtils.isNotBlank(fhirConfig.getLocalFhirStorePath())) {
+        if (autocreateOn) {
             Resource[] programResources = getAllProgramResources();
             for (Resource programResource : programResources) {
                 try (BufferedReader reader = new BufferedReader(
@@ -207,12 +203,10 @@ public class ProgramAutocreateService {
                     }
                     program = programService.save(program);
                     questionnaire.setId(program.getQuestionnaireUUID().toString());
-                    fhirPersistanceService.updateFhirResourceInFhirStore(questionnaire);
+                    questionnaireStorageService.saveQuestionnaire(questionnaire);
                     DisplayListService.getInstance().refreshList(ListType.PROGRAM);
 
-                    // }
-
-                } catch (IOException | FhirLocalPersistingException e) {
+                } catch (IOException | RuntimeException e) {
                     LogEvent.logError(e);
                 }
             }
