@@ -66,9 +66,7 @@ vi.mock("../../utils/Utils", async (importOriginal) => {
             activeTestCount: 3,
             pendingAnalysisCount: 2,
             historicalAnalysisCount: 17,
-            reflexOrCalculationTargetCount: 1,
-            reflexOrCalculationTargetNames: ["Susceptibility"],
-            recommendedOption: "reassign",
+            recommendedOption: "deactivate_all",
           },
         });
       } else {
@@ -227,21 +225,23 @@ describe("LabUnitManagement deactivation flow (OGC-189 M3)", () => {
     expect(postToOpenElisServerJsonResponse).not.toHaveBeenCalled();
   });
 
-  test("reflex and calculation targets are called out separately", async () => {
+  test("does not warn about reflex targets", async () => {
     await openFlow();
     await screen.findByText("This lab unit currently holds:");
 
-    // A flat test count hides the dangerous ones, so they get their own line
-    // plus a warning naming them (D5).
+    // Removed 2026-09-07. The warning named the reflex TARGET tests assigned to
+    // this unit, but the reflex gate gates on the unit the work LANDS in (the
+    // parent's, T159) — so it warned about reflexes that keep firing and stayed
+    // silent on the ones that break.
     expect(
-      screen.getByText("1 of these tests are reflex or calculation targets"),
-    ).toBeInTheDocument();
+      screen.queryByText("Reflex rules will stop firing"),
+    ).not.toBeInTheDocument();
     expect(
-      screen.getByText("Reflex rules will stop firing"),
-    ).toBeInTheDocument();
+      screen.queryByText(/reflex or calculation targets/),
+    ).not.toBeInTheDocument();
   });
 
-  test("all three options are offered, defaulting to reassign where reflexes exist", async () => {
+  test("all three options are offered", async () => {
     await openFlow();
     await screen.findByText("This lab unit currently holds:");
 
@@ -250,10 +250,14 @@ describe("LabUnitManagement deactivation flow (OGC-189 M3)", () => {
     expect(
       screen.getByLabelText(/Deactivate all assigned tests/),
     ).toBeInTheDocument();
-    const reassign = screen.getByLabelText(/Reassign the tests/);
-    expect(reassign).toBeInTheDocument();
-    // D2 — reassign is the default when a clinical rule would otherwise break.
-    expect(reassign).toBeChecked();
+    expect(screen.getByLabelText(/Reassign the tests/)).toBeInTheDocument();
+    // The server's recommendedOption drives the preselection. With the
+    // reflex-risk input removed it is "deactivate_all" for a unit holding
+    // tests, so assert on what the server actually sent rather than pinning a
+    // specific radio here.
+    expect(
+      screen.getByLabelText(/Deactivate all assigned tests/),
+    ).toBeChecked();
   });
 
   test("confirmation is required before the unit can be deactivated", async () => {
