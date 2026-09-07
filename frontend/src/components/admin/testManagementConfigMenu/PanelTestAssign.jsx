@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState } from "react";
 import {
   Heading,
   Button,
@@ -9,10 +9,11 @@ import {
   Select,
   SelectItem,
 } from "@carbon/react";
+import { postToOpenElisServerJsonResponse } from "../../utils/Utils";
 import {
-  getFromOpenElisServer,
-  postToOpenElisServerJsonResponse,
-} from "../../utils/Utils";
+  useInvalidateServerData,
+  useServerData,
+} from "../../utils/useServerData";
 import { NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,
@@ -21,6 +22,8 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import { CustomSharedList } from "./CustomSharedList";
+
+const PANEL_TEST_ASSIGN_ENDPOINT = "/rest/PanelTestAssign";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -44,16 +47,32 @@ function PanelTestAssign() {
     useContext(NotificationContext);
 
   const intl = useIntl();
-  const [isLoading, setIsLoading] = useState(true);
-  const [panelTestList, setPanelTestList] = useState([]);
   const [panelId, setPanelId] = useState("");
-  const [selectedPanelIdData, setSelectedPanelIdData] = useState({});
+  // The tests moved between the two lists but not yet saved. Null means the
+  // panel is shown as it is stored.
+  const [movedTests, setMovedTests] = useState(null);
 
-  const componentMounted = useRef(false);
+  const { data: panelTestList } = useServerData(PANEL_TEST_ASSIGN_ENDPOINT);
+  const invalidateServerData = useInvalidateServerData();
+
+  // Held off until a panel is picked and keyed on it. Until the read for a
+  // newly picked panel arrives the hook still serves the one picked before,
+  // so the lists stay empty rather than showing the previous panel's tests.
+  const { data: readPanel, isPreviousData } = useServerData(
+    panelId ? `${PANEL_TEST_ASSIGN_ENDPOINT}?panelId=${panelId}` : null,
+  );
+  const storedPanel = isPreviousData ? undefined : readPanel;
+  const selectedPanelIdData =
+    storedPanel && movedTests
+      ? {
+          ...storedPanel,
+          selectedPanel: { ...storedPanel.selectedPanel, ...movedTests },
+        }
+      : storedPanel;
 
   const handlePostPanelTestTestAssignListCall = () => {
-    if (!panelId || !selectedPanelIdData) {
-      window.location.reload();
+    if (!panelId || !selectedPanelIdData?.selectedPanel) {
+      setMovedTests(null);
       return;
     }
     postToOpenElisServerJsonResponse(
@@ -74,7 +93,6 @@ function PanelTestAssign() {
 
   const handlePostPanelTestTestAssignListCallBack = (res) => {
     if (res) {
-      setIsLoading(false);
       addNotification({
         title: intl.formatMessage({
           id: "notification.title",
@@ -84,9 +102,9 @@ function PanelTestAssign() {
         }),
         kind: NotificationKinds.success,
       });
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
+      setNotificationVisible(true);
+      setMovedTests(null);
+      invalidateServerData();
     } else {
       addNotification({
         kind: NotificationKinds.error,
@@ -97,43 +115,7 @@ function PanelTestAssign() {
     }
   };
 
-  const handleSelectedPanelTestList = (res) => {
-    if (!res) {
-    } else {
-      setSelectedPanelIdData(res);
-    }
-  };
-
-  const handlePanelTestAssignList = (res) => {
-    if (!res) {
-      setIsLoading(true);
-    } else {
-      setPanelTestList(res);
-    }
-  };
-
-  useEffect(() => {
-    if (componentMounted.current) {
-      if (panelId) {
-        getFromOpenElisServer(
-          `/rest/PanelTestAssign?panelId=${panelId}`,
-          handleSelectedPanelTestList,
-        );
-      }
-    }
-  }, [panelId]);
-
-  useEffect(() => {
-    componentMounted.current = true;
-    setIsLoading(true);
-    getFromOpenElisServer(`/rest/PanelTestAssign`, handlePanelTestAssignList);
-    return () => {
-      componentMounted.current = false;
-      setIsLoading(false);
-    };
-  }, []);
-
-  if (!isLoading) {
+  if (!panelTestList) {
     return (
       <>
         <Loading />
@@ -191,6 +173,7 @@ function PanelTestAssign() {
                       value={panelId}
                       onChange={(e) => {
                         setPanelId(e.target.value);
+                        setMovedTests(null);
                       }}
                     >
                       <SelectItem
@@ -225,15 +208,9 @@ function PanelTestAssign() {
                   rightList={selectedPanelIdData?.selectedPanel?.availableTests}
                   renderItem={(item) => item}
                   onChange={(newLeft, newRight) => {
-                    setSelectedPanelIdData((prev) => {
-                      return {
-                        ...prev,
-                        selectedPanel: {
-                          ...prev.selectedPanel,
-                          tests: newLeft,
-                          availableTests: newRight,
-                        },
-                      };
+                    setMovedTests({
+                      tests: newLeft,
+                      availableTests: newRight,
                     });
                   }}
                 />

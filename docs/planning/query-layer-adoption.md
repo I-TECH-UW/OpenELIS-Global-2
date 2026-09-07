@@ -76,12 +76,13 @@ Counts, non-test source:
 
 |                                                  | Start | Now | In scope |
 | ------------------------------------------------ | ----- | --- | -------- |
-| `window.location.reload()`                       | 84    | 40  | 38       |
+| `window.location.reload()`                       | 84    | 32  | 30       |
 | same-route / cross-screen `assign()` or `href =` | 85    | 72  | 55       |
 
-Converted: `UserManagement`, the three order screens, the five rename screens
-and the four create screens (`Panel`, `SampleType`, `TestSection`, `Uom`). The
-one `window.location.replace` in the frontend went with them.
+Converted: `UserManagement`, the three order screens, the five rename screens,
+the four create screens (`Panel`, `SampleType`, `TestSection`, `Uom`) and the
+three test-assign screens. The one `window.location.replace` in the frontend
+went with them.
 
 ### One constraint the conversion has to respect
 
@@ -96,6 +97,17 @@ The three order screens were converted the mirrored way first and lost the
 ability to throw a pending reorder away: discarding is exactly the case where
 the stored order has not changed. Their test passed because it changed the
 stored order first, which is the one thing discarding never does.
+
+### What E2E can and cannot say here
+
+No Cypress or Playwright spec opens any of the screens converted so far. The
+specs that reach admin go to `/MasterListsPage` and from there to the test
+catalog editor, label presets, calendar management and the site menus. So the
+per-job comparison is a regression check on what every screen now shares — the
+query client at the app root and the reloads removed from error paths in 17
+files — and says nothing about the converted screens themselves. Their unit
+tests are the only guard, which is why each is written to fail when the
+behaviour is reverted.
 
 ### Per-job E2E, branch vs baseline
 

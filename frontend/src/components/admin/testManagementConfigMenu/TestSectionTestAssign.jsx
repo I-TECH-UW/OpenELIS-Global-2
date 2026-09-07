@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState } from "react";
 import {
   Heading,
   Loading,
@@ -10,10 +10,11 @@ import {
   ClickableTile,
   Modal,
 } from "@carbon/react";
+import { postToOpenElisServerJsonResponse } from "../../utils/Utils";
 import {
-  getFromOpenElisServer,
-  postToOpenElisServerJsonResponse,
-} from "../../utils/Utils";
+  useInvalidateServerData,
+  useServerData,
+} from "../../utils/useServerData";
 import { NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,
@@ -21,6 +22,16 @@ import {
 } from "../../common/CustomNotification";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+
+const TEST_SECTION_TEST_ASSIGN_ENDPOINT = "/rest/TestSectionTestAssign";
+const NO_SELECTION = {
+  testSectionIdNew: "",
+  testSectionNameNew: "",
+  testId: "",
+  testValue: "",
+  testSectionNameOld: "",
+  testSectionIdOld: "",
+};
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -44,35 +55,24 @@ function TestSectionTestAssign() {
     useContext(NotificationContext);
 
   const intl = useIntl();
-  const [isLoading, setIsLoading] = useState(false);
   const [confirmation, setConfirmation] = useState(false);
   const [testSectionTestAssignModal, setTestSectionTestAssignModal] =
     useState(false);
-  const [testSectionTestAssign, setTestSectionTestAssign] = useState({});
-  const [testSectionTestAssignPost, setTestSectionTestAssignPost] = useState({
-    testSectionIdNew: "",
-    testSectionNameNew: "",
-    testId: "",
-    testValue: "",
-    testSectionNameOld: "",
-    testSectionIdOld: "",
-  });
-  const componentMounted = useRef(false);
-
-  const handleTestSectionTestAssignList = (res) => {
-    if (!res) {
-      setIsLoading(true);
-    } else {
-      setTestSectionTestAssign(res);
-    }
-  };
+  const { data: testSectionTestAssign } = useServerData(
+    TEST_SECTION_TEST_ASSIGN_ENDPOINT,
+  );
+  const invalidateServerData = useInvalidateServerData();
+  const [testSectionTestAssignPost, setTestSectionTestAssignPost] =
+    useState(NO_SELECTION);
 
   const handlePostTestSectionTestAssignListCall = () => {
     if (
       !testSectionTestAssignPost.testId ||
       !testSectionTestAssignPost.testSectionIdNew
     ) {
-      window.location.reload();
+      setTestSectionTestAssignModal(false);
+      setConfirmation(false);
+      setTestSectionTestAssignPost(NO_SELECTION);
       return;
     }
     postToOpenElisServerJsonResponse(
@@ -90,7 +90,6 @@ function TestSectionTestAssign() {
 
   const handlePostTestSectionTestAssignListCallBack = (res) => {
     if (res) {
-      setIsLoading(false);
       addNotification({
         title: intl.formatMessage({
           id: "notification.title",
@@ -100,9 +99,10 @@ function TestSectionTestAssign() {
         }),
         kind: NotificationKinds.success,
       });
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
+      setNotificationVisible(true);
+      setConfirmation(false);
+      setTestSectionTestAssignPost(NO_SELECTION);
+      invalidateServerData();
     } else {
       addNotification({
         kind: NotificationKinds.error,
@@ -113,20 +113,7 @@ function TestSectionTestAssign() {
     }
   };
 
-  useEffect(() => {
-    componentMounted.current = true;
-    setIsLoading(true);
-    getFromOpenElisServer(
-      `/rest/TestSectionTestAssign`,
-      handleTestSectionTestAssignList,
-    );
-    return () => {
-      componentMounted.current = false;
-      setIsLoading(false);
-    };
-  }, []);
-
-  if (!isLoading) {
+  if (!testSectionTestAssign) {
     return (
       <>
         <Loading />
@@ -267,7 +254,8 @@ function TestSectionTestAssign() {
         }}
         onRequestClose={() => {
           setTestSectionTestAssignModal(false);
-          window.location.reload();
+          setConfirmation(false);
+          setTestSectionTestAssignPost(NO_SELECTION);
         }}
         preventCloseOnClickOutside={true}
         shouldSubmitOnEnter={true}
