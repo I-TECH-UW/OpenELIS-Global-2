@@ -76,7 +76,7 @@ Counts, non-test source:
 
 |                                                  | Start | Now | In scope |
 | ------------------------------------------------ | ----- | --- | -------- |
-| `window.location.reload()`                       | 84    | 7   | 5        |
+| `window.location.reload()`                       | 84    | 5   | 3        |
 | same-route / cross-screen `assign()` or `href =` | 85    | 70  | 53       |
 
 Converted: `UserManagement`; the three order screens; the five rename screens
@@ -85,7 +85,10 @@ screens; the three test-assign screens; `TestActivation` and `TestOrderability`;
 the general-configuration editor; `ResultSelectListAdd`;
 `ResultReportingConfiguration`; `AnalyzerTestName`; the provider,
 external-connection and organization menus; and `TestAdd` with the test step
-form. What is left is five screens with one reload each.
+form. What is left is three screens with one reload each. Two more were removed
+rather than converted: the reflex-rule and calculated-value forms each carried a
+delete handler nothing called, reachable from no button, whose success path
+reloaded.
 
 `TestOrderability` also carried the first two same-route `assign()` calls to go:
 both were Cancel buttons that navigated to the screen they were already on in
