@@ -76,15 +76,15 @@ Counts, non-test source:
 
 |                                                  | Start | Now | In scope |
 | ------------------------------------------------ | ----- | --- | -------- |
-| `window.location.reload()`                       | 84    | 11  | 9        |
+| `window.location.reload()`                       | 84    | 9   | 7        |
 | same-route / cross-screen `assign()` or `href =` | 85    | 72  | 55       |
 
 Converted: `UserManagement`; the three order screens; the five rename screens
 plus `Test` and `SelectList`, which complete the family; the four create
 screens; the three test-assign screens; `TestActivation`; the
-general-configuration editor; `ResultSelectListAdd`; `AnalyzerTestName`; and the
-provider, external-connection and organization menus. What is left is nine
-screens with one reload each.
+general-configuration editor; `ResultSelectListAdd`; `AnalyzerTestName`; the
+provider, external-connection and organization menus; and `TestAdd` with the
+test step form. What is left is seven screens with one reload each.
 
 ### One constraint the conversion has to respect
 
