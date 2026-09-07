@@ -1,7 +1,12 @@
 # Query layer adoption — TanStack Query v4
 
-Branch: `feat/query-layer-tanstack`, off the top of the OGC-782 stack. Separate
-PR; lands after #4196 is green so it is measured against a clean baseline.
+Branch: `feat/tanstack-query-layer`, off `develop`, in its own worktree
+(`~/code/worktrees/tanstack-query-layer`). The reloads are legacy admin code
+that predates the microbiology stack, so this PR does not depend on it.
+
+**Baseline for criterion 6:** develop @ `d6bab7a5a`, E2E run `33887282951`
+(2026-09-04): every job green — Cypress Admin / Independent / Core, Playwright
+Core 1/2 and 2/2, Playwright Harness 1/2 and 2/2.
 
 ## Goal
 
