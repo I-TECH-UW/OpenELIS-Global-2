@@ -76,12 +76,11 @@ Counts, non-test source:
 
 |                                                  | Start | Now | In scope |
 | ------------------------------------------------ | ----- | --- | -------- |
-| `window.location.reload()`                       | 84    | 48  | 46       |
+| `window.location.reload()`                       | 84    | 42  | 40       |
 | same-route / cross-screen `assign()` or `href =` | 85    | 72  | 55       |
 
-Converted: `UserManagement`, `PanelOrder`, `SampleTypeOrder`,
-`TestSectionOrder`, and the five rename screens (`Panel`, `SampleType`,
-`TestSection`, `Uom`, `Method`).
+Converted: `UserManagement`, the three order screens, the five rename screens
+and the three Formik create screens (`Panel`, `SampleType`, `TestSection`).
 
 ### One constraint the conversion has to respect
 
