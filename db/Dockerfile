@@ -1,5 +1,5 @@
-# Use the official PostgreSQL 14.4 image as base
-FROM postgres:14.4
+# Keep the PostgreSQL major version on a supported operating-system base.
+FROM postgres:14.24-bookworm
 
 RUN apt-get update && apt-get install -y gettext-base && rm -rf /var/lib/apt/lists/*
 # Copy initialization scripts and data files into the container
