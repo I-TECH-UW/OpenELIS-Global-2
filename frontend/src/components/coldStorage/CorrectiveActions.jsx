@@ -264,8 +264,9 @@ export default function CorrectiveActions() {
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
-  // PUT .../retract is @PreAuthorize(hasRole('ADMIN')); showing the button to
-  // anyone else only offers them a 403.
+  // The retract and create-device writes both require ADMIN, and a denial
+  // reaches the browser as HTTP 500 because ControllerSetup resolves
+  // AccessDeniedException before Spring Security can translate it.
   const isAdminUser = hasRole(userSessionDetails, Roles.GLOBAL_ADMIN);
 
   const notify = useCallback(
@@ -1032,19 +1033,21 @@ export default function CorrectiveActions() {
                 }
                 disabled={devices.length === 0}
               />
-              <div style={{ marginTop: "0.5rem" }}>
-                <Link
-                  onClick={() => {
-                    setIsAddModalOpen(false);
-                    setIsDeviceModalOpen(true);
-                  }}
-                  style={{ cursor: "pointer", fontSize: "0.875rem" }}
-                >
-                  {devices.length === 0
-                    ? "Create a new device"
-                    : "Don't see your device? Create a new one"}
-                </Link>
-              </div>
+              {isAdminUser && (
+                <div style={{ marginTop: "0.5rem" }}>
+                  <Link
+                    onClick={() => {
+                      setIsAddModalOpen(false);
+                      setIsDeviceModalOpen(true);
+                    }}
+                    style={{ cursor: "pointer", fontSize: "0.875rem" }}
+                  >
+                    {devices.length === 0
+                      ? "Create a new device"
+                      : "Don't see your device? Create a new one"}
+                  </Link>
+                </div>
+              )}
             </div>
 
             <Dropdown

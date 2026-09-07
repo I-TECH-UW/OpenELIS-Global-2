@@ -160,7 +160,9 @@ function DeviceManagement() {
   const loadLocations = useCallback(async () => {
     try {
       const response = await fetchLocations();
-      setLocations(response || []);
+      // AddDeviceModal renders locations.map even while closed, so a non-array
+      // error body would throw during render.
+      setLocations(Array.isArray(response) ? response : []);
     } catch (err) {
       console.error("Failed to load locations:", err);
       notify({

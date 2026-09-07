@@ -32,6 +32,8 @@ import {
   NotificationKinds,
 } from "../../common/CustomNotification";
 import { NotificationContext } from "../../layout/Layout";
+import UserSessionDetailsContext from "../../../UserSessionDetailsContext";
+import { hasRole, Roles } from "../../utils/Utils";
 
 // Map UI alert types to backend NotificationNature enum values
 const getAlertTypes = (intl) => [
@@ -65,6 +67,10 @@ function AlertSettings() {
   const intl = useIntl();
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+  const { userSessionDetails } = useContext(UserSessionDetailsContext);
+  // AlertNotificationConfigRestController is ADMIN-only at class level, so a
+  // non-admin who clicks Save gets a failed request back.
+  const canManageAlertConfig = hasRole(userSessionDetails, Roles.GLOBAL_ADMIN);
   const notify = useCallback(
     ({ kind = NotificationKinds.info, title, subtitle, message }) => {
       setNotificationVisible(true);
@@ -373,16 +379,18 @@ function AlertSettings() {
           </ul>
         </div>
 
-        <Button
-          kind="primary"
-          onClick={handleSave}
-          disabled={saving}
-          className="oe-alertSettings-saveButton"
-        >
-          {saving
-            ? intl.formatMessage({ id: "coldStorage.saving" })
-            : intl.formatMessage({ id: "coldStorage.saveNotificationPrefs" })}
-        </Button>
+        {canManageAlertConfig && (
+          <Button
+            kind="primary"
+            onClick={handleSave}
+            disabled={saving}
+            className="oe-alertSettings-saveButton"
+          >
+            {saving
+              ? intl.formatMessage({ id: "coldStorage.saving" })
+              : intl.formatMessage({ id: "coldStorage.saveNotificationPrefs" })}
+          </Button>
+        )}
       </Section>
     </div>
   );

@@ -7,6 +7,7 @@ import messages from "../../../languages/en.json";
 import { NotificationContext } from "../../layout/contexts";
 import UserSessionDetailsContext from "../../../UserSessionDetailsContext";
 import DeviceManagement from "./DeviceManagement";
+import { fetchLocations } from "../api";
 
 vi.mock("../api", () => ({
   fetchDevices: vi.fn(() =>
@@ -76,5 +77,19 @@ describe("DeviceManagement write controls by role", () => {
     expect(
       screen.getByRole("columnheader", { name: "Actions" }),
     ).toBeInTheDocument();
+  });
+});
+
+/**
+ * AddDeviceModal renders locations.map even while closed, so a parsed error
+ * body from the rooms fetch would throw out of the whole Settings tree.
+ */
+describe("DeviceManagement location fetch payloads", () => {
+  it("renders the device table when the rooms fetch resolves a non-array", async () => {
+    fetchLocations.mockResolvedValueOnce({ status: 400, error: "Bad Request" });
+
+    renderFor(["Global Administrator"]);
+
+    expect(await screen.findByText("Freezer A")).toBeInTheDocument();
   });
 });
