@@ -1,7 +1,6 @@
 FROM hapiproject/hapi:v6.6.0-tomcat
 
 USER root
-RUN apt-get update && apt-get install -y curl
 
 COPY ./tomcat/hapi_server.xml /opt/bitnami/tomcat/conf/server.xml
 
