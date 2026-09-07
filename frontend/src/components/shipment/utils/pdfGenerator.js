@@ -153,7 +153,11 @@ export const generateManifestPDF = async (manifestData, formatMessage) => {
         formatMessage({ id: "shipment.manifest.number" }) || "#",
         formatMessage({ id: "sample.label.accessionNumber" }) ||
           "Accession Number",
-        formatMessage({ id: "sample.label.typeOfSample" }) || "Type",
+        // What the middle column holds depends on the document: a specimen type
+        // for a patient consignment, the panel for EQA material.
+        manifestData.typeColumnLabel ||
+          formatMessage({ id: "sample.label.typeOfSample" }) ||
+          "Type",
         formatMessage({ id: "shipment.label.tests" }) || "Tests",
         formatMessage({ id: "sample.label.collectionDate" }) ||
           "Collection Date",

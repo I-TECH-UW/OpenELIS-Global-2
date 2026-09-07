@@ -626,9 +626,14 @@ export const convertAlphaNumLabNumForDisplay = (
       labNumberForDisplay +
       labNumberParts[0].slice(labNumberParts[0].length - 3);
   }
-  //re-add dash
+  // Re-add every remaining part, not just the first: keeping only one dropped
+  // the tail of anything with a second dash in it (an EQA blind code such as
+  // IH-2-04 rendered as IH-2, the same for every row on the page).
   if (isAnalysisLabNumber) {
-    labNumberForDisplay = labNumberForDisplay + "-" + labNumberParts[1];
+    labNumberForDisplay = [
+      labNumberForDisplay,
+      ...labNumberParts.slice(1),
+    ].join("-");
   }
   return labNumberForDisplay.toUpperCase();
 };

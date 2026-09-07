@@ -12,6 +12,7 @@ import java.util.Map;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.ObjectNotFoundException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.eqa.dao.EQACycleDAO;
 import org.openelisglobal.eqa.dao.EQACycleParticipantDAO;
 import org.openelisglobal.eqa.dao.EQAPanelDAO;
@@ -817,6 +818,15 @@ public class EQAShipmentServiceImpl implements EQAShipmentService {
         row.put("shippedDate",
                 shipment == null || shipment.getShippedDate() == null ? null : shipment.getShippedDate().toString());
         row.put("shipmentStatus", shipment == null ? null : shipment.getStatus().name());
+        // The pack list and shipping label are built in the browser, so the three
+        // header facts the shipment module reads off the box server-side have to
+        // travel with the row; without them both documents printed "-" where the
+        // sending laboratory, the date and the packer belong.
+        row.put("boxCreatedDate", box == null || box.getCreatedDate() == null ? null : box.getCreatedDate().toString());
+        row.put("boxCreatedBy",
+                box == null || box.getCreatedBy() == null ? null : box.getCreatedBy().getNameForDisplay());
+        row.put("serviceLocation",
+                ConfigurationProperties.getInstance().getPropertyValue(ConfigurationProperties.Property.SiteName));
         return row;
     }
 

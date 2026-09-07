@@ -105,13 +105,16 @@ const EQAParticipantsPage = () => {
       `/rest/eqa/programs/${selectedProgramId}/enrollments`,
       JSON.stringify({ organizationIds: [Number(selectedOrgId)] }),
       (response) => {
-        if (response && !response.error) {
+        // The count comes from what the server says it wrote, not from what was
+        // asked for: an already-enrolled laboratory writes nothing, and reporting
+        // that as a success is worse than reporting nothing at all.
+        if (Array.isArray(response) && response.length > 0) {
           setSelectedOrgId("");
           setNotification({
             kind: "success",
             message: intl.formatMessage(
               { id: "eqa.enrollment.success" },
-              { count: 1 },
+              { count: response.length },
             ),
           });
         } else {

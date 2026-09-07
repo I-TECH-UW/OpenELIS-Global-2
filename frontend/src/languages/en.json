@@ -8604,5 +8604,8 @@
   "alerts.type.inventory_low": "Inventory Low",
   "alerts.type.sample_tracking": "Sample Tracking",
   "alerts.type.critical_result": "Critical Result",
-  "alerts.type.other": "Other"
+  "alerts.type.other": "Other",
+  "eqa.provider.wizard.sampleCode.duplicate": "Every sample code on a panel must be different.",
+  "eqa.provider.wizard.rangeHigh.backwards": "The high end of an acceptance range cannot be below the low end.",
+  "eqa.shipment.packList.panelColumn": "Panel"
 }

@@ -115,6 +115,31 @@ describe("ReceiptMonitor", () => {
     expect(screen.getByText("1 unacceptable of 3")).toBeInTheDocument();
   });
 
+  // Dispatching from the sibling Shipments tab moves the cycle, and this tab
+  // kept reporting the pre-dispatch state until the page was reloaded.
+  it("refetches when the cycle moves under it", async () => {
+    const { rerender } = renderTab("SHIPPED");
+    await screen.findByText("Overdue");
+    const readsAfterFirstLoad = getFromOpenElisServer.mock.calls.length;
+
+    rerender(
+      <IntlProvider locale="en" messages={messages}>
+        <MemoryRouter>
+          <ReceiptMonitor
+            cycleId="9"
+            cycleStatus="SUBMISSIONS_OPEN"
+            onChanged={vi.fn()}
+            onNotice={vi.fn()}
+          />
+        </MemoryRouter>
+      </IntlProvider>,
+    );
+
+    expect(getFromOpenElisServer.mock.calls.length).toBeGreaterThan(
+      readsAfterFirstLoad,
+    );
+  });
+
   it("records a delivery for one participant", async () => {
     postToOpenElisServerFullResponse.mockImplementation((_url, _body, cb) =>
       cb(jsonResponse(true, { receiptStatus: "DELIVERED" })),

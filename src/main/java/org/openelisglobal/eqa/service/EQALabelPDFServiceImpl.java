@@ -5,6 +5,7 @@ import com.itextpdf.text.DocumentException;
 import com.itextpdf.text.Font;
 import com.itextpdf.text.PageSize;
 import com.itextpdf.text.Phrase;
+import com.itextpdf.text.pdf.BaseFont;
 import com.itextpdf.text.pdf.ColumnText;
 import com.itextpdf.text.pdf.PdfContentByte;
 import com.itextpdf.text.pdf.PdfWriter;
@@ -46,6 +47,8 @@ public class EQALabelPDFServiceImpl implements EQALabelPDFService {
     private static final int COLUMNS = 3;
     private static final int ROWS = 10;
     private static final float PAD = 8f;
+
+    private static final String ELLIPSIS = "...";
 
     /** Sealed and distributed only — see generateLabelSheet. */
     private static final Set<EQAPanelStatus> PRINTABLE_STATES = EnumSet.of(EQAPanelStatus.SEALED,
@@ -123,21 +126,57 @@ public class EQALabelPDFServiceImpl implements EQALabelPDFService {
 
         // Blind code large and first; cycle + analyte small underneath. Target
         // values and acceptance ranges are deliberately never read here.
-        show(canvas, new Phrase(sample.getBlindCode(), CODE_FONT), left, top - 24);
-        show(canvas, new Phrase(cycleIdentifier, META_FONT), left, top - 42);
-        show(canvas, new Phrase(analyteName(sample.getAnalyteId()), META_FONT), left, top - 54);
+        show(canvas, oneLine(sample.getBlindCode(), CODE_FONT), left, top - 24);
+        show(canvas, oneLine(cycleIdentifier, META_FONT), left, top - 42);
+        show(canvas, oneLine(analyteName(sample.getAnalyteId()), META_FONT), left, top - 54);
+    }
+
+    /** The width one line of label text has to live in. */
+    private static final float TEXT_WIDTH = LABEL_WIDTH - 2f * PAD;
+
+    /**
+     * One line, shortened with an ellipsis if it does not fit the label's width. A
+     * label box holds a single line, and a value long enough to wrap used to lose
+     * every line of itself rather than the tail — so the cycle identifier and the
+     * analyte name printed on nothing but the shortest fixtures. A truncated
+     * analyte name on a tube is still useful; a missing one is not.
+     */
+    private static Phrase oneLine(String text, Font font) {
+        String fitted = text == null ? "" : text.trim();
+        BaseFont base = font.getCalculatedBaseFont(false);
+        if (base.getWidthPoint(fitted, font.getSize()) <= TEXT_WIDTH) {
+            return new Phrase(fitted, font);
+        }
+        while (!fitted.isEmpty() && base.getWidthPoint(fitted + ELLIPSIS, font.getSize()) > TEXT_WIDTH) {
+            fitted = fitted.substring(0, fitted.length() - 1);
+        }
+        return new Phrase(fitted.trim() + ELLIPSIS, font);
     }
 
     /**
      * Clipped to the label box: showTextAligned draws a single unwrapped line, so a
      * long blind code would otherwise run into the neighbouring label.
+     *
+     * <p>
+     * The box has to hold a whole line of leading, not just the glyphs: sized to
+     * the font alone it was a fraction too short and iText dropped the text without
+     * a word. The baseline still lands on {@code y}, because that is where a column
+     * places its first line.
      */
     private void show(PdfContentByte canvas, Phrase phrase, float x, float y) {
+        float leading = phrase.getFont().getSize() + 1f;
         ColumnText column = new ColumnText(canvas);
-        column.setSimpleColumn(x, y - 2f, x + LABEL_WIDTH - 2f * PAD, y + phrase.getFont().getSize() + 2f);
+        column.setLeading(leading);
+        column.setSimpleColumn(x, y - 3f, x + TEXT_WIDTH, y + leading);
         column.addText(phrase);
         try {
-            column.go();
+            // go() reports what it could not fit rather than throwing, so an
+            // unchecked call is how a line goes missing silently. Everything drawn
+            // here is one line wide by construction, so this cannot fire without a
+            // bug above it.
+            if ((column.go() & ColumnText.NO_MORE_TEXT) == 0) {
+                throw new IllegalStateException("Label text did not fit its box: " + phrase.getContent());
+            }
         } catch (DocumentException e) {
             throw new IllegalStateException("Label text layout failed", e);
         }
