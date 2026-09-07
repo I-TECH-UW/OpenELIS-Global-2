@@ -61,10 +61,12 @@ const EnvironmentalOrderEnter = () => {
   const [errors, setErrors] = useState({});
   const [showNceForm, setShowNceForm] = useState(false);
 
-  // Reset on mount for new orders. Only skip reset when ?order= is present
-  // AND the URL path belongs to this workflow.
+  // Reset on mount for new orders. Only skip reset when an order is addressed
+  // in the URL (?order= or the dashboard's ?labNumber=) AND the URL path
+  // belongs to this workflow.
   useEffect(() => {
-    const orderParam = new URLSearchParams(location.search).get("order");
+    const params = new URLSearchParams(location.search);
+    const orderParam = params.get("order") || params.get("labNumber");
     const pathMatchesWorkflow = location.pathname.startsWith(
       "/order/environmental",
     );
