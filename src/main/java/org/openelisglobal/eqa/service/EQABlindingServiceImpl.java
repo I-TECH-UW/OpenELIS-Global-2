@@ -22,6 +22,8 @@ import org.openelisglobal.eqa.dao.EQAPanelSampleDAO;
 import org.openelisglobal.eqa.dao.EQAParticipantResultDAO;
 import org.openelisglobal.eqa.dao.EQARoundDAO;
 import org.openelisglobal.eqa.dao.EQASchemeAnalystDAO;
+import org.openelisglobal.eqa.valueholder.EQACycle;
+import org.openelisglobal.eqa.valueholder.EQACycleStatus;
 import org.openelisglobal.eqa.valueholder.EQALabProgramEnrollment;
 import org.openelisglobal.eqa.valueholder.EQAPanel;
 import org.openelisglobal.eqa.valueholder.EQAPanelSample;
@@ -31,7 +33,10 @@ import org.openelisglobal.eqa.valueholder.EQAPerformanceStatus;
 import org.openelisglobal.eqa.valueholder.EQARound;
 import org.openelisglobal.eqa.valueholder.EQASchemeAnalyst;
 import org.openelisglobal.eqa.valueholder.EQASchemeType;
+import org.openelisglobal.eqa.valueholder.EQAStateMachine;
 import org.openelisglobal.eqa.valueholder.EQASubmissionStatus;
+import org.openelisglobal.eqa.valueholder.EQATriggerEvent;
+import org.openelisglobal.eqa.valueholder.EQATriggerType;
 import org.openelisglobal.eqa.valueholder.EQAUnblindMethod;
 import org.openelisglobal.eqa.valueholder.SampleEQA;
 import org.openelisglobal.patient.service.PatientService;
@@ -75,6 +80,8 @@ public class EQABlindingServiceImpl implements EQABlindingService {
     private EQAPanelDAO panelDAO;
     @Autowired
     private EQAPanelSampleDAO panelSampleDAO;
+    @Autowired
+    private EQACycleService cycleService;
     @Autowired
     private EQARoundDAO roundDAO;
     @Autowired
@@ -182,7 +189,22 @@ public class EQABlindingServiceImpl implements EQABlindingService {
 
         panel.setStatus(EQAPanelStatus.SCORED);
         panel.setSysUserId(sysUserId);
-        return panelDAO.update(panel);
+        EQAPanel scored = panelDAO.update(panel);
+
+        // The cycle follows its panel. Without this an unblinded and scored
+        // in-house cycle stayed at PLANNED and My Cycles read it as untouched
+        // while its own report showed the verdicts. A second panel unblinding in
+        // the same cycle finds it already scored and leaves it alone.
+        markCycleScored(panel.getCycle(), sysUserId);
+        return scored;
+    }
+
+    private void markCycleScored(EQACycle cycle, String sysUserId) {
+        if (cycle == null || cycle.getStatus() == EQACycleStatus.SCORED || cycle.getStatus() == EQACycleStatus.CLOSED) {
+            return;
+        }
+        cycleService.transition(cycle.getId(), EQACycleStatus.SCORED, EQAStateMachine.PARTICIPANT, EQATriggerType.AUTO,
+                EQATriggerEvent.PANEL_UNBLIND, null, null, sysUserId);
     }
 
     // ---- seal helpers ----

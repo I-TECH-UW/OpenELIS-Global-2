@@ -86,7 +86,8 @@ public class EQACycleEnrichmentIntegrationTest extends EQASpineTestBase {
      * SampleEQAOrderStatusIntegrationTest.
      */
     private void ensureStatusRows() {
-        String[][] canonical = { { "9604", "Not Tested" }, { "9606", "Finalized" } };
+        String[][] canonical = { { "9604", "Not Tested" }, { "9606", "Finalized" },
+                { "9605", "Technical Acceptance" } };
         for (String[] row : canonical) {
             jdbc.update("INSERT INTO clinlims.status_of_sample (id, code, status_type, name, description)"
                     + " SELECT ?::numeric, 1, 'ANALYSIS', ?, 'restored by EQACycleEnrichmentIntegrationTest'"
@@ -102,7 +103,7 @@ public class EQACycleEnrichmentIntegrationTest extends EQASpineTestBase {
     }
 
     private void cleanupSeed() {
-        jdbc.update("DELETE FROM clinlims.result WHERE id = ?", RESULT_ID);
+        jdbc.update("DELETE FROM clinlims.result WHERE id IN (?, ?)", RESULT_ID, RESULT_ID + 1);
         jdbc.update("DELETE FROM clinlims.sample_eqa WHERE id = ?", SAMPLE_EQA_ID);
         jdbc.update("DELETE FROM clinlims.analysis WHERE id IN (?, ?)", ANALYSIS_FINALIZED_ID, ANALYSIS_NOT_STARTED_ID);
         jdbc.update("DELETE FROM clinlims.sample_item WHERE id = ?", SAMPLE_ITEM_ID);
@@ -194,6 +195,51 @@ public class EQACycleEnrichmentIntegrationTest extends EQASpineTestBase {
         @SuppressWarnings("unchecked")
         List<Map<String, Object>> after = (List<Map<String, Object>>) row.get("samples");
         assertEquals("entered", after.get(0).get("entryStatus"));
+    }
+
+    /**
+     * The two lanes count progress by different gates, because they have different
+     * gates. The in-house lane scores from the unblind and never goes through
+     * validation, so counting only Finalized analyses left a fully answered and
+     * scored panel reading 0 of 2 on My Cycles while its own report showed the
+     * verdicts.
+     */
+    @Test
+    public void anInHouseCycleCountsAnsweredSamplesRatherThanValidatedOnes() {
+        EQAProgram scheme = insertScheme("In-house progress " + System.nanoTime(), EQASchemeType.IN_HOUSE, null);
+        Long cycleId = insertCycle(scheme, 5);
+
+        int technicalAcceptance = Integer.parseInt(statusService.getStatusID(AnalysisStatus.TechnicalAcceptance));
+        int notStartedId = Integer.parseInt(statusService.getStatusID(AnalysisStatus.NotStarted));
+        seedLinkedOrder(cycleId, technicalAcceptance, notStartedId);
+        // The answered analysis carries a result; the silent one does not. That is
+        // the difference, not the status: reading the status would count a
+        // cancelled analysis as answered.
+        jdbc.update("INSERT INTO clinlims.result (id, analysis_id, result_type, value, sort_order, is_reportable,"
+                + " lastupdated) VALUES (?, ?, 'N', '102', '1', 'Y', NOW())", RESULT_ID, ANALYSIS_FINALIZED_ID);
+
+        Map<String, Object> row = findCycleRow(cycleId);
+
+        assertEquals("the answered sample counts although nothing was validated", Map.of("entered", 1, "total", 2),
+                row.get("progress"));
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> samples = (List<Map<String, Object>>) row.get("samples");
+        assertEquals("one answered of two reads as in progress", "in_progress", samples.get(0).get("entryStatus"));
+
+        // Answer the second one and the order reads as entered, still unvalidated.
+        jdbc.update("UPDATE clinlims.analysis SET status_id = ? WHERE id = ?", technicalAcceptance,
+                ANALYSIS_NOT_STARTED_ID);
+        jdbc.update(
+                "INSERT INTO clinlims.result (id, analysis_id, result_type, value, sort_order, is_reportable,"
+                        + " lastupdated) VALUES (?, ?, 'N', '99', '1', 'Y', NOW())",
+                RESULT_ID + 1, ANALYSIS_NOT_STARTED_ID);
+        row = findCycleRow(cycleId);
+
+        assertEquals(Map.of("entered", 2, "total", 2), row.get("progress"));
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> after = (List<Map<String, Object>>) row.get("samples");
+        assertEquals("entered", after.get(0).get("entryStatus"));
+        jdbc.update("DELETE FROM clinlims.result WHERE id = ?", RESULT_ID + 1);
     }
 
     /**
