@@ -55,8 +55,6 @@ import org.openelisglobal.eqa.valueholder.SampleEQA;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.spring.util.SpringContext;
-import org.openelisglobal.testanalyte.service.TestAnalyteService;
-import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -123,7 +121,7 @@ public class EQACycleSubmissionServiceImpl implements EQACycleSubmissionService 
     private EQALabProgramEnrollmentDAO enrollmentDAO;
 
     @Autowired
-    private TestAnalyteService testAnalyteService;
+    private EQAPanelService eqaPanelService;
 
     @Autowired
     private AnalysisService analysisService;
@@ -238,10 +236,8 @@ public class EQACycleSubmissionServiceImpl implements EQACycleSubmissionService 
                 // Same unmapped-analyte case the bridge logs, and worth saying twice:
                 // here a user has explicitly named an analyst and would otherwise get
                 // no record and no reason.
-                logger.warn(
-                        "EQA analyst not recorded for analysis {} (test {}): it reports no analyte. Map the test to"
-                                + " its scheme analyte on the enrollment first.",
-                        analysis.getId(), analysis.getTest() == null ? "?" : analysis.getTest().getId());
+                logger.warn("EQA analyst not recorded for analysis {}: it names no test, so it resolves no analyte",
+                        analysis.getId());
                 continue;
             }
             String value = EqaReportedValue.of(resultService, pipelineResult);
@@ -344,10 +340,8 @@ public class EQACycleSubmissionServiceImpl implements EQACycleSubmissionService 
                 // Logged rather than skipped quietly: the cycle then stays short of
                 // its denominator and never submits, and this line is the only thing
                 // that says why.
-                logger.warn(
-                        "EQA analysis {} (test {}) reports no analyte; map the test to its scheme analyte on the"
-                                + " enrollment before this cycle can be submitted",
-                        analysis.getId(), analysis.getTest() == null ? "?" : analysis.getTest().getId());
+                logger.warn("EQA analysis {} names no test, so it resolves no analyte and cannot be submitted",
+                        analysis.getId());
                 continue;
             }
             if (upsert(cycle, roundId, enrollmentId, analysis, analyteId, value.trim(), sysUserId, tally)) {
@@ -369,8 +363,12 @@ public class EQACycleSubmissionServiceImpl implements EQACycleSubmissionService 
      * <li>the enrollment's scheme mapping (qa/030) — what the lab declared this
      * test reports for this scheme. The normal external-PT case: most test
      * configurations carry no test_analyte row at all, so source 1 is null.
-     * <li>test_analyte for the analysis's test — covers a result saved before the
-     * catalog mapping was added.
+     * <li>the test's own analyte, created from the test name when the catalog has
+     * none. This is the same resolution the provider makes when it seals a panel
+     * sample, and that is the point: a result crosses to the provider under its
+     * <em>analyte name</em>, and scores come back matched the same way, so both
+     * instances have to derive the same name. Deriving it from the shared test name
+     * on both sides is what makes them agree without a new field on the wire.
      * </ol>
      */
     private Long analyteIdOf(Result pipelineResult, Analysis analysis, Map<Long, Long> schemeAnalytes) {
@@ -385,12 +383,7 @@ public class EQACycleSubmissionServiceImpl implements EQACycleSubmissionService 
         if (analysis.getTest() == null) {
             return null;
         }
-        for (TestAnalyte testAnalyte : testAnalyteService.getAllTestAnalytesPerTest(analysis.getTest())) {
-            if (testAnalyte.getAnalyte() != null && testAnalyte.getAnalyte().getId() != null) {
-                return Long.valueOf(testAnalyte.getAnalyte().getId());
-            }
-        }
-        return null;
+        return eqaPanelService.analyteIdForTest(analysis.getTest().getId());
     }
 
     /** This enrollment's declared test-to-analyte mapping, empty when unmapped. */
