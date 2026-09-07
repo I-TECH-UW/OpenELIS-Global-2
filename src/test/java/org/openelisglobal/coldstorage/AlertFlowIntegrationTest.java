@@ -431,6 +431,50 @@ public class AlertFlowIntegrationTest extends BaseWebContextSensitiveTest {
                 alerts.stream().filter(alert -> alert.getStatus() == AlertStatus.OPEN).count());
     }
 
+    @Test
+    public void testRecoveryLeavesAnOpenTemperatureAlertAlone() throws InterruptedException {
+        // A lab that loses comms mid-excursion must not get a clean Active Alerts
+        // panel back when the device answers again: recovery says nothing about the
+        // temperature, so only the FREEZER_OFFLINE alert may be resolved.
+        Long freezerId = 100L;
+        Freezer freezer = freezerService.findById(freezerId).orElse(null);
+        assertNotNull("Freezer should exist", freezer);
+
+        OffsetDateTime firstPoll = OffsetDateTime.now().minusMinutes(30);
+
+        readingIngestionService.ingest(freezer, firstPoll, new BigDecimal("5.0"), null, null, true, null);
+        Thread.sleep(500);
+        assertEquals("The warm reading should raise a temperature alert", AlertStatus.OPEN,
+                soleAlertOfType(freezerId, AlertType.FREEZER_TEMPERATURE).getStatus());
+
+        ingestFailedPolls(freezer, firstPoll.plusMinutes(1), 3);
+        Thread.sleep(500);
+        assertEquals("Three consecutive failures should raise the offline alert", AlertStatus.OPEN,
+                soleAlertOfType(freezerId, AlertType.FREEZER_OFFLINE).getStatus());
+
+        // -40C breaches none of profile 1's thresholds, so this poll raises no
+        // temperature alert of its own.
+        readingIngestionService.ingest(freezer, firstPoll.plusMinutes(5), new BigDecimal("-40.0"), null, null, true,
+                null);
+        Thread.sleep(500);
+
+        assertEquals("Recovery should resolve the offline alert", AlertStatus.RESOLVED,
+                soleAlertOfType(freezerId, AlertType.FREEZER_OFFLINE).getStatus());
+
+        Alert excursion = soleAlertOfType(freezerId, AlertType.FREEZER_TEMPERATURE);
+        assertEquals("The excursion must survive the recovery still open", AlertStatus.OPEN, excursion.getStatus());
+        assertNull("The excursion must not be stamped resolved", excursion.getResolvedAt());
+        assertNull("The excursion must not carry the daemon's resolution note", excursion.getResolutionNotes());
+        assertNull("The excursion's lifecycle must not have been ended", excursion.getEndTime());
+    }
+
+    private Alert soleAlertOfType(Long freezerId, AlertType alertType) {
+        List<Alert> matching = alertService.getAlertsByEntity("Freezer", freezerId).stream()
+                .filter(alert -> alert.getAlertType() == alertType).toList();
+        assertEquals("Expected exactly one " + alertType + " alert for freezer " + freezerId, 1, matching.size());
+        return matching.get(0);
+    }
+
     private void ingestFailedPolls(Freezer freezer, OffsetDateTime firstPoll, int count) {
         for (int i = 0; i < count; i++) {
             readingIngestionService.ingest(freezer, firstPoll.plusMinutes(i), null, null, null, false, "timeout");
