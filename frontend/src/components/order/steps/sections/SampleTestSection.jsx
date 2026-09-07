@@ -104,6 +104,11 @@ const SampleTestSection = ({
   }, [samples]);
 
   const fetchTestsForSampleType = (sampleIndex, sampleTypeId) => {
+    // A search term left over from the previous sample type would filter the
+    // freshly-fetched lists against text that no longer applies, hiding
+    // everything for no visible reason. Clear both on every (re)fetch.
+    setTestSearchTerms((prev) => ({ ...prev, [sampleIndex]: "" }));
+    setPanelSearchTerms((prev) => ({ ...prev, [sampleIndex]: "" }));
     if (!sampleTypeId) {
       setTestsPerSample((prev) => ({ ...prev, [sampleIndex]: [] }));
       setPanelsPerSample((prev) => ({ ...prev, [sampleIndex]: [] }));
@@ -169,6 +174,16 @@ const SampleTestSection = ({
       ? panels.filter((p) => p.name?.toLowerCase().includes(term))
       : panels;
   };
+
+  // Whether this sample type has ANY tests/panels, regardless of the search
+  // term. The render guards must key off these rather than the filtered
+  // length: gating on the filtered count unmounts the search input along with
+  // the list, leaving no way to clear a term that matched nothing.
+  const hasAnyTests = (sampleIndex) =>
+    (testsPerSample[sampleIndex] || []).length > 0;
+
+  const hasAnyPanels = (sampleIndex) =>
+    (panelsPerSample[sampleIndex] || []).length > 0;
 
   const handleAddSample = () => {
     const newSample = {
@@ -430,7 +445,7 @@ const SampleTestSection = ({
                 </Tag>
               ))}
             </div>
-            {getFilteredPanels(sampleIndex).length > 0 ? (
+            {hasAnyPanels(sampleIndex) ? (
               <>
                 <Search
                   id={`panelSearch-${sampleIndex}`}
@@ -450,18 +465,27 @@ const SampleTestSection = ({
                   size="sm"
                 />
                 <div className="checkbox-list">
-                  {getFilteredPanels(sampleIndex).map((panel) => (
-                    <Checkbox
-                      key={panel.id}
-                      id={`panel-${sampleIndex}-${panel.id}`}
-                      labelText={panel.name}
-                      checked={isPanelSelected(sampleIndex, panel.id)}
-                      onChange={(_, { checked }) =>
-                        handlePanelToggle(sampleIndex, panel, checked)
-                      }
-                      disabled={isReadOnly}
-                    />
-                  ))}
+                  {getFilteredPanels(sampleIndex).length > 0 ? (
+                    getFilteredPanels(sampleIndex).map((panel) => (
+                      <Checkbox
+                        key={panel.id}
+                        id={`panel-${sampleIndex}-${panel.id}`}
+                        labelText={panel.name}
+                        checked={isPanelSelected(sampleIndex, panel.id)}
+                        onChange={(_, { checked }) =>
+                          handlePanelToggle(sampleIndex, panel, checked)
+                        }
+                        disabled={isReadOnly}
+                      />
+                    ))
+                  ) : (
+                    <p className="no-items-message">
+                      <FormattedMessage
+                        id="sample.noPanelsMatchSearch"
+                        defaultMessage="No panels match your search"
+                      />
+                    </p>
+                  )}
                 </div>
               </>
             ) : loadingPerSample[sampleIndex] ? (
@@ -502,7 +526,7 @@ const SampleTestSection = ({
                 </Tag>
               ))}
             </div>
-            {getFilteredTests(sampleIndex).length > 0 ? (
+            {hasAnyTests(sampleIndex) ? (
               <>
                 <Search
                   id={`testSearch-${sampleIndex}`}
@@ -522,18 +546,27 @@ const SampleTestSection = ({
                   size="sm"
                 />
                 <div className="checkbox-list checkbox-list-scrollable">
-                  {getFilteredTests(sampleIndex).map((test) => (
-                    <Checkbox
-                      key={test.id}
-                      id={`test-${sampleIndex}-${test.id}`}
-                      labelText={test.name}
-                      checked={isTestSelected(sampleIndex, test.id)}
-                      onChange={(_, { checked }) =>
-                        handleTestToggle(sampleIndex, test, checked)
-                      }
-                      disabled={isReadOnly}
-                    />
-                  ))}
+                  {getFilteredTests(sampleIndex).length > 0 ? (
+                    getFilteredTests(sampleIndex).map((test) => (
+                      <Checkbox
+                        key={test.id}
+                        id={`test-${sampleIndex}-${test.id}`}
+                        labelText={test.name}
+                        checked={isTestSelected(sampleIndex, test.id)}
+                        onChange={(_, { checked }) =>
+                          handleTestToggle(sampleIndex, test, checked)
+                        }
+                        disabled={isReadOnly}
+                      />
+                    ))
+                  ) : (
+                    <p className="no-items-message">
+                      <FormattedMessage
+                        id="sample.noTestsMatchSearch"
+                        defaultMessage="No tests match your search"
+                      />
+                    </p>
+                  )}
                 </div>
                 <span className="test-count-info">
                   <FormattedMessage
@@ -1435,7 +1468,7 @@ const SampleTestSection = ({
                         </Tag>
                       ))}
                     </div>
-                    {getFilteredPanels(sampleIndex).length > 0 ? (
+                    {hasAnyPanels(sampleIndex) ? (
                       <>
                         <Search
                           id={`panelSearch-${sampleIndex}`}
@@ -1455,18 +1488,27 @@ const SampleTestSection = ({
                           size="sm"
                         />
                         <div className="checkbox-list">
-                          {getFilteredPanels(sampleIndex).map((panel) => (
-                            <Checkbox
-                              key={panel.id}
-                              id={`panel-${sampleIndex}-${panel.id}`}
-                              labelText={panel.name}
-                              checked={isPanelSelected(sampleIndex, panel.id)}
-                              onChange={(_, { checked }) =>
-                                handlePanelToggle(sampleIndex, panel, checked)
-                              }
-                              disabled={isReadOnly}
-                            />
-                          ))}
+                          {getFilteredPanels(sampleIndex).length > 0 ? (
+                            getFilteredPanels(sampleIndex).map((panel) => (
+                              <Checkbox
+                                key={panel.id}
+                                id={`panel-${sampleIndex}-${panel.id}`}
+                                labelText={panel.name}
+                                checked={isPanelSelected(sampleIndex, panel.id)}
+                                onChange={(_, { checked }) =>
+                                  handlePanelToggle(sampleIndex, panel, checked)
+                                }
+                                disabled={isReadOnly}
+                              />
+                            ))
+                          ) : (
+                            <p className="no-items-message">
+                              <FormattedMessage
+                                id="sample.noPanelsMatchSearch"
+                                defaultMessage="No panels match your search"
+                              />
+                            </p>
+                          )}
                         </div>
                       </>
                     ) : loadingPerSample[sampleIndex] ? (
@@ -1505,7 +1547,7 @@ const SampleTestSection = ({
                         </Tag>
                       ))}
                     </div>
-                    {getFilteredTests(sampleIndex).length > 0 ? (
+                    {hasAnyTests(sampleIndex) ? (
                       <>
                         <Search
                           id={`testSearch-${sampleIndex}`}
@@ -1525,18 +1567,27 @@ const SampleTestSection = ({
                           size="sm"
                         />
                         <div className="checkbox-list checkbox-list-scrollable">
-                          {getFilteredTests(sampleIndex).map((test) => (
-                            <Checkbox
-                              key={test.id}
-                              id={`test-${sampleIndex}-${test.id}`}
-                              labelText={test.name}
-                              checked={isTestSelected(sampleIndex, test.id)}
-                              onChange={(_, { checked }) =>
-                                handleTestToggle(sampleIndex, test, checked)
-                              }
-                              disabled={isReadOnly}
-                            />
-                          ))}
+                          {getFilteredTests(sampleIndex).length > 0 ? (
+                            getFilteredTests(sampleIndex).map((test) => (
+                              <Checkbox
+                                key={test.id}
+                                id={`test-${sampleIndex}-${test.id}`}
+                                labelText={test.name}
+                                checked={isTestSelected(sampleIndex, test.id)}
+                                onChange={(_, { checked }) =>
+                                  handleTestToggle(sampleIndex, test, checked)
+                                }
+                                disabled={isReadOnly}
+                              />
+                            ))
+                          ) : (
+                            <p className="no-items-message">
+                              <FormattedMessage
+                                id="sample.noTestsMatchSearch"
+                                defaultMessage="No tests match your search"
+                              />
+                            </p>
+                          )}
                         </div>
                         <span className="test-count-info">
                           <FormattedMessage
