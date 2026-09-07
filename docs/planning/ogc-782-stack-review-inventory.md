@@ -56,14 +56,6 @@ on a fresh load, Playwright arriving by navigation, and a vitest test on the
 real component all pass, so the coverage moved rather than the cause being
 found.
 
----- | ------------------------------------------------------------------------------------------------------------ | ----------------------------------------------------------------------------------------------------------------- |
-| 1 | E2E fixes, section E (6) | 4 done (ingress creds, region landmark, stale demo testid, WHONET listbox wait); esig + Cypress pending diagnosis |
-| 2 | Commit bucket B (3, already validated) | in tree, uncommitted |
-| 3 | Bucket C (6): T27, T22, T25, T28, T29, T16r | **all 6 done, Red-proven where behavioural** |
-| 4 | Bucket D (11): 9 done (T17, T7, T4, T13, T9, T15, T21, T6, T23); T18 pending; T12 stale-as-filed (see below) |
-| 5 | Local validation per criterion 4, then one push, then `gh pr checks 4196` | pending |
-| 6 | Draft bucket-A replies → Piotr approves → post + resolve; reply/resolve B–D | pending |
-
 Rejected on 2026-09-06: deferring bucket D to a follow-up PR "to protect the one
 CI run". Backend CI is already green at the top and every D item has a local
 harness, so CI risk was never a real constraint; deferring P1 clinical-safety
