@@ -425,6 +425,32 @@ public class EQABlindingServiceImpl implements EQABlindingService {
 
     // ---- unblind helpers ----
 
+    @Override
+    public int scoreLateResults(String sysUserId) {
+        // Driven from the missed rows rather than from panels: the set shrinks as
+        // they are answered, where a scan of every scored panel would grow for
+        // ever. ponytail: one query for the rows, one per row for its panel
+        // sample; an in-house panel carries a handful of samples.
+        int scored = 0;
+        for (EQAParticipantResult result : participantResultDAO.getAllMatching("submissionStatus",
+                EQASubmissionStatus.MISSED_DEADLINE)) {
+            if (result.getPanelSampleId() == null || result.getPerformanceStatus() != null) {
+                continue; // external PT, or already given its verdict on an earlier pass
+            }
+            EQAPanelSample target = panelSampleDAO.get(result.getPanelSampleId()).orElse(null);
+            if (target == null || target.getPanel() == null || target.getPanel().getUnblindedAt() == null) {
+                continue; // the panel is still blinded, so nothing is late yet
+            }
+            String reported = reportedValueOf(result);
+            if (GenericValidator.isBlankOrNull(reported)) {
+                continue; // still unanswered — genuinely a missed deadline
+            }
+            participantResultService.recordLateScore(result.getId(), reported, verdictFor(target, reported), sysUserId);
+            scored++;
+        }
+        return scored;
+    }
+
     private void resolveResult(EQAParticipantResult result, EQAPanelSample target, String sysUserId) {
         if (result.getSubmissionStatus() == EQASubmissionStatus.SCORED
                 || result.getSubmissionStatus() == EQASubmissionStatus.MISSED_DEADLINE) {

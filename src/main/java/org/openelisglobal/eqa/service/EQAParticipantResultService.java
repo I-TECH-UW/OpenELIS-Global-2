@@ -51,6 +51,21 @@ public interface EQAParticipantResultService extends BaseObjectService<EQAPartic
      */
     EQAParticipantResult markMissedDeadline(Long resultId, String sysUserId);
 
+    /**
+     * Records the verdict for a result answered after its panel was unblinded,
+     * keeping {@code MISSED_DEADLINE} as the lateness flag rather than replacing it
+     * with SCORED. The two are separate facts: the row was late, and it was also
+     * right or wrong, and a supervisor reviewing the cycle needs to be able to tell
+     * a technologist who was late from one who never tested at all.
+     *
+     * <p>
+     * No competency event is written. The analyst's lateness was already recorded
+     * as {@code IN_HOUSE_MISSED_DEADLINE} when the panel unblinded, and counting
+     * the same sample twice would band them on one act.
+     */
+    EQAParticipantResult recordLateScore(Long resultId, String reportedValue, EQAPerformanceStatus performance,
+            String sysUserId);
+
     /** Results for one cycle, optionally narrowed to one lab enrollment. */
     List<Map<String, Object>> getResultDtos(Long cycleId, Long labEnrollmentId);
 

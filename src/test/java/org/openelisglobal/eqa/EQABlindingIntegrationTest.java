@@ -14,6 +14,7 @@ import com.itextpdf.text.pdf.PdfReader;
 import com.itextpdf.text.pdf.parser.PdfTextExtractor;
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.sql.Timestamp;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Map;
@@ -649,6 +650,59 @@ public class EQABlindingIntegrationTest extends EQASpineTestBase {
         } catch (IllegalArgumentException | IllegalStateException expected) {
             // the service refuses before writing anything
         }
+    }
+
+    /**
+     * AC-V2.4-06. A result answered after the unblind used to leave no trace: the
+     * row stayed MISSED_DEADLINE with no value and no verdict, and nothing could
+     * score it, because {@code resolveResult} returns early for that status and the
+     * unblind itself is guarded by the DISTRIBUTED → UNBLINDED edge. The re-resolve
+     * pass scores it and keeps the lateness, which are two separate facts.
+     */
+    @Test
+    public void lateResults_areScoredAndStillReadAsHavingMissedTheDeadline() {
+        seedEnrollment(9901, "IH Late Scheme");
+        EQAProgram scheme = inHouseScheme("IH Late Scheme");
+        EQACycle cycle = readBack(insertCycle(scheme, 1));
+        Long roundId = insertRound(cycle, 1, "OPEN");
+        EQAPanel panel = panelWith(scheme, cycle, EQAPanelStatus.DISTRIBUTED, LocalDate.now().minusDays(1));
+        Long lateSample = insertPanelSample(panel, "IH-01", "IHLATE-1", NUMERIC_ANALYTE, "100", "95", "105");
+        Long silentSample = insertPanelSample(panel, "IH-02", "IHLATE-2", NUMERIC_ANALYTE, "100", "95", "105");
+        Long late = insertResult(cycle, roundId, 9901, NUMERIC_ANALYTE, EQASubmissionStatus.DRAFT, null, 1L,
+                lateSample);
+        Long silent = insertResult(cycle, roundId, 9901, NUMERIC_ANALYTE, EQASubmissionStatus.DRAFT, null, 1L,
+                silentSample);
+
+        blindingService.unblindAndScore(panel.getId(), USER, EQAUnblindMethod.MANUAL);
+        assertEquals("both start as missed", "MISSED_DEADLINE", resultRow(late).get("submission_status"));
+        assertNull("and unverdicted", resultRow(late).get("performance_status"));
+
+        // The bench answers one of them after the panel has been scored.
+        jdbc.update("UPDATE clinlims.eqa_participant_result SET result_value = '102' WHERE id = ?", late);
+        int scored = blindingService.scoreLateResults(USER);
+
+        assertEquals("only the answered one is scored", 1, scored);
+        Map<String, Object> lateRow = resultRow(late);
+        assertEquals("the verdict is recorded", "ACCEPTABLE", lateRow.get("performance_status"));
+        assertEquals("the reported value is on the row the report reads", "102", lateRow.get("result_value"));
+        assertEquals("and it still reads as late", "MISSED_DEADLINE", lateRow.get("submission_status"));
+        assertNotNull("scored-at is stamped", jdbc.queryForObject(
+                "SELECT score_received_at FROM clinlims.eqa_participant_result WHERE id = ?", Timestamp.class, late));
+
+        assertNull("a result nobody ever entered keeps no verdict", resultRow(silent).get("performance_status"));
+        assertEquals("MISSED_DEADLINE", resultRow(silent).get("submission_status"));
+
+        // The lateness was already counted against the analyst at the unblind, so
+        // scoring it now must not band them twice on one sample.
+        assertEquals("no second competency event for the late score", Integer.valueOf(1), jdbc.queryForObject(
+                "SELECT count(*) FROM clinlims.eqa_analyst_competency_event" + " WHERE participant_result_id = ?",
+                Integer.class, late));
+        assertEquals("IN_HOUSE_MISSED_DEADLINE", jdbc.queryForObject(
+                "SELECT event_type FROM clinlims.eqa_analyst_competency_event" + " WHERE participant_result_id = ?",
+                String.class, late));
+
+        // A second pass finds it already verdicted and does nothing.
+        assertEquals("the pass is idempotent", 0, blindingService.scoreLateResults(USER));
     }
 
     @Test

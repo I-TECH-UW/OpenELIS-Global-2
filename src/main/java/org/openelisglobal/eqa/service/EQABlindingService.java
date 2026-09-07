@@ -47,4 +47,23 @@ public interface EQABlindingService {
      * (FR-V2.4-08 — never auto-NCE for in-house). The panel ends SCORED.
      */
     EQAPanel unblindAndScore(Long panelId, String sysUserId, EQAUnblindMethod method);
+
+    /**
+     * AC-V2.4-06: scores results answered <i>after</i> their panel was unblinded.
+     *
+     * <p>
+     * A late answer is real bench work. It used to leave no trace in the EQA record
+     * — the row stayed {@code MISSED_DEADLINE} with no value and no verdict, the
+     * report printed it blank and "Not scored", and nothing could score it, because
+     * the unblind is guarded by the {@code DISTRIBUTED → UNBLINDED} edge and cannot
+     * be re-run. This pass re-resolves those rows instead of re-running the
+     * unblind, so the panel's own idempotency guard is left alone.
+     *
+     * <p>
+     * The status stays {@code MISSED_DEADLINE}: lateness and the verdict are two
+     * separate facts about one sample.
+     *
+     * @return how many late results were scored
+     */
+    int scoreLateResults(String sysUserId);
 }

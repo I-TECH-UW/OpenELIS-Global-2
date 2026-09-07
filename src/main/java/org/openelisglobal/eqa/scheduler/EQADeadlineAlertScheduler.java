@@ -268,6 +268,25 @@ public class EQADeadlineAlertScheduler {
     }
 
     /**
+     * AC-V2.4-06: a result answered after its panel unblinded is scored on the next
+     * pass, keeping its lateness flag. Rides the sweep the unblind pass already
+     * runs on rather than adding a second scheduler (the house rule), and reads the
+     * missed rows rather than the scored panels, so the work shrinks as they are
+     * answered.
+     */
+    @Scheduled(fixedDelay = 300000)
+    public void scoreLateInHouseResults() {
+        try {
+            int scored = blindingService.scoreLateResults(SCHEDULER_USER);
+            if (scored > 0) {
+                logger.info("Scored {} in-house result(s) entered after unblind", scored);
+            }
+        } catch (RuntimeException e) {
+            logger.error("Late in-house result scoring failed", e);
+        }
+    }
+
+    /**
      * FR-V2.2-05 automatic submission: bridge each participant cycle's validated
      * results onto its own rows, advance the participant state machine, and post to
      * the provider once the review window has elapsed. Per-cycle calls in a
