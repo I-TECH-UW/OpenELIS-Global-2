@@ -84,18 +84,21 @@
 
     <questionnaire_response id="1"
         fhir_uuid="aaaa1111-aaaa-aaaa-aaaa-aaaaaaaaaaaa" questionnaire_id="1"
-        subject_id="1" status="COMPLETED" authored="2026-05-20 09:00:00"
-        sys_user_id="1" last_updated="2026-05-20 09:10:00" />
+        subject_reference="Patient/b479ab79-5f53-4d1f-bc9b-10f19ce04635"
+        status="COMPLETED" authored="2026-05-20 09:00:00" sys_user_id="1"
+        last_updated="2026-05-20 09:10:00" />
 
     <questionnaire_response id="2"
         fhir_uuid="bbbb2222-bbbb-bbbb-bbbb-bbbbbbbbbbbb" questionnaire_id="2"
-        subject_id="1" status="COMPLETED" authored="2026-05-20 09:30:00"
-        sys_user_id="1" last_updated="2026-05-20 09:40:00" />
+        subject_reference="Patient/b479ab79-5f53-4d1f-bc9b-10f19ce04635"
+        status="COMPLETED" authored="2026-05-20 09:30:00" sys_user_id="1"
+        last_updated="2026-05-20 09:40:00" />
 
     <questionnaire_response id="3"
         fhir_uuid="cccc3333-cccc-cccc-cccc-cccccccccccc" questionnaire_id="3"
-        subject_id="1" status="IN_PROGRESS" authored="2026-05-20 10:00:00"
-        sys_user_id="1" last_updated="2026-05-20 10:05:00" />
+        subject_reference="Patient/b479ab79-5f53-4d1f-bc9b-10f19ce04635"
+        status="IN_PROGRESS" authored="2026-05-20 10:00:00" sys_user_id="1"
+        last_updated="2026-05-20 10:05:00" />
 
     <questionnaire_response_item id="1"
         questionnaire_response_id="1" link_id="1" text="Maternal Assessment"
