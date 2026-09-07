@@ -29,6 +29,7 @@ import AlertsDashboard from "./components/alerts/AlertsDashboard";
 import EQAProgramManagement from "./components/eqa/EQAProgram/ProgramManagement";
 import MyCyclesPage from "./components/eqa/MyCycles/MyCyclesPage";
 import ProviderSchemeList from "./components/eqa/Provider/ProviderSchemeList";
+import ParticipantPerformance from "./components/eqa/Provider/ParticipantPerformance";
 import CycleWizard from "./components/eqa/Provider/CycleWizard";
 import ProviderWorkbenchPage from "./components/eqa/Provider/Workbench/ProviderWorkbenchPage";
 import InHousePanelsPage from "./components/eqa/InHouse/InHousePanelsPage";
@@ -820,6 +821,16 @@ export default function App() {
                   path="/qa/eqa/provider/schemes/:schemeId/cycles/new"
                   exact
                   component={() => <CycleWizard />}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
+                />
+                {/* FR-V2.5-05 participant performance: the trend the workbench's
+                    per-cycle view cannot show. Declared before the bare scheme
+                    list so the more specific path wins. */}
+                <SecureRoute
+                  path="/qa/eqa/provider/schemes/:schemeId/performance"
+                  exact
+                  component={() => <ParticipantPerformance />}
                   role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
                   permission="qa.view.eqa"
                 />

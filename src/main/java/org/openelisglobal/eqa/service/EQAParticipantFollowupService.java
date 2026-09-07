@@ -90,6 +90,14 @@ public interface EQAParticipantFollowupService extends BaseObjectService<EQAPart
      */
     long countOpenProviderFollowups();
 
+    /**
+     * Open provider-side follow-ups per participating laboratory, keyed by
+     * organization id, under the same membership rule as
+     * {@link #countOpenProviderFollowups()} — the register's own reading of "open",
+     * rather than a second one.
+     */
+    Map<Long, Long> countOpenProviderFollowupsByOrganization();
+
     /** Marks a row escalated once its NCE exists (FR-V2.3-02). */
     EQAParticipantFollowup markEscalated(Long followupId, String sysUserId);
 

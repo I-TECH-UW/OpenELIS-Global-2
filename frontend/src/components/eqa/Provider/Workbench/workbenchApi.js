@@ -33,6 +33,13 @@ export const fetchProviderSchemes = (callback) =>
     }),
   );
 
+/** One row per laboratory in the scheme, each carrying its own cycle history. */
+export const fetchParticipantPerformance = (schemeId, callback) =>
+  getFromOpenElisServer(
+    `/rest/eqa/provider/schemes/${schemeId}/performance`,
+    (data) => callback(Array.isArray(data) ? data : []),
+  );
+
 export const fetchPrepStatus = (cycleId, callback) =>
   getFromOpenElisServer(`/rest/eqa/cycles/${cycleId}/prep`, (data) =>
     callback(data || null),

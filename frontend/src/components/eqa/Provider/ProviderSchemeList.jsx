@@ -236,6 +236,11 @@ const ProviderSchemeList = () => {
                         `/qa/eqa/provider/schemes/${scheme.id}/cycles/new`,
                       )
                     }
+                    onPerformance={() =>
+                      history.push(
+                        `/qa/eqa/provider/schemes/${scheme.id}/performance`,
+                      )
+                    }
                   />
                 ))}
               </TableBody>
@@ -252,7 +257,7 @@ const ProviderSchemeList = () => {
  * expansion state next to it, which is why this is a component rather than a
  * render helper.
  */
-const SchemeRows = ({ scheme, t, onNewCycle }) => {
+const SchemeRows = ({ scheme, t, onNewCycle, onPerformance }) => {
   const [expanded, setExpanded] = useState(false);
   const cycles = scheme.cycles || [];
 
@@ -282,6 +287,9 @@ const SchemeRows = ({ scheme, t, onNewCycle }) => {
         <TableCell>
           <Button kind="tertiary" size="sm" onClick={onNewCycle}>
             {t("eqa.provider.schemes.newCycle", "New cycle")}
+          </Button>{" "}
+          <Button kind="ghost" size="sm" onClick={onPerformance}>
+            {t("eqa.provider.schemes.performance", "Performance")}
           </Button>
         </TableCell>
       </TableExpandRow>

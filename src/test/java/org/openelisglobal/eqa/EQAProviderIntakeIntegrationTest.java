@@ -89,6 +89,7 @@ public class EQAProviderIntakeIntegrationTest extends EQASpineTestBase {
     @Override
     protected void cleanEqaTables() {
         if (jdbc != null) {
+            jdbc.update("DELETE FROM clinlims.eqa_program_enrollment WHERE id BETWEEN 9959 AND 9990");
             jdbc.update("DELETE FROM clinlims.eqa_result");
             jdbc.update("DELETE FROM clinlims.eqa_distribution WHERE cycle_id IS NOT NULL");
         }
@@ -261,6 +262,122 @@ public class EQAProviderIntakeIntegrationTest extends EQASpineTestBase {
         } finally {
             reader.close();
         }
+    }
+
+    /**
+     * FR-V2.5-05. The provider could see one cycle at a time and never the trend,
+     * which is the judgement the FR exists to support — which laboratory is
+     * drifting. The rate is asserted against a rebuild from the same rows rather
+     * than a figure typed into the test.
+     */
+    @Test
+    public void participantPerformanceCarriesEachLaboratorysRollingPassRate() {
+        // The read is enrollment-driven, as FR-V2.5-05 asks: a laboratory belongs on
+        // this page because it is enrolled, not because it happens to have
+        // reported. The intake fixture takes results in without enrolling anyone,
+        // so the roster is seeded here.
+        for (int p = 0; p < ORGS; p++) {
+            jdbc.update("INSERT INTO clinlims.eqa_program_enrollment"
+                    + " (id, eqa_program_id, organization_id, enrollment_date, status, sys_user_id, lastupdated)"
+                    + " VALUES (?, ?, ?, now(), 'Active', ?, now())", 9960 + p, scheme.getId(), FIRST_ORG + p, USER);
+        }
+
+        // Five scored cycles on the scheme; the window is the last four, so the
+        // oldest must fall out of the rate while staying in the record.
+        long steady = FIRST_ORG;
+        long drifting = FIRST_ORG + 1;
+        String[] driftingValues = { "reactive", "reactive", "Non-reactive", "reactive", "Non-reactive" };
+        for (int i = 0; i < driftingValues.length; i++) {
+            EQACycle round = readBack(insertCycle(scheme, 10 + i));
+            jdbc.update("UPDATE clinlims.eqa_cycle SET status = 'SUBMISSIONS_OPEN' WHERE id = ?", round.getId());
+            // A qualitative answer is judged against the target its own cycle's
+            // panel sealed, so each round needs one; the peer statistic cannot
+            // place a word.
+            EQAPanel roundPanel = insertPanel(scheme, p -> {
+                p.setCycle(round);
+                p.setPanelName("Round panel " + round.getCycleNumber());
+            });
+            EQAPanelSample roundSample = new EQAPanelSample();
+            roundSample.setPanel(roundPanel);
+            roundSample.setSampleCode("S" + round.getCycleNumber());
+            roundSample.setAnalyteId(ANALYTE_SERO);
+            roundSample.setTargetValue("Reactive");
+            roundSample.setSysUserId(USER);
+            eqaPanelSampleDAO.insert(roundSample);
+            for (int p = 0; p < ORGS; p++) {
+                long org = FIRST_ORG + p;
+                String value = org == drifting ? driftingValues[i] : "reactive";
+                scoringService.takeIn(round.getId(), org, Map.of(TEST_SERO, value), EQASubmissionMethod.MANUAL, USER);
+            }
+            scoringService.scoreCycle(round.getId(), USER);
+        }
+
+        Map<Long, Map<String, Object>> byOrg = new java.util.HashMap<>();
+        for (Map<String, Object> row : scoringService.getParticipantPerformance(scheme.getId())) {
+            byOrg.put(((Number) row.get("organizationId")).longValue(), row);
+        }
+
+        // Withdrawal is terminal, so a re-admitted laboratory holds two enrollment
+        // rows — and must still appear once, with the status it holds now. The rate
+        // belongs to the organization, not to the paperwork.
+        jdbc.update("UPDATE clinlims.eqa_program_enrollment SET status = 'Withdrawn' WHERE id = ?", 9960);
+        jdbc.update("INSERT INTO clinlims.eqa_program_enrollment"
+                + " (id, eqa_program_id, organization_id, enrollment_date, status, sys_user_id, lastupdated)"
+                + " VALUES (?, ?, ?, now(), 'Active', ?, now())", 9959, scheme.getId(), FIRST_ORG, USER);
+
+        byOrg.clear();
+        for (Map<String, Object> row : scoringService.getParticipantPerformance(scheme.getId())) {
+            assertTrue("no laboratory is listed twice",
+                    byOrg.put(((Number) row.get("organizationId")).longValue(), row) == null);
+        }
+        assertEquals("still one row per laboratory after a re-admission", ORGS, byOrg.size());
+        assertEquals("and it reads as active, not withdrawn", "Active", byOrg.get(steady).get("enrollmentStatus"));
+
+        // Every enrolled laboratory has a row, named and with its enrollment.
+        assertEquals("one row per enrolled laboratory", ORGS, byOrg.size());
+        assertEquals("Intake lab " + steady, byOrg.get(steady).get("organizationName"));
+        assertEquals("Active", byOrg.get(steady).get("enrollmentStatus"));
+
+        // The steady laboratory passed every cycle; the drifting one failed the
+        // last of its four and one before it.
+        assertEquals("a laboratory that never failed reads 100%", 0,
+                ((BigDecimal) byOrg.get(steady).get("passRate")).compareTo(new BigDecimal("100.0")));
+        assertEquals("only the last four cycles count towards the rate", Integer.valueOf(4),
+                byOrg.get(drifting).get("cyclesCounted"));
+        assertEquals("two of its last four were unacceptable", Integer.valueOf(2), byOrg.get(drifting).get("accepted"));
+        assertEquals("out of four judged", Integer.valueOf(4), byOrg.get(drifting).get("judged"));
+        assertEquals("so the rate is half", 0,
+                ((BigDecimal) byOrg.get(drifting).get("passRate")).compareTo(new BigDecimal("50.0")));
+
+        // The rate matches a rebuild over the same rows, rather than a number
+        // written into the test.
+        Integer acceptedInWindow = jdbc.queryForObject(
+                "SELECT count(*) FROM ( SELECT r.performance_status FROM clinlims.eqa_result r"
+                        + " JOIN clinlims.eqa_distribution d ON d.id = r.eqa_distribution_id"
+                        + " JOIN clinlims.eqa_cycle c ON c.id = d.cycle_id"
+                        + " WHERE r.participant_organization_id = ? AND c.scheme_id = ?"
+                        + " ORDER BY c.cycle_number DESC LIMIT 4 ) w WHERE performance_status = 'ACCEPTABLE'",
+                Integer.class, drifting, scheme.getId());
+        assertEquals("the rate is what the rows say", acceptedInWindow, byOrg.get(drifting).get("accepted"));
+
+        // The drill-in rides the same read: the cycles behind the rate, newest
+        // first, each with what was reported and how it was judged.
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> history = (List<Map<String, Object>>) byOrg.get(drifting).get("cycles");
+        assertEquals("four cycles of history, the window", 4, history.size());
+        assertEquals("newest first", Integer.valueOf(14), history.get(0).get("cycleNumber"));
+        @SuppressWarnings("unchecked")
+        List<Map<String, Object>> analytes = (List<Map<String, Object>>) history.get(0).get("analytes");
+        assertEquals("Non-reactive", analytes.get(0).get("reported"));
+        assertEquals("UNACCEPTABLE", analytes.get(0).get("performance"));
+        assertEquals("the most recent verdict is the newest cycle's", "UNACCEPTABLE",
+                byOrg.get(drifting).get("mostRecentPerformance"));
+
+        // A laboratory that has failed carries its open follow-ups; one that has
+        // not carries none.
+        assertTrue("the drifting laboratory has an open follow-up",
+                ((Number) byOrg.get(drifting).get("openFollowups")).longValue() > 0);
+        assertEquals("the steady one has none", 0L, ((Number) byOrg.get(steady).get("openFollowups")).longValue());
     }
 
     @Test
