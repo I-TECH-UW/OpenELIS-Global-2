@@ -31,6 +31,7 @@ import {
 } from "../../utils/Utils";
 import CustomDatePicker from "../../common/CustomDatePicker";
 import AutoComplete from "../../common/AutoComplete";
+import { navigateTo, softReload } from "../../utils/appNavigation";
 
 const breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -102,7 +103,7 @@ function UserAddModify() {
       );
     } else {
       setTimeout(() => {
-        window.location.assign("/MasterListsPage/userManagement");
+        navigateTo("/MasterListsPage/userManagement");
       }, 200);
     }
     return () => {
@@ -358,7 +359,7 @@ function UserAddModify() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        window.location.reload();
+        softReload();
       }, 200);
     } else {
       addNotification({
@@ -368,7 +369,7 @@ function UserAddModify() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        window.location.reload();
+        softReload();
       }, 200);
     }
   }
@@ -1438,9 +1439,7 @@ function UserAddModify() {
                     </Button>{" "}
                     <Button
                       onClick={() =>
-                        window.location.assign(
-                          "/MasterListsPage/userManagement",
-                        )
+                        navigateTo("/MasterListsPage/userManagement")
                       }
                       data-cy="exitButton"
                       kind="tertiary"

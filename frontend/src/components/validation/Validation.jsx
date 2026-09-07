@@ -38,6 +38,7 @@ import {
   triageRows,
 } from "./validationTriage";
 import ValidationReviewPanel from "./ValidationReviewPanel";
+import { navigateTo } from "../utils/appNavigation";
 
 const Validation = (props) => {
   const componentMounted = useRef(false);
@@ -213,7 +214,7 @@ const Validation = (props) => {
       ),
     });
     setNotificationVisible(true);
-    window.location.assign("/validation" + props.params);
+    navigateTo("/validation" + props.params);
   };
 
   /**
@@ -229,7 +230,7 @@ const Validation = (props) => {
       }),
     });
     setNotificationVisible(true);
-    window.location.assign("/validation" + props.params);
+    navigateTo("/validation" + props.params);
   };
 
   /**
@@ -372,7 +373,7 @@ const Validation = (props) => {
         });
         setNotificationVisible(true);
         setBulkOpen(false);
-        window.location.assign("/validation" + props.params);
+        navigateTo("/validation" + props.params);
       },
     );
   };

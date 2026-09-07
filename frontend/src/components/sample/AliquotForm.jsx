@@ -37,6 +37,7 @@ import { Formik, Field } from "formik";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 import { ConfigurationContext } from "../layout/Layout";
+import { softReload } from "../utils/appNavigation";
 
 function AliquotPage() {
   const [sampleForm, setSampleForm] = useState({
@@ -552,7 +553,7 @@ export function SampleItemsDisplay(props) {
         message: intl.formatMessage({ id: "aliquot.save.success" }),
         kind: NotificationKinds.success,
       });
-      window.location.reload();
+      softReload();
     } else {
       addNotification({
         title: intl.formatMessage({ id: "notification.title" }),

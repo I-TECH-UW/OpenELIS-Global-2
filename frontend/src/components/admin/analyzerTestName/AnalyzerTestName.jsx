@@ -34,6 +34,7 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import ActionPaginationButtonType from "../../common/ActionPaginationButtonType";
+import { softReload } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -203,7 +204,7 @@ function AnalyzerTestName() {
       JSON.stringify(selectedIds),
       setLoading(false),
       setTimeout(() => {
-        window.location.reload();
+        softReload();
       }, 1000),
     );
   }
@@ -336,7 +337,7 @@ function AnalyzerTestName() {
 
     closeAddModal();
     setTimeout(() => {
-      window.location.reload();
+      softReload();
     }, 1000);
   };
 
@@ -369,7 +370,7 @@ function AnalyzerTestName() {
 
     closeUpdateModal();
     setTimeout(() => {
-      window.location.reload();
+      softReload();
     }, 1000);
   };
 

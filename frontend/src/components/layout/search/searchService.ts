@@ -6,6 +6,7 @@ import {
   type MouseEvent,
 } from "react";
 import { getFromOpenElisServer } from "../../utils/Utils";
+import { navigateTo } from "../../utils/appNavigation";
 
 export interface PatientSearchResult {
   id?: string | number;
@@ -99,7 +100,7 @@ export const fetchPatientData = async (
 
 export const openPatientResults = (patientId?: string | number) => {
   if (patientId) {
-    window.location.href = "/PatientResults/" + patientId;
+    navigateTo("/PatientResults/" + patientId);
   }
 };
 

@@ -7,6 +7,7 @@ import PageBreadCrumb from "../common/PageBreadCrumb";
 import { StudyReports, STUDY_REPORT_LABELS } from "./study/index";
 import { RoutineReports, ROUTINE_REPORT_LABELS } from "./routine/Index";
 import { Loading } from "@carbon/react";
+import { navigateTo } from "../utils/appNavigation";
 
 const ReportIndex = () => {
   const intl = useIntl();
@@ -28,7 +29,7 @@ const ReportIndex = () => {
     if (paramType && paramReport) {
       setIsLoading(false);
     } else {
-      window.location.href = "/";
+      navigateTo("/");
     }
   }, [location.search]);
 

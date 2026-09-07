@@ -32,6 +32,7 @@ import { AlertDialog } from "../common/CustomNotification";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 import ShipmentNavigation from "./ShipmentNavigation";
 import "./ReceptionWorkflow.css";
+import { navigateTo } from "../utils/appNavigation";
 
 const ReceptionWorkflow = () => {
   const intl = useIntl();
@@ -217,9 +218,11 @@ const ReceptionWorkflow = () => {
 
   const handleAcceptSpecimen = (specimen) => {
     // Open the pre-filled sample-entry form; re-scanning after save links the sample to the box.
-    window.location.href = `/SamplePatientEntry?ID=${encodeURIComponent(
-      specimen.externalOrderNumber,
-    )}`;
+    navigateTo(
+      `/SamplePatientEntry?ID=${encodeURIComponent(
+        specimen.externalOrderNumber,
+      )}`,
+    );
   };
 
   const handleSampleStatusChange = (sampleKey, status) => {

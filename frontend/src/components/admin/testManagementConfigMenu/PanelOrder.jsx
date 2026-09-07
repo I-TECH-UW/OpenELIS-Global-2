@@ -20,6 +20,7 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import { CustomCommonSortableOrderList } from "./sortableListComponent/SortableList";
+import { softReload } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -62,7 +63,7 @@ function PanelOrder() {
     if (!panelOrderListPost) {
       setIsLoading(true);
       setTimeout(() => {
-        window.location.reload();
+        softReload();
       }, 200);
     }
     postToOpenElisServerJsonResponse(
@@ -92,7 +93,7 @@ function PanelOrder() {
           kind: NotificationKinds.success,
         });
         setTimeout(() => {
-          window.location.reload();
+          softReload();
         }, 200);
         setNotificationVisible(true);
       }
@@ -237,7 +238,7 @@ function PanelOrder() {
                 type="button"
                 kind="tertiary"
                 onClick={() => {
-                  window.location.reload();
+                  softReload();
                 }}
               >
                 {confirmSelection ? (

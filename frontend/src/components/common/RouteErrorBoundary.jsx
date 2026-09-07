@@ -54,7 +54,7 @@ class RouteErrorBoundaryClass extends React.Component {
     if (onReload) {
       onReload();
     } else {
-      window.location.reload();
+      softReload();
     }
   };
 
@@ -92,4 +92,5 @@ function RouteErrorBoundaryWithLocation(props) {
 }
 
 export { RouteErrorBoundary };
+import { softReload } from "../utils/appNavigation";
 export default RouteErrorBoundaryWithLocation;

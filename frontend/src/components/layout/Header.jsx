@@ -41,6 +41,7 @@ import { getFromOpenElisServer, putToOpenElisServer } from "../utils/Utils";
 import SearchBar from "./search/searchBar";
 import { getBranding } from "../utils/BrandingUtils";
 import config from "../../config.json";
+import { navigateTo } from "../utils/appNavigation";
 
 function OEHeader({
   onChangeLanguage,
@@ -775,7 +776,7 @@ function OEHeader({
                       data-cy="headerChangePassword"
                       className="userDetails clickableUserDetails"
                       onClick={() => {
-                        window.location.href = "/ChangePasswordLogin";
+                        navigateTo("/ChangePasswordLogin");
                       }}
                     >
                       <Password style={{ marginRight: "3px" }} />

@@ -26,6 +26,7 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import { useLocation } from "react-router-dom";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+import { navigateTo } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -77,7 +78,7 @@ function ExternalConnectionAddModify() {
       );
     } else {
       setTimeout(() => {
-        window.location.assign("/MasterListsPage/externalConnections");
+        navigateTo("/MasterListsPage/externalConnections");
       }, 1000);
     }
     return () => {
@@ -198,7 +199,7 @@ function ExternalConnectionAddModify() {
     });
     setNotificationVisible(true);
     setTimeout(() => {
-      window.location.assign("/MasterListsPage/externalConnections");
+      navigateTo("/MasterListsPage/externalConnections");
     }, 200);
   };
 
@@ -418,7 +419,7 @@ function ExternalConnectionAddModify() {
               </Button>{" "}
               <Button
                 onClick={() =>
-                  window.location.assign("/MasterListsPage/externalConnections")
+                  navigateTo("/MasterListsPage/externalConnections")
                 }
                 kind="tertiary"
                 type="button"

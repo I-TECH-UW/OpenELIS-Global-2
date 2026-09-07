@@ -11,6 +11,7 @@ import PageBreadCrumb from "../../common/PageBreadCrumb";
 import { CustomShowGuide } from "./customComponents/CustomShowGuide";
 import { TestStepForm } from "./customComponents/TestStepForm";
 import { TestFormData } from "./customComponents/TestFormData";
+import { softReload } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -49,7 +50,7 @@ function TestAdd() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        window.location.reload();
+        softReload();
       }, 500);
     }
     setIsLoading(true);
@@ -76,7 +77,7 @@ function TestAdd() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        window.location.reload();
+        softReload();
       }, 200);
     } else {
       addNotification({
@@ -86,7 +87,7 @@ function TestAdd() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        window.location.reload();
+        softReload();
       }, 200);
     }
   };

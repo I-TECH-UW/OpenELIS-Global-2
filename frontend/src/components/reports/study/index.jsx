@@ -18,6 +18,7 @@ import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "../auditTrailReport/AuditTrailReport";
 import ReportByDateCSV from "../common/ReportByDateCSV";
 import IntermediateByService from "./IntermediateByService";
+import { navigateTo } from "../../utils/appNavigation";
 
 // report -> page-title message id, keyed `${type}_${report}`. Exported so the
 // /Report dispatcher can name the same report in its breadcrumb.
@@ -221,7 +222,7 @@ const StudyIndex = () => {
       }
       setIsLoading(false);
     } else {
-      window.location.href = "/StudyReports";
+      navigateTo("/StudyReports");
     }
   }, [type, report]);
 

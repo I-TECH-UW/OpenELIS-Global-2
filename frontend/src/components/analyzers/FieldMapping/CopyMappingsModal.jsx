@@ -28,6 +28,7 @@ import { Copy } from "@carbon/icons-react";
 import { FormattedMessage, useIntl } from "react-intl";
 import * as analyzerService from "../../../services/analyzerService";
 import "./CopyMappingsModal.css";
+import { navigateTo } from "../../utils/appNavigation";
 
 const CopyMappingsModal = ({
   open,
@@ -152,7 +153,7 @@ const CopyMappingsModal = ({
   const handleViewTarget = () => {
     handleClose();
     if (targetAnalyzerId) {
-      window.location.href = `/analyzers/${targetAnalyzerId}/mappings`;
+      navigateTo(`/analyzers/${targetAnalyzerId}/mappings`);
     }
   };
 

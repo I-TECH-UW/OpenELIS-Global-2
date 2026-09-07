@@ -22,6 +22,7 @@ import {
   getFromOpenElisServer,
   postToOpenElisServerJsonResponse,
 } from "../../utils/Utils";
+import { navigateTo, softReload } from "../../utils/appNavigation";
 
 const breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -250,7 +251,7 @@ function BatchTestReassignmentAndCancelation() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        window.location.reload();
+        softReload();
       }, 200);
     } else {
       addNotification({
@@ -260,7 +261,7 @@ function BatchTestReassignmentAndCancelation() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        window.location.reload();
+        softReload();
       }, 200);
     }
   }
@@ -804,9 +805,7 @@ function BatchTestReassignmentAndCancelation() {
                 data-cy="cancelButton"
                 onClick={() => {
                   resetToDefault();
-                  window.location.assign(
-                    "/MasterListsPage/batchTestReassignment",
-                  );
+                  navigateTo("/MasterListsPage/batchTestReassignment");
                 }}
                 kind="tertiary"
                 type="button"
@@ -1013,9 +1012,7 @@ function BatchTestReassignmentAndCancelation() {
                   </Button>{" "}
                   <Button
                     onClick={() =>
-                      window.location.assign(
-                        "/MasterListsPage/batchTestReassignment",
-                      )
+                      navigateTo("/MasterListsPage/batchTestReassignment")
                     }
                     kind="tertiary"
                     type="button"

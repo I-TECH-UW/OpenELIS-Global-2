@@ -14,6 +14,7 @@ import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
 } from "../utils/Utils";
+import { navigateTo } from "../utils/appNavigation";
 
 const AddToBoxModal = ({ open, onClose, sample, onSuccess }) => {
   const intl = useIntl();
@@ -139,7 +140,9 @@ const AddToBoxModal = ({ open, onClose, sample, onSuccess }) => {
         ? `facilityId=${sample.destinationFacilityId}&`
         : "";
       const sampleParam = sample.sampleItemId || sample.id || "";
-      window.location.href = `/SampleShipment/create-box?${facilityParam}sampleItemId=${sampleParam}`;
+      navigateTo(
+        `/SampleShipment/create-box?${facilityParam}sampleItemId=${sampleParam}`,
+      );
       setSubmitting(false);
     }
   };

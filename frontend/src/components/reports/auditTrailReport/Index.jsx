@@ -6,6 +6,7 @@ import { Loading } from "@carbon/react";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AuditTrailReport from "./AuditTrailReport";
 import SystemAuditEvents from "./SystemAuditEvents";
+import { navigateTo } from "../../utils/appNavigation";
 
 const AuditTrailReportIndex = () => {
   const { notificationVisible } = useContext(NotificationContext);
@@ -21,7 +22,7 @@ const AuditTrailReportIndex = () => {
       setType(paramType);
       setIsLoading(false);
     } else {
-      window.location.href = "/AuditTrailReport?type=system";
+      navigateTo("/AuditTrailReport?type=system");
     }
   }, [location.search]);
 

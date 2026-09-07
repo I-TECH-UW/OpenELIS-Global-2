@@ -32,6 +32,7 @@ import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import CustomCheckBox from "../../common/CustomCheckBox";
 import ActionPaginationButtonType from "../../common/ActionPaginationButtonType";
+import { softReload } from "../../utils/appNavigation";
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -130,7 +131,7 @@ function UserManagement() {
         kind: NotificationKinds.success,
       });
       setTimeout(() => {
-        window.location.reload();
+        softReload();
       }, 200);
     } else {
       addNotification({
@@ -140,7 +141,7 @@ function UserManagement() {
       });
       setNotificationVisible(true);
       setTimeout(() => {
-        window.location.reload();
+        softReload();
       }, 200);
     }
   }

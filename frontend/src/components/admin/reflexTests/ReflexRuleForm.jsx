@@ -27,6 +27,7 @@ import {
 } from "../../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
 import "./ReflexStyles.css";
+import { softReload } from "../../utils/appNavigation";
 
 var defaultTestResultList = {};
 var defaultSampleTests = { conditions: {}, actions: {} };
@@ -434,7 +435,7 @@ function ReflexRule() {
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "delete.success.msg" }),
       });
-      window.location.reload();
+      softReload();
     } else {
       addNotification({
         kind: NotificationKinds.error,

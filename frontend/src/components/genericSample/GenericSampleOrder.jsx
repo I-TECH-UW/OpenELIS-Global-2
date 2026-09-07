@@ -21,6 +21,7 @@ import {
   getFromOpenElisServer,
   postToOpenElisServerJsonResponse,
 } from "../utils/Utils";
+import { navigateTo } from "../utils/appNavigation";
 
 /**
  * GenericSampleOrder - Configurable sample order entry component
@@ -475,10 +476,7 @@ export default function GenericSampleOrder({
                     defaultMessage="Create Another Sample"
                   />
                 </Button>
-                <Button
-                  kind="tertiary"
-                  onClick={() => (window.location.href = "/")}
-                >
+                <Button kind="tertiary" onClick={() => navigateTo("/")}>
                   <FormattedMessage id="button.home" defaultMessage="Home" />
                 </Button>
               </div>

@@ -34,6 +34,7 @@ import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import ActionPaginationButtonType from "../../common/ActionPaginationButtonType";
 import { getPhoneFormatHint } from "../../patient/phoneFormatHint";
+import { softReload } from "../../utils/appNavigation";
 
 interface ProviderPerson {
   lastName: string;
@@ -271,7 +272,7 @@ function ProviderMenu() {
       providerMenuListShow,
       setLoading(false),
       setTimeout(() => {
-        window.location.reload();
+        softReload();
       }, 1),
     );
   }
@@ -359,7 +360,7 @@ function ProviderMenu() {
     );
 
     closeAddModal();
-    window.location.reload();
+    softReload();
   };
 
   const handleUpdateProvider = () => {
@@ -381,7 +382,7 @@ function ProviderMenu() {
     );
 
     closeUpdateModal();
-    window.location.reload();
+    softReload();
   };
 
   const handleLastNameChange = (event: ChangeEvent<HTMLInputElement>) => {
