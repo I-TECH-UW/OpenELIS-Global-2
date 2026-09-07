@@ -3,6 +3,7 @@ package org.openelisglobal.eqa;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -234,9 +235,10 @@ public class EQAProviderCycleWizardIntegrationTest extends EQASpineTestBase {
 
     @Test
     public void aVendorSourcedPanelWithoutAVendorIsRefused() {
-        ProviderCycleRequest request = new ProviderCycleRequest(scheme.getId(), 4, "2026 Round 4", null, null,
-                "Vendor panel", EQAPanelSourceType.VENDOR_SOURCED, "LOT-1", null, null, null, twoSamples(),
-                List.of(ORG_A), null, null, EQADistributionMethod.FHIR);
+        ProviderCycleRequest request = new ProviderCycleRequest(scheme.getId(), 4, "2026 Round 4",
+                Date.valueOf("2026-09-01"), Date.valueOf("2026-10-01"), "Vendor panel",
+                EQAPanelSourceType.VENDOR_SOURCED, "LOT-1", null, null, null, twoSamples(), List.of(ORG_A), null, null,
+                EQADistributionMethod.FHIR);
 
         try {
             cycleService.createProviderCycle(request, USER);
@@ -349,36 +351,46 @@ public class EQAProviderCycleWizardIntegrationTest extends EQASpineTestBase {
     }
 
     /**
-     * With no deadline there is nothing to remind anyone about, and writing an
-     * empty round would take the reuse branch in blinding's findOrCreateRound,
-     * costing the deadline it derives from the panel's unblind date.
+     * The submission deadline is the only thing the reminder digest can key on, so
+     * a cycle created without one would be invisible to every reminder for its
+     * whole life. It is refused rather than written and left silent.
      */
     @Test
-    public void aCycleWithNoPlannedEndDateWritesNoRound() {
-        EQACycle created = cycleService.createProviderCycle(withCycleNumber(11), USER);
+    public void aCycleWithNoSubmissionDeadlineIsRefused() {
+        ProviderCycleRequest noDeadline = new ProviderCycleRequest(scheme.getId(), 11, "2026 Round",
+                Date.valueOf("2026-09-01"), null, "HIV VL panel", EQAPanelSourceType.IN_HOUSE_ALIQUOTED, "LOT-1", null,
+                null, null, twoSamples(), List.of(ORG_A), EQAStorageTemp.DRY_ICE, null, EQADistributionMethod.FHIR);
 
-        assertEquals(Integer.valueOf(0), jdbc.queryForObject(
-                "SELECT count(*) FROM clinlims.eqa_round WHERE cycle_id = ?", Integer.class, created.getId()));
+        IllegalArgumentException refused = assertThrows(IllegalArgumentException.class,
+                () -> cycleService.createProviderCycle(noDeadline, USER));
+        assertTrue(refused.getMessage(), refused.getMessage().contains("submission deadline"));
+        assertEquals("nothing written", Integer.valueOf(0),
+                jdbc.queryForObject("SELECT count(*) FROM clinlims.eqa_cycle WHERE cycle_number = 11 AND scheme_id = ?",
+                        Integer.class, scheme.getId()));
     }
 
-    /**
-     * The deadline alone is enough for a round — a missing distribution date must
-     * not cost the digest its reminder, and must not invent a date either.
-     */
+    /** The distribution date is half of the pair FR-V2.5-02 step 1 collects. */
     @Test
-    public void aDeadlineWithoutADistributionDateStillWritesTheRound() {
-        EQACycle created = cycleService
-                .createProviderCycle(
-                        new ProviderCycleRequest(scheme.getId(), 12, "2026 Round", null, Date.valueOf("2026-10-01"),
-                                "HIV VL panel", EQAPanelSourceType.IN_HOUSE_ALIQUOTED, "LOT-1", null, null, null,
-                                twoSamples(), List.of(ORG_A), EQAStorageTemp.DRY_ICE, null, EQADistributionMethod.FHIR),
-                        USER);
+    public void aCycleWithNoDistributionDateIsRefused() {
+        ProviderCycleRequest noStart = new ProviderCycleRequest(scheme.getId(), 12, "2026 Round", null,
+                Date.valueOf("2026-10-01"), "HIV VL panel", EQAPanelSourceType.IN_HOUSE_ALIQUOTED, "LOT-1", null, null,
+                null, twoSamples(), List.of(ORG_A), EQAStorageTemp.DRY_ICE, null, EQADistributionMethod.FHIR);
 
-        assertEquals(Timestamp.valueOf("2026-10-01 00:00:00"),
-                jdbc.queryForObject("SELECT submission_deadline FROM clinlims.eqa_round WHERE cycle_id = ?",
-                        Timestamp.class, created.getId()));
-        assertNull(jdbc.queryForObject("SELECT distribution_date FROM clinlims.eqa_round WHERE cycle_id = ?",
-                Timestamp.class, created.getId()));
+        IllegalArgumentException refused = assertThrows(IllegalArgumentException.class,
+                () -> cycleService.createProviderCycle(noStart, USER));
+        assertTrue(refused.getMessage(), refused.getMessage().contains("distribution date"));
+    }
+
+    /** A cycle nobody can name is refused too (AC-V2.5-02's step 1 fields). */
+    @Test
+    public void aCycleWithNoNameIsRefused() {
+        ProviderCycleRequest unnamed = new ProviderCycleRequest(scheme.getId(), 13, "   ", Date.valueOf("2026-09-01"),
+                Date.valueOf("2026-10-01"), "HIV VL panel", EQAPanelSourceType.IN_HOUSE_ALIQUOTED, "LOT-1", null, null,
+                null, twoSamples(), List.of(ORG_A), EQAStorageTemp.DRY_ICE, null, EQADistributionMethod.FHIR);
+
+        IllegalArgumentException refused = assertThrows(IllegalArgumentException.class,
+                () -> cycleService.createProviderCycle(unnamed, USER));
+        assertTrue(refused.getMessage(), refused.getMessage().contains("name"));
     }
 
     private ProviderCycleRequest request(List<Long> participants) {
@@ -386,9 +398,9 @@ public class EQAProviderCycleWizardIntegrationTest extends EQASpineTestBase {
     }
 
     private ProviderCycleRequest withCycleNumber(Integer cycleNumber) {
-        return new ProviderCycleRequest(scheme.getId(), cycleNumber, "2026 Round", null, null, "HIV VL panel",
-                EQAPanelSourceType.IN_HOUSE_ALIQUOTED, "LOT-1", null, null, null, twoSamples(), List.of(ORG_A),
-                EQAStorageTemp.DRY_ICE, null, EQADistributionMethod.FHIR);
+        return new ProviderCycleRequest(scheme.getId(), cycleNumber, "2026 Round", Date.valueOf("2026-09-01"),
+                Date.valueOf("2026-10-01"), "HIV VL panel", EQAPanelSourceType.IN_HOUSE_ALIQUOTED, "LOT-1", null, null,
+                null, twoSamples(), List.of(ORG_A), EQAStorageTemp.DRY_ICE, null, EQADistributionMethod.FHIR);
     }
 
     private ProviderCycleRequest with(List<PanelSampleRequest> samples, List<Long> participants) {

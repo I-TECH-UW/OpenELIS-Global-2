@@ -138,11 +138,12 @@ const CycleWizard = () => {
   const samplesComplete = samples.every(
     (sample) => sample.sampleCode.trim() && sample.testId,
   );
-  // Per step, what must be filled in to move on. Step 1 is the only one the
-  // server can reject outright, so it is the only one gated hard here; cycle
-  // details and distribution are all optional columns.
+  // Per step, what must be filled in to move on: whatever the server will
+  // refuse. Step 0's date pair is the cycle's distribution date and submission
+  // deadline, and a cycle without the deadline is invisible to the reminder
+  // digest, so both are required rather than optional columns.
   const canAdvance = [
-    true,
+    !!cycleName.trim() && !!plannedStartDate && !!plannedEndDate,
     !!panelName.trim() &&
       samplesComplete &&
       (!vendorRequired || !!vendorName.trim()),
@@ -271,6 +272,11 @@ const CycleWizard = () => {
                   id="cycle-name"
                   labelText={t("eqa.provider.wizard.cycleName", "Cycle name")}
                   value={cycleName}
+                  invalid={!cycleName.trim()}
+                  invalidText={t(
+                    "eqa.provider.wizard.cycleName.required",
+                    "A cycle needs a name.",
+                  )}
                   onChange={(e) => setCycleName(e.target.value)}
                 />
               </Column>
@@ -312,6 +318,11 @@ const CycleWizard = () => {
                       "Submission deadline",
                     )}
                     placeholder="dd/mm/yyyy"
+                    invalid={!plannedStartDate || !plannedEndDate}
+                    invalidText={t(
+                      "eqa.provider.wizard.dates.required",
+                      "A cycle needs both a distribution date and a submission deadline; the deadline is what its reminders are sent against.",
+                    )}
                   />
                 </DatePicker>
               </Column>

@@ -214,6 +214,7 @@ const MyProgramsPage = () => {
             <div style={{ marginBottom: "1rem" }}>
               <InlineEnrollmentForm
                 enrollment={null}
+                enrollments={enrollments}
                 onSave={handleCreate}
                 onCancel={() => setShowNewForm(false)}
               />
@@ -374,6 +375,7 @@ const MyProgramsPage = () => {
                               >
                                 <InlineEnrollmentForm
                                   enrollment={enrollment}
+                                  enrollments={enrollments}
                                   onSave={(payload) =>
                                     handleUpdate(enrollment.id, payload)
                                   }

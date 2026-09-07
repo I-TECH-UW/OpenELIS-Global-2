@@ -11,6 +11,20 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { getFromOpenElisServer } from "../utils/Utils";
 import CustomDatePicker from "../common/CustomDatePicker";
 
+/**
+ * A receipt marked not-intact needs the note that says what was wrong with the
+ * material (AC-V2.2-13). Exported so the wizard's Next button holds on the same
+ * rule the receipt service enforces, rather than a second copy of it.
+ */
+export const eqaReceiptNoteMissing = (orderFormValues) => {
+  const order = orderFormValues?.sampleOrderItems || {};
+  return (
+    !!order.isEQASample &&
+    order.eqaIntegrityOk === false &&
+    !(order.eqaIntegrityNotes || "").trim()
+  );
+};
+
 const EQAOrderForm = ({ orderFormValues, setOrderFormValues }) => {
   const intl = useIntl();
   const componentMounted = useRef(false);
@@ -336,6 +350,10 @@ const EQAOrderForm = ({ orderFormValues, setOrderFormValues }) => {
                       id="eqa-integrity-notes"
                       labelText={intl.formatMessage({
                         id: "eqa.order.receipt.notes",
+                      })}
+                      invalid={eqaReceiptNoteMissing(orderFormValues)}
+                      invalidText={intl.formatMessage({
+                        id: "eqa.order.receipt.notes.required",
                       })}
                       value={sampleOrder.eqaIntegrityNotes || ""}
                       onChange={(e) =>

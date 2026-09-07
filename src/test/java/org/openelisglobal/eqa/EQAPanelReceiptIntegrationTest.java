@@ -3,6 +3,7 @@ package org.openelisglobal.eqa;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
 
@@ -175,6 +176,41 @@ public class EQAPanelReceiptIntegrationTest extends EQASpineTestBase {
                 "SELECT count(*) FROM clinlims.eqa_cycle_state_transition WHERE cycle_id = ?", Integer.class, cycleId));
         assertEquals("the ignored shipment stays untouched", "IN_TRANSIT",
                 jdbc.queryForObject("SELECT status FROM clinlims.shipment WHERE id = 9952", String.class));
+    }
+
+    /**
+     * AC-V2.2-13. A receipt saying the panel arrived compromised is the one receipt
+     * an accreditation record needs prose on, so the note is required exactly there
+     * — and nothing about the receipt is written without it.
+     */
+    @Test
+    public void aReceiptMarkedNotIntactWithoutANote_isRefusedAndWritesNothing() {
+        seedEnrollment(ENROLLMENT, "Compromised panel");
+        EQAProgram scheme = insertScheme("Integrity scheme", EQASchemeType.INTERNATIONAL_PT, "NHLS");
+        Long cycleId = insertCycle(scheme, 1);
+
+        IllegalArgumentException refused = assertThrows(IllegalArgumentException.class,
+                () -> receiptService.recordReceipt(cycleId, ENROLLMENT, null, null, false, "   ", ADMIN_USER_ID, USER));
+
+        assertTrue(refused.getMessage(), refused.getMessage().contains("written note"));
+        assertEquals("no receipt row", Integer.valueOf(0), jdbc.queryForObject(
+                "SELECT count(*) FROM clinlims.eqa_panel_receipt WHERE cycle_id = ?", Integer.class, cycleId));
+        assertEquals("the cycle stays where it was", EQACycleStatus.PLANNED, readBack(cycleId).getStatus());
+    }
+
+    /** The same receipt with the note behind it is taken, note and all. */
+    @Test
+    public void aReceiptMarkedNotIntactWithANote_isRecordedWithIt() {
+        seedEnrollment(ENROLLMENT, "Compromised panel, explained");
+        EQAProgram scheme = insertScheme("Integrity noted scheme", EQASchemeType.INTERNATIONAL_PT, "NHLS");
+        Long cycleId = insertCycle(scheme, 1);
+
+        EQAPanelReceipt receipt = receiptService.recordReceipt(cycleId, ENROLLMENT, null, null, false,
+                "Two vials cracked in transit", ADMIN_USER_ID, USER);
+
+        assertEquals(Boolean.FALSE, receipt.getIntegrityOk());
+        assertEquals("Two vials cracked in transit", receipt.getIntegrityNotes());
+        assertEquals(EQACycleStatus.PANEL_RECEIVED, readBack(cycleId).getStatus());
     }
 
     @Test
