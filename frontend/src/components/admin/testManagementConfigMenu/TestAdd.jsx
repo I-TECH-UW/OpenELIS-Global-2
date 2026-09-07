@@ -48,9 +48,6 @@ function TestAdd() {
         message: "Form submission failed due to missing data.",
       });
       setNotificationVisible(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 500);
     }
     setIsLoading(true);
     postToOpenElisServerJsonResponse(
@@ -85,9 +82,6 @@ function TestAdd() {
         message: intl.formatMessage({ id: "server.error.msg" }),
       });
       setNotificationVisible(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
     }
   };
 

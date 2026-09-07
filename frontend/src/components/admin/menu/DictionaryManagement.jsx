@@ -259,7 +259,6 @@ function DictionaryManagement() {
         message: intl.formatMessage({ id: "error.add.edited.msg" }),
       });
     }
-    window.location.reload();
   }
 
   const handleSubmitModal = (e) => {
@@ -418,7 +417,6 @@ function DictionaryManagement() {
         message: intl.formatMessage({ id: "dictionary.menu.deactivate.fail" }),
       });
     }
-    window.location.reload();
   };
 
   const handlePanelSearchChange = (event) => {

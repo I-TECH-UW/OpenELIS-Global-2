@@ -94,15 +94,11 @@ function PanelTestAssign() {
         message: intl.formatMessage({ id: "server.error.msg" }),
       });
       setNotificationVisible(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
     }
   };
 
   const handleSelectedPanelTestList = (res) => {
     if (!res) {
-      window.location.reload();
     } else {
       setSelectedPanelIdData(res);
     }
