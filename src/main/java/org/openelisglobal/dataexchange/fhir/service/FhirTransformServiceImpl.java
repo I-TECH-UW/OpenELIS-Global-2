@@ -2344,8 +2344,8 @@ public class FhirTransformServiceImpl implements FhirTransformService {
         // sample_human.provider_id is nullable: samples entered without an ordering
         // provider carry no performer rather than a dangling Practitioner/null.
         if (provider != null && provider.getFhirUuid() != null) {
-            observation.addPerformer(
-                    this.createReferenceFor(ResourceType.Practitioner, provider.getFhirUuidAsString()));
+            observation
+                    .addPerformer(this.createReferenceFor(ResourceType.Practitioner, provider.getFhirUuidAsString()));
         }
 
         return observation;

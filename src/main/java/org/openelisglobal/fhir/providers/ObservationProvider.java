@@ -636,12 +636,12 @@ public class ObservationProvider implements IResourceProvider {
         return actionDataSet;
     }
 
+    /**
+     * Rejects bodies the result workflow cannot persist before any lookup runs, so
+     * an incomplete Observation is a 422 rather than a 500 from deep inside the
+     * transform.
+     */
     private void validateObservation(Observation observation) {
-
-        if (observation == null) {
-            throw new UnprocessableEntityException("Observation resource cannot be null");
-        }
-
         if (!observation.hasSubject()) {
             throw new UnprocessableEntityException("Observation.subject is required");
         }
