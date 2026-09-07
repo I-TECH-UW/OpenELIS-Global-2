@@ -1,9 +1,10 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import { Heading, Button, Loading, Grid, Column, Section } from "@carbon/react";
+import { postToOpenElisServerJsonResponse } from "../../utils/Utils";
 import {
-  getFromOpenElisServer,
-  postToOpenElisServerJsonResponse,
-} from "../../utils/Utils";
+  useServerData,
+  useInvalidateServerData,
+} from "../../utils/useServerData";
 import { NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,
@@ -35,27 +36,15 @@ function SampleTypeOrder() {
     useContext(NotificationContext);
 
   const intl = useIntl();
-  const [isLoading, setIsLoading] = useState(false);
   const [confirmSelection, setConfirmSelection] = useState(false);
   const [sampleTypeOrderList, setSampleTypeOrderList] = useState({});
   const [sampleTypeOrderListPost, setSampleTypeOrderListPost] = useState([]);
 
-  const componentMounted = useRef(false);
-
-  const handleSampleTypeOrderList = (res) => {
-    if (!res) {
-      setIsLoading(true);
-    } else {
-      setSampleTypeOrderList(res);
-    }
-  };
-
   const handleSampleTypeOrderListCall = () => {
     if (!sampleTypeOrderListPost) {
-      setIsLoading(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
+      // Nothing to save: read the order again rather than post an empty change.
+      refreshSampleTypeOrderList("/rest/SampleTypeOrder");
+      return;
     }
     postToOpenElisServerJsonResponse(
       "/rest/SampleTypeOrder",
@@ -73,7 +62,6 @@ function SampleTypeOrder() {
   const handlePostSampleTypeOrderListCallBack = (res) => {
     if (res) {
       if (res) {
-        setIsLoading(false);
         addNotification({
           title: intl.formatMessage({
             id: "notification.title",
@@ -83,9 +71,7 @@ function SampleTypeOrder() {
           }),
           kind: NotificationKinds.success,
         });
-        setTimeout(() => {
-          window.location.reload();
-        }, 200);
+        refreshSampleTypeOrderList("/rest/SampleTypeOrder");
         setNotificationVisible(true);
       }
     } else {
@@ -98,17 +84,21 @@ function SampleTypeOrder() {
     }
   };
 
-  useEffect(() => {
-    componentMounted.current = true;
-    setIsLoading(true);
-    getFromOpenElisServer(`/rest/SampleTypeOrder`, handleSampleTypeOrderList);
-    return () => {
-      componentMounted.current = false;
-      setIsLoading(false);
-    };
-  }, []);
+  // The order shown is a read of /rest/SampleTypeOrder; a save marks it out of date
+  // and the screen reads it again, which is what reloading used to do.
+  const {
+    data: fetchedSampleTypeOrderList,
+    isFetching: sampleTypeOrderListFetching,
+  } = useServerData("/rest/SampleTypeOrder");
+  const refreshSampleTypeOrderList = useInvalidateServerData();
 
-  if (!isLoading) {
+  useEffect(() => {
+    if (fetchedSampleTypeOrderList) {
+      setSampleTypeOrderList(fetchedSampleTypeOrderList);
+    }
+  }, [fetchedSampleTypeOrderList]);
+
+  if (sampleTypeOrderListFetching && !fetchedSampleTypeOrderList) {
     return (
       <>
         <Loading />
@@ -229,7 +219,10 @@ function SampleTypeOrder() {
                 type="button"
                 kind="tertiary"
                 onClick={() => {
-                  window.location.reload();
+                  // Discard the pending reordering and show what is stored.
+                  setSampleTypeOrderListPost([]);
+                  setConfirmSelection(false);
+                  refreshSampleTypeOrderList("/rest/SampleTypeOrder");
                 }}
               >
                 {confirmSelection ? (
