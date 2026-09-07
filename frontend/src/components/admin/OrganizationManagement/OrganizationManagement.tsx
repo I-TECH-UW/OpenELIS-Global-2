@@ -1,8 +1,7 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import type { ChangeEvent, FormEvent, ReactNode } from "react";
 import {
   Heading,
-  Loading,
   Grid,
   Column,
   Section,
@@ -18,10 +17,11 @@ import {
   Pagination,
   Search,
 } from "@carbon/react";
+import { postToOpenElisServerJsonResponse } from "../../utils/Utils";
 import {
-  getFromOpenElisServer,
-  postToOpenElisServerJsonResponse,
-} from "../../utils/Utils";
+  useInvalidateServerData,
+  useServerData,
+} from "../../utils/useServerData";
 import { NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,
@@ -98,7 +98,6 @@ function OrganizationManagement() {
 
   const intl = useIntl();
 
-  const componentMounted = useRef(false);
   const [page, setPage] = useState(1);
   const [pageSize, setPageSize] = useState(10);
   const [deactivateButton, setDeactivateButton] = useState(true);
@@ -107,7 +106,6 @@ function OrganizationManagement() {
   const [selectedRowIdsPost, setSelectedRowIdsPost] = useState<
     string[] | { selectedIDs: string[] }
   >([]);
-  const [loading, setLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
   const [totalRecordCount, setTotalRecordCount] = useState("");
@@ -115,8 +113,6 @@ function OrganizationManagement() {
   const [fromRecordCount, setFromRecordCount] = useState("");
   const [toRecordCount, setToRecordCount] = useState("");
   const [paging, setPaging] = useState(1);
-  const [organizationsManagmentList, setOrganizationsManagmentList] =
-    useState<OrganizationMenuResponse>();
   const [organizationsManagmentListShow, setOrganizationsManagmentListShow] =
     useState<OrganizationTableRow[]>([]);
 
@@ -124,7 +120,6 @@ function OrganizationManagement() {
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
-    setLoading(true);
     postToOpenElisServerJsonResponse(
       `/rest/DeleteOrganization?ID=${selectedRowIds.join(",")}&startingRecNo=1`,
       JSON.stringify(selectedRowIdsPost),
@@ -156,7 +151,6 @@ function OrganizationManagement() {
   };
 
   const deleteDeactivateOrganizationManagamentCallback = () => {
-    setLoading(false);
     setNotificationVisible(true);
     addNotification({
       title: intl.formatMessage({
@@ -167,9 +161,7 @@ function OrganizationManagement() {
       }),
       kind: NotificationKinds.success,
     });
-    setTimeout(() => {
-      window.location.reload();
-    }, 200);
+    invalidateServerData();
   };
 
   const handlePageChange = ({
@@ -184,44 +176,18 @@ function OrganizationManagement() {
     setSelectedRowIds([]);
   };
 
-  const handleMenuItems = (res?: OrganizationMenuResponse) => {
-    if (!res) {
-      setLoading(true);
-    } else {
-      setOrganizationsManagmentList(res);
-    }
-  };
-
-  useEffect(() => {
-    componentMounted.current = true;
-    setLoading(true);
-    getFromOpenElisServer(
-      `/rest/OrganizationMenu?paging=${paging}&startingRecNo=${startingRecNo}`,
-      handleMenuItems,
+  // Browsing and searching are the same list from two endpoints, so which one
+  // is read follows the search box rather than both being read at once.
+  const { data: organizationsManagmentList } =
+    useServerData<OrganizationMenuResponse>(
+      panelSearchTerm
+        ? `/rest/SearchOrganizationMenu?search=Y&startingRecNo=${startingRecNo}&searchString=${panelSearchTerm}`
+        : `/rest/OrganizationMenu?paging=${paging}&startingRecNo=${startingRecNo}`,
     );
-    return () => {
-      componentMounted.current = false;
-      setLoading(false);
-    };
-  }, [paging, startingRecNo]);
-
-  const handleSearchedProviderMenuList = (res?: OrganizationMenuResponse) => {
-    if (!res) {
-      setLoading(true);
-    } else {
-      setOrganizationsManagmentList(res);
-    }
-  };
+  const invalidateServerData = useInvalidateServerData();
 
   useEffect(() => {
-    getFromOpenElisServer(
-      `/rest/SearchOrganizationMenu?search=Y&startingRecNo=${startingRecNo}&searchString=${panelSearchTerm}`,
-      handleSearchedProviderMenuList,
-    );
-  }, [panelSearchTerm]);
-
-  useEffect(() => {
-    if (organizationsManagmentList) {
+    if (organizationsManagmentList?.menuList) {
       const newOrganizationsManagementList =
         organizationsManagmentList.menuList.map((item) => {
           return {
@@ -301,14 +267,6 @@ function OrganizationManagement() {
       return <TableCell key={cell.id}>{cell.value}</TableCell>;
     }
   };
-
-  if (!loading) {
-    return (
-      <>
-        <Loading />
-      </>
-    );
-  }
 
   return (
     <>
