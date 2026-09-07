@@ -11,6 +11,7 @@ export const formatMicrobiologyEnum = (value, intl) => {
   }
 
   const messageId =
+    // i18n-keys: microbiology.enum.*
     existingMessageIds[value] || `microbiology.enum.${String(value)}`;
   return intl.formatMessage({ id: messageId, defaultMessage: String(value) });
 };

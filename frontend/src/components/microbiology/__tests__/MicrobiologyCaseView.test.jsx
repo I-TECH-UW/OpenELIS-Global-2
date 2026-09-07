@@ -215,6 +215,29 @@ describe("MicrobiologyCaseView", () => {
     expect(service.getAstRunsForIsolate).not.toHaveBeenCalled();
   });
 
+  it.each([
+    ["critical-communication", "Critical communication"],
+    ["isolates", "Isolates"],
+    ["order-detail", "Order detail"],
+  ])(
+    "exposes the focused %s section as exactly one landmark",
+    async (section, name) => {
+      const service = {
+        ...astServiceStubs,
+        getCaseDetail: vi.fn().mockResolvedValue(caseDetail),
+        createIsolate: vi.fn(),
+        getOrderDetail: vi.fn().mockResolvedValue(null),
+      };
+
+      renderCase(service, `/Microbiology/cases/case-1?section=${section}`);
+
+      expect(
+        await screen.findByTestId(`microbiology-case-section-${section}`),
+      ).toBeInTheDocument();
+      expect(screen.getAllByRole("region", { name })).toHaveLength(1);
+    },
+  );
+
   it("sets a bench protocol from canonical URL state and retains worklist context", async () => {
     const user = userEvent.setup();
     const protocolOption = {

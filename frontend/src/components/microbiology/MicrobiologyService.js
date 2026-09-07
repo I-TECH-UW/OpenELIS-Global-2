@@ -345,12 +345,33 @@ export const getCriticalCommunications = (caseId) =>
     );
   });
 
+// postToOpenElisServerJsonResponse resolves its callback with an error object
+// (carrying an HTTP status or a network status of 0) instead of rejecting, so a
+// bare resolve would let callers run their success path on a failed write. This
+// rejects those, leaving 2xx bodies to resolve.
+const settleJsonResponse = (resolve, reject) => (response) => {
+  const status = response?.status;
+  const failed =
+    !response ||
+    response.error ||
+    (typeof status === "number" && (status === 0 || status >= 400));
+  if (failed) {
+    const failure = new Error(
+      response?.message || response?.error || "Request failed",
+    );
+    failure.status = status;
+    reject(failure);
+    return;
+  }
+  resolve(response);
+};
+
 export const logCriticalCommunication = (caseId, payload) =>
-  new Promise((resolve) => {
+  new Promise((resolve, reject) => {
     postToOpenElisServerJsonResponse(
       `/rest/microbiology/cases/${caseId}/critical-communications`,
       JSON.stringify(payload),
-      resolve,
+      settleJsonResponse(resolve, reject),
     );
   });
 
@@ -412,20 +433,20 @@ export const getReportProjection = (caseId) =>
   });
 
 export const releasePreliminaryReport = (caseId) =>
-  new Promise((resolve) => {
+  new Promise((resolve, reject) => {
     postToOpenElisServerJsonResponse(
       `/rest/microbiology/cases/${caseId}/release/preliminary`,
       JSON.stringify({}),
-      resolve,
+      settleJsonResponse(resolve, reject),
     );
   });
 
 export const releaseFinalReport = (caseId) =>
-  new Promise((resolve) => {
+  new Promise((resolve, reject) => {
     postToOpenElisServerJsonResponse(
       `/rest/microbiology/cases/${caseId}/release/final`,
       JSON.stringify({}),
-      resolve,
+      settleJsonResponse(resolve, reject),
     );
   });
 

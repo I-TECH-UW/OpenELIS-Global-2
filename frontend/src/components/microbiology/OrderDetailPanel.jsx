@@ -65,7 +65,6 @@ const OrderDetailPanel = ({
     <section
       className="microbiology-card"
       data-testid="microbiology-order-detail-card"
-      aria-labelledby="microbiology-order-detail-heading"
     >
       <div className="microbiology-card__header">
         <div>

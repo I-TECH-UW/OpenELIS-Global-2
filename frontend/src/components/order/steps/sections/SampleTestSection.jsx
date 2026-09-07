@@ -476,7 +476,7 @@ const SampleTestSection = ({
                   disabled={isReadOnly}
                   dismissTooltipLabel={intl.formatMessage(
                     {
-                      id: "sample.removeSelection",
+                      id: "common.removeSelection",
                       defaultMessage: "Remove {name}",
                     },
                     { name: panel.name },
@@ -553,7 +553,7 @@ const SampleTestSection = ({
                   disabled={isReadOnly}
                   dismissTooltipLabel={intl.formatMessage(
                     {
-                      id: "sample.removeSelection",
+                      id: "common.removeSelection",
                       defaultMessage: "Remove {name}",
                     },
                     { name: test.name },
@@ -1513,7 +1513,7 @@ const SampleTestSection = ({
                           disabled={isReadOnly}
                           dismissTooltipLabel={intl.formatMessage(
                             {
-                              id: "sample.removeSelection",
+                              id: "common.removeSelection",
                               defaultMessage: "Remove {name}",
                             },
                             { name: panel.name },
@@ -1588,7 +1588,7 @@ const SampleTestSection = ({
                           disabled={isReadOnly}
                           dismissTooltipLabel={intl.formatMessage(
                             {
-                              id: "sample.removeSelection",
+                              id: "common.removeSelection",
                               defaultMessage: "Remove {name}",
                             },
                             { name: test.name },

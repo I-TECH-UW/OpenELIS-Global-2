@@ -169,7 +169,6 @@ const IsolatePanel = ({
     <section
       className="microbiology-card"
       data-testid="microbiology-isolates-card"
-      aria-labelledby="microbiology-isolates-heading"
     >
       <div className="microbiology-card__header">
         <div>

@@ -64,7 +64,7 @@ export const getPendingRequests = (sampleId) => {
 export const toRequestedSampleTypes = (samples = []) =>
   samples
     .filter((sample) => sample && sample.sampleTypeId)
-    .map((sample, index) => ({
+    .map((sample) => ({
       typeOfSampleId: sample.sampleTypeId,
       requestedQuantity: parseFloat(sample.quantity) || null,
       unitOfMeasureId: sample.quantityUnit || null,
@@ -158,7 +158,10 @@ export const convertRequestsToSamples = (pendingRequests) => {
           ? request.requestedTestDetails
           : zipIdsAndNames(request.requestedTests, request.requestedTestNames),
       referralItems: [],
-      quantity: "",
+      quantity:
+        request.requestedQuantity == null
+          ? ""
+          : String(request.requestedQuantity),
       quantityUnit: request.unitOfMeasureId || "",
       collectionConditions: "",
       collectionDate: "",
@@ -174,4 +177,36 @@ export const convertRequestsToSamples = (pendingRequests) => {
       // Status from request
       status: request.status,
     }));
+};
+
+/**
+ * A partially collected order loads its collected specimens as sample_items and
+ * leaves the rest as pending sample_type_requests. Rebuilding the entry state
+ * from either source alone drops the other, so a resave of the Enter step would
+ * cancel the omitted pending specimens. This keeps both.
+ * @param {Array} responseSamples - samples from the order response
+ * @param {Array} requests - SampleTypeRequestDTO rows for the sample
+ * @param {Array|null} fallback - value to use when neither source has rows
+ * @returns {Array|null} - merged UI samples
+ */
+export const mergeCollectedAndPendingSamples = (
+  responseSamples,
+  requests,
+  fallback,
+) => {
+  const collected = (responseSamples || []).filter(
+    (sample) => sample && sample.sampleItemId,
+  );
+  const pending = convertRequestsToSamples(
+    (requests || []).filter(
+      (request) => request && request.status === "REQUESTED",
+    ),
+  );
+  const merged = [...collected, ...pending];
+  if (merged.length > 0) {
+    return merged;
+  }
+  return responseSamples && responseSamples.length > 0
+    ? responseSamples
+    : fallback;
 };

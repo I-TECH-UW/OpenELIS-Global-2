@@ -15,7 +15,7 @@ import {
 import {
   toRequestedSampleTypes,
   getRequestsBySample,
-  convertRequestsToSamples,
+  mergeCollectedAndPendingSamples,
 } from "./api/sampleTypeRequestApi";
 import { createSampleOrderFormValues } from "../formModel/innitialValues/OrderEntryFormValues";
 import { ConfigurationContext } from "../layout/Layout";
@@ -350,20 +350,20 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
                 samples: response.samples,
               });
 
-              if (!hasSampleItems && response.id) {
+              if (response.id) {
                 // Load sample type requests and resolve only after samples are set,
                 // so callers that await loadOrder() see the full samples state.
                 getRequestsBySample(response.id)
                   .then((requests) => {
-                    if (requests && requests.length > 0) {
-                      setSamplesState(
-                        injectVectorFields(convertRequestsToSamples(requests)),
-                      );
-                    } else {
-                      setSamplesState(
-                        injectVectorFields(response.samples || [sampleObject]),
-                      );
-                    }
+                    setSamplesState(
+                      injectVectorFields(
+                        mergeCollectedAndPendingSamples(
+                          response.samples,
+                          requests,
+                          [sampleObject],
+                        ),
+                      ),
+                    );
                     resolve(response);
                   })
                   .catch(() => {
@@ -589,9 +589,8 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
     }
     const byField = {};
     (body.fieldErrors || []).forEach((fieldError) => {
-      if (fieldError?.field) {
-        byField[fieldError.field] =
-          fieldError.defaultMessage || "invalid value";
+      if (fieldError?.field && fieldError.defaultMessage) {
+        byField[fieldError.field] = fieldError.defaultMessage;
       }
     });
     const globalMessages = (body.globalErrors || [])
@@ -718,36 +717,18 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
                       // quantity/tests — per-sample fields like collectionDate,
                       // container, gpsLatitude, and labPerformedSampling are not
                       // stored there, so we keep the current samples state.
-                      const hasSampleItems =
-                        response.samples &&
-                        response.samples.length > 0 &&
-                        response.samples.some((s) => s.sampleItemId);
-                      if (hasSampleItems) {
-                        setSamplesState(
-                          flattenSampleManifestFields(
-                            response.samples,
-                            envFields,
-                            dateLocale,
-                          ),
-                        );
-                      } else if (response.id) {
+                      if (response.id) {
                         getRequestsBySample(response.id)
                           .then((requests) => {
-                            if (requests && requests.length > 0) {
+                            const merged = mergeCollectedAndPendingSamples(
+                              response.samples,
+                              requests,
+                              null,
+                            );
+                            if (merged) {
                               setSamplesState(
                                 flattenSampleManifestFields(
-                                  convertRequestsToSamples(requests),
-                                  envFields,
-                                  dateLocale,
-                                ),
-                              );
-                            } else if (
-                              response.samples &&
-                              response.samples.length > 0
-                            ) {
-                              setSamplesState(
-                                flattenSampleManifestFields(
-                                  response.samples,
+                                  merged,
                                   envFields,
                                   dateLocale,
                                 ),
