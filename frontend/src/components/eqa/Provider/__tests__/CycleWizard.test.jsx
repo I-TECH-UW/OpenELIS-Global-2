@@ -192,6 +192,70 @@ describe("CycleWizard", () => {
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
   });
 
+  // The server refuses both of these by name; the wizard used to let them
+  // through to a 422 with nothing pointing at the field that caused it.
+  test("the panel step holds on a repeated sample code", () => {
+    renderWizard();
+    completeCycleStep();
+    next();
+    fireEvent.change(screen.getByLabelText("Panel name"), {
+      target: { value: "HIV VL panel" },
+    });
+    fireEvent.change(screen.getByLabelText("Sample code"), {
+      target: { value: "PS-1" },
+    });
+    fireEvent.change(screen.getByLabelText("Test"), { target: { value: "55" } });
+    expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
+
+    fireEvent.click(screen.getByRole("button", { name: "Add sample" }));
+    const codes = screen.getAllByLabelText("Sample code");
+    fireEvent.change(codes[1], { target: { value: "ps-1" } });
+    fireEvent.change(screen.getAllByLabelText("Test")[1], {
+      target: { value: "56" },
+    });
+
+    // Case is not a difference the server would accept either.
+    expect(
+      screen.getByText("Every sample code on a panel must be different."),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
+
+    fireEvent.change(codes[1], { target: { value: "PS-2" } });
+    expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
+  });
+
+  test("the panel step holds on an acceptance range that runs backwards", () => {
+    renderWizard();
+    completeCycleStep();
+    next();
+    fireEvent.change(screen.getByLabelText("Panel name"), {
+      target: { value: "HIV VL panel" },
+    });
+    fireEvent.change(screen.getByLabelText("Sample code"), {
+      target: { value: "PS-1" },
+    });
+    fireEvent.change(screen.getByLabelText("Test"), { target: { value: "55" } });
+
+    fireEvent.change(screen.getByLabelText("Acceptance low"), {
+      target: { value: "46.3" },
+    });
+    fireEvent.change(screen.getByLabelText("Acceptance high"), {
+      target: { value: "41.1" },
+    });
+
+    expect(
+      screen.getByText(
+        "The high end of an acceptance range cannot be below the low end.",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Next" })).toBeDisabled();
+
+    fireEvent.change(screen.getByLabelText("Acceptance high"), {
+      target: { value: "51.1" },
+    });
+    expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
+  });
+
   test("only actively enrolled labs are offered as participants", async () => {
     renderWizard();
     throughPanelStep();

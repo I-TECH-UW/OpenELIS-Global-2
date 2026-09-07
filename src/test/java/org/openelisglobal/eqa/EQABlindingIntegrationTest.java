@@ -99,6 +99,15 @@ public class EQABlindingIntegrationTest extends EQASpineTestBase {
                 + "   WHERE name = 'Entered' AND status_type = 'SAMPLE')");
         statusService.refreshCache();
 
+        // The label sheet prints the analyte's name under each blind code, so the
+        // two analytes this class uses need names to print.
+        jdbc.update("INSERT INTO clinlims.analyte (id, name, is_active, lastupdated)"
+                + " SELECT 9801, 'EQA Numeric Analyte', 'Y', now()"
+                + " WHERE NOT EXISTS (SELECT 1 FROM clinlims.analyte WHERE id = 9801)");
+        jdbc.update("INSERT INTO clinlims.analyte (id, name, is_active, lastupdated)"
+                + " SELECT 9802, 'EQA Categorical Analyte', 'Y', now()"
+                + " WHERE NOT EXISTS (SELECT 1 FROM clinlims.analyte WHERE id = 9802)");
+
         jdbc.update("INSERT INTO clinlims.localization (id, description)" + " SELECT 9807, 'EQA Blinding Test'"
                 + " WHERE NOT EXISTS (SELECT 1 FROM clinlims.localization WHERE id = 9807)");
         jdbc.update("INSERT INTO clinlims.test_section (id, name, description, is_external, sort_order,"
@@ -780,9 +789,50 @@ public class EQABlindingIntegrationTest extends EQASpineTestBase {
         String extracted = text.toString();
 
         assertTrue("every blind code prints", extracted.contains("IHBLIND-P1") && extracted.contains("IHBLIND-P2"));
+        // AC-V2.4-14 also asks for the cycle and the analyte under each code. Both
+        // are 8pt, and a box sized to the glyphs alone silently dropped them.
+        String cycleIdentifier = cycle.getCycleName() != null ? cycle.getCycleName() : panel.getPanelName();
+        assertTrue("the cycle identifier prints under each code", extracted.contains(cycleIdentifier));
+        // Whatever the catalog calls these two analytes, both must appear: the
+        // 8pt meta lines were being dropped by a box sized to the glyphs alone.
+        for (long analyteId : new long[] { NUMERIC_ANALYTE, CATEGORICAL_ANALYTE }) {
+            String name = jdbc.queryForObject("SELECT name FROM clinlims.analyte WHERE id = ?", String.class,
+                    analyteId);
+            assertTrue("the analyte prints under its blind code: " + name, extracted.contains(name));
+        }
         assertFalse("numeric target must not leak (AC-V2.4-14)", extracted.contains("43.7"));
         assertFalse("acceptance range must not leak", extracted.contains("41.1") || extracted.contains("46.3"));
         assertFalse("categorical target must not leak", extracted.contains("SecretPositive77"));
+    }
+
+    /**
+     * The rig's real names are long: a scheme cycle called "CPHL National HIV Viral
+     * Load EQA 2026 Round 1" and an analyte called "HIV-1 Viral Load (plasma, RNA
+     * copies/mL)" are what the sheet has to carry, not the short fixture strings.
+     */
+    @Test
+    public void labelSheet_printsLongCycleAndAnalyteNames() throws Exception {
+        jdbc.update("INSERT INTO clinlims.analyte (id, name, is_active, lastupdated)"
+                + " VALUES (9811, 'HIV-1 Viral Load (plasma, RNA copies/mL)', 'Y', now())"
+                + " ON CONFLICT (id) DO UPDATE SET name = excluded.name");
+        EQAProgram scheme = inHouseScheme("IH Long Label Scheme");
+        EQACycle cycle = readBack(insertCycle(scheme, 1));
+        cycle.setCycleName("CPHL National HIV Viral Load EQA 2026 Round 1");
+        cycle.setSysUserId(USER);
+        eqaCycleDAO.update(cycle);
+        EQAPanel panel = panelWith(scheme, cycle, EQAPanelStatus.SEALED, LocalDate.now().plusDays(7));
+        insertPanelSample(panel, "IH-01", "IHLONG-P1", 9811L, "5000", null, null);
+
+        PdfReader reader = new PdfReader(labelPDFService.generateLabelSheet(panel.getId()));
+        String extracted = PdfTextExtractor.getTextFromPage(reader, 1);
+        reader.close();
+
+        assertTrue("the blind code prints", extracted.contains("IHLONG-P1"));
+        // Shortened to the label's width rather than dropped: on the old build the
+        // sheet printed the blind code and nothing else for names this long.
+        assertTrue("the cycle identifier prints: " + extracted, extracted.contains("CPHL National HIV Viral Load"));
+        assertTrue("the analyte prints: " + extracted, extracted.contains("HIV-1 Viral Load (plasma"));
+        assertTrue("what did not fit is marked, not silently lost", extracted.contains("..."));
     }
 
     @Test

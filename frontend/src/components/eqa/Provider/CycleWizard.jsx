@@ -138,6 +138,34 @@ const CycleWizard = () => {
   const samplesComplete = samples.every(
     (sample) => sample.sampleCode.trim() && sample.testId,
   );
+  // What the server refuses by name, held here instead of shown as a 422 with
+  // nothing pointing at the field that caused it.
+  const duplicateSampleCode = (index) => {
+    const code = samples[index].sampleCode.trim().toUpperCase();
+    return (
+      !!code &&
+      samples.some(
+        (other, i) =>
+          i < index && other.sampleCode.trim().toUpperCase() === code,
+      )
+    );
+  };
+  const rangeBackwards = (sample) => {
+    const low = Number(sample.acceptanceRangeLow);
+    const high = Number(sample.acceptanceRangeHigh);
+    return (
+      sample.acceptanceRangeLow !== "" &&
+      sample.acceptanceRangeHigh !== "" &&
+      Number.isFinite(low) &&
+      Number.isFinite(high) &&
+      low > high
+    );
+  };
+  const samplesValid =
+    samplesComplete &&
+    !samples.some(
+      (sample, index) => duplicateSampleCode(index) || rangeBackwards(sample),
+    );
   // Per step, what must be filled in to move on: whatever the server will
   // refuse. Step 0's date pair is the cycle's distribution date and submission
   // deadline, and a cycle without the deadline is invisible to the reminder
@@ -145,7 +173,7 @@ const CycleWizard = () => {
   const canAdvance = [
     !!cycleName.trim() && !!plannedStartDate && !!plannedEndDate,
     !!panelName.trim() &&
-      samplesComplete &&
+      samplesValid &&
       (!vendorRequired || !!vendorName.trim()),
     selectedOrgs.length > 0,
     true,
@@ -447,6 +475,11 @@ const CycleWizard = () => {
                           )}
                           hideLabel
                           value={sample.sampleCode}
+                          invalid={duplicateSampleCode(index)}
+                          invalidText={t(
+                            "eqa.provider.wizard.sampleCode.duplicate",
+                            "Every sample code on a panel must be different.",
+                          )}
                           onChange={(e) =>
                             setSample(index, { sampleCode: e.target.value })
                           }
@@ -532,6 +565,11 @@ const CycleWizard = () => {
                           )}
                           hideLabel
                           value={sample.acceptanceRangeHigh}
+                          invalid={rangeBackwards(sample)}
+                          invalidText={t(
+                            "eqa.provider.wizard.rangeHigh.backwards",
+                            "The high end of an acceptance range cannot be below the low end.",
+                          )}
                           onChange={(e) =>
                             setSample(index, {
                               acceptanceRangeHigh: e.target.value,

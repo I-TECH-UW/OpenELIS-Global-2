@@ -1,4 +1,4 @@
-import { formatDateOnly } from "../Utils";
+import { convertAlphaNumLabNumForDisplay, formatDateOnly } from "../Utils";
 
 describe("formatDateOnly", () => {
   test("keeps the entered calendar date for an end-of-day deadline", () => {
@@ -15,5 +15,30 @@ describe("formatDateOnly", () => {
     expect(formatDateOnly(null)).toBe("");
     expect(formatDateOnly("")).toBe("");
     expect(formatDateOnly("not a date")).toBe("");
+  });
+});
+
+describe("convertAlphaNumLabNumForDisplay", () => {
+  test("keeps every part of a lab number carrying more than one dash", () => {
+    // An EQA blind code is IH-<cycle>-<sample>. Keeping only the first part
+    // after the split rendered every row on the workplan as "IH-2".
+    expect(convertAlphaNumLabNumForDisplay("IH-2-04")).toBe("IH-2-04");
+    expect(convertAlphaNumLabNumForDisplay("IH-12-07-1")).toBe("IH-12-07-1");
+  });
+
+  test("still formats a legacy dashed lab number the same way", () => {
+    expect(convertAlphaNumLabNumForDisplay("20260900123-1")).toBe(
+      "20-260-900-123-1",
+    );
+    expect(convertAlphaNumLabNumForDisplay("20260900123")).toBe(
+      "20-260-900-123",
+    );
+  });
+
+  test("passes absent and opaque values straight through", () => {
+    expect(convertAlphaNumLabNumForDisplay(null)).toBeNull();
+    expect(convertAlphaNumLabNumForDisplay("DEV01263000000000001")).toBe(
+      "DEV01263000000000001",
+    );
   });
 });

@@ -311,15 +311,20 @@ public class ResultsLoadUtility {
             currentPatient = sampleService.getPatient(sample);
 
             String patientName = "";
-            String patientInfo;
-            String nationalId = patientService.getNationalId(currentPatient);
-            if (depersonalize) {
+            String patientInfo = "";
+            // A blinded EQA order has no patient at all. Reading identity off a null
+            // one used to render the literal words "null" into the Sample Info cell
+            // — "nullnull, null, N" — which reads like corrupt data.
+            String nationalId = currentPatient == null ? null : patientService.getNationalId(currentPatient);
+            if (currentPatient == null) {
+                patientInfo = "";
+            } else if (depersonalize) {
                 patientInfo = GenericValidator.isBlankOrNull(nationalId) ? patientService.getExternalId(currentPatient)
                         : nationalId;
             } else {
                 patientName = patientService.getLastFirstName(currentPatient);
-                patientInfo = nationalId + ", " + patientService.getGender(currentPatient) + ", "
-                        + patientService.getBirthdayForDisplay(currentPatient);
+                patientInfo = joinPatientInfo(nationalId, patientService.getGender(currentPatient),
+                        patientService.getBirthdayForDisplay(currentPatient));
             }
 
             currSample = analysis.getSampleItem().getSample();
@@ -416,6 +421,24 @@ public class ResultsLoadUtility {
     public List<Test> getTestsInSection(String id) {
 
         return testService.getTestsByTestSection(id);
+    }
+
+    /**
+     * The three-part patient line, with absent parts dropped rather than printed as
+     * the word "null". A sample with no identity on file should read as blank, not
+     * as a record that lost its contents.
+     */
+    private String joinPatientInfo(String nationalId, String gender, String birthday) {
+        StringBuilder info = new StringBuilder();
+        for (String part : new String[] { nationalId, gender, birthday }) {
+            if (!GenericValidator.isBlankOrNull(part)) {
+                if (info.length() > 0) {
+                    info.append(", ");
+                }
+                info.append(part);
+            }
+        }
+        return info.toString();
     }
 
     private List<TestResultItem> getTestResultItemFromAnalysis(Analysis analysis, String patientName,

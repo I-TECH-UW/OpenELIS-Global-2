@@ -90,10 +90,13 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
   const [openingSubmissions, setOpeningSubmissions] = useState(false);
   const [openReason, setOpenReason] = useState("");
 
+  // The cycle status is a dependency, not decoration: dispatching from the
+  // sibling Shipments tab moves the cycle, and without it this tab kept
+  // reporting "Not shipped" until the page was reloaded.
   const load = useCallback(() => {
     fetchReceiptRows(cycleId, setRows);
     fetchScoreRows(cycleId, setScores);
-  }, [cycleId]);
+  }, [cycleId, cycleStatus]);
 
   useEffect(load, [load]);
 

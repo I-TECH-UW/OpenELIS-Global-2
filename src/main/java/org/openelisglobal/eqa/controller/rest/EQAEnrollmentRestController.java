@@ -64,6 +64,15 @@ public class EQAEnrollmentRestController extends ControllerUtills {
             String sysUserId = getSysUserId(request);
 
             List<EQAProgramEnrollment> enrolled = enrollmentService.bulkEnroll(programId, organizationIds, sysUserId);
+            // Nothing was written because every laboratory named is already enrolled.
+            // Answering Created with an empty list let the caller report a success that
+            // never happened, which is the one thing a roster screen must not do.
+            if (enrolled.isEmpty()) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(Map.of("error",
+                                organizationIds.size() == 1 ? "That laboratory is already enrolled in this scheme"
+                                        : "Every laboratory named is already enrolled in this scheme"));
+            }
             List<Map<String, Object>> dtos = enrolled.stream().map(this::toDto).collect(Collectors.toList());
 
             return ResponseEntity.status(HttpStatus.CREATED).body(dtos);

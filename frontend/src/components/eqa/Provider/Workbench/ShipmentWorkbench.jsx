@@ -127,6 +127,16 @@ const ShipmentWorkbench = ({ cycleId, prep, rows, onChanged, onNotice }) => {
     });
   };
 
+  /** Aliquots per panel: what the box holds, keyed the way the label prints it. */
+  const panelCounts = () =>
+    (prep?.panels || []).reduce(
+      (counts, panel) => ({
+        ...counts,
+        [panel.panelName]: (counts[panel.panelName] || 0) + panel.sampleCount,
+      }),
+      {},
+    );
+
   const handleLabel = (row) =>
     generateLabelPDF(
       {
@@ -137,6 +147,8 @@ const ShipmentWorkbench = ({ cycleId, prep, rows, onChanged, onNotice }) => {
           (sum, panel) => sum + panel.sampleCount,
           0,
         ),
+        sampleTypeCounts: panelCounts(),
+        createdDate: row.boxCreatedDate,
       },
       intl.formatMessage,
     );
@@ -193,6 +205,14 @@ const ShipmentWorkbench = ({ cycleId, prep, rows, onChanged, onNotice }) => {
           destinationFacility: row.organizationName,
           state: row.boxState,
           temperature: row.temperatureRequirement,
+          // The three header facts the shipment module reads off the box on the
+          // server; this document is built here, so they travel with the row.
+          serviceLocation: row.serviceLocation,
+          createdDate: row.boxCreatedDate,
+          createdBy: row.boxCreatedBy,
+          // Panel material has no specimen type, and calling the panel one was
+          // the wrong label rather than the wrong value.
+          typeColumnLabel: t("eqa.shipment.packList.panelColumn", "Panel"),
           samples: samples,
           notes: t(
             "eqa.shipment.packList.notes",
