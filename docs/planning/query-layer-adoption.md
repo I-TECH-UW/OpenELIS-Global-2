@@ -143,6 +143,14 @@ that broke on the reverted attempt — Cypress Admin and Playwright Harness, the
 analyzer accept-results flows — are green. The checkpoint also passed on
 `fbab7a6` and `4811c01e`. Later pushes are still queued.
 
+Nothing has run since. `Shared Build` fails building `db_openelis_org` and
+`fhir_openelis_org`: both are Debian bullseye images and `bullseye-security`'s
+`InRelease` is expired, so `apt-get update` exits 100. The expiry grows between
+runs, so no fresh file is being published and it does not recover on a retry.
+Without images the executor is skipped and the checkpoint fails, which is what
+`a85d812f9` shows — no test failed. `db` needs `gettext-base` for `envsubst`, so
+this is not fixed by dropping the unused `curl` from the FHIR image.
+
 `E2E / Tests` runs as a `workflow_run`, so it reports develop's branch and sha
 and never appears against the PR's own commit: read it through the
 `03 Checkpoint - E2E` status instead of `gh pr checks`. Its concurrency is keyed
