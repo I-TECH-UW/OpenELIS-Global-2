@@ -408,7 +408,12 @@ public class UserServiceImpl implements UserService {
     public List<TestResultItem> filterResultsByLabUnitRoles(String systemUserId, List<TestResultItem> results,
             String roleName) {
         String resultsRoleId = roleService.getRoleByName(roleName).getId();
-        List<IdValuePair> testSections = getUserTestSections(systemUserId, resultsRoleId);
+        // OGC-189 (M2): viewer semantics — this filters results the lab has
+        // already started, across 21 call sites (workplan, logbook results,
+        // status results, patient results, accession lookup, patient reports).
+        // With the active-only set, deactivating a lab unit made every pending
+        // result in it vanish from all of them and become uncompletable.
+        List<IdValuePair> testSections = getUserViewerTestSections(systemUserId, resultsRoleId);
         List<String> testUnitIds = new ArrayList<>();
         if (testSections != null) {
             testSections.forEach(testSection -> testUnitIds.add(testSection.getId()));
