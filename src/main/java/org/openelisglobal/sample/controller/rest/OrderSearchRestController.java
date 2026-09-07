@@ -42,7 +42,6 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -68,6 +67,7 @@ import org.openelisglobal.program.valueholder.ProgramSample;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.qachecklist.service.SampleQaChecklistService;
 import org.openelisglobal.qc.dao.SampleItemQcProfileDAO;
+import org.openelisglobal.questionnaire.service.QuestionnaireStorageService;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralSubcontract;
@@ -165,7 +165,7 @@ public class OrderSearchRestController extends BaseRestController {
     private OrganizationService organizationService;
 
     @Autowired
-    private FhirUtil fhirUtil;
+    private QuestionnaireStorageService questionnaireStorageService;
 
     @Autowired
     private SampleStorageAssignmentDAO sampleStorageAssignmentDAO;
@@ -1098,9 +1098,9 @@ public class OrderSearchRestController extends BaseRestController {
                     // Load questionnaire response if available
                     if (programSample.getQuestionnaireResponseUuid() != null) {
                         try {
-                            QuestionnaireResponse qr = fhirUtil.getLocalFhirClient().read()
-                                    .resource(QuestionnaireResponse.class)
-                                    .withId(programSample.getQuestionnaireResponseUuid().toString()).execute();
+                            QuestionnaireResponse qr = questionnaireStorageService
+                                    .getQuestionnaireResponse(programSample.getQuestionnaireResponseUuid())
+                                    .orElse(null);
                             if (qr != null) {
                                 sampleOrderItems.put("additionalQuestions", qr);
                             }
@@ -1138,9 +1138,8 @@ public class OrderSearchRestController extends BaseRestController {
                         // Load questionnaire response if available
                         if (ps.getQuestionnaireResponseUuid() != null) {
                             try {
-                                QuestionnaireResponse qr = fhirUtil.getLocalFhirClient().read()
-                                        .resource(QuestionnaireResponse.class)
-                                        .withId(ps.getQuestionnaireResponseUuid().toString()).execute();
+                                QuestionnaireResponse qr = questionnaireStorageService
+                                        .getQuestionnaireResponse(ps.getQuestionnaireResponseUuid()).orElse(null);
                                 if (qr != null) {
                                     sampleOrderItems.put("additionalQuestions", qr);
                                 }
