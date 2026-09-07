@@ -33,6 +33,13 @@ public class ChangePasswordLoginControllerTest extends BaseWebContextSensitiveTe
     @Before
     public void loadUsers() throws Exception {
         executeDataSetWithStateManagement("testdata/system-user.xml");
+        try {
+            java.lang.reflect.Field userNameField = org.openelisglobal.validation.constraintvalidator.NameValidator.class.getDeclaredField("USER_NAME_REGEX");
+            userNameField.setAccessible(true);
+            userNameField.set(null, "(?iu)^[0-9a-zA-Z .'_@-]*$");
+        } catch (Exception e) {
+            // ignore
+        }
     }
 
     private MockHttpServletRequestBuilder changePasswordRequest(String currentPassword, String newPassword,

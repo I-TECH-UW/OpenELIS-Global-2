@@ -600,14 +600,15 @@ public class SamplePatientEntryRestControllerIntegrationTest extends BaseWebCont
         String[][] statuses = { { "Test Entered", "ORDER" }, { "SampleEntered", "SAMPLE" },
                 { "Sample Rejected", "SAMPLE" }, { "Not Tested", "ANALYSIS" }, { "Sample Rejected", "ANALYSIS" } };
 
+        int counter = 1;
         for (String[] status : statuses) {
             jdbc.update(
                     "INSERT INTO clinlims.status_of_sample " + "(id, name, status_type, is_active, display_key, "
-                            + "description, lastupdated) "
-                            + "SELECT nextval('clinlims.status_of_sample_seq'), ?, ?, 'Y', ?, ?, " + "now() "
+                            + "description, code, lastupdated) "
+                            + "SELECT nextval('clinlims.status_of_sample_seq'), ?, ?, 'Y', ?, ?, ?, " + "now() "
                             + "WHERE NOT EXISTS " + "(SELECT 1 FROM clinlims.status_of_sample "
                             + "WHERE name = ? AND status_type = ?)",
-                    status[0], status[1], "status." + status[0].replace(' ', '.'), status[0], status[0], status[1]);
+                    status[0], status[1], "status." + status[0].replace(' ', '.'), status[0], counter++, status[0], status[1]);
         }
 
         statusService.refreshCache();
