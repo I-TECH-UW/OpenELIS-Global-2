@@ -173,10 +173,12 @@
 
     <sampletype_test id="1" test_id="1" sample_type_id="3" />
 
+    <!-- Panel is version-mapped on lastupdated; a null version reads as transient on merge -->
     <panel id="1" name="Test Panel"
-        description="This is a test panel." name_localization_id="1" />
+        description="This is a test panel." name_localization_id="1"
+        lastupdated="2025-03-08 12:00:00" />
     <panel id="2" name="DCPIP Panel" description="Vitamins test"
-        name_localization_id="2" />
+        name_localization_id="2" lastupdated="2025-03-08 12:00:00" />
 
     <panel_item id="1" panel_id="1" sort_order="1"
         test_local_abbrev="TLA1" method_name="therapy"
