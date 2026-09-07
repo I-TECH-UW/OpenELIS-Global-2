@@ -144,14 +144,21 @@ test("E-Signature — full result entry and validation flow", async ({
     await pwInput.click();
     await pwInput.pressSequentially(password, { delay: 30 });
 
-    // The signature releases the result save; sync on that request so the
-    // navigation that follows cannot cancel it mid-flight.
+    // The signature releases the result save, and a successful save makes the
+    // page navigate back to the results search on its own. Sync on both so the
+    // next page.goto neither cancels the save nor collides with that reload
+    // (net::ERR_ABORTED).
     const resultsSaved = page.waitForResponse(
       (response) =>
         response.url().includes("/rest/LogbookResults") &&
         response.request().method() === "POST",
       { timeout: LONG_TIMEOUT },
     );
+    const resultsReloaded = page.waitForEvent("framenavigated", {
+      predicate: (frame) =>
+        frame === page.mainFrame() && frame.url().includes("/result?"),
+      timeout: LONG_TIMEOUT,
+    });
 
     // Click Sign
     await modal.getByRole("button", { name: /sign/i }).click();
@@ -159,6 +166,8 @@ test("E-Signature — full result entry and validation flow", async ({
     // Modal should close after successful signature
     await expect(modal).toBeHidden({ timeout: LONG_TIMEOUT });
     await resultsSaved;
+    await resultsReloaded;
+    await page.waitForLoadState("domcontentloaded");
   });
 
   // ── Step 4: Validation — VALIDATED_AND_RELEASED signature ─────
@@ -220,13 +229,19 @@ test("E-Signature — full result entry and validation flow", async ({
 
     // In password-only mode, just enter password
     await modal.locator('input[type="password"]').fill(password);
+
+    // A successful release reloads the validation page; wait for that
+    // navigation so the cleanup step's own navigation cannot collide with it.
+    const queueReloaded = page.waitForEvent("framenavigated", {
+      predicate: (frame) =>
+        frame === page.mainFrame() && frame.url().includes("/validation"),
+      timeout: LONG_TIMEOUT,
+    });
     await modal.getByRole("button", { name: /sign/i }).click();
 
     await expect(modal).toBeHidden({ timeout: LONG_TIMEOUT });
-
-    // Wait for the page to finish any post-sign navigation/redirect
-    // before attempting cleanup navigation
-    await page.waitForLoadState("networkidle");
+    await queueReloaded;
+    await page.waitForLoadState("domcontentloaded");
   });
 
   // ── Cleanup: Restore original e-sig setting ───────────────────

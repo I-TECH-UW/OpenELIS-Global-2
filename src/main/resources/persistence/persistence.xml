@@ -182,7 +182,15 @@
 
         <!-- UnitOfMeasure entities (migrated from HBM to JPA annotations) -->
         <class>org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure</class>
-
+      
+        <!-- Questionnaire / QuestionnaireResponse local storage -->
+        <class>org.openelisglobal.questionnaire.valueholder.Questionnaire</class>
+        <class>org.openelisglobal.questionnaire.valueholder.QuestionnaireItem</class>
+        <class>org.openelisglobal.questionnaire.valueholder.QuestionnaireAnswerOption</class>
+        <class>org.openelisglobal.questionnaire.valueholder.QuestionnaireItemInitial</class>
+        <class>org.openelisglobal.questionnaire.valueholder.QuestionnaireResponse</class>
+        <class>org.openelisglobal.questionnaire.valueholder.QuestionnaireResponseItem</class>
+        <class>org.openelisglobal.questionnaire.valueholder.QuestionnaireResponseAnswer</class>
 
         <properties>
             <property name="hibernate.cfg_xml_file"
