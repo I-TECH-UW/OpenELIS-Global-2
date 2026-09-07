@@ -74,6 +74,13 @@
         </sql>
         <rollback>
             <sql>
+                <!-- These alerts name a feature that is being removed, and the narrow
+                     CHECK 3.5.x.x/070 owns cannot come back while they are on file.
+                     Unlike the state-transition rows, the alert table survives the
+                     rollback, so this is a real deletion: it is scoped to the one
+                     alert type this changeset introduced. -->
+                DELETE FROM clinlims.alert WHERE alert_type = 'EQA_SUBMISSION_FAILED';
+
                 ALTER TABLE clinlims.alert DROP CONSTRAINT IF EXISTS chk_alert_type;
                 ALTER TABLE clinlims.alert ADD CONSTRAINT chk_alert_type
                 CHECK (alert_type IN (
