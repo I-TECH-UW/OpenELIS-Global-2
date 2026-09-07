@@ -491,6 +491,7 @@ public class AppTestConfig implements WebMvcConfigurer {
     public DataExportTaskDAO dataExportTaskDAO() {
         return mock(DataExportTaskDAO.class);
     }
+
     /**
      * Explicit bean because the component scan excludes
      * {@code org.openelisglobal.sample.controller.*} (a sibling controller in that

@@ -608,7 +608,8 @@ public class SamplePatientEntryRestControllerIntegrationTest extends BaseWebCont
                             + "SELECT nextval('clinlims.status_of_sample_seq'), ?, ?, 'Y', ?, ?, ?, " + "now() "
                             + "WHERE NOT EXISTS " + "(SELECT 1 FROM clinlims.status_of_sample "
                             + "WHERE name = ? AND status_type = ?)",
-                    status[0], status[1], "status." + status[0].replace(' ', '.'), status[0], counter++, status[0], status[1]);
+                    status[0], status[1], "status." + status[0].replace(' ', '.'), status[0], counter++, status[0],
+                    status[1]);
         }
 
         statusService.refreshCache();
