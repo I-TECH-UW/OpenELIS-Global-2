@@ -18,7 +18,6 @@ import java.sql.Timestamp;
 import java.util.Set;
 import java.util.UUID;
 import org.openelisglobal.common.valueholder.BaseObject;
-import org.openelisglobal.patient.valueholder.Patient;
 
 @Entity
 @Table(name = "questionnaire_response")
@@ -40,15 +39,32 @@ public class QuestionnaireResponse extends BaseObject<Integer> {
     @Column(name = "status")
     private QuestionnaireResponseStatus status;
 
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "subject_id")
-    private Patient subject;
+    /**
+     * FHIR reference of the subject, e.g. {@code Patient/<uuid>}; null for
+     * patientless samples.
+     */
+    @Column(name = "subject_reference", length = 100)
+    private String subjectReference;
+
+    /**
+     * UUID of the answered Questionnaire, kept even when that questionnaire has no
+     * local row.
+     */
+    @Column(name = "questionnaire_fhir_uuid")
+    private UUID questionnaireFhirUuid;
 
     @Column(name = "authored")
     private Timestamp authored;
 
     @Column(name = "summary")
     private String summary;
+
+    /**
+     * Canonical FHIR JSON of the resource; the relational columns are metadata
+     * derived from it.
+     */
+    @Column(name = "resource_json")
+    private String resourceJson;
 
     @OneToMany(mappedBy = "questionnaireResponse", cascade = CascadeType.ALL, orphanRemoval = true)
     private Set<QuestionnaireResponseItem> items;
@@ -77,12 +93,28 @@ public class QuestionnaireResponse extends BaseObject<Integer> {
         this.status = status;
     }
 
-    public Patient getSubject() {
-        return subject;
+    public String getSubjectReference() {
+        return subjectReference;
     }
 
-    public void setSubject(Patient subject) {
-        this.subject = subject;
+    public void setSubjectReference(String subjectReference) {
+        this.subjectReference = subjectReference;
+    }
+
+    public UUID getQuestionnaireFhirUuid() {
+        return questionnaireFhirUuid;
+    }
+
+    public void setQuestionnaireFhirUuid(UUID questionnaireFhirUuid) {
+        this.questionnaireFhirUuid = questionnaireFhirUuid;
+    }
+
+    public String getResourceJson() {
+        return resourceJson;
+    }
+
+    public void setResourceJson(String resourceJson) {
+        this.resourceJson = resourceJson;
     }
 
     public Timestamp getAuthored() {

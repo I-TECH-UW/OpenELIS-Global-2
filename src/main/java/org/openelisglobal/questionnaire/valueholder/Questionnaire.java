@@ -27,12 +27,12 @@ public class Questionnaire extends BaseObject<Integer> {
     @Id
     @GeneratedValue(strategy = GenerationType.SEQUENCE, generator = "questionnaire_generator")
     @SequenceGenerator(name = "questionnaire_generator", sequenceName = "questionnaire_seq", allocationSize = 1)
-    private int id;
+    private Integer id;
 
     @Column(name = "fhir_uuid", nullable = false, unique = true)
     private UUID fhirUuid;
 
-    @Column(name = "code", nullable = false, length = 10)
+    @Column(name = "code", length = 10)
     private String code;
 
     @Column(name = "has_item")
@@ -53,7 +53,7 @@ public class Questionnaire extends BaseObject<Integer> {
     @Column(name = "description", length = 255)
     private String description;
 
-    @Column(name = "questionnaire_name", length = 36, nullable = false)
+    @Column(name = "questionnaire_name", length = 255)
     private String questionnaireName;
 
     @Column(name = "approval_date")
@@ -68,8 +68,21 @@ public class Questionnaire extends BaseObject<Integer> {
     @Column(name = "status_id", length = 10)
     private String statusId;
 
-    @Column(name = "purpose", nullable = false, length = 255)
+    @Column(name = "purpose", length = 255)
     private String purpose;
+
+    @Column(name = "identifier_system", length = 255)
+    private String identifierSystem;
+
+    @Column(name = "identifier_value", length = 255)
+    private String identifierValue;
+
+    /**
+     * Canonical FHIR JSON of the resource; the relational columns are metadata
+     * derived from it.
+     */
+    @Column(name = "resource_json")
+    private String resourceJson;
 
     public Questionnaire() {
     }
@@ -186,6 +199,30 @@ public class Questionnaire extends BaseObject<Integer> {
 
     public void setPurpose(String purpose) {
         this.purpose = purpose;
+    }
+
+    public String getIdentifierSystem() {
+        return identifierSystem;
+    }
+
+    public void setIdentifierSystem(String identifierSystem) {
+        this.identifierSystem = identifierSystem;
+    }
+
+    public String getIdentifierValue() {
+        return identifierValue;
+    }
+
+    public void setIdentifierValue(String identifierValue) {
+        this.identifierValue = identifierValue;
+    }
+
+    public String getResourceJson() {
+        return resourceJson;
+    }
+
+    public void setResourceJson(String resourceJson) {
+        this.resourceJson = resourceJson;
     }
 
     public enum QuestionnaireStatus {

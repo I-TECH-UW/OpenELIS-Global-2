@@ -72,7 +72,7 @@ public class QuestionnaireResponseServiceTest extends BaseWebContextSensitiveTes
         response.setAuthored(new Timestamp(System.currentTimeMillis()));
 
         Patient patient = patientService.get("1");
-        response.setSubject(patient);
+        response.setSubjectReference("Patient/" + patient.getFhirUuidAsString());
 
         questionnaireResponseService.insert(response);
 
@@ -101,7 +101,7 @@ public class QuestionnaireResponseServiceTest extends BaseWebContextSensitiveTes
         response.setFhirUuid(UUID.randomUUID());
         response.setStatus(QuestionnaireResponseStatus.COMPLETED);
         response.setAuthored(new Timestamp(System.currentTimeMillis()));
-        response.setSubject(patient);
+        response.setSubjectReference("Patient/" + patient.getFhirUuidAsString());
 
         QuestionnaireResponseItem item = new QuestionnaireResponseItem();
         item.setQuestionnaireResponse(response);
@@ -144,7 +144,7 @@ public class QuestionnaireResponseServiceTest extends BaseWebContextSensitiveTes
         response.setFhirUuid(UUID.randomUUID());
         response.setStatus(QuestionnaireResponseStatus.COMPLETED);
         response.setAuthored(new Timestamp(System.currentTimeMillis()));
-        response.setSubject(patient);
+        response.setSubjectReference("Patient/" + patient.getFhirUuidAsString());
 
         QuestionnaireResponseItem parent = new QuestionnaireResponseItem();
         parent.setQuestionnaireResponse(response);
@@ -192,7 +192,7 @@ public class QuestionnaireResponseServiceTest extends BaseWebContextSensitiveTes
         response.setFhirUuid(UUID.randomUUID());
         response.setStatus(QuestionnaireResponseStatus.COMPLETED);
         response.setAuthored(new Timestamp(System.currentTimeMillis()));
-        response.setSubject(patient);
+        response.setSubjectReference("Patient/" + patient.getFhirUuidAsString());
 
         QuestionnaireResponseItem item = new QuestionnaireResponseItem();
         item.setQuestionnaireResponse(response);
@@ -237,7 +237,7 @@ public class QuestionnaireResponseServiceTest extends BaseWebContextSensitiveTes
         response.setFhirUuid(UUID.randomUUID());
         response.setStatus(QuestionnaireResponseStatus.IN_PROGRESS);
         response.setAuthored(new Timestamp(System.currentTimeMillis()));
-        response.setSubject(patient);
+        response.setSubjectReference("Patient/" + patient.getFhirUuidAsString());
 
         QuestionnaireResponseItem item = new QuestionnaireResponseItem();
         item.setQuestionnaireResponse(response);
