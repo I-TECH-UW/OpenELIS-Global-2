@@ -50,6 +50,10 @@ const SOURCE_TAG = {
   inter_lab_split: "cyan",
 };
 
+// FR-V2.3-02 gives the queue a Source filter. The keys are the ones the rows
+// already carry, so the tag colours above and this list cannot drift apart.
+const SOURCE_KEYS = Object.keys(SOURCE_TAG);
+
 const REASON_TAG = {
   questionable: "warm-gray",
   inHouseFailure: "red",
@@ -134,6 +138,7 @@ const FollowUpQueuePage = () => {
   const [notice, setNotice] = useState(null);
   const [dismissing, setDismissing] = useState(null);
   const [category, setCategory] = useState(DISMISSAL_CATEGORIES[0]);
+  const [sourceFilter, setSourceFilter] = useState("all");
   const [notes, setNotes] = useState("");
   const [busy, setBusy] = useState(false);
 
@@ -162,6 +167,14 @@ const FollowUpQueuePage = () => {
       `eqa.queue.reason.${reason}`,
       reason === "inHouseFailure" ? "In-house fail" : "Questionable",
     );
+
+  // The KPI tiles below describe the whole queue on purpose; only the table and
+  // its export follow the filter, so a laboratory cannot mistake a filtered
+  // view for its real backlog.
+  const visibleRows =
+    sourceFilter === "all"
+      ? rows
+      : rows.filter((row) => row.sourceKey === sourceFilter);
 
   const questionableCount = rows.filter(
     (row) => row.reason === "questionable",
@@ -319,11 +332,41 @@ const FollowUpQueuePage = () => {
               marginBottom: "0.5rem",
             }}
           >
-            <strong>
-              {t("eqa.queue.count", "Queue · {count} items", {
-                count: rows.length,
-              })}
-            </strong>
+            <div
+              style={{
+                display: "flex",
+                gap: "1rem",
+                alignItems: "flex-end",
+              }}
+            >
+              <strong>
+                {sourceFilter === "all"
+                  ? t("eqa.queue.count", "Queue · {count} items", {
+                      count: rows.length,
+                    })
+                  : t(
+                      "eqa.queue.countFiltered",
+                      "Queue · {count} of {total} items",
+                      { count: visibleRows.length, total: rows.length },
+                    )}
+              </strong>
+              <Select
+                id="queue-source-filter"
+                size="sm"
+                labelText={t("eqa.queue.source", "Source")}
+                hideLabel
+                value={sourceFilter}
+                onChange={(e) => setSourceFilter(e.target.value)}
+              >
+                <SelectItem
+                  value="all"
+                  text={t("eqa.queue.source.all", "Every source")}
+                />
+                {SOURCE_KEYS.map((key) => (
+                  <SelectItem key={key} value={key} text={sourceLabelOf(key)} />
+                ))}
+              </Select>
+            </div>
             <div>
               <Button
                 kind="ghost"
@@ -337,10 +380,10 @@ const FollowUpQueuePage = () => {
                 kind="ghost"
                 size="sm"
                 renderIcon={Download}
-                disabled={rows.length === 0}
+                disabled={visibleRows.length === 0}
                 onClick={() =>
                   downloadCsv(
-                    queueCsv(rows, sourceLabelOf, reasonLabelOf),
+                    queueCsv(visibleRows, sourceLabelOf, reasonLabelOf),
                     "eqa-follow-up-queue.csv",
                   )
                 }
@@ -359,6 +402,14 @@ const FollowUpQueuePage = () => {
                 "Nothing awaiting triage. Questionable scores and in-house failures land here as cycles are scored.",
               )}
             </Tile>
+          ) : visibleRows.length === 0 ? (
+            <Tile>
+              {t(
+                "eqa.queue.emptyForSource",
+                "Nothing from this source is awaiting triage. The queue holds {total} items from other sources.",
+                { total: rows.length },
+              )}
+            </Tile>
           ) : (
             <Table useZebraStyles>
               <TableHead>
@@ -375,7 +426,7 @@ const FollowUpQueuePage = () => {
                 </TableRow>
               </TableHead>
               <TableBody>
-                {rows.map((row) => (
+                {visibleRows.map((row) => (
                   <React.Fragment key={row.id}>
                     <TableRow>
                       <TableCell>

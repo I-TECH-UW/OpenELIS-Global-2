@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, within } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { IntlProvider } from "react-intl";
 import { MemoryRouter } from "react-router-dom";
@@ -121,10 +121,13 @@ describe("FollowUpQueuePage", () => {
     expect(await screen.findByText("2026 Round 2")).toBeInTheDocument();
     expect(screen.getByText("HIV-1 viral load")).toBeInTheDocument();
     expect(screen.getByText("2.4")).toBeInTheDocument();
-    expect(screen.getByText("External provider")).toBeInTheDocument();
+    // The source filter above the table offers the same three labels, so the
+    // row tags are read out of the table itself.
+    const table = within(document.querySelector("table"));
+    expect(table.getByText("External provider")).toBeInTheDocument();
     // Two analytes on one cycle stay one register row — triage acts on the row.
     expect(screen.getByText("Malaria RDT +1 more")).toBeInTheDocument();
-    expect(screen.getByText("In-house")).toBeInTheDocument();
+    expect(table.getByText("In-house")).toBeInTheDocument();
   });
 
   it("tags the triage band from the scheme, not from the verdict", async () => {
@@ -151,6 +154,43 @@ describe("FollowUpQueuePage", () => {
     expect(screen.getByTestId("kpi-queued")).toHaveTextContent("2");
     expect(screen.getByTestId("kpi-questionable")).toHaveTextContent("1");
     expect(screen.getByTestId("kpi-inhouse")).toHaveTextContent("1");
+  });
+
+  // F-24: the page rendered a Source column and counted in-house rows for its
+  // own KPI tile, and offered no way to filter on it.
+  it("filters the table by source and says how much of the queue is showing", async () => {
+    renderPage();
+    await screen.findByText("2026 Round 2");
+
+    const filter = document.getElementById("queue-source-filter");
+    expect(
+      Array.from(filter.querySelectorAll("option")).map((o) => o.textContent),
+    ).toEqual([
+      "Every source",
+      "External provider",
+      "In-house",
+      "Inter-lab split",
+    ]);
+    expect(screen.getByText("Queue · 2 items")).toBeInTheDocument();
+
+    fireEvent.change(filter, { target: { value: "in_house" } });
+
+    expect(screen.getByText("Blind run 1")).toBeInTheDocument();
+    expect(screen.queryByText("2026 Round 2")).toBeNull();
+    expect(screen.getByText("Queue · 1 of 2 items")).toBeInTheDocument();
+    // The tiles describe the whole queue, not the filtered view.
+    expect(screen.getByTestId("kpi-queued")).toHaveTextContent("2");
+
+    fireEvent.change(filter, { target: { value: "inter_lab_split" } });
+    expect(
+      screen.getByText(
+        "Nothing from this source is awaiting triage. The queue holds 2 items from other sources.",
+      ),
+    ).toBeInTheDocument();
+
+    fireEvent.change(filter, { target: { value: "all" } });
+    expect(screen.getByText("2026 Round 2")).toBeInTheDocument();
+    expect(screen.getByText("Blind run 1")).toBeInTheDocument();
   });
 
   it("escalates a row and reports the NCE the server raised", async () => {
