@@ -26,6 +26,10 @@ import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
 } from "../../utils/Utils";
+import {
+  useInvalidateServerData,
+  useServerData,
+} from "../../utils/useServerData";
 import { ConfigurationContext, NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,
@@ -58,7 +62,6 @@ function AnalyzerTestName() {
   const [selectedRowIds, setSelectedRowIds] = useState([]);
   const [loading, setLoading] = useState(true);
   const [startingRecNo, setStartingRecNo] = useState(1);
-  const [AnalyzerTestName, setAnalyzerTestName] = useState({});
   const [AnalyzerTestNameShow, setAnalyzerTestNameShow] = useState([]);
   const [fromRecordCount, setFromRecordCount] = useState("1");
   const [toRecordCount, setToRecordCount] = useState("");
@@ -78,31 +81,22 @@ function AnalyzerTestName() {
   const [originalAnalyzerTestName, setOriginalAnalyzerTestName] = useState("");
   const [editingItemId, setEditingItemId] = useState(null);
 
-  const handleMenuItems = (res) => {
-    if (!res) {
-      setLoading(true);
-    } else {
-      setAnalyzerTestName(res);
-    }
-  };
+  const { data: AnalyzerTestName } = useServerData(
+    `/rest/AnalyzerTestNameMenu?paging=${paging}&startingRecNo=${startingRecNo}&analyzerId=${filterAnalyzer}`,
+  );
+  const invalidateServerData = useInvalidateServerData();
 
   useEffect(() => {
     componentMounted.current = true;
-    setLoading(true);
-    getFromOpenElisServer(
-      `/rest/AnalyzerTestNameMenu?paging=${paging}&startingRecNo=${startingRecNo}&analyzerId=${filterAnalyzer}`,
-      handleMenuItems,
-    );
     fetchDropdownData();
     fetchDropdownDatatestlist();
     return () => {
       componentMounted.current = false;
-      setLoading(false);
     };
-  }, [paging, startingRecNo]);
+  }, []);
 
   useEffect(() => {
-    if (AnalyzerTestName.menuList) {
+    if (AnalyzerTestName?.menuList) {
       const newAnalyzerTestName = AnalyzerTestName.menuList.map((item) => {
         return {
           id: item.uniqueId,
@@ -158,17 +152,6 @@ function AnalyzerTestName() {
   }, [selectedRowIds]);
 
   useEffect(() => {
-    setLoading(true);
-    setFromRecordCount("");
-    setToRecordCount("");
-    setTotalRecordCount("");
-    getFromOpenElisServer(
-      `/rest/AnalyzerTestNameMenu?analyzerId=${filterAnalyzer}`,
-      handleMenuItems,
-    );
-  }, [filterAnalyzer]);
-
-  useEffect(() => {
     if (selectedRowIds.length === 0) {
       setDeactivateButton(true);
     } else {
@@ -184,6 +167,7 @@ function AnalyzerTestName() {
         title: intl.formatMessage({ id: "notification.title" }),
         message: intl.formatMessage({ id: "save.config.success.msg" }),
       });
+      invalidateServerData();
     } else {
       addNotification({
         kind: NotificationKinds.error,
@@ -201,10 +185,7 @@ function AnalyzerTestName() {
     postToOpenElisServerFullResponse(
       `/rest/DeleteAnalyzerTestName?ID=${selectedRowIds.join(",")}&${startingRecNo}=1`,
       JSON.stringify(selectedIds),
-      setLoading(false),
-      setTimeout(() => {
-        window.location.reload();
-      }, 1000),
+      displayStatus,
     );
   }
 
@@ -335,9 +316,6 @@ function AnalyzerTestName() {
     );
 
     closeAddModal();
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
   };
 
   const handleUpdateAnalyzer = () => {
@@ -368,9 +346,6 @@ function AnalyzerTestName() {
     );
 
     closeUpdateModal();
-    setTimeout(() => {
-      window.location.reload();
-    }, 1000);
   };
 
   const renderCell = (cell, row) => {
@@ -554,6 +529,8 @@ function AnalyzerTestName() {
                   value={filterAnalyzer}
                   onChange={(e) => {
                     setFilterAnalyser(e.target.value);
+                    setPaging(null);
+                    setStartingRecNo(1);
                   }}
                 >
                   <SelectItem
