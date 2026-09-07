@@ -187,7 +187,11 @@ Then customize `.env` for your environment (database passwords, domain, etc.).
 
 **State & Data:**
 
-- **SWR 2.0.3** (data fetching + caching)
+- **No query/cache layer yet.** Data is fetched by hand through
+  `getFromOpenElisServer` callbacks inside `useEffect` (735 calls across 273
+  files). **TanStack Query v4** is the adopted target; see
+  `docs/planning/query-layer-adoption.md`. SWR was listed here but was never
+  installed or used.
 - **React Router DOM 5.2.0** (routing)
 
 **Forms & Validation:**
