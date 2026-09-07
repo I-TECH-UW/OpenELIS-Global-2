@@ -1,5 +1,5 @@
-# Use the official PostgreSQL 14.4 image as base
-FROM postgres:14.4
+# Keep the PostgreSQL major version on a supported operating-system base.
+FROM postgres:14.24-bookworm
 
 # Debian 11 (bullseye) left LTS on 2026-08-31: the security suite's Release file has expired and its
 # pool is being pruned, so packages come from archive.debian.org (main + updates only).
