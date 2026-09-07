@@ -250,9 +250,8 @@
     <sample_human id="1" provider_id="1" samp_id="1"
         patient_id="1" lastupdated="2023-11-01 12:00:00" />
 
-    <sample_human id="2" provider_id="1" samp_id="2"
-        patient_id="2" lastupdated="2023-11-01 12:00:00" />
-
+    <!-- sample 2 deliberately has no ordering provider: Observation.performer
+        must be omitted, not Practitioner/null -->
     <sample_human id="2" samp_id="2" patient_id="2"
         lastupdated="2023-11-01 12:00:00" />
 
