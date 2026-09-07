@@ -112,7 +112,7 @@ test.describe("OGC-782 microbiology MVP", () => {
       await captureCard(
         page,
         demo,
-        "microbiology-setup-card",
+        "microbiology-case-section-setup",
         "ogc-782-02-inoculation-ready",
       );
       await setup.getByRole("button", { name: "Save media" }).click();

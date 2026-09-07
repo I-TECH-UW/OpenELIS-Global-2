@@ -4,21 +4,26 @@ import type { Page } from "@playwright/test";
 
 const API_PREFIX = "/api/OpenELIS-Global";
 
-const requireAnalyzerIngressCredential = (
-  name: "ANALYZER_INGRESS_USER" | "ANALYZER_INGRESS_PASS",
-) => {
-  const value = process.env[name]?.trim();
-  if (!value) {
-    throw new Error(
-      `${name} is required for analyzer-ingress Playwright scenarios`,
-    );
-  }
-  return value;
-};
+// A deployment with a dedicated analyzer-import account names it explicitly;
+// otherwise these fall back to the same fixture account auth.setup.ts logs in
+// with, which carries the ANALYSER_IMPORT role.
+const analyzerIngressCredential = (
+  dedicated: string | undefined,
+  shared: string | undefined,
+  fallback: string,
+) => dedicated?.trim() || shared?.trim() || fallback;
 
 const analyzerIngressHeaders = () => {
-  const username = requireAnalyzerIngressCredential("ANALYZER_INGRESS_USER");
-  const password = requireAnalyzerIngressCredential("ANALYZER_INGRESS_PASS");
+  const username = analyzerIngressCredential(
+    process.env.ANALYZER_INGRESS_USER,
+    process.env.TEST_USER,
+    "admin",
+  );
+  const password = analyzerIngressCredential(
+    process.env.ANALYZER_INGRESS_PASS,
+    process.env.TEST_PASS,
+    "adminADMIN!",
+  );
   return {
     Authorization: `Basic ${Buffer.from(`${username}:${password}`).toString("base64")}`,
   };

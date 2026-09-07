@@ -65,9 +65,10 @@ produces a merged HTML report artifact:
 No `workflow_dispatch` manual workflows exist for Playwright. Video recording
 is local-only via the `-video` project variants.
 
-Analyzer-ingress scenarios require `ANALYZER_INGRESS_USER` and
-`ANALYZER_INGRESS_PASS`. CI supplies the configured test account; local runs
-must provide an account authorized for analyzer import.
+Analyzer-ingress scenarios post as a machine client. Set
+`ANALYZER_INGRESS_USER` / `ANALYZER_INGRESS_PASS` to use a dedicated
+analyzer-import account; otherwise they fall back to `TEST_USER` / `TEST_PASS`,
+and then to the `admin` fixture account, which carries the role.
 
 ## Fixtures
 
@@ -400,13 +401,13 @@ test("my demo test", async ({ page }, testInfo) => {
 
 ## Environment Variables
 
-| Variable                | Default             | Description                                                                  |
-| ----------------------- | ------------------- | ---------------------------------------------------------------------------- |
-| `BASE_URL`              | `https://localhost` | App URL                                                                      |
-| `TEST_USER`             | —                   | Login username (required)                                                    |
-| `TEST_PASS`             | —                   | Login password (required)                                                    |
-| `ANALYZER_INGRESS_USER` | —                   | Dedicated account with the Analyser Import role for analyzer-event scenarios |
-| `ANALYZER_INGRESS_PASS` | —                   | Password for the dedicated analyzer-ingress account                          |
-| `PLAYWRIGHT_SLOWMO`     | `500`               | Milliseconds of slowMo for `*-demo-video` projects                           |
-| `PLAYWRIGHT_VIDEO`      | `off`               | Global video override (prefer `*-demo-video` projects)                       |
-| `CI`                    | —                   | Set by GitHub Actions; enables CI mode settings in Playwright config         |
+| Variable                | Default              | Description                                                                  |
+| ----------------------- | -------------------- | ---------------------------------------------------------------------------- |
+| `BASE_URL`              | `https://localhost`  | App URL                                                                      |
+| `TEST_USER`             | —                    | Login username (required)                                                    |
+| `TEST_PASS`             | —                    | Login password (required)                                                    |
+| `ANALYZER_INGRESS_USER` | `TEST_USER`, `admin` | Dedicated account with the Analyser Import role for analyzer-event scenarios |
+| `ANALYZER_INGRESS_PASS` | `TEST_PASS`, fixture | Password for the dedicated analyzer-ingress account                          |
+| `PLAYWRIGHT_SLOWMO`     | `500`                | Milliseconds of slowMo for `*-demo-video` projects                           |
+| `PLAYWRIGHT_VIDEO`      | `off`                | Global video override (prefer `*-demo-video` projects)                       |
+| `CI`                    | —                    | Set by GitHub Actions; enables CI mode settings in Playwright config         |

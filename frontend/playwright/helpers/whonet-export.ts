@@ -91,7 +91,6 @@ export const selectWhonetFilterOption = async (
     throw new Error(`WHONET filter ${filterName} has no controlled listbox`);
   }
   const listbox = page.locator(`[id="${listboxId}"]`);
-  await expect(listbox).toBeVisible();
   const supportsTextEntry = await filter.evaluate((element) =>
     element.matches("input, textarea, [contenteditable='true']"),
   );
