@@ -42,7 +42,6 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
-import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.organization.service.OrganizationService;
@@ -68,6 +67,7 @@ import org.openelisglobal.program.valueholder.ProgramSample;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.qachecklist.service.SampleQaChecklistService;
 import org.openelisglobal.qc.dao.SampleItemQcProfileDAO;
+import org.openelisglobal.questionnaire.service.QuestionnaireStorageService;
 import org.openelisglobal.referral.service.ReferralService;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralSubcontract;
@@ -165,7 +165,7 @@ public class OrderSearchRestController extends BaseRestController {
     private OrganizationService organizationService;
 
     @Autowired
-    private FhirUtil fhirUtil;
+    private QuestionnaireStorageService questionnaireStorageService;
 
     @Autowired
     private SampleStorageAssignmentDAO sampleStorageAssignmentDAO;
@@ -209,6 +209,7 @@ public class OrderSearchRestController extends BaseRestController {
      * "true" leaves the list unscoped.
      */
     private static final String RESTRICT_RECENT_ORDERS_PROPERTY = "restrictRecentOrdersByTestSection";
+    private static final int MAX_DASHBOARD_PAGE_SIZE = 500;
 
     private String ADDRESS_PART_VILLAGE_ID;
     private String ADDRESS_PART_COMMUNE_ID;
@@ -250,9 +251,13 @@ public class OrderSearchRestController extends BaseRestController {
             String currentSysUserId = getSysUserId(request);
             Set<String> allowedSectionIds = resolveAllowedSectionIds(currentSysUserId);
 
-            // Get recent samples - getPageOfSamples expects 1-based startingRecNo
-            int startingRecNo = ((page - 1) * pageSize) + 1;
-            List<Sample> samples = sampleService.getPageOfSamples(startingRecNo);
+            // Newest orders first, in pages of the requested size (1-based startingRecNo).
+            // The system-default paging walks samples oldest-first in pages of
+            // page.defaultPageSize, which never reaches a freshly created order once the
+            // lab has more samples than that (OGC-1192).
+            int effectivePageSize = Math.min(Math.max(pageSize, 1), MAX_DASHBOARD_PAGE_SIZE);
+            int startingRecNo = ((Math.max(page, 1) - 1) * effectivePageSize) + 1;
+            List<Sample> samples = sampleService.getSamplesNewestFirst(startingRecNo, effectivePageSize);
 
             // Apply filters
             for (Sample sample : samples) {
@@ -1093,9 +1098,9 @@ public class OrderSearchRestController extends BaseRestController {
                     // Load questionnaire response if available
                     if (programSample.getQuestionnaireResponseUuid() != null) {
                         try {
-                            QuestionnaireResponse qr = fhirUtil.getLocalFhirClient().read()
-                                    .resource(QuestionnaireResponse.class)
-                                    .withId(programSample.getQuestionnaireResponseUuid().toString()).execute();
+                            QuestionnaireResponse qr = questionnaireStorageService
+                                    .getQuestionnaireResponse(programSample.getQuestionnaireResponseUuid())
+                                    .orElse(null);
                             if (qr != null) {
                                 sampleOrderItems.put("additionalQuestions", qr);
                             }
@@ -1133,9 +1138,8 @@ public class OrderSearchRestController extends BaseRestController {
                         // Load questionnaire response if available
                         if (ps.getQuestionnaireResponseUuid() != null) {
                             try {
-                                QuestionnaireResponse qr = fhirUtil.getLocalFhirClient().read()
-                                        .resource(QuestionnaireResponse.class)
-                                        .withId(ps.getQuestionnaireResponseUuid().toString()).execute();
+                                QuestionnaireResponse qr = questionnaireStorageService
+                                        .getQuestionnaireResponse(ps.getQuestionnaireResponseUuid()).orElse(null);
                                 if (qr != null) {
                                     sampleOrderItems.put("additionalQuestions", qr);
                                 }

@@ -118,6 +118,17 @@ jobs:
           - compose_image: openelisglobal-databse.build
             dockerhub_suffix: database
     steps:
+      # The Trivy step below reads .trivyignore from the workspace, but this job
+      # otherwise never checks the repository out (it only retags images), so
+      # Trivy failed with "cannot find ignorefile" on every publish since the
+      # scan was added. Check out just that file, at the commit being published.
+      - name: Checkout Trivy ignore list
+        uses: actions/checkout@v6
+        with:
+          ref: ${{ needs.setup.outputs.head_sha }}
+          sparse-checkout: .trivyignore
+          sparse-checkout-cone-mode: false
+
       - name: Download image map from triggering build workflow
         uses: actions/download-artifact@v6
         with:
