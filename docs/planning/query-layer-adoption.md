@@ -76,15 +76,20 @@ Counts, non-test source:
 
 |                                                  | Start | Now | In scope |
 | ------------------------------------------------ | ----- | --- | -------- |
-| `window.location.reload()`                       | 84    | 9   | 7        |
-| same-route / cross-screen `assign()` or `href =` | 85    | 72  | 55       |
+| `window.location.reload()`                       | 84    | 7   | 5        |
+| same-route / cross-screen `assign()` or `href =` | 85    | 70  | 53       |
 
 Converted: `UserManagement`; the three order screens; the five rename screens
 plus `Test` and `SelectList`, which complete the family; the four create
-screens; the three test-assign screens; `TestActivation`; the
-general-configuration editor; `ResultSelectListAdd`; `AnalyzerTestName`; the
-provider, external-connection and organization menus; and `TestAdd` with the
-test step form. What is left is seven screens with one reload each.
+screens; the three test-assign screens; `TestActivation` and `TestOrderability`;
+the general-configuration editor; `ResultSelectListAdd`;
+`ResultReportingConfiguration`; `AnalyzerTestName`; the provider,
+external-connection and organization menus; and `TestAdd` with the test step
+form. What is left is five screens with one reload each.
+
+`TestOrderability` also carried the first two same-route `assign()` calls to go:
+both were Cancel buttons that navigated to the screen they were already on in
+order to forget a pending change.
 
 ### One constraint the conversion has to respect
 

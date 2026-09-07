@@ -1,4 +1,4 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect } from "react";
 import {
   Heading,
   Button,
@@ -9,10 +9,11 @@ import {
   Checkbox,
   Modal,
 } from "@carbon/react";
+import { postToOpenElisServerJsonResponse } from "../../utils/Utils";
 import {
-  getFromOpenElisServer,
-  postToOpenElisServerJsonResponse,
-} from "../../utils/Utils";
+  useInvalidateServerData,
+  useServerData,
+} from "../../utils/useServerData";
 import { NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,
@@ -20,6 +21,9 @@ import {
 } from "../../common/CustomNotification";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+
+const ORDERABILITY_ENDPOINT = "/rest/TestOrderability";
+const NO_CHANGES = { activateTest: [], deactivateTest: [] };
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -40,16 +44,21 @@ function TestOrderability() {
 
   const intl = useIntl();
 
-  const componentMounted = useRef(false);
-  const [isLoading, setIsLoading] = useState(false);
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
-  const [testOrderabilityData, setTestOrderabilityData] = useState({});
   const [changedTestOrderabilityData, setChangedTestOrderabilityData] =
     useState({});
-  const [jsonChangeList, setJsonChangeList] = useState({
-    activateTest: [],
-    deactivateTest: [],
-  });
+  const [jsonChangeList, setJsonChangeList] = useState(NO_CHANGES);
+
+  const { data: testOrderabilityData } = useServerData(ORDERABILITY_ENDPOINT);
+  const invalidateServerData = useInvalidateServerData();
+
+  // What the user has changed but not saved. Reloading the document, and
+  // navigating to this same screen, are how it used to be dropped.
+  function discardPendingChanges() {
+    setChangedTestOrderabilityData(testOrderabilityData ?? {});
+    setJsonChangeList(NO_CHANGES);
+    setIsConfirmModalOpen(false);
+  }
 
   const handleActiveTestsCheckboxChange = (test, sampleTypeId, isChecked) => {
     setChangedTestOrderabilityData((prev) => {
@@ -60,7 +69,7 @@ function TestOrderability() {
           let activeTests = [...sample.activeTests];
           let inactiveTests = [...sample.inactiveTests];
 
-          const originalState = testOrderabilityData.orderableTestList.find(
+          const originalState = testOrderabilityData?.orderableTestList?.find(
             (sample) => sample.sampleType.id === sampleTypeId,
           );
 
@@ -150,7 +159,7 @@ function TestOrderability() {
           let activeTests = [...sample.activeTests];
           let inactiveTests = [...sample.inactiveTests];
 
-          const originalState = testOrderabilityData.orderableTestList.find(
+          const originalState = testOrderabilityData?.orderableTestList?.find(
             (sample) => sample.sampleType.id === sampleTypeId,
           );
 
@@ -231,17 +240,7 @@ function TestOrderability() {
     });
   };
 
-  function handleTestOrderabilityData(res) {
-    if (!res) {
-      setIsLoading(true);
-    } else {
-      setTestOrderabilityData(res);
-      setChangedTestOrderabilityData(res);
-    }
-  }
-
   function testOrderabilityPostCall() {
-    setIsLoading(true);
     postToOpenElisServerJsonResponse(
       `/rest/TestOrderability`,
       JSON.stringify({
@@ -256,7 +255,6 @@ function TestOrderability() {
 
   function testOrderabilityPostCallback(res) {
     if (res) {
-      setIsLoading(false);
       addNotification({
         title: intl.formatMessage({
           id: "notification.title",
@@ -267,9 +265,8 @@ function TestOrderability() {
         kind: NotificationKinds.success,
       });
       setNotificationVisible(true);
-      setTimeout(() => {
-        window.location.reload();
-      }, 200);
+      discardPendingChanges();
+      invalidateServerData();
     } else {
       addNotification({
         kind: NotificationKinds.error,
@@ -281,18 +278,12 @@ function TestOrderability() {
   }
 
   useEffect(() => {
-    componentMounted.current = true;
-    setIsLoading(true);
-    getFromOpenElisServer(`/rest/TestOrderability`, (res) => {
-      handleTestOrderabilityData(res);
-    });
-    return () => {
-      componentMounted.current = false;
-      setIsLoading(false);
-    };
-  }, []);
+    if (testOrderabilityData) {
+      setChangedTestOrderabilityData(testOrderabilityData);
+    }
+  }, [testOrderabilityData]);
 
-  if (!isLoading) {
+  if (!testOrderabilityData) {
     return (
       <>
         <Loading />
@@ -349,9 +340,7 @@ function TestOrderability() {
                 <FormattedMessage id="label.button.submit" />
               </Button>{" "}
               <Button
-                onClick={() =>
-                  window.location.assign("/MasterListsPage/TestOrderability")
-                }
+                onClick={discardPendingChanges}
                 kind="tertiary"
                 type="button"
               >
@@ -431,9 +420,7 @@ function TestOrderability() {
                 <FormattedMessage id="label.button.submit" />
               </Button>{" "}
               <Button
-                onClick={() =>
-                  window.location.assign("/MasterListsPage/TestOrderability")
-                }
+                onClick={discardPendingChanges}
                 kind="tertiary"
                 type="button"
               >
