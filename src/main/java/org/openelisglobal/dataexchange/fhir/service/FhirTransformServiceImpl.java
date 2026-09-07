@@ -1897,13 +1897,13 @@ public class FhirTransformServiceImpl implements FhirTransformService {
 
                     List<Test> tests = testService.getTestsByLoincCode(code.getCode());
                     if (tests.isEmpty()) {
-                        throw new InternalErrorException("No test with loinc code " + code.getCode());
+                        throw new UnprocessableEntityException("No test with loinc code " + code.getCode());
                     }
 
                     if (tests.getFirst().getLoinc().equals(code.getCode())) {
                         bean.setTestId(tests.getFirst().getId());
                     } else {
-                        throw new InternalErrorException("Observation code " + code.getCode()
+                        throw new UnprocessableEntityException("Observation code " + code.getCode()
                                 + " does not match test loinc code " + tests.getFirst().getLoinc());
                     }
 
@@ -1912,7 +1912,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             }
 
             if (!matchedLoinc) {
-                throw new InternalErrorException("Observation has code but no LOINC code was found");
+                throw new UnprocessableEntityException("Observation has code but no LOINC code was found");
             }
         }
 
@@ -2247,6 +2247,7 @@ public class FhirTransformServiceImpl implements FhirTransformService {
                 : (anchor != null ? anchor.getSampleItem() : null);
         Sample sampleForResult = anchor != null ? anchor.getSample() : null;
         Patient patient = sampleForResult != null ? sampleHumanService.getPatientForSample(sampleForResult) : null;
+        Provider provider = sampleForResult != null ? sampleHumanService.getProviderForSample(sampleForResult) : null;
         Observation observation = new Observation();
 
         observation.setId(result.getFhirUuidAsString());
@@ -2340,6 +2341,12 @@ public class FhirTransformServiceImpl implements FhirTransformService {
             observation.setEffective(new DateTimeType(analysis.getStartedDate()));
         }
         // observation.setIssued(new Date());
+        // sample_human.provider_id is nullable: samples entered without an ordering
+        // provider carry no performer rather than a dangling Practitioner/null.
+        if (provider != null && provider.getFhirUuid() != null) {
+            observation
+                    .addPerformer(this.createReferenceFor(ResourceType.Practitioner, provider.getFhirUuidAsString()));
+        }
 
         return observation;
     }
