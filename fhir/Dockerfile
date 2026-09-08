@@ -17,14 +17,17 @@ RUN groupadd tomcat \
 COPY --from=hapi --chown=tomcat_admin:tomcat /opt/bitnami/tomcat/webapps/ROOT.war /usr/local/tomcat/webapps/ROOT.war
 COPY --chown=tomcat_admin:tomcat ./tomcat/hapi_server.xml /usr/local/tomcat/conf/server.xml
 COPY --chown=tomcat_admin:tomcat ./fhir/hapi_application.yaml /opt/openelis/config/hapi_application.yaml
+COPY ./fhir/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
 
 RUN chown -R tomcat_admin:tomcat "$CATALINA_HOME" \
     && chmod g-w,o-rwx "$CATALINA_HOME" "$CATALINA_HOME/conf" "$CATALINA_HOME/bin" "$CATALINA_HOME/webapps" \
     && chmod o-rwx "$CATALINA_HOME/logs" "$CATALINA_HOME/temp" "$CATALINA_HOME/work" "$CATALINA_HOME/target" \
     && chmod g-w,o-rwx "$CATALINA_HOME"/conf/* \
     && chmod 640 "$CATALINA_HOME/conf/server.xml" \
-    && chmod 600 /opt/openelis/config/hapi_application.yaml
+    && chmod 600 /opt/openelis/config/hapi_application.yaml \
+    && chmod 755 /usr/local/bin/docker-entrypoint.sh
 
 ENV SPRING_CONFIG_LOCATION=file:///opt/openelis/config/hapi_application.yaml
 EXPOSE 8443
 USER tomcat_admin
+ENTRYPOINT ["docker-entrypoint.sh"]
