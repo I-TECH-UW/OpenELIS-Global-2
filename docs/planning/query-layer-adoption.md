@@ -68,7 +68,7 @@ grouped into checkpoints and each run is allowed to finish, otherwise criterion
 | 1 Dependency, provider, shared query function, first screen | done                            |
 | 2 Stop reloading on error                                   | done — 20 sites across 17 files |
 | 3 List/queue screens refetch after a write                  | in progress                     |
-| 4 Same-route `assign()` becomes a refetch                   | in progress                     |
+| 4 Same-route `assign()` becomes a refetch                   | done                            |
 | 5 Cross-screen `assign()` becomes `history.push`            | not started                     |
 | 6 Per-job E2E comparison                                    | green on `be431ee83e`           |
 
@@ -77,7 +77,7 @@ Counts, non-test source:
 |                                                  | Start | Now | In scope |
 | ------------------------------------------------ | ----- | --- | -------- |
 | `window.location.reload()`                       | 84    | 2   | 0        |
-| same-route / cross-screen `assign()` or `href =` | 85    | 59  | 42       |
+| same-route / cross-screen `assign()` or `href =` | 85    | 57  | 40       |
 
 Criterion 2 is met: no `window.location.reload()` remains outside the session
 and error-recovery set. The two that stay are the CSRF-expiry reload in
@@ -88,11 +88,11 @@ Two were removed rather than converted: the reflex-rule and calculated-value
 forms each carried a delete handler nothing called, reachable from no button,
 whose success path reloaded.
 
-Criterion 3 and 5 have started. `TestOrderability` and batch test reassignment
-each had Cancel buttons that navigated to the screen they were already on to
-forget a pending change; those are resets now. `UomCreate` and `UserAddModify`
-left their screen by downloading the app again to reach a route the router
-already serves; those are `history.push`.
+Criterion 3 is done; criterion 5 has started. `TestOrderability` and batch test
+reassignment each had Cancel buttons that navigated to the screen they were
+already on to forget a pending change; those are resets now. `UomCreate` and
+`UserAddModify` left their screen by downloading the app again to reach a route
+the router already serves; those are `history.push`.
 
 The validation queue is the first screen where a same-route `assign()` was a
 refetch rather than a reset. Three of them: a per-row action succeeding, a row
@@ -106,6 +106,17 @@ way to call it. `Validation` reads entirely from props, so nothing had to be
 un-mirrored; what it does clear is the row state the released rows carried, the
 page number, the open review panels, and the QC acknowledgment scoped to the
 batch just released. A refresh serves page 1, which is what the reload did.
+
+`AnalyserResults` and `SearchResultForm` close out criterion 3. Both had the
+same shape as validation: a parent that already owns the search endpoint and its
+fetch, and a child whose save handler sent the browser to that same endpoint.
+Both now call a `refreshResults` the parent passes down instead.
+`AnalyserResults`'s parent renders it directly, so the callback is a plain prop;
+`SearchResultForm`'s parent renders the search form and the results table as
+siblings, so it uses the same registered-ref pattern as validation. Every
+criterion-3 target named in the acceptance criteria (Validation,
+AnalyserResults, SearchResultForm, TestOrderability, BatchTestReassignment,
+report indexes) is now a refetch or a reset, not a navigation.
 
 ### One constraint the conversion has to respect
 

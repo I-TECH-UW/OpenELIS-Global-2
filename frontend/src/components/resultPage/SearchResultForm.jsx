@@ -1,4 +1,11 @@
-import React, { useContext, useEffect, useState, useRef, useMemo } from "react";
+import React, {
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+  useRef,
+  useMemo,
+} from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import {
@@ -185,6 +192,18 @@ function ResultSearchPage() {
     setResultForm(resultForm);
   };
 
+  /**
+   * The results table re-runs the current search after a write instead of
+   * sending the browser back to the URL it is already on. SearchResultForm
+   * owns the search and publishes its refresh here whenever the endpoint
+   * changes; SearchResults calls it after a save.
+   */
+  const refreshRun = useRef(null);
+  const registerRefresh = useCallback((run) => {
+    refreshRun.current = run;
+  }, []);
+  const refreshResults = useCallback(() => refreshRun.current?.(), []);
+
   // Single-accession context → offer LIS-initiated dispatch of this order to an
   // analyzer. Derived from the active accession-number search param (set when the
   // page is loaded/searched by accession, e.g. /AccessionResults?accessionNumber=…);
@@ -204,6 +223,7 @@ function ResultSearchPage() {
         setParam={setParam}
         setSearchBy={setSearchBy}
         setResults={setResults}
+        registerRefresh={registerRefresh}
         poolLotOptions={poolLotOptions}
         poolOptions={poolOptions}
         poolLotFilter={poolLotFilter}
@@ -232,6 +252,7 @@ function ResultSearchPage() {
         results={resultForm}
         setResultForm={setResultForm}
         refreshOnSubmit={true}
+        refreshResults={refreshResults}
         poolLotFilter={poolLotFilter}
         poolIdFilter={poolIdFilter}
       />
@@ -445,6 +466,20 @@ export function SearchResultForm(props) {
     setPagination(false);
     querySearch(values);
   };
+
+  useEffect(() => {
+    if (!props.registerRefresh) {
+      return;
+    }
+    props.registerRefresh(
+      url
+        ? () => {
+            setLoading(true);
+            getFromOpenElisServer(url, setResultsWithId);
+          }
+        : null,
+    );
+  }, [url, props.registerRefresh]);
 
   const getTests = (tests) => {
     if (componentMounted.current) {
@@ -2750,12 +2785,7 @@ export function SearchResults(props) {
         kind: NotificationKinds.success,
       });
       if (props.refreshOnSubmit) {
-        window.location.href =
-          "/result?type=" +
-          props.searchBy.type +
-          "&doRange=" +
-          props.searchBy.doRange +
-          props.extraParams;
+        props.refreshResults?.();
       }
     } else {
       addNotification({
