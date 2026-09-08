@@ -84,6 +84,15 @@ const Index = () => {
     }
   }, [url]);
 
+  /** Rereads the worklist the address bar names, after a write changes it. */
+  const refreshResults = () => {
+    if (!url) {
+      return;
+    }
+    setIsLoading(true);
+    getFromOpenElisServer(url, handleResults);
+  };
+
   const extractUniqueGroups = (data) => {
     const seenGroups = new Set();
     return data.filter((item) => {
@@ -243,6 +252,7 @@ const Index = () => {
           queryValue={queryValue}
           results={results}
           sampleGroup={sampleGroup}
+          refreshResults={refreshResults}
         />
       </div>
     </>

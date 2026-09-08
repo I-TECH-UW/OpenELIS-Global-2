@@ -28,16 +28,6 @@ import { convertAlphaNumLabNumForDisplay } from "../utils/Utils";
 import { jpSet } from "../utils/JsonPath";
 import config from "../../config.json";
 
-export const buildAnalyzerResultsRedirectUrl = (queryMode, queryValue) => {
-  if (!queryValue) {
-    return "/AnalyzerResults";
-  }
-
-  return queryMode === "id"
-    ? `/AnalyzerResults?id=${queryValue}`
-    : `/AnalyzerResults?type=${queryValue}`;
-};
-
 const AnalyserResults = (props) => {
   const componentMounted = useRef(false);
 
@@ -156,10 +146,10 @@ const AnalyserResults = (props) => {
     if (response.status == 200) {
       message = intl.formatMessage({ id: "validation.save.success" });
       kind = NotificationKinds.success;
-      window.location.href = buildAnalyzerResultsRedirectUrl(
-        props.queryMode,
-        props.queryValue || props.type,
-      );
+      // The accepted rows leave the worklist, so the page it was showing may
+      // no longer exist.
+      setPage(1);
+      props.refreshResults?.();
     } else {
       const detail = await response.text().catch(() => "");
       if (detail) {
