@@ -664,3 +664,37 @@
   white-space: normal;
   word-break: break-word;
 }
+
+.unifiedResultsPatientPanel {
+  margin-top: 0.5rem;
+}
+
+.unifiedResultsPatientPanelHeader {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  flex-wrap: wrap;
+}
+
+.unifiedResultsPatientSearch {
+  margin-top: 1rem;
+}
+
+// Toolbar: every column bottom-aligns its control, and the buttons take the
+// input height, so search, lab unit, date and both buttons sit on one level.
+.unifiedResultsPage .unifiedResultsToolbarColumn {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+}
+
+.unifiedResultsPage .unifiedResultsToolbarColumn > .cds--label {
+  display: block;
+}
+
+.unifiedResultsPage .unifiedResultsToolbarColumn .cds--btn {
+  height: 2.5rem;
+  min-height: 2.5rem;
+  padding-block: 0;
+  align-items: center;
+}
