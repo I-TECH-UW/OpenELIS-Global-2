@@ -4,15 +4,14 @@ import static org.junit.Assert.*;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 import org.hibernate.LazyInitializationException;
 import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
-import org.openelisglobal.storage.valueholder.StorageDevice;
-import org.openelisglobal.storage.valueholder.StorageRack;
-import org.openelisglobal.storage.valueholder.StorageRoom;
-import org.openelisglobal.storage.valueholder.StorageShelf;
+import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.storage.valueholder.*;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -189,6 +188,23 @@ public class StorageLocationServiceIntegrationTest extends BaseWebContextSensiti
     }
 
     @Test
+    public void insertDevice_shouldPersistCode_whenDeviceCodeIsNullOrEmpty() {
+        StorageRoom parentRoom = (StorageRoom) storageLocationService.get(5000, StorageRoom.class);
+        assertNotNull(parentRoom);
+        StorageDevice device = new StorageDevice();
+        device.setName("Test Device 02");
+        device.setTypeEnum(StorageDevice.DeviceType.FREEZER);
+        device.setParentRoom(parentRoom);
+        device.setActive(true);
+        device.setSysUserIdValue(1);
+        Integer deviceId = storageLocationService.insert(device);
+        assertNotNull(deviceId);
+        StorageDevice retrieved = (StorageDevice) storageLocationService.get(deviceId, StorageDevice.class);
+        assertNotNull(retrieved);
+        assertEquals("TESTDEVICE", retrieved.getCode());
+    }
+
+    @Test
     public void insertDevice_shouldThrowException_whenCodeLengthExceedsLimit() {
         StorageRoom parentRoom = (StorageRoom) storageLocationService.get(5000, StorageRoom.class);
         assertNotNull(parentRoom);
@@ -286,6 +302,99 @@ public class StorageLocationServiceIntegrationTest extends BaseWebContextSensiti
         Integer rackId = storageLocationService.insert(rack);
         StorageRack retrieved = (StorageRack) storageLocationService.get(rackId, StorageRack.class);
         assertEquals("TEST-RKR01", retrieved.getCode());
+    }
+
+    @Test
+    public void testInsert_WhenEntityIsStorageBox_ThrowExceptionWhenColumnIsNull() {
+        StorageBox storageBox = new StorageBox();
+
+        storageBox.setPositionSchemaHint("New Schema Hint");
+        storageBox.setLabel("Box-5004");
+
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> {
+            storageLocationService.insert(storageBox);
+        });
+
+        assertEquals("Box must have valid grid dimensions (rows and columns cannot be negative)",
+                exception.getMessage());
+    }
+
+    @Test
+    public void testInsert_WhenEntityIsStorageBox_ReturnInsertedBox() {
+        StorageBox storageBox = new StorageBox();
+        StorageRack storageRack = (StorageRack) storageLocationService.get(5001, StorageRack.class);
+
+        storageBox.setPositionSchemaHint("New Schema Hint");
+        storageBox.setRows(9);
+        storageBox.setColumns(10);
+        storageBox.setLabel("Box-5004");
+        storageBox.setActive(true);
+        storageBox.setCode("CODE-0019");
+        storageBox.setSysUserId("1");
+        storageBox.setParentRack(storageRack);
+
+        Integer returnedInteger = storageLocationService.insert(storageBox);
+        assertEquals("Box-5004", storageBox.getLabel());
+        assertNotNull(returnedInteger);
+        assertEquals(Integer.valueOf(1), returnedInteger);
+        assertEquals("New Schema Hint", storageBox.getPositionSchemaHint());
+    }
+
+    @Test
+    public void testInsert_WhenEntityIsStorageRoom_ReturnInsertedRoom() {
+        StorageRoom storageRoom = new StorageRoom();
+
+        storageRoom.setFhirUuid(UUID.fromString("00000000-0000-0000-0000-000000001078"));
+        storageRoom.setActive(true);
+        storageRoom.setCode("CODE-0019");
+        storageRoom.setName("ROOM-277");
+        storageRoom.setSysUserId("1");
+
+        Integer returnedInteger = storageLocationService.insert(storageRoom);
+        assertEquals("CODE-0019", storageRoom.getCode());
+        assertNotNull(returnedInteger);
+        assertEquals(Integer.valueOf(3), returnedInteger);
+        assertEquals("1", storageRoom.getSysUserId());
+    }
+
+    @Test
+    public void testInsert_WhenEntityIsStorageShelf_ReturnInsertedShelfCodeIsNull() {
+        StorageShelf storageShelf = new StorageShelf();
+        StorageDevice storageDevice = (StorageDevice) storageLocationService.get(5001, StorageDevice.class);
+
+        storageShelf.setFhirUuid(UUID.fromString("00000000-0000-0000-0000-000000001078"));
+        storageShelf.setActive(true);
+        storageShelf.setLabel("SHELF-0087");
+        storageShelf.setSysUserId("1");
+        storageShelf.setParentDevice(storageDevice);
+
+        Integer returnedInteger = storageLocationService.insert(storageShelf);
+        assertEquals("SHELF-0087", storageShelf.getCode());
+        assertNotNull(returnedInteger);
+        assertEquals(Integer.valueOf(2), returnedInteger);
+        assertEquals("1", storageShelf.getSysUserId());
+    }
+
+    @Test
+    public void testInsert_WhenEntityIsStorageRoom_ThrowsExceptionWhenDuplicateCodeIsBeingInserted() {
+        StorageRoom storageRoom = new StorageRoom();
+        storageRoom.setCode("TEST-R01");
+
+        LIMSRuntimeException exception = assertThrows(LIMSRuntimeException.class, () -> {
+            storageLocationService.insert(storageRoom);
+        });
+        assertEquals("Room with code " + storageRoom.getCode() + " already exists", exception.getMessage());
+    }
+
+    @Test
+    public void testInsert_WhenEntityIsUnsupported_ThrowsExceptionWithMessage() {
+        SampleItem sampleItem = new SampleItem();
+        sampleItem.setId("7843");
+
+        LIMSRuntimeException exception = assertThrows(LIMSRuntimeException.class, () -> {
+            storageLocationService.insert(sampleItem);
+        });
+        assertEquals("Unsupported entity type for insert", exception.getMessage());
     }
 
     @Test
@@ -428,4 +537,449 @@ public class StorageLocationServiceIntegrationTest extends BaseWebContextSensiti
         assertTrue(shelvesForDevice5000.stream().anyMatch(s -> s.getLabel().equals("Shelf A")));
         assertTrue(shelvesForDevice5000.stream().anyMatch(s -> s.getLabel().equals("Shelf B")));
     }
+
+    @Test
+    public void testUpdatedRoom_ReturnNullWhenRoomIsNull() {
+        StorageRoom returnedRoom = storageLocationService.updateRoom(6702, new StorageRoom());
+        assertNull(returnedRoom);
+    }
+
+    @Test
+    public void testUpdatedRoom_UpdateRoomWhenCodeIsNotNullAndNewCodeNotEqualsToExistingCode() {
+        StorageRoom storageRoom = (StorageRoom) storageLocationService.get(5001, StorageRoom.class);
+        assertEquals("Test Room 2", storageRoom.getName());
+        assertEquals("Second test room", storageRoom.getDescription());
+        assertEquals("TEST-R02", storageRoom.getCode());
+
+        storageRoom.setName("Test Room 5001");
+        storageRoom.setDescription("Test Number 5001");
+        storageRoom.setCode("CODE-R03");
+        StorageRoom returnedRoom = storageLocationService.updateRoom(5001, storageRoom);
+        assertNotNull(returnedRoom);
+        assertEquals("Test Room 5001", returnedRoom.getName());
+        assertEquals("Test Number 5001", returnedRoom.getDescription());
+        assertEquals("CODE-R03", returnedRoom.getCode());
+
+    }
+
+    @Test
+    public void testUpdatedRoom_UpdateStorageRoomWhenAvailable() {
+        StorageRoom storageRoom = (StorageRoom) storageLocationService.get(5001, StorageRoom.class);
+        assertEquals("Test Room 2", storageRoom.getName());
+        assertEquals("Second test room", storageRoom.getDescription());
+
+        storageRoom.setName("Test Room 5001");
+        storageRoom.setDescription("Test Number 5001");
+        StorageRoom returnedRoom = storageLocationService.updateRoom(5001, storageRoom);
+        assertNotNull(returnedRoom);
+        assertEquals("Test Room 5001", returnedRoom.getName());
+        assertEquals("Test Number 5001", returnedRoom.getDescription());
+    }
+
+    @Test
+    public void testGetBoxesByRack_ReturnsAllBoxesWithParentRackId() {
+        List<StorageBox> storageBoxes = storageLocationService.getBoxesByRack(5004);
+        assertNotNull(storageBoxes);
+        assertEquals(2, storageBoxes.size());
+        assertEquals("Plate 96-A", storageBoxes.getLast().getLabel());
+        assertEquals("Box 81-B", storageBoxes.getFirst().getLabel());
+    }
+
+    @Test
+    public void testGetAllBoxes_ReturnsAllStorageBoxes() {
+        List<StorageBox> storageBoxes = storageLocationService.getAllBoxes();
+        assertNotNull(storageBoxes);
+        assertEquals(2, storageBoxes.size());
+        assertEquals("PLT-01", storageBoxes.getLast().getCode());
+        assertEquals("BOX-02", storageBoxes.getFirst().getCode());
+    }
+
+    @Test
+    public void testCountOccupiedInDevice_ReturnsNumberOfOccupiedBoxesInDevice() {
+        int occupiedBoxesInDevice = storageLocationService.countOccupiedInDevice(5004);
+        assertEquals(2, occupiedBoxesInDevice);
+    }
+
+    @Test
+    public void testCountOccupied_ReturnNumberOfOccupiedBoxesInRack() {
+        int occupiedBoxesInDevice = storageLocationService.countOccupied(5004);
+        assertEquals(2, occupiedBoxesInDevice);
+    }
+
+    @Test
+    public void testCountOccupied_ReturnNumberOfOccupiedBoxesInShelf() {
+        int occupiedBoxesInShelf = storageLocationService.countOccupiedInShelf(5004);
+        assertEquals(2, occupiedBoxesInShelf);
+    }
+
+    @Test
+    public void testValidateLocationActive_ReturnTrueWhenAllParentsAreActive() {
+        StorageRoom room = new StorageRoom();
+        room.setActive(true);
+
+        StorageDevice device = new StorageDevice();
+        device.setActive(true);
+        device.setParentRoom(room);
+
+        StorageShelf shelf = new StorageShelf();
+        shelf.setActive(true);
+        shelf.setParentDevice(device);
+
+        StorageRack rack = new StorageRack();
+        rack.setActive(true);
+        rack.setParentShelf(shelf);
+
+        StorageBox box = new StorageBox();
+        box.setParentRack(rack);
+
+        boolean isLocationActive = storageLocationService.validateLocationActive(box);
+        assertTrue(isLocationActive);
+    }
+
+    @Test
+    public void testValidateLocationActive_ReturnFalseWhenDeviceActiveIsNull() {
+        StorageRoom room = new StorageRoom();
+        room.setActive(true);
+
+        StorageDevice device = new StorageDevice();
+        device.setActive(null); // Null active state
+        device.setParentRoom(room);
+
+        StorageShelf shelf = new StorageShelf();
+        shelf.setParentDevice(device);
+
+        StorageRack rack = new StorageRack();
+        rack.setParentShelf(shelf);
+
+        StorageBox box = new StorageBox();
+        box.setParentRack(rack);
+
+        assertFalse(storageLocationService.validateLocationActive(box));
+    }
+
+    @Test
+    public void testValidateLocationActive_ReturnFalseWhenShelfIsInactive() {
+        StorageRoom room = new StorageRoom();
+        room.setActive(true);
+
+        StorageDevice device = new StorageDevice();
+        device.setActive(true);
+        device.setParentRoom(room);
+
+        StorageShelf shelf = new StorageShelf();
+        shelf.setActive(false); // Inactive shelf
+        shelf.setParentDevice(device);
+
+        StorageRack rack = new StorageRack();
+        rack.setParentShelf(shelf);
+
+        StorageBox box = new StorageBox();
+        box.setParentRack(rack);
+
+        assertFalse(storageLocationService.validateLocationActive(box));
+    }
+
+    @Test
+    public void testValidateLocationActive_ReturnFalseWhenRackIsInactive() {
+        StorageRoom room = new StorageRoom();
+        room.setActive(true);
+
+        StorageDevice device = new StorageDevice();
+        device.setActive(true);
+        device.setParentRoom(room);
+
+        StorageShelf shelf = new StorageShelf();
+        shelf.setActive(true);
+        shelf.setParentDevice(device);
+
+        StorageRack rack = new StorageRack();
+        rack.setActive(false); // Inactive rack
+        rack.setParentShelf(shelf);
+
+        StorageBox box = new StorageBox();
+        box.setParentRack(rack);
+
+        assertFalse(storageLocationService.validateLocationActive(box));
+    }
+
+    @Test
+    public void testBuildHierarchicalPath_ReturnUnKnownLocationWhenBoxIsNull() {
+        String hierarchicalPath = storageLocationService.buildHierarchicalPath(null);
+        assertEquals("Unknown Location", hierarchicalPath);
+    }
+
+    @Test
+    public void testBuildHierarchicalPath_ReturnUnKnownWhenRackIsNull() {
+        StorageBox storageBox = new StorageBox();
+        String hierarchicalPath = storageLocationService.buildHierarchicalPath(storageBox);
+        assertEquals("Unknown", hierarchicalPath);
+    }
+
+    @Test
+    public void testBuildHierarchicalPath_ReturnUnKnownWhenParentShelfIsNull() {
+        StorageBox storageBox = new StorageBox();
+        StorageRack storageRack = new StorageRack();
+        storageBox.setParentRack(storageRack);
+        String hierarchicalPath = storageLocationService.buildHierarchicalPath(storageBox);
+        assertEquals("Unknown", hierarchicalPath);
+    }
+
+    @Test
+    public void testBuildHierarchicalPath_ReturnRackLabelWhenRoomIsNull() {
+        StorageBox storageBox = new StorageBox();
+        StorageRack storageRack = new StorageRack();
+
+        StorageShelf storageShelf = new StorageShelf();
+        storageRack.setLabel("RACk #680");
+        storageRack.setParentShelf(storageShelf);
+
+        storageBox.setParentRack(storageRack);
+        String hierarchicalPath = storageLocationService.buildHierarchicalPath(storageBox);
+        assertEquals("RACk #680", hierarchicalPath);
+    }
+
+    @Test
+    public void testBuildHierarchicalPath_ReturnPathWhenBoxLabelIsNull() {
+        StorageBox storageBox = new StorageBox();
+        StorageRoom storageRoom = new StorageRoom();
+        storageRoom.setName("Test ROOM-0652");
+        StorageRack storageRack = new StorageRack();
+
+        storageRack.setLabel("RACk #680");
+        StorageShelf storageShelf = new StorageShelf();
+        storageShelf.setLabel("SHELF-0022");
+        StorageDevice storageDevice = new StorageDevice();
+        storageDevice.setName("Test-Device-001");
+        storageShelf.setParentDevice(storageDevice);
+
+        storageDevice.setParentRoom(storageRoom);
+
+        storageRack.setParentShelf(storageShelf);
+        storageBox.setParentRack(storageRack);
+
+        String hierarchicalPath = storageLocationService.buildHierarchicalPath(storageBox);
+        System.out.println(hierarchicalPath);
+        assertEquals("Test ROOM-0652 > Test-Device-001 > SHELF-0022 > RACk #680", hierarchicalPath);
+
+    }
+
+    @Test
+    public void testBuildHierarchicalPath_ReturnPathWhenBoxIsFullyBult() {
+        StorageBox storageBox = (StorageBox) storageLocationService.get(5004, StorageBox.class);
+        String hierarchicalPath = storageLocationService.buildHierarchicalPath(storageBox);
+        assertEquals("Test Room 2 > Test Device Inactive > Shelf Inactive > Rack Flexible > Plate 96-A",
+                hierarchicalPath);
+    }
+
+    @Test
+    public void testGetRoom() {
+        StorageRoom storageRoom = storageLocationService.getRoom(5000);
+        assertNotNull(storageRoom);
+        assertEquals("First test room", storageRoom.getDescription());
+        assertEquals("TEST-R01", storageRoom.getCode());
+    }
+
+    @Test
+    public void testCreateRoom_WhenRoomCodeIsNullOrEmpty() {
+
+        StorageRoom storageRoom = new StorageRoom();
+        storageRoom.setFhirUuid(UUID.fromString("00000000-0000-0000-0000-000000001783"));
+        storageRoom.setName("New Created Room");
+        storageRoom.setActive(true);
+        storageRoom.setSysUserId("1");
+
+        StorageRoom createdRoom = storageLocationService.createRoom(storageRoom);
+
+        assertNotNull(createdRoom);
+        assertEquals(UUID.fromString("00000000-0000-0000-0000-000000001783"), createdRoom.getFhirUuid());
+        assertEquals("New Created Room", createdRoom.getName());
+
+    }
+
+    @Test
+    public void testCreateRoom_WhenRoomCodeIsNotNull() {
+
+        StorageRoom storageRoom = new StorageRoom();
+        storageRoom.setFhirUuid(UUID.fromString("00000000-0000-0000-0000-000000001783"));
+        storageRoom.setName("New Created Room");
+        storageRoom.setActive(true);
+        storageRoom.setSysUserId("1");
+        storageRoom.setCode("PLTA-89");
+
+        StorageRoom createdRoom = storageLocationService.createRoom(storageRoom);
+
+        assertNotNull(createdRoom);
+        assertEquals(UUID.fromString("00000000-0000-0000-0000-000000001783"), createdRoom.getFhirUuid());
+        assertEquals("New Created Room", createdRoom.getName());
+    }
+
+    @Test
+    public void testCreateRoom_ThrowLIMSRuntimeExceptionWhenFormatResultIsInvalid() {
+
+    }
+
+    @Test
+    public void testGetShelvesByDevice() {
+
+        List<StorageShelf> storageShelves = storageLocationService.getShelvesByDevice(5004);
+        assertNotNull(storageShelves);
+        assertEquals(1, storageShelves.size());
+        assertEquals("Shelf Inactive", storageShelves.getFirst().getLabel());
+    }
+
+    @Test
+    public void testGetRacksByShelf() {
+        List<StorageRack> storageRacks = storageLocationService.getRacksByShelf(5004);
+        assertNotNull(storageRacks);
+        assertEquals(1, storageRacks.size());
+        assertEquals("TEST-RF", storageRacks.getFirst().getCode());
+
+    }
+
+    @Test
+    public void testUpdate_WhenEntityIsStorageRoom_ThrowLIMSRuntimeExceptionWhenExistingRoomIsNull() {
+        StorageRoom storageRoom = new StorageRoom();
+        storageRoom.setId(4300);
+        assertThrows(LIMSRuntimeException.class, () -> {
+            storageLocationService.update(storageRoom);
+        });
+    }
+
+    @Test
+    public void testUpdate_WhenEntityIsStorageDevice_ThrowLIMSRuntimeExceptionWhenExistingDeviceIsNull() {
+        StorageDevice storageDevice = new StorageDevice();
+        storageDevice.setId(4301);
+        assertThrows(LIMSRuntimeException.class, () -> {
+            storageLocationService.update(storageDevice);
+        });
+    }
+
+    @Test
+    public void testUpdate_WhenEntityIsStorageShelf_ThrowLIMSRuntimeExceptionWhenExistingShelfIsNull() {
+        StorageShelf storageShelf = new StorageShelf();
+        storageShelf.setId(4302);
+        assertThrows(LIMSRuntimeException.class, () -> {
+            storageLocationService.update(storageShelf);
+        });
+    }
+
+    @Test
+    public void testUpdate_WhenEntityIsStorageRack_ThrowLIMSRuntimeExceptionWhenExistingRackIsNull() {
+        StorageRack storageRack = new StorageRack();
+        storageRack.setId(4303);
+        assertThrows(LIMSRuntimeException.class, () -> {
+            storageLocationService.update(storageRack);
+        });
+    }
+
+    @Test
+    public void testUpdate_WhenEntityIsStorageBox_ThrowLIMSRuntimeExceptionWhenExistingBoxIsNull() {
+        StorageBox storageBox = new StorageBox();
+        storageBox.setId(4303);
+        assertThrows(LIMSRuntimeException.class, () -> {
+            storageLocationService.update(storageBox);
+        });
+    }
+
+    @Test
+    public void testUpdate_WhenEntityIsUnsupported_ThrowsExceptionWithMessage() {
+        SampleItem sampleItem = new SampleItem();
+        sampleItem.setId("7843");
+
+        LIMSRuntimeException exception = assertThrows(LIMSRuntimeException.class, () -> {
+            storageLocationService.update(sampleItem);
+        });
+        assertEquals("Unsupported entity type for update", exception.getMessage());
+    }
+
+    @Test
+    public void testUpdate_WhenEntityIsStorageRoom_ReturnNullWhenExistingRoomIsNotNull() {
+        StorageRoom storageRoom = storageLocationService.getRoom(5002);
+
+        storageRoom.setDescription("New Description for Room 5002");
+        storageRoom.setName("Test Room 5002");
+
+        storageLocationService.update(storageRoom);
+        assertEquals("Test Room 5002", storageRoom.getName());
+        assertEquals("New Description for Room 5002", storageRoom.getDescription());
+    }
+
+    @Test
+    public void testUpdate_WhenEntityIsStorageRack_ReturnNullWhenExistingRackIsNotNull() {
+        StorageRack storageRack = (StorageRack) storageLocationService.get(5004, StorageRack.class);
+
+        storageRack.setLabel("New Rack Flexible");
+        storageRack.setActive(false);
+
+        storageLocationService.update(storageRack);
+        assertEquals("New Rack Flexible", storageRack.getLabel());
+        assertFalse(storageRack.getActive());
+    }
+
+    @Test
+    public void testUpdate_WhenEntityIsStorageBox_ReturnNullWhenExistingBoxIsNotNull() {
+        StorageBox storageBox = (StorageBox) storageLocationService.get(5004, StorageBox.class);
+
+        storageBox.setPositionSchemaHint("New Schema Hint");
+        storageBox.setRows(9);
+        storageBox.setLabel("Box-5004");
+
+        storageLocationService.update(storageBox);
+        assertEquals("Box-5004", storageBox.getLabel());
+        assertEquals("New Schema Hint", storageBox.getPositionSchemaHint());
+    }
+
+    @Test
+    public void testUpdate_WhenEntityIsStorageShelf_ReturnNullWhenExistingShelfIsNotNull() {
+        StorageShelf storageShelf = (StorageShelf) storageLocationService.get(5000, StorageShelf.class);
+
+        storageShelf.setLabel("New Shelf Label");
+        storageShelf.setActive(false);
+        storageShelf.setCode("CODE-783");
+
+        storageLocationService.update(storageShelf);
+        assertEquals("New Shelf Label", storageShelf.getLabel());
+        assertFalse("New Schema Hint", storageShelf.getActive());
+    }
+
+    @Test
+    public void testIsCodeUniqueForRoom_ReturnTrueWhenCodeIsNullOrEmpty() {
+        assertTrue(storageLocationService.isCodeUniqueForRoom(null, 5002));
+    }
+
+    @Test
+    public void testIsCodeUniqueForRoom_ReturnTrueWhenCodeIsNotNullOrEmpty() {
+        assertTrue(storageLocationService.isCodeUniqueForRoom("TEST-RR1", 5000));
+    }
+
+    @Test
+    public void testIsCodeUniqueForDevice_ReturnTrueWhenCodeIsNullOrEmpty() {
+        assertTrue(storageLocationService.isCodeUniqueForDevice(null, 5000));
+    }
+
+    @Test
+    public void testIsCodeUniqueForDevice_ReturnTrueWhenCodeIsNotNullOrEmpty() {
+        assertTrue(storageLocationService.isCodeUniqueForDevice("TEST-F01", 5000));
+    }
+
+    @Test
+    public void testIsCodeUniqueForShelf_ReturnTrueWhenCodeIsNullOrEmpty() {
+        assertTrue(storageLocationService.isCodeUniqueForShelf(null, 5003));
+    }
+
+    @Test
+    public void testIsCodeUniqueForShelf_ReturnTrueWhenCodeIsNotNullOrEmpty() {
+        assertTrue(storageLocationService.isCodeUniqueForShelf("TEST-SI", 5003));
+    }
+
+    @Test
+    public void testIsCodeUniqueForRack_ReturnTrueWhenCodeIsNullOrEmpty() {
+        assertTrue(storageLocationService.isCodeUniqueForRack(null, 5001));
+    }
+
+    @Test
+    public void testIsCodeUniqueForRack_ReturnTrueWhenCodeIsNotNullOrEmpty() {
+        assertTrue(storageLocationService.isCodeUniqueForRack("TEST-RR2", 5001));
+    }
+
 }
