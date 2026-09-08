@@ -5,7 +5,13 @@ the unchanged HAPI 6.6.0 WAR on Tomcat 9 with Java 17 on Ubuntu Noble. The old
 HAPI image supplies only the WAR during the build, not the final operating
 system, Tomcat installation, or entrypoint. Configuration stays at
 `/opt/openelis/config/hapi_application.yaml`; TLS settings and runtime user 8443
-are preserved. The Tomcat installation is now `/usr/local/tomcat`.
+are preserved. The Tomcat installation is now `/usr/local/tomcat`. Deployments
+that override the server configuration by mounting a file at the old Bitnami
+path (`/opt/bitnami/tomcat/conf/server.xml`, as `dev.docker-compose.yml` and the
+installer template do) keep working: the image entrypoint
+(`fhir/docker-entrypoint.sh`) applies such a file to the Tomcat configuration
+directory before start-up. Deployments that pass `-Dhapi.ssl.*` through
+`CATALINA_OPTS` use the baked `server.xml` as before.
 
 This addresses the expired Bullseye package metadata that prevented clean image
 builds. It does not constitute a HAPI application upgrade or a PostgreSQL
@@ -48,13 +54,26 @@ package signature or expiration checks to retain an obsolete base image.
 
 ### What the library change looks like on an OpenELIS database
 
-The move from Debian 11 to Debian 12 takes glibc from 2.31 to 2.36. PostgreSQL 14
-records the glibc version only for named collations in `pg_collation`; it does
-not track the database's default collation (`en_US.utf8` in every OpenELIS
-install), so indexes on text columns keep working silently on the new image
-and can still hide ordering inconsistencies. Run the remediation once, in the
-maintenance window, right after the first start on the new image and before
-the site is opened to users:
+The move from Debian 11 to Debian 12 takes glibc from 2.31 to 2.36. PostgreSQL
+14 records the glibc version only for named collations in `pg_collation`; it
+does not track the database's default collation (`en_US.utf8` in every OpenELIS
+install), so indexes on text columns keep working silently on the new image and
+can still hide ordering inconsistencies.
+
+The database image handles this itself. Its entrypoint
+(`db/docker-entrypoint-collation.sh`) runs before PostgreSQL accepts
+connections: on an existing data directory it starts the server privately,
+compares the recorded collation versions with the ones the operating system
+provides, and only when they differ rebuilds every index of the affected
+databases (`REINDEX DATABASE`) and records the new versions
+(`ALTER COLLATION ... REFRESH VERSION`). Empty volumes and already-refreshed
+volumes pass straight through, so the check costs nothing on later starts. The
+check never blocks start-up: if the private server does not come up or the
+`postgres` role cannot connect over the local socket (the check uses
+`POSTGRES_PASSWORD` when local authentication requires one), the wrapper logs
+the statements to run and PostgreSQL starts normally. Set
+`OE_DB_SKIP_COLLATION_REINDEX=true` on the database service to skip it and run
+the same statements by hand in a maintenance window:
 
 ```sql
 -- as the postgres superuser, connected to clinlims
@@ -65,7 +84,10 @@ ALTER COLLATION "en_US.utf8" REFRESH VERSION;
 ALTER COLLATION "en_US" REFRESH VERSION;
 ```
 
-Measured on a development database with 914 indexes (11 MB), `REINDEX
-DATABASE` took about one second; the time grows with index size. Take a backup
-before the upgrade regardless, and rehearse the sequence on a copy of the
-production volume first.
+Measured on a development database with 913 indexes (11 MB), the rebuild took
+between one and seven seconds depending on host load; the time grows with index
+size, and the first start on the new image is delayed by that much. Take a
+backup before the upgrade regardless, and rehearse on a copy of the production
+volume first. Rolling back to the previous image on the same volume works (same
+PostgreSQL major); the old image then sees recorded version 2.36 against its own
+2.31 and the check would rebuild again on the next start of the new image.
