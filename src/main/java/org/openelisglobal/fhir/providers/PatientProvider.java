@@ -32,7 +32,6 @@ import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.OperationOutcome;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.dataexchange.fhir.FHIRTransformUtil;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
@@ -74,9 +73,6 @@ public class PatientProvider implements IResourceProvider {
 
     @Autowired
     private FhirTransformService fhirTransformService;
-
-    @Autowired
-    private FHIRTransformUtil fhirTransformUtil;
 
     @Autowired
     private FhirPersistanceService fhirPersistenceService;
@@ -160,7 +156,7 @@ public class PatientProvider implements IResourceProvider {
             PatientUtil.preparePatientData(errors, request, patientInfo, patient);
 
             if (fhirPatient.getTelecom() != null) {
-                fhirTransformUtil.addTelecomToPerson(fhirPatient.getTelecom(), patient.getPerson());
+                fhirTransformService.addTelecomToPerson(fhirPatient.getTelecom(), patient.getPerson());
             } else {
                 LogEvent.logInfo(this.getClass().getSimpleName(), method, "No telecom info provided for patient");
             }
@@ -298,7 +294,7 @@ public class PatientProvider implements IResourceProvider {
             }
 
             if (fhirPatient.hasTelecom()) {
-                fhirTransformUtil.addTelecomToPerson(fhirPatient.getTelecom(), workingPatient.getPerson());
+                fhirTransformService.addTelecomToPerson(fhirPatient.getTelecom(), workingPatient.getPerson());
             }
 
             List<PatientContact> contacts = patientContactService.getForPatient(existingPatient.getId());

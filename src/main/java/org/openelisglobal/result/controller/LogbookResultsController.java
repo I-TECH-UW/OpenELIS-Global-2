@@ -8,8 +8,10 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
 import org.apache.commons.validator.GenericValidator;
@@ -123,7 +125,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             "paging.currentPage", //
             "testResult*.refer", "testResult*.referralItem.referralReasonId",
             "testResult*.referralItem.referredInstituteId", "testResult*.referralItem.referredTestId",
-            "testResult*.referralItem.referredSendDate" };
+            "testResult*.referralItem.referredSendDate", "testResult*.expandedUncertainty",
+            "testResult*.coverageFactor" };
 
     @Autowired
     private DictionaryService dictionaryService;
@@ -514,7 +517,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
     private void createAnalysisOnlyUpdates(ResultsUpdateDataSet actionDataSet) {
         for (TestResultItem testResultItem : actionDataSet.getAnalysisOnlyChangeResults()) {
 
-            Analysis analysis = analysisService.get(testResultItem.getAnalysisId());
+            Analysis analysis = ResultUtil.resolveModifiedAnalysis(actionDataSet, testResultItem.getAnalysisId());
             analysis.setSysUserId(getSysUserId(request));
             analysis.setCompletedDate(DateUtil.convertStringDateToTimestampLenient(testResultItem.getTestDate()));
             if (testResultItem.getAnalysisMethod() != null) {
@@ -523,22 +526,22 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             if (!GenericValidator.isBlankOrNull(testResultItem.getTestMethod())) {
                 analysis.setMethod(methodService.get(testResultItem.getTestMethod()));
             }
-            actionDataSet.getModifiedAnalysis().add(analysis);
         }
     }
 
     private void createResultsFromItems(ResultsUpdateDataSet actionDataSet, boolean supportReferrals,
             boolean alwaysValidate, boolean useTechnicianName, String statusRuleSet) {
 
+        Set<String> correctedFlagComputedIds = new HashSet<>();
+
         for (TestResultItem testResultItem : actionDataSet.getModifiedItems()) {
 
-            Analysis analysis = analysisService.get(testResultItem.getAnalysisId());
+            Analysis analysis = ResultUtil.resolveModifiedAnalysis(actionDataSet, testResultItem.getAnalysisId());
             analysis.setStatusId(getStatusForTestResult(testResultItem, alwaysValidate));
             analysis.setSysUserId(getSysUserId(request));
             if (!GenericValidator.isBlankOrNull(testResultItem.getTestMethod())) {
                 analysis.setMethod(methodService.get(testResultItem.getTestMethod()));
             }
-            actionDataSet.getModifiedAnalysis().add(analysis);
 
             actionDataSet.addToNoteList(noteService.createSavableNote(analysis, NoteType.INTERNAL,
                     testResultItem.getNote(), RESULT_SUBJECT, getSysUserId(request)));
@@ -560,8 +563,13 @@ public class LogbookResultsController extends LogbookResultsBaseController {
             List<Result> results = resultSaveService.createResultsFromTestResultItem(bean,
                     actionDataSet.getDeletableResults());
 
-            analysis.setCorrectedSincePatientReport(
-                    resultSaveService.isUpdatedResult() && analysisService.patientReportHasBeenDone(analysis));
+            boolean correctedSinceReport = resultSaveService.isUpdatedResult()
+                    && analysisService.patientReportHasBeenDone(analysis);
+            if (correctedFlagComputedIds.add(analysis.getId())) {
+                analysis.setCorrectedSincePatientReport(correctedSinceReport);
+            } else if (correctedSinceReport) {
+                analysis.setCorrectedSincePatientReport(true);
+            }
 
             if (analysisService.hasBeenCorrectedSinceLastPatientReport(analysis)) {
                 Note note = noteService.createSavableNote(analysis, NoteType.EXTERNAL,
@@ -587,6 +595,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
     }
 
+    @SuppressWarnings("deprecation")
     private void handleReferrals(TestResultItem testResultItem, ReferralItem referralItem, List<Result> results,
             Analysis analysis, ResultsUpdateDataSet actionDataSet) {
         // List<Referral> referrals = new ArrayList<>();

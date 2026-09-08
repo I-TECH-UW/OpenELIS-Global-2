@@ -4,12 +4,20 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.CodeableConcept;
+import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.Device;
 import org.hl7.fhir.r4.model.DiagnosticReport;
+import org.hl7.fhir.r4.model.HumanName;
+import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Practitioner;
+import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Specimen;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.common.valueholder.BaseObject;
@@ -30,6 +38,7 @@ import org.openelisglobal.sample.bean.SampleOrderItem;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.test.beanItems.TestResultItem;
+import org.openelisglobal.test.valueholder.Test;
 
 public interface FhirTransformService {
 
@@ -54,6 +63,8 @@ public interface FhirTransformService {
 
     String getIdFromLocation(String location);
 
+    Reference createReferenceFor(Resource resource);
+
     void transformPersistResultValidationFhirObjects(List<Result> deletableList, List<Analysis> analysisUpdateList,
             ArrayList<Result> resultUpdateList, List<AnalysisItem> resultItemList, ArrayList<Sample> sampleUpdateList,
             ArrayList<Note> noteUpdateList) throws FhirLocalPersistingException;
@@ -66,11 +77,19 @@ public interface FhirTransformService {
 
     Practitioner transformNameToPractitioner(String practitionerName);
 
+    Reference createReferenceFor(ResourceType resourceType, String id);
+
+    Identifier createIdentifier(String system, String value);
+
     boolean setTempIdIfMissing(Resource resource, TempIdGenerator tempIdGenerator);
 
     Practitioner transformProviderToPractitioner(Provider provider);
 
     Provider transformToProvider(Practitioner practitioner);
+
+    void addHumanNameToPerson(HumanName humanName, org.openelisglobal.person.valueholder.Person person);
+
+    void addTelecomToPerson(List<ContactPoint> telecoms, org.openelisglobal.person.valueholder.Person person);
 
     PatientSearchResults transformToOpenElisPatientSearchResults(org.hl7.fhir.r4.model.Patient externalPatient);
 
@@ -90,13 +109,19 @@ public interface FhirTransformService {
 
     ServiceRequest transformToServiceRequest(String anlaysisId);
 
+    Specimen transformToSpecimen(SampleItem sampleItem);
+
     SampleOrderItem buildSampleOrderItemFromServiceRequest(ServiceRequest serviceRequest, String sysUserId)
             throws Exception;
 
     List<SampleEditItem> buildSampleEditItemsListFromServiceRequest(ServiceRequest serviceRequest, String sysUserId)
             throws Exception;
 
-    Specimen transformToSpecimen(SampleItem sampleItem);
+    List<Test> resolveTestsFromCodeableConcept(CodeableConcept codeableConcept);
+
+    Device transformAnalyzerToDevice(Analyzer analyzer);
+
+    Analyzer transformDeviceToAnalyzer(Device device);
 
     Specimen transformToSpecimen(String sampleItemId);
 

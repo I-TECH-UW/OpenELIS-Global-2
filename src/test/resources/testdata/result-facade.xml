@@ -115,11 +115,11 @@
     <test_section id="1" name="TB"
         description="SectionDescription1" org_id="3" is_external="N"
         lastupdated="2025-03-20 12:00:00.0" sort_order="2147483647"
-        name_localization_id="1" display_key="TestKey1" />
+        name_localization_id="1" display_key="TestKey1" domain="CLINICAL" />
     <test_section id="2" name="TestSection2"
         description="SectionDescription2" org_id="4" is_external="N"
         lastupdated="2025-03-21 13:00:00.0" sort_order="2147483646"
-        name_localization_id="2" display_key="TestKey2" />
+        name_localization_id="2" display_key="TestKey2" domain="CLINICAL" />
 
     <test_formats id="1" lastupdated="2025-03-21 12:00:00" />
     <test_formats id="2" lastupdated="2025-03-21 12:00:00" />
@@ -173,10 +173,13 @@
 
     <sampletype_test id="1" test_id="1" sample_type_id="3" />
 
+    <!-- Panel is version-mapped on lastupdated; a null version reads as transient
+        on merge -->
     <panel id="1" name="Test Panel"
-        description="This is a test panel." name_localization_id="1" />
+        description="This is a test panel." name_localization_id="1"
+        lastupdated="2025-03-08 12:00:00" />
     <panel id="2" name="DCPIP Panel" description="Vitamins test"
-        name_localization_id="2" />
+        name_localization_id="2" lastupdated="2025-03-08 12:00:00" />
 
     <panel_item id="1" panel_id="1" sort_order="1"
         test_local_abbrev="TLA1" method_name="therapy"
@@ -247,9 +250,8 @@
     <sample_human id="1" provider_id="1" samp_id="1"
         patient_id="1" lastupdated="2023-11-01 12:00:00" />
 
-    <sample_human id="2" provider_id="1" samp_id="2"
-        patient_id="2" lastupdated="2023-11-01 12:00:00" />
-
+    <!-- sample 2 deliberately has no ordering provider: Observation.performer
+        must be omitted, not Practitioner/null -->
     <sample_human id="2" samp_id="2" patient_id="2"
         lastupdated="2023-11-01 12:00:00" />
 

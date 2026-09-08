@@ -131,7 +131,8 @@ describe("SampleResultsSection", () => {
     // The editable option input (scoped so it doesn't collide with the live
     // preview's dropdown, which also shows the option label).
     expect(container.querySelector("#opt-value-0-0").value).toBe("Male");
-    expect(screen.getByDisplayValue(">140")).toBeInTheDocument(); // interpretation match
+    // Select-list component → the interpretation value field is a dropdown (FR-32).
+    expect(container.querySelector("#int-match-0-0").tagName).toBe("SELECT");
     expect(screen.getByDisplayValue("High")).toBeInTheDocument(); // interpretation text
   });
 
@@ -192,12 +193,118 @@ describe("SampleResultsSection", () => {
     fireEvent.change(container.querySelector("#comp-label-1"), {
       target: { value: "Diastolic" },
     });
+    // The result type is a required explicit choice (FR-56) — pick Numeric.
+    fireEvent.click(container.querySelector("#comp-type-1-N"));
     fireEvent.click(saveButton());
 
     const components = savedPayload().components;
     expect(components).toHaveLength(2);
     // Code defaults to the label when left blank.
     expect(components[1].code).toBe("Diastolic");
+  });
+
+  it("marks a component primary: code fixed to PRIMARY + disabled, other toggles locked", async () => {
+    getFromOpenElisServer.mockImplementation((url, cb) => {
+      if (url === "/rest/test-list" || url === "/rest/uom") {
+        cb([]);
+      } else {
+        cb(clone(TWO_COMPONENTS));
+      }
+    });
+    const { container } = renderSection();
+    await screen.findByDisplayValue("SYS");
+
+    // No primary yet → both toggles enabled; mark the first.
+    fireEvent.click(container.querySelector("#comp-primary-0"));
+
+    // Its code is forced to PRIMARY and the field is disabled.
+    const code0 = container.querySelector("#comp-code-0");
+    expect(code0.value).toBe("PRIMARY");
+    expect(code0).toBeDisabled();
+    // The other component can no longer be marked primary.
+    expect(container.querySelector("#comp-primary-1")).toBeDisabled();
+
+    fireEvent.click(saveButton());
+    const components = savedPayload().components;
+    expect(components[0].isPrimary).toBe(true);
+    expect(components[0].code).toBe("PRIMARY");
+    expect(components[1].isPrimary).toBeFalsy();
+  });
+
+  it("unmarking the primary frees its code and unlocks the other toggles", async () => {
+    getFromOpenElisServer.mockImplementation((url, cb) => {
+      if (url === "/rest/test-list" || url === "/rest/uom") {
+        cb([]);
+      } else {
+        const data = clone(TWO_COMPONENTS);
+        data.components[0].isPrimary = true;
+        data.components[0].code = "PRIMARY";
+        cb(data);
+      }
+    });
+    const { container } = renderSection();
+    await screen.findByDisplayValue("PRIMARY");
+
+    // Second toggle starts locked while the first is primary.
+    expect(container.querySelector("#comp-primary-1")).toBeDisabled();
+
+    // Unmark the primary → code falls back to its label, other toggle unlocks.
+    fireEvent.click(container.querySelector("#comp-primary-0"));
+    expect(container.querySelector("#comp-code-0").value).toBe("Systolic");
+    expect(container.querySelector("#comp-code-0")).not.toBeDisabled();
+    expect(container.querySelector("#comp-primary-1")).not.toBeDisabled();
+
+    // Now the second component can take the designation.
+    fireEvent.click(container.querySelector("#comp-primary-1"));
+    expect(container.querySelector("#comp-code-1").value).toBe("PRIMARY");
+    expect(container.querySelector("#comp-code-1")).toBeDisabled();
+  });
+
+  it("shows result types as primary cards with the legacy types behind a disclosure (FR-28)", async () => {
+    renderSection();
+    await screen.findByDisplayValue("SYS");
+
+    // The three primary types render as tiles up front.
+    expect(
+      screen.getByText(
+        messages["label.testCatalog.sampleResults.resultType.N"],
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(
+        messages["label.testCatalog.sampleResults.resultType.R"],
+      ),
+    ).toBeInTheDocument();
+    // A legacy type (Titer) is hidden until the disclosure is opened.
+    expect(
+      screen.queryByText(
+        messages["label.testCatalog.sampleResults.resultType.T"],
+      ),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: messages[
+          "label.testCatalog.sampleResults.resultType.showAdvanced"
+        ],
+      }),
+    );
+    expect(
+      screen.getByText(
+        messages["label.testCatalog.sampleResults.resultType.T"],
+      ),
+    ).toBeInTheDocument();
+  });
+
+  it("changes a component's result type via the cards and persists it (FR-28)", async () => {
+    const { container } = renderSection();
+    await screen.findByDisplayValue("SYS");
+
+    // Pick "Numeric" (the tile's hidden radio input) for the loaded component.
+    fireEvent.click(container.querySelector("#comp-type-0-N"));
+    fireEvent.click(saveButton());
+
+    expect(savedPayload().components[0].resultType).toBe("N");
   });
 
   it("adds a dictionary option via the search box and includes it in the payload", async () => {
@@ -228,8 +335,10 @@ describe("SampleResultsSection", () => {
       }),
     );
     // The new (second) interpretation row — fill match, text, and severity.
+    // This component is a select-list (D), so the value field is a dropdown of
+    // its configured options (FR-32); pick the option "Male".
     fireEvent.change(container.querySelector("#int-match-0-1"), {
-      target: { value: "<90" },
+      target: { value: "Male" },
     });
     fireEvent.change(container.querySelector("#int-text-0-1"), {
       target: { value: "Low" },
@@ -242,8 +351,49 @@ describe("SampleResultsSection", () => {
     const interps = savedPayload().components[0].interpretations;
     expect(interps).toHaveLength(2);
     const added = interps.find((i) => i.text === "Low");
-    expect(added.valueMatch).toBe("<90");
+    expect(added.valueMatch).toBe("Male");
     expect(added.severity).toBe("ABNORMAL");
+  });
+
+  it("uses a free-text value field for numeric interpretations (FR-32)", async () => {
+    const numeric = {
+      testId: "7",
+      components: [
+        {
+          id: "C1",
+          code: "GLU",
+          label: "Glucose",
+          displayOrder: 1,
+          resultType: "N",
+          options: [],
+          interpretations: [],
+        },
+      ],
+    };
+    getFromOpenElisServer.mockImplementation((url, cb) => {
+      if (url === "/rest/test-list" || url === "/rest/uom") {
+        cb([]);
+      } else {
+        cb(clone(numeric));
+      }
+    });
+    const { container } = renderSection();
+    await screen.findByDisplayValue("GLU");
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: messages["label.testCatalog.sampleResults.addInterpretation"],
+      }),
+    );
+    // Numeric → the value field is a free-text pattern input, not a dropdown.
+    const match = container.querySelector("#int-match-0-0");
+    expect(match.tagName).toBe("INPUT");
+    fireEvent.change(match, { target: { value: ">140" } });
+    fireEvent.click(saveButton());
+
+    expect(savedPayload().components[0].interpretations[0].valueMatch).toBe(
+      ">140",
+    );
   });
 
   it("removes a component so it is absent from the saved payload", async () => {
@@ -324,6 +474,176 @@ describe("SampleResultsSection", () => {
     expect(savedPayload().components[0].uomId).toBe("5");
   });
 
+  it("creates a unit inline and auto-selects it (FR-29)", async () => {
+    const numericTest = {
+      testId: "7",
+      components: [
+        {
+          id: "C1",
+          code: "SYS",
+          label: "Systolic",
+          displayOrder: 1,
+          resultType: "N",
+          options: [],
+          interpretations: [],
+        },
+      ],
+    };
+    getFromOpenElisServer.mockImplementation((url, cb) => {
+      if (url === "/rest/test-list" || url === "/rest/uom") {
+        cb([]);
+      } else {
+        cb(clone(numericTest));
+      }
+    });
+    // The create endpoint echoes the new unit back as {id, value}.
+    postToOpenElisServerJsonResponse.mockImplementation((url, body, cb) => {
+      if (url === "/rest/uom") {
+        cb({ id: "42", value: JSON.parse(body).name });
+      } else {
+        cb({ components: [] });
+      }
+    });
+    const { container } = renderSection();
+    await screen.findByDisplayValue("SYS");
+
+    // Open the inline "add new unit" form via the ＋ affordance.
+    fireEvent.click(screen.getByTestId("add-unit-0"));
+    await screen.findByTestId("add-unit-form-0");
+
+    fireEvent.change(container.querySelector("#add-unit-name-0"), {
+      target: { value: "mmol/L" },
+    });
+    fireEvent.change(container.querySelector("#add-unit-ucum-0"), {
+      target: { value: "mmol/L" },
+    });
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: messages["label.testCatalog.sampleResults.uom.saveNew"],
+      }),
+    );
+
+    // The POST carried the new unit's fields.
+    const createCall = postToOpenElisServerJsonResponse.mock.calls.find(
+      (c) => c[0] === "/rest/uom",
+    );
+    expect(JSON.parse(createCall[1]).name).toBe("mmol/L");
+    expect(JSON.parse(createCall[1]).ucumCode).toBe("mmol/L");
+
+    // The new unit is auto-selected on the component and persisted on save.
+    fireEvent.click(saveButton());
+    expect(savedPayload().components[0].uomId).toBe("42");
+  });
+
+  it("shows only the empty state — no bare column-header band — when a component has no interpretations (OGC-1153)", async () => {
+    const noInterpretations = {
+      testId: "7",
+      components: [
+        {
+          id: "C1",
+          code: "GLU",
+          label: "Glucose",
+          displayOrder: 1,
+          // Numeric so the select-list options table is not disclosed and the
+          // interpretations table is the only table this component can render.
+          resultType: "N",
+          options: [],
+          interpretations: [],
+        },
+      ],
+    };
+    getFromOpenElisServer.mockImplementation((url, cb) => {
+      if (url === "/rest/test-list" || url === "/rest/uom") {
+        cb([]);
+      } else {
+        cb(clone(noInterpretations));
+      }
+    });
+    const { container } = renderSection();
+    await screen.findByDisplayValue("GLU");
+
+    expect(
+      screen.getByText(
+        messages["label.testCatalog.sampleResults.interpretations.empty"],
+      ),
+    ).toBeInTheDocument();
+    // Column headings with nothing beneath them read as broken layout.
+    expect(
+      screen.queryByText(
+        messages["label.testCatalog.sampleResults.interp.valueMatch"],
+      ),
+    ).not.toBeInTheDocument();
+    expect(container.querySelectorAll("table")).toHaveLength(0);
+    // Suppressing the table must not take the add affordance with it.
+    expect(
+      screen.getByRole("button", {
+        name: messages["label.testCatalog.sampleResults.addInterpretation"],
+      }),
+    ).toBeInTheDocument();
+  });
+
+  it("shows only the empty state for a select-list component with no options (OGC-1153)", async () => {
+    const noOptions = {
+      testId: "7",
+      components: [
+        {
+          id: "C1",
+          code: "ABO",
+          label: "Blood group",
+          displayOrder: 1,
+          // Dictionary type discloses the options table; no options and no
+          // interpretations means neither table should render.
+          resultType: "D",
+          options: [],
+          interpretations: [],
+        },
+      ],
+    };
+    getFromOpenElisServer.mockImplementation((url, cb) => {
+      if (url === "/rest/test-list" || url === "/rest/uom") {
+        cb([]);
+      } else {
+        cb(clone(noOptions));
+      }
+    });
+    const { container } = renderSection();
+    await screen.findByDisplayValue("ABO");
+
+    expect(
+      screen.getByText(
+        messages["label.testCatalog.sampleResults.options.empty"],
+      ),
+    ).toBeInTheDocument();
+    // The orphan four-column heading band this ticket reported must be gone.
+    expect(
+      screen.queryByText(
+        messages["label.testCatalog.sampleResults.option.value"],
+      ),
+    ).not.toBeInTheDocument();
+    expect(container.querySelectorAll("table")).toHaveLength(0);
+    // Suppressing the table must not take the add affordance with it.
+    expect(
+      container.querySelector('[data-testid="add-custom-option-0"]'),
+    ).toBeInTheDocument();
+  });
+
+  it("shows the interpretations table and no empty state once an interpretation exists (OGC-1153)", async () => {
+    const { container } = renderSection();
+    await screen.findByDisplayValue("SYS");
+
+    expect(
+      screen.getByText(
+        messages["label.testCatalog.sampleResults.interp.valueMatch"],
+      ),
+    ).toBeInTheDocument();
+    expect(container.querySelector("#int-match-0-0")).toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        messages["label.testCatalog.sampleResults.interpretations.empty"],
+      ),
+    ).not.toBeInTheDocument();
+  });
+
   it("copies sample-results configuration from another test", async () => {
     getFromOpenElisServer.mockImplementation((url, cb) => {
       if (url === "/rest/test-list") {
@@ -353,5 +673,73 @@ describe("SampleResultsSection", () => {
     expect(postToOpenElisServerJsonResponse.mock.calls[0][0]).toBe(
       "/rest/test-catalog/tests/7/sample-results/copy-from/9",
     );
+  });
+
+  /**
+   * Scroll-jump regression: adding the SECOND component used to flip the list
+   * wrappers from Fragment/PlainPanel to Accordion/AccordionItem — React
+   * cannot reconcile across element types, so the whole section remounted
+   * (fresh DOM nodes), dropping focus and resetting the page scroll to the
+   * top. The wrapper types are now stable for any component count, so the
+   * first component's DOM nodes must survive the add untouched.
+   */
+  it("adding the second component does not remount the first (no scroll jump)", async () => {
+    getFromOpenElisServer.mockImplementation((url, cb) => {
+      if (url === "/rest/test-list" || url === "/rest/uom") {
+        cb([]);
+      } else {
+        cb({
+          testId: "7",
+          components: [
+            {
+              id: "c1",
+              code: "PRIMARY",
+              label: "Primary",
+              isPrimary: true,
+              resultType: "N",
+              displayOrder: 1,
+              showOnReport: true,
+              options: [],
+              interpretations: [],
+            },
+          ],
+        });
+      }
+    });
+    renderSection();
+    const firstLabelBefore = await screen.findByDisplayValue("Primary");
+
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: messages["label.testCatalog.sampleResults.addComponent"],
+      }),
+    );
+
+    // same DOM node — the section did not remount
+    expect(screen.getByDisplayValue("Primary")).toBe(firstLabelBefore);
+    // the new component rendered below, usable immediately
+    expect(document.getElementById("comp-label-1")).not.toBeNull();
+    // first component's data untouched
+    expect(screen.getByDisplayValue("Primary")).toBeInTheDocument();
+  });
+
+  it("adding a third component behaves the same as the second", async () => {
+    getFromOpenElisServer.mockImplementation((url, cb) => {
+      if (url === "/rest/test-list" || url === "/rest/uom") {
+        cb([]);
+      } else {
+        cb(clone(TWO_COMPONENTS));
+      }
+    });
+    renderSection();
+    const firstLabelBefore = await screen.findByDisplayValue("Systolic");
+    fireEvent.click(
+      screen.getByRole("button", {
+        name: messages["label.testCatalog.sampleResults.addComponent"],
+      }),
+    );
+    expect(screen.getByDisplayValue("Systolic")).toBe(firstLabelBefore);
+    expect(screen.getByDisplayValue("Diastolic")).toBeInTheDocument();
+    expect(document.getElementById("comp-label-2")).not.toBeNull();
   });
 });

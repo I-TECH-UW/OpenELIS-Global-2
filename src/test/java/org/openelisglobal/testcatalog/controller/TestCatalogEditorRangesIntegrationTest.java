@@ -167,6 +167,19 @@ public class TestCatalogEditorRangesIntegrationTest extends BaseWebContextSensit
     }
 
     @org.junit.Test
+    public void saveRanges_validBoundsRoundTrip() {
+        // OGC-1117: the Valid range is now editable in this dialog and must persist.
+        RangeDto r = range(null, "M", 0d, 30d);
+        r.lowValid = 2d;
+        r.highValid = 20d;
+        controller.saveRanges(testId(), body(r), authedRequest());
+
+        RangeDto loaded = controller.getRanges(testId()).getBody().ranges.get(0);
+        assertEquals(Double.valueOf(2d), loaded.lowValid);
+        assertEquals(Double.valueOf(20d), loaded.highValid);
+    }
+
+    @org.junit.Test
     public void saveRanges_openEndedMaxAgeRoundTripsAsNull_andCoversToInfinity() {
         // maxAge null → open-ended; a single 0..∞ all-sex range fully covers both.
         controller.saveRanges(testId(), body(range(null, null, 0d, null)), authedRequest());
@@ -280,5 +293,43 @@ public class TestCatalogEditorRangesIntegrationTest extends BaseWebContextSensit
         // Negative minAge.
         assertEquals(422, controller.saveRanges(testId(), body(range(null, "M", -1d, 30d)), authedRequest())
                 .getStatusCode().value());
+    }
+
+    /**
+     * Regression (bug family of the alert-rule 400): the GET representation must be
+     * PUT-able verbatim over HTTP, exercised through MockMvc so Jackson binding is
+     * actually in play (direct controller calls bypass it). Guards against any
+     * future GET-only field (a derived getter on RangesResponse or its children)
+     * silently making every editor save 400.
+     */
+    @org.junit.Test
+    public void http_rangesGetRepresentation_isPutableVerbatim() throws Exception {
+        RangesResponse put = new RangesResponse();
+        RangeDto range = new RangeDto();
+        range.gender = "M";
+        range.minAge = 0.0;
+        range.maxAge = 130.0;
+        range.lowNormal = 1.0;
+        range.highNormal = 5.0;
+        put.ranges = java.util.List.of(range);
+        controller.saveRanges(testId(), put, authedRequest());
+
+        org.openelisglobal.login.valueholder.UserSessionData usd = new org.openelisglobal.login.valueholder.UserSessionData();
+        usd.setSytemUserId(1);
+        org.springframework.mock.web.MockHttpSession httpSession = new org.springframework.mock.web.MockHttpSession();
+        httpSession.setAttribute(IActionConstants.USER_SESSION_DATA, usd);
+
+        org.springframework.test.web.servlet.MvcResult getResult = mockMvc
+                .perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                        .get("/rest/test-catalog/tests/" + testId() + "/ranges").session(httpSession))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isOk())
+                .andReturn();
+        String getBody = getResult.getResponse().getContentAsString();
+        org.junit.Assert.assertTrue("coverage rides the GET representation", getBody.contains("coverage"));
+
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .put("/rest/test-catalog/tests/" + testId() + "/ranges")
+                .contentType(org.springframework.http.MediaType.APPLICATION_JSON).content(getBody).session(httpSession))
+                .andExpect(org.springframework.test.web.servlet.result.MockMvcResultMatchers.status().isOk());
     }
 }

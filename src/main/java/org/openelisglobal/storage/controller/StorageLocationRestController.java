@@ -22,7 +22,9 @@ import org.openelisglobal.storage.form.response.StorageRoomResponse;
 import org.openelisglobal.storage.form.response.StorageShelfResponse;
 import org.openelisglobal.storage.service.DeletionValidationResult;
 import org.openelisglobal.storage.service.StorageDashboardService;
+import org.openelisglobal.storage.service.StorageDeviceService;
 import org.openelisglobal.storage.service.StorageLocationService;
+import org.openelisglobal.storage.service.StorageRoomService;
 import org.openelisglobal.storage.service.StorageSearchService;
 import org.openelisglobal.storage.valueholder.*;
 import org.openelisglobal.userrole.service.UserRoleService;
@@ -53,10 +55,10 @@ public class StorageLocationRestController extends BaseRestController {
     private StorageSearchService storageSearchService;
 
     @Autowired
-    private StorageRoomDAO storageRoomDAO;
+    private StorageRoomService storageRoomService;
 
     @Autowired
-    private StorageDeviceDAO storageDeviceDAO;
+    private StorageDeviceService storageDeviceService;
 
     @Autowired
     private SampleStorageAssignmentDAO sampleStorageAssignmentDAO;
@@ -114,11 +116,7 @@ public class StorageLocationRestController extends BaseRestController {
             room.setDescription(form.getDescription());
             room.setActive(form.getActive() != null ? form.getActive() : true);
             room.setFhirUuid(UUID.randomUUID());
-            String sysUserId = getSysUserId(request);
-            if (sysUserId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Authentication required"));
-            }
-            room.setSysUserId(sysUserId);
+            room.setSysUserId(getSysUserId());
 
             StorageRoom createdRoom = storageLocationService.createRoom(room);
 
@@ -364,11 +362,7 @@ public class StorageLocationRestController extends BaseRestController {
             device.setPort(form.getPort());
             device.setCommunicationProtocol(form.getCommunicationProtocol());
             device.setFhirUuid(UUID.randomUUID());
-            String sysUserId = getSysUserId(request);
-            if (sysUserId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Authentication required"));
-            }
-            device.setSysUserId(sysUserId);
+            device.setSysUserId(getSysUserId());
             device.setParentRoom(parentRoom);
 
             Integer id = storageLocationService.insert(device);
@@ -376,7 +370,7 @@ public class StorageLocationRestController extends BaseRestController {
 
             if (shouldEnableMonitoring(device)) {
                 try {
-                    createFreezerMonitoringStub(device, sysUserId);
+                    createFreezerMonitoringStub(device, getSysUserId());
                 } catch (Exception e) {
                     logger.warn("Failed to auto-create freezer monitoring stub for device {}: {}", device.getName(),
                             e.getMessage());
@@ -648,11 +642,7 @@ public class StorageLocationRestController extends BaseRestController {
             shelf.setCapacityLimit(form.getCapacityLimit());
             shelf.setActive(form.getActive() != null ? form.getActive() : true);
             shelf.setFhirUuid(UUID.randomUUID());
-            String sysUserId = getSysUserId(request);
-            if (sysUserId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Authentication required"));
-            }
-            shelf.setSysUserId(sysUserId);
+            shelf.setSysUserId(getSysUserId());
 
             Integer parentDeviceId = form.getParentDeviceId() != null ? Integer.parseInt(form.getParentDeviceId())
                     : null;
@@ -915,11 +905,7 @@ public class StorageLocationRestController extends BaseRestController {
             rack.setCode(form.getCode());
             rack.setActive(form.getActive() != null ? form.getActive() : true);
             rack.setFhirUuid(UUID.randomUUID());
-            String sysUserId = getSysUserId(request);
-            if (sysUserId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Authentication required"));
-            }
-            rack.setSysUserId(sysUserId);
+            rack.setSysUserId(getSysUserId());
 
             Integer parentShelfId = form.getParentShelfId() != null ? Integer.parseInt(form.getParentShelfId()) : null;
             StorageShelf parentShelf = (StorageShelf) storageLocationService.get(parentShelfId, StorageShelf.class);
@@ -1205,11 +1191,7 @@ public class StorageLocationRestController extends BaseRestController {
             box.setCode(form.getCode());
             box.setActive(form.getActive() != null ? form.getActive() : true);
             box.setFhirUuid(UUID.randomUUID());
-            String sysUserId = getSysUserId(request);
-            if (sysUserId == null) {
-                return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body(Map.of("error", "Authentication required"));
-            }
-            box.setSysUserId(sysUserId);
+            box.setSysUserId(getSysUserId());
 
             Integer parentRackId = form.getParentRackId() != null ? Integer.parseInt(form.getParentRackId()) : null;
             StorageRack parentRack = (StorageRack) storageLocationService.get(parentRackId, StorageRack.class);
@@ -1412,7 +1394,7 @@ public class StorageLocationRestController extends BaseRestController {
         int suffix = 1;
 
         // Check for uniqueness and append suffix if needed
-        while (storageRoomDAO.findByCode(code) != null) {
+        while (storageRoomService.findByCode(code) != null) {
             String suffixStr = String.valueOf(suffix);
             int maxBaseLength = 50 - suffixStr.length() - 1; // -1 for hyphen
             if (maxBaseLength < 1) {
@@ -1453,7 +1435,7 @@ public class StorageLocationRestController extends BaseRestController {
         int suffix = 1;
 
         // Check for uniqueness within the room and append suffix if needed
-        while (storageDeviceDAO.findByParentRoomIdAndCode(roomId, code) != null) {
+        while (storageDeviceService.findByParentRoomIdAndCode(roomId, code) != null) {
             String suffixStr = String.valueOf(suffix);
             int maxBaseLength = 50 - suffixStr.length() - 1; // -1 for hyphen
             if (maxBaseLength < 1) {

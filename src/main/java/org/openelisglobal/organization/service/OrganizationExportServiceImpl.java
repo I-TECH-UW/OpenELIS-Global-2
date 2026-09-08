@@ -8,7 +8,6 @@ import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Endpoint;
 import org.hl7.fhir.r4.model.Resource;
 import org.openelisglobal.common.util.validator.GenericValidator;
-import org.openelisglobal.dataexchange.fhir.FHIRTransformUtil;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
@@ -28,8 +27,6 @@ public class OrganizationExportServiceImpl implements OrganizationExportService 
     private FhirPersistanceService fhirPersistanceService;
     @Autowired
     private OrganizationService organizationService;
-    @Autowired
-    private FHIRTransformUtil fhirTransformUtil;
 
     @Transactional(readOnly = true)
     @Override
@@ -71,7 +68,7 @@ public class OrganizationExportServiceImpl implements OrganizationExportService 
         Endpoint endpoint = new Endpoint() //
                 .setAddress(organization.getInternetAddress());
         endpoint.setId(tempId);
-        fhirOrganization.addEndpoint(fhirTransformUtil.createReferenceFor(endpoint));
+        fhirOrganization.addEndpoint(fhirTransformService.createReferenceFor(endpoint));
         return endpoint;
     }
 
@@ -79,7 +76,7 @@ public class OrganizationExportServiceImpl implements OrganizationExportService 
             Organization organization) throws FhirTransformationException {
         org.hl7.fhir.r4.model.Organization partOfOrg = fhirTransformService
                 .transformToFhirOrganization(organization.getOrganization());
-        fhirOrganization.setPartOf(fhirTransformUtil.createReferenceFor(partOfOrg));
+        fhirOrganization.setPartOf(fhirTransformService.createReferenceFor(partOfOrg));
         return partOfOrg;
     }
 }
