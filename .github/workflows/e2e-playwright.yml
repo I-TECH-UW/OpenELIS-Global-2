@@ -54,6 +54,9 @@ jobs:
         run: npm ci --legacy-peer-deps
         working-directory: frontend
 
+      - name: Test E2E build contracts
+        run: node --test scripts/e2e/resolve-analyzer-runtime.test.cjs
+
       - name: Prepare .env
         run: cp .env.example .env
 
@@ -102,6 +105,7 @@ jobs:
       - name: Prepare build context metadata (early)
         run: |
           mkdir -p /tmp/e2e-build-context-core
+          echo "plugins" > /tmp/e2e-build-context-core/analyzer_runtime
           echo "${{ github.event_name }}" > /tmp/e2e-build-context-core/event_name
 
           IS_FORK="false"

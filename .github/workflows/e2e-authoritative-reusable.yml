@@ -36,6 +36,16 @@ on:
         required: false
         type: string
         default: "true"
+      analyzer_projects:
+        description: "Analyzer projects selected by the build contract"
+        required: false
+        type: string
+        default: "harness-foundational,harness-demo"
+      seed_analyzer_traffic:
+        description: "Prepare real Bridge traffic before assembled analyzer stories"
+        required: false
+        type: string
+        default: "false"
       is_fork:
         description: "Whether execution context is fork-native"
         required: false
@@ -85,21 +95,46 @@ jobs:
       test_pass: ${{ inputs.test_pass || vars.TEST_PASS || 'adminADMIN!' }}
 
   # ─── Playwright Harness ─────────────────────────────────────────────────────
-  # Runs harness-foundational and harness-demo projects on the analyzer harness.
+  # Setup stories run without unresolved traffic changing their preconditions.
   playwright-harness:
     name: Playwright Harness
-    if: inputs.include_plugin_jars == 'true'
     uses: ./.github/workflows/e2e-playwright-reusable.yml
     permissions:
       contents: read
       packages: read
       actions: read
     with:
-      projects: "harness-foundational,harness-demo"
+      projects: ${{ inputs.analyzer_projects }}
       artifact_prefix: "harness"
       compose_files: "build.docker-compose.yml,projects/analyzer-harness/docker-compose.base.yml,.github/ci/ci.analyzer-harness.yml"
       fixture_mode: "harness"
       setup_analyzer_harness: true
+      include_plugin_jars: ${{ inputs.include_plugin_jars == 'true' }}
+      prepare_analyzer_mappings: ${{ inputs.seed_analyzer_traffic == 'true' }}
+      build_run_id: ${{ inputs.build_run_id }}
+      artifact_source_mode: ${{ inputs.artifact_source_mode }}
+      checkout_ref: ${{ inputs.checkout_ref }}
+      test_user: ${{ inputs.test_user || vars.TEST_USER || 'admin' }}
+      test_pass: ${{ inputs.test_pass || vars.TEST_PASS || 'adminADMIN!' }}
+
+  # The held-result story requires its own database and Bridge state.
+  playwright-analyzer-traffic:
+    name: Playwright Analyzer Traffic
+    if: inputs.seed_analyzer_traffic == 'true'
+    uses: ./.github/workflows/e2e-playwright-reusable.yml
+    permissions:
+      contents: read
+      packages: read
+      actions: read
+    with:
+      projects: "harness-mvp"
+      artifact_prefix: "analyzer-traffic"
+      shard_indices: "[1]"
+      compose_files: "build.docker-compose.yml,projects/analyzer-harness/docker-compose.base.yml,.github/ci/ci.analyzer-harness.yml"
+      fixture_mode: "harness"
+      setup_analyzer_harness: true
+      include_plugin_jars: false
+      seed_analyzer_traffic: true
       build_run_id: ${{ inputs.build_run_id }}
       artifact_source_mode: ${{ inputs.artifact_source_mode }}
       checkout_ref: ${{ inputs.checkout_ref }}
@@ -125,7 +160,13 @@ jobs:
   e2e-suite-gate:
     name: E2E Suite Gate
     if: always()
-    needs: [playwright-core, playwright-harness, cypress]
+    needs:
+      [
+        playwright-core,
+        playwright-harness,
+        playwright-analyzer-traffic,
+        cypress,
+      ]
     runs-on: ubuntu-latest
     steps:
       - name: Enforce suite outcomes
@@ -134,8 +175,12 @@ jobs:
             echo "Playwright Core failed: ${{ needs.playwright-core.result }}"
             exit 1
           fi
-          if [[ "${{ needs.playwright-harness.result }}" != "success" && "${{ needs.playwright-harness.result }}" != "skipped" ]]; then
+          if [[ "${{ needs.playwright-harness.result }}" != "success" ]]; then
             echo "Playwright Harness failed: ${{ needs.playwright-harness.result }}"
+            exit 1
+          fi
+          if [[ "${{ inputs.seed_analyzer_traffic }}" == "true" && "${{ needs.playwright-analyzer-traffic.result }}" != "success" ]]; then
+            echo "Playwright Analyzer Traffic failed: ${{ needs.playwright-analyzer-traffic.result }}"
             exit 1
           fi
           if [[ "${{ needs.cypress.result }}" != "success" ]]; then
