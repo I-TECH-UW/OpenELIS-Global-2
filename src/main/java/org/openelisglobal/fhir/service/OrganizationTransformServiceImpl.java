@@ -7,6 +7,7 @@ import java.util.stream.Collectors;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Identifier;
+import org.hl7.fhir.r4.model.ResourceType;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.validator.GenericValidator;
@@ -38,11 +39,16 @@ public class OrganizationTransformServiceImpl implements OrganizationTransformSe
         org.hl7.fhir.r4.model.Organization fhirOrganization = new org.hl7.fhir.r4.model.Organization();
         fhirOrganization
                 .setId(organization.getFhirUuid() == null ? organization.getId() : organization.getFhirUuidAsString());
+        fhirOrganization.getMeta().setLastUpdated(organization.getLastupdated());
         fhirOrganization.setName(organization.getOrganizationName());
-        fhirOrganization.setActive(organization.getIsActive().equals(IActionConstants.YES) ? true : false);
+        fhirOrganization.setActive(!IActionConstants.NO.equals(organization.getIsActive()));
         this.setFhirOrganizationIdentifiers(fhirOrganization, organization);
         this.setFhirAddressInfo(fhirOrganization, organization);
         this.setFhirOrganizationTypes(fhirOrganization, organization);
+        if (organization.getOrganization() != null && organization.getOrganization().getFhirUuid() != null) {
+            fhirOrganization.setPartOf(common.createReferenceFor(ResourceType.Organization,
+                    organization.getOrganization().getFhirUuidAsString()));
+        }
         return fhirOrganization;
     }
 

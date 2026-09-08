@@ -185,6 +185,7 @@ public class ServiceRequestTransformServiceImpl implements ServiceRequestTransfo
         Test test = analysis.getTest();
         ServiceRequest serviceRequest = new ServiceRequest();
         serviceRequest.setId(analysis.getFhirUuidAsString());
+        serviceRequest.getMeta().setLastUpdated(analysis.getLastupdated());
         serviceRequest.addIdentifier(common.createIdentifier(fhirConfig.getOeFhirSystem() + "/analysis_uuid",
                 analysis.getFhirUuidAsString()));
         Identifier facilityId = common.createFacilityIdentifier();

@@ -1,16 +1,19 @@
 package org.openelisglobal.fhir.providers;
 
-import ca.uhn.fhir.model.api.Include;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
-import ca.uhn.fhir.rest.annotation.IncludeParam;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Sort;
 import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.SortSpec;
+import ca.uhn.fhir.rest.api.server.IBundleProvider;
+import ca.uhn.fhir.rest.param.DateRangeParam;
+import ca.uhn.fhir.rest.param.StringAndListParam;
 import ca.uhn.fhir.rest.param.TokenAndListParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
@@ -18,22 +21,18 @@ import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Device;
-import org.hl7.fhir.r4.model.Encounter;
 import org.hl7.fhir.r4.model.IdType;
-import org.hl7.fhir.r4.model.ServiceRequest;
 import org.openelisglobal.analyzer.service.AnalyzerService;
 import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.common.log.LogEvent;
-import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
+import org.openelisglobal.fhir.search.searchparams.DeviceSearchParams;
+import org.openelisglobal.search.service.DeviceSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -42,8 +41,8 @@ import org.springframework.stereotype.Component;
  *
  * <p>
  * Read and write operations hit the OpenELIS database directly; the result is
- * mirrored to the FHIR store on a best-effort basis. Search still forwards to
- * the FHIR store.
+ * mirrored to the FHIR store on a best-effort basis; search is answered from
+ * the analyzer table.
  *
  * <p>
  * Supported operations:
@@ -59,7 +58,7 @@ import org.springframework.stereotype.Component;
 public class DeviceProvider implements IResourceProvider {
 
     @Autowired
-    private FhirUtil util;
+    private DeviceSearchService deviceSearchService;
 
     @Autowired
     private FhirTransformService fhirTransformService;
@@ -94,6 +93,9 @@ public class DeviceProvider implements IResourceProvider {
         } catch (ResourceNotFoundException | InvalidRequestException e) {
             throw e;
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("Device", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method, e.getMessage());
             throw new InternalErrorException("Unexpected error reading Device", e);
         }
@@ -147,6 +149,9 @@ public class DeviceProvider implements IResourceProvider {
         } catch (UnprocessableEntityException | InvalidRequestException e) {
             throw e;
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("Device", e);
+            }
             LogEvent.logError(getClass().getSimpleName(), method, e.getMessage());
             throw new InternalErrorException("Unexpected error creating Device", e);
         }
@@ -201,6 +206,9 @@ public class DeviceProvider implements IResourceProvider {
         } catch (UnprocessableEntityException | InvalidRequestException | ResourceNotFoundException e) {
             throw e;
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("Device", e);
+            }
             LogEvent.logError(getClass().getSimpleName(), method, e.getMessage());
             throw new InternalErrorException("Unexpected error updating Device", e);
         }
@@ -239,37 +247,39 @@ public class DeviceProvider implements IResourceProvider {
         } catch (ResourceNotFoundException | InvalidRequestException e) {
             throw e;
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("Device", e);
+            }
             LogEvent.logError(getClass().getSimpleName(), method, e.getMessage());
             throw new InternalErrorException("Unexpected error deleting Device", e);
         }
     }
 
     @Search
-    public Bundle searchDeviceBundle(@OptionalParam(name = Device.SP_IDENTIFIER) TokenAndListParam identifier,
-            @OptionalParam(name = Device.SP_DEVICE_NAME) TokenAndListParam deviceName,
+    public IBundleProvider searchDevices(@OptionalParam(name = Device.SP_RES_ID) TokenAndListParam id,
+            @OptionalParam(name = Device.SP_IDENTIFIER) TokenAndListParam identifier,
+            @OptionalParam(name = Device.SP_DEVICE_NAME) StringAndListParam deviceName,
             @OptionalParam(name = Device.SP_TYPE) TokenAndListParam type,
-            @IncludeParam(reverse = true, allow = { "Encounter:" + Encounter.SP_PARTICIPANT,
-                    "ServiceRequest:" + ServiceRequest.SP_REQUESTER }) HashSet<Include> revIncludes,
+            @OptionalParam(name = Device.SP_STATUS) TokenAndListParam status,
+            @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
             HttpServletRequest request) {
 
-        String method = "searchDeviceBundle";
+        String method = "searchDevices";
+        LogEvent.logDebug(getClass().getSimpleName(), method, "Searching for Devices");
 
         try {
-            Bundle bundle = util.forwardSearchToFhirStore(request);
-
-            if (bundle == null) {
-                bundle = new Bundle();
-            }
-            if (bundle.getType() == null) {
-                bundle.setType(Bundle.BundleType.SEARCHSET);
-            }
-            if (bundle.getEntry() == null) {
-                bundle.setEntry(new ArrayList<>());
-            }
-
-            return bundle;
-
+            DeviceSearchParams params = new DeviceSearchParams(id, identifier, deviceName, type, status, lastUpdated,
+                    sort);
+            return deviceSearchService.searchDevices(params);
+        } catch (InvalidRequestException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            LogEvent.logError(getClass().getSimpleName(), method, "Invalid Device search parameter: " + e.getMessage());
+            throw new InvalidRequestException("Invalid Device search parameter: " + e.getMessage(), e);
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("Device", e);
+            }
             LogEvent.logError(getClass().getSimpleName(), method, e.getMessage());
             throw new InternalErrorException("Error searching Device", e);
         }
