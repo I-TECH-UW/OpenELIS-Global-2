@@ -698,3 +698,17 @@
   padding-block: 0;
   align-items: center;
 }
+
+// Status filter chips sit right beneath the toolbar row; give the row its
+// own breathing room so "All" / "Not Started" don't collide with the
+// Search and Load buttons above.
+.unifiedResultsPage .unifiedResultsChips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 1.5rem;
+}
+
+.unifiedResultsPage .unifiedResultsChip {
+  cursor: pointer;
+}
