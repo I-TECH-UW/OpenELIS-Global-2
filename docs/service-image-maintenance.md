@@ -45,3 +45,27 @@ The fresh-database smoke test does not establish that an existing site's indexes
 are safe after that library change. Site-specific backup, index maintenance,
 restore, and rollback validation are deployment responsibilities. Do not disable
 package signature or expiration checks to retain an obsolete base image.
+
+### What the library change looks like on an OpenELIS database
+
+The move from Debian 11 to Debian 12 takes glibc from 2.31 to 2.36. PostgreSQL 14
+records the glibc version only for named collations in `pg_collation`; it does
+not track the database's default collation (`en_US.utf8` in every OpenELIS
+install), so indexes on text columns keep working silently on the new image
+and can still hide ordering inconsistencies. Run the remediation once, in the
+maintenance window, right after the first start on the new image and before
+the site is opened to users:
+
+```sql
+-- as the postgres superuser, connected to clinlims
+SELECT collname, collversion, pg_collation_actual_version(oid)
+  FROM pg_collation WHERE collname IN ('en_US.utf8', 'en_US');
+REINDEX DATABASE clinlims;
+ALTER COLLATION "en_US.utf8" REFRESH VERSION;
+ALTER COLLATION "en_US" REFRESH VERSION;
+```
+
+Measured on a development database with 914 indexes (11 MB), `REINDEX
+DATABASE` took about one second; the time grows with index size. Take a backup
+before the upgrade regardless, and rehearse the sequence on a copy of the
+production volume first.
