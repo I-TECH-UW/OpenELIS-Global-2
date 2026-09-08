@@ -34,6 +34,7 @@ public class PractitionerTransformServiceImpl implements PractitionerTransformSe
 
         Practitioner practitioner = new Practitioner();
         practitioner.setId(provider.getFhirUuidAsString());
+        practitioner.getMeta().setLastUpdated(provider.getLastupdated());
         practitioner.addIdentifier(common.createIdentifier(fhirConfig.getOeFhirSystem() + "/provider_uuid",
                 provider.getFhirUuidAsString()));
         Identifier facilityId = common.createFacilityIdentifier();

@@ -304,6 +304,7 @@ public class DeviceTransformServiceImpl implements DeviceTransformService {
 
         String fhirUuid = analyzer.ensureFhirUuid();
         device.setId(fhirUuid);
+        device.getMeta().setLastUpdated(analyzer.getLastupdated());
         if (analyzer.getStatus() != null) {
 
             switch (analyzer.getStatus()) {

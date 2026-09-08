@@ -3,6 +3,7 @@ package org.openelisglobal.fhir;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
 
 import ca.uhn.fhir.context.FhirContext;
 import ca.uhn.fhir.rest.server.RestfulServer;
@@ -238,5 +239,58 @@ public class OrganizationFacadeTest extends BaseWebContextSensitiveTest {
         assertNotNull(deletedOrg);
         assertEquals("N", deletedOrg.getIsActive());
         assertFalse(deletedOrg.getIsActive().equals("Y"));
+    }
+
+    @Test
+    public void createOrganization_withPartOf_linksParentAndAnswersPartofSearch() throws Exception {
+        cleanupDatabase();
+
+        JsonNode parent = post("/Organization", """
+                {"resourceType": "Organization", "active": true, "name": "Parent Laboratory"}
+                """, 201);
+        String parentId = parent.get("id").asText();
+
+        JsonNode child = post("/Organization", """
+                {"resourceType": "Organization", "active": true, "name": "Child Ward",
+                 "partOf": {"reference": "Organization/%s"}}
+                """.formatted(parentId), 201);
+        assertEquals("Organization/" + parentId, child.get("partOf").get("reference").asText());
+
+        MockHttpServletRequest request = buildFhirRequest("GET", "/Organization");
+        request.setQueryString("partof=Organization/" + parentId);
+        request.addParameter("partof", "Organization/" + parentId);
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        fhirServlet.service(request, response);
+        assertEquals(200, response.getStatus());
+        JsonNode bundle = objectMapper.readTree(response.getContentAsString());
+        assertEquals(1, bundle.get("total").asInt());
+        assertEquals(child.get("id").asText(), bundle.get("entry").get(0).get("resource").get("id").asText());
+    }
+
+    @Test
+    public void createOrganization_withUnknownPartOf_returns422() throws Exception {
+        JsonNode outcome = post("/Organization", """
+                {"resourceType": "Organization", "active": true, "name": "Orphan Ward",
+                 "partOf": {"reference": "Organization/00000000-0000-0000-0000-000000000000"}}
+                """, 422);
+        assertEquals("OperationOutcome", outcome.get("resourceType").asText());
+    }
+
+    @Test
+    public void createOrganization_withOverlongState_returns422NotServerError() throws Exception {
+        JsonNode outcome = post("/Organization", """
+                {"resourceType": "Organization", "active": true, "name": "Wide State Clinic",
+                 "address": [{"city": "Kampala", "state": "Central Region"}]}
+                """, 422);
+        assertTrue(outcome.get("issue").get(0).get("diagnostics").asText().contains("could not be stored"));
+    }
+
+    private JsonNode post(String path, String json, int expectedStatus) throws Exception {
+        MockHttpServletRequest request = buildFhirRequest("POST", path);
+        request.setContent(json.getBytes());
+        MockHttpServletResponse response = new MockHttpServletResponse();
+        fhirServlet.service(request, response);
+        assertEquals(response.getContentAsString(), expectedStatus, response.getStatus());
+        return objectMapper.readTree(response.getContentAsString());
     }
 }
