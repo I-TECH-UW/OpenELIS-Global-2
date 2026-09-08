@@ -230,6 +230,9 @@ function ProviderMenu() {
         message: intl.formatMessage({ id: "save.config.success.msg" }),
       });
       invalidateServerData();
+      // The row a success just acted on may no longer be in the next read
+      // (a deactivation), so Modify/Deactivate must stop pointing at it.
+      setSelectedRowIds([]);
     } else {
       addNotification({
         kind: NotificationKinds.error,

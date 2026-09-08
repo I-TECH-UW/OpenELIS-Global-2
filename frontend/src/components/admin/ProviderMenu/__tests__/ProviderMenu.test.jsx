@@ -136,4 +136,31 @@ describe("ProviderMenu", () => {
     await waitFor(() => expect(screen.getByText("Hopper")).toBeInTheDocument());
     expect(reload).not.toHaveBeenCalled();
   });
+
+  it("clears the row selection after a deactivation, so Modify has nothing stale to open", async () => {
+    renderScreen();
+    await waitFor(() =>
+      expect(screen.getByText("Lovelace")).toBeInTheDocument(),
+    );
+
+    fireEvent.click(screen.getAllByLabelText("selectRows")[0]);
+    const modifyButton = screen.getByRole("button", { name: "Modify" });
+    expect(modifyButton).toBeEnabled();
+
+    // The row is gone from the next read, the way a real deactivation leaves it.
+    postToOpenElisServerFullResponse.mockImplementation(
+      (url, payload, callback) => {
+        onServer = providers([]);
+        callback({ status: 200 });
+      },
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Deactivate" }));
+    await waitFor(() =>
+      expect(screen.queryByText("Lovelace")).not.toBeInTheDocument(),
+    );
+
+    // Modify used to stay enabled on the row id that no longer exists, and
+    // clicking it crashed the screen looking that row up.
+    expect(screen.getByRole("button", { name: "Modify" })).toBeDisabled();
+  });
 });
