@@ -152,4 +152,9 @@
   <include file="liquibase/qa/038-eqa-panel-receipt-shipping-box.xml" />
   <!-- EQA V2.5 — OGC-613: qualitative participant results on the provider side (qa-078) -->
   <include file="liquibase/qa/039-eqa-result-text.xml" />
+
+  <!-- Clears an eqa-v2-start tag that an earlier version of qa/040 recorded without
+       applying. Last on purpose: it repairs a changelog row, so it has to run after
+       every changeset that could have written one. -->
+  <include file="liquibase/qa/041-clear-stale-eqa-v2-start-tag.xml" />
 </databaseChangeLog>
