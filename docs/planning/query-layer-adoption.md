@@ -178,10 +178,35 @@ The nine routes pass their screen to `render` now. `ConfigMenuDisplay.test.tsx`
 pins both halves: behind `render` the open editor survives a re-render of the
 parent, behind an inline `component` it does not.
 
-`App.jsx` names 137 routes the same way, so every screen in the application is
-rebuilt whenever a notification appears or expires. That is the same defect and
-it is worth fixing, but it touches every route in the app and only E2E can speak
-for it, so it is left as its own change rather than folded in here.
+`App.jsx` named 137 routes the same way, so every screen in the application was
+rebuilt whenever a notification appeared or expired; those are `render` now too.
+All 137 were zero-argument arrows, so they were already dropping the route props
+React Router passes to `component`, and the screens read what they need from
+hooks instead. `render` is called as a function and produces the identical
+element, so the only thing that changes is that the component type stops moving.
+The one route that names a real component, `component={BoxDetails}`, was already
+stable and is untouched.
+
+It is a wide change that only E2E can fully speak for, so it is its own commit,
+kept apart from the nine admin routes that the failing spec actually named.
+
+### One spec asserted on the reload itself
+
+`esig-result-validation.spec.ts` signed a validation release and then waited for
+a `framenavigated` event on `/validation`, so that the cleanup step's own
+navigation could not collide with the release still in flight. The reload was
+the signal it waited on, and removing the reload left it waiting thirty seconds
+for a navigation that no longer happens.
+
+The intent survives the change; only the signal has to move. It syncs on the
+queue's reread instead — the GET the refresh issues — and then asserts the page
+is still the validation queue. That is a stronger statement than the old one: a
+navigation proved only that something happened, while the reread proves the
+queue was actually served again.
+
+This is the third screen an E2E spec turns out to cover, and the second time the
+spec named the reload rather than the outcome. Worth expecting on the remaining
+conversions.
 
 ### Per-job E2E, branch vs baseline
 
