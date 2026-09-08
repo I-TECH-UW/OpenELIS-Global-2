@@ -63,6 +63,11 @@ keyed on the PR, so every push kills the run before it. Pushes are therefore
 grouped into checkpoints and each run is allowed to finish, otherwise criterion
 6 collects nothing.
 
+Once, a GitHub-side branch update landed a develop merge on top of an earlier
+push rather than the latest one, and origin briefly did not have this branch's
+four newest commits. Nothing was lost locally; reconciled with a plain merge and
+a fast-forward push, not a force-push.
+
 | Step                                                        | State                           |
 | ----------------------------------------------------------- | ------------------------------- |
 | 1 Dependency, provider, shared query function, first screen | done                            |
