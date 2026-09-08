@@ -113,6 +113,7 @@ public class EQARestGuardMatrixTest {
         WRITE_GUARDS.put("EQAMyProgramsRestController#deleteMyProgram", EQAGuards.PARTICIPANT);
         WRITE_GUARDS.put("EQAPanelReceiptRestController#recordReceipt", EQAGuards.PARTICIPANT);
         WRITE_GUARDS.put("EQASubmissionRestController#submitManually", EQAGuards.PARTICIPANT);
+        WRITE_GUARDS.put("EQASubmissionRestController#submitAfterReview", EQAGuards.PARTICIPANT);
         WRITE_GUARDS.put("EQAParticipantResultRestController#createDraft", EQAGuards.PARTICIPANT);
         WRITE_GUARDS.put("EQAParticipantResultRestController#transition", EQAGuards.PARTICIPANT);
         WRITE_GUARDS.put("EQAResultRestController#submitResult", EQAGuards.PARTICIPANT);

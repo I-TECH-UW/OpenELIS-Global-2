@@ -485,24 +485,71 @@ public class EQACycleSubmissionServiceImpl implements EQACycleSubmissionService 
             return false;
         }
 
-        boolean allSent = true;
-        for (Long enrollmentId : enrollments) {
-            if (!fhirSubmissionService.submitCycleViaFhir(cycle.getId(), enrollmentId)) {
-                allSent = false;
-            }
-        }
-
-        if (allSent) {
-            for (Long enrollmentId : enrollments) {
-                markSent(cycle.getId(), enrollmentId, EQASubmissionChannel.FHIR, null, SCHEDULER_USER);
-            }
-            clearRetryBudget(cycle, SCHEDULER_USER);
-            advanceTo(cycle, SUBMITTED, EQATriggerType.AUTO, EQATriggerEvent.FHIR_SUBMIT_SUCCESS, null, null,
+        if (postToProvider(cycle.getId(), enrollments)) {
+            stampSubmitted(cycle, enrollments, EQATriggerType.AUTO, EQATriggerEvent.FHIR_SUBMIT_SUCCESS, null, null,
                     SCHEDULER_USER);
             return true;
         }
         recordFailedAttempt(cycle, attempts + 1);
         return true;
+    }
+
+    /**
+     * Posts to every enrolled laboratory before reporting, so one unreachable
+     * enrollment does not hide the state of the rest. A partial post counts as a
+     * failure: the caller stamps nothing and the whole cycle is sent again.
+     */
+    private boolean postToProvider(Long cycleId, List<Long> enrollments) {
+        boolean allSent = true;
+        for (Long enrollmentId : enrollments) {
+            if (!fhirSubmissionService.submitCycleViaFhir(cycleId, enrollmentId)) {
+                allSent = false;
+            }
+        }
+        return allSent;
+    }
+
+    /**
+     * What a successful send leaves behind: the channel and timestamp on each
+     * result row, a cleared retry budget, and the cycle at SUBMITTED. The state
+     * transition alone is not a record of a submission, because nothing reading
+     * {@code eqa_participant_result} would see the results as sent.
+     */
+    private void stampSubmitted(EQACycle cycle, List<Long> enrollments, EQATriggerType triggerType,
+            EQATriggerEvent triggerEvent, Long triggeredBy, String reason, String sysUserId) {
+        for (Long enrollmentId : enrollments) {
+            markSent(cycle.getId(), enrollmentId, EQASubmissionChannel.FHIR, null, sysUserId);
+        }
+        clearRetryBudget(cycle, sysUserId);
+        advanceTo(cycle, SUBMITTED, triggerType, triggerEvent, triggeredBy, reason, sysUserId);
+    }
+
+    @Override
+    public EQACycle submitAfterReview(Long cycleId, String sysUserId) {
+        EQACycle cycle = cycleDAO.get(cycleId)
+                .orElseThrow(() -> new IllegalArgumentException("Cycle not found: " + cycleId));
+        if (cycle.getStatus() != READY_TO_SUBMIT) {
+            throw new IllegalStateException("Only a cycle that is ready to submit can be reviewed and submitted");
+        }
+        // The scheme's review flag is not consulted: the reviewer clicking is what
+        // the flag asks for. Neither the review window nor the retry budget is
+        // consulted either — both exist to pace an unattended sweep, and a person
+        // waiting for an answer is told the outcome instead.
+        if (StringUtils.isBlank(fhirConfig.getLocalFhirStorePath())) {
+            throw new IllegalStateException(
+                    "This laboratory has no automatic submission channel configured; submit by hand instead");
+        }
+        List<Long> enrollments = submittingEnrollments(cycleId);
+        if (enrollments.isEmpty()) {
+            throw new IllegalStateException("No validated result to submit for cycle " + cycleId);
+        }
+        if (!postToProvider(cycleId, enrollments)) {
+            logger.warn("EQA cycle {} review submission could not reach the provider", cycleId);
+            throw new IllegalStateException("The provider could not be reached, so the cycle was not submitted");
+        }
+        stampSubmitted(cycle, enrollments, EQATriggerType.MANUAL, EQATriggerEvent.MANUAL_OVERRIDE,
+                actingUser(sysUserId), "Reviewed and submitted from My Cycles", sysUserId);
+        return cycleDAO.get(cycleId).orElseThrow();
     }
 
     /** 15, 30, 60, 120 minutes by default — doubling from the first failure. */

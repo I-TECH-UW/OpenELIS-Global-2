@@ -70,6 +70,29 @@ public class EQASubmissionRestController extends BaseRestController {
         }
     }
 
+    /**
+     * The reviewer's release on a scheme that reviews every cycle before it goes.
+     * The click sends over the automatic channel and stamps each result row, which
+     * a state transition on its own does not do.
+     *
+     * <p>
+     * Provenance is not taken from the request body: the submission is recorded
+     * against the session user.
+     */
+    @PostMapping(value = "/cycles/{cycleId}/review-submit", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize(EQAGuards.PARTICIPANT)
+    public ResponseEntity<?> submitAfterReview(HttpServletRequest request, @PathVariable Long cycleId) {
+        try {
+            EQACycle cycle = cycleSubmissionService.submitAfterReview(cycleId, getSysUserId(request));
+            return ResponseEntity
+                    .ok(Map.of("cycleId", cycle.getId(), "status", cycle.getStatus().name(), "channel", "FHIR"));
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        } catch (IllegalStateException e) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(Map.of("error", e.getMessage()));
+        }
+    }
+
     /** FR-V2.2-06 export bundle: what a lab uploads to the provider by hand. */
     @GetMapping(value = "/cycles/{cycleId}/export-bundle", produces = "text/csv")
     public ResponseEntity<String> exportBundle(@PathVariable Long cycleId,

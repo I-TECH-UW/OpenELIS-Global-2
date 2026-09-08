@@ -6,7 +6,6 @@
 // mapping is T-19, the NCE link is T-17) — they default false here.
 import {
   getFromOpenElisServer,
-  patchToOpenElisServerJsonResponse,
   postToOpenElisServerFullResponse,
 } from "../../utils/Utils";
 
@@ -30,19 +29,29 @@ export const fetchMyCycles = (callback) => {
   );
 };
 
-// Single-click Review & Submit (FR-V2.2-07): no re-auth, no extra sign-off.
-// The transition endpoint records every HTTP call as a MANUAL override and
-// requires a reason, so a fixed one is sent. 409 = illegal edge, 422 =
-// missing reason; the helper reports both as an undefined response.
+// Single-click review and submit: no re-auth, no extra sign-off. This posts the
+// results and stamps their submission channel, which the plain cycle transition
+// endpoint does not do — it would leave the screen claiming a send the provider
+// never received. 409 carries the reason the cycle could not go, so the raw
+// response is read rather than treating any JSON as success.
 export const submitCycle = (cycleId, callback) => {
-  patchToOpenElisServerJsonResponse(
-    `/rest/eqa/cycles/${cycleId}/transition`,
-    JSON.stringify({
-      newState: "SUBMITTED",
-      stateMachine: "PARTICIPANT",
-      reason: "Participant review & submit from My Cycles",
-    }),
-    (response) => callback(response ? toViewModel(response) : null),
+  postToOpenElisServerFullResponse(
+    `/rest/eqa/cycles/${cycleId}/review-submit`,
+    "{}",
+    (response) => {
+      response
+        .json()
+        .catch(() => ({}))
+        .then((payload) =>
+          callback({
+            ok: response.ok,
+            status: payload?.status,
+            error: response.ok
+              ? null
+              : payload?.error || payload?.message || response.statusText,
+          }),
+        );
+    },
   );
 };
 
