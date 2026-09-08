@@ -11,15 +11,6 @@ import org.openelisglobal.resultlimits.valueholder.ResultLimit;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 
-/**
- * Integration tests for {@link ResultLimitService}.
- *
- * Follows OpenELIS Global 2 backend integration testing standards: - Extends
- * BaseWebContextSensitiveTest for full Spring context and Testcontainers
- * support. - Seeds data using executeDataSetWithStateManagement with
- * testdata/result-limit.xml. - Hardened assertions asserting exact values and
- * exact list sizes.
- */
 public class ResultLimitServiceTest extends BaseWebContextSensitiveTest {
 
     @Autowired
