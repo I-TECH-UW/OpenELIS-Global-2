@@ -70,7 +70,7 @@ grouped into checkpoints and each run is allowed to finish, otherwise criterion
 | 3 List/queue screens refetch after a write                  | in progress                     |
 | 4 Same-route `assign()` becomes a refetch                   | in progress                     |
 | 5 Cross-screen `assign()` becomes `history.push`            | not started                     |
-| 6 Per-job E2E comparison                                    | accumulating on #4213           |
+| 6 Per-job E2E comparison                                    | green on `be431ee83e`           |
 
 Counts, non-test source:
 
@@ -160,96 +160,66 @@ is written to fail when the behaviour is reverted.
 
 ### What the reloads were hiding: routes that rebuild their screen
 
-`Admin` named nine of its screens with `component={() => <Screen />}`. React
-Router calls `createElement` on whatever `component` holds, so an inline arrow
-is a new component type on every render of `Admin` — React throws the mounted
-screen away and builds a new one. Anything that re-renders the layout does it: a
-notification arriving, and again when it times out.
+`Admin` named 9 screens and `App` 137 with `component={() => <Screen />}`. React
+Router calls `createElement` on `component`, so an inline arrow is a new
+component type every render: React discards the mounted screen and builds a new
+one. A notification appearing or expiring is enough. Reloading after each save
+hid it; once the reloads went, an open editor could be discarded mid-edit.
 
-Nothing noticed while saving reloaded the document, because the screen was going
-to be rebuilt regardless. Once saving stopped reloading, an open editor could be
-discarded mid-edit by a notification from an earlier save timing out. That is
-what `generalConfigurations.cy.js` caught: it cleared the value field, a
-notification expired, the field it was about to type into no longer existed, and
-Cypress reported the subject detached from the DOM. The six menus that pick a
-radio survived because a click is one command; typing is a chain.
+`generalConfigurations.cy.js` caught it — it clears the value field then types,
+and the field vanished in between ("subject detached from the DOM"). The radio
+menus passed because a click is one command.
 
-The nine routes pass their screen to `render` now. `ConfigMenuDisplay.test.tsx`
-pins both halves: behind `render` the open editor survives a re-render of the
-parent, behind an inline `component` it does not.
-
-`App.jsx` named 137 routes the same way, so every screen in the application was
-rebuilt whenever a notification appeared or expired; those are `render` now too.
-All 137 were zero-argument arrows, so they were already dropping the route props
-React Router passes to `component`, and the screens read what they need from
-hooks instead. `render` is called as a function and produces the identical
-element, so the only thing that changes is that the component type stops moving.
-The one route that names a real component, `component={BoxDetails}`, was already
-stable and is untouched.
-
-It is a wide change that only E2E can fully speak for, so it is its own commit,
-kept apart from the nine admin routes that the failing spec actually named.
+All are `render` now, which is called as a function and leaves the component
+type alone. Every arrow was zero-argument, so no route props were being passed
+anyway; `component={BoxDetails}` was already stable and is untouched.
+`ConfigMenuDisplay.test.tsx` pins both halves.
 
 ### One spec asserted on the reload itself
 
-`esig-result-validation.spec.ts` signed a validation release and then waited for
-a `framenavigated` event on `/validation`, so that the cleanup step's own
-navigation could not collide with the release still in flight. The reload was
-the signal it waited on, and removing the reload left it waiting thirty seconds
-for a navigation that no longer happens.
-
-The intent survives the change; only the signal has to move. It syncs on the
-queue's reread instead — the GET the refresh issues — and then asserts the page
-is still the validation queue. That is a stronger statement than the old one: a
-navigation proved only that something happened, while the reread proves the
-queue was actually served again.
-
-This is the third screen an E2E spec turns out to cover, and the second time the
-spec named the reload rather than the outcome. Worth expecting on the remaining
-conversions.
+`esig-result-validation.spec.ts` waited for a `framenavigated` event on
+`/validation` after signing a release, so cleanup could not collide with it. No
+reload, no event, 30s timeout. It syncs on the reread's GET instead, then
+asserts the page is still the queue. Second spec to name the reload rather than
+the outcome; expect more.
 
 ### Per-job E2E, branch vs baseline
 
-Baseline is run `33887282951` on develop `d6bab7a5a`, every job green. The table
-below is that comparison, taken on `cb4370260`.
+Baseline: run `33887282951` on develop `d6bab7a5a`, every job green. Current:
+run `34186122749` on `be431ee83e` — merge, validation refresh, both route fixes,
+reworked e-signature spec.
 
-Develop has since been merged in, so the next comparison is against develop's
-tip rather than `d6bab7a5a`. The merge was needed on its own account: develop's
-#4209 turns the unified results worklist on by default in changeset 089 and
-rewrites the two specs that drove the legacy result-entry page in the same
-commit. The branch had the flag but neither the changeset nor the rewritten
-specs, so `esig-result-validation.spec.ts` and `storage-assign-result.spec.ts`
-both failed against a page that now forwards to `/Results`. #4209 also carries
-the `archive.debian.org` fix that had been failing every image build.
+| Job                    | Baseline | Branch                     |
+| ---------------------- | -------- | -------------------------- |
+| Cypress / Admin        | green    | green                      |
+| Cypress / Core         | green    | green                      |
+| Cypress / Independent  | green    | green on re-run, see below |
+| Playwright Core 1/2    | green    | green                      |
+| Playwright Core 2/2    | green    | green                      |
+| Playwright Harness 1/2 | green    | green                      |
+| Playwright Harness 2/2 | green    | green                      |
+| E2E Suite Gate         | green    | green                      |
+| Shared Build           | green    | green                      |
+| Static                 | green    | green                      |
+| Image                  | green    | green                      |
 
-| Job                    | Baseline | Branch |
-| ---------------------- | -------- | ------ |
-| Cypress / Admin        | green    | green  |
-| Cypress / Core         | green    | green  |
-| Cypress / Independent  | green    | green  |
-| Playwright Core 1/2    | green    | green  |
-| Playwright Core 2/2    | green    | green  |
-| Playwright Harness 1/2 | green    | green  |
-| Playwright Harness 2/2 | green    | green  |
-| E2E Suite Gate         | green    | green  |
-| Shared Build           | green    | green  |
-| Static                 | green    | green  |
-| Image                  | green    | green  |
+Both canaries (Cypress Admin, Playwright Harness — the analyzer accept-results
+flows that broke on the reverted attempt) are green. Cypress Independent
+confirms the route fix on the test that found it: `generalConfigurations.cy.js`
+goes from 6 passing / 1 failing / 3 skipped to 10 passing.
 
-Branch results are run `34161231563` on `cb4370260`, the order-screen fix, and
-cover everything up to it: the query client at the root, the reloads removed
-from error paths, and the order, rename and `UserManagement` screens. Both jobs
-that broke on the reverted attempt — Cypress Admin and Playwright Harness, the
-analyzer accept-results flows — are green. The checkpoint also passed on
-`fbab7a6` and `4811c01e`. Later pushes are still queued.
+Two things that cost time and will recur:
 
-Nothing has run since. `Shared Build` fails building `db_openelis_org` and
-`fhir_openelis_org`: both are Debian bullseye images and `bullseye-security`'s
-`InRelease` is expired, so `apt-get update` exits 100. The expiry grows between
-runs, so no fresh file is being published and it does not recover on a retry.
-Without images the executor is skipped and the checkpoint fails, which is what
-`a85d812f9` shows — no test failed. `db` needs `gettext-base` for `envsubst`, so
-this is not fixed by dropping the unused `curl` from the FHIR image.
+- Independent failed once with no test result at all — the runner image no
+  longer ships Chrome and the job's apt fallback failed three times, so it
+  exited before a single spec ran. Check for a `Running:` line before reading a
+  red Cypress job as a code failure; the fix is a job re-run.
+- The image build was stuck for several pushes on expired `bullseye-security`
+  metadata (`apt-get update` exit 100, expiry growing each run, so no retry
+  would help). Develop's #4209 fixed it with `archive.debian.org`. That same PR
+  turns the unified results worklist on in changeset 089 and rewrites the two
+  legacy result-entry specs, which is why the branch had to merge develop before
+  its E2E meant anything.
 
 `E2E / Tests` runs as a `workflow_run`, so it reports develop's branch and sha
 and never appears against the PR's own commit: read it through the
