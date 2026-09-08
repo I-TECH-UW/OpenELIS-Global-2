@@ -1,5 +1,9 @@
+import { useContext, useEffect, useRef } from "react";
+import { useIntl } from "react-intl";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { serverQuery } from "./queryClient";
+import { NotificationContext } from "../layout/contexts";
+import { NotificationKinds } from "../common/CustomNotification";
 
 /** Every read through this hook shares this prefix, so one call can retire all of it. */
 export const SERVER_DATA_KEY = "serverData";
@@ -12,6 +16,11 @@ export const SERVER_DATA_KEY = "serverData";
  *
  * Pass a falsy endpoint to hold off — for a read that depends on a selection the
  * user has not made yet.
+ *
+ * A failed read tells the user through the existing notification banner
+ * rather than leaving the screen's own `!data` guard spinning forever with
+ * nothing to show for it — every consumer already renders that banner for
+ * its own write results, so this needs no per-screen change.
  */
 export const useServerData = <T>(endPoint: string | null | undefined) => {
   const query = useQuery({
@@ -19,6 +28,31 @@ export const useServerData = <T>(endPoint: string | null | undefined) => {
     enabled: Boolean(endPoint),
     keepPreviousData: true,
   });
+
+  const notificationContext = useContext(NotificationContext);
+  const intl = useIntl();
+  const notifiedFor = useRef<string | null>(null);
+
+  useEffect(() => {
+    if (!endPoint) {
+      return;
+    }
+    if (query.isError) {
+      if (notifiedFor.current === endPoint) {
+        return;
+      }
+      notifiedFor.current = endPoint;
+      notificationContext?.addNotification?.({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "server.error.msg" }),
+      });
+      notificationContext?.setNotificationVisible?.(true);
+    } else {
+      notifiedFor.current = null;
+    }
+  }, [query.isError, endPoint, notificationContext]);
+
   return query;
 };
 

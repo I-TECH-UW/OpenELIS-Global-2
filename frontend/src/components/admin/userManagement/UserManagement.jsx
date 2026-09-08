@@ -166,7 +166,11 @@ function UserManagement() {
         ",",
       )}&roleFilter=${roleFilter}`;
 
-  const { data: fetchedUserList, isFetching: userListFetching } = useQuery({
+  const {
+    data: fetchedUserList,
+    isFetching: userListFetching,
+    isError: userListFailed,
+  } = useQuery({
     ...serverQuery(USER_LIST_KEY.concat(userListEndpoint), userListEndpoint),
     keepPreviousData: true,
   });
@@ -176,6 +180,24 @@ function UserManagement() {
       setUserManagementList(fetchedUserList);
     }
   }, [fetchedUserList]);
+
+  // This screen calls useQuery directly rather than through useServerData
+  // (its cache key needs a distinct invalidation scope), so it does not pick
+  // up that hook's own notify-on-error handling and needs its own.
+  const userListFailureNotified = useRef(false);
+  useEffect(() => {
+    if (userListFailed && !userListFailureNotified.current) {
+      userListFailureNotified.current = true;
+      addNotification({
+        kind: NotificationKinds.error,
+        title: intl.formatMessage({ id: "notification.title" }),
+        message: intl.formatMessage({ id: "server.error.msg" }),
+      });
+      setNotificationVisible(true);
+    } else if (!userListFailed) {
+      userListFailureNotified.current = false;
+    }
+  }, [userListFailed]);
 
   useEffect(() => {
     if (userManagementListShow) {

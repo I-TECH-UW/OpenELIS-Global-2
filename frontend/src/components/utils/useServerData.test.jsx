@@ -3,6 +3,9 @@ import { render, screen } from "@testing-library/react";
 import { waitFor } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import { QueryClientProvider } from "@tanstack/react-query";
+import { IntlProvider } from "react-intl";
+import messages from "../../languages/en.json";
+import { NotificationContext } from "../layout/contexts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { getFromOpenElisServer } from "./Utils";
 import { createQueryClient } from "./queryClient";
@@ -31,11 +34,15 @@ const Screen = ({ endPoint = "/rest/things", second = null }) => {
   );
 };
 
-const renderWithCache = (props) =>
+const renderWithCache = (props, notificationContext) =>
   render(
-    <QueryClientProvider client={createQueryClient()}>
-      <Screen {...props} />
-    </QueryClientProvider>,
+    <IntlProvider locale="en" messages={messages}>
+      <QueryClientProvider client={createQueryClient()}>
+        <NotificationContext.Provider value={notificationContext ?? {}}>
+          <Screen {...props} />
+        </NotificationContext.Provider>
+      </QueryClientProvider>
+    </IntlProvider>,
   );
 
 describe("useServerData", () => {
@@ -103,5 +110,27 @@ describe("useServerData", () => {
       expect(screen.getByTestId("value")).toHaveTextContent("—"),
     );
     expect(getFromOpenElisServer).not.toHaveBeenCalled();
+  });
+
+  it("tells the user once when a read fails, instead of spinning forever", async () => {
+    // getFromOpenElisServer reports a failed read by calling back undefined —
+    // fetchFromServer turns that into a rejected query.
+    getFromOpenElisServer.mockImplementation((url, cb) => cb(undefined));
+    const addNotification = vi.fn();
+    const setNotificationVisible = vi.fn();
+
+    renderWithCache({}, { addNotification, setNotificationVisible });
+
+    await waitFor(() => expect(addNotification).toHaveBeenCalledTimes(1));
+    expect(addNotification.mock.calls[0][0]).toMatchObject({
+      kind: "error",
+      message: messages["server.error.msg"],
+    });
+    expect(setNotificationVisible).toHaveBeenCalledWith(true);
+
+    // Re-rendering while the same endpoint keeps failing must not repeat it.
+    await userEvent.click(screen.getByRole("button", { name: "refresh one" }));
+    await waitFor(() => expect(getFromOpenElisServer).toHaveBeenCalledTimes(2));
+    expect(addNotification).toHaveBeenCalledTimes(1);
   });
 });

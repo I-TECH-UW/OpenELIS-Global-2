@@ -129,4 +129,33 @@ describe("UserManagement", () => {
     // A document reload would have thrown away every bit of client state.
     expect(reload).not.toHaveBeenCalled();
   });
+
+  it("tells the user once when the list fails to load", async () => {
+    getFromOpenElisServer.mockImplementation((url, cb) => cb(undefined));
+    const addNotification = vi.fn();
+
+    render(
+      <MemoryRouter>
+        <IntlProvider locale="en" messages={messages}>
+          <QueryClientProvider client={createQueryClient()}>
+            <NotificationContext.Provider
+              value={{
+                notificationVisible: false,
+                setNotificationVisible: vi.fn(),
+                addNotification,
+              }}
+            >
+              <UserManagement />
+            </NotificationContext.Provider>
+          </QueryClientProvider>
+        </IntlProvider>
+      </MemoryRouter>,
+    );
+
+    await waitFor(() => expect(addNotification).toHaveBeenCalledTimes(1));
+    expect(addNotification.mock.calls[0][0]).toMatchObject({
+      kind: "error",
+      message: messages["server.error.msg"],
+    });
+  });
 });
