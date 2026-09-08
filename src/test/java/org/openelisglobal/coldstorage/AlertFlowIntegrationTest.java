@@ -480,4 +480,77 @@ public class AlertFlowIntegrationTest extends BaseWebContextSensitiveTest {
             readingIngestionService.ingest(freezer, firstPoll.plusMinutes(i), null, null, null, false, "timeout");
         }
     }
+
+    /**
+     * Humidity fed the reading's stored status but nothing raised an alert for it,
+     * so a cabinet could show a red Critical tag with no alert and no notification
+     * behind it. The profile's temperature band is wide of this reading, so
+     * humidity is the only thing out of range.
+     */
+    @Test
+    public void testHumidityOnlyBreachRaisesItsOwnAlert() throws InterruptedException {
+        Long freezerId = 103L;
+        Freezer freezer = freezerService.findById(freezerId).orElse(null);
+        assertNotNull("Humidity test fridge should exist", freezer);
+
+        readingIngestionService.ingest(freezer, OffsetDateTime.now(), new BigDecimal("-80.0"),
+                new BigDecimal("82.0"), null, true, null);
+
+        Thread.sleep(500);
+
+        List<Alert> alerts = alertService.getAlertsByEntity("Freezer", freezerId);
+        assertEquals("A humidity breach should raise exactly one alert", 1, alerts.size());
+
+        Alert alert = alerts.getFirst();
+        assertEquals("Alert type should be FREEZER_HUMIDITY", AlertType.FREEZER_HUMIDITY, alert.getAlertType());
+        assertEquals("82% against a critical maximum of 75% is CRITICAL", AlertSeverity.CRITICAL,
+                alert.getSeverity());
+        assertEquals("Alert status should be OPEN", AlertStatus.OPEN, alert.getStatus());
+        assertTrue("Message should name humidity, not temperature: " + alert.getMessage(),
+                alert.getMessage().contains("Humidity threshold violated"));
+        assertTrue("Message should carry the reading: " + alert.getMessage(), alert.getMessage().contains("82.0"));
+
+        FreezerReading stored = freezerReadingService.getLatestReading(freezerId).orElse(null);
+        assertNotNull("The reading should be stored", stored);
+        assertEquals("The reading itself should be CRITICAL too", FreezerReading.Status.CRITICAL, stored.getStatus());
+    }
+
+    /** A humidity reading inside its band must not raise anything. */
+    @Test
+    public void testHumidityInsideItsBandRaisesNoAlert() throws InterruptedException {
+        Freezer freezer = freezerService.findById(103L).orElse(null);
+        assertNotNull("Humidity test fridge should exist", freezer);
+
+        readingIngestionService.ingest(freezer, OffsetDateTime.now(), new BigDecimal("-80.0"),
+                new BigDecimal("45.0"), null, true, null);
+
+        Thread.sleep(500);
+
+        assertTrue("Nothing is out of band, so there should be no alert",
+                alertService.getAlertsByEntity("Freezer", 103L).isEmpty());
+    }
+
+    /**
+     * Alerts deduplicate on (type, entity type, entity id), so temperature and
+     * humidity have to be separate types - sharing one would collapse both
+     * breaches on a unit into a single row and lose whichever arrived second.
+     */
+    @Test
+    public void testTemperatureAndHumidityBreachesRaiseSeparateAlerts() throws InterruptedException {
+        Long freezerId = 103L;
+        Freezer freezer = freezerService.findById(freezerId).orElse(null);
+        assertNotNull("Humidity test fridge should exist", freezer);
+
+        readingIngestionService.ingest(freezer, OffsetDateTime.now(), new BigDecimal("5.0"), new BigDecimal("82.0"),
+                null, true, null);
+
+        Thread.sleep(500);
+
+        List<Alert> alerts = alertService.getAlertsByEntity("Freezer", freezerId);
+        assertEquals("Both breaches should be visible, not one", 2, alerts.size());
+        assertTrue("A temperature alert should be among them",
+                alerts.stream().anyMatch(a -> a.getAlertType() == AlertType.FREEZER_TEMPERATURE));
+        assertTrue("A humidity alert should be among them",
+                alerts.stream().anyMatch(a -> a.getAlertType() == AlertType.FREEZER_HUMIDITY));
+    }
 }

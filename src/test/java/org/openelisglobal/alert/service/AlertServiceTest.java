@@ -105,4 +105,45 @@ public class AlertServiceTest extends BaseWebContextSensitiveTest {
         assertEquals("Duplicate count should be 1", Integer.valueOf(1), alert.getDuplicateCount());
         assertNotNull("Last duplicate time should be set", alert.getLastDuplicateTime());
     }
+
+    /**
+     * A condition that deteriorates while its alert is open must not keep the
+     * severity and message it was raised with: a freezer that has gone from
+     * WARNING to CRITICAL read WARNING, with the temperature it first breached
+     * at, for as long as nobody closed the row.
+     */
+    @Test
+    public void testCreateAlert_WhenSeverityWorsens_EscalatesTheOpenAlert() {
+        Alert warning = alertService.createAlert(AlertType.FREEZER_TEMPERATURE, "Freezer", 601L, AlertSeverity.WARNING,
+                "Temperature threshold violated: Current -17.0C", "{\"temperature\": -17.0}");
+
+        Alert escalated = alertService.createAlert(AlertType.FREEZER_TEMPERATURE, "Freezer", 601L,
+                AlertSeverity.CRITICAL, "Temperature threshold violated: Current 5.0C", "{\"temperature\": 5.0}");
+
+        assertEquals("Escalation must reuse the open alert, not open a second one", warning.getId(),
+                escalated.getId());
+        assertEquals("Severity should now be CRITICAL", AlertSeverity.CRITICAL, escalated.getSeverity());
+        assertEquals("The message should describe the breach it escalated on",
+                "Temperature threshold violated: Current 5.0C", escalated.getMessage());
+        assertEquals("Duplicate count still counts the repeat", Integer.valueOf(1), escalated.getDuplicateCount());
+    }
+
+    /**
+     * The inverse must not happen. One reading back inside the warning band is
+     * not a recovery, and silently downgrading an open CRITICAL would hide an
+     * excursion that is still running.
+     */
+    @Test
+    public void testCreateAlert_WhenSeverityImproves_DoesNotDowngradeTheOpenAlert() {
+        Alert critical = alertService.createAlert(AlertType.FREEZER_TEMPERATURE, "Freezer", 602L,
+                AlertSeverity.CRITICAL, "Temperature threshold violated: Current 5.0C", "{\"temperature\": 5.0}");
+
+        Alert repeat = alertService.createAlert(AlertType.FREEZER_TEMPERATURE, "Freezer", 602L, AlertSeverity.WARNING,
+                "Temperature threshold violated: Current -17.0C", "{\"temperature\": -17.0}");
+
+        assertEquals("Should still be the same alert", critical.getId(), repeat.getId());
+        assertEquals("Severity should stay CRITICAL", AlertSeverity.CRITICAL, repeat.getSeverity());
+        assertEquals("The message should stay the one it escalated on",
+                "Temperature threshold violated: Current 5.0C", repeat.getMessage());
+    }
 }

@@ -12,7 +12,8 @@
     </preConditions>
     <comment>Add FREEZER_OFFLINE to alert_type CHECK constraint so an unresponsive device can raise its own alert. The
       constraint is redeclared wholesale by every changeset that touches it, so this list is 086's union plus
-      FREEZER_OFFLINE and no changeset anywhere in base-changelog.xml may redeclare chk_alert_type after this one -
+      FREEZER_OFFLINE. The "must be last" invariant has moved to 092, which redeclares the constraint again to add
+      FREEZER_HUMIDITY - no changeset anywhere in base-changelog.xml may redeclare chk_alert_type after 092,
       including the analyzer/ and qc/ changelogs, which base-changelog.xml includes after 3.5.x.x/base.xml.</comment>
     <sql>
       ALTER TABLE clinlims.alert DROP CONSTRAINT IF EXISTS chk_alert_type;

@@ -330,8 +330,17 @@ function Reports({ devices = [] }) {
         range: item.range,
         severity: item.severity,
         status: item.status,
-        source: item,
       })),
+    [excursions],
+  );
+
+  // The row cells below need more than a flat value - the freezer column
+  // stacks an id over a name, and severity and status render as tags - so the
+  // excursion is looked up by id here. It cannot be carried on the row object:
+  // Carbon normalises rows to the declared header keys, so an extra key does
+  // not survive to the render prop.
+  const excursionById = useMemo(
+    () => new Map(excursions.map((item) => [item.id, item])),
     [excursions],
   );
 
@@ -681,6 +690,7 @@ function Reports({ devices = [] }) {
         <Column lg={4} md={4} sm={4}>
           <DatePicker
             datePickerType="single"
+            value={dateRange[0]}
             onChange={(dates) => {
               if (dates && dates.length > 0) {
                 const newRange = [...dateRange];
@@ -703,6 +713,7 @@ function Reports({ devices = [] }) {
         <Column lg={4} md={4} sm={4}>
           <DatePicker
             datePickerType="single"
+            value={dateRange[1]}
             onChange={(dates) => {
               if (dates && dates.length > 0) {
                 const newRange = [...dateRange];
@@ -836,10 +847,7 @@ function Reports({ devices = [] }) {
                             </TableRow>
                           )}
                           {rows.map((row) => {
-                            const excursion = row.source;
-                            if (!excursion) {
-                              return null;
-                            }
+                            const excursion = excursionById.get(row.id) ?? {};
                             return (
                               <TableRow key={row.id} {...getRowProps({ row })}>
                                 <TableCell>{excursion.id}</TableCell>

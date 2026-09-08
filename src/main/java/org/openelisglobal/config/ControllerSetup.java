@@ -19,6 +19,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
@@ -47,6 +48,21 @@ public class ControllerSetup extends ResponseEntityExceptionHandler {
         binder.registerCustomEditor(AuthType.class, new CaseInsensitiveEnumPropertyEditor<>(AuthType.class));
         binder.registerCustomEditor(ProgrammedConnection.class,
                 new CaseInsensitiveEnumPropertyEditor<>(ProgrammedConnection.class));
+    }
+
+    /**
+     * AccessDeniedException is a RuntimeException, so without a handler of its own
+     * the fallback below answered every @PreAuthorize denial with 500: the
+     * DispatcherServlet resolves a @ControllerAdvice handler before Spring
+     * Security's ExceptionTranslationFilter sees the exception, and a caller could
+     * not tell "you may not do this" from "the server broke". Logged at debug, not
+     * error - a refusal is the authorization layer working, not a fault.
+     */
+    @ExceptionHandler(value = { AccessDeniedException.class })
+    protected ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex, WebRequest request) {
+        LogEvent.logDebug(this.getClass().getName(), "handleAccessDenied", ex.getMessage());
+        return new ResponseEntity<>(buildGenericErrorBody(HttpStatus.FORBIDDEN), new HttpHeaders(),
+                HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(value = { RuntimeException.class })

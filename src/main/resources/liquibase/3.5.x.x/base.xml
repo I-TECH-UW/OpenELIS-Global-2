@@ -394,9 +394,8 @@
   <include relativeToChangelogFile="true" file="098-remove-superseded-analyzer-schema.xml"/>
 
   <!-- Cold-storage monitoring hardening (issues #3743/#3904). Its first changeset redeclares
-       chk_alert_type wholesale (086's union plus FREEZER_OFFLINE), so anything that redeclares that
-       constraint after it - anywhere later in base-changelog.xml, which also includes analyzer/ and
-       qc/ after this file - drops FREEZER_OFFLINE again. -->
+       chk_alert_type wholesale (086's union plus FREEZER_OFFLINE). 092 below redeclares it once more to
+       add FREEZER_HUMIDITY and is now the last word on that constraint - see the note there. -->
   <include relativeToChangelogFile="true" file="089-cold-storage-monitoring-hardening.xml"/>
 
   <!-- Acknowledgment notes on alert, so the detail modal's notes field is no longer dropped on acknowledge. -->
@@ -405,6 +404,10 @@
   <!-- Repair value_type on a freezer.monitoring.enabled row seeded by the pre-rename 070 file, whose
        existence makes 089's guarded insert MARK_RAN. -->
   <include relativeToChangelogFile="true" file="091-freezer-monitoring-enabled-value-type.xml"/>
+
+  <!-- FREEZER_HUMIDITY on the alert_type constraint. This is now the last changeset anywhere in
+       base-changelog.xml that may redeclare chk_alert_type - it inherits 089's ordering invariant. -->
+  <include relativeToChangelogFile="true" file="092-freezer-humidity-alert-type.xml"/>
 
 
 </databaseChangeLog>

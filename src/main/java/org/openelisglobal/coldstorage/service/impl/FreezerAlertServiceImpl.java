@@ -9,6 +9,7 @@ import org.openelisglobal.alert.valueholder.Alert;
 import org.openelisglobal.alert.valueholder.AlertSeverity;
 import org.openelisglobal.alert.valueholder.AlertStatus;
 import org.openelisglobal.alert.valueholder.AlertType;
+import org.openelisglobal.coldstorage.event.FreezerHumidityThresholdViolatedEvent;
 import org.openelisglobal.coldstorage.event.FreezerTemperatureThresholdViolatedEvent;
 import org.openelisglobal.coldstorage.event.FreezerTransmissionFailedEvent;
 import org.openelisglobal.coldstorage.event.FreezerTransmissionRecoveredEvent;
@@ -52,6 +53,19 @@ public class FreezerAlertServiceImpl implements FreezerAlertService {
 
     @Override
     @Transactional
+    public Alert createFreezerHumidityAlert(Long freezerId, BigDecimal humidity, BigDecimal thresholdValue,
+            String thresholdType) {
+
+        AlertSeverity severity = thresholdType.startsWith("CRITICAL") ? AlertSeverity.CRITICAL : AlertSeverity.WARNING;
+        String message = buildHumidityAlertMessage(humidity, thresholdValue, thresholdType);
+        String contextDataJson = buildHumidityContextDataJson(humidity, thresholdValue, thresholdType);
+
+        return alertService.createAlert(AlertType.FREEZER_HUMIDITY, "Freezer", freezerId, severity, message,
+                contextDataJson);
+    }
+
+    @Override
+    @Transactional
     public Alert createFreezerOfflineAlert(Long freezerId, String errorMessage) {
         String message = buildOfflineAlertMessage(errorMessage);
         String contextDataJson = buildOfflineContextDataJson(errorMessage);
@@ -72,6 +86,21 @@ public class FreezerAlertServiceImpl implements FreezerAlertService {
                     event.getThresholdType());
         } catch (Exception e) {
             logger.error("Error creating freezer temperature alert for freezer ID: {}", event.getFreezerId(), e);
+        }
+    }
+
+    // AFTER_COMMIT and REQUIRES_NEW for the same reasons as the temperature
+    // listener above.
+    @Override
+    @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
+    @Transactional(propagation = Propagation.REQUIRES_NEW)
+    @Async
+    public void handleFreezerHumidityThresholdViolated(FreezerHumidityThresholdViolatedEvent event) {
+        try {
+            createFreezerHumidityAlert(event.getFreezerId(), event.getHumidity(), event.getThresholdValue(),
+                    event.getThresholdType());
+        } catch (Exception e) {
+            logger.error("Error creating freezer humidity alert for freezer ID: {}", event.getFreezerId(), e);
         }
     }
 
@@ -146,6 +175,24 @@ public class FreezerAlertServiceImpl implements FreezerAlertService {
             return objectMapper.writeValueAsString(contextData);
         } catch (Exception e) {
             logger.error("Error building context data JSON", e);
+            return "{}";
+        }
+    }
+
+    private String buildHumidityAlertMessage(BigDecimal humidity, BigDecimal thresholdValue, String thresholdType) {
+        return String.format("Humidity threshold violated: Current %.1f%%, Threshold %.1f%% (%s)",
+                humidity.doubleValue(), thresholdValue.doubleValue(), thresholdType);
+    }
+
+    private String buildHumidityContextDataJson(BigDecimal humidity, BigDecimal thresholdValue, String thresholdType) {
+        try {
+            Map<String, Object> contextData = new HashMap<>();
+            contextData.put("humidity", humidity);
+            contextData.put("thresholdValue", thresholdValue);
+            contextData.put("thresholdType", thresholdType);
+            return objectMapper.writeValueAsString(contextData);
+        } catch (Exception e) {
+            logger.error("Error building humidity context data JSON", e);
             return "{}";
         }
     }

@@ -77,8 +77,16 @@ public class ReadingIngestionServiceImpl implements ReadingIngestionService {
         if (profile != null) {
             if (escalationStatus != FreezerReading.Status.NORMAL) {
                 checkTemperatureThresholdsWithProfile(freezer, temperature, savedReading.getId(), profile);
+                // Humidity is evaluated alongside temperature rather than instead
+                // of it: a unit can be within band on one and outside on the
+                // other, and each needs its own alert. Both sit behind the same
+                // hysteresis gate, since escalationStatus already accounts for
+                // humidity.
+                checkHumidityThresholdsWithProfile(freezer, humidity, savedReading.getId(), profile);
             }
         } else {
+            // The simple fallback has no humidity thresholds to check - Freezer
+            // carries only a target temperature and two deviation bounds.
             checkSimpleTemperatureThresholds(freezer, temperature, savedReading.getId());
         }
     }
@@ -162,6 +170,54 @@ public class ReadingIngestionServiceImpl implements ReadingIngestionService {
             publishThresholdViolatedEvent(freezer.getId(), temperature, profile.getWarningMin(), "WARNING_LOW",
                     readingId);
         }
+    }
+
+    /**
+     * Checks humidity against the profile's band and publishes
+     * FreezerHumidityThresholdViolatedEvent.
+     *
+     * <p>
+     * Checks in priority order: CRITICAL_MAX, WARNING_MAX, CRITICAL_MIN,
+     * WARNING_MIN - so a reading beyond the critical bound never reports as a
+     * mere warning.
+     */
+    private void checkHumidityThresholdsWithProfile(Freezer freezer, BigDecimal humidity, Long readingId,
+            ThresholdProfile profile) {
+        // A device with no humidity register reports nothing to check.
+        if (humidity == null) {
+            return;
+        }
+
+        if (profile.getHumidityCriticalMax() != null && humidity.compareTo(profile.getHumidityCriticalMax()) > 0) {
+            publishHumidityViolatedEvent(freezer.getId(), humidity, profile.getHumidityCriticalMax(), "CRITICAL_HIGH",
+                    readingId);
+            return;
+        }
+
+        if (profile.getHumidityWarningMax() != null && humidity.compareTo(profile.getHumidityWarningMax()) > 0) {
+            publishHumidityViolatedEvent(freezer.getId(), humidity, profile.getHumidityWarningMax(), "WARNING_HIGH",
+                    readingId);
+            return;
+        }
+
+        if (profile.getHumidityCriticalMin() != null && humidity.compareTo(profile.getHumidityCriticalMin()) < 0) {
+            publishHumidityViolatedEvent(freezer.getId(), humidity, profile.getHumidityCriticalMin(), "CRITICAL_LOW",
+                    readingId);
+            return;
+        }
+
+        if (profile.getHumidityWarningMin() != null && humidity.compareTo(profile.getHumidityWarningMin()) < 0) {
+            publishHumidityViolatedEvent(freezer.getId(), humidity, profile.getHumidityWarningMin(), "WARNING_LOW",
+                    readingId);
+        }
+    }
+
+    private void publishHumidityViolatedEvent(Long freezerId, BigDecimal humidity, BigDecimal thresholdValue,
+            String thresholdType, Long readingId) {
+        eventPublisher.publishEvent(new org.openelisglobal.coldstorage.event.FreezerHumidityThresholdViolatedEvent(this,
+                freezerId, humidity, thresholdValue, thresholdType, readingId));
+        LOGGER.info("Published humidity threshold violated event for freezer {}: {}% (threshold: {}%)", freezerId,
+                humidity, thresholdValue);
     }
 
     /**
