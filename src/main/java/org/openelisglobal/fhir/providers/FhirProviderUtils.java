@@ -86,6 +86,10 @@ public final class FhirProviderUtils {
         return ControllerUtills.getSysUserId(request);
     }
 
+    public static String safeMessage(Exception e) {
+        return (e == null || e.getMessage() == null) ? "No error message available" : e.getMessage();
+    }
+
     public static void validateIdParam(IdType theId, String resourceType, String callerClassName, String method) {
 
         if (theId == null || !theId.hasIdPart()) {
