@@ -1,10 +1,7 @@
-# Use the official PostgreSQL 14.4 image as base
-FROM postgres:14.4
+# Keep the PostgreSQL major version on a supported operating-system base.
+FROM postgres:14.24-bookworm
 
-# Debian 11 (bullseye) left LTS on 2026-08-31: the security suite's Release file has expired and its
-# pool is being pruned, so packages come from archive.debian.org (main + updates only).
-RUN printf 'deb http://archive.debian.org/debian bullseye main\ndeb http://archive.debian.org/debian bullseye-updates main\n' > /etc/apt/sources.list \
-    && apt-get -o Acquire::Check-Valid-Until=false update && apt-get install -y gettext-base && rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y gettext-base && rm -rf /var/lib/apt/lists/*
 # Copy initialization scripts and data files into the container
 # PostgreSQL will automatically run any *.sql or *.sh files in this folder
 COPY ./db/dbInit /docker-entrypoint-initdb.d
@@ -14,8 +11,15 @@ COPY ./db/dbInit/siteInfo.sql /docker-entrypoint-initdb.d/siteInfo.sql
 RUN chmod -R 755 /docker-entrypoint-initdb.d \
     && chown -R postgres:postgres /docker-entrypoint-initdb.d
 
+# Existing volumes: rebuild indexes once when the OS collation library changed (see the script).
+COPY ./db/docker-entrypoint-collation.sh /usr/local/bin/docker-entrypoint-collation.sh
+RUN chmod 755 /usr/local/bin/docker-entrypoint-collation.sh
+
 # Optional: Set working directory (not strictly needed)
 WORKDIR /docker-entrypoint-initdb.d
 
 # Expose the PostgreSQL port
 EXPOSE 5432
+
+ENTRYPOINT ["docker-entrypoint-collation.sh"]
+CMD ["postgres"]
