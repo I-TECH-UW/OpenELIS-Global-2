@@ -77,7 +77,7 @@ Counts, non-test source:
 |                                                  | Start | Now | In scope |
 | ------------------------------------------------ | ----- | --- | -------- |
 | `window.location.reload()`                       | 84    | 2   | 0        |
-| same-route / cross-screen `assign()` or `href =` | 85    | 50  | 30       |
+| same-route / cross-screen `assign()` or `href =` | 85    | 40  | 20       |
 
 Criterion 2 is met: no `window.location.reload()` remains outside the session
 and error-recovery set. The two that stay are the CSRF-expiry reload in
@@ -103,10 +103,23 @@ scope, not a screen navigation. In scope for criterion 5: 34 sites across
 roughly 20 files.
 
 The four case-view dashboards (Cytology, Pathology, Immunohistochemistry,
-program) are the first done: each sent the browser to its own detail route on a
-row click, now `history.push` through a `useHistory()` the router already
-provides. `caseViewNavigation.test.jsx` covers all four, Red-proved on Cytology
-by reverting to the `href` write.
+program) were first: each sent the browser to its own detail route on a row
+click, now `history.push` through a `useHistory()` the router already provides.
+`caseViewNavigation.test.jsx` covers all four, Red-proved on Cytology by
+reverting to the `href` write.
+
+Next, the admin add/modify screens: `OrganizationAddModify`,
+`ExternalConnectionAddModify` and `TestNotificationConfigEdit` each leave for a
+different route and component (their own list), so all of their sites —
+missing-ID guard, save success, Exit — are `history.push`, `history.replace` for
+the guard. `TestNotificationConfigMenu` looked the same shape but wasn't: its
+two Exit buttons target the route the component is already mounted at.
+`history.push` to your own current route is a no-op in React Router — it would
+have left the unsaved checkbox toggles on screen instead of discarding them.
+Caught by reading the route table before writing the fix, not by the test. Those
+two are a refetch (`discardPendingChanges`, the same shape as
+`TestOrderability`'s Cancel), same-route despite being discovered during the
+cross-screen sweep. All ten sites Red-proved by reverting to the original write.
 
 The validation queue is the first screen where a same-route `assign()` was a
 refetch rather than a reset. Three of them: a per-row action succeeding, a row
