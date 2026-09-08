@@ -2,6 +2,7 @@ package org.openelisglobal.fhir.providers;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.param.DateRangeParam;
+import ca.uhn.fhir.rest.param.ReferenceAndListParam;
 import ca.uhn.fhir.rest.param.StringAndListParam;
 import ca.uhn.fhir.rest.param.StringOrListParam;
 import ca.uhn.fhir.rest.param.StringParam;
@@ -9,6 +10,7 @@ import ca.uhn.fhir.rest.param.TokenAndListParam;
 import ca.uhn.fhir.rest.param.TokenOrListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -84,6 +86,10 @@ public final class FhirProviderUtils {
     public static String getSysUserId(HttpServletRequest request) {
 
         return ControllerUtills.getSysUserId(request);
+    }
+
+    public static String safeMessage(Exception e) {
+        return (e == null || e.getMessage() == null) ? "No error message available" : e.getMessage();
     }
 
     public static void validateIdParam(IdType theId, String resourceType, String callerClassName, String method) {
@@ -284,5 +290,78 @@ public final class FhirProviderUtils {
     public static boolean hasValue(TokenAndListParam parameter) {
 
         return !tokenParameterGroups(parameter).isEmpty();
+    }
+
+    /**
+     * Folds two spellings of the same reference search parameter (for example
+     * {@code patient} and {@code subject}) into one AND list.
+     */
+    public static ReferenceAndListParam merge(ReferenceAndListParam first, ReferenceAndListParam second) {
+
+        if (first == null) {
+            return second;
+        }
+        if (second == null) {
+            return first;
+        }
+        ReferenceAndListParam merged = new ReferenceAndListParam();
+        first.getValuesAsQueryTokens().forEach(merged::addAnd);
+        second.getValuesAsQueryTokens().forEach(merged::addAnd);
+        return merged;
+    }
+
+    /**
+     * True when the failure is the caller's data rather than a server fault: a
+     * bean-validation violation, a database constraint or column-length rejection,
+     * or an SQL data/integrity error anywhere in the cause chain.
+     */
+    public static boolean isDataError(Throwable e) {
+        Throwable current = e;
+        while (current != null) {
+            if (current instanceof jakarta.validation.ConstraintViolationException
+                    || current instanceof org.hibernate.exception.DataException
+                    || current instanceof org.hibernate.exception.ConstraintViolationException
+                    || current instanceof org.springframework.dao.DataIntegrityViolationException) {
+                return true;
+            }
+            if (current instanceof java.sql.SQLException sqlException) {
+                String state = sqlException.getSQLState();
+                if (state != null && (state.startsWith("22") || state.startsWith("23"))) {
+                    return true;
+                }
+            }
+            if (current.getCause() == current) {
+                break;
+            }
+            current = current.getCause();
+        }
+        return false;
+    }
+
+    /**
+     * Maps a data error (see {@link #isDataError(Throwable)}) to a 422 whose
+     * diagnostics name the rejected field or constraint instead of a bare 500.
+     */
+    public static UnprocessableEntityException unprocessableData(String resourceType, Throwable e) {
+        Throwable current = e;
+        String reason = null;
+        while (current != null) {
+            if (current instanceof jakarta.validation.ConstraintViolationException violation) {
+                reason = violation.getConstraintViolations().stream()
+                        .map(v -> v.getPropertyPath() + " " + v.getMessage()).sorted()
+                        .collect(java.util.stream.Collectors.joining("; "));
+                break;
+            }
+            if (current instanceof java.sql.SQLException || current.getCause() == null
+                    || current.getCause() == current) {
+                reason = current.getMessage();
+                break;
+            }
+            current = current.getCause();
+        }
+        if (reason == null || reason.isBlank()) {
+            reason = e.getClass().getSimpleName();
+        }
+        return new UnprocessableEntityException(resourceType + " could not be stored: " + reason.trim());
     }
 }
