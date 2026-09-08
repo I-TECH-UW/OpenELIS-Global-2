@@ -641,48 +641,25 @@ public abstract class BaseFhirDao {
     }
 
     /**
-     * Creates a last updated date range predicate.
+     * {@code _lastUpdated} over the entity's lastupdated column, with FHIR period
+     * semantics: a day-precision value spans the whole day, {@code gt}/{@code lt}
+     * exclude the period and {@code ge}/{@code le}/{@code eq} include it.
      */
     protected <T, R> Optional<Predicate> createLastUpdatedPredicate(FhirCriteriaContext<T, R> context,
             DateRangeParam lastUpdated) {
-
         if (context == null || lastUpdated == null) {
             return Optional.empty();
         }
-
-        DateParam lowerBound = lastUpdated.getLowerBound();
-        DateParam upperBound = lastUpdated.getUpperBound();
-
-        if (!hasDateValue(lowerBound) && !hasDateValue(upperBound)) {
-            return Optional.empty();
-        }
-
-        CriteriaBuilder criteriaBuilder = context.getCriteriaBuilder();
         Expression<Date> lastUpdatedExpression = resolveExpression(context, FhirConstants.LAST_UPDATED_PROPERTY,
                 Date.class);
-
-        Predicate lowerPredicate = createLowerDatePredicate(criteriaBuilder, lastUpdatedExpression, lowerBound);
-
-        Predicate upperPredicate = createUpperDatePredicate(criteriaBuilder, lastUpdatedExpression, upperBound);
-
-        if (lowerPredicate == null && upperPredicate == null) {
+        List<Predicate> bounds = DateParamBounds.predicates(context.getCriteriaBuilder(), lastUpdatedExpression,
+                lastUpdated);
+        if (bounds.isEmpty()) {
             return Optional.empty();
         }
-
-        if (lowerPredicate == null) {
-            return Optional.of(upperPredicate);
-        }
-
-        if (upperPredicate == null) {
-            return Optional.of(lowerPredicate);
-        }
-
-        return Optional.of(criteriaBuilder.and(lowerPredicate, upperPredicate));
+        return Optional.of(context.getCriteriaBuilder().and(bounds.toArray(new Predicate[0])));
     }
 
-    /**
-     * Creates a lower bound date predicate.
-     */
     protected Predicate createLowerDatePredicate(CriteriaBuilder criteriaBuilder, Expression<Date> expression,
             DateParam parameter) {
 

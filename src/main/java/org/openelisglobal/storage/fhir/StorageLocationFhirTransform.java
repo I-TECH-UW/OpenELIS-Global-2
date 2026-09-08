@@ -110,6 +110,7 @@ public class StorageLocationFhirTransform {
         Location location = new Location();
 
         location.setId(room.getFhirUuidAsString());
+        location.getMeta().setLastUpdated(room.getLastupdated());
         location.setStatus(
                 room.getActive() != null && room.getActive() ? LocationStatus.ACTIVE : LocationStatus.INACTIVE);
         location.setName(room.getName());
@@ -224,6 +225,7 @@ public class StorageLocationFhirTransform {
         Location location = new Location();
 
         location.setId(device.getFhirUuidAsString());
+        location.getMeta().setLastUpdated(device.getLastupdated());
         location.setStatus(
                 device.getActive() != null && device.getActive() ? LocationStatus.ACTIVE : LocationStatus.INACTIVE);
         location.setName(device.getName());
@@ -340,6 +342,7 @@ public class StorageLocationFhirTransform {
         Location location = new Location();
 
         location.setId(shelf.getFhirUuidAsString());
+        location.getMeta().setLastUpdated(shelf.getLastupdated());
         location.setStatus(
                 shelf.getActive() != null && shelf.getActive() ? LocationStatus.ACTIVE : LocationStatus.INACTIVE);
         location.setName(shelf.getLabel());
@@ -423,6 +426,7 @@ public class StorageLocationFhirTransform {
         Location location = new Location();
 
         location.setId(rack.getFhirUuidAsString());
+        location.getMeta().setLastUpdated(rack.getLastupdated());
         location.setStatus(
                 rack.getActive() != null && rack.getActive() ? LocationStatus.ACTIVE : LocationStatus.INACTIVE);
         location.setName(rack.getLabel());
@@ -552,6 +556,7 @@ public class StorageLocationFhirTransform {
         Location location = new Location();
 
         location.setId(box.getFhirUuidAsString());
+        location.getMeta().setLastUpdated(box.getLastupdated());
         location.setStatus(
                 box.getActive() != null && box.getActive() ? LocationStatus.ACTIVE : LocationStatus.INACTIVE);
         location.setMode(LocationMode.INSTANCE);

@@ -242,6 +242,7 @@ public class SpecimenTransformServiceImpl implements SpecimenTransformService {
         Specimen specimen = new Specimen();
 
         specimen.setId(sampleItem.getFhirUuidAsString());
+        specimen.getMeta().setLastUpdated(sampleItem.getLastupdated());
 
         specimen.addIdentifier(common.createIdentifier(fhirConfig.getOeFhirSystem() + "/sampleItem_uuid",
                 sampleItem.getFhirUuidAsString()));
