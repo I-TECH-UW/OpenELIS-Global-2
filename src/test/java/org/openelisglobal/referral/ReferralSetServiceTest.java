@@ -487,7 +487,7 @@ public class ReferralSetServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void updateReferralSets_shouldUpdateExistingReferralResultAndResult() {
+    public void updateReferralSets_shouldUpdateExistingReferralResult() {
         ReferralResult existingRR = referralResultService.getReferralResultById("903");
         assertEquals("14.5", existingRR.getResult().getValue());
 
