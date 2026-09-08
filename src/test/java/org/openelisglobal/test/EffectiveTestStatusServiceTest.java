@@ -47,9 +47,13 @@ public class EffectiveTestStatusServiceTest extends BaseWebContextSensitiveTest 
     private void setLabUnitActive(String sectionId, boolean active) {
         jdbcTemplate.update("update clinlims.test_section set is_active = ? where id = ?", active ? "Y" : "N",
                 Integer.valueOf(sectionId));
-        // The service layer caches section lists; drop them so the next read
-        // sees the new status.
-        testSectionService.refreshNames();
+        // Deliberately NOT calling testSectionService.refreshNames() here.
+        // isEffectivelyActive reads only TestSection.isActive (via
+        // testSectionService.get), never the localized-name cache, so the
+        // refresh is unnecessary — and it is process-wide state: populating it
+        // leaked into TestSectionServiceTest.getUserLocalizedTesSectionName,
+        // which asserts the map is still empty. That surfaced only in a
+        // full-suite run, where class order puts this test first.
     }
 
     @org.junit.Test
