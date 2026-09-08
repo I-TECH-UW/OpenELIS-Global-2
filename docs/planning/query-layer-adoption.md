@@ -123,8 +123,9 @@ stored order first, which is the one thing discarding never does.
 
 ### What E2E can and cannot say here
 
-Two converted screens are covered, and neither spec reaches the part that
-changed most.
+The config editor is covered twice and the validation queue once. The earlier
+claim that one screen was covered undercounted: it missed the Cypress side
+entirely, and the Cypress spec is the one that found the bug.
 
 `general-configurations.spec.ts` opens the general-configuration editor, toggles
 a value, saves, and asserts the editor has closed and the list is back. That
@@ -132,6 +133,13 @@ worked because reloading the document destroyed the parent's record of being in
 the editor — the reload was the navigation, not a refetch — so replacing it with
 one meant giving the editor a way to say it is finished. Converting it as a
 refetch would have left the editor open and turned that job red.
+
+`generalConfigurations.cy.js` goes further: it edits nine configuration menus,
+and for the printed-report and validation menus it **types** into the value
+rather than picking a radio. Typing is a chain that requires the input to stay
+put between clearing it and filling it, which is what caught the route problem
+below. The four `MenuConfig/*.cy.js` specs traverse the same list component.
+Both sit in the Cypress Independent shard.
 
 `validation.cy.js` reaches the validation queue from the side menu, checks the
 heading, and runs a search. It never takes a row action: its `validateTestUnit`
@@ -150,9 +158,44 @@ and the reloads removed from error paths in 17 files — and says nothing about
 the screens themselves. Their unit tests are the only guard, which is why each
 is written to fail when the behaviour is reverted.
 
+### What the reloads were hiding: routes that rebuild their screen
+
+`Admin` named nine of its screens with `component={() => <Screen />}`. React
+Router calls `createElement` on whatever `component` holds, so an inline arrow
+is a new component type on every render of `Admin` — React throws the mounted
+screen away and builds a new one. Anything that re-renders the layout does it: a
+notification arriving, and again when it times out.
+
+Nothing noticed while saving reloaded the document, because the screen was going
+to be rebuilt regardless. Once saving stopped reloading, an open editor could be
+discarded mid-edit by a notification from an earlier save timing out. That is
+what `generalConfigurations.cy.js` caught: it cleared the value field, a
+notification expired, the field it was about to type into no longer existed, and
+Cypress reported the subject detached from the DOM. The six menus that pick a
+radio survived because a click is one command; typing is a chain.
+
+The nine routes pass their screen to `render` now. `ConfigMenuDisplay.test.tsx`
+pins both halves: behind `render` the open editor survives a re-render of the
+parent, behind an inline `component` it does not.
+
+`App.jsx` names 137 routes the same way, so every screen in the application is
+rebuilt whenever a notification appears or expires. That is the same defect and
+it is worth fixing, but it touches every route in the app and only E2E can speak
+for it, so it is left as its own change rather than folded in here.
+
 ### Per-job E2E, branch vs baseline
 
-Baseline is run `33887282951` on develop `d6bab7a5a`, every job green.
+Baseline is run `33887282951` on develop `d6bab7a5a`, every job green. The table
+below is that comparison, taken on `cb4370260`.
+
+Develop has since been merged in, so the next comparison is against develop's
+tip rather than `d6bab7a5a`. The merge was needed on its own account: develop's
+#4209 turns the unified results worklist on by default in changeset 089 and
+rewrites the two specs that drove the legacy result-entry page in the same
+commit. The branch had the flag but neither the changeset nor the rewritten
+specs, so `esig-result-validation.spec.ts` and `storage-assign-result.spec.ts`
+both failed against a page that now forwards to `/Results`. #4209 also carries
+the `archive.debian.org` fix that had been failing every image build.
 
 | Job                    | Baseline | Branch |
 | ---------------------- | -------- | ------ |
