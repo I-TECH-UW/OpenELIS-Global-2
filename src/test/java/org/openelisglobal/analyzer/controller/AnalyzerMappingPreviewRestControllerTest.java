@@ -118,10 +118,11 @@ public class AnalyzerMappingPreviewRestControllerTest extends BaseWebContextSens
         MappingPreviewForm form = new MappingPreviewForm();
         form.setAstmMessage(largeMessage);
 
-        // Act & Assert: Oversized messages now return 413 PAYLOAD_TOO_LARGE
+        // Act & Assert: Oversized messages return 400 Bad Request via @Valid size
+        // constraint
         mockMvc.perform(post("/rest/analyzer/analyzers/{id}/preview-mapping", analyzerId)
                 .contentType(MediaType.APPLICATION_JSON).content(objectMapper.writeValueAsString(form)))
-                .andExpect(status().is(413)).andExpect(jsonPath("$.error").exists());
+                .andExpect(status().isBadRequest());
     }
 
     /**
