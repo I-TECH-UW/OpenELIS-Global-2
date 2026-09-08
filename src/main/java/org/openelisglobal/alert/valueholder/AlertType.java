@@ -7,10 +7,6 @@ public enum AlertType {
     FREEZER_TEMPERATURE,
 
     /**
-     * Freezer/fridge Modbus device stopped responding to polling (dead-man's
-     * switch, fires independently of any temperature threshold breach)
-     */
-    /**
      * Relative humidity outside the profile's humidity band. A separate type from
      * FREEZER_TEMPERATURE because alerts deduplicate on type, so sharing one would
      * collapse a humidity breach and a temperature breach on the same unit into a
@@ -18,6 +14,7 @@ public enum AlertType {
      */
     FREEZER_HUMIDITY,
 
+    /** Fires on failed polls, not threshold evaluation; do not re-route it. */
     FREEZER_OFFLINE,
 
     /**

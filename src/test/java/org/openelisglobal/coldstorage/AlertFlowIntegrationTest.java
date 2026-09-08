@@ -493,8 +493,8 @@ public class AlertFlowIntegrationTest extends BaseWebContextSensitiveTest {
         Freezer freezer = freezerService.findById(freezerId).orElse(null);
         assertNotNull("Humidity test fridge should exist", freezer);
 
-        readingIngestionService.ingest(freezer, OffsetDateTime.now(), new BigDecimal("-80.0"),
-                new BigDecimal("82.0"), null, true, null);
+        readingIngestionService.ingest(freezer, OffsetDateTime.now(), new BigDecimal("-80.0"), new BigDecimal("82.0"),
+                null, true, null);
 
         Thread.sleep(500);
 
@@ -503,8 +503,7 @@ public class AlertFlowIntegrationTest extends BaseWebContextSensitiveTest {
 
         Alert alert = alerts.getFirst();
         assertEquals("Alert type should be FREEZER_HUMIDITY", AlertType.FREEZER_HUMIDITY, alert.getAlertType());
-        assertEquals("82% against a critical maximum of 75% is CRITICAL", AlertSeverity.CRITICAL,
-                alert.getSeverity());
+        assertEquals("82% against a critical maximum of 75% is CRITICAL", AlertSeverity.CRITICAL, alert.getSeverity());
         assertEquals("Alert status should be OPEN", AlertStatus.OPEN, alert.getStatus());
         assertTrue("Message should name humidity, not temperature: " + alert.getMessage(),
                 alert.getMessage().contains("Humidity threshold violated"));
@@ -521,8 +520,8 @@ public class AlertFlowIntegrationTest extends BaseWebContextSensitiveTest {
         Freezer freezer = freezerService.findById(103L).orElse(null);
         assertNotNull("Humidity test fridge should exist", freezer);
 
-        readingIngestionService.ingest(freezer, OffsetDateTime.now(), new BigDecimal("-80.0"),
-                new BigDecimal("45.0"), null, true, null);
+        readingIngestionService.ingest(freezer, OffsetDateTime.now(), new BigDecimal("-80.0"), new BigDecimal("45.0"),
+                null, true, null);
 
         Thread.sleep(500);
 
@@ -530,11 +529,6 @@ public class AlertFlowIntegrationTest extends BaseWebContextSensitiveTest {
                 alertService.getAlertsByEntity("Freezer", 103L).isEmpty());
     }
 
-    /**
-     * Alerts deduplicate on (type, entity type, entity id), so temperature and
-     * humidity have to be separate types - sharing one would collapse both
-     * breaches on a unit into a single row and lose whichever arrived second.
-     */
     @Test
     public void testTemperatureAndHumidityBreachesRaiseSeparateAlerts() throws InterruptedException {
         Long freezerId = 103L;

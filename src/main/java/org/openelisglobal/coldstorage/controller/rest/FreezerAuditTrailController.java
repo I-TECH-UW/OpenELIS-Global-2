@@ -3,6 +3,7 @@ package org.openelisglobal.coldstorage.controller.rest;
 import java.io.StringReader;
 import java.time.OffsetDateTime;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -48,6 +49,18 @@ import org.xml.sax.InputSource;
 public class FreezerAuditTrailController extends BaseRestController {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(FreezerAuditTrailController.class);
+
+    private static final DateTimeFormatter DETAIL_TIMESTAMP_FORMATTER = DateTimeFormatter
+            .ofPattern("yyyy-MM-dd HH:mm:ss");
+
+    /**
+     * Orders merged audit events newest first by instant; do not compare the ISO
+     * strings as text, which misorders a DST-straddling timeline.
+     */
+    static final Comparator<Map<String, Object>> MOST_RECENT_FIRST = Comparator
+            .comparing(
+                    (Map<String, Object> event) -> OffsetDateTime.parse((String) event.get("performedAt")).toInstant())
+            .reversed();
 
     @Autowired
     private HistoryService historyService;
@@ -215,8 +228,7 @@ public class FreezerAuditTrailController extends BaseRestController {
                 }
             }
 
-            // Sort by timestamp descending (most recent first)
-            auditEvents.sort(Comparator.comparing((Map<String, Object> e) -> (String) e.get("performedAt")).reversed());
+            auditEvents.sort(MOST_RECENT_FIRST);
 
         } catch (Exception e) {
             // An unexpected failure here is a real server-side bug (bad input was already
@@ -334,13 +346,15 @@ public class FreezerAuditTrailController extends BaseRestController {
         return desc.toString();
     }
 
-    private String buildCorrectiveActionDetails(CorrectiveAction action) {
+    String buildCorrectiveActionDetails(CorrectiveAction action) {
         StringBuilder details = new StringBuilder();
         details.append("Action Type: ").append(action.getActionType()).append("\n");
         details.append("Status: ").append(action.getStatus()).append("\n");
 
         if (action.getCompletedAt() != null) {
-            details.append("Completed: ").append(action.getCompletedAt()).append("\n");
+            // Reports renders this verbatim, so keep it a readable local timestamp.
+            details.append("Completed: ").append(action.getCompletedAt().atZoneSameInstant(ZoneId.systemDefault())
+                    .format(DETAIL_TIMESTAMP_FORMATTER)).append("\n");
         }
 
         if (action.getCompletionNotes() != null) {

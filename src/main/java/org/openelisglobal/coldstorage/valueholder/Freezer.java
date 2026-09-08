@@ -31,7 +31,9 @@ import org.openelisglobal.storage.valueholder.StorageDevice;
 // name uniqueness is enforced by a partial unique index scoped to deleted=false
 // (idx_freezer_name_active) rather than a plain column constraint, so a
 // soft-deleted freezer's name can be reused - JPA can't express a partial
-// index, so it isn't declared here; see migration 074.
+// index, so it isn't declared here. The index is created by changeset
+// 3.5.0-089-freezer-name-unique-partial-index in
+// liquibase/3.5.x.x/089-cold-storage-monitoring-hardening.xml.
 @Table(name = "freezer")
 public class Freezer extends BaseObject<Long> {
 

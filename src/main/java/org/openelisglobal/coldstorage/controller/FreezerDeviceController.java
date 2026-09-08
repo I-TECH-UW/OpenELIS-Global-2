@@ -23,6 +23,7 @@ import org.openelisglobal.storage.valueholder.StorageDevice;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
@@ -48,6 +49,15 @@ public class FreezerDeviceController extends BaseRestController {
     private final ThresholdEvaluationService thresholdEvaluationService;
     private final StorageLocationService storageLocationService;
     private final SystemUserService systemUserService;
+
+    /**
+     * ModbusPollingService's own cadence; the offline cutoff is derived from it, so
+     * do not hardcode that cutoff or a slow fleet reads as offline.
+     */
+    @Value("#{T(java.time.Duration).parse('${org.openelisglobal.freezermonitoring.modbus.poll-interval:PT5M}').getSeconds()}")
+    private long modbusPollIntervalSeconds;
+
+    private static final int STALE_AFTER_MISSED_POLLS = 3;
 
     public FreezerDeviceController(FreezerService freezerService, FreezerReadingService freezerReadingService,
             ThresholdEvaluationService thresholdEvaluationService, StorageLocationService storageLocationService,
@@ -178,16 +188,12 @@ public class FreezerDeviceController extends BaseRestController {
         FreezerReading latest = freezerReadingService.getLatestReading(freezer.getId()).orElse(null);
         ThresholdProfile profile = resolveActiveProfile(freezer,
                 latest != null ? latest.getRecordedAt() : OffsetDateTime.now());
-        BigDecimal targetTemperature = thresholdEvaluationService != null
-                ? thresholdEvaluationService.deriveTargetTemperature(profile)
-                : null;
-        return FreezerStatusResponse.from(freezer, latest, targetTemperature);
+        BigDecimal targetTemperature = thresholdEvaluationService.deriveTargetTemperature(profile);
+        return FreezerStatusResponse.from(freezer, latest, targetTemperature,
+                modbusPollIntervalSeconds * STALE_AFTER_MISSED_POLLS);
     }
 
     private ThresholdProfile resolveActiveProfile(Freezer freezer, OffsetDateTime timestamp) {
-        if (thresholdEvaluationService == null) {
-            return null;
-        }
         try {
             return thresholdEvaluationService.resolveActiveProfile(freezer, timestamp);
         } catch (Exception ex) {
@@ -211,9 +217,12 @@ public class FreezerDeviceController extends BaseRestController {
         @JsonFormat(shape = JsonFormat.Shape.STRING)
         private OffsetDateTime recordedAt;
 
-        public static FreezerStatusResponse from(Freezer freezer, FreezerReading reading,
-                BigDecimal targetTemperature) {
+        private Long staleAfterSeconds;
+
+        public static FreezerStatusResponse from(Freezer freezer, FreezerReading reading, BigDecimal targetTemperature,
+                long staleAfterSeconds) {
             FreezerStatusResponse response = new FreezerStatusResponse();
+            response.setStaleAfterSeconds(staleAfterSeconds);
             response.setFreezerId(freezer.getId());
             response.setFreezerName(freezer.getName());
             response.setLocationName(freezer.getStorageRoom() != null ? freezer.getStorageRoom().getName() : null);

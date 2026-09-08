@@ -1872,7 +1872,6 @@
   "coldStorage.dashboard.criticalAlertSubtitle": "{count} storage unit(s) experiencing critical temperature excursions",
   "coldStorage.dashboard.criticalAlertTitle": "CRITICAL ALERT",
   "coldStorage.dashboard.deviceTypeFilter": "Device Type",
-  "coldStorage.dashboard.durationMinutes": "{minutes} min",
   "coldStorage.dashboard.kpi.critical": "Critical Alerts",
   "coldStorage.dashboard.kpi.normal": "Normal Status",
   "coldStorage.dashboard.kpi.totalUnits": "Total Storage Units",

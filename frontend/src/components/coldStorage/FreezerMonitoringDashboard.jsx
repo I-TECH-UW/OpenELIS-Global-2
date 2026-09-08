@@ -61,11 +61,7 @@ import { NotificationContext } from "../layout/Layout";
 // staying well under the poll cadence so we don't hammer the backend.
 const REFRESH_INTERVAL_MS = 60 * 1000;
 
-// Fallback staleness threshold used when no poll-interval configuration is
-// available to this dashboard (no config endpoint is currently fetched
-// here). 15 minutes is a conservative multiple of the 5 minute default poll
-// cycle; devices configured with a longer poll interval should have their
-// own threshold surfaced via Settings > Temperature Thresholds in future.
+// Fallback when the status response omits staleAfterSeconds; 3 x the shipped PT5M.
 const DEFAULT_STALE_THRESHOLD_MS = 15 * 60 * 1000;
 
 const getColumns = (intl) => [
@@ -257,6 +253,10 @@ const normalizeUnit = (unit) => ({
   currentTemp2: toNumber(unit.temperatureCelsius2),
   protocol: unit.protocol ?? "Unknown",
   lastReading: unit.recordedAt,
+  staleThresholdMs:
+    unit.staleAfterSeconds != null
+      ? unit.staleAfterSeconds * 1000
+      : DEFAULT_STALE_THRESHOLD_MS,
 });
 
 const normalizeAlert = (alert) => {
@@ -876,6 +876,7 @@ function FreezerMonitoringDashboard({ intl }) {
                                                     {statusTag(cell.value)}
                                                     {stalenessTag(
                                                       unit.lastReading,
+                                                      unit.staleThresholdMs,
                                                     )}
                                                   </div>
                                                 </TableCell>
@@ -1121,6 +1122,12 @@ function FreezerMonitoringDashboard({ intl }) {
                                           const alert = activeAlerts.find(
                                             (a) => a.id.toString() === row.id,
                                           );
+                                          // Carbon syncs row ids in an
+                                          // effect, so a pass can hold a
+                                          // dropped id.
+                                          if (!alert) {
+                                            return null;
+                                          }
                                           return (
                                             <TableRow
                                               key={row.id}
@@ -1269,6 +1276,8 @@ function FreezerMonitoringDashboard({ intl }) {
         onClose={() => {
           setShowAlertDetail(false);
           setSelectedAlertId(null);
+          // The modal closes itself, so the rows behind it need refetching.
+          loadDashboardData();
         }}
       />
     </>

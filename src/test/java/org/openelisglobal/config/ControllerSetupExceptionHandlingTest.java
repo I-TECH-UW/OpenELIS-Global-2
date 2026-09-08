@@ -48,8 +48,8 @@ public class ControllerSetupExceptionHandlingTest {
 
     @Before
     public void setUp() {
-        mockMvc = MockMvcBuilders.standaloneSetup(new ThrowingController())
-                .setControllerAdvice(new ControllerSetup()).build();
+        mockMvc = MockMvcBuilders.standaloneSetup(new ThrowingController()).setControllerAdvice(new ControllerSetup())
+                .build();
     }
 
     @Test

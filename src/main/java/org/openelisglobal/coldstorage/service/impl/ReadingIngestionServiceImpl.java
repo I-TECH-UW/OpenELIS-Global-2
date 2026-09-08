@@ -178,8 +178,8 @@ public class ReadingIngestionServiceImpl implements ReadingIngestionService {
      *
      * <p>
      * Checks in priority order: CRITICAL_MAX, WARNING_MAX, CRITICAL_MIN,
-     * WARNING_MIN - so a reading beyond the critical bound never reports as a
-     * mere warning.
+     * WARNING_MIN - so a reading beyond the critical bound never reports as a mere
+     * warning.
      */
     private void checkHumidityThresholdsWithProfile(Freezer freezer, BigDecimal humidity, Long readingId,
             ThresholdProfile profile) {

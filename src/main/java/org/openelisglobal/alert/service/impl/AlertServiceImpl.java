@@ -159,26 +159,13 @@ public class AlertServiceImpl extends BaseObjectServiceImpl<Alert, Long> impleme
     }
 
     /**
-     * Find an active alert for the same (type, entity) so a repeat condition just
-     * bumps the duplicate count instead of inserting a new row. We deliberately do
-     * NOT use a sliding time window here: with schedulers firing every 5 min and a
-     * 30-min window, any condition lasting longer than half an hour spawned a fresh
-     * alert each time the window expired — which is how dev systems accumulated
-     * thousands of duplicate rows for the same underlying problem.
+     * Raises an open alert's severity when the condition behind it has got worse,
+     * and refreshes the message and context that travelled with it.
      *
      * <p>
-     * One alert per lifecycle: if an OPEN or ACKNOWLEDGED alert already exists for
-     * the same (alertType, entityType, entityId), reuse it. A new alert can only be
-     * created once the existing one is RESOLVED (status filter below).
-     */
-    /**
-     * Raises an open alert's severity when the condition behind it has got
-     * worse, and refreshes the message and context that travelled with it.
-     *
-     * <p>
-     * Never lowers it: one reading back inside the warning band is not a
-     * recovery, and downgrading an open CRITICAL would hide an excursion that
-     * is still running. Recovery is a resolve, not a lesser duplicate.
+     * Never lowers it: one reading back inside the warning band is not a recovery,
+     * and downgrading an open CRITICAL would hide an excursion that is still
+     * running. Recovery is a resolve, not a lesser duplicate.
      *
      * @return whether the alert was escalated
      */
@@ -192,6 +179,10 @@ public class AlertServiceImpl extends BaseObjectServiceImpl<Alert, Long> impleme
         return true;
     }
 
+    /**
+     * Reuses the open alert for a (type, entity) so a repeat bumps its duplicate
+     * count; do not add a time window, which spawned a fresh row per expiry.
+     */
     private Alert findDuplicateAlert(AlertType alertType, String entityType, Long entityId) {
         List<Alert> existingAlerts = alertDAO.getAlertsByEntity(entityType, entityId);
         for (Alert existingAlert : existingAlerts) {

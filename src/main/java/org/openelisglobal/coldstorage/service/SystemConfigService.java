@@ -205,11 +205,11 @@ public class SystemConfigService {
         siteInformationService.persistData(bacnetUdpPort, false);
 
         saveSetting(MONITORING_ENABLED_KEY, "Enable/disable freezer Modbus polling (default: true)",
-                String.valueOf(config.getMonitoringEnabled()));
+                String.valueOf(config.getMonitoringEnabled()), "boolean");
         saveSetting(MODBUS_TIMEOUT_MILLIS_KEY,
                 "Modbus connect/request timeout in milliseconds - raise this for devices reached over a "
                         + "routed subnet or VPN (default: " + DEFAULT_TIMEOUT_MILLIS + ")",
-                String.valueOf(config.getModbusTimeoutMillis()));
+                String.valueOf(config.getModbusTimeoutMillis()), "text");
 
         // Update runtime metadata
         config.setLastUpdate(OffsetDateTime.now());
@@ -219,13 +219,18 @@ public class SystemConfigService {
         return config;
     }
 
-    private void saveSetting(String name, String description, String value) {
+    /**
+     * @param valueType must match what the liquibase seed for this key uses; Site
+     *                  Information renders a "boolean" row as a checkbox and a
+     *                  "text" row as a free-text box.
+     */
+    private void saveSetting(String name, String description, String value, String valueType) {
         SiteInformation setting = siteInformationService.getSiteInformationByName(name);
         if (setting == null) {
             setting = new SiteInformation();
             setting.setName(name);
             setting.setDescription(description);
-            setting.setValueType("text");
+            setting.setValueType(valueType);
             setting.setEncrypted(false);
             setting.setDomain(siteIdentityDomain);
             setting.setGroup(0);
