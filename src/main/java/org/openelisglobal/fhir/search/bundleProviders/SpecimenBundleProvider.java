@@ -71,12 +71,13 @@ public class SpecimenBundleProvider extends BaseFhirBundleProvider<SampleItem, S
     @Override
     public List<IBaseResource> getResources(int fromIndex, int toIndex) {
 
-        int pageSize = toIndex - fromIndex;
+        int offset = effectiveOffset(fromIndex);
+        int pageSize = effectivePageSize(fromIndex, toIndex);
         if (pageSize <= 0) {
             return List.of();
         }
 
-        List<SampleItem> sampleItems = loadEntities(fromIndex, pageSize);
+        List<SampleItem> sampleItems = loadEntities(offset, pageSize);
         List<IBaseResource> resources = new ArrayList<>();
         for (SampleItem sampleItem : sampleItems) {
             Specimen specimen = transformEntity(sampleItem);

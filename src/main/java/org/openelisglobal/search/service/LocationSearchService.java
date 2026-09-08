@@ -25,6 +25,7 @@ import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Location;
 import org.openelisglobal.common.fhir.dao.DateParamBounds;
 import org.openelisglobal.fhir.FhirConstants;
+import org.openelisglobal.fhir.search.bundleProviders.PagedBundleProvider;
 import org.openelisglobal.fhir.search.searchparams.LocationSearchParams;
 import org.openelisglobal.storage.fhir.StorageLocationFhirTransform;
 import org.openelisglobal.storage.service.StorageBoxService;
@@ -111,11 +112,13 @@ public class LocationSearchService {
      * carries the included parents and children, mirroring how the database-backed
      * bundle providers append their includes.
      */
-    static final class HierarchyBundleProvider implements IBundleProvider {
+    static final class HierarchyBundleProvider implements PagedBundleProvider {
 
         private final List<IBaseResource> matches;
         private final List<IBaseResource> includes;
         private final InstantDt published = InstantDt.withCurrentTime();
+        private Integer currentPageOffset;
+        private Integer currentPageSize;
 
         HierarchyBundleProvider(List<IBaseResource> matches, List<IBaseResource> includes) {
             this.matches = matches;
@@ -123,9 +126,27 @@ public class LocationSearchService {
         }
 
         @Override
+        public void setCurrentPage(Integer offset, Integer count) {
+            currentPageOffset = offset;
+            currentPageSize = offset == null || count == null || count <= 0 ? null : count;
+        }
+
+        @Override
+        public Integer getCurrentPageOffset() {
+            return currentPageOffset;
+        }
+
+        @Override
+        public Integer getCurrentPageSize() {
+            return currentPageSize;
+        }
+
+        @Override
         public List<IBaseResource> getResources(int fromIndex, int toIndex) {
-            int from = Math.max(0, Math.min(fromIndex, matches.size()));
-            int to = Math.max(from, Math.min(toIndex, matches.size()));
+            int requestedFrom = currentPageOffset == null ? fromIndex : currentPageOffset;
+            int requestedTo = currentPageSize == null ? toIndex : requestedFrom + currentPageSize;
+            int from = Math.max(0, Math.min(requestedFrom, matches.size()));
+            int to = Math.max(from, Math.min(requestedTo, matches.size()));
             List<IBaseResource> page = new ArrayList<>(matches.subList(from, to));
             page.addAll(includes);
             return page;

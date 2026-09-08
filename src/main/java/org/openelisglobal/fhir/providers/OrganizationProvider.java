@@ -1,10 +1,12 @@
 package org.openelisglobal.fhir.providers;
 
 import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.IncludeParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -286,6 +288,7 @@ public class OrganizationProvider implements IResourceProvider {
             @OptionalParam(name = Organization.SP_ADDRESS_CITY) StringAndListParam addressCity,
             @OptionalParam(name = Organization.SP_ADDRESS_STATE) StringAndListParam addressState,
             @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
+            @Offset Integer offset, @Count Integer count,
             @IncludeParam(allow = { FhirConstants.ORGANIZATION_PARTOF_INCLUDE }) HashSet<Include> includes,
             @IncludeParam(reverse = true, allow = {
                     FhirConstants.ORGANIZATION_PARTOF_INCLUDE }) HashSet<Include> revIncludes,
@@ -297,7 +300,7 @@ public class OrganizationProvider implements IResourceProvider {
         try {
             OrganizationSearchParams params = new OrganizationSearchParams(id, identifier, name, active, type, partOf,
                     addressCity, addressState, lastUpdated, sort, includes, revIncludes);
-            return organizationSearchService.searchOrganizations(params);
+            return FhirProviderUtils.withPaging(organizationSearchService.searchOrganizations(params), offset, count);
         } catch (InvalidRequestException e) {
             throw e;
         } catch (IllegalArgumentException e) {

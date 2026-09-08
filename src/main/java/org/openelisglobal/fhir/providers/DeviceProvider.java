@@ -1,8 +1,10 @@
 package org.openelisglobal.fhir.providers;
 
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -262,7 +264,7 @@ public class DeviceProvider implements IResourceProvider {
             @OptionalParam(name = Device.SP_TYPE) TokenAndListParam type,
             @OptionalParam(name = Device.SP_STATUS) TokenAndListParam status,
             @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
-            HttpServletRequest request) {
+            @Offset Integer offset, @Count Integer count, HttpServletRequest request) {
 
         String method = "searchDevices";
         LogEvent.logDebug(getClass().getSimpleName(), method, "Searching for Devices");
@@ -270,7 +272,7 @@ public class DeviceProvider implements IResourceProvider {
         try {
             DeviceSearchParams params = new DeviceSearchParams(id, identifier, deviceName, type, status, lastUpdated,
                     sort);
-            return deviceSearchService.searchDevices(params);
+            return FhirProviderUtils.withPaging(deviceSearchService.searchDevices(params), offset, count);
         } catch (InvalidRequestException e) {
             throw e;
         } catch (IllegalArgumentException e) {

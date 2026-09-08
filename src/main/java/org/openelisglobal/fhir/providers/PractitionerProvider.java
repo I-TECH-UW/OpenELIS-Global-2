@@ -1,10 +1,12 @@
 package org.openelisglobal.fhir.providers;
 
 import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.IncludeParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -265,7 +267,7 @@ public class PractitionerProvider implements IResourceProvider {
 
             @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated,
 
-            @Sort SortSpec sort,
+            @Sort SortSpec sort, @Offset Integer offset, @Count Integer count,
 
             @IncludeParam(reverse = true, allow = { FhirConstants.SERVICE_REQUEST_REQUESTER_REV_INCLUDE,
                     FhirConstants.OBSERVATION_PERFORMER_REV_INCLUDE }) HashSet<Include> revIncludes,
@@ -280,7 +282,7 @@ public class PractitionerProvider implements IResourceProvider {
             PractitionerSearchParams params = new PractitionerSearchParams(identifier, name, given, family, city, state,
                     postalCode, country, telecom, email, phone, id, lastUpdated, sort, revIncludes);
 
-            return practitionerSearchService.searchPractitioners(params);
+            return FhirProviderUtils.withPaging(practitionerSearchService.searchPractitioners(params), offset, count);
 
         } catch (InvalidRequestException exception) {
             throw exception;

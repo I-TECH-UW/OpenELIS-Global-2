@@ -914,6 +914,8 @@ public abstract class BaseFhirDao {
      */
     private <R> List<R> executeQuery(FhirCriteriaContext<?, R> context, int firstResult, int maxResults) {
         try {
+            applyDefaultOrdering(context);
+
             List<R> results = context.createQuery().setFirstResult(firstResult).setMaxResults(maxResults)
                     .getResultList();
 
@@ -922,6 +924,36 @@ public abstract class BaseFhirDao {
         } catch (Exception exception) {
             LOGGER.error("Error executing query: {}", exception.getMessage(), exception);
             throw new RuntimeException("Failed to execute FHIR query", exception);
+        }
+    }
+
+    /**
+     * Orders an otherwise unordered search by the root identifier.
+     *
+     * <p>
+     * Paging is expressed as an offset into a result set, which only means
+     * something if the result set has a stable order. PostgreSQL is free to return
+     * rows in any order for a query with no {@code ORDER BY}, so without this a
+     * client walking the pages of a search could see the same resource twice and
+     * never see another one at all.
+     */
+    private void applyDefaultOrdering(FhirCriteriaContext<?, ?> context) {
+        if (!(context.getCriteriaQuery() instanceof CriteriaQuery<?> criteriaQuery)) {
+            return;
+        }
+        if (!criteriaQuery.getOrderList().isEmpty()) {
+            return;
+        }
+        Root<?> root = context.getRoot();
+        if (root == null || root.getModel() == null) {
+            return;
+        }
+        try {
+            String idAttribute = root.getModel().getId(Object.class).getName();
+            criteriaQuery.orderBy(context.getCriteriaBuilder().asc(root.get(idAttribute)));
+        } catch (IllegalArgumentException exception) {
+            LOGGER.debug("No single-attribute identifier on {}, leaving the search unordered",
+                    root.getModel().getName());
         }
     }
 
