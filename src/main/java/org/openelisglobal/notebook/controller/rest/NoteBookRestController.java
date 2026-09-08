@@ -45,8 +45,11 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import org.springframework.security.access.prepost.PreAuthorize;
+
 @RestController
 @RequestMapping(value = "/rest/notebook")
+@PreAuthorize("hasAnyRole('RECEPTION', 'RESULTS', 'ADMIN')")
 public class NoteBookRestController extends BaseRestController {
 
     @Autowired
