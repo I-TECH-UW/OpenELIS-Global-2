@@ -95,6 +95,7 @@ public class DiagnosticReportTransformServiceImpl implements DiagnosticReportTra
 
         DiagnosticReport diagnosticReport = new DiagnosticReport();
         diagnosticReport.setId(analysis.getFhirUuidAsString());
+        diagnosticReport.getMeta().setLastUpdated(analysis.getLastupdated());
         diagnosticReport.addIdentifier(common.createIdentifier(fhirConfig.getOeFhirSystem() + "/analysisResult_uuid",
                 analysis.getFhirUuidAsString()));
         Identifier facilityId = common.createFacilityIdentifier();

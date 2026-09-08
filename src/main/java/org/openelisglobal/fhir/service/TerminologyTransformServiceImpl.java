@@ -106,6 +106,9 @@ public class TerminologyTransformServiceImpl implements TerminologyTransformServ
         }
 
         addPrioritizedCodings(codeableConcept, bySystem);
+        if (display != null && !display.isBlank()) {
+            codeableConcept.setText(display);
+        }
         return codeableConcept;
     }
 
