@@ -78,21 +78,38 @@ Both now declare an empty `<rollback />`, which is the truthful inverse as well
 as the convenient one: restoring orphaned panel items would restore broken
 references, and the next start would delete them again.
 
-**Say where to stop, do not count.** `liquibase rollbackToTag eqa-v2-start`
-names the point the set begins, written by `qa/040-eqa-v2-start-tag.xml`, which
-is included ahead of the first V2 changeset rather than in file order.
+**Which route you take depends on how the database got the feature.** There are
+two, and only one of them works on any given database.
 
-The tag carries a precondition, which is the honest part. A tag marks the last
-changeset applied when it runs, so on a database that already carries the V2 set
-this file would execute after it and tag the wrong end: a tag that rolls back
-nothing, which is worse than no tag because an operator would trust it. There it
-is marked ran without tagging, and the route is `rollbackCount`. A database
-provisioned after this change gets the tag where it belongs.
+_A database provisioned after `qa/040-eqa-v2-start-tag.xml` shipped_ carries the
+tag `eqa-v2-start`, written ahead of the first V2 changeset rather than in file
+order. Say where to stop: `liquibase rollbackToTag eqa-v2-start`.
 
-Counting, where you have to: the V2 set is 57 changesets, and the two
-`runAlways` rows above it are part of the count, so `rollbackCount 59` is the
-whole set on a running installation. Verify against `databasechangelog` ordered
-by `orderexecuted` before running it rather than trusting the number.
+_A database that already carried the V2 set when that changeset arrived_ has no
+such tag, and `rollbackToTag eqa-v2-start` fails naming the missing tag. That
+failure is the intended outcome, not a fault to work around. A tag marks the
+last changeset applied when it runs, so on such a database the changeset would
+tag the wrong end, above the whole V2 set instead of below it, and
+`rollbackToTag` would report success and remove nothing. Its precondition skips
+it there, and `qa/041` clears the tag from databases that recorded one before
+the precondition was corrected. Use the counted route.
+
+**Counting, where you have to.** The V2 set is 57 changesets, but the count you
+pass is not 57: everything between the set and the head of the changelog goes
+with it. That is always the two `runAlways` rows, plus `qa/041`, plus whatever
+else has been applied since. Two participant databases measured on the same day
+needed 60 and 61, differing only in whether a `qa-079` row was already on file.
+
+So **read the number off `databasechangelog` rather than trusting one**:
+
+```sql
+SELECT COUNT(*) FROM clinlims.databasechangelog
+ WHERE orderexecuted >= (SELECT orderexecuted FROM clinlims.databasechangelog
+                          WHERE id = 'eqa-cycle-001-create-eqa-cycle');
+```
+
+`eqa-cycle-001-create-eqa-cycle` creates `eqa_cycle` and is the first changeset
+of the set. The count is a property of one database's history, not of V2.
 
 **Widened CHECK constraints delete their own rows.** Four V2 changesets widened
 a CHECK precisely so the feature could write a new value, and their rollbacks
@@ -119,9 +136,23 @@ EQA, so leaving them would block a core constraint from being restored.
 had used the feature: eleven V2 tables gone, the eight V1 EQA tables standing,
 `shipping_box.eqa_cycle_id` removed, the one `EQA_SUBMISSION_FAILED` alert
 deleted with the other six untouched, `chk_alert_type` back to the definition
-`3.5.x.x/070-critical-result-alert-type.xml` owns, and 59 rows gone from
-`databasechangelog`. Liquibase reported "Rollback has been successful" with no
-manual step at any point.
+`3.5.x.x/070-critical-result-alert-type.xml` owns, and 61 rows gone from
+`databasechangelog`: the 57, the two `runAlways` rows, `qa/041`, and the
+`qa-079` row that copy already carried. Liquibase reported "Rollback has been
+successful" with no manual step at any point.
+
+Measured on the same copy, the tag route does what it should on a database that
+has no tag: `rollback eqa-v2-start` stops with _"Could not find tag
+'eqa-v2-start' in the database"_, exits non-zero, changes nothing, and leaves
+all nineteen EQA tables standing. An operator who runs it learns at once that it
+is the wrong route for their database, which is the point of recording no tag
+there.
+
+Measured on a database provisioned from the baseline dump with this changelog,
+the tag route is the whole story: the tag lands at the head of the set,
+immediately below `eqa-cycle-001-create-eqa-cycle`, and `rollback eqa-v2-start`
+takes the changelog from 954 rows to 895 with the eleven V2 tables gone, the
+eight V1 tables standing, and nothing left above the tag point.
 
 ## Why the legacy scores stay where they are
 
