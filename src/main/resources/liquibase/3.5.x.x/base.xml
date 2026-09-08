@@ -377,6 +377,7 @@
 
   <!-- Unified Results Entry worklist on by default (flips the flag seeded off by 059). -->
   <include relativeToChangelogFile="true" file="089-results-unified-route-default-on.xml"/>
+  <include relativeToChangelogFile="true" file="090-patient-search-trigram-indexes.xml"/>
 
 
 </databaseChangeLog>
