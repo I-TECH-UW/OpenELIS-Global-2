@@ -1,5 +1,6 @@
 package org.openelisglobal.coldstorage.controller;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
@@ -153,7 +154,9 @@ public class FreezerThresholdController extends BaseRestController {
         private Long id;
         private Long freezerId;
         private Long profileId;
+        @JsonFormat(shape = JsonFormat.Shape.STRING)
         private OffsetDateTime effectiveStart;
+        @JsonFormat(shape = JsonFormat.Shape.STRING)
         private OffsetDateTime effectiveEnd;
         private Boolean isDefault;
 

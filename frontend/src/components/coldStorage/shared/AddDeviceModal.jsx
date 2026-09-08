@@ -50,7 +50,7 @@ const INITIAL_FORM_DATA = {
   temperatureRegister: 0,
   temperatureScale: 1.0,
   temperatureOffset: 0.0,
-  humidityRegister: 0,
+  humidityRegister: null,
   humidityScale: 1.0,
   humidityOffset: 0.0,
   temperatureRegister2: null,
@@ -569,8 +569,13 @@ export default function AddDeviceModal({
                       helperText="Modbus register address for humidity reading"
                       value={formData.humidityRegister ?? ""}
                       onChange={(e, { value }) =>
-                        handleFormChange("humidityRegister", value ?? 0)
+                        handleFormChange(
+                          "humidityRegister",
+                          value === "" ? null : value,
+                        )
                       }
+                      // Without allowEmpty, Carbon reports an emptied optional register as Number("") === 0.
+                      allowEmpty
                       min={0}
                       max={65535}
                       step={1}
@@ -635,6 +640,7 @@ export default function AddDeviceModal({
                           value === "" ? null : value,
                         )
                       }
+                      allowEmpty
                       min={0}
                       max={65535}
                       step={1}

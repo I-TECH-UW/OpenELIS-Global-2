@@ -1,13 +1,13 @@
 import React from "react";
 import { vi } from "vitest";
-import { render, screen } from "@testing-library/react";
+import { render, screen, fireEvent } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { IntlProvider } from "react-intl";
 import messages from "../../../languages/en.json";
 import { NotificationContext } from "../../layout/contexts";
 import UserSessionDetailsContext from "../../../UserSessionDetailsContext";
 import DeviceManagement from "./DeviceManagement";
-import { fetchLocations } from "../api";
+import { fetchLocations, createDevice } from "../api";
 
 vi.mock("../api", () => ({
   fetchDevices: vi.fn(() =>
@@ -15,7 +15,7 @@ vi.mock("../api", () => ({
       { id: 1, name: "Freezer A", active: true, protocol: "TCP" },
     ]),
   ),
-  fetchLocations: vi.fn(() => Promise.resolve([])),
+  fetchLocations: vi.fn(() => Promise.resolve([{ id: 7, name: "Cold Room" }])),
   createDevice: vi.fn(),
   updateDevice: vi.fn(),
   toggleDeviceStatus: vi.fn(),
@@ -91,5 +91,32 @@ describe("DeviceManagement location fetch payloads", () => {
     renderFor(["Global Administrator"]);
 
     expect(await screen.findByText("Freezer A")).toBeInTheDocument();
+  });
+});
+
+/**
+ * The register is optional, and the modal reports "not configured" as null.
+ * Sending 0 instead makes every poll read the temperature register a second
+ * time and publish its raw contents as a humidity percentage.
+ */
+describe("DeviceManagement humidity register", () => {
+  it("sends a null humidityRegister for a device created without one", async () => {
+    renderFor(["Global Administrator"]);
+    expect(await screen.findByText("Freezer A")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Add New Device" }));
+    fireEvent.change(screen.getByLabelText("Device Name *"), {
+      target: { value: "Ultra-low 1" },
+    });
+    fireEvent.change(screen.getByLabelText("Room/Facility *"), {
+      target: { value: "7" },
+    });
+    fireEvent.change(screen.getByLabelText("IP Address/Host *"), {
+      target: { value: "10.0.0.9" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Create" }));
+
+    expect(createDevice).toHaveBeenCalledTimes(1);
+    expect(createDevice.mock.calls[0][0].humidityRegister).toBeNull();
   });
 });

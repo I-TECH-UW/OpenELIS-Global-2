@@ -108,11 +108,13 @@
     <preConditions onFail="MARK_RAN">
       <sqlCheck expectedResult="1">
         SELECT COUNT(*) FROM information_schema.columns
-        WHERE table_schema = 'clinlims' AND table_name = 'freezer_reading'
-        AND column_name = 'temperature_celsius' AND numeric_precision IS NULL
+        WHERE table_schema = 'clinlims' AND table_name = 'freezer'
+        AND column_name = 'temperature_offset' AND numeric_precision IS NULL
       </sqlCheck>
     </preConditions>
-    <comment>Give temperature/humidity DECIMAL columns explicit precision/scale instead of bare DECIMAL, matching the app's existing 2dp rounding.</comment>
+    <comment>Give the hand-entered freezer and threshold_profile DECIMAL columns explicit precision/scale. Do not add
+      freezer_reading's measured columns: a ceiling there fails this ALTER on an existing out-of-range row and then
+      makes each later poll of that device roll back unstored, starving the FREEZER_OFFLINE detector.</comment>
     <modifyDataType schemaName="clinlims" tableName="freezer" columnName="temperature_scale" newDataType="DECIMAL(10,4)"/>
     <modifyDataType schemaName="clinlims" tableName="freezer" columnName="temperature_offset" newDataType="DECIMAL(6,2)"/>
     <modifyDataType schemaName="clinlims" tableName="freezer" columnName="humidity_scale" newDataType="DECIMAL(10,4)"/>
@@ -129,9 +131,6 @@
     <modifyDataType schemaName="clinlims" tableName="threshold_profile" columnName="humidity_warning_max" newDataType="DECIMAL(6,2)"/>
     <modifyDataType schemaName="clinlims" tableName="threshold_profile" columnName="humidity_critical_min" newDataType="DECIMAL(6,2)"/>
     <modifyDataType schemaName="clinlims" tableName="threshold_profile" columnName="humidity_critical_max" newDataType="DECIMAL(6,2)"/>
-
-    <modifyDataType schemaName="clinlims" tableName="freezer_reading" columnName="temperature_celsius" newDataType="DECIMAL(6,2)"/>
-    <modifyDataType schemaName="clinlims" tableName="freezer_reading" columnName="humidity_percentage" newDataType="DECIMAL(6,2)"/>
   </changeSet>
 
   <changeSet id="3.5.0-089-freezer-name-unique-partial-index" author="mherman22">
@@ -174,7 +173,9 @@
       <column name="temperature_offset_2" type="DECIMAL(6,2)" defaultValueNumeric="0.0"/>
     </addColumn>
     <addColumn tableName="freezer_reading" schemaName="clinlims">
-      <column name="temperature_celsius_2" type="DECIMAL(6,2)"/>
+      <!-- Bare DECIMAL like temperature_celsius and humidity_percentage, so a raw sentinel from a misconfigured probe
+           is stored rather than costing the whole poll row. -->
+      <column name="temperature_celsius_2" type="DECIMAL"/>
     </addColumn>
   </changeSet>
 
