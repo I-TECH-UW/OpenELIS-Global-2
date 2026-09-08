@@ -150,6 +150,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private org.openelisglobal.referral.service.ReferralSetService referralSetService;
     @Autowired
     private OrderLabelRequestService orderLabelRequestService;
+    @Autowired
+    private org.openelisglobal.questionnaire.service.QuestionnaireStorageService questionnaireStorageService;
 
     @Transactional
     @Override
@@ -421,6 +423,12 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
                 immunohistochemistrySampleService.save((ImmunohistochemistrySample) updateData.getProgramSample());
             } else {
                 programSampleService.save(updateData.getProgramSample());
+            }
+            if (updateData.getProgramQuestionnaireResponse() != null) {
+                updateData.getProgramQuestionnaireResponse()
+                        .setId(updateData.getProgramSample().getQuestionnaireResponseUuid().toString());
+                questionnaireStorageService
+                        .storeQuestionnaireResponseLocally(updateData.getProgramQuestionnaireResponse());
             }
         }
 
