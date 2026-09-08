@@ -256,6 +256,7 @@ public class ObservationTransformServiceImpl implements ObservationTransformServ
         Observation observation = new Observation();
 
         observation.setId(result.getFhirUuidAsString());
+        observation.getMeta().setLastUpdated(result.getLastupdated());
         observation.addIdentifier(
                 common.createIdentifier(fhirConfig.getOeFhirSystem() + "/result_uuid", result.getFhirUuidAsString()));
         Identifier facilityId = common.createFacilityIdentifier();

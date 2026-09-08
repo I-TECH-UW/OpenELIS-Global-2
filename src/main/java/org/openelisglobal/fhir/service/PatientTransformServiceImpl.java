@@ -127,6 +127,7 @@ public class PatientTransformServiceImpl implements PatientTransformService {
                 "transforming patient with id: " + patient.getId() + " fhirUuid: " + uuid);
 
         fhirPatient.setId(uuid);
+        fhirPatient.getMeta().setLastUpdated(patient.getLastupdated());
         fhirPatient.setIdentifier(createPatientIdentifiers(subjectNumber, nationalId, stNumber, guid, uuid));
         Identifier facilityId = common.createFacilityIdentifier();
         if (facilityId != null) {
