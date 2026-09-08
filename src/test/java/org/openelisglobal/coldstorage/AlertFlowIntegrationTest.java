@@ -375,6 +375,25 @@ public class AlertFlowIntegrationTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
+    public void testOfflineAlertNotRaisedWhenASuccessfulPollBreaksTheStreak() throws InterruptedException {
+        Long freezerId = 100L;
+        Freezer freezer = freezerService.findById(freezerId).orElse(null);
+        assertNotNull("Freezer should exist", freezer);
+
+        OffsetDateTime firstPoll = OffsetDateTime.now().minusMinutes(10);
+        ingestFailedPolls(freezer, firstPoll, 2);
+        // -40C is inside profile 1's warning band, so this poll raises no alert.
+        readingIngestionService.ingest(freezer, firstPoll.plusMinutes(2), new BigDecimal("-40.0"), null, null, true,
+                null);
+        readingIngestionService.ingest(freezer, firstPoll.plusMinutes(3), null, null, null, false, "timeout");
+        Thread.sleep(500);
+
+        List<Alert> alerts = alertService.getAlertsByEntity("Freezer", freezerId);
+        assertTrue("A recovered poll breaks the streak, so no offline alert is due: " + alertTypes(alerts),
+                alerts.stream().noneMatch(alert -> alert.getAlertType() == AlertType.FREEZER_OFFLINE));
+    }
+
+    @Test
     public void testOfflineAlertResolvesWhenTransmissionRecovers() throws InterruptedException {
         Long freezerId = 100L;
         Freezer freezer = freezerService.findById(freezerId).orElse(null);
@@ -475,6 +494,10 @@ public class AlertFlowIntegrationTest extends BaseWebContextSensitiveTest {
         return matching.get(0);
     }
 
+    private List<AlertType> alertTypes(List<Alert> alerts) {
+        return alerts.stream().map(Alert::getAlertType).toList();
+    }
+
     private void ingestFailedPolls(Freezer freezer, OffsetDateTime firstPoll, int count) {
         for (int i = 0; i < count; i++) {
             readingIngestionService.ingest(freezer, firstPoll.plusMinutes(i), null, null, null, false, "timeout");
@@ -542,6 +565,88 @@ public class AlertFlowIntegrationTest extends BaseWebContextSensitiveTest {
 
         List<Alert> alerts = alertService.getAlertsByEntity("Freezer", freezerId);
         assertEquals("Both breaches should be visible, not one", 2, alerts.size());
+        assertTrue("A temperature alert should be among them",
+                alerts.stream().anyMatch(a -> a.getAlertType() == AlertType.FREEZER_TEMPERATURE));
+        assertTrue("A humidity alert should be among them",
+                alerts.stream().anyMatch(a -> a.getAlertType() == AlertType.FREEZER_HUMIDITY));
+    }
+
+    /**
+     * Freezer 104 / profile 5 pairs humidity bounds with a non-zero
+     * minExcursionMinutes, which is what makes a per-metric gate observable.
+     */
+    @Test
+    public void testSustainedTemperatureBreachDoesNotEscalateAFirstHumidityBreach() throws InterruptedException {
+        Long freezerId = 104L;
+        Freezer freezer = freezerService.findById(freezerId).orElse(null);
+        assertNotNull("Humidity + hysteresis fridge should exist", freezer);
+        OffsetDateTime firstPoll = OffsetDateTime.now().minusMinutes(15);
+
+        // Temperature out of band, humidity in band.
+        readingIngestionService.ingest(freezer, firstPoll, new BigDecimal("5.0"), new BigDecimal("45.0"), null, true,
+                null);
+        Thread.sleep(500);
+        assertTrue("Neither metric has accumulated any excursion time yet",
+                alertService.getAlertsByEntity("Freezer", freezerId).isEmpty());
+
+        // Temperature has now been out of band for 15 minutes; humidity is new.
+        readingIngestionService.ingest(freezer, firstPoll.plusMinutes(15), new BigDecimal("5.0"),
+                new BigDecimal("82.0"), null, true, null);
+        Thread.sleep(500);
+
+        List<Alert> alerts = alertService.getAlertsByEntity("Freezer", freezerId);
+        assertTrue("The sustained temperature breach must still escalate",
+                alerts.stream().anyMatch(a -> a.getAlertType() == AlertType.FREEZER_TEMPERATURE));
+        assertTrue(
+                "The humidity breach has zero accumulated minutes, so it must stay suppressed: " + alertTypes(alerts),
+                alerts.stream().noneMatch(a -> a.getAlertType() == AlertType.FREEZER_HUMIDITY));
+    }
+
+    @Test
+    public void testSustainedHumidityBreachDoesNotEscalateAMomentaryTemperatureSpike() throws InterruptedException {
+        Long freezerId = 104L;
+        Freezer freezer = freezerService.findById(freezerId).orElse(null);
+        assertNotNull("Humidity + hysteresis fridge should exist", freezer);
+        OffsetDateTime firstPoll = OffsetDateTime.now().minusMinutes(15);
+
+        // Humidity out of band, temperature in band.
+        readingIngestionService.ingest(freezer, firstPoll, new BigDecimal("-80.0"), new BigDecimal("82.0"), null, true,
+                null);
+        Thread.sleep(500);
+        assertTrue("Neither metric has accumulated any excursion time yet",
+                alertService.getAlertsByEntity("Freezer", freezerId).isEmpty());
+
+        // Humidity still out of band 15 minutes on; temperature spikes once.
+        readingIngestionService.ingest(freezer, firstPoll.plusMinutes(15), new BigDecimal("5.0"),
+                new BigDecimal("82.0"), null, true, null);
+        Thread.sleep(500);
+
+        List<Alert> alerts = alertService.getAlertsByEntity("Freezer", freezerId);
+        assertTrue("The sustained humidity breach must still escalate",
+                alerts.stream().anyMatch(a -> a.getAlertType() == AlertType.FREEZER_HUMIDITY));
+        assertTrue("The one-poll temperature spike must stay suppressed: " + alertTypes(alerts),
+                alerts.stream().noneMatch(a -> a.getAlertType() == AlertType.FREEZER_TEMPERATURE));
+    }
+
+    @Test
+    public void testBothMetricsEscalateOnceEachBreachIsSustained() throws InterruptedException {
+        Long freezerId = 104L;
+        Freezer freezer = freezerService.findById(freezerId).orElse(null);
+        assertNotNull("Humidity + hysteresis fridge should exist", freezer);
+        OffsetDateTime firstPoll = OffsetDateTime.now().minusMinutes(15);
+
+        readingIngestionService.ingest(freezer, firstPoll, new BigDecimal("5.0"), new BigDecimal("82.0"), null, true,
+                null);
+        Thread.sleep(500);
+        assertTrue("Both breaches are brand new, so both must be suppressed",
+                alertService.getAlertsByEntity("Freezer", freezerId).isEmpty());
+
+        readingIngestionService.ingest(freezer, firstPoll.plusMinutes(15), new BigDecimal("5.0"),
+                new BigDecimal("82.0"), null, true, null);
+        Thread.sleep(500);
+
+        List<Alert> alerts = alertService.getAlertsByEntity("Freezer", freezerId);
+        assertEquals("Each metric's own sustained breach must escalate: " + alertTypes(alerts), 2, alerts.size());
         assertTrue("A temperature alert should be among them",
                 alerts.stream().anyMatch(a -> a.getAlertType() == AlertType.FREEZER_TEMPERATURE));
         assertTrue("A humidity alert should be among them",

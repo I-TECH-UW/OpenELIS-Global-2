@@ -6,6 +6,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import org.junit.Before;
 import org.junit.Test;
+import org.openelisglobal.coldstorage.controller.FreezerMonitoringExceptionHandler;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.test.web.servlet.MockMvc;
@@ -68,5 +69,14 @@ public class ControllerSetupExceptionHandlingTest {
     public void limsRuntimeException_still500() throws Exception {
         mockMvc.perform(get("/invalid")).andExpect(status().isInternalServerError())
                 .andExpect(jsonPath("$.status").value(500));
+    }
+
+    @Test
+    public void limsRuntimeException_outsideColdStorage_stillAnswers500WithNoDetail() throws Exception {
+        MockMvc withColdStorageAdvice = MockMvcBuilders.standaloneSetup(new ThrowingController())
+                .setControllerAdvice(new FreezerMonitoringExceptionHandler(), new ControllerSetup()).build();
+
+        withColdStorageAdvice.perform(get("/invalid")).andExpect(status().isInternalServerError())
+                .andExpect(jsonPath("$.status").value(500)).andExpect(jsonPath("$.message").doesNotExist());
     }
 }

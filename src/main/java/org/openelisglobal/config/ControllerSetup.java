@@ -32,9 +32,7 @@ import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
-// One step below HIGHEST_PRECEDENCE so a package-scoped @ControllerAdvice can
-// actually be ordered ahead of this app-wide fallback: equal @Order values leave
-// the winner to bean registration order (see FreezerMonitoringExceptionHandler).
+// Leaves HIGHEST_PRECEDENCE free for a package-scoped @ControllerAdvice.
 @Order(Ordered.HIGHEST_PRECEDENCE + 1)
 @ControllerAdvice
 public class ControllerSetup extends ResponseEntityExceptionHandler {
@@ -51,12 +49,9 @@ public class ControllerSetup extends ResponseEntityExceptionHandler {
     }
 
     /**
-     * AccessDeniedException is a RuntimeException, so without a handler of its own
-     * the fallback below answered every @PreAuthorize denial with 500: the
-     * DispatcherServlet resolves a @ControllerAdvice handler before Spring
-     * Security's ExceptionTranslationFilter sees the exception, and a caller could
-     * not tell "you may not do this" from "the server broke". Logged at debug, not
-     * error - a refusal is the authorization layer working, not a fault.
+     * Keeps @PreAuthorize denials on 403: handleRuntimeException would otherwise
+     * claim them, since AccessDeniedException is a RuntimeException. Debug-level,
+     * because a refusal is the authorization layer working.
      */
     @ExceptionHandler(value = { AccessDeniedException.class })
     protected ResponseEntity<Object> handleAccessDenied(AccessDeniedException ex, WebRequest request) {

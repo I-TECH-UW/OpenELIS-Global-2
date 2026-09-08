@@ -53,9 +53,20 @@ public class ThresholdEvaluationServiceImpl implements ThresholdEvaluationServic
     }
 
     @Override
-    public FreezerReading.Status evaluateStatus(BigDecimal temperature, BigDecimal humidity, ThresholdProfile profile,
+    public FreezerReading.Status evaluateTemperatureStatus(BigDecimal temperature, ThresholdProfile profile,
             Freezer freezer, OffsetDateTime timestamp) {
-        FreezerReading.Status instantaneousStatus = evaluateInstantaneousStatus(temperature, humidity, profile);
+        return evaluateWithHysteresis(temperature, profile, freezer, timestamp, Metric.TEMPERATURE);
+    }
+
+    @Override
+    public FreezerReading.Status evaluateHumidityStatus(BigDecimal humidity, ThresholdProfile profile, Freezer freezer,
+            OffsetDateTime timestamp) {
+        return evaluateWithHysteresis(humidity, profile, freezer, timestamp, Metric.HUMIDITY);
+    }
+
+    private FreezerReading.Status evaluateWithHysteresis(BigDecimal value, ThresholdProfile profile, Freezer freezer,
+            OffsetDateTime timestamp, Metric metric) {
+        FreezerReading.Status instantaneousStatus = classify(value, profile, metric);
 
         if (instantaneousStatus == FreezerReading.Status.NORMAL || profile == null) {
             return instantaneousStatus;
@@ -67,7 +78,7 @@ public class ThresholdEvaluationServiceImpl implements ThresholdEvaluationServic
             return instantaneousStatus;
         }
 
-        return applyMinExcursionHysteresis(freezer, timestamp, profile, instantaneousStatus);
+        return applyMinExcursionHysteresis(freezer, timestamp, profile, instantaneousStatus, metric);
     }
 
     /**
@@ -81,7 +92,7 @@ public class ThresholdEvaluationServiceImpl implements ThresholdEvaluationServic
      * {@link ThresholdProfile#getMaxDurationMinutes()}.
      */
     private FreezerReading.Status applyMinExcursionHysteresis(Freezer freezer, OffsetDateTime timestamp,
-            ThresholdProfile profile, FreezerReading.Status instantaneousStatus) {
+            ThresholdProfile profile, FreezerReading.Status instantaneousStatus, Metric metric) {
         int minExcursionMinutes = profile.getMinExcursionMinutes();
         List<FreezerReading> priorReadings;
         try {
@@ -100,8 +111,7 @@ public class ThresholdEvaluationServiceImpl implements ThresholdEvaluationServic
             if (Boolean.FALSE.equals(reading.getTransmissionOk())) {
                 break;
             }
-            FreezerReading.Status pastStatus = evaluateInstantaneousStatus(reading.getTemperatureCelsius(),
-                    reading.getHumidityPercentage(), profile);
+            FreezerReading.Status pastStatus = classify(metric.readFrom(reading), profile, metric);
             boolean breaching = instantaneousStatus == FreezerReading.Status.CRITICAL
                     ? pastStatus == FreezerReading.Status.CRITICAL
                     : (pastStatus == FreezerReading.Status.WARNING || pastStatus == FreezerReading.Status.CRITICAL);
@@ -141,23 +151,59 @@ public class ThresholdEvaluationServiceImpl implements ThresholdEvaluationServic
                 .map(List::of).orElseGet(List::of);
     }
 
+    /**
+     * The worse of the two metrics' classifications: a missing temperature read
+     * still lets a humidity breach set the status.
+     */
     private FreezerReading.Status evaluateInstantaneousStatus(BigDecimal temperature, BigDecimal humidity,
             ThresholdProfile profile) {
-        if (profile == null || temperature == null) {
+        if (profile == null) {
             return FreezerReading.Status.NORMAL;
         }
 
-        boolean critical = isCriticalTemperature(temperature, profile) || isCriticalHumidity(humidity, profile);
-        if (critical) {
+        FreezerReading.Status temperatureStatus = classify(temperature, profile, Metric.TEMPERATURE);
+        FreezerReading.Status humidityStatus = classify(humidity, profile, Metric.HUMIDITY);
+
+        if (temperatureStatus == FreezerReading.Status.CRITICAL || humidityStatus == FreezerReading.Status.CRITICAL) {
             return FreezerReading.Status.CRITICAL;
         }
-
-        boolean warning = isWarningTemperature(temperature, profile) || isWarningHumidity(humidity, profile);
-        if (warning) {
+        if (temperatureStatus == FreezerReading.Status.WARNING || humidityStatus == FreezerReading.Status.WARNING) {
             return FreezerReading.Status.WARNING;
         }
-
         return FreezerReading.Status.NORMAL;
+    }
+
+    private FreezerReading.Status classify(BigDecimal value, ThresholdProfile profile, Metric metric) {
+        if (profile == null || value == null) {
+            return FreezerReading.Status.NORMAL;
+        }
+        if (metric == Metric.TEMPERATURE) {
+            if (isCriticalTemperature(value, profile)) {
+                return FreezerReading.Status.CRITICAL;
+            }
+            return isWarningTemperature(value, profile) ? FreezerReading.Status.WARNING : FreezerReading.Status.NORMAL;
+        }
+        if (isCriticalHumidity(value, profile)) {
+            return FreezerReading.Status.CRITICAL;
+        }
+        return isWarningHumidity(value, profile) ? FreezerReading.Status.WARNING : FreezerReading.Status.NORMAL;
+    }
+
+    private enum Metric {
+        TEMPERATURE {
+            @Override
+            BigDecimal readFrom(FreezerReading reading) {
+                return reading.getTemperatureCelsius();
+            }
+        },
+        HUMIDITY {
+            @Override
+            BigDecimal readFrom(FreezerReading reading) {
+                return reading.getHumidityPercentage();
+            }
+        };
+
+        abstract BigDecimal readFrom(FreezerReading reading);
     }
 
     private boolean isCriticalTemperature(BigDecimal temperature, ThresholdProfile profile) {

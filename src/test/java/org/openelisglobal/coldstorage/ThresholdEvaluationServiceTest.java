@@ -190,7 +190,19 @@ public class ThresholdEvaluationServiceTest extends BaseWebContextSensitiveTest 
     }
 
     @Test
-    public void evaluateStatusWithHysteresis_shouldSuppressEscalationOnFirstBreach() {
+    public void evaluateStatus_shouldClassifyHumidityWhenTheTemperatureReadIsMissing() {
+        ThresholdProfile profile = new ThresholdProfile();
+        profile.setCriticalMax(new BigDecimal("-75.0"));
+        profile.setHumidityCriticalMax(new BigDecimal("75.0"));
+
+        FreezerReading.Status status = thresholdEvaluationService.evaluateStatus(null, new BigDecimal("82.0"), profile);
+
+        assertEquals("A humidity breach is a breach whether or not temperature was read",
+                FreezerReading.Status.CRITICAL, status);
+    }
+
+    @Test
+    public void evaluateTemperatureStatus_shouldSuppressEscalationOnFirstBreach() {
         // Ultra-Low Freezer Profile (id=100) has min_excursion_minutes=5. With no
         // prior reading history at all, a breach cannot yet have persisted for the
         // full window, so it must not escalate on the very first reading.
@@ -203,14 +215,14 @@ public class ThresholdEvaluationServiceTest extends BaseWebContextSensitiveTest 
 
         BigDecimal criticalTemperature = new BigDecimal("-74.0"); // above critical max (-75.0)
 
-        FreezerReading.Status status = thresholdEvaluationService.evaluateStatus(criticalTemperature, null, profile,
-                freezer, now);
+        FreezerReading.Status status = thresholdEvaluationService.evaluateTemperatureStatus(criticalTemperature,
+                profile, freezer, now);
 
         assertEquals("First breach with no history should not yet escalate", FreezerReading.Status.NORMAL, status);
     }
 
     @Test
-    public void evaluateStatusWithHysteresis_shouldEscalateAfterSustainedBreach() {
+    public void evaluateTemperatureStatus_shouldEscalateAfterSustainedBreach() {
         Long freezerId = 100L;
         Freezer freezer = freezerService.findById(freezerId).orElse(null);
         assertNotNull("Freezer should exist", freezer);
@@ -230,15 +242,15 @@ public class ThresholdEvaluationServiceTest extends BaseWebContextSensitiveTest 
         freezerReadingService.saveReading(freezer, now.minusMinutes(2), criticalTemperature, null, null,
                 FreezerReading.Status.CRITICAL, true, null);
 
-        FreezerReading.Status status = thresholdEvaluationService.evaluateStatus(criticalTemperature, null, profile,
-                freezer, now);
+        FreezerReading.Status status = thresholdEvaluationService.evaluateTemperatureStatus(criticalTemperature,
+                profile, freezer, now);
 
         assertEquals("Sustained breach spanning the full window should escalate", FreezerReading.Status.CRITICAL,
                 status);
     }
 
     @Test
-    public void evaluateStatusWithHysteresis_shouldEscalateWhenPollGapExceedsTheLookbackWindow() {
+    public void evaluateTemperatureStatus_shouldEscalateWhenPollGapExceedsTheLookbackWindow() {
         // Ultra-Low Freezer Profile (id=100) has min_excursion_minutes=5. A lab polling
         // every 15 minutes never lands a prior reading inside a lookback window derived
         // from the profile alone, so the breach would never accumulate any duration.
@@ -254,22 +266,22 @@ public class ThresholdEvaluationServiceTest extends BaseWebContextSensitiveTest 
         freezerReadingService.saveReading(freezer, now.minusMinutes(15), criticalTemperature, null, null,
                 FreezerReading.Status.CRITICAL, true, null);
 
-        FreezerReading.Status status = thresholdEvaluationService.evaluateStatus(criticalTemperature, null, profile,
-                freezer, now);
+        FreezerReading.Status status = thresholdEvaluationService.evaluateTemperatureStatus(criticalTemperature,
+                profile, freezer, now);
 
         assertEquals("A breach sustained across a poll gap wider than the lookback window must escalate",
                 FreezerReading.Status.CRITICAL, status);
     }
 
     @Test
-    public void evaluateStatusWithHysteresis_shouldFallBackToInstantaneousWithoutFreezerContext() {
+    public void evaluateTemperatureStatus_shouldFallBackToInstantaneousWithoutFreezerContext() {
         ThresholdProfile profile = new ThresholdProfile();
         profile.setCriticalMax(new BigDecimal("-75.0"));
         profile.setMinExcursionMinutes(5);
 
         BigDecimal temperature = new BigDecimal("-74.0");
 
-        FreezerReading.Status status = thresholdEvaluationService.evaluateStatus(temperature, null, profile, null,
+        FreezerReading.Status status = thresholdEvaluationService.evaluateTemperatureStatus(temperature, profile, null,
                 null);
 
         assertEquals("Without freezer/timestamp context, hysteresis cannot be applied", FreezerReading.Status.CRITICAL,

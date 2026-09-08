@@ -53,17 +53,23 @@ const TIME_RANGE_OPTIONS = [
   { id: "all", label: "All Time" },
 ];
 
+// Labels are message ids shared with HistoricalTrends, not literal strings.
 const METRIC_OPTIONS = [
   {
     id: "temperature",
-    label: "Temperature",
+    labelId: "coldStorage.trends.metric.temperature",
     field: "temperatureCelsius",
     unit: "°C",
   },
-  { id: "humidity", label: "Humidity", field: "humidityPercentage", unit: "%" },
+  {
+    id: "humidity",
+    labelId: "coldStorage.trends.metric.humidity",
+    field: "humidityPercentage",
+    unit: "%",
+  },
   {
     id: "temperature2",
-    label: "Temperature (Probe 2)",
+    labelId: "coldStorage.trends.metric.temperature2",
     field: "temperatureCelsius2",
     unit: "°C",
   },
@@ -203,7 +209,6 @@ function DeviceHistoryExpansion({ device }) {
           const normalizedReadings = (readings || [])
             .filter((reading) => reading[metric.field] != null)
             .map((reading) => ({
-              group: metric.label,
               date: toDate(reading.recordedAt),
               value: reading[metric.field],
             }))
@@ -361,9 +366,15 @@ function DeviceHistoryExpansion({ device }) {
     [selectedMetric],
   );
 
+  const metricLabel = useCallback(
+    (option) => intl.formatMessage({ id: option.labelId }),
+    [intl],
+  );
+
   const formattedChartData = useMemo(() => {
+    const group = metricLabel(selectedMetricOption);
     return chartData.map((point) => ({
-      group: point.group,
+      group,
       key: point.date.toLocaleString([], {
         month: "short",
         day: "numeric",
@@ -372,7 +383,7 @@ function DeviceHistoryExpansion({ device }) {
       }),
       value: point.value,
     }));
-  }, [chartData]);
+  }, [chartData, metricLabel, selectedMetricOption]);
 
   const deviceThresholds = useMemo(() => {
     const minTemp = device?.minTemperature || device?.thresholdMin || -20;
@@ -393,7 +404,7 @@ function DeviceHistoryExpansion({ device }) {
           scaleType: "labels",
         },
         left: {
-          title: `${metric.label} (${metric.unit})`,
+          title: `${metricLabel(metric)} (${metric.unit})`,
           mapsTo: "value",
           scaleType: "linear",
         },
@@ -422,13 +433,13 @@ function DeviceHistoryExpansion({ device }) {
         ],
       }),
     };
-  }, [deviceThresholds, selectedMetric]);
+  }, [deviceThresholds, selectedMetric, metricLabel]);
 
   const handleExportCsv = () => {
     if (!chartData.length) return;
 
     const metric = METRIC_OPTIONS.find((m) => m.id === selectedMetric);
-    const csvHeader = `Timestamp,${metric.label} (${metric.unit})\n`;
+    const csvHeader = `Timestamp,${metricLabel(metric)} (${metric.unit})\n`;
     const csvRows = chartData
       .map((point) => `${point.date.toISOString()},${point.value}`)
       .join("\n");
@@ -844,12 +855,9 @@ function DeviceHistoryExpansion({ device }) {
                     <Dropdown
                       id="metric-dropdown"
                       titleText=""
-                      label={
-                        METRIC_OPTIONS.find((opt) => opt.id === selectedMetric)
-                          ?.label || "Temperature"
-                      }
+                      label={metricLabel(selectedMetricOption)}
                       items={METRIC_OPTIONS}
-                      itemToString={(item) => (item ? item.label : "")}
+                      itemToString={(item) => (item ? metricLabel(item) : "")}
                       selectedItem={METRIC_OPTIONS.find(
                         (opt) => opt.id === selectedMetric,
                       )}
@@ -889,7 +897,7 @@ function DeviceHistoryExpansion({ device }) {
                       <FormattedMessage
                         id="coldStorage.deviceHistory.averageMetric"
                         defaultMessage="Average {metric}"
-                        values={{ metric: selectedMetricOption.label }}
+                        values={{ metric: metricLabel(selectedMetricOption) }}
                       />
                     </div>
                     <div className="oe-deviceHistory-metricValue">
@@ -905,7 +913,7 @@ function DeviceHistoryExpansion({ device }) {
                       <FormattedMessage
                         id="coldStorage.deviceHistory.minMetric"
                         defaultMessage="Min {metric}"
-                        values={{ metric: selectedMetricOption.label }}
+                        values={{ metric: metricLabel(selectedMetricOption) }}
                       />
                     </div>
                     <div className="oe-deviceHistory-metricValue oe-deviceHistory-metricValue--min">
@@ -921,7 +929,7 @@ function DeviceHistoryExpansion({ device }) {
                       <FormattedMessage
                         id="coldStorage.deviceHistory.maxMetric"
                         defaultMessage="Max {metric}"
-                        values={{ metric: selectedMetricOption.label }}
+                        values={{ metric: metricLabel(selectedMetricOption) }}
                       />
                     </div>
                     <div className="oe-deviceHistory-metricValue oe-deviceHistory-metricValue--max">

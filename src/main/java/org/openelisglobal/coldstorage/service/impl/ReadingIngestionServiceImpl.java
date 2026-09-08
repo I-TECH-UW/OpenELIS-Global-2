@@ -54,9 +54,13 @@ public class ReadingIngestionServiceImpl implements ReadingIngestionService {
         // it would see this reading as its own evidence of a sustained breach.
         FreezerReading.Status instantaneousStatus = determineInstantaneousStatus(temperature, humidity, transmissionOk,
                 profile);
-        FreezerReading.Status escalationStatus = (transmissionOk && profile != null)
-                ? thresholdEvaluationService.evaluateStatus(temperature, humidity, profile, freezer, recordedAt)
-                : null;
+        boolean escalationApplies = transmissionOk && profile != null;
+        FreezerReading.Status temperatureEscalation = escalationApplies
+                ? thresholdEvaluationService.evaluateTemperatureStatus(temperature, profile, freezer, recordedAt)
+                : FreezerReading.Status.NORMAL;
+        FreezerReading.Status humidityEscalation = escalationApplies
+                ? thresholdEvaluationService.evaluateHumidityStatus(humidity, profile, freezer, recordedAt)
+                : FreezerReading.Status.NORMAL;
 
         boolean recoveredFromOffline = transmissionOk && lastPollFailed(freezer.getId());
 
@@ -75,13 +79,10 @@ public class ReadingIngestionServiceImpl implements ReadingIngestionService {
         }
 
         if (profile != null) {
-            if (escalationStatus != FreezerReading.Status.NORMAL) {
+            if (temperatureEscalation != FreezerReading.Status.NORMAL) {
                 checkTemperatureThresholdsWithProfile(freezer, temperature, savedReading.getId(), profile);
-                // Humidity is evaluated alongside temperature rather than instead
-                // of it: a unit can be within band on one and outside on the
-                // other, and each needs its own alert. Both sit behind the same
-                // hysteresis gate, since escalationStatus already accounts for
-                // humidity.
+            }
+            if (humidityEscalation != FreezerReading.Status.NORMAL) {
                 checkHumidityThresholdsWithProfile(freezer, humidity, savedReading.getId(), profile);
             }
         } else {

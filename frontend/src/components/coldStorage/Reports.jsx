@@ -334,11 +334,7 @@ function Reports({ devices = [] }) {
     [excursions],
   );
 
-  // The row cells below need more than a flat value - the freezer column
-  // stacks an id over a name, and severity and status render as tags - so the
-  // excursion is looked up by id here. It cannot be carried on the row object:
-  // Carbon normalises rows to the declared header keys, so an extra key does
-  // not survive to the render prop.
+  // Carbon drops row keys that are not declared headers, so cells look here.
   const excursionById = useMemo(
     () => new Map(excursions.map((item) => [item.id, item])),
     [excursions],

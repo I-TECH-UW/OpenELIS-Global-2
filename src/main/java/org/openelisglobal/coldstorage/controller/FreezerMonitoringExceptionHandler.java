@@ -3,6 +3,7 @@ package org.openelisglobal.coldstorage.controller;
 import lombok.Data;
 import org.openelisglobal.coldstorage.service.exception.FreezerDeviceNotFoundException;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
+import org.openelisglobal.common.log.LogEvent;
 import org.springframework.core.Ordered;
 import org.springframework.core.annotation.Order;
 import org.springframework.http.HttpStatus;
@@ -37,8 +38,17 @@ public class FreezerMonitoringExceptionHandler {
         return ResponseEntity.badRequest().body(new ErrorResponse("bad_request", ex.getMessage()));
     }
 
+    /**
+     * A cause on the exception means a DAO wrapped an infrastructure fault, so it
+     * answers 500 rather than blaming the request with a 409.
+     */
     @ExceptionHandler(LIMSRuntimeException.class)
     public ResponseEntity<ErrorResponse> handleStorageValidation(LIMSRuntimeException ex) {
+        if (ex.getCause() != null) {
+            LogEvent.logError(ex);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
+                    .body(new ErrorResponse("internal_error", HttpStatus.INTERNAL_SERVER_ERROR.getReasonPhrase()));
+        }
         return ResponseEntity.status(HttpStatus.CONFLICT).body(new ErrorResponse("storage_validation_error",
                 ex.getMessage() != null ? ex.getMessage() : "Unable to save device"));
     }

@@ -75,8 +75,7 @@ public class FreezerAlertServiceImpl implements FreezerAlertService {
     }
 
     // AFTER_COMMIT so a rolled-back ingest() never leaves behind a false alert.
-    // REQUIRES_NEW gives createFreezerTemperatureAlert below a real transaction to
-    // run in (self-invocation bypasses its own @Transactional).
+    // REQUIRES_NEW because the committed transaction is still bound in that phase.
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)
     @Async
@@ -89,8 +88,6 @@ public class FreezerAlertServiceImpl implements FreezerAlertService {
         }
     }
 
-    // AFTER_COMMIT and REQUIRES_NEW for the same reasons as the temperature
-    // listener above.
     @Override
     @TransactionalEventListener(phase = TransactionPhase.AFTER_COMMIT)
     @Transactional(propagation = Propagation.REQUIRES_NEW)

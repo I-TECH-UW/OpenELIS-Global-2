@@ -101,4 +101,19 @@ public class AlertRestControllerTest extends BaseWebContextSensitiveTest {
     public void deleteAlert_withUnknownId_shouldReturn404() throws Exception {
         mockMvc.perform(delete("/rest/alerts/99999").session(session)).andExpect(status().isNotFound());
     }
+
+    /**
+     * The 204 is not the assertion: Clear has to leave the alert out of the list
+     * the dashboard reloads from.
+     */
+    @Test
+    public void deleteAlert_shouldRemoveTheAlertFromTheListTheDashboardReloads() throws Exception {
+        Alert alert = alertService.createAlert(AlertType.FREEZER_TEMPERATURE, "Freezer", 100L, AlertSeverity.CRITICAL,
+                "Temperature threshold violated", "{}");
+
+        mockMvc.perform(delete("/rest/alerts/" + alert.getId()).session(session)).andExpect(status().isNoContent());
+
+        mockMvc.perform(get("/rest/alerts").param("entityType", "Freezer").session(session)).andExpect(status().isOk())
+                .andExpect(jsonPath("$[?(@.id == " + alert.getId() + ")]").doesNotExist());
+    }
 }

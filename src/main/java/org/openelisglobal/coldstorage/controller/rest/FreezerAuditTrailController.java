@@ -88,8 +88,8 @@ public class FreezerAuditTrailController extends BaseRestController {
         List<Map<String, Object>> auditEvents = new ArrayList<>();
 
         // Date parsing is genuine client input validation - a malformed date param is
-        // a 400, not a server bug - so it is parsed and reported separately from the
-        // rest of the method, which represents unexpected server-side failures.
+        // a 400, not a server bug, so it is parsed separately from the rest of the
+        // method.
         OffsetDateTime startDateTime;
         OffsetDateTime endDateTime;
         try {
@@ -231,10 +231,7 @@ public class FreezerAuditTrailController extends BaseRestController {
             auditEvents.sort(MOST_RECENT_FIRST);
 
         } catch (Exception e) {
-            // An unexpected failure here is a real server-side bug (bad input was already
-            // rejected above with a 400), not a client error - surface it as a 500 and
-            // log it through the app's logger so it is visible in normal log
-            // aggregation instead of only on stderr via printStackTrace().
+            // A malformed date already returned a 400, so a failure here is server-side.
             LOGGER.error("Unexpected error building freezer audit trail for freezerId={}", freezerId, e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }

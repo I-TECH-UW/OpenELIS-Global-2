@@ -18,16 +18,18 @@ public interface ThresholdEvaluationService {
     FreezerReading.Status evaluateStatus(BigDecimal temperature, BigDecimal humidity, ThresholdProfile profile);
 
     /**
-     * Same instantaneous evaluation as
-     * {@link #evaluateStatus(BigDecimal, BigDecimal, ThresholdProfile)}, but
-     * additionally applies {@code minExcursionMinutes} hysteresis using
-     * {@code freezer}'s reading history around {@code timestamp}: a breach only
-     * escalates to WARNING/CRITICAL once it has persisted for the configured
-     * window, so a reading oscillating exactly at a threshold boundary does not
-     * flap an alert on every poll.
+     * Classifies {@code temperature} against the profile's band, then gates
+     * escalation on {@code minExcursionMinutes} of continuous breach.
      */
-    FreezerReading.Status evaluateStatus(BigDecimal temperature, BigDecimal humidity, ThresholdProfile profile,
-            Freezer freezer, OffsetDateTime timestamp);
+    FreezerReading.Status evaluateTemperatureStatus(BigDecimal temperature, ThresholdProfile profile, Freezer freezer,
+            OffsetDateTime timestamp);
+
+    /**
+     * Measures the excursion streak over humidity alone, so each metric escalates
+     * on its own accumulated breach time.
+     */
+    FreezerReading.Status evaluateHumidityStatus(BigDecimal humidity, ThresholdProfile profile, Freezer freezer,
+            OffsetDateTime timestamp);
 
     /**
      * Derives a representative "target" temperature from a threshold profile for
