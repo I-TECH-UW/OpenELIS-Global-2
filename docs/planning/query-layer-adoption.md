@@ -69,7 +69,7 @@ grouped into checkpoints and each run is allowed to finish, otherwise criterion
 | 2 Stop reloading on error                                   | done — 20 sites across 17 files |
 | 3 List/queue screens refetch after a write                  | in progress                     |
 | 4 Same-route `assign()` becomes a refetch                   | done                            |
-| 5 Cross-screen `assign()` becomes `history.push`            | not started                     |
+| 5 Cross-screen `assign()` becomes `history.push`            | in progress                     |
 | 6 Per-job E2E comparison                                    | green on `be431ee83e`           |
 
 Counts, non-test source:
@@ -77,7 +77,7 @@ Counts, non-test source:
 |                                                  | Start | Now | In scope |
 | ------------------------------------------------ | ----- | --- | -------- |
 | `window.location.reload()`                       | 84    | 2   | 0        |
-| same-route / cross-screen `assign()` or `href =` | 85    | 57  | 40       |
+| same-route / cross-screen `assign()` or `href =` | 85    | 50  | 30       |
 
 Criterion 2 is met: no `window.location.reload()` remains outside the session
 and error-recovery set. The two that stay are the CSRF-expiry reload in
@@ -93,6 +93,20 @@ reassignment each had Cancel buttons that navigated to the screen they were
 already on to forget a pending change; those are resets now. `UomCreate` and
 `UserAddModify` left their screen by downloading the app again to reach a route
 the router already serves; those are `history.push`.
+
+Criterion 5's count needed two corrections first. `ChangePassword.jsx`'s two
+sites are session-boundary, same family as Login and SecureRoute, so they join
+the criterion-4 exempt set (19 total now, not 17). `navigate.ts`'s one real site
+(three more of its matches were inside a doc comment) is a `single-spa`
+micro-frontend interop utility with zero callers anywhere in `src/` — out of
+scope, not a screen navigation. In scope for criterion 5: 34 sites across
+roughly 20 files.
+
+The four case-view dashboards (Cytology, Pathology, Immunohistochemistry,
+program) are the first done: each sent the browser to its own detail route on a
+row click, now `history.push` through a `useHistory()` the router already
+provides. `caseViewNavigation.test.jsx` covers all four, Red-proved on Cytology
+by reverting to the `href` write.
 
 The validation queue is the first screen where a same-route `assign()` was a
 refetch rather than a reset. Three of them: a per-row action succeeding, a row
