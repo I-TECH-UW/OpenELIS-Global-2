@@ -107,6 +107,24 @@ const SearchForm = (props) => {
     props.setResults(searchResults);
   }, [searchResults]);
 
+  /**
+   * The queue behind this form re-runs the current search after a write. The
+   * registration is keyed on the endpoint so a later search supersedes it.
+   */
+  useEffect(() => {
+    if (!props.registerRefresh) {
+      return;
+    }
+    props.registerRefresh(
+      url
+        ? () => {
+            setIsLoading(true);
+            getFromOpenElisServer(url, validationResults);
+          }
+        : null,
+    );
+  }, [url, props.registerRefresh]);
+
   const handleSubmit = (values) => {
     setNextPage(null);
     setPreviousPage(null);

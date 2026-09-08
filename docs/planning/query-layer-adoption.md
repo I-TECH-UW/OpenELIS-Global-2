@@ -68,7 +68,7 @@ grouped into checkpoints and each run is allowed to finish, otherwise criterion
 | 1 Dependency, provider, shared query function, first screen | done                            |
 | 2 Stop reloading on error                                   | done — 20 sites across 17 files |
 | 3 List/queue screens refetch after a write                  | in progress                     |
-| 4 Same-route `assign()` becomes a refetch                   | not started                     |
+| 4 Same-route `assign()` becomes a refetch                   | in progress                     |
 | 5 Cross-screen `assign()` becomes `history.push`            | not started                     |
 | 6 Per-job E2E comparison                                    | accumulating on #4213           |
 
@@ -77,7 +77,7 @@ Counts, non-test source:
 |                                                  | Start | Now | In scope |
 | ------------------------------------------------ | ----- | --- | -------- |
 | `window.location.reload()`                       | 84    | 2   | 0        |
-| same-route / cross-screen `assign()` or `href =` | 85    | 62  | 45       |
+| same-route / cross-screen `assign()` or `href =` | 85    | 59  | 42       |
 
 Criterion 2 is met: no `window.location.reload()` remains outside the session
 and error-recovery set. The two that stay are the CSRF-expiry reload in
@@ -94,9 +94,18 @@ forget a pending change; those are resets now. `UomCreate` and `UserAddModify`
 left their screen by downloading the app again to reach a route the router
 already serves; those are `history.push`.
 
-`TestOrderability` also carried the first two same-route `assign()` calls to go:
-both were Cancel buttons that navigated to the screen they were already on in
-order to forget a pending change.
+The validation queue is the first screen where a same-route `assign()` was a
+refetch rather than a reset. Three of them: a per-row action succeeding, a row
+found stale under another validator, and the bulk release of the Clear lane.
+Each sent the browser to `/validation` plus the search key the page already
+held, and the queue came back only because `SearchForm` re-reads
+`window.location.search` on mount and re-runs the search from it. Removing the
+`assign()` therefore meant giving that re-run a name: `SearchForm` publishes it
+to the parent whenever its endpoint changes, and the parent hands the queue a
+way to call it. `Validation` reads entirely from props, so nothing had to be
+un-mirrored; what it does clear is the row state the released rows carried, the
+page number, the open review panels, and the QC acknowledgment scoped to the
+batch just released. A refresh serves page 1, which is what the reload did.
 
 ### One constraint the conversion has to respect
 
@@ -114,13 +123,24 @@ stored order first, which is the one thing discarding never does.
 
 ### What E2E can and cannot say here
 
-One converted screen is covered: `general-configurations.spec.ts` opens the
-general-configuration editor, toggles a value, saves, and asserts the editor has
-closed and the list is back. That worked because reloading the document
-destroyed the parent's record of being in the editor — the reload was the
-navigation, not a refetch — so replacing it with one meant giving the editor a
-way to say it is finished. Converting it as a refetch would have left the editor
-open and turned that job red.
+Two converted screens are covered, and neither spec reaches the part that
+changed most.
+
+`general-configurations.spec.ts` opens the general-configuration editor, toggles
+a value, saves, and asserts the editor has closed and the list is back. That
+worked because reloading the document destroyed the parent's record of being in
+the editor — the reload was the navigation, not a refetch — so replacing it with
+one meant giving the editor a way to say it is finished. Converting it as a
+refetch would have left the editor open and turned that job red.
+
+`validation.cy.js` reaches the validation queue from the side menu, checks the
+heading, and runs a search. It never takes a row action: its `validateTestUnit`
+call is commented out. So it guards the load-and-search path the refresh
+re-runs, which is worth having, and says nothing about the three refetches
+themselves. `validationRefresh.test.jsx` is the guard for those, and it drives
+the real screen: the mount search, the per-row retest through the review panel,
+and the bulk release through the signature button, each asserting a row only the
+server knows about appears afterwards.
 
 No spec opens any of the others. The specs that reach admin go to
 `/MasterListsPage` and from there to the test catalog editor, label presets,
