@@ -80,6 +80,8 @@ function PanelOrder() {
           kind: NotificationKinds.success,
         });
         setPendingOrder(null);
+        setPanelOrderListPost([]);
+        setConfirmSelection(false);
         refreshPanelOrderList("/rest/PanelOrder");
         setNotificationVisible(true);
       }

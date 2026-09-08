@@ -72,6 +72,8 @@ function TestSectionOrder() {
           kind: NotificationKinds.success,
         });
         setPendingOrder(null);
+        setTestSectionOrderListPost([]);
+        setConfirmSelection(false);
         refreshTestSectionOrderList("/rest/TestSectionOrder");
         setNotificationVisible(true);
       }

@@ -187,4 +187,43 @@ describe.each(SCREENS)("$name", ({ Screen, endPoint, listField }) => {
 
     expect(postToOpenElisServerJsonResponse).not.toHaveBeenCalled();
   });
+
+  it("leaves confirm mode once the accepted order is saved", async () => {
+    renderScreen();
+    expect(await screen.findByText("Chemistry")).toBeInTheDocument();
+
+    dragFirstOntoSecond();
+    await userEvent.click(screen.getByRole("button", { name: "Next" }));
+    onServer = orderOf(["Haematology", "Chemistry"]);
+    // The real endpoint answers after the click handler has already returned,
+    // so the callback has to be genuinely async here too — a synchronous one
+    // would race the same button's own unconditional setConfirmSelection(true).
+    postToOpenElisServerJsonResponse.mockImplementation(
+      (url, payload, callback) => Promise.resolve().then(() => callback(true)),
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Accept" }));
+
+    // Confirm mode cleared: the button is "Next" again, not "Accept" still
+    // waiting on a second click to repost the same, now-stale, entries.
+    expect(
+      await screen.findByRole("button", { name: "Next" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Accept" }),
+    ).not.toBeInTheDocument();
+
+    // A fresh reorder posts only the entries just dragged, not anything left
+    // over from the accepted save.
+    postToOpenElisServerJsonResponse.mockClear();
+    dragFirstOntoSecond();
+    await userEvent.click(screen.getByRole("button", { name: "Next" }));
+    await userEvent.click(screen.getByRole("button", { name: "Accept" }));
+    const [, payload] = postToOpenElisServerJsonResponse.mock.calls[0];
+    const sent = JSON.parse(JSON.parse(payload).jsonChangeList);
+    const entries = JSON.parse(Object.values(sent)[0]);
+    expect(entries).toEqual([
+      { id: 2, sortOrder: 0 },
+      { id: 1, sortOrder: 1 },
+    ]);
+  });
 });

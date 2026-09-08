@@ -72,6 +72,8 @@ function SampleTypeOrder() {
           kind: NotificationKinds.success,
         });
         setPendingOrder(null);
+        setSampleTypeOrderListPost([]);
+        setConfirmSelection(false);
         refreshSampleTypeOrderList("/rest/SampleTypeOrder");
         setNotificationVisible(true);
       }
