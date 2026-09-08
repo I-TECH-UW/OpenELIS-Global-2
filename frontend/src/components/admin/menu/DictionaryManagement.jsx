@@ -234,6 +234,24 @@ function DictionaryManagement() {
     };
   }, []);
 
+  /**
+   * Rereads whichever list is on screen: the search results if a search
+   * term is active, the paged browse list otherwise.
+   */
+  const refreshDictionaryList = () => {
+    if (panelSearchTerm) {
+      getFromOpenElisServer(
+        `/rest/SearchDictionaryMenu?search=Y&startingRecNo=1&searchString=${panelSearchTerm}`,
+        fetchedSearchedDictionaryMenu,
+      );
+    } else {
+      getFromOpenElisServer(
+        `/rest/DictionaryMenu?paging=${paging}&startingRecNo=${startingRecNo}`,
+        fetchedDictionaryMenu,
+      );
+    }
+  };
+
   const postData = {
     id: dictionaryNumber,
     selectedDictionaryCategoryId: category?.id,
@@ -259,6 +277,7 @@ function DictionaryManagement() {
         message: intl.formatMessage({ id: "error.add.edited.msg" }),
       });
     }
+    refreshDictionaryList();
   }
 
   const handleSubmitModal = (e) => {
@@ -417,6 +436,7 @@ function DictionaryManagement() {
         message: intl.formatMessage({ id: "dictionary.menu.deactivate.fail" }),
       });
     }
+    refreshDictionaryList();
   };
 
   const handlePanelSearchChange = (event) => {
