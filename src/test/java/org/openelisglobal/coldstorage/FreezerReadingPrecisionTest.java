@@ -20,9 +20,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 /**
- * Pins that the device-reported columns of {@code freezer_reading} carry no
- * magnitude ceiling, while the admin-entered configuration columns narrowed by
- * changeset {@code 3.5.0-089-freezer-decimal-precision} keep theirs.
+ * Stops someone narrowing freezer_reading's device columns, which no decoder
+ * bounds.
  */
 public class FreezerReadingPrecisionTest extends BaseWebContextSensitiveTest {
 
@@ -71,9 +70,8 @@ public class FreezerReadingPrecisionTest extends BaseWebContextSensitiveTest {
     }
 
     /**
-     * The offline dead-man's switch counts stored rows, so a reading the schema
-     * cannot represent would roll the poll back and leave the device silently
-     * unmonitored rather than merely wrong on screen.
+     * A reading the schema cannot store rolls the poll back, and the offline switch
+     * counts stored rows, so the device goes unmonitored rather than wrong.
      */
     @Test
     public void ingestShouldStoreASentinelReadingSoTheOfflineDetectorStillSeesThePoll() {

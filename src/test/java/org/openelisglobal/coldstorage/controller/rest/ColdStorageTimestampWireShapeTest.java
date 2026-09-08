@@ -28,10 +28,8 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
 
 /**
- * Pins the ISO-8601 string wire shape that issue #3743 was about. Jackson's
- * default for OffsetDateTime is epoch seconds, indistinguishable on the wire
- * from the epoch milliseconds legacy fields send, which is what made alert
- * durations read as ~56 years and chart axes show 1970.
+ * Stops someone dropping @JsonFormat: Jackson sends OffsetDateTime as epoch
+ * seconds.
  */
 public class ColdStorageTimestampWireShapeTest extends BaseWebContextSensitiveTest {
 
