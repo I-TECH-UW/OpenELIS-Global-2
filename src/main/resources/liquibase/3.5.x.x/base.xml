@@ -375,5 +375,8 @@
   <!-- OGC-1030 (Validation v4 V4): site flag requiring a note when sending a result for retest. -->
   <include relativeToChangelogFile="true" file="088-validation-retest-note-flag.xml"/>
 
+  <!-- Unified Results Entry worklist on by default (flips the flag seeded off by 059). -->
+  <include relativeToChangelogFile="true" file="089-results-unified-route-default-on.xml"/>
+
 
 </databaseChangeLog>
