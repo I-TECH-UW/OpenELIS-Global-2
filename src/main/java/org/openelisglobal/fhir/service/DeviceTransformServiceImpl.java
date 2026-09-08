@@ -290,6 +290,15 @@ public class DeviceTransformServiceImpl implements DeviceTransformService {
         return analyzer;
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * The id falls back to the row id rather than {@code ensureFhirUuid()}, which
+     * invents a UUID when the column is null. This is a read-only path, so that
+     * invented value was never persisted: every request handed the client a
+     * different id for the same analyzer, and none of them resolved.
+     */
     @Override
     public Device transformAnalyzerToDevice(Analyzer analyzer) {
         Device device = new Device();
@@ -302,7 +311,7 @@ public class DeviceTransformServiceImpl implements DeviceTransformService {
 
         final String TRANSPORT_EXTENSION = "http://openelis.org/fhir/StructureDefinition/analyzer-transport-details";
 
-        String fhirUuid = analyzer.ensureFhirUuid();
+        String fhirUuid = analyzer.getFhirUuid() == null ? analyzer.getId() : analyzer.getFhirUuidAsString();
         device.setId(fhirUuid);
         device.getMeta().setLastUpdated(analyzer.getLastupdated());
         if (analyzer.getStatus() != null) {

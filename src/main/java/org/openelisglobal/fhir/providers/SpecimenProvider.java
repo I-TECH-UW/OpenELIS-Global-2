@@ -1,10 +1,12 @@
 package org.openelisglobal.fhir.providers;
 
 import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.IncludeParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -355,6 +357,7 @@ public class SpecimenProvider implements IResourceProvider {
             @OptionalParam(name = Specimen.SP_STATUS) TokenAndListParam status,
             @OptionalParam(name = Specimen.SP_COLLECTED) DateRangeParam collected,
             @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
+            @Offset Integer offset, @Count Integer count,
             @IncludeParam(allow = { FhirConstants.SPECIMEN_PATIENT_INCLUDE,
                     FhirConstants.SPECIMEN_SUBJECT_INCLUDE }) HashSet<Include> includes,
             @IncludeParam(reverse = true, allow = { FhirConstants.SERVICE_REQUEST_SPECIMEN_REV_INCLUDE,
@@ -369,7 +372,7 @@ public class SpecimenProvider implements IResourceProvider {
             SpecimenSearchParams params = new SpecimenSearchParams(id, identifier, accession,
                     FhirProviderUtils.merge(patient, subject), type, status, collected, lastUpdated, sort, includes,
                     revIncludes);
-            return specimenSearchService.searchSpecimens(params);
+            return FhirProviderUtils.withPaging(specimenSearchService.searchSpecimens(params), offset, count);
         } catch (InvalidRequestException e) {
             throw e;
         } catch (IllegalArgumentException e) {

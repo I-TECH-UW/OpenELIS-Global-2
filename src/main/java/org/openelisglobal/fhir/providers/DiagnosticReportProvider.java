@@ -1,9 +1,11 @@
 package org.openelisglobal.fhir.providers;
 
 import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.IncludeParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.Search;
@@ -182,6 +184,7 @@ public class DiagnosticReportProvider implements IResourceProvider {
             @OptionalParam(name = DiagnosticReport.SP_STATUS) TokenAndListParam status,
             @OptionalParam(name = DiagnosticReport.SP_ISSUED) DateRangeParam issued,
             @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
+            @Offset Integer offset, @Count Integer count,
             @IncludeParam(allow = { FhirConstants.DIAGNOSTIC_REPORT_PATIENT_INCLUDE,
                     FhirConstants.DIAGNOSTIC_REPORT_SUBJECT_INCLUDE, FhirConstants.DIAGNOSTIC_REPORT_BASED_ON_INCLUDE,
                     FhirConstants.DIAGNOSTIC_REPORT_RESULT_INCLUDE,
@@ -195,7 +198,8 @@ public class DiagnosticReportProvider implements IResourceProvider {
             DiagnosticReportSearchParams params = new DiagnosticReportSearchParams(id, identifier,
                     FhirProviderUtils.merge(patient, subject), basedOn, result, specimen, code, status, issued,
                     lastUpdated, sort, includes);
-            return diagnosticReportSearchService.searchDiagnosticReports(params);
+            return FhirProviderUtils.withPaging(diagnosticReportSearchService.searchDiagnosticReports(params), offset,
+                    count);
         } catch (InvalidRequestException e) {
             throw e;
         } catch (IllegalArgumentException e) {
