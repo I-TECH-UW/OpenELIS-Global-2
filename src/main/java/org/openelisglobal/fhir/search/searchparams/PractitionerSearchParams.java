@@ -18,14 +18,6 @@ public class PractitionerSearchParams extends BaseSearchParam {
 
     private StringAndListParam family;
 
-    private StringAndListParam city;
-
-    private StringAndListParam state;
-
-    private StringAndListParam postalCode;
-
-    private StringAndListParam country;
-
     private TokenAndListParam telecom;
 
     private TokenAndListParam email;
@@ -37,8 +29,7 @@ public class PractitionerSearchParams extends BaseSearchParam {
     private final Set<Include> revIncludes;
 
     public PractitionerSearchParams(TokenAndListParam identifier, StringAndListParam name, StringAndListParam given,
-            StringAndListParam family, StringAndListParam city, StringAndListParam state, StringAndListParam postalCode,
-            StringAndListParam country, TokenAndListParam telecom, TokenAndListParam email, TokenAndListParam phone,
+            StringAndListParam family, TokenAndListParam telecom, TokenAndListParam email, TokenAndListParam phone,
             TokenAndListParam id, DateRangeParam lastUpdated, SortSpec sort, Set<Include> revIncludes) {
 
         /*
@@ -50,10 +41,6 @@ public class PractitionerSearchParams extends BaseSearchParam {
         this.name = name;
         this.given = given;
         this.family = family;
-        this.city = city;
-        this.state = state;
-        this.postalCode = postalCode;
-        this.country = country;
         this.telecom = telecom;
         this.email = email;
         this.phone = phone;
@@ -100,30 +87,17 @@ public class PractitionerSearchParams extends BaseSearchParam {
             map.addParameter(FhirConstants.LAST_NAME_SEARCH_HANDLER, family);
         }
 
-        if (city != null) {
-            map.addParameter(FhirConstants.CITY_SEARCH_HANDLER, city);
-        }
-
-        if (state != null) {
-            map.addParameter(FhirConstants.STATE_SEARCH_HANDLER, state);
-        }
-
-        if (postalCode != null) {
-            map.addParameter(FhirConstants.POSTALCODE_SEARCH_HANDLER, postalCode);
-        }
-
-        if (country != null) {
-            map.addParameter(FhirConstants.COUNTRY_SEARCH_HANDLER, country);
-        }
-
         if (telecom != null) {
             map.addParameter(FhirConstants.TELECOM_SEARCH_HANDLER, telecom);
         }
 
         if (email != null) {
             map.addParameter(FhirConstants.EMAIL_SEARCH_HANDLER, email);
-        }
 
+        }
+        if (phone != null) {
+            map.addParameter(FhirConstants.WORK_PHONE_SEARCH_HANDLER, phone);
+        }
     }
 
     public StringAndListParam getName() {
@@ -151,42 +125,6 @@ public class PractitionerSearchParams extends BaseSearchParam {
     public void setFamily(StringAndListParam family) {
 
         this.family = family;
-    }
-
-    public StringAndListParam getCity() {
-        return city;
-    }
-
-    public void setCity(StringAndListParam city) {
-
-        this.city = city;
-    }
-
-    public StringAndListParam getState() {
-        return state;
-    }
-
-    public void setState(StringAndListParam state) {
-
-        this.state = state;
-    }
-
-    public StringAndListParam getPostalCode() {
-        return postalCode;
-    }
-
-    public void setPostalCode(StringAndListParam postalCode) {
-
-        this.postalCode = postalCode;
-    }
-
-    public StringAndListParam getCountry() {
-        return country;
-    }
-
-    public void setCountry(StringAndListParam country) {
-
-        this.country = country;
     }
 
     public TokenAndListParam getTelecom() {
