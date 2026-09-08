@@ -199,6 +199,13 @@
                 and solve the double deployment before relying on it again.
             -->
             <property name="hibernate.search.automatic_indexing.enabled" value="false" />
+            <!--
+                And do not create or validate that index at start-up either: both
+                contexts try it, one loses the writer lock and logs an
+                OverlappingFileLockException on every boot. Nothing reads the
+                index, so there is nothing to manage.
+            -->
+            <property name="hibernate.search.schema_management.strategy" value="none" />
             <property name="hibernate.search.backend.directory.type" value="local-filesystem" />
             <property name="hibernate.search.backend.directory.root" value="/var/lib/lucene_index" />
             <property name="hibernate.search.backend.analysis.configurer" value="class:org.openelisglobal.hibernate.search.analysis.CustomLuceneAnalysisConfigurer"/>

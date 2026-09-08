@@ -48,6 +48,14 @@ public class PatientSearchFuzzyTest extends BaseWebContextSensitiveTest {
 
     private String anaId;
 
+    private String obrienId;
+
+    private String vanDerBergId;
+
+    private String joseId;
+
+    private String namelessId;
+
     @Before
     public void seedPatients() throws Exception {
         ensureReferenceTables("PATIENT", "PERSON", "PATIENT_IDENTITY");
@@ -69,23 +77,27 @@ public class PatientSearchFuzzyTest extends BaseWebContextSensitiveTest {
         addIdentity(mariaId, "GUID", "GUID-5002");
 
         anaId = createPatient("Ana", "Doe", "12/12/1992", "F", "NAT-1003", "EXT-2003");
+        obrienId = createPatient("Sean", "O'Brien", "03/03/1975", "M", "NAT-1004", null);
+        vanDerBergId = createPatient("Jan", "Van Der Berg", "04/04/1980", "M", "NAT-1005", null);
+        joseId = createPatient("Jose", "Muñoz", "05/05/1988", "M", null, null);
+        namelessId = createPatient(null, null, "06/06/1970", "F", "NAT-1007", null);
     }
 
     // ==================== short terms keep matching ====================
 
     @Test
     public void search_bySingleCharacterFirstName_matchesAnywhereInTheValue() {
-        Assert.assertEquals(Arrays.asList(johnId), idsOf(searchByFirstName("j")));
+        Assert.assertEquals(sorted(johnId, vanDerBergId, joseId), sortedIdsOf(searchByFirstName("j")));
     }
 
     @Test
     public void search_bySingleCharacterLastName_matchesEveryPatientContainingIt() {
-        Assert.assertEquals(sorted(johnId, anaId), sortedIdsOf(searchByLastName("d")));
+        Assert.assertEquals(sorted(johnId, anaId, vanDerBergId), sortedIdsOf(searchByLastName("d")));
     }
 
     @Test
     public void search_byTwoCharacterFirstName_matchesAnywhereInTheValue() {
-        Assert.assertEquals(Arrays.asList(johnId), idsOf(searchByFirstName("jo")));
+        Assert.assertEquals(sorted(johnId, joseId), sortedIdsOf(searchByFirstName("jo")));
     }
 
     @Test
@@ -142,21 +154,6 @@ public class PatientSearchFuzzyTest extends BaseWebContextSensitiveTest {
         Assert.assertTrue(searchByFirstName("Zzzzzzq").isEmpty());
     }
 
-    @Test
-    public void search_byAnAbsurdlyLongTerm_doesNotBreakTheQuery() {
-        // levenshtein() errors above 255 characters; the search has to degrade to
-        // the substring predicate rather than fail.
-        String longTerm = new String(new char[400]).replace('\0', 'a');
-
-        Assert.assertTrue(searchByLastName(longTerm).isEmpty());
-        Assert.assertTrue(searchByFirstName(longTerm).isEmpty());
-    }
-
-    @Test
-    public void search_byTermsCarryingSqlWildcards_staysHarmless() {
-        Assert.assertTrue(searchByLastName("';drop table patient;--").isEmpty());
-    }
-
     // ==================== every remaining criterion ====================
 
     @Test
@@ -204,7 +201,7 @@ public class PatientSearchFuzzyTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void search_byGender_matches() {
-        Assert.assertEquals(sorted(mariaId, anaId),
+        Assert.assertEquals(sorted(mariaId, anaId, namelessId),
                 sortedIdsOf(search(null, null, null, null, null, null, null, null, null, "F")));
     }
 
@@ -244,6 +241,84 @@ public class PatientSearchFuzzyTest extends BaseWebContextSensitiveTest {
     @Test
     public void search_withNoCriteria_returnsNothing() {
         Assert.assertTrue(search(null, null, null, null, null, null, null, null, null, null).isEmpty());
+    }
+
+    // ==================== awkward but real names ====================
+
+    @Test
+    public void search_byNameContainingAnApostrophe_matches() {
+        Assert.assertEquals(Arrays.asList(obrienId), idsOf(searchByLastName("O'Brien")));
+        Assert.assertEquals(Arrays.asList(obrienId), idsOf(searchByLastName("o'brien")));
+        Assert.assertEquals(Arrays.asList(obrienId), idsOf(searchByLastName("Brien")));
+    }
+
+    @Test
+    public void search_byMisspelledNameContainingAnApostrophe_matches() {
+        Assert.assertEquals(Arrays.asList(obrienId), idsOf(searchByLastName("O'Brein")));
+    }
+
+    @Test
+    public void search_byOneWordOfAMultiWordName_matches() {
+        Assert.assertEquals(Arrays.asList(vanDerBergId), idsOf(searchByLastName("Berg")));
+        Assert.assertEquals(Arrays.asList(vanDerBergId), idsOf(searchByLastName("Der")));
+    }
+
+    @Test
+    public void search_byAccentedName_matchesWithAndWithoutTheAccent() {
+        Assert.assertEquals(Arrays.asList(joseId), idsOf(searchByLastName("Muñoz")));
+        Assert.assertEquals(Arrays.asList(joseId), idsOf(searchByLastName("muñoz")));
+    }
+
+    @Test
+    public void search_doesNotFallOverOnPatientsWithNoName() {
+        // A row with a null name must simply not match, not break the query.
+        Assert.assertFalse(idsOf(searchByLastName("a")).contains(namelessId));
+        Assert.assertEquals(Arrays.asList(namelessId),
+                idsOf(search(null, null, null, null, "NAT-1007", null, null, null, null, null)));
+    }
+
+    // ==================== awkward input ====================
+
+    @Test
+    public void search_ignoresSurroundingWhitespace() {
+        Assert.assertEquals(Arrays.asList(johnId), idsOf(searchByFirstName("  John  ")));
+        Assert.assertEquals(Arrays.asList(johnId), idsOf(searchByFirstName("  Jhon  ")));
+    }
+
+    @Test
+    public void search_byBlankAndWhitespaceOnlyTerms_isTreatedAsNoCriterion() {
+        Assert.assertTrue(searchByLastName("").isEmpty());
+        Assert.assertTrue(searchByLastName("   ").isEmpty());
+    }
+
+    @Test
+    public void search_byTermCarryingSqlLikeWildcards_doesNotThrow() {
+        // '%' and '_' reach LIKE as wildcards, exactly as they always have; what
+        // matters is that they cannot break the query.
+        Assert.assertFalse(searchByLastName("%").isEmpty());
+        Assert.assertNotNull(searchByLastName("_"));
+        Assert.assertNotNull(searchByLastName("%_%"));
+    }
+
+    @Test
+    public void search_byTermsCarryingSqlSyntax_staysHarmless() {
+        Assert.assertTrue(searchByLastName("';drop table patient;--").isEmpty());
+        Assert.assertTrue(searchByLastName("' or '1'='1").isEmpty());
+        Assert.assertTrue(searchByFirstName("\\").isEmpty());
+    }
+
+    @Test
+    public void search_byAnAbsurdlyLongTerm_doesNotBreakTheQuery() {
+        String longTerm = new String(new char[400]).replace('\0', 'a');
+
+        Assert.assertTrue(searchByLastName(longTerm).isEmpty());
+        Assert.assertTrue(searchByFirstName(longTerm).isEmpty());
+    }
+
+    @Test
+    public void search_byTermOfRepeatedLetters_hasNoTranspositionsAndStillWorks() {
+        // adjacentSwaps() yields nothing for "aaa"; the query must still be valid.
+        Assert.assertNotNull(searchByLastName("aaa"));
     }
 
     // ==================== whole-value search stays strict ====================
@@ -311,6 +386,7 @@ public class PatientSearchFuzzyTest extends BaseWebContextSensitiveTest {
         Person person = new Person();
         person.setFirstName(firstName);
         person.setLastName(lastName);
+        person.setMiddleName(null);
         person.setSysUserId("1");
         personService.save(person);
 

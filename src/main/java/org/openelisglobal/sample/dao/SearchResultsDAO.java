@@ -21,8 +21,6 @@ public interface SearchResultsDAO {
     /** Search terms and tolerances backing the fuzzy name match. */
     String LAST_NAME_TERM = "lastNameTerm";
     String FIRST_NAME_TERM = "firstNameTerm";
-    String LAST_NAME_EDITS = "lastNameEdits";
-    String FIRST_NAME_EDITS = "firstNameEdits";
     String LAST_NAME_SWAPS = "lastNameSwaps";
     String FIRST_NAME_SWAPS = "firstNameSwaps";
 

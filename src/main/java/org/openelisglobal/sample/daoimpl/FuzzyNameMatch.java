@@ -10,11 +10,11 @@ import java.util.Set;
  * Tolerances for the misspelled-name half of the patient search.
  *
  * <p>
- * PostgreSQL's {@code levenshtein()} is plain Levenshtein, so swapping two
- * neighbouring letters - by far the most common typing slip - costs two edits,
- * the same as two unrelated mistakes. Raising the edit budget to two for every
- * short term would match almost anything, so the swapped spellings are instead
- * matched literally and the edit budget stays tight.
+ * Misspellings are matched by trigram similarity, which the GIN index serves
+ * directly. Similarity alone is weak for the commonest typing slip though -
+ * swapping two neighbouring letters scores only 0.14 on a three letter name -
+ * so the swapped spellings are additionally matched literally, which the same
+ * index also serves.
  */
 final class FuzzyNameMatch {
 
@@ -24,14 +24,14 @@ final class FuzzyNameMatch {
      */
     private static final int MIN_FUZZY_LENGTH = 3;
 
-    private static final int TWO_EDIT_LENGTH = 6;
-
     /**
-     * PostgreSQL's levenshtein() raises an error above 255 characters, so a longer
-     * term is matched by the substring predicate alone rather than failing the
-     * whole search.
+     * Similarity floor for the trigram match, set explicitly so behaviour does not
+     * depend on the server's own setting. 0.2 was tried and rejected: it starts
+     * matching names that merely share a two letter prefix - "john" scores 0.25
+     * against both "jose" and "joan". What similarity misses at this level are the
+     * transpositions, and those are matched exactly by the swapped spellings below.
      */
-    static final int MAX_FUZZY_LENGTH = 255;
+    static final float SIMILARITY_THRESHOLD = 0.3f;
 
     private FuzzyNameMatch() {
     }
@@ -41,15 +41,7 @@ final class FuzzyNameMatch {
     }
 
     static boolean isFuzzyMatchable(String term) {
-        if (term == null) {
-            return false;
-        }
-        int length = normalize(term).length();
-        return length >= MIN_FUZZY_LENGTH && length <= MAX_FUZZY_LENGTH;
-    }
-
-    static int maxEdits(String term) {
-        return normalize(term).length() >= TWO_EDIT_LENGTH ? 2 : 1;
+        return term != null && normalize(term).length() >= MIN_FUZZY_LENGTH;
     }
 
     /** Every spelling of the term with one pair of neighbouring letters swapped. */
