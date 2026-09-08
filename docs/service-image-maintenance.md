@@ -60,18 +60,28 @@ does not track the database's default collation (`en_US.utf8` in every OpenELIS
 install), so indexes on text columns keep working silently on the new image and
 can still hide ordering inconsistencies.
 
-The database image handles this itself. Its entrypoint
-(`db/docker-entrypoint-collation.sh`) runs before PostgreSQL accepts
-connections: on an existing data directory it starts the server privately,
-compares the recorded collation versions with the ones the operating system
-provides, and only when they differ rebuilds every index of the affected
-databases (`REINDEX DATABASE`) and records the new versions
-(`ALTER COLLATION ... REFRESH VERSION`). Empty volumes and already-refreshed
-volumes pass straight through, so the check costs nothing on later starts. The
-check never blocks start-up: if the private server does not come up or the
-`postgres` role cannot connect over the local socket (the check uses
-`POSTGRES_PASSWORD` when local authentication requires one), the wrapper logs
-the statements to run and PostgreSQL starts normally. Set
+The database image handles this itself, without holding up start-up. Its
+entrypoint (`db/docker-entrypoint-collation.sh`) hands over to the stock
+entrypoint immediately and, on an existing data directory, runs the check in the
+background once the server is accepting connections: it compares the recorded
+collation versions with the ones the operating system provides and, only when
+they differ, rebuilds the affected databases' indexes with
+`REINDEX DATABASE ... CONCURRENTLY` before recording the new versions
+(`ALTER COLLATION ... REFRESH VERSION`). Nothing is locked against reads or
+writes, and the database is reachable throughout.
+
+Running online rather than before start-up is deliberate. The application
+container starts at the same time as the database and aborts its deployment if
+the database is unreachable when its schema migration runs, so a rebuild that
+held start-up would take the application down for as long as the rebuild lasted,
+and that time grows with the size of the database.
+
+Empty volumes and already-refreshed volumes do nothing at all, so the check
+costs nothing on later starts. Failures are logged with the statements to run by
+hand and never affect the database: the recorded versions are refreshed only
+after a rebuild has actually succeeded, so an interrupted run is retried on the
+next start. The check connects over the local socket as `postgres`, using
+`POSTGRES_PASSWORD` where local authentication requires a password. Set
 `OE_DB_SKIP_COLLATION_REINDEX=true` on the database service to skip it and run
 the same statements by hand in a maintenance window:
 
@@ -79,15 +89,21 @@ the same statements by hand in a maintenance window:
 -- as the postgres superuser, connected to clinlims
 SELECT collname, collversion, pg_collation_actual_version(oid)
   FROM pg_collation WHERE collname IN ('en_US.utf8', 'en_US');
-REINDEX DATABASE clinlims;
+REINDEX DATABASE clinlims CONCURRENTLY;
 ALTER COLLATION "en_US.utf8" REFRESH VERSION;
 ALTER COLLATION "en_US" REFRESH VERSION;
 ```
 
-Measured on a development database with 913 indexes (11 MB), the rebuild took
-between one and seven seconds depending on host load; the time grows with index
-size, and the first start on the new image is delayed by that much. Take a
-backup before the upgrade regardless, and rehearse on a copy of the production
-volume first. Rolling back to the previous image on the same volume works (same
-PostgreSQL major); the old image then sees recorded version 2.36 against its own
-2.31 and the check would rebuild again on the next start of the new image.
+A concurrent rebuild builds each replacement index alongside the original, so
+the volume needs room for the largest index twice over while it runs; it also
+skips the system catalogues, which is harmless because their text columns use
+the `C` collation and are unaffected by the library change. Stopping the
+container mid-rebuild is safe, and the next start rebuilds again, but PostgreSQL
+may leave invalid indexes named `..._ccnew` behind; they are ignored by queries
+and can be dropped with `DROP INDEX CONCURRENTLY`. Measured on a development
+database with 913 indexes (11 MB) the rebuild took a few seconds, and the time
+grows with index size. Take a backup before the upgrade regardless, and rehearse
+on a copy of the production volume first. Rolling back to the previous image on
+the same volume works (same PostgreSQL major); the old image then sees recorded
+version 2.36 against its own 2.31 and the check would rebuild again on the next
+start of the new image.
