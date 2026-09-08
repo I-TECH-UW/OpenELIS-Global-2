@@ -8,6 +8,8 @@ import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
+import java.util.stream.Collectors;
+import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.ContactPoint.ContactPointSystem;
@@ -18,6 +20,7 @@ import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.Resource;
 import org.hl7.fhir.r4.model.ResourceType;
+import org.hl7.fhir.r4.model.StringType;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.common.util.DateUtil;
@@ -219,6 +222,17 @@ public class FhirCommonTransformServiceImpl implements FhirCommonTransformServic
         person.setLastName(humanName.getFamily() == null ? "" : humanName.getFamily().strip());
     }
 
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * {@code ContactPoint.use} is optional in FHIR. A phone that omits it - or
+     * carries a use this method does not map to a dedicated column - is still
+     * stored as the primary phone, so that a resource created with such a telecom
+     * can afterwards be found by {@code ?phone=} and {@code ?telecom=}. Dropping it
+     * used to make those parameters unable to match anything the facade had just
+     * accepted.
+     */
     @Override
     public void addTelecomToPerson(List<ContactPoint> telecoms, Person person) {
         for (ContactPoint contact : telecoms) {
@@ -227,23 +241,78 @@ public class FhirCommonTransformServiceImpl implements FhirCommonTransformServic
                 person.setEmail(contactValue);
             } else if (ContactPointSystem.FAX.equals(contact.getSystem())) {
                 person.setFax(contactValue);
-            } else if (ContactPointSystem.PHONE.equals(contact.getSystem())
-                    && ContactPointUse.MOBILE.equals(contact.getUse())) {
-                person.setCellPhone(contactValue);
-                person.setPrimaryPhone(contactValue);
-            } else if (ContactPointSystem.PHONE.equals(contact.getSystem())
-                    && ContactPointUse.HOME.equals(contact.getUse())) {
-                person.setHomePhone(contactValue);
-                if (GenericValidator.isBlankOrNull(person.getPrimaryPhone())) {
-                    person.setPrimaryPhone(contactValue);
-                }
-            } else if (ContactPointSystem.PHONE.equals(contact.getSystem())
-                    && ContactPointUse.WORK.equals(contact.getUse())) {
-                person.setWorkPhone(contactValue);
-                if (GenericValidator.isBlankOrNull(person.getPrimaryPhone())) {
-                    person.setPrimaryPhone(contactValue);
-                }
+            } else if (ContactPointSystem.PHONE.equals(contact.getSystem())) {
+                addPhoneToPerson(contact.getUse(), contactValue, person);
             }
         }
+    }
+
+    private void addPhoneToPerson(ContactPointUse use, String contactValue, Person person) {
+        if (ContactPointUse.MOBILE.equals(use)) {
+            person.setCellPhone(contactValue);
+            person.setPrimaryPhone(contactValue);
+            return;
+        }
+        if (ContactPointUse.HOME.equals(use)) {
+            person.setHomePhone(contactValue);
+        } else if (ContactPointUse.WORK.equals(use)) {
+            person.setWorkPhone(contactValue);
+        }
+        if (GenericValidator.isBlankOrNull(person.getPrimaryPhone())) {
+            person.setPrimaryPhone(contactValue);
+        }
+    }
+
+    @Override
+    public void addAddressToPerson(Address address, Person person) {
+        if (address == null || address.isEmpty()) {
+            return;
+        }
+        if (address.hasLine()) {
+            person.setStreetAddress(
+                    address.getLine().stream().map(StringType::getValue).collect(Collectors.joining(", ")));
+        }
+        if (address.hasCity()) {
+            person.setCity(address.getCity());
+        }
+        if (address.hasState()) {
+            person.setState(address.getState());
+        }
+        if (address.hasPostalCode()) {
+            person.setZipCode(address.getPostalCode());
+        }
+        if (address.hasCountry()) {
+            person.setCountry(address.getCountry());
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     *
+     * <p>
+     * Values are trimmed on the way out because {@code PERSON.ZIP_CODE} is a fixed
+     * width {@code character(10)}: read back unchanged, a five character postal
+     * code would be published with five trailing spaces, so what a client stored is
+     * not what it gets back.
+     */
+    @Override
+    public Address transformToAddress(Person person) {
+        Address address = new Address();
+        if (!GenericValidator.isBlankOrNull(person.getStreetAddress())) {
+            address.addLine(person.getStreetAddress().trim());
+        }
+        if (!GenericValidator.isBlankOrNull(person.getCity())) {
+            address.setCity(person.getCity().trim());
+        }
+        if (!GenericValidator.isBlankOrNull(person.getState())) {
+            address.setState(person.getState().trim());
+        }
+        if (!GenericValidator.isBlankOrNull(person.getZipCode())) {
+            address.setPostalCode(person.getZipCode().trim());
+        }
+        if (!GenericValidator.isBlankOrNull(person.getCountry())) {
+            address.setCountry(person.getCountry().trim());
+        }
+        return address;
     }
 }

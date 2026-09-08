@@ -78,12 +78,13 @@ public class PatientBundleProvider extends BaseFhirBundleProvider<Patient, org.h
     @Override
     public List<IBaseResource> getResources(int fromIndex, int toIndex) {
 
-        int pageSize = toIndex - fromIndex;
+        int offset = effectiveOffset(fromIndex);
+        int pageSize = effectivePageSize(fromIndex, toIndex);
         if (pageSize <= 0) {
             return List.of();
         }
 
-        List<Patient> patients = loadEntities(fromIndex, pageSize);
+        List<Patient> patients = loadEntities(offset, pageSize);
         List<IBaseResource> resources = new ArrayList<>();
         patients.stream().map(this::transformEntity).filter(Objects::nonNull).forEach(resources::add);
         resources.forEach(

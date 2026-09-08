@@ -71,12 +71,13 @@ public class DiagnosticReportBundleProvider extends BaseFhirBundleProvider<Analy
     @Override
     public List<IBaseResource> getResources(int fromIndex, int toIndex) {
 
-        int pageSize = toIndex - fromIndex;
+        int offset = effectiveOffset(fromIndex);
+        int pageSize = effectivePageSize(fromIndex, toIndex);
         if (pageSize <= 0) {
             return List.of();
         }
 
-        List<Analysis> analyses = loadEntities(fromIndex, pageSize);
+        List<Analysis> analyses = loadEntities(offset, pageSize);
         List<IBaseResource> resources = new ArrayList<>();
         for (Analysis analysis : analyses) {
             DiagnosticReport report = transformEntity(analysis);

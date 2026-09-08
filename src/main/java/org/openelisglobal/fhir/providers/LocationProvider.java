@@ -1,10 +1,12 @@
 package org.openelisglobal.fhir.providers;
 
 import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.IncludeParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -298,6 +300,7 @@ public class LocationProvider implements IResourceProvider {
             @OptionalParam(name = Location.SP_PARTOF) ReferenceAndListParam partOf,
             @OptionalParam(name = "_tag") TokenAndListParam tag,
             @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
+            @Offset Integer offset, @Count Integer count,
             @IncludeParam(allow = { FhirConstants.LOCATION_PARTOF_INCLUDE }) HashSet<Include> includes,
             @IncludeParam(reverse = true, allow = {
                     FhirConstants.LOCATION_PARTOF_INCLUDE }) HashSet<Include> revIncludes,
@@ -309,7 +312,7 @@ public class LocationProvider implements IResourceProvider {
         try {
             LocationSearchParams params = new LocationSearchParams(id, identifier, name, status, partOf, tag,
                     lastUpdated, sort, includes, revIncludes);
-            return locationSearchService.searchLocations(params);
+            return FhirProviderUtils.withPaging(locationSearchService.searchLocations(params), offset, count);
         } catch (InvalidRequestException e) {
             throw e;
         } catch (IllegalArgumentException e) {

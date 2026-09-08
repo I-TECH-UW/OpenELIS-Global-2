@@ -276,13 +276,23 @@ public class OrganizationFacadeTest extends BaseWebContextSensitiveTest {
         assertEquals("OperationOutcome", outcome.get("resourceType").asText());
     }
 
+    /**
+     * STATE is a two character US state code. The rejection has to name the field
+     * and its limit: it used to surface as the entire generated INSERT with every
+     * bound value inlined, which told a client nothing it could act on.
+     */
     @Test
     public void createOrganization_withOverlongState_returns422NotServerError() throws Exception {
         JsonNode outcome = post("/Organization", """
                 {"resourceType": "Organization", "active": true, "name": "Wide State Clinic",
                  "address": [{"city": "Kampala", "state": "Central Region"}]}
                 """, 422);
-        assertTrue(outcome.get("issue").get(0).get("diagnostics").asText().contains("could not be stored"));
+        String diagnostics = outcome.get("issue").get(0).get("diagnostics").asText();
+        assertTrue("the error should name the field, but was: " + diagnostics,
+                diagnostics.contains("Organization.address.state"));
+        assertTrue("the error should state the limit, but was: " + diagnostics, diagnostics.contains("2 characters"));
+        assertFalse("the error should not carry the generated SQL, but was: " + diagnostics,
+                diagnostics.contains("insert into"));
     }
 
     private JsonNode post(String path, String json, int expectedStatus) throws Exception {

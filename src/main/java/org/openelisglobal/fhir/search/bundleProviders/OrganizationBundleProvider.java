@@ -61,12 +61,13 @@ public class OrganizationBundleProvider
     @Override
     public List<IBaseResource> getResources(int fromIndex, int toIndex) {
 
-        int pageSize = toIndex - fromIndex;
+        int offset = effectiveOffset(fromIndex);
+        int pageSize = effectivePageSize(fromIndex, toIndex);
         if (pageSize <= 0) {
             return List.of();
         }
 
-        List<Organization> matches = loadEntities(fromIndex, pageSize);
+        List<Organization> matches = loadEntities(offset, pageSize);
         List<IBaseResource> resources = new ArrayList<>();
         for (Organization organization : matches) {
             org.hl7.fhir.r4.model.Organization resource = transformEntity(organization);
