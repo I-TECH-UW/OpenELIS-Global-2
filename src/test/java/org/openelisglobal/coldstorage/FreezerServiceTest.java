@@ -154,9 +154,8 @@ public class FreezerServiceTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void createFreezer_shouldAcceptANameLongerThanTheDeviceCodeLimit() {
-        // Issue #3904 item 1: a realistic device name has more than 10 alphanumeric
-        // characters, and the derived storage-device code has to fit the limit the
-        // code validator enforces or the device cannot be created at all.
+        // Keep the derived code inside the validator's 10-character limit (issue
+        // #3904).
         Freezer freezer = new Freezer();
         freezer.setName("Vaccine Fridge 01");
         freezer.setProtocol(Freezer.Protocol.TCP);

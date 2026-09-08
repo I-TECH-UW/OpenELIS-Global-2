@@ -53,6 +53,7 @@ const AlertDetailModal = ({ intl, alertId, open, onClose }) => {
     useState("");
   const [correctiveActionSubmitting, setCorrectiveActionSubmitting] =
     useState(false);
+  const [deleteConfirming, setDeleteConfirming] = useState(false);
 
   const loadAlertDetails = useCallback(async () => {
     setLoading(true);
@@ -69,6 +70,7 @@ const AlertDetailModal = ({ intl, alertId, open, onClose }) => {
 
   useEffect(() => {
     if (open && alertId) {
+      setDeleteConfirming(false);
       loadAlertDetails();
     }
   }, [open, alertId, loadAlertDetails]);
@@ -281,19 +283,64 @@ const AlertDetailModal = ({ intl, alertId, open, onClose }) => {
       )}
 
       {alert && !loading && isAdminUser && (
-        <div className="oe-coldStorage-alertModalActions">
-          <Button
-            kind="danger--ghost"
-            size="sm"
-            disabled={actionInProgress}
-            onClick={handleDelete}
-          >
-            <FormattedMessage
-              id="freezer.alert.detail.delete"
-              defaultMessage="Delete Alert"
+        <>
+          {deleteConfirming && (
+            <InlineNotification
+              kind="warning"
+              lowContrast
+              hideCloseButton
+              title={intl.formatMessage({
+                id: "freezer.alert.detail.deleteConfirm",
+                defaultMessage: "Delete this alert permanently?",
+              })}
+              subtitle={intl.formatMessage({
+                id: "freezer.alert.detail.deleteWarning",
+                defaultMessage:
+                  "The start time, severity, acknowledgment and notes are removed with no audit trail and cannot be recovered.",
+              })}
             />
-          </Button>
-        </div>
+          )}
+          <div className="oe-coldStorage-alertModalActions">
+            {deleteConfirming ? (
+              <>
+                <Button
+                  kind="ghost"
+                  size="sm"
+                  disabled={actionInProgress}
+                  onClick={() => setDeleteConfirming(false)}
+                >
+                  <FormattedMessage
+                    id="label.button.cancel"
+                    defaultMessage="Cancel"
+                  />
+                </Button>
+                <Button
+                  kind="danger"
+                  size="sm"
+                  disabled={actionInProgress}
+                  onClick={handleDelete}
+                >
+                  <FormattedMessage
+                    id="freezer.alert.detail.deletePermanently"
+                    defaultMessage="Delete permanently"
+                  />
+                </Button>
+              </>
+            ) : (
+              <Button
+                kind="danger--ghost"
+                size="sm"
+                disabled={actionInProgress}
+                onClick={() => setDeleteConfirming(true)}
+              >
+                <FormattedMessage
+                  id="freezer.alert.detail.delete"
+                  defaultMessage="Delete Alert"
+                />
+              </Button>
+            )}
+          </div>
+        </>
       )}
 
       {alert && !loading && (

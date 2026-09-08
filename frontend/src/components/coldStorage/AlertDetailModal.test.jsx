@@ -5,6 +5,9 @@ import "@testing-library/jest-dom";
 import { IntlProvider } from "react-intl";
 import messages from "../../languages/en.json";
 import AlertDetailModal from "./AlertDetailModal";
+import UserSessionDetailsContext from "../../UserSessionDetailsContext";
+import { deleteAlert } from "./api";
+import { Roles } from "../utils/Utils";
 
 vi.mock("./api", () => ({
   fetchAlertDetails: vi.fn(() =>
@@ -47,5 +50,57 @@ describe("AlertDetailModal corrective-action types", () => {
     fireEvent.click(screen.getByRole("combobox"));
 
     expect(await screen.findByText("Étalonnage")).toBeInTheDocument();
+  });
+});
+
+/**
+ * DELETE /rest/alerts/{id} is a hard row delete with no audit trail, so the
+ * button must not reach it on one click.
+ */
+describe("AlertDetailModal delete confirmation", () => {
+  const renderAsAdmin = () =>
+    render(
+      <UserSessionDetailsContext.Provider
+        value={{ userSessionDetails: { roles: [Roles.GLOBAL_ADMIN] } }}
+      >
+        <IntlProvider locale="en" messages={messages}>
+          <AlertDetailModal alertId={7} open onClose={vi.fn()} />
+        </IntlProvider>
+      </UserSessionDetailsContext.Provider>,
+    );
+
+  beforeEach(() => {
+    deleteAlert.mockClear();
+    deleteAlert.mockResolvedValue({});
+  });
+
+  it("asks before deleting instead of deleting on the first click", async () => {
+    renderAsAdmin();
+
+    fireEvent.click(await screen.findByText("Delete Alert"));
+
+    expect(deleteAlert).not.toHaveBeenCalled();
+    expect(
+      screen.getByText("Delete this alert permanently?"),
+    ).toBeInTheDocument();
+  });
+
+  it("deletes once the confirmation is accepted", async () => {
+    renderAsAdmin();
+
+    fireEvent.click(await screen.findByText("Delete Alert"));
+    fireEvent.click(screen.getByText("Delete permanently"));
+
+    expect(deleteAlert).toHaveBeenCalledWith(7);
+  });
+
+  it("keeps the alert when the confirmation is cancelled", async () => {
+    renderAsAdmin();
+
+    fireEvent.click(await screen.findByText("Delete Alert"));
+    fireEvent.click(screen.getByText("Cancel"));
+
+    expect(deleteAlert).not.toHaveBeenCalled();
+    expect(screen.getByText("Delete Alert")).toBeInTheDocument();
   });
 });

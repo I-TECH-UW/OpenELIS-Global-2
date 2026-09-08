@@ -116,6 +116,7 @@ describe("FreezerMonitoringDashboard alert detail modal", () => {
       screen.getByRole("button", { name: /view alert details/i }),
     );
     fireEvent.click(await screen.findByText("Delete Alert"));
+    fireEvent.click(await screen.findByText("Delete permanently"));
 
     await wait(() => expect(deleteAlert).toHaveBeenCalledWith(1104));
     await wait(() => expect(fetchOpenAlerts).toHaveBeenCalledTimes(2));
