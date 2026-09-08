@@ -270,6 +270,43 @@ and never appears against the PR's own commit: read it through the
 on the triggering run's sha, so a run already started survives a later push;
 only `03 - E2E` itself cancels per PR.
 
+### Automated review findings
+
+Copilot and Codex both reviewed this PR (against `8b253dfd76`, three commits
+behind the fixes below). Four findings, each checked against current code before
+acting rather than taken on trust:
+
+- `DictionaryManagement.jsx` (Copilot): add/edit/deactivate showed a
+  notification but never refetched, so the table kept showing pre-write data.
+  Confirmed real; fixed with `refreshDictionaryList()`.
+- `ProviderMenu.tsx` (Codex): deactivating a row left `selectedRowIds` pointing
+  at it, so Modify stayed enabled and crashed looking the row up after the
+  refetch dropped it. Confirmed real; fixed by clearing the selection on
+  success.
+- `PanelOrder`/`SampleTypeOrder`/`TestSectionOrder` (Codex): a successful save
+  cleared `pendingOrder` but not `confirmSelection` or the `*OrderListPost`
+  array, so the screen stayed in confirm mode and a second Accept reposted
+  already-saved entries. Same fix in all three, matching what the discard path
+  already did.
+- `queryClient.ts` (Codex, P1): a screen's `if (!data) return <Loading/>` guard
+  can't tell "still loading" from "failed and never coming," so a failed read
+  spins forever with no feedback. Confirmed real, but not new — the
+  pre-migration raw `getFromOpenElisServer` callback also answered `undefined`
+  on any failure, so the same screens were stuck the same way before this PR
+  existed. The fix that matters here is not per-screen: all 23 screens converted
+  to `useServerData` already render `<AlertDialog/>` for their own write
+  results, so the hook now watches its own query's `isError` and calls
+  `addNotification` directly — no screen needed to change. `UserManagement.jsx`
+  calls `useQuery` directly (a separate invalidation scope), so it got the
+  identical handling inline. Retries were tried and reverted: TanStack's default
+  backoff makes a retried failure take seconds to settle, which would have put a
+  timing cost on every test in the suite that asserts a fast failure. Visible
+  feedback and automatic retry are independent; only the first was actually
+  missing.
+
+All four Red-proved by reverting the fix and observing the specific failure each
+finding described.
+
 ## Plan
 
 | Step | Work                                                                                                                                       |
