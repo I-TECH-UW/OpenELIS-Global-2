@@ -8622,5 +8622,7 @@
   "eqa.performance.noRate": "No scored cycle yet",
   "eqa.performance.noCycles": "This laboratory has not reported into a scored cycle yet.",
   "eqa.performance.empty": "No laboratory is enrolled in this scheme yet.",
-  "eqa.performance.loadFailed": "Could not load participant performance"
+  "eqa.performance.loadFailed": "Could not load participant performance",
+  "eqa.myPrograms.group.active": "Active enrolments ({count})",
+  "eqa.myPrograms.group.inactive": "Inactive enrolments ({count})"
 }

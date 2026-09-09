@@ -136,6 +136,30 @@ describe("MyProgramsPage", () => {
     expect(screen.getByText("Inactive")).toBeTruthy();
   });
 
+  test("groups the rows under a heading per status, counted", () => {
+    renderPage();
+
+    // The fixture holds one active and one inactive enrolment, so each heading
+    // carries a count of one rather than a total of both.
+    expect(screen.getByText("Active enrolments (1)")).toBeTruthy();
+    expect(screen.getByText("Inactive enrolments (1)")).toBeTruthy();
+  });
+
+  test("each heading precedes the rows it covers", () => {
+    renderPage();
+
+    const text = document.body.textContent;
+    const activeHeading = text.indexOf("Active enrolments (1)");
+    const chemistry = text.indexOf("Chemistry PT");
+    const inactiveHeading = text.indexOf("Inactive enrolments (1)");
+    const hematology = text.indexOf("Hematology PT");
+
+    // A heading below its own rows would read as covering the group after it.
+    expect(activeHeading).toBeLessThan(chemistry);
+    expect(chemistry).toBeLessThan(inactiveHeading);
+    expect(inactiveHeading).toBeLessThan(hematology);
+  });
+
   test("renders count tags for enrolled program", () => {
     renderPage();
     // Chemistry PT has: 1 lab unit, 2 tests, 1 panel
