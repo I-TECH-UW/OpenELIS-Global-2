@@ -107,6 +107,14 @@ public class SpecimenSearchDao extends BaseFhirDao {
         addPredicate(context, createLastUpdatedPredicate(context, params.getLastUpdated()));
     }
 
+    /**
+     * Matches the accession as the resource publishes it.
+     *
+     * <p>
+     * {@code accessionIdentifier} carries {@code accession[-sortOrder]}, so a
+     * client searching with the value it was just given has to get a hit; a bare
+     * accession still matches every item of the sample.
+     */
     private <R> Optional<Predicate> createAccessionPredicate(FhirCriteriaContext<SampleItem, R> context,
             TokenAndListParam accession) {
 
@@ -114,9 +122,13 @@ public class SpecimenSearchDao extends BaseFhirDao {
             return Optional.empty();
         }
         CriteriaBuilder criteriaBuilder = requireCriteriaBuilder(context);
-        Expression<String> expression = resolveStringExpression(context, ACCESSION_PROPERTY);
-        return handleTokenAndListParam(criteriaBuilder, accession,
-                token -> createTokenValuePredicate(criteriaBuilder, expression, token));
+        return handleTokenAndListParam(criteriaBuilder, accession, token -> {
+            String value = token.getValue() == null ? "" : token.getValue().trim();
+            if (value.isEmpty()) {
+                return Optional.empty();
+            }
+            return Optional.of(labNumberPredicate(context, value));
+        });
     }
 
     /**

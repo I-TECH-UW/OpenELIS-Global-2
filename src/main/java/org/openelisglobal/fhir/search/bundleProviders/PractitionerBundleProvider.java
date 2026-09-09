@@ -86,7 +86,8 @@ public class PractitionerBundleProvider extends BaseFhirBundleProvider<Provider,
             throw new IllegalArgumentException("toIndex must be greater than or equal to fromIndex");
         }
 
-        int pageSize = toIndex - fromIndex;
+        int offset = effectiveOffset(fromIndex);
+        int pageSize = effectivePageSize(fromIndex, toIndex);
 
         if (pageSize == 0) {
             return List.of();
@@ -95,7 +96,7 @@ public class PractitionerBundleProvider extends BaseFhirBundleProvider<Provider,
         /*
          * Step 1: Load only the current page of matching Providers.
          */
-        List<Provider> providers = practitionerSearchDao.search(searchParams, fromIndex, pageSize);
+        List<Provider> providers = practitionerSearchDao.search(searchParams, offset, pageSize);
 
         List<IBaseResource> resources = new ArrayList<>();
         providers.stream().map(this::transformEntity).filter(Objects::nonNull).forEach(resources::add);

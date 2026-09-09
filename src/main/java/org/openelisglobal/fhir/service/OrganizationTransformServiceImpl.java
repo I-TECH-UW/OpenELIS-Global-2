@@ -1,9 +1,11 @@
 package org.openelisglobal.fhir.service;
 
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.Identifier;
@@ -21,6 +23,15 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class OrganizationTransformServiceImpl implements OrganizationTransformService {
+
+    /** Widths of the ORGANIZATION address columns, which are narrow and legacy. */
+    private static final int STREET_ADDRESS_LIMIT = 30;
+
+    private static final int CITY_LIMIT = 30;
+
+    private static final int STATE_LIMIT = 2;
+
+    private static final int POSTAL_CODE_LIMIT = 10;
 
     @Autowired
     private FhirConfig fhirConfig;
@@ -157,16 +168,39 @@ public class OrganizationTransformServiceImpl implements OrganizationTransformSe
         }
     }
 
+    /**
+     * Copies the address onto the organization, rejecting any part that the column
+     * behind it cannot hold.
+     *
+     * <p>
+     * These are narrow legacy columns - {@code STATE} in particular is a two
+     * character US state code - and writing through them unchecked made the
+     * database abort the whole insert, which reached the caller as a 422 carrying
+     * the entire generated SQL statement and no indication of which field was at
+     * fault. Naming the field and its limit up front is the difference between a
+     * client being able to correct the payload and not.
+     */
     private void setOeOrganizationAddressInfo(Organization organization,
             org.hl7.fhir.r4.model.Organization fhirOrganization) {
         LogEvent.logTrace(this.getClass().getSimpleName(), "setOeOrganizationAddressInfo",
                 "setOeOrganizationAddressInfo called");
 
-        organization.setStreetAddress(fhirOrganization.getAddressFirstRep().getLine().stream()
-                .map(e -> e.asStringValue()).collect(Collectors.joining("\\n")));
-        organization.setCity(fhirOrganization.getAddressFirstRep().getCity());
-        organization.setState(fhirOrganization.getAddressFirstRep().getState());
-        organization.setZipCode(fhirOrganization.getAddressFirstRep().getPostalCode());
+        Address address = fhirOrganization.getAddressFirstRep();
+        organization.setStreetAddress(requireFits("Organization.address.line",
+                address.getLine().stream().map(e -> e.asStringValue()).collect(Collectors.joining("\\n")),
+                STREET_ADDRESS_LIMIT));
+        organization.setCity(requireFits("Organization.address.city", address.getCity(), CITY_LIMIT));
+        organization.setState(requireFits("Organization.address.state", address.getState(), STATE_LIMIT));
+        organization
+                .setZipCode(requireFits("Organization.address.postalCode", address.getPostalCode(), POSTAL_CODE_LIMIT));
+    }
+
+    private String requireFits(String fhirPath, String value, int limit) {
+        if (value != null && value.length() > limit) {
+            throw new UnprocessableEntityException(fhirPath + " is limited to " + limit
+                    + " characters in this database, but was " + value.length() + " characters");
+        }
+        return value;
     }
 
     private void setFhirAddressInfo(org.hl7.fhir.r4.model.Organization fhirOrganization, Organization organization) {

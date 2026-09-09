@@ -14,7 +14,6 @@ import org.hl7.fhir.r4.model.Observation;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
-import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.fhir.FhirConstants;
@@ -79,12 +78,13 @@ public class ObservationBundleProvider extends BaseFhirBundleProvider<Result, Ob
     @Override
     public List<IBaseResource> getResources(int fromIndex, int toIndex) {
 
-        int pageSize = toIndex - fromIndex;
+        int offset = effectiveOffset(fromIndex);
+        int pageSize = effectivePageSize(fromIndex, toIndex);
         if (pageSize <= 0) {
             return List.of();
         }
 
-        List<Result> results = loadEntities(fromIndex, pageSize);
+        List<Result> results = loadEntities(offset, pageSize);
         List<IBaseResource> resources = new ArrayList<>();
         for (Result result : results) {
             Observation observation = transformEntity(result);
@@ -149,9 +149,6 @@ public class ObservationBundleProvider extends BaseFhirBundleProvider<Result, Ob
         }
         if (searchParams.hasRevInclude(FhirConstants.DIAGNOSTIC_REPORT_RESULT_REV_INCLUDE)) {
             for (Analysis analysis : analyses.values()) {
-                if (!statusService.matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
-                    continue;
-                }
                 try {
                     resources.add(fhirTransformService.transformResultToDiagnosticReport(analysis));
                 } catch (FhirTransformationException e) {

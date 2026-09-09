@@ -8,8 +8,8 @@ import org.hl7.fhir.r4.model.Device;
 
 /**
  * Search parameters the Device facade answers from the OpenELIS analyzer table:
- * logical id, identifiers (uuid, machine id, discovered source id), device
- * name, type, status and last-updated timestamp.
+ * logical id, identifiers (uuid and Bridge connection id), device name, pinned
+ * profile type, status and last-updated timestamp.
  */
 public class DeviceSearchParams extends BaseSearchParam {
 

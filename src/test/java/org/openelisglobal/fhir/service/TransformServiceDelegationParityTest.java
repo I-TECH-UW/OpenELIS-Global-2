@@ -12,7 +12,6 @@ import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.analyzer.service.AnalyzerService;
 import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
@@ -40,7 +39,6 @@ public class TransformServiceDelegationParityTest extends BaseWebContextSensitiv
     private static final String SAMPLE_ITEM_ID = "601";
     private static final String PROVIDER_ID = "1";
     private static final String ORGANIZATION_ID = "3";
-    private static final String ANALYZER_ID = "1";
 
     @Autowired
     private FhirTransformService fhirTransformService;
@@ -71,14 +69,11 @@ public class TransformServiceDelegationParityTest extends BaseWebContextSensitiv
     private ProviderService providerService;
     @Autowired
     private OrganizationService organizationService;
-    @Autowired
-    private AnalyzerService analyzerService;
 
     private final IParser parser = FhirContext.forR4().newJsonParser();
 
     @Before
     public void setUp() throws Exception {
-        executeDataSetWithStateManagement("testdata/facade-device.xml");
         executeDataSetWithStateManagement("testdata/facade-organization.xml");
         executeDataSetWithStateManagement("testdata/result-facade.xml");
     }
@@ -140,8 +135,11 @@ public class TransformServiceDelegationParityTest extends BaseWebContextSensitiv
 
     @Test
     public void device_orchestratorMatchesDeviceService() throws Exception {
-        Analyzer analyzer = analyzerService.get(ANALYZER_ID);
-        assertNotNull(analyzer);
+        Analyzer analyzer = new Analyzer();
+        analyzer.setName("Parity analyzer");
+        analyzer.setStatus(Analyzer.AnalyzerStatus.SETUP);
+        analyzer.setBridgeConnectionId("bridge-parity");
+
         assertSameResource(fhirTransformService.transformAnalyzerToDevice(analyzer),
                 deviceTransformService.transformAnalyzerToDevice(analyzer));
     }

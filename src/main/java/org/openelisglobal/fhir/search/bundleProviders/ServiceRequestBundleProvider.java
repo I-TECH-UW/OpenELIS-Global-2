@@ -12,7 +12,6 @@ import org.hl7.fhir.r4.model.ServiceRequest;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
-import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.fhir.FhirConstants;
@@ -77,12 +76,13 @@ public class ServiceRequestBundleProvider extends BaseFhirBundleProvider<Analysi
     @Override
     public List<IBaseResource> getResources(int fromIndex, int toIndex) {
 
-        int pageSize = toIndex - fromIndex;
+        int offset = effectiveOffset(fromIndex);
+        int pageSize = effectivePageSize(fromIndex, toIndex);
         if (pageSize <= 0) {
             return List.of();
         }
 
-        List<Analysis> analyses = loadEntities(fromIndex, pageSize);
+        List<Analysis> analyses = loadEntities(offset, pageSize);
         List<IBaseResource> resources = new ArrayList<>();
         for (Analysis analysis : analyses) {
             ServiceRequest serviceRequest = transformEntity(analysis);
@@ -149,9 +149,6 @@ public class ServiceRequestBundleProvider extends BaseFhirBundleProvider<Analysi
         }
         if (wantsReports) {
             for (Analysis analysis : analyses) {
-                if (!statusService.matches(analysis.getStatusId(), AnalysisStatus.Finalized)) {
-                    continue;
-                }
                 try {
                     resources.add(fhirTransformService.transformResultToDiagnosticReport(analysis));
                 } catch (FhirTransformationException e) {

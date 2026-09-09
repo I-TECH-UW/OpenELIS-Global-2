@@ -1,10 +1,12 @@
 package org.openelisglobal.fhir.providers;
 
 import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.IncludeParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -554,6 +556,7 @@ public class ServiceRequestProvider implements IResourceProvider {
             @OptionalParam(name = ServiceRequest.SP_CODE) TokenAndListParam code,
             @OptionalParam(name = ServiceRequest.SP_STATUS) TokenAndListParam status,
             @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
+            @Offset Integer offset, @Count Integer count,
             @IncludeParam(allow = { FhirConstants.SERVICE_REQUEST_PATIENT_INCLUDE,
                     FhirConstants.SERVICE_REQUEST_SUBJECT_INCLUDE, FhirConstants.SERVICE_REQUEST_REQUESTER_INCLUDE,
                     FhirConstants.SERVICE_REQUEST_SPECIMEN_INCLUDE }) HashSet<Include> includes,
@@ -568,7 +571,8 @@ public class ServiceRequestProvider implements IResourceProvider {
             ServiceRequestSearchParams params = new ServiceRequestSearchParams(id, identifier,
                     FhirProviderUtils.merge(patient, subject), requester, specimen, code, status, lastUpdated, sort,
                     includes, revIncludes);
-            return serviceRequestSearchService.searchServiceRequests(params);
+            return FhirProviderUtils.withPaging(serviceRequestSearchService.searchServiceRequests(params), offset,
+                    count);
         } catch (InvalidRequestException e) {
             throw e;
         } catch (IllegalArgumentException e) {

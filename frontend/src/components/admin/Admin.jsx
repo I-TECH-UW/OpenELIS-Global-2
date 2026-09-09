@@ -22,8 +22,6 @@ import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import DataExportStatus from "./DataExportStatus/DataExportStatus";
 import LabelPresetList from "./labelPresets/LabelPresetList";
 import { Redirect } from "react-router-dom";
-import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName";
-import PluginList from "./pluginFile/PluginFile";
 import ResultReportingConfiguration from "./ResultReportingConfiguration/ResultReportingConfiguration";
 import TestCatalog from "./testManagement/ViewTestCatalog";
 import TestCatalogEditor from "./testCatalog/TestCatalogEditor";
@@ -113,7 +111,6 @@ function Admin() {
         component={TestCatalogEditor}
       />
       <Route path={`${path}/MethodManagement`} component={ManageMethod} />
-      <Route path={`${path}/AnalyzerTestName`} component={AnalyzerTestName} />
       <Route path={`${path}/labNumber`} component={LabNumberManagement} />
       <Route path={`${path}/labelPresets`} component={LabelPresetList} />
       <Route path={`${path}/program`} component={ProgramManagement} />
@@ -352,7 +349,6 @@ function Admin() {
         component={NotificationTriggerConfig}
       />
       <Route path={`${path}/DictionaryMenu`} component={DictionaryManagement} />
-      <Route path={`${path}/PluginFile`} component={PluginList} />
       <Route
         path={`${path}/SearchIndexManagement`}
         component={SearchIndexManagement}
