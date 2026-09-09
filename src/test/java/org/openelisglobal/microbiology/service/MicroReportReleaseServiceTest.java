@@ -80,6 +80,27 @@ public class MicroReportReleaseServiceTest {
     }
 
     @Test
+    public void preliminaryReleaseIsRejectedOnceTheCaseIsFinal() {
+        MicroCase microCase = new MicroCase();
+        microCase.setId("case-1");
+        microCase.setStage(MicroCaseStage.FINAL_RELEASED.name());
+        microCase.setFinalReleaseState(MicroCaseFinalReleaseState.FINAL_RELEASED.name());
+        when(caseDAO.get("case-1")).thenReturn(Optional.of(microCase));
+
+        try {
+            service.releasePreliminary("case-1", "1");
+            fail("Expected preliminary release to be rejected for a final case");
+        } catch (IllegalStateException expected) {
+            assertEquals("Preliminary release is blocked: CASE_FINAL_RELEASED", expected.getMessage());
+        }
+        assertEquals(MicroCaseFinalReleaseState.FINAL_RELEASED.name(), microCase.getFinalReleaseState());
+        assertEquals(MicroCaseStage.FINAL_RELEASED.name(), microCase.getStage());
+        verify(reportProjectionService, never()).releasePreliminary(anyString(), anyString());
+        verify(caseDAO, never()).update(any(MicroCase.class));
+        verify(activityDAO, never()).insert(any());
+    }
+
+    @Test
     public void finalReleaseUpdatesCaseAndRecordsHistory() {
         MicroCase microCase = new MicroCase();
         microCase.setId("case-1");

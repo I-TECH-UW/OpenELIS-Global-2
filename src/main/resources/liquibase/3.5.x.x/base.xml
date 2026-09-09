@@ -494,6 +494,15 @@
   <!-- OGC-782 R11: capture the explicit clinical or screening culture purpose -->
   <include relativeToChangelogFile="true" file="088-microbiology-culture-purpose.xml"/>
 
+  <!-- OGC-782 R16: one direct order-entry action per domain; the generic parent is retired -->
+  <include relativeToChangelogFile="true" file="093-order-entry-domain-actions.xml"/>
+
+  <!-- OGC-782 R16: finish the move on a database that holds only some of the actions -->
+  <include relativeToChangelogFile="true" file="094-order-entry-domain-actions-guard.xml"/>
+
+  <!-- OGC-782 R16: retain an audit of discarded pre-case microbiology drafts -->
+  <include relativeToChangelogFile="true" file="095-microbiology-order-draft-discard-audit.xml"/>
+
   <!-- Cold-storage monitoring hardening (issues #3743/#3904). Its first changeset redeclares
        chk_alert_type wholesale (086's union plus FREEZER_OFFLINE). 092 below redeclares it once more to
        add FREEZER_HUMIDITY and is now the last word on that constraint - see the note there. -->

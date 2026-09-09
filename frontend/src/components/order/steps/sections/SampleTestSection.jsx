@@ -23,6 +23,7 @@ import {
   ChevronUp,
 } from "@carbon/icons-react";
 import { getFromOpenElisServer } from "../../../utils/Utils";
+import { hasCultureWorkflowTest } from "../../orderDataUtils";
 
 const SampleTestSection = ({
   samples,
@@ -271,11 +272,6 @@ const SampleTestSection = ({
     return "purple";
   };
 
-  const hasCultureWorkflow = (candidateSamples) =>
-    candidateSamples.some((sample) =>
-      (sample.tests || []).some((test) => test.cultureWorkflowType),
-    );
-
   const hasMicrobiologyDetail = Object.values(
     orderData?.microbiologyOrderDetail || {},
   ).some((value) => value !== "" && value !== null && value !== false);
@@ -283,14 +279,7 @@ const SampleTestSection = ({
   const clearMicrobiologyState = () => {
     setOrderData((previous) => ({
       ...previous,
-      microbiologyOrderDetail: {
-        cultureMethodId: "",
-        patientOrigin: "",
-        admissionDate: "",
-        numberOfSets: "",
-        clinicalHistory: "",
-        antibioticExposure: false,
-      },
+      microbiologyOrderDetail: undefined,
       sampleOrderItems: {
         ...previous.sampleOrderItems,
         programId:
@@ -303,8 +292,8 @@ const SampleTestSection = ({
 
   const applySamples = (updated) => {
     if (
-      hasCultureWorkflow(samples) &&
-      !hasCultureWorkflow(updated) &&
+      hasCultureWorkflowTest(samples) &&
+      !hasCultureWorkflowTest(updated) &&
       hasMicrobiologyDetail
     ) {
       setPendingSamples(updated);
@@ -487,7 +476,7 @@ const SampleTestSection = ({
                   disabled={isReadOnly}
                   dismissTooltipLabel={intl.formatMessage(
                     {
-                      id: "sample.removeSelection",
+                      id: "common.removeSelection",
                       defaultMessage: "Remove {name}",
                     },
                     { name: panel.name },
@@ -564,7 +553,7 @@ const SampleTestSection = ({
                   disabled={isReadOnly}
                   dismissTooltipLabel={intl.formatMessage(
                     {
-                      id: "sample.removeSelection",
+                      id: "common.removeSelection",
                       defaultMessage: "Remove {name}",
                     },
                     { name: test.name },
@@ -1524,7 +1513,7 @@ const SampleTestSection = ({
                           disabled={isReadOnly}
                           dismissTooltipLabel={intl.formatMessage(
                             {
-                              id: "sample.removeSelection",
+                              id: "common.removeSelection",
                               defaultMessage: "Remove {name}",
                             },
                             { name: panel.name },
@@ -1599,7 +1588,7 @@ const SampleTestSection = ({
                           disabled={isReadOnly}
                           dismissTooltipLabel={intl.formatMessage(
                             {
-                              id: "sample.removeSelection",
+                              id: "common.removeSelection",
                               defaultMessage: "Remove {name}",
                             },
                             { name: test.name },

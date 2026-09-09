@@ -64,6 +64,12 @@ public class MicroCaseOrderDetail extends BaseObject<String> {
     @Column(name = "updated_by", length = 20)
     private String updatedBy;
 
+    @Column(name = "discarded_at")
+    private Timestamp discardedAt;
+
+    @Column(name = "discarded_by", length = 20)
+    private String discardedBy;
+
     @Override
     public String getId() {
         return id;
@@ -184,5 +190,21 @@ public class MicroCaseOrderDetail extends BaseObject<String> {
 
     public void setUpdatedBy(String updatedBy) {
         this.updatedBy = updatedBy;
+    }
+
+    public Timestamp getDiscardedAt() {
+        return discardedAt;
+    }
+
+    public void setDiscardedAt(Timestamp discardedAt) {
+        this.discardedAt = discardedAt;
+    }
+
+    public String getDiscardedBy() {
+        return discardedBy;
+    }
+
+    public void setDiscardedBy(String discardedBy) {
+        this.discardedBy = discardedBy;
     }
 }

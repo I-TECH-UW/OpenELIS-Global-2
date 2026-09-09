@@ -124,7 +124,8 @@ public class MicroAstServiceTest {
     public void setUp() {
         service = new MicroAstServiceImpl(runDAO, readingDAO, isolateDAO, caseDAO, activityDAO, breakpointService,
                 interpretationService, amendmentDAO, reagentLotService, organismDAO, sampleItemService, panelDAO,
-                overrideEventDAO, systemUserService, panelAntibioticDAO, runAntibioticDAO, antibioticDAO);
+                overrideEventDAO, systemUserService, panelAntibioticDAO, runAntibioticDAO, antibioticDAO, "CLSI",
+                "2026");
         when(caseDAO.get("case-1")).thenReturn(Optional.of(mutableCase()));
         MicroOrganism organism = new MicroOrganism();
         organism.setId("org-1");
@@ -225,6 +226,39 @@ public class MicroAstServiceTest {
         }
 
         verify(readingDAO, never()).insert(any(MicroAstReading.class));
+    }
+
+    @Test
+    public void recordReadingRejectsARunThatIsAlreadyReviewed() {
+        MicroAstRun run = reviewedRun("run-1");
+        run.setTechnique(MicroAstTechnique.VITEK_2.name());
+        run.setMethod(MicroAstMethod.MIC.name());
+        when(runDAO.get("run-1")).thenReturn(Optional.of(run));
+
+        try {
+            service.recordReading("run-1", "abx-1", new BigDecimal("2"), "1");
+            fail("Expected a reviewed run to reject new readings");
+        } catch (MicroAstConflictException expected) {
+            assertEquals("AST_RUN_ALREADY_REVIEWED", expected.getMessage());
+        }
+        verify(readingDAO, never()).insert(any(MicroAstReading.class));
+    }
+
+    @Test
+    public void overrideReadingRejectsARunThatIsAlreadyReviewed() {
+        MicroAstReading reading = reading("reading-1", "run-1", MicroAstInterpretation.SUSCEPTIBLE);
+        when(readingDAO.get("reading-1")).thenReturn(Optional.of(reading));
+        when(runDAO.get("run-1")).thenReturn(Optional.of(reviewedRun("run-1")));
+
+        try {
+            service.overrideReading("reading-1", MicroAstInterpretation.RESISTANT, "Clinical exception", "42");
+            fail("Expected a reviewed run to reject overrides");
+        } catch (MicroAstConflictException expected) {
+            assertEquals("AST_RUN_ALREADY_REVIEWED", expected.getMessage());
+        }
+        assertEquals(null, reading.getOverrideInterpretation());
+        verify(readingDAO, never()).update(any(MicroAstReading.class));
+        verify(overrideEventDAO, never()).insert(any(MicroAstOverrideEvent.class));
     }
 
     @Test

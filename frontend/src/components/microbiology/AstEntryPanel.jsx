@@ -658,11 +658,7 @@ const AstEntryPanel = ({
   };
 
   return (
-    <section
-      className="microbiology-card"
-      data-testid="microbiology-ast-card"
-      aria-labelledby="microbiology-ast-heading"
-    >
+    <section className="microbiology-card" data-testid="microbiology-ast-card">
       <div className="microbiology-card__header">
         <div>
           <h3 id="microbiology-ast-heading">

@@ -1,4 +1,6 @@
-export const SampleOrderFormValues = {
+// Every new order gets its own values. A shared object would let one order's
+// entries survive into the next.
+export const createSampleOrderFormValues = () => ({
   rememberSiteAndRequester: false,
   currentDate: null,
   projects: null,
@@ -7,15 +9,6 @@ export const SampleOrderFormValues = {
   patientSMSNotificationTestIds: [],
   providerEmailNotificationTestIds: [],
   providerSMSNotificationTestIds: [],
-  microbiologyOrderDetail: {
-    culturePurpose: "CLINICAL_DIAGNOSTIC",
-    cultureMethodId: "",
-    patientOrigin: "",
-    admissionDate: "",
-    numberOfSets: "",
-    clinicalHistory: "",
-    antibioticExposure: false,
-  },
   patientUpdateStatus: "ADD",
   referralItems: [],
   referralOrganizations: null,
@@ -136,7 +129,7 @@ export const SampleOrderFormValues = {
   warning: false,
   useReferral: false,
   rejectReasonList: null,
-};
+});
 
 export const ModifyOrderFormValues = {
   patientName: "",

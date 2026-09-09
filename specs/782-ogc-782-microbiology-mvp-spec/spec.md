@@ -86,6 +86,15 @@ Amendment/re-identification history, reagent/card lot linkage, expert rules,
 authoritative WHONET interoperability, operational TB processing, antibiograms,
 and GLASS reporting are explicit later work.
 
+## Clarifications
+
+### Session 2026-09-06
+
+- Q: What canonical term should the specification use for the surface where a
+  microbiology order is placed? → A: "Add Clinical Order", the domain-scoped
+  clinical order-entry workflow; environmental and vector orders have their own
+  actions, and the legacy Add Order screen is out of scope.
+
 ## User Scenarios & Testing _(mandatory)_
 
 ### User Story 1 - Route a Microbiology Order (Priority: P1)
@@ -104,7 +113,7 @@ appears in the worklist with the correct workflow context.
 **Acceptance Scenarios**:
 
 1. **Given** a test that is configured to start routine bacteriology work,
-   **When** the user selects that test in the supported Add Order workflow,
+   **When** the user selects that test in Add Clinical Order,
    **Then** Program visibly changes to Microbiology and the Microbiology Program
    Details become available before save.
 2. **Given** a test that is not configured for microbiology culture work,
@@ -388,8 +397,11 @@ or missing mapping for export.
 
 - **FR-001**: The system MUST provide a reliable way for ordered tests to start
   the appropriate microbiology workflow without relying on clerk memory.
-- **FR-002**: In the supported Add Order workflow, the system MUST derive and
-  display Culture Protocol read-only from the ordered test. A missing default
+- **FR-002**: In Add Clinical Order (formerly referred to as "the supported
+  Add Order workflow"; environmental and vector orders have their own
+  order-entry actions, and the legacy Add Order screen is out of scope), the
+  system MUST derive and display Culture Protocol read-only from the ordered
+  test. A missing default
   MUST NOT block order or case creation. Users MUST be able to select Patient
   Origin from the deployment's configured choices, optionally record Date of
   Admission, enter a bounded/defaulted Number of Sets, record multi-line
@@ -718,7 +730,7 @@ place or silently losing work when connectivity is interrupted.
 
 ### Measurable Outcomes
 
-- **SC-001**: From the supported Add Order workflow, a user can select a
+- **SC-001**: From Add Clinical Order, a user can select a
   qualifying routine-bacteriology test, see Program become Microbiology,
   confirm the complete culture details, save, and find one resulting case on
   the worklist without manual routing or duplicate creation.

@@ -21,6 +21,7 @@ import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.project.valueholder.Project;
 import org.openelisglobal.referral.action.beanitems.ReferralItem;
 import org.openelisglobal.sample.bean.SampleOrderItem;
+import org.openelisglobal.sampletyperequest.dto.SampleTypeRequestDTO;
 import org.openelisglobal.validation.annotations.ValidDate;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
@@ -123,8 +124,24 @@ public class SamplePatientEntryForm extends BaseForm {
     @Valid
     private MicroCaseOrderDetailRequestForm microbiologyOrderDetail;
 
+    /**
+     * Specimens requested at order entry, saved with the order in one transaction
+     * so an order can never exist without them. Null means the request did not
+     * speak for the specimens at all, which leaves them as they are; an empty list
+     * means none are requested any more.
+     */
+    private List<SampleTypeRequestDTO> requestedSampleTypes;
+
     public SamplePatientEntryForm() {
         setFormName("samplePatientEntryForm");
+    }
+
+    public List<SampleTypeRequestDTO> getRequestedSampleTypes() {
+        return requestedSampleTypes;
+    }
+
+    public void setRequestedSampleTypes(List<SampleTypeRequestDTO> requestedSampleTypes) {
+        this.requestedSampleTypes = requestedSampleTypes;
     }
 
     public MicroCaseOrderDetailRequestForm getMicrobiologyOrderDetail() {

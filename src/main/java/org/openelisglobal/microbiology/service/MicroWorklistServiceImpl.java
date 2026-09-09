@@ -464,7 +464,7 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
         row.createdAt = microCase.getCreatedAt();
         row.needsAstReview = needsAstReview(runs);
         row.hasOpenCriticalCommunication = hasOpenCriticalCommunication(communications);
-        row.dueAction = dueAction(microCase, isolates, row.needsAstReview);
+        row.dueAction = dueAction(microCase, isolates, runs, row.needsAstReview);
         row.urgency = urgency(microCase, row.needsAstReview, row.hasOpenCriticalCommunication);
         for (MicroCase sibling : siblingCases) {
             if (!sibling.getId().equals(microCase.getId())) {
@@ -610,6 +610,29 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
         }
     }
 
+    /**
+     * An isolate keeps only its organism id once identified, so rows carry that id
+     * as their display text. Surveillance controls are read by people, so the
+     * catalog name replaces it wherever one exists.
+     */
+    private void applyOrganismLabels(List<MicroWorklistRowForm> rows) {
+        List<String> ids = rows.stream().map(row -> row.organismId).filter(value -> value != null && !value.isBlank())
+                .distinct().toList();
+        if (ids.isEmpty()) {
+            return;
+        }
+        Map<String, String> names = organismDAO.getByIds(ids).stream()
+                .filter(organism -> organism.getDisplayName() != null && !organism.getDisplayName().isBlank())
+                .collect(Collectors.toMap(MicroOrganism::getId, MicroOrganism::getDisplayName,
+                        (first, ignored) -> first));
+        for (MicroWorklistRowForm row : rows) {
+            String name = names.get(row.organismId);
+            if (name != null) {
+                row.organismDisplay = name;
+            }
+        }
+    }
+
     private Map<String, String> patientOriginLabels(List<MicroWorklistRowForm> rows) {
         List<String> codes = rows.stream().map(row -> row.patientOrigin)
                 .filter(value -> value != null && !value.isBlank()).distinct().toList();
@@ -675,7 +698,8 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
         return false;
     }
 
-    private String dueAction(MicroCase microCase, List<MicroIsolate> isolates, boolean needsAstReview) {
+    private String dueAction(MicroCase microCase, List<MicroIsolate> isolates, List<MicroAstRun> runs,
+            boolean needsAstReview) {
         if (MicroWorkflowType.UNASSIGNED.name().equals(microCase.getWorkflowType())) {
             return "NEEDS_WORKFLOW";
         }
@@ -695,7 +719,11 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
             return "ISOLATE_ID";
         }
         for (MicroIsolate isolate : isolates) {
-            if (MicroIsolateSignificance.CLINICALLY_SIGNIFICANT.name().equals(isolate.getSignificance())) {
+            // A significant isolate whose AST work is already reviewed is ready for
+            // case review; only one with no run yet still needs AST entry.
+            boolean isolateHasRun = runs.stream().anyMatch(run -> isolate.getId().equals(run.getIsolateId()));
+            if (MicroIsolateSignificance.CLINICALLY_SIGNIFICANT.name().equals(isolate.getSignificance())
+                    && !isolateHasRun) {
                 return "AST_ENTRY";
             }
         }

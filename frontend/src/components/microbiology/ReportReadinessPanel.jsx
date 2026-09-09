@@ -130,15 +130,15 @@ const ReportReadinessPanel = ({
     }
 
     const rows = blockers.length
-      ? blockers
+      ? blockers.map((blocker) => formatMicrobiologyEnum(blocker, intl))
       : [intl.formatMessage({ id: "microbiology.release.notEvaluated" })];
 
-    return rows.map((blocker) => (
-      <li key={blocker}>
+    return rows.map((label) => (
+      <li key={label}>
         <span className="microbiology-status-dot microbiology-status-dot--warning">
           !
         </span>
-        {formatMicrobiologyEnum(blocker, intl)}
+        {label}
       </li>
     ));
   };

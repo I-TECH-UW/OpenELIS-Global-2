@@ -126,6 +126,17 @@ public class MicroOrderRoutingServiceImpl implements MicroOrderRoutingService {
         }
     }
 
+    @Override
+    public boolean isMicrobiologyOrder(List<Test> tests, boolean microbiologyProgramSelected) {
+        if (microbiologyProgramSelected) {
+            return true;
+        }
+        if (tests == null) {
+            return false;
+        }
+        return tests.stream().anyMatch(test -> workflowTypeFor(test) != null);
+    }
+
     private MicroWorkflowType workflowTypeFor(Test test) {
         if (test == null || test.getCultureWorkflowType() == null || test.getCultureWorkflowType().trim().isEmpty()) {
             return null;
