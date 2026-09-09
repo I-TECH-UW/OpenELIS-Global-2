@@ -2,11 +2,13 @@ package org.openelisglobal.eqa.controller;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyLong;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -26,6 +28,7 @@ import org.openelisglobal.eqa.service.EQALabelPDFService;
 import org.openelisglobal.eqa.service.EQAPanelService;
 import org.openelisglobal.eqa.service.EQAProgramEnrollmentService;
 import org.openelisglobal.eqa.service.EQAProgramService;
+import org.openelisglobal.eqa.valueholder.EQALabProgramEnrollment;
 import org.openelisglobal.eqa.valueholder.EQAPanel;
 import org.openelisglobal.eqa.valueholder.EQAProgram;
 import org.openelisglobal.login.valueholder.UserSessionData;
@@ -128,6 +131,27 @@ public class EQARestGuardSecuritySliceTest extends SecuritySliceMockMvcTest {
                 .andExpect(status().isForbidden());
     }
 
+    @Test
+    public void enrollmentStatus_readUmbrellaCannotChangeStatus() throws Exception {
+        // Suspend, resume and withdraw are participant-lane writes. The endpoint
+        // shipped inheriting only the class-level read umbrella, which would have
+        // let a qa.view.eqa holder change a status; the positive case below proves
+        // the route exists, so the 403 here can only come from the method guard.
+        mockMvc.perform(put("/rest/eqa/my-programs/9/status").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"status\":\"SUSPENDED\",\"reason\":\"instrument down\"}")
+                .with(user("viewer").authorities(new SimpleGrantedAuthority("qa.view.eqa"))))
+                .andExpect(status().isForbidden());
+    }
+
+    @Test
+    public void enrollmentStatus_participantTierReturns200() throws Exception {
+        mockMvc.perform(put("/rest/eqa/my-programs/9/status").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"status\":\"SUSPENDED\",\"reason\":\"instrument down\"}")
+                .sessionAttr(IActionConstants.USER_SESSION_DATA, sessionUser())
+                .with(user("qaofficer").authorities(new SimpleGrantedAuthority("qa.eqa.participant"))))
+                .andExpect(status().isOk()).andExpect(jsonPath("$.status").value("SUSPENDED"));
+    }
+
     // ---- provider-lane writes ----
 
     @Test
@@ -205,6 +229,10 @@ public class EQARestGuardSecuritySliceTest extends SecuritySliceMockMvcTest {
         EQALabProgramEnrollmentService labProgramEnrollmentService() {
             EQALabProgramEnrollmentService service = Mockito.mock(EQALabProgramEnrollmentService.class);
             Mockito.when(service.findAll()).thenReturn(List.of());
+            EQALabProgramEnrollment suspended = new EQALabProgramEnrollment();
+            suspended.setId(9L);
+            suspended.setStatus("SUSPENDED");
+            Mockito.when(service.updateStatus(anyLong(), anyString(), anyString(), any(), any())).thenReturn(suspended);
             return service;
         }
 
