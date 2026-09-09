@@ -444,7 +444,7 @@ const AnalyzerTypeMappingEditor = () => {
             })}
             subtitle={routeError || loadError || ""}
             actionButtonLabel={intl.formatMessage({
-              id: "analyzerType.button.retry",
+              id: "common.retry",
             })}
             onActionButtonClick={retry}
           />
