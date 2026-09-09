@@ -37,6 +37,23 @@ const STATUS_TAG = {
   closed: "gray",
 };
 
+/**
+ * Props that make a Carbon date picker take its value from the calendar alone.
+ * flatpickr never parses what is typed into these fields, so text entry left a
+ * date on screen that the save then sent as an empty string. Refusing the
+ * keystrokes is honest about it. Modifier combinations pass through, so copy
+ * and keyboard navigation are unaffected, and the calendar still opens on focus.
+ */
+export const calendarOnlyInput = {
+  onKeyDown: (e) => {
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    if (e.key.length === 1 || e.key === "Backspace" || e.key === "Delete") {
+      e.preventDefault();
+    }
+  },
+  onPaste: (e) => e.preventDefault(),
+};
+
 /** RFC 4180 cell: everything quoted, embedded quotes doubled. */
 export const csvCell = (value) =>
   `"${String(value ?? "").replace(/"/g, '""')}"`;

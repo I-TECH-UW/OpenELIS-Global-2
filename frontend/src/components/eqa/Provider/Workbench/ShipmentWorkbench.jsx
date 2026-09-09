@@ -20,7 +20,7 @@ import {
   resolveApiErrorMessage,
   toLocalIsoDate,
 } from "../../../utils/Utils";
-import { hintStyle } from "../../eqaCommon";
+import { calendarOnlyInput, hintStyle } from "../../eqaCommon";
 import {
   generateLabelPDF,
   generateManifestPDF,
@@ -397,6 +397,7 @@ const ShipmentWorkbench = ({ cycleId, prep, rows, onChanged, onNotice }) => {
                           size="sm"
                           placeholder="dd/mm/yyyy"
                           disabled={isDispatched}
+                          {...calendarOnlyInput}
                         />
                       </DatePicker>
                     </TableCell>
