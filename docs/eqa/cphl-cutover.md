@@ -68,11 +68,23 @@ it. Verify each by doing it once on the seeded instance.
 
 The registry is a CSV config file, not code — edit the file, not the database.
 On the CPHL instance, copy `docs/eqa/cphl-eqa-programs.csv` into the backend
-configuration directory:
+configuration directory, which the container sees at:
 
 ```
 /var/lib/openelis-global/configuration/backend/eqa-programs/cphl-eqa-programs.csv
 ```
+
+On a Compose deployment that is the host path `./configuration/backend/eqa-programs/`,
+because `docker-compose.yml` mounts `./configuration` there. That directory is
+not in the repository — the deployment owns it, which is why this template
+travels with the checklist.
+
+**Do not mistake the development copy for an installed one.** The repository also
+carries this registry at `volume/configuration/backend/eqa-programs/`, and
+`dev.docker-compose.yml` mounts `volume/configuration` instead. That copy feeds
+the development stack only; on a Compose deployment it is never read, so the file
+being present in the repository does not mean the instance has loaded it. The
+check below is what settles it.
 
 Restart the webapp, or call `POST /rest/configuration/domains/reload` as an
 administrator to load it without a restart. An empty body reloads every
