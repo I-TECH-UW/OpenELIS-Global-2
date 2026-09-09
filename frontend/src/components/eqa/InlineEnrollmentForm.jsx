@@ -4,7 +4,6 @@ import {
   Column,
   TextInput,
   TextArea,
-  Toggle,
   Button,
   FilterableMultiSelect,
   Select,
@@ -34,9 +33,6 @@ const InlineEnrollmentForm = ({
   );
   const [description, setDescription] = useState(
     enrollment ? enrollment.description || "" : "",
-  );
-  const [isActive, setIsActive] = useState(
-    enrollment ? enrollment.isActive : true,
   );
   const [selectedLabUnits, setSelectedLabUnits] = useState([]);
   const [selectedTests, setSelectedTests] = useState([]);
@@ -144,7 +140,6 @@ const InlineEnrollmentForm = ({
       programName,
       provider,
       description,
-      isActive,
       labUnitIds: selectedLabUnits.map((u) => Number(u.id)),
       testIds: selectedTests.map((t) => Number(t.id)),
       panelIds: selectedPanels.map((p) => Number(p.id)),
@@ -372,19 +367,11 @@ const InlineEnrollmentForm = ({
       <div
         style={{
           display: "flex",
-          justifyContent: "space-between",
+          justifyContent: "flex-end",
           alignItems: "center",
           marginTop: "1rem",
         }}
       >
-        <Toggle
-          id="enrollment-active-toggle"
-          labelText={intl.formatMessage({ id: "eqa.enrollment.status" })}
-          labelA={intl.formatMessage({ id: "eqa.status.inactive" })}
-          labelB={intl.formatMessage({ id: "eqa.status.active" })}
-          toggled={isActive}
-          onToggle={(checked) => setIsActive(checked)}
-        />
         <div style={{ display: "flex", gap: "0.5rem" }}>
           <Button kind="secondary" size="sm" onClick={onCancel}>
             {intl.formatMessage({ id: "label.button.cancel" })}

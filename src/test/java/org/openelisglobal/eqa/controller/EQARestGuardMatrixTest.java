@@ -110,6 +110,8 @@ public class EQARestGuardMatrixTest {
         // Participant lane — bench work, so the legacy roles still admit it
         WRITE_GUARDS.put("EQAMyProgramsRestController#createMyProgram", EQAGuards.PARTICIPANT);
         WRITE_GUARDS.put("EQAMyProgramsRestController#updateMyProgram", EQAGuards.PARTICIPANT);
+        // A laboratory suspends, resumes and withdraws its own enrolment.
+        WRITE_GUARDS.put("EQAMyProgramsRestController#updateMyProgramStatus", EQAGuards.PARTICIPANT);
         WRITE_GUARDS.put("EQAMyProgramsRestController#deleteMyProgram", EQAGuards.PARTICIPANT);
         WRITE_GUARDS.put("EQAPanelReceiptRestController#recordReceipt", EQAGuards.PARTICIPANT);
         WRITE_GUARDS.put("EQASubmissionRestController#submitManually", EQAGuards.PARTICIPANT);

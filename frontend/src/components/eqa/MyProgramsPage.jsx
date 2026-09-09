@@ -28,10 +28,45 @@ import {
   getFromOpenElisServer,
   postToOpenElisServerJsonResponse,
   putToOpenElisServer,
+  putToOpenElisServerFullResponse,
+  resolveApiErrorMessage,
 } from "../utils/Utils";
 import { NotificationContext } from "../layout/Layout";
 import { NotificationKinds } from "../common/CustomNotification";
 import InlineEnrollmentForm from "./InlineEnrollmentForm";
+import EnrollmentStatusModal from "./EnrollmentStatusModal";
+
+/** The heading each status group carries, and the colour its tag takes. */
+const STATUS_GROUP_KEY = {
+  Active: "eqa.myPrograms.group.active",
+  Suspended: "eqa.myPrograms.group.suspended",
+  Withdrawn: "eqa.myPrograms.group.withdrawn",
+};
+
+const STATUS_LABEL_KEY = {
+  Active: "eqa.enrollment.status.active",
+  Suspended: "eqa.enrollment.status.suspended",
+  Withdrawn: "eqa.enrollment.status.withdrawn",
+};
+
+const STATUS_TAG_TYPE = {
+  Active: "green",
+  Suspended: "cyan",
+  Withdrawn: "gray",
+};
+
+/** Where an enrolment in each status may go next. */
+const NEXT_STATUSES = {
+  Active: ["Suspended", "Withdrawn"],
+  Suspended: ["Active", "Withdrawn"],
+  Withdrawn: [],
+};
+
+const STATUS_ACTION_KEY = {
+  Active: "eqa.enrollment.resume",
+  Suspended: "eqa.enrollment.suspend",
+  Withdrawn: "eqa.enrollment.withdraw",
+};
 
 const breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -47,6 +82,7 @@ const MyProgramsPage = () => {
   const [loading, setLoading] = useState(true);
   const [showNewForm, setShowNewForm] = useState(false);
   const [editingId, setEditingId] = useState(null);
+  const [statusChange, setStatusChange] = useState(null);
 
   useEffect(() => {
     fetchEnrollments();
@@ -119,33 +155,49 @@ const MyProgramsPage = () => {
     );
   };
 
-  const handleDeactivate = (enrollment) => {
-    const payload = {
-      programName: enrollment.programName,
-      provider: enrollment.provider,
-      description: enrollment.description,
-      isActive: !enrollment.isActive,
-      labUnitIds: (enrollment.labUnits || []).map((u) => u.id),
-      testIds: (enrollment.tests || []).map((t) => t.id),
-      panelIds: (enrollment.panels || []).map((p) => p.id),
-    };
-    putToOpenElisServer(
-      `/rest/eqa/my-programs/${enrollment.id}`,
-      JSON.stringify(payload),
-      (status) => {
-        if (status === 200) {
+  const handleStatusChange = (reason, effectiveDate) => {
+    const { enrollment, nextStatus } = statusChange;
+    putToOpenElisServerFullResponse(
+      `/rest/eqa/my-programs/${enrollment.id}/status`,
+      JSON.stringify({ status: nextStatus, reason, effectiveDate }),
+      (response) => {
+        setStatusChange(null);
+        if (response && response.ok) {
           addNotification({
             kind: NotificationKinds.success,
             title: intl.formatMessage({ id: "notification.title" }),
-            subtitle: intl.formatMessage({
-              id: enrollment.isActive
-                ? "eqa.enrollment.deactivated"
-                : "eqa.enrollment.reactivated",
-            }),
+            subtitle: intl.formatMessage(
+              { id: "eqa.enrollment.statusChanged" },
+              {
+                status: intl.formatMessage({
+                  id: STATUS_LABEL_KEY[nextStatus],
+                }),
+              },
+            ),
             message: "",
           });
           fetchEnrollments();
+          return;
         }
+        const report = (body) =>
+          addNotification({
+            kind: NotificationKinds.error,
+            title: intl.formatMessage({ id: "notification.title" }),
+            subtitle: resolveApiErrorMessage(
+              intl,
+              body,
+              "eqa.enrollment.statusChangeFailed",
+            ),
+            message: "",
+          });
+        if (!response) {
+          report(null);
+          return;
+        }
+        response
+          .json()
+          .then(report)
+          .catch(() => report(null));
       },
     );
   };
@@ -184,7 +236,9 @@ const MyProgramsPage = () => {
     labUnits: (e.labUnits || []).length,
     tests: (e.tests || []).length,
     panels: (e.panels || []).length,
-    status: e.isActive ? "Active" : "Inactive",
+    // An enrolment made before the lifecycle columns existed is read from the
+    // flag the rest of the module still keys on.
+    status: e.status || (e.isActive ? "Active" : "Suspended"),
   }));
 
   const statusOf = (row) =>
@@ -291,12 +345,7 @@ const MyProgramsPage = () => {
                               >
                                 <strong>
                                   {intl.formatMessage(
-                                    {
-                                      id:
-                                        status === "Active"
-                                          ? "eqa.myPrograms.group.active"
-                                          : "eqa.myPrograms.group.inactive",
-                                    },
+                                    { id: STATUS_GROUP_KEY[status] },
                                     {
                                       count: tableRows.filter(
                                         (r) => statusOf(r) === status,
@@ -313,18 +362,11 @@ const MyProgramsPage = () => {
                                 return (
                                   <TableCell key={cell.id}>
                                     <Tag
-                                      type={
-                                        cell.value === "Active"
-                                          ? "green"
-                                          : "gray"
-                                      }
+                                      type={STATUS_TAG_TYPE[cell.value]}
                                       size="sm"
                                     >
                                       {intl.formatMessage({
-                                        id:
-                                          cell.value === "Active"
-                                            ? "eqa.status.active"
-                                            : "eqa.status.inactive",
+                                        id: STATUS_LABEL_KEY[cell.value],
                                       })}
                                     </Tag>
                                   </TableCell>
@@ -386,17 +428,24 @@ const MyProgramsPage = () => {
                                     setShowNewForm(false);
                                   }}
                                 />
-                                <OverflowMenuItem
-                                  itemText={intl.formatMessage({
-                                    id:
-                                      enrollment && enrollment.isActive
-                                        ? "eqa.action.deactivate"
-                                        : "eqa.action.reactivate",
-                                  })}
-                                  onClick={() =>
-                                    enrollment && handleDeactivate(enrollment)
-                                  }
-                                />
+                                {(NEXT_STATUSES[status] || []).map(
+                                  (nextStatus) => (
+                                    <OverflowMenuItem
+                                      key={nextStatus}
+                                      isDelete={nextStatus === "Withdrawn"}
+                                      itemText={intl.formatMessage({
+                                        id: STATUS_ACTION_KEY[nextStatus],
+                                      })}
+                                      onClick={() =>
+                                        enrollment &&
+                                        setStatusChange({
+                                          enrollment,
+                                          nextStatus,
+                                        })
+                                      }
+                                    />
+                                  ),
+                                )}
                               </OverflowMenu>
                             </TableCell>
                           </TableRow>
@@ -427,6 +476,15 @@ const MyProgramsPage = () => {
           </DataTable>
         </Column>
       </Grid>
+
+      {statusChange && (
+        <EnrollmentStatusModal
+          enrollment={statusChange.enrollment}
+          nextStatus={statusChange.nextStatus}
+          onClose={() => setStatusChange(null)}
+          onConfirm={handleStatusChange}
+        />
+      )}
     </div>
   );
 };

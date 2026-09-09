@@ -169,9 +169,9 @@ public class EQALabProgramEnrollmentServiceTest {
     }
 
     /**
-     * A status toggle sends no reporting-analyte map, and the update clears and
-     * rebuilds the test maps — so the stored analyte has to survive it. The
-     * participant's submission bridge resolves the analyte through this map.
+     * An edit that sends no reporting-analyte map clears and rebuilds the test
+     * maps, so the stored analyte has to survive it. The participant's submission
+     * bridge resolves the analyte through this map.
      */
     @Test
     public void testUpdateEnrollment_AbsentTestAnalytesKeepsStoredAnalyte() {
@@ -183,16 +183,42 @@ public class EQALabProgramEnrollmentServiceTest {
         EQALabProgramEnrollment updated = new EQALabProgramEnrollment();
         updated.setProgramName("Viral Load PT");
         updated.setProvider("CPHL");
-        updated.setIsActive(false);
         updated.setSysUserId("1");
 
         EQALabProgramEnrollment result = service.updateEnrollment(1L, updated, null, List.of(191L), null, null);
 
-        assertFalse(result.getIsActive());
         assertEquals(1, result.getTestMaps().size());
         EQALabEnrollmentTestMap map = result.getTestMaps().iterator().next();
         assertEquals(Long.valueOf(191L), map.getTestId());
         assertEquals(Long.valueOf(103L), map.getAnalyteId());
+    }
+
+    /**
+     * Editing an enrolment's details leaves its lifecycle alone. Suspending,
+     * resuming and withdrawing all need a reason and an effective date, so they go
+     * through updateStatus; a save that carried a status with them would be a
+     * second, unreasoned way to move an enrolment.
+     */
+    @Test
+    public void testUpdateEnrollment_DoesNotMoveTheLifecycle() {
+        EQALabProgramEnrollment existing = enrollmentWithTestAnalyte(191L, 103L);
+        existing.setIsActive(true);
+        existing.setStatus("Active");
+
+        when(enrollmentDAO.get(1L)).thenReturn(Optional.of(existing));
+        when(enrollmentDAO.update(any(EQALabProgramEnrollment.class))).thenReturn(existing);
+
+        EQALabProgramEnrollment updated = new EQALabProgramEnrollment();
+        updated.setProgramName("Viral Load PT");
+        updated.setProvider("CPHL");
+        updated.setIsActive(false);
+        updated.setStatus("Withdrawn");
+        updated.setSysUserId("1");
+
+        EQALabProgramEnrollment result = service.updateEnrollment(1L, updated, null, List.of(191L), null, null);
+
+        assertTrue(result.getIsActive());
+        assertEquals("Active", result.getStatus());
     }
 
     /**
