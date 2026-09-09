@@ -103,6 +103,54 @@ public class EQASchemeAdministrationIntegrationTest extends EQASpineTestBase {
     }
 
     @Test
+    public void updateProgram_refusesATypeChangeWhileACycleIsStillRunning() {
+        Long id = created(Map.of("name", "Has a live cycle " + System.nanoTime(), "schemeType", "REGIONAL_PT",
+                "provider", "CPHL"));
+        insertCycle(eqaProgramService.get(id), 4);
+
+        ResponseEntity<?> response = controller.updateProgram(request(), id, Map.of("schemeType", "IN_HOUSE"));
+
+        assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
+        assertTrue("the refusal names the cycle that blocks it: " + errorOf(response),
+                errorOf(response).contains("cycle 4"));
+        assertEquals("and the stored type is untouched", EQASchemeType.REGIONAL_PT,
+                eqaProgramService.get(id).getSchemeType());
+    }
+
+    @Test
+    public void updateProgram_allowsATypeChangeWhenEveryCycleIsClosed() {
+        // The V1 upgrade path. Every completed legacy distribution was backfilled a
+        // CLOSED cycle, and those schemes all took the INTERNATIONAL_PT default, so
+        // refusing on any cycle at all would strand them outside in-house blinding.
+        Long id = created(Map.of("name", "Legacy V1 scheme " + System.nanoTime(), "schemeType", "INTERNATIONAL_PT",
+                "provider", "CPHL"));
+        Long cycleId = insertCycle(eqaProgramService.get(id), 1);
+        jdbc.update("UPDATE clinlims.eqa_cycle SET status = 'CLOSED' WHERE id = ?", cycleId);
+
+        ResponseEntity<?> response = controller.updateProgram(request(), id,
+                Map.of("schemeType", "IN_HOUSE", "provider", ""));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals(EQASchemeType.IN_HOUSE, eqaProgramService.get(id).getSchemeType());
+    }
+
+    @Test
+    public void updateProgram_letsAnEditResendTheSameTypeUnderALiveCycle() {
+        // The Programs form sends every field it displays, so an edit to the name or
+        // the review gate carries schemeType with it. That is not a type change.
+        Long id = created(
+                Map.of("name", "Unchanged type " + System.nanoTime(), "schemeType", "REGIONAL_PT", "provider", "CPHL"));
+        insertCycle(eqaProgramService.get(id), 2);
+
+        ResponseEntity<?> response = controller.updateProgram(request(), id,
+                Map.of("schemeType", "REGIONAL_PT", "provider", "CPHL", "description", "Second round"));
+
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertEquals("Second round", eqaProgramService.get(id).getDescription());
+        assertEquals(EQASchemeType.REGIONAL_PT, eqaProgramService.get(id).getSchemeType());
+    }
+
+    @Test
     public void updateTestAssignments_writesTheMapProviderIntakeReads() {
         seedTest(TEST_SERO, "Scheme admin serology");
         seedTest(TEST_VL, "Scheme admin viral load");
@@ -124,6 +172,11 @@ public class EQASchemeAdministrationIntegrationTest extends EQASpineTestBase {
     }
 
     // ---- helpers ----
+
+    private String errorOf(ResponseEntity<?> response) {
+        Object error = ((Map<?, ?>) response.getBody()).get("error");
+        return error == null ? "" : String.valueOf(error);
+    }
 
     private Long created(Map<String, Object> body) {
         ResponseEntity<?> response = controller.createProgram(request(), body);

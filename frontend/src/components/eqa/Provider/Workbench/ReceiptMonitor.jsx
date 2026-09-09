@@ -116,11 +116,15 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
     successText,
     failKey,
     grant,
+    successValues,
   ) => {
     setBusy(null);
     if (ok && body?.success !== false) {
       refresh();
-      onNotice({ kind: "success", text: t(successKey, successText) });
+      onNotice({
+        kind: "success",
+        text: t(successKey, successText, successValues),
+      });
       return;
     }
     // A refusal names the action and the grant that carries it. The actions are
@@ -297,15 +301,27 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
 
   const handleScore = () => {
     setBusy("score");
-    scoreCycle(cycleId, (response) =>
+    scoreCycle(cycleId, (response) => {
+      // A result whose analyte carries no sealed target and whose test has too few
+      // peers to place it against reaches SCORED with no verdict on it. Saying so
+      // is the difference between a gap and a silent null.
+      const unjudged = response?.body?.unjudgedCount ?? 0;
       report(
         response,
-        "eqa.score.scored",
-        "Cycle scored. Unacceptable participants are in the follow-up register.",
+        unjudged ? "eqa.score.scoredWithUnjudged" : "eqa.score.scored",
+        unjudged
+          ? "Cycle scored, but {count} result(s) got no verdict, on {tests}. Those analytes carry no sealed target and the cycle has too few peers to place them against."
+          : "Cycle scored. Unacceptable participants are in the follow-up register.",
         "eqa.score.scoreFailed",
         "qa.manage.eqa",
-      ),
-    );
+        unjudged
+          ? {
+              count: unjudged,
+              tests: (response?.body?.unjudgedTests ?? []).join(", "),
+            }
+          : undefined,
+      );
+    });
   };
 
   const handleDistribute = (row) => {

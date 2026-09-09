@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.UUID;
+import java.util.stream.Collectors;
 import org.apache.commons.validator.GenericValidator;
 import org.hibernate.ObjectNotFoundException;
 import org.openelisglobal.analyte.service.AnalyteService;
@@ -168,6 +169,7 @@ public class EQAProviderScoringServiceImpl implements EQAProviderScoringService 
         // acceptable. Where the panel sealed a target, that target is the verdict.
         eqaStatisticsService.calculateAndUpdateStatistics(distribution.getId());
         judgeAgainstPanelTargets(cycle, distribution.getId());
+        List<EQAResult> unjudged = unjudgedResults(distribution.getId());
         advanceToScored(cycle, sysUserId);
 
         int followups = 0;
@@ -185,6 +187,9 @@ public class EQAProviderScoringServiceImpl implements EQAProviderScoringService 
         summary.put("distributionId", distribution.getId());
         summary.put("scoredCount", (int) reported);
         summary.put("followupCount", followups);
+        summary.put("unjudgedCount", unjudged.size());
+        summary.put("unjudgedTests", unjudged.stream().map(result -> testName(result.getTestId()))
+                .filter(name -> name != null).distinct().sorted().collect(Collectors.toList()));
         summary.put("cycleStatus",
                 eqaCycleDAO.get(cycleId).map(EQACycle::getStatus).map(EQACycleStatus::name).orElse(null));
         return summary;
@@ -445,6 +450,20 @@ public class EQAProviderScoringServiceImpl implements EQAProviderScoringService 
             result.setPerformanceStatus(EqaPanelVerdict.of(target, reported));
             eqaResultDAO.update(result);
         }
+    }
+
+    /**
+     * The reported results that reached SCORED with no verdict on them. Neither
+     * pass covers them: the peer statistic skips a test with fewer than
+     * {@code MIN_PARTICIPANTS_FOR_STATS} numeric results and never places a
+     * qualitative one at any roster size, and the target pass only touches analytes
+     * the panel sealed a target for. Before this the row simply kept a null
+     * performance_status and the only trace was an info line in the statistics log.
+     */
+    private List<EQAResult> unjudgedResults(Long distributionId) {
+        return eqaResultDAO.findByDistributionId(distributionId).stream()
+                .filter(result -> result.getResultValue() != null || result.getResultText() != null)
+                .filter(result -> result.getPerformanceStatus() == null).collect(Collectors.toList());
     }
 
     private static Object reportedOf(EQAResult result) {

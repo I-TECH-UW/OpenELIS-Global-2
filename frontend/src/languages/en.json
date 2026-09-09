@@ -8634,5 +8634,6 @@
   "eqa.enrollment.statusEffectiveDate": "Effective from",
   "eqa.enrollment.withdrawIsFinal": "Withdrawing is final. To take part again, this laboratory enrols in the programme afresh.",
   "eqa.enrollment.statusChanged": "This enrolment is now {status}",
-  "eqa.enrollment.statusChangeFailed": "Could not change this enrolment's status"
+  "eqa.enrollment.statusChangeFailed": "Could not change this enrolment's status",
+  "eqa.score.scoredWithUnjudged": "Cycle scored, but {count} result(s) got no verdict, on {tests}. Those analytes carry no sealed target and the cycle has too few peers to place them against."
 }
