@@ -1,5 +1,6 @@
 import React from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
+import userEvent from "@testing-library/user-event";
 import "@testing-library/jest-dom";
 import { IntlProvider } from "react-intl";
 import { MemoryRouter, Route } from "react-router-dom";
@@ -206,6 +207,20 @@ describe("ProviderWorkbenchPage", () => {
     expect(
       screen.getByLabelText("Tracking number for District Lab A"),
     ).toBeInTheDocument();
+  });
+
+  test("the expected-delivery field refuses typed text, which the row never saved", async () => {
+    renderWorkbench();
+    fireEvent.click(screen.getByRole("tab", { name: "Shipments" }));
+
+    // Typing rendered a date on screen that the request then sent as an empty
+    // string, so the row reported a successful save and stored no date. The
+    // calendar is the only path that reaches the draft, so text entry is
+    // refused rather than accepted and dropped.
+    const field = screen.getByLabelText("Expected delivery for District Lab B");
+    await userEvent.type(field, "10/09/2026");
+
+    expect(field).toHaveValue("");
   });
 
   test("a pack list is refused rather than produced empty when samples cannot be read", async () => {

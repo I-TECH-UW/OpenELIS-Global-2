@@ -33,7 +33,7 @@ import {
   resolveApiErrorMessage,
 } from "../../utils/Utils";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
-import { hintStyle } from "../eqaCommon";
+import { calendarOnlyInput, hintStyle } from "../eqaCommon";
 import { createProviderCycle } from "./Workbench/workbenchApi";
 // The same test list T-21's in-house wizard picks from: the standard catalog
 // narrowed to tests that carry an analyte, since a panel target is stored
@@ -332,6 +332,7 @@ const CycleWizard = () => {
                   }}
                 >
                   <DatePickerInput
+                    {...calendarOnlyInput}
                     id="cycle-planned-start"
                     labelText={t(
                       "eqa.provider.wizard.distributionDate",
@@ -340,6 +341,7 @@ const CycleWizard = () => {
                     placeholder="dd/mm/yyyy"
                   />
                   <DatePickerInput
+                    {...calendarOnlyInput}
                     id="cycle-planned-end"
                     labelText={t(
                       "eqa.provider.wizard.submissionDeadline",
@@ -650,6 +652,7 @@ const CycleWizard = () => {
                     }
                   >
                     <DatePickerInput
+                      {...calendarOnlyInput}
                       id="panel-expiration"
                       labelText={t(
                         "eqa.provider.wizard.expiration",
