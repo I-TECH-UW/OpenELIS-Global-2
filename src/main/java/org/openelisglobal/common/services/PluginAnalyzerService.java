@@ -35,9 +35,8 @@ import org.openelisglobal.plugin.AnalyzerImporterPlugin;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Service;
 
-@Service
+@Deprecated(forRemoval = true)
 public class PluginAnalyzerService {
 
     private static PluginAnalyzerService INSTANCE;

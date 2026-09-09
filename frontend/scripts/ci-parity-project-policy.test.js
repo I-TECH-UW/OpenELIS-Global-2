@@ -22,9 +22,9 @@ const runPolicy = (command) =>
   }).trim();
 
 describe("analyzer harness Playwright project policy", () => {
-  test("uses foundational analyzer flows for non-video parity", () => {
+  test("uses visible checkpoint stories for non-video parity", () => {
     expect(runPolicy('resolve_harness_playwright_project "parity" ""')).toBe(
-      "harness-foundational",
+      "harness-demo",
     );
   });
 
@@ -34,7 +34,7 @@ describe("analyzer harness Playwright project policy", () => {
     );
   });
 
-  test("accepts the explicit foundational project", () => {
+  test("accepts the current foundational analyzer stories", () => {
     expect(
       runPolicy('validate_harness_playwright_project "harness-foundational"'),
     ).toBe("harness-foundational");

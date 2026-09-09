@@ -1,6 +1,6 @@
 # OGC-1054 Analyzer Feature Roadmap
 
-**Updated:** 2026-09-02
+**Updated:** 2026-09-07
 
 **Product and ownership contract:** [feature specification](../OGC-1054-analyzer-qc-config/spec.md)
 
@@ -53,6 +53,25 @@ enough to review before each implementation slice.
   Administrators retain their platform override. Other authenticated users
   cannot view or invoke those workflows directly.
 - Multi-component mapping and Results/Validation v4 are later milestones.
+
+## CI Transition Decision
+
+Keep the existing build-only workflow and downstream E2E executor, with the
+downstream workflow as the only reporter of `03 Checkpoint - E2E`. Remove the
+additional E2E execution and checkpoint introduced in the build workflow.
+
+Retain the plugin build files and artifacts required by the active shared CI
+contract during this transition. Retained plugins must be inactive in the new
+analyzer runtime: they must not register analyzers or handle analyzer traffic.
+Delete those files and their CI requirements together in a later cleanup PR.
+Do not replace them with placeholder artifacts, skip analyzer stories, or post
+manual checkpoint results. A passing rerun alone does not fix an intermittent
+test failure.
+
+This is a sequencing exception for inactive files, not permission to restore a
+second analyzer workflow. Acceptance requires the normal pipeline to build the
+PR's OpenELIS, Bridge, and mock revisions and pass all applicable suites, with
+one E2E result for the current PR commit.
 
 ## Marker Rule
 
@@ -107,19 +126,29 @@ removes it must also contain and test the replacement.
   [#49](https://github.com/DIGI-UW/openelis-analyzer-bridge/pull/49), and mock
   [#42](https://github.com/DIGI-UW/analyzer-mock-server/pull/42).
 - [ ] **G0 - Exact deployment and named human acceptance.** Review tooling
-      [#17](https://github.com/DIGI-UW/openelis-review-tooling/pull/17) must be
-      merged and deployed before the acceptance build is frozen.
+      [#17](https://github.com/DIGI-UW/openelis-review-tooling/pull/17) is
+      merged; its exact release must be deployed before the acceptance build is
+      frozen.
 - [ ] **R1 - Full feature operations.** Future.
 - [ ] **R2 - Site rollout.** Future.
 
 All listed PRs are stacked and unmerged. `[x]` means review-ready, not merged or
-accepted. Corrections are made in the owning existing PR; do not create a
-parallel remediation stack.
+accepted. Keep review-ready lower branches intact unless a versioned companion
+contract requires an owning-repository correction; do not create a parallel
+remediation stack.
 
-M4 is the active integrated checkpoint. Review corrections still land in the
-earliest owning review-ready PR, from the bottom of each stack upward, and are
-then carried into M4 by restacking. Those corrections do not change an `[x]`
-marker. M4 becomes `[x]` only after all four remediation slices below pass.
+M4 is the active integrated checkpoint. Current acceptance corrections land in
+the existing M4 top PR so they do not create another remediation layer or churn
+review-ready lower branches. A correction that changes a versioned companion
+contract must still be made in its owning repository and carried into M4. These
+corrections do not change an `[x]` marker. M4 becomes `[x]` only after all four
+remediation slices below pass.
+
+The next analyzer deployment is the single M4 remediation candidate. Do not
+deploy it until every current actionable review finding is fixed or disproved
+against the current top, the required E2E checkpoint is green, and each
+actionable Grist answer links directly to the top PR. GitHub owns resolution
+state; neither Grist nor this roadmap duplicates it.
 
 ## Execution Loop
 
@@ -322,26 +351,37 @@ the existing stack.
    and unknown values one catalog-backed resolution workflow; allow only valid
    active local targets, audit the decision, leave the original held result
    unchanged, and apply it deterministically to the next matching message.
-   Prove domain behavior in OE integration tests and visible behavior in
-   real-router RTL before the assembled story.
+   Expose the site-binding mapping history in that workflow with its actor,
+   time, profile revision, and mapping decisions; profile-publication history
+   must not masquerade as local mapping history. Prove domain behavior in OE
+   integration tests and visible behavior in real-router RTL before the
+   assembled story.
 3. **Connection and QC.** In M3, restore the Bridge-provided latest probe after
-   reload; make the canonical New Control Lot action submit successfully;
-   restrict its Test choices to active tests mapped for the selected analyzer;
-   and show profile display names rather than raw identifiers. Prove probe
-   persistence in Bridge/OE consumer tests and QC behavior in OE integration
-   tests plus real-router RTL. Operational QC remains separate and never gates
-   verification or activation.
+   reload. Starting Add Analyzer while another analyzer is open must clear the
+   prior identity and create a new analyzer, while setup breadcrumbs and
+   lifecycle confirmations must name the current analyzer and focused action.
+   Make the canonical New Control Lot action submit successfully; restrict its
+   Test choices to active tests mapped for the selected analyzer; surface
+   required statistics and server validation beside their owning fields; and
+   show profile display names rather than raw identifiers. Rerun activation
+   against the current build and fix it in this candidate if the historical
+   server failure remains; do not change activation from stale evidence alone.
+   Prove probe persistence in Bridge/OE consumer tests and QC behavior in OE
+   integration tests plus real-router RTL. Operational QC remains separate and
+   never gates verification or activation.
 4. **Result review.** In M4, show source analyzer identity and raw source context
-   for normal, held, control, and FILE traffic. Use Bridge and analyzer-mock
-   transport tests for transmission and an external demo-operator action for
-   resend; do not add an OE mock control. Finish with the UI-only patient,
-   control, unknown-test, unknown-value, and FILE Playwright stories.
+   for normal, held, control, and FILE traffic, including the source unit when
+   the analyzer supplied one. Use Bridge and analyzer-mock transport tests for
+   transmission and an external demo-operator action for resend; do not add an
+   OE mock control. Finish with the UI-only patient, control, unknown-test,
+   unknown-value, and FILE Playwright stories.
 
-Exit: all four remediation slices are green; their owning PRs are restacked;
-patient/control/unknown behavior is proven in owning tests and UI-only assembled
-Playwright stories; focused console, trace, runtime, accessibility, and
-desktop/mobile screenshot review passes; and no old analyzer runtime path
-survives. The resulting M4 tip is then deployed for updated Grist review.
+Exit: all four remediation slices are green in the M4 top and any required
+companion PRs; patient/control/unknown behavior is proven in owning tests and
+UI-only assembled Playwright stories; focused console, trace, runtime,
+accessibility, and desktop/mobile screenshot review passes; and no old analyzer
+runtime path survives. The resulting M4 tip is then deployed for updated Grist
+review.
 
 ### G0 - Exact Deployment And Human Acceptance
 

@@ -11,7 +11,7 @@ resolve_harness_playwright_project() {
   if [[ "$mode" == "video" ]]; then
     echo "harness-demo-video"
   else
-    echo "harness-foundational"
+    echo "harness-demo"
   fi
 }
 

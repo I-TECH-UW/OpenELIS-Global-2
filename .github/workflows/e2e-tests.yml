@@ -35,7 +35,6 @@ jobs:
       artifact_source_mode: ${{ steps.context.outputs.artifact_source_mode }}
       transfer_mode: ${{ steps.context.outputs.transfer_mode }}
       artifact_map_kind: ${{ steps.context.outputs.artifact_map_kind }}
-      include_analyzer_harness: ${{ steps.context.outputs.include_analyzer_harness }}
       checkpoint_context: ${{ steps.context.outputs.checkpoint_context }}
     steps:
       - name: Download early build context artifact
@@ -71,7 +70,6 @@ jobs:
             echo "artifact_source_mode=none" >> "$GITHUB_OUTPUT"
             echo "transfer_mode=none" >> "$GITHUB_OUTPUT"
             echo "artifact_map_kind=base" >> "$GITHUB_OUTPUT"
-            echo "include_analyzer_harness=true" >> "$GITHUB_OUTPUT"
             echo "checkpoint_context=03 Checkpoint - E2E" >> "$GITHUB_OUTPUT"
             exit 0
           fi
@@ -115,7 +113,6 @@ jobs:
           echo "artifact_source_mode=$ARTIFACT_SOURCE_MODE" >> "$GITHUB_OUTPUT"
           echo "transfer_mode=$IMAGE_TRANSFER" >> "$GITHUB_OUTPUT"
           echo "artifact_map_kind=base" >> "$GITHUB_OUTPUT"
-          echo "include_analyzer_harness=true" >> "$GITHUB_OUTPUT"
           echo "checkpoint_context=03 Checkpoint - E2E" >> "$GITHUB_OUTPUT"
 
           echo "Build context: is_fork=$IS_FORK transfer_mode=$IMAGE_TRANSFER artifact_source_mode=$ARTIFACT_SOURCE_MODE pr=#$PR_NUMBER checkout_ref=$CHECKOUT_REF"
@@ -297,7 +294,6 @@ jobs:
       build_run_id: ${{ needs.setup.outputs.build_run_id }}
       artifact_source_mode: ${{ needs.setup.outputs.artifact_source_mode }}
       artifact_map_kind: ${{ needs.setup.outputs.artifact_map_kind }}
-      include_analyzer_harness: ${{ needs.setup.outputs.include_analyzer_harness }}
       is_fork: ${{ needs.setup.outputs.is_fork }}
       pr_number: ${{ needs.setup.outputs.pr_number }}
       checkpoint_context: ${{ needs.setup.outputs.checkpoint_context }}
