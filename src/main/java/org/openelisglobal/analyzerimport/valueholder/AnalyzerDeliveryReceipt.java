@@ -1,6 +1,7 @@
 package org.openelisglobal.analyzerimport.valueholder;
 
 import jakarta.persistence.Column;
+import jakarta.persistence.Convert;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
@@ -11,6 +12,7 @@ import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 import org.openelisglobal.common.valueholder.BaseObject;
+import org.openelisglobal.hibernate.converter.StringToIntegerConverter;
 
 /**
  * Durable acceptance evidence, retained independently of result staging and
@@ -34,7 +36,8 @@ public class AnalyzerDeliveryReceipt extends BaseObject<String> {
     private String connectionId;
     @Column(name = "message_id", length = 255, nullable = false)
     private String messageId;
-    @Column(name = "analyzer_id", length = 36, nullable = false)
+    @Convert(converter = StringToIntegerConverter.class)
+    @Column(name = "analyzer_id", nullable = false)
     private String analyzerId;
     @Column(name = "profile_id", length = 128, nullable = false)
     private String profileId;

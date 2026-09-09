@@ -33,8 +33,10 @@ results worklist. The role-protected endpoint is
 `POST /rest/analyzer/analyzers/{analyzerId}/held-results/{resultId}/reprocess`.
 It locks the analyzer and selected staging row, verifies connection ownership and
 the acknowledged profile pin, and applies current local bindings to the stored
-raw source evidence. It updates that same held row, or removes it when the mapping
-explicitly excludes it. Still-unresolved results remain held. A row that is already
+raw source Observation, including its lot number and control level. It updates
+that same held row, or removes it when the mapping explicitly excludes it.
+Still-unresolved results retain their newly determined hold reason and binding
+context so the next missing mapping can be discovered. A row that is already
 actionable cannot be reprocessed again through this endpoint.
 
 This is an audited operator action, not a transport retry or receipt bypass.

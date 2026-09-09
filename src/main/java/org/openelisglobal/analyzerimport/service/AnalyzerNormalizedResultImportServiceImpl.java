@@ -124,11 +124,8 @@ public class AnalyzerNormalizedResultImportServiceImpl implements AnalyzerNormal
         if (!held.isReadOnly() || held.getImportIssueReason() == null || held.getImportIssueReason().isBlank()) {
             throw new IllegalStateException("Only a held normalized result can be reprocessed");
         }
-        AnalyzerNormalizedResultContract.Result original = new AnalyzerNormalizedResultContract.Result(
-                held.getAccessionNumber(), held.getRawTestCode(), held.getRawResultValue(), held.getUnits(),
-                held.getResultType(), held.getResultClassification(), held.getSourceTransport(),
-                held.getRecognitionMode(), held.getRecognitionOutcome(), held.getRecognitionFingerprint(),
-                held.getLotNumber(), held.getControlLevel(), held.getCompleteDate(), held.getSourcePayload());
+        AnalyzerNormalizedResultContract.Result original = AnalyzerNormalizedResultContract
+                .parseStoredObservation(held.getSourcePayload(), held.getAccessionNumber(), fhirContext);
         AnalyzerNormalizedResultContract contract = new AnalyzerNormalizedResultContract(held.getSourceMessageId(),
                 held.getSourceConnectionId(), held.getSourceProfileId(), held.getSourceProfileRevision(),
                 held.getSourceProtocol(), List.of(original));
@@ -140,13 +137,13 @@ public class AnalyzerNormalizedResultImportServiceImpl implements AnalyzerNormal
             return new AnalyzerNormalizedResultImportSummary(analyzerId, 0, 0, 0);
         }
         AnalyzerResults updated = mapped.get(0);
-        if (updated.isReadOnly()) {
-            return new AnalyzerNormalizedResultImportSummary(analyzerId, 1, 1, 0);
-        }
         updated.setId(held.getId());
         updated.setLastupdated(held.getLastupdated());
         updated.setSysUserId(effectiveActor);
         analyzerResultsService.update(updated);
+        if (updated.isReadOnly()) {
+            return new AnalyzerNormalizedResultImportSummary(analyzerId, 1, 1, 0);
+        }
         int controls = updated.getIsControl() && processControl(updated, analyzer) ? 1 : 0;
         // This explicit, audited row transition never deletes or bypasses a delivery
         // receipt.
