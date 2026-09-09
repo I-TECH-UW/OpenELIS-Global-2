@@ -24,11 +24,12 @@ const CORE_DEMO_TESTS = ["**/demo/core/**/*.spec.ts"];
 // Core foundational verification (ci-safe).
 const CORE_FOUNDATIONAL_TESTS = ["**/foundational/core/**/*.spec.ts"];
 
-// Harness demo story proof (video-ready).
-const HARNESS_DEMO_TESTS = ["**/demo/harness/**/*.spec.ts"];
-
-// Harness foundational verification (ci-safe).
-const HARNESS_FOUNDATIONAL_TESTS = ["**/foundational/harness/**/*.spec.ts"];
+// M1 owns the Analyzer Types story. Later mapping, setup, and result-traffic
+// stories run in their owning checkpoints.
+const HARNESS_FOUNDATIONAL_TESTS = [
+  "**/demo/harness/ogc-1054-m1-analyzer-types.spec.ts",
+];
+const HARNESS_DEMO_TESTS = [];
 
 // Manual-only harness coverage (real hardware or operator-managed infra).
 const HARNESS_MANUAL_ONLY_TESTS = [
@@ -65,6 +66,8 @@ export default defineConfig({
   use: {
     baseURL: process.env.BASE_URL || "https://localhost",
     ignoreHTTPSErrors: true,
+    // Story assertions use the source English copy, not regional translations.
+    locale: "en",
 
     // Evidence collection
     trace: "retain-on-failure",
