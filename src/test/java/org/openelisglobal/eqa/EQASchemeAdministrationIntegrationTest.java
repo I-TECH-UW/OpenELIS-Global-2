@@ -1,6 +1,7 @@
 package org.openelisglobal.eqa;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -113,6 +114,13 @@ public class EQASchemeAdministrationIntegrationTest extends EQASpineTestBase {
         assertEquals(HttpStatus.BAD_REQUEST, response.getStatusCode());
         assertTrue("the refusal names the cycle that blocks it: " + errorOf(response),
                 errorOf(response).contains("cycle 4"));
+        assertTrue("and offers the only route an operator actually has: " + errorOf(response),
+                errorOf(response).toLowerCase().contains("create a new scheme"));
+        // Nothing in the product closes a cycle: the SCORED to CLOSED edge is legal on
+        // all three machines and no caller asks for it. Advice to close this one first
+        // would be advice nobody can follow, so the message must not give it.
+        assertFalse("and does not tell them to close it, which no screen can do: " + errorOf(response),
+                errorOf(response).toLowerCase().contains("close"));
         assertEquals("and the stored type is untouched", EQASchemeType.REGIONAL_PT,
                 eqaProgramService.get(id).getSchemeType());
     }

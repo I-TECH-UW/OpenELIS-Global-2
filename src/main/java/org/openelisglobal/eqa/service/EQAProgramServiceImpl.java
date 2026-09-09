@@ -79,6 +79,15 @@ public class EQAProgramServiceImpl extends BaseObjectServiceImpl<EQAProgram, Lon
      * one of them outside in-house blinding, with no route out from any screen.
      *
      * <p>
+     * SCORED is deliberately not treated as closed. It is still on the scoring
+     * path, scores are distributed from it, and it feeds the rolling window that
+     * decides persistent failure, so reinterpreting the scheme underneath it would
+     * move live work. That makes this rule strict in practice: nothing in the
+     * product closes a cycle today, so a scheme that has run a V2 cycle keeps its
+     * type. The V1 backfill writes CLOSED directly, which is the case the rule
+     * exists to admit.
+     *
+     * <p>
      * The comparison reads the stored row rather than trusting the argument: both
      * callers mutate a detached scheme in place, so by the time update() sees it
      * the previous type is gone from the object.
@@ -97,9 +106,14 @@ public class EQAProgramServiceImpl extends BaseObjectServiceImpl<EQAProgram, Lon
                 .filter(cycle -> cycle.getStatus() != EQACycleStatus.CLOSED)
                 .map(cycle -> "cycle " + cycle.getCycleNumber()).collect(Collectors.toList());
         if (!live.isEmpty()) {
+            // The message offers the new scheme and nothing else on purpose. Closing a
+            // cycle would also lift the bar, but nothing in the product asks for CLOSED
+            // — the edge is legal on all three machines and unreachable in practice — so
+            // telling an operator to close it first is advice nobody can take.
             throw new LIMSRuntimeException("This scheme's type cannot change from " + stored + " to "
-                    + program.getSchemeType() + " while " + String.join(", ", live)
-                    + " is still running. Close it first, or create a new scheme of the type you need.");
+                    + program.getSchemeType() + ": " + String.join(", ", live)
+                    + " has run under the current type and its results are still read against it."
+                    + " Create a new scheme of the type you need.");
         }
     }
 
