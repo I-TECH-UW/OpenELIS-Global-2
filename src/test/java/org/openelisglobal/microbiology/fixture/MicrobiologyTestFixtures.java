@@ -9,6 +9,8 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import org.openelisglobal.analysis.service.AnalysisService;
+import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
@@ -26,6 +28,10 @@ import org.openelisglobal.microbiology.valueholder.MicroBreakpointStandard;
 import org.openelisglobal.microbiology.valueholder.MicroCultureSetup;
 import org.openelisglobal.microbiology.valueholder.MicroOrganism;
 import org.openelisglobal.microbiology.valueholder.MicroWorkflowType;
+import org.openelisglobal.patient.service.PatientService;
+import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.person.service.PersonService;
+import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.service.SampleItemService;
@@ -35,6 +41,9 @@ import org.openelisglobal.statusofsample.valueholder.StatusOfSample;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.service.TestService;
+import org.openelisglobal.test.valueholder.Test;
+import org.openelisglobal.testmethod.service.TestMethodService;
+import org.openelisglobal.testmethod.valueholder.TestMethod;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.springframework.stereotype.Component;
@@ -50,29 +59,39 @@ public class MicrobiologyTestFixtures {
     private final MethodService methodService;
     private final SampleService sampleService;
     private final SampleItemService sampleItemService;
+    private final AnalysisService analysisService;
     private final TestService testService;
     private final TypeOfSampleService typeOfSampleService;
     private final LocalizationService localizationService;
+    private final TestMethodService testMethodService;
     private final IStatusService statusService;
     private final StatusOfSampleService statusOfSampleService;
     private final SystemUserService systemUserService;
     private final MicrobiologyConfigurationService configurationService;
+    private final PersonService personService;
+    private final PatientService patientService;
 
     public MicrobiologyTestFixtures(MethodService methodService, SampleService sampleService,
-            SampleItemService sampleItemService, TestService testService, TypeOfSampleService typeOfSampleService,
-            LocalizationService localizationService, IStatusService statusService,
+            SampleItemService sampleItemService, AnalysisService analysisService, TestService testService,
+            TypeOfSampleService typeOfSampleService, LocalizationService localizationService,
+            TestMethodService testMethodService, IStatusService statusService,
             StatusOfSampleService statusOfSampleService, SystemUserService systemUserService,
-            MicrobiologyConfigurationService configurationService) {
+            MicrobiologyConfigurationService configurationService, PersonService personService,
+            PatientService patientService) {
         this.methodService = methodService;
         this.sampleService = sampleService;
         this.sampleItemService = sampleItemService;
+        this.analysisService = analysisService;
         this.testService = testService;
         this.typeOfSampleService = typeOfSampleService;
         this.localizationService = localizationService;
+        this.testMethodService = testMethodService;
         this.statusService = statusService;
         this.statusOfSampleService = statusOfSampleService;
         this.systemUserService = systemUserService;
         this.configurationService = configurationService;
+        this.personService = personService;
+        this.patientService = patientService;
     }
 
     public String defaultUserId() {
@@ -137,14 +156,61 @@ public class MicrobiologyTestFixtures {
         return sampleItem;
     }
 
+    public Patient createPatient(String externalIdPrefix) {
+        String userId = defaultUserId();
+        String suffix = uniqueSuffix();
+        Person person = new Person();
+        person.setFirstName("Microbiology");
+        person.setLastName("Order " + suffix);
+        person.setSysUserId(userId);
+        personService.insert(person);
+
+        Patient patient = new Patient();
+        patient.setPerson(person);
+        patient.setExternalId(uniqueValue(externalIdPrefix, 30));
+        patient.setNationalId("NID" + suffix);
+        patient.setSysUserId(userId);
+        patientService.insert(patient);
+        return patient;
+    }
+
+    public TypeOfSample getOrCreateActiveSampleType() {
+        List<TypeOfSample> sampleTypes = typeOfSampleService.getAllTypeOfSamples();
+        TypeOfSample existing = sampleTypes == null ? null
+                : sampleTypes.stream().filter(TypeOfSample::getIsActive)
+                        .sorted(Comparator.comparing(TypeOfSample::getId)).findFirst().orElse(null);
+        if (existing != null) {
+            return existing;
+        }
+
+        String userId = defaultUserId();
+        Localization localization = new Localization();
+        localization.setDescription("Microbiology integration specimen");
+        localization.setEnglish("Microbiology integration specimen");
+        localization.setSysUserId(userId);
+        String localizationId = localizationService.insert(localization);
+        if (localization.getId() == null) {
+            localization.setId(localizationId);
+        }
+
+        TypeOfSample sampleType = new TypeOfSample();
+        sampleType.setDescription("Microbiology integration specimen");
+        sampleType.setDomain("H");
+        sampleType.setLocalAbbreviation("MICROIT");
+        sampleType.setActive(true);
+        sampleType.setSortOrder(999);
+        sampleType.setWhonetCode("");
+        sampleType.setLocalization(localization);
+        sampleType.setSysUserId(userId);
+        String generatedId = typeOfSampleService.insert(sampleType);
+        if (sampleType.getId() == null) {
+            sampleType.setId(generatedId);
+        }
+        return sampleType;
+    }
+
     public ReferenceData createReferenceData(String methodId) {
         String suffix = uniqueSuffix();
-
-        MicroOrganism organism = new MicroOrganism();
-        organism.setDisplayName("Escherichia coli " + suffix);
-        organism.setWhonetCode("ECO" + suffix);
-        organism.setOrganismGroup("Enterobacterales");
-        configurationService.createOrganism(organism);
 
         MicroAntibiotic antibiotic = new MicroAntibiotic();
         antibiotic.setDisplayName("Ampicillin " + suffix);
@@ -157,6 +223,13 @@ public class MicrobiologyTestFixtures {
         panel.setWorkflowType(MicroWorkflowType.BACTERIOLOGY.name());
         panel.setOrganismGroup("Enterobacterales");
         configurationService.createAstPanel(panel);
+
+        MicroOrganism organism = new MicroOrganism();
+        organism.setDisplayName("Escherichia coli " + suffix);
+        organism.setWhonetCode("ECO" + suffix);
+        organism.setOrganismGroup("Enterobacterales");
+        organism.setDefaultAstPanelId(panel.getId());
+        configurationService.createOrganism(organism);
 
         MicroAstPanelAntibiotic panelAntibiotic = new MicroAstPanelAntibiotic();
         panelAntibiotic.setPanelId(panel.getId());
@@ -178,7 +251,7 @@ public class MicrobiologyTestFixtures {
         setup.setMediaDefaults("Blood agar");
         setup.setIncubationDefaults("18-24h");
         setup.setAtmosphereDefaults("Ambient");
-        configurationService.createCultureSetup(setup);
+        setup = configurationService.getOrCreateCultureSetup(setup);
 
         return new ReferenceData(organism, antibiotic, panel, panelAntibiotic, standard, rule, setup);
     }
@@ -193,6 +266,15 @@ public class MicrobiologyTestFixtures {
         return new AlternativeBreakpointData(standard, rule);
     }
 
+    public MicroOrganism createOrganism(String displayName, String organismGroup, String defaultAstPanelId) {
+        MicroOrganism organism = new MicroOrganism();
+        organism.setDisplayName(displayName);
+        organism.setWhonetCode("ORG" + uniqueSuffix());
+        organism.setOrganismGroup(organismGroup);
+        organism.setDefaultAstPanelId(defaultAstPanelId);
+        return configurationService.createOrganism(organism);
+    }
+
     public MicroCultureSetup createTbCultureSetup(String methodId) {
         MicroCultureSetup setup = new MicroCultureSetup();
         setup.setMethodId(methodId);
@@ -201,12 +283,50 @@ public class MicrobiologyTestFixtures {
         setup.setMediaDefaults("MGIT");
         setup.setIncubationDefaults("up to 42 days");
         setup.setAtmosphereDefaults("Ambient");
-        return configurationService.createCultureSetup(setup);
+        return configurationService.getOrCreateCultureSetup(setup);
     }
 
     public org.openelisglobal.test.valueholder.Test createCatalogTest() {
+        return createCatalogTest(null, null);
+    }
+
+    public Test createCatalogCultureTest(String methodId, MicroWorkflowType workflowType) {
+        Method method = methodService.findById(methodId);
+        if (method == null) {
+            throw new IllegalArgumentException("Method not found: " + methodId);
+        }
+        Test test = createCatalogTest(workflowType, method);
+
+        TestMethod link = new TestMethod();
+        link.setTestId(test.getId());
+        link.setMethodId(methodId);
+        link.setIsDefaultMethod(true);
+        link.setEffectiveDate(new Date(System.currentTimeMillis()));
+        link.setIsActive(IActionConstants.YES);
+        link.setSysUserId(defaultUserId());
+        testMethodService.linkMethod(link);
+        return test;
+    }
+
+    public Analysis createAnalysis(SampleItem sampleItem, Test test) {
+        Analysis analysis = new Analysis();
+        analysis.setSampleItem(sampleItem);
+        analysis.setTest(test);
+        analysis.setMethod(test.getMethod());
+        analysis.setAnalysisType("MANUAL");
+        analysis.setIsReportable(IActionConstants.YES);
+        analysis.setRevision("0");
+        analysis.setStartedDate(Timestamp.from(Instant.now()));
+        analysis.setStatusId(ensureAnalysisNotStartedStatus());
+        analysis.setFhirUuid(UUID.randomUUID());
+        analysis.setSysUserId(defaultUserId());
+        analysisService.insert(analysis);
+        return analysis;
+    }
+
+    private Test createCatalogTest(MicroWorkflowType workflowType, Method method) {
         String suffix = uniqueSuffix();
-        org.openelisglobal.test.valueholder.Test test = new org.openelisglobal.test.valueholder.Test();
+        Test test = new Test();
         test.setName("MicroCatalogIT " + suffix);
         test.setDescription("MicroCatalogIT " + suffix);
         test.setIsActive(IActionConstants.YES);
@@ -214,6 +334,10 @@ public class MicrobiologyTestFixtures {
         test.setDomain("CLINICAL");
         test.setAntimicrobialResistance(true);
         test.setOrderable(true);
+        test.setCultureWorkflowType(workflowType == null ? null : workflowType.name());
+        if (method != null) {
+            test.setMethod(method);
+        }
         test.setSysUserId(defaultUserId());
         testService.insert(test);
         return test;

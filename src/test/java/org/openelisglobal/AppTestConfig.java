@@ -53,6 +53,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.FilterType;
+import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.Primary;
 import org.springframework.context.annotation.Profile;
 import org.springframework.context.support.ReloadableResourceBundleMessageSource;
@@ -68,6 +69,7 @@ import org.springframework.web.servlet.config.annotation.EnableWebMvc;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 @Configuration
+@Import(org.openelisglobal.common.rest.provider.SampleEntryTestsForTypeProviderRestController.class)
 @ComponentScan(basePackages = { "org.openelisglobal.spring", "org.openelisglobal.common.services",
         "org.openelisglobal.patient", "org.openelisglobal.patientidentity", "org.openelisglobal.gender",
         "org.openelisglobal.patientidentitytype", "org.openelisglobal.patienttype", "org.openelisglobal.address",
@@ -137,6 +139,7 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.security.SecurityConfig"),
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.security.DaemonUserConfig"),
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.security.login.*"),
+                @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org\\.openelisglobal\\..*Test\\$TestConfig"),
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.eqa.controller.*"),
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.qc.controller.*"),
                 @ComponentScan.Filter(type = FilterType.REGEX, pattern = "org.openelisglobal.analyzer.controller.AnalyzerTypeRestControllerSecurityTest.*"),

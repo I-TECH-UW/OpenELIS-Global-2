@@ -1,10 +1,11 @@
 import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
+  Accordion,
+  AccordionItem,
   Button,
+  Checkbox,
   Column,
   DataTable,
-  DatePicker,
-  DatePickerInput,
   Grid,
   InlineNotification,
   Layer,
@@ -13,6 +14,8 @@ import {
   Pagination,
   ProgressIndicator,
   ProgressStep,
+  RadioButton,
+  RadioButtonGroup,
   Select,
   SelectItem,
   Table,
@@ -28,9 +31,11 @@ import { Download, Edit, View, WarningAlt } from "@carbon/icons-react";
 import { useIntl } from "react-intl";
 import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
 import PageBreadCrumb from "../common/PageBreadCrumb";
+import MicrobiologySurveillanceFilters from "./MicrobiologySurveillanceFilters";
 import * as defaultService from "./WhonetService";
 import {
   buildWhonetSearch,
+  clearWhonetWorklistScope,
   getWhonetMappingRepairUrl,
   parseWhonetSearch,
   toWhonetRequest,
@@ -52,6 +57,19 @@ const formatRequestError = (intl, error) => {
   return intl.formatMessage({ id: "microbiology.whonet.error.generic" });
 };
 
+const mappingRepairMessage = {
+  organisms: "microbiology.whonet.mapping.fixOrganism",
+  antibiotics: "microbiology.whonet.mapping.fixAntibiotic",
+  "specimen-types": "microbiology.whonet.mapping.fixSpecimen",
+};
+
+const emptyFilterOptions = {
+  specimenTypes: [],
+  organisms: [],
+  patientOrigins: [],
+  significance: [],
+};
+
 const WhonetExport = ({ service = defaultService, now }) => {
   const intl = useIntl();
   const history = useHistory();
@@ -61,6 +79,9 @@ const WhonetExport = ({ service = defaultService, now }) => {
   const [generating, setGenerating] = useState(false);
   const [generated, setGenerated] = useState(false);
   const [error, setError] = useState("");
+  const [filterOptionsError, setFilterOptionsError] = useState("");
+  const [filterOptions, setFilterOptions] = useState(emptyFilterOptions);
+  const [filterOptionsLoading, setFilterOptionsLoading] = useState(false);
   const referenceNow = useMemo(() => now || new Date(), [now]);
 
   const state = useMemo(
@@ -92,6 +113,35 @@ const WhonetExport = ({ service = defaultService, now }) => {
   );
 
   const request = useMemo(() => toWhonetRequest(state), [state]);
+  const invalidPeriod = state.to < state.from;
+  const dedupEnabled = state.dedup !== "NONE";
+
+  useEffect(() => {
+    if (invalidPeriod) {
+      setFilterOptionsError("");
+      return undefined;
+    }
+    let active = true;
+    setFilterOptionsLoading(true);
+    service
+      .getWhonetFilterOptions(request)
+      .then((response) => {
+        if (active) {
+          setFilterOptions(response);
+          setFilterOptionsError("");
+        }
+      })
+      .catch((requestError) => {
+        if (active)
+          setFilterOptionsError(formatRequestError(intl, requestError));
+      })
+      .finally(() => {
+        if (active) setFilterOptionsLoading(false);
+      });
+    return () => {
+      active = false;
+    };
+  }, [intl, invalidPeriod, request.from, request.to, service]);
 
   useEffect(() => {
     if (state.step !== "preview") {
@@ -123,7 +173,15 @@ const WhonetExport = ({ service = defaultService, now }) => {
     setQuery({ ...updates, step: "configure", page: 1 });
   };
 
-  const invalidPeriod = state.to < state.from;
+  const clearWorklistScope = () => {
+    const directState = clearWhonetWorklistScope(state, referenceNow);
+    history.push({
+      pathname: location.pathname,
+      search: buildWhonetSearch(directState, referenceNow),
+    });
+  };
+
+  const activeError = error || filterOptionsError;
 
   const generate = async () => {
     setGenerating(true);
@@ -188,6 +246,41 @@ const WhonetExport = ({ service = defaultService, now }) => {
           "isolates",
           preview.totalIsolates,
           "microbiology.whonet.count.isolates",
+        ],
+        [
+          "after-specimen",
+          preview.afterSpecimen,
+          "microbiology.whonet.count.specimen",
+        ],
+        [
+          "after-organism",
+          preview.afterOrganism,
+          "microbiology.whonet.count.organism",
+        ],
+        [
+          "after-origin",
+          preview.afterPatientOrigin,
+          "microbiology.whonet.count.origin",
+        ],
+        [
+          "clinical-purpose",
+          preview.clinicalPurposeCases,
+          "microbiology.whonet.count.clinicalPurpose",
+        ],
+        [
+          "screening-purpose",
+          preview.screeningPurposeCases,
+          "microbiology.whonet.count.screeningPurpose",
+        ],
+        [
+          "unspecified-purpose",
+          preview.unspecifiedPurposeCases,
+          "microbiology.whonet.count.unspecifiedPurpose",
+        ],
+        [
+          "after-purpose",
+          preview.afterCulturePurpose,
+          "microbiology.whonet.count.purposeIncluded",
         ],
         [
           "after-inclusion",
@@ -274,6 +367,27 @@ const WhonetExport = ({ service = defaultService, now }) => {
             />
           </ProgressIndicator>
 
+          {state.source === "ast-worklist" && (
+            <div className="whonet-export__source">
+              <InlineNotification
+                kind="info"
+                lowContrast
+                hideCloseButton
+                title={intl.formatMessage({
+                  id: "microbiology.whonet.source.worklist.title",
+                })}
+                subtitle={intl.formatMessage({
+                  id: "microbiology.whonet.source.worklist.description",
+                })}
+              />
+              <Button kind="ghost" size="sm" onClick={clearWorklistScope}>
+                {intl.formatMessage({
+                  id: "microbiology.whonet.source.worklist.clear",
+                })}
+              </Button>
+            </div>
+          )}
+
           <Layer className="whonet-export__configure">
             <div className="whonet-export__section-heading">
               <h2>
@@ -287,98 +401,270 @@ const WhonetExport = ({ service = defaultService, now }) => {
                 })}
               </p>
             </div>
-            <div className="whonet-export__controls">
-              <DatePicker
-                datePickerType="single"
-                dateFormat="Y-m-d"
-                value={state.from}
-                onChange={(_dates, dateString) => {
-                  if (dateString) updateConfiguration({ from: dateString });
-                }}
-              >
-                <DatePickerInput
-                  id="whonet-from-date"
-                  labelText={intl.formatMessage({
-                    id: "microbiology.whonet.from",
-                  })}
-                  placeholder={intl.formatMessage({
-                    id: "microbiology.whonet.date.placeholder",
-                  })}
-                  invalid={invalidPeriod}
-                  invalidText={intl.formatMessage({
-                    id: "microbiology.whonet.period.invalid",
-                  })}
-                />
-              </DatePicker>
-              <DatePicker
-                datePickerType="single"
-                dateFormat="Y-m-d"
-                value={state.to}
-                onChange={(_dates, dateString) => {
-                  if (dateString) updateConfiguration({ to: dateString });
-                }}
-              >
-                <DatePickerInput
-                  id="whonet-to-date"
-                  labelText={intl.formatMessage({
-                    id: "microbiology.whonet.to",
-                  })}
-                  placeholder={intl.formatMessage({
-                    id: "microbiology.whonet.date.placeholder",
-                  })}
-                  invalid={invalidPeriod}
-                  invalidText={intl.formatMessage({
-                    id: "microbiology.whonet.period.invalid",
-                  })}
-                />
-              </DatePicker>
-              <Select
-                id="whonet-significance"
-                labelText={intl.formatMessage({
-                  id: "microbiology.whonet.significance",
+            <MicrobiologySurveillanceFilters
+              state={state}
+              filterOptions={filterOptions}
+              onChange={updateConfiguration}
+              now={referenceNow}
+              disabled={filterOptionsLoading}
+              idPrefix="whonet"
+            />
+            <div className="whonet-export__first-isolate">
+              <Checkbox
+                id="whonet-dedup-enabled"
+                aria-label={intl.formatMessage({
+                  id: "microbiology.whonet.dedup.apply",
                 })}
-                value={state.significance}
-                onChange={(event) =>
-                  updateConfiguration({ significance: event.target.value })
-                }
-              >
-                <SelectItem
-                  value="CLINICALLY_SIGNIFICANT"
-                  text={intl.formatMessage({
-                    id: "microbiology.whonet.significance.clinical",
-                  })}
-                />
-                <SelectItem
-                  value="ALL"
-                  text={intl.formatMessage({
-                    id: "microbiology.whonet.significance.all",
-                  })}
-                />
-              </Select>
-              <Select
-                id="whonet-dedup"
                 labelText={intl.formatMessage({
-                  id: "microbiology.whonet.dedup",
+                  id: "microbiology.whonet.dedup.apply",
                 })}
-                value={state.dedup}
-                onChange={(event) =>
-                  updateConfiguration({ dedup: event.target.value })
+                checked={dedupEnabled}
+                onChange={(_, { checked }) =>
+                  updateConfiguration({
+                    dedup: checked ? "FIRST_ISOLATE_7_DAY" : "NONE",
+                  })
                 }
-              >
-                <SelectItem
-                  value="FIRST_ISOLATE_7_DAY"
-                  text={intl.formatMessage({
-                    id: "microbiology.whonet.dedup.sevenDay",
-                  })}
-                />
-                <SelectItem
-                  value="NONE"
-                  text={intl.formatMessage({
-                    id: "microbiology.whonet.dedup.none",
-                  })}
-                />
-              </Select>
+              />
+              <p className="whonet-export__helper">
+                {intl.formatMessage({
+                  id: "microbiology.whonet.dedup.apply.help",
+                })}
+              </p>
+              {dedupEnabled && (
+                <Accordion align="start">
+                  <AccordionItem
+                    title={intl.formatMessage({
+                      id: "microbiology.whonet.dedup.advanced",
+                    })}
+                  >
+                    <div className="whonet-export__dedup-grid">
+                      <Select
+                        id="whonet-dedup-window"
+                        aria-label={intl.formatMessage({
+                          id: "microbiology.whonet.dedup.window",
+                        })}
+                        labelText={intl.formatMessage({
+                          id: "microbiology.whonet.dedup.window",
+                        })}
+                        helperText={intl.formatMessage({
+                          id: "microbiology.whonet.dedup.window.help",
+                        })}
+                        value={state.dedup}
+                        onChange={(event) =>
+                          updateConfiguration({ dedup: event.target.value })
+                        }
+                      >
+                        <SelectItem
+                          value="FIRST_ISOLATE_7_DAY"
+                          text={intl.formatMessage({
+                            id: "microbiology.whonet.dedup.sevenDay",
+                          })}
+                        />
+                        <SelectItem
+                          value="FIRST_ISOLATE_14_DAY"
+                          text={intl.formatMessage({
+                            id: "microbiology.whonet.dedup.fourteenDay",
+                          })}
+                        />
+                        <SelectItem
+                          value="FIRST_ISOLATE_30_DAY"
+                          text={intl.formatMessage({
+                            id: "microbiology.whonet.dedup.thirtyDay",
+                          })}
+                        />
+                      </Select>
+
+                      <div className="whonet-export__dedup-control">
+                        <RadioButtonGroup
+                          name="whonet-dedup-basis"
+                          aria-label={intl.formatMessage({
+                            id: "microbiology.whonet.dedup.basis",
+                          })}
+                          legendText={intl.formatMessage({
+                            id: "microbiology.whonet.dedup.basis",
+                          })}
+                          valueSelected={state.dedupBasis}
+                          aria-describedby="whonet-dedup-basis-help"
+                          onChange={(value) =>
+                            updateConfiguration({ dedupBasis: value })
+                          }
+                        >
+                          <RadioButton
+                            id="whonet-dedup-basis-collection"
+                            value="COLLECTION_DATE"
+                            labelText={intl.formatMessage({
+                              id: "microbiology.whonet.dedup.basis.collection",
+                            })}
+                          />
+                          <RadioButton
+                            id="whonet-dedup-basis-release"
+                            value="RELEASE_DATE"
+                            labelText={intl.formatMessage({
+                              id: "microbiology.whonet.dedup.basis.release",
+                            })}
+                          />
+                        </RadioButtonGroup>
+                        <p
+                          id="whonet-dedup-basis-help"
+                          className="whonet-export__helper"
+                        >
+                          {intl.formatMessage({
+                            id: "microbiology.whonet.dedup.basis.help",
+                          })}
+                        </p>
+                      </div>
+
+                      <div className="whonet-export__dedup-control">
+                        <RadioButtonGroup
+                          name="whonet-dedup-scope"
+                          aria-label={intl.formatMessage({
+                            id: "microbiology.whonet.dedup.scope",
+                          })}
+                          legendText={intl.formatMessage({
+                            id: "microbiology.whonet.dedup.scope",
+                          })}
+                          valueSelected={state.dedupScope}
+                          aria-describedby="whonet-dedup-scope-help"
+                          onChange={(value) =>
+                            updateConfiguration({ dedupScope: value })
+                          }
+                        >
+                          <RadioButton
+                            id="whonet-dedup-scope-any"
+                            value="ANY_SOURCE"
+                            labelText={intl.formatMessage({
+                              id: "microbiology.whonet.dedup.scope.any",
+                            })}
+                          />
+                          <RadioButton
+                            id="whonet-dedup-scope-same"
+                            value="SAME_SOURCE"
+                            labelText={intl.formatMessage({
+                              id: "microbiology.whonet.dedup.scope.same",
+                            })}
+                          />
+                        </RadioButtonGroup>
+                        <p
+                          id="whonet-dedup-scope-help"
+                          className="whonet-export__helper"
+                        >
+                          {intl.formatMessage({
+                            id: "microbiology.whonet.dedup.scope.help",
+                          })}
+                        </p>
+                      </div>
+
+                      <div className="whonet-export__dedup-control">
+                        <Checkbox
+                          id="whonet-dedup-exclude-contaminants"
+                          aria-label={intl.formatMessage({
+                            id: "microbiology.whonet.dedup.contaminants",
+                          })}
+                          labelText={intl.formatMessage({
+                            id: "microbiology.whonet.dedup.contaminants",
+                          })}
+                          checked={state.excludeContaminants}
+                          aria-describedby="whonet-dedup-contaminants-help"
+                          onChange={(_, { checked }) =>
+                            updateConfiguration({
+                              excludeContaminants: checked,
+                            })
+                          }
+                        />
+                        <p
+                          id="whonet-dedup-contaminants-help"
+                          className="whonet-export__helper"
+                        >
+                          {intl.formatMessage({
+                            id: "microbiology.whonet.dedup.contaminants.help",
+                          })}
+                        </p>
+                      </div>
+
+                      <div className="whonet-export__dedup-control">
+                        <RadioButtonGroup
+                          name="whonet-profile-sensitivity"
+                          aria-label={intl.formatMessage({
+                            id: "microbiology.whonet.dedup.profile",
+                          })}
+                          legendText={intl.formatMessage({
+                            id: "microbiology.whonet.dedup.profile",
+                          })}
+                          valueSelected={state.profileSensitivity}
+                          aria-describedby="whonet-dedup-profile-help"
+                          onChange={(value) =>
+                            updateConfiguration({
+                              profileSensitivity: value,
+                            })
+                          }
+                        >
+                          <RadioButton
+                            id="whonet-profile-insensitive"
+                            value="INSENSITIVE"
+                            labelText={intl.formatMessage({
+                              id: "microbiology.whonet.dedup.profile.insensitive",
+                            })}
+                          />
+                          <RadioButton
+                            id="whonet-profile-sensitive"
+                            value="SENSITIVE"
+                            labelText={intl.formatMessage({
+                              id: "microbiology.whonet.dedup.profile.sensitive",
+                            })}
+                          />
+                        </RadioButtonGroup>
+                        <p
+                          id="whonet-dedup-profile-help"
+                          className="whonet-export__helper"
+                        >
+                          {intl.formatMessage({
+                            id: "microbiology.whonet.dedup.profile.help",
+                          })}
+                        </p>
+                      </div>
+                    </div>
+                  </AccordionItem>
+                </Accordion>
+              )}
             </div>
+            <fieldset className="whonet-export__purpose-filters">
+              <legend className="cds--label">
+                {intl.formatMessage({
+                  id: "microbiology.whonet.culturePurpose.title",
+                })}
+              </legend>
+              <p>
+                {intl.formatMessage({
+                  id: "microbiology.whonet.culturePurpose.description",
+                })}
+              </p>
+              <Checkbox
+                id="whonet-include-screening"
+                aria-label={intl.formatMessage({
+                  id: "microbiology.whonet.culturePurpose.includeScreening",
+                })}
+                labelText={intl.formatMessage({
+                  id: "microbiology.whonet.culturePurpose.includeScreening",
+                })}
+                checked={state.includeScreening}
+                onChange={(_, { checked }) =>
+                  updateConfiguration({ includeScreening: checked })
+                }
+              />
+              <Checkbox
+                id="whonet-include-unspecified"
+                aria-label={intl.formatMessage({
+                  id: "microbiology.whonet.culturePurpose.includeUnspecified",
+                })}
+                labelText={intl.formatMessage({
+                  id: "microbiology.whonet.culturePurpose.includeUnspecified",
+                })}
+                checked={state.includeUnspecified}
+                onChange={(_, { checked }) =>
+                  updateConfiguration({ includeUnspecified: checked })
+                }
+              />
+            </fieldset>
             <div className="whonet-export__configure-actions">
               <Button
                 renderIcon={View}
@@ -392,14 +678,14 @@ const WhonetExport = ({ service = defaultService, now }) => {
             </div>
           </Layer>
 
-          {error && (
+          {activeError && (
             <InlineNotification
               kind="error"
               hideCloseButton
               title={intl.formatMessage({
                 id: "microbiology.whonet.error.title",
               })}
-              subtitle={error}
+              subtitle={activeError}
             />
           )}
           {generated && (
@@ -471,6 +757,7 @@ const WhonetExport = ({ service = defaultService, now }) => {
                     const repairUrl = getWhonetMappingRepairUrl(
                       warning.resource,
                       warning.resourceId,
+                      `${location.pathname}?${canonicalSearch}`,
                     );
                     return (
                       <div
@@ -494,10 +781,7 @@ const WhonetExport = ({ service = defaultService, now }) => {
                             renderIcon={Edit}
                           >
                             {intl.formatMessage({
-                              id:
-                                warning.resource === "organisms"
-                                  ? "microbiology.whonet.mapping.fixOrganism"
-                                  : "microbiology.whonet.mapping.fixAntibiotic",
+                              id: mappingRepairMessage[warning.resource],
                             })}
                           </CarbonLink>
                         )}

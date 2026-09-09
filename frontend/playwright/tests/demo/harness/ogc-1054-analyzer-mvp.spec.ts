@@ -257,6 +257,10 @@ test.describe("OGC-1054 assembled analyzer MVP", () => {
     await expect(
       page.getByRole("heading", { level: 1, name: "Analyzers" }),
     ).toBeVisible({ timeout: LONG_TIMEOUT });
+    await expect(page.getByTestId("content-wrapper")).toHaveCSS(
+      "margin-left",
+      "0px",
+    );
     await expectNoPageHorizontalOverflow(
       page,
       "Analyzer dashboard should not overflow the mobile page horizontally",

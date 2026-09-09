@@ -95,7 +95,8 @@ public abstract class BaseWebContextSensitiveTest extends AbstractTransactionalJ
      * {@code nextval()} returns {@code 4}) as it does for every sequence in the
      * schema on a fresh test DB.
      */
-    private static final String[] PROTECTED_SEED_TABLES = { "reference_tables", "requester_type", "label_preset" };
+    private static final String[] PROTECTED_SEED_TABLES = { "reference_tables", "requester_type", "label_preset",
+            "observation_history_type" };
 
     /**
      * Legacy entities whose Hibernate generators use standalone sequences and whose
@@ -107,7 +108,7 @@ public abstract class BaseWebContextSensitiveTest extends AbstractTransactionalJ
     private static final String[][] FIXTURE_SEQUENCE_MAPPINGS = { { "person", "person_seq" },
             { "patient", "patient_seq" }, { "sample", "sample_seq" }, { "sample_item", "sample_item_seq" },
             { "sample_human", "sample_human_seq" }, { "analysis", "analysis_seq" }, { "result", "result_seq" },
-            { "inventory_item", "inventory_item_seq" } };
+            { "inventory_item", "inventory_item_seq" }, { "observation_history", "observation_history_seq" } };
 
     /**
      * Default sys_user_id for audit-emitting service calls in tests. Matches the
@@ -151,6 +152,10 @@ public abstract class BaseWebContextSensitiveTest extends AbstractTransactionalJ
 
     @Before
     public void setDefaultTestAuthentication() throws Exception {
+        // A cached test context is reused without another ApplicationContextAware
+        // callback. Restore the legacy lookup after tests using another context.
+        webApplicationContext.getBean(org.openelisglobal.spring.util.SpringContext.class)
+                .setApplicationContext(webApplicationContext);
         // Ensure the "admin" SystemUser row exists so UserContextHolder can
         // resolve the principal set below (or by @WithMockUser(username="admin")
         // on individual tests). Without this, fillSysUserIdIfMissing throws
