@@ -187,6 +187,9 @@ const MyProgramsPage = () => {
     status: e.isActive ? "Active" : "Inactive",
   }));
 
+  const statusOf = (row) =>
+    row.cells.find((c) => c.info.header === "status")?.value;
+
   const getEnrollmentById = (id) => {
     return enrollments.find((e) => String(e.id) === String(id));
   };
@@ -270,10 +273,40 @@ const MyProgramsPage = () => {
                     </TableRow>
                   </TableHead>
                   <TableBody>
-                    {tableRows.map((row) => {
+                    {tableRows.map((row, index) => {
                       const enrollment = getEnrollmentById(row.id);
+                      // The rows arrive grouped, active first, so a heading is due
+                      // wherever the status changes from the row above.
+                      const status = statusOf(row);
+                      const startsGroup =
+                        index === 0 ||
+                        statusOf(tableRows[index - 1]) !== status;
                       return (
                         <React.Fragment key={row.id}>
+                          {startsGroup && (
+                            <TableRow>
+                              <TableCell
+                                colSpan={hdrs.length + 1}
+                                className="eqa-my-programs-group"
+                              >
+                                <strong>
+                                  {intl.formatMessage(
+                                    {
+                                      id:
+                                        status === "Active"
+                                          ? "eqa.myPrograms.group.active"
+                                          : "eqa.myPrograms.group.inactive",
+                                    },
+                                    {
+                                      count: tableRows.filter(
+                                        (r) => statusOf(r) === status,
+                                      ).length,
+                                    },
+                                  )}
+                                </strong>
+                              </TableCell>
+                            </TableRow>
+                          )}
                           <TableRow {...getRowProps({ row })}>
                             {row.cells.map((cell) => {
                               if (cell.info.header === "status") {
