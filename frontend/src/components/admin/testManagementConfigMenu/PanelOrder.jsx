@@ -50,8 +50,10 @@ function PanelOrder() {
 
   const handlePanelOrderListCall = () => {
     if (!panelOrderListPost?.length) {
-      // Nothing to save: read the order again rather than post an empty change.
-      refreshPanelOrderList("/rest/PanelOrder");
+      // Accepting an unchanged preview is complete once it leaves confirmation.
+      setPendingOrder(null);
+      setPanelOrderListPost([]);
+      setConfirmSelection(false);
       return;
     }
     postToOpenElisServerJsonResponse(
@@ -206,6 +208,7 @@ function PanelOrder() {
                 onClick={() => {
                   if (confirmSelection) {
                     handlePanelOrderListCall();
+                    return;
                   }
                   setConfirmSelection(true);
                 }}

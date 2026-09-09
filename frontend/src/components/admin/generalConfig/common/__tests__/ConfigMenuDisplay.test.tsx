@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { waitFor } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import { IntlProvider } from "react-intl";
@@ -10,16 +10,31 @@ import messages from "../../../../../languages/en.json";
 import {
   getFromOpenElisServer,
   postToOpenElisServer,
+  postToOpenElisServerFormData,
 } from "../../../../utils/Utils";
 import { createQueryClient } from "../../../../utils/queryClient";
-import { NotificationContext } from "../../../../layout/Layout";
+import {
+  ConfigurationContext,
+  NotificationContext,
+} from "../../../../layout/Layout";
 import ConfigMenuDisplay from "../ConfigMenuDisplay";
 
 vi.mock("../../../../utils/Utils", async () => {
   const actual = await vi.importActual("../../../../utils/Utils");
+  const getFromOpenElisServer = vi.fn();
   return {
     ...actual,
-    getFromOpenElisServer: vi.fn(),
+    getFromOpenElisServer,
+    fetchFromOpenElisServer: vi.fn(
+      (url: string) =>
+        new Promise((resolve, reject) =>
+          getFromOpenElisServer(url, (response: unknown) =>
+            response === undefined
+              ? reject(new Error("read failed"))
+              : resolve(response),
+          ),
+        ),
+    ),
     postToOpenElisServer: vi.fn(),
     postToOpenElisServerFormData: vi.fn(),
   };
@@ -39,6 +54,7 @@ const config = (value: string) => ({
 
 describe("ConfigMenuDisplay", () => {
   let onServer: { value: string };
+  let reloadConfiguration: ReturnType<typeof vi.fn>;
 
   const renderScreen = () =>
     render(
@@ -52,11 +68,13 @@ describe("ConfigMenuDisplay", () => {
                 addNotification: vi.fn(),
               }}
             >
-              <ConfigMenuDisplay
-                id="admin.formEntryConfig"
-                label="Non Conformity"
-                menuType={MENU}
-              />
+              <ConfigurationContext.Provider value={{ reloadConfiguration }}>
+                <ConfigMenuDisplay
+                  id="admin.formEntryConfig"
+                  label="Non Conformity"
+                  menuType={MENU}
+                />
+              </ConfigurationContext.Provider>
             </NotificationContext.Provider>
           </QueryClientProvider>
         </IntlProvider>
@@ -73,6 +91,7 @@ describe("ConfigMenuDisplay", () => {
 
   beforeEach(() => {
     onServer = { value: "false" };
+    reloadConfiguration = vi.fn();
     (getFromOpenElisServer as ReturnType<typeof vi.fn>).mockReset();
     (getFromOpenElisServer as ReturnType<typeof vi.fn>).mockImplementation(
       (url: string, callback: (r: unknown) => void) => {
@@ -112,6 +131,20 @@ describe("ConfigMenuDisplay", () => {
       ).not.toBeInTheDocument(),
     );
     expect(await screen.findByText("true")).toBeInTheDocument();
+    expect(reloadConfiguration).toHaveBeenCalledOnce();
+  });
+
+  it("does not refresh runtime configuration when saving fails", async () => {
+    await openTheEditor();
+    (postToOpenElisServer as ReturnType<typeof vi.fn>).mockImplementation(
+      (url: string, body: string, callback: (status: number) => void) =>
+        callback(500),
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+    expect(reloadConfiguration).not.toHaveBeenCalled();
+    expect(
+      screen.getByRole("heading", { name: "Edit Record" }),
+    ).toBeInTheDocument();
   });
 
   it("returns to the list when the edit is abandoned", async () => {
@@ -225,6 +258,51 @@ describe("ConfigMenuDisplay with an image row", () => {
     await screen.findByRole("heading", { name: "Edit Record" });
     return document.getElementById("textInput") as HTMLInputElement;
   };
+
+  const openTheImageEditor = async () => {
+    renderImageMenu();
+    await waitFor(() => expect(pendingImages.length).toBeGreaterThan(0));
+    act(() => pendingImages.splice(0).forEach((deliver) => deliver()));
+    await waitFor(() =>
+      expect(screen.getAllByLabelText("selectRow")).toHaveLength(2),
+    );
+    fireEvent.click(screen.getAllByLabelText("selectRow")[1]);
+    await userEvent.click(screen.getByRole("button", { name: "Modify" }));
+    await screen.findByRole("heading", { name: "Edit Record" });
+    await waitFor(() => expect(pendingImages.length).toBeGreaterThan(0));
+    (postToOpenElisServerFormData as ReturnType<typeof vi.fn>).mockReset();
+  };
+
+  it("keeps a removal decision when the stored logo arrives late", async () => {
+    await openTheImageEditor();
+    fireEvent.click(screen.getByLabelText("Remove Image"));
+    await act(async () =>
+      pendingImages.splice(0).forEach((deliver) => deliver()),
+    );
+    expect(screen.getByLabelText("Remove Image")).toBeChecked();
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+    const [, body] = (postToOpenElisServerFormData as ReturnType<typeof vi.fn>)
+      .mock.calls[0];
+    expect(body.get("removeImage")).toBe("true");
+    expect(body.has("logoFile")).toBe(false);
+  });
+
+  it("keeps the chosen upload when the stored logo arrives late", async () => {
+    await openTheImageEditor();
+    const file = new File(["replacement"], "logo.png", { type: "image/png" });
+    await userEvent.upload(
+      document.querySelector('input[type="file"]') as HTMLInputElement,
+      file,
+    );
+    await act(async () =>
+      pendingImages.splice(0).forEach((deliver) => deliver()),
+    );
+    await userEvent.click(screen.getByRole("button", { name: "Save" }));
+    const [, body] = (postToOpenElisServerFormData as ReturnType<typeof vi.fn>)
+      .mock.calls[0];
+    expect(body.get("logoFile")).toBe(file);
+    expect(body.get("removeImage")).toBe("false");
+  });
 
   it("keeps what is typed when a reread of the record answers mid-edit", async () => {
     holdRereads = true;

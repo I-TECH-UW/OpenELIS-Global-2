@@ -42,8 +42,10 @@ function SampleTypeOrder() {
 
   const handleSampleTypeOrderListCall = () => {
     if (!sampleTypeOrderListPost?.length) {
-      // Nothing to save: read the order again rather than post an empty change.
-      refreshSampleTypeOrderList("/rest/SampleTypeOrder");
+      // Accepting an unchanged preview is complete once it leaves confirmation.
+      setPendingOrder(null);
+      setSampleTypeOrderListPost([]);
+      setConfirmSelection(false);
       return;
     }
     postToOpenElisServerJsonResponse(
@@ -200,6 +202,7 @@ function SampleTypeOrder() {
                 onClick={() => {
                   if (confirmSelection) {
                     handleSampleTypeOrderListCall();
+                    return;
                   }
                   setConfirmSelection(true);
                 }}

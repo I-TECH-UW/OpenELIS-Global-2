@@ -19,9 +19,20 @@ import TestSectionOrder from "../TestSectionOrder";
 
 vi.mock("../../../utils/Utils", async () => {
   const actual = await vi.importActual("../../../utils/Utils");
+  const getFromOpenElisServer = vi.fn();
   return {
     ...actual,
-    getFromOpenElisServer: vi.fn(),
+    getFromOpenElisServer,
+    fetchFromOpenElisServer: vi.fn(
+      (url) =>
+        new Promise((resolve, reject) =>
+          getFromOpenElisServer(url, (response) =>
+            response === undefined
+              ? reject(new Error("read failed"))
+              : resolve(response),
+          ),
+        ),
+    ),
     postToOpenElisServerJsonResponse: vi.fn(),
   };
 });
@@ -186,6 +197,9 @@ describe.each(SCREENS)("$name", ({ Screen, endPoint, listField }) => {
     await userEvent.click(screen.getByRole("button", { name: "Accept" }));
 
     expect(postToOpenElisServerJsonResponse).not.toHaveBeenCalled();
+    expect(
+      await screen.findByRole("button", { name: "Next" }),
+    ).toBeInTheDocument();
   });
 
   it("leaves confirm mode once the accepted order is saved", async () => {

@@ -17,10 +17,9 @@ export const SERVER_DATA_KEY = "serverData";
  * Pass a falsy endpoint to hold off — for a read that depends on a selection the
  * user has not made yet.
  *
- * A failed read tells the user through the existing notification banner
- * rather than leaving the screen's own `!data` guard spinning forever with
- * nothing to show for it — every consumer already renders that banner for
- * its own write results, so this needs no per-screen change.
+ * Failed reads notify screens that already have data. Screens with a required
+ * initial read render ServerDataState while data is absent, so their early
+ * return exposes an error and retry action as well as the loading state.
  */
 export const useServerData = <T>(endPoint: string | null | undefined) => {
   const query = useQuery({
@@ -51,7 +50,7 @@ export const useServerData = <T>(endPoint: string | null | undefined) => {
     } else {
       notifiedFor.current = null;
     }
-  }, [query.isError, endPoint, notificationContext]);
+  }, [query.isError, endPoint, notificationContext, intl]);
 
   return query;
 };

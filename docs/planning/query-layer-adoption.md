@@ -289,23 +289,23 @@ acting rather than taken on trust:
   already-saved entries. Same fix in all three, matching what the discard path
   already did.
 - `queryClient.ts` (Codex, P1): a screen's `if (!data) return <Loading/>` guard
-  can't tell "still loading" from "failed and never coming," so a failed read
-  spins forever with no feedback. Confirmed real, but not new — the
-  pre-migration raw `getFromOpenElisServer` callback also answered `undefined`
-  on any failure, so the same screens were stuck the same way before this PR
-  existed. The fix that matters here is not per-screen: all 23 screens converted
-  to `useServerData` already render `<AlertDialog/>` for their own write
-  results, so the hook now watches its own query's `isError` and calls
-  `addNotification` directly — no screen needed to change. `UserManagement.jsx`
-  calls `useQuery` directly (a separate invalidation scope), so it got the
-  identical handling inline. Retries were tried and reverted: TanStack's default
-  backoff makes a retried failure take seconds to settle, which would have put a
-  timing cost on every test in the suite that asserts a fast failure. Visible
-  feedback and automatic retry are independent; only the first was actually
-  missing.
+  cannot distinguish "still loading" from a failed read. Query reads now use a
+  promise-native GET that rejects non-success HTTP responses; the legacy
+  callback helper retains its compatibility behavior for the rest of the app.
+  The required-read screens with early loading returns render a shared retry
+  state, so an error is visible and actionable instead of an endless spinner.
+  Automatic retries and reconnect refetches remain disabled: writes explicitly
+  invalidate their data, and an unsaved form must never be overwritten by a
+  background reread.
 
-All four Red-proved by reverting the fix and observing the specific failure each
-finding described.
+Regression tests cover these paths. Subsequent review also identified draft
+state that a full page reload had previously cleared: result-row notes must not
+carry into the next patient's results, deleted dictionary rows must lose their
+selection, and a completed no-change ordering confirmation must close. Queue
+refreshes now replace their pagination state even when the response shrinks to
+one page or no results. Configuration saves refresh the running application's
+configuration; late logo reads and background test-setting reads preserve the
+user's unsaved choices and the baseline used to compute the submitted changes.
 
 ## Plan
 

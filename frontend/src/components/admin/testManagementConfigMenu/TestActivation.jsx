@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from "react";
 import {
   Heading,
   Button,
-  Loading,
   Grid,
   Column,
   Section,
@@ -25,6 +24,7 @@ import {
   SortableTestList,
   SortableSampleTypeList,
 } from "./sortableListComponent/SortableList";
+import ServerDataState from "../../utils/ServerDataState";
 
 const TEST_ACTIVATION_ENDPOINT = "/rest/TestActivation";
 const NO_CHANGES = {
@@ -33,6 +33,11 @@ const NO_CHANGES = {
   activateTest: [],
   deactivateTest: [],
 };
+
+const hasPendingChanges = (changes) =>
+  Object.values(changes).some(
+    (change) => Array.isArray(change) && change.length > 0,
+  );
 
 // The two orderings the screen starts from, read off what is stored. Shared
 // so first showing them and going back to them cannot drift apart.
@@ -93,7 +98,9 @@ function TestActivation() {
 
   const [isConfirmModalOpen, setIsConfirmModalOpen] = useState(false);
 
-  const { data: testActivationData } = useServerData(TEST_ACTIVATION_ENDPOINT);
+  const testActivationQuery = useServerData(TEST_ACTIVATION_ENDPOINT);
+  const { data: storedTestActivationData } = testActivationQuery;
+  const [testActivationData, setTestActivationData] = useState();
   const invalidateServerData = useInvalidateServerData();
   const [changedTestActivationData, setChangedTestActivationData] = useState(
     {},
@@ -688,14 +695,20 @@ function TestActivation() {
     }
   }
 
+  const activationDraftIsDirty = hasPendingChanges(jsonChangeList);
+
   useEffect(() => {
-    if (!testActivationData) return;
-    const { activatedSamples, allSamples } =
-      sampleTypeSortings(testActivationData);
-    setChangedTestActivationData(testActivationData);
+    if (!storedTestActivationData || activationDraftIsDirty) return;
+    // Keep both the visible draft and its comparison baseline stable while
+    // editing, even if another screen invalidates this cached read.
+    setTestActivationData(storedTestActivationData);
+    const { activatedSamples, allSamples } = sampleTypeSortings(
+      storedTestActivationData,
+    );
+    setChangedTestActivationData(storedTestActivationData);
     setSampleTypesWithIdValueActivatedSorting(activatedSamples);
     setSampleTypesWithIdValueSorting(allSamples);
-  }, [testActivationData]);
+  }, [storedTestActivationData, activationDraftIsDirty]);
 
   const handleActiveSampleOnChangeSetJsonChangeList = (sampleTypeId) => {
     const sampleType = sampleTypesWithIdValueSorting.find(
@@ -960,13 +973,8 @@ function TestActivation() {
     return sampleTypeValues;
   };
 
-  if (!testActivationData) {
-    return (
-      <>
-        <Loading />
-      </>
-    );
-  }
+  if (!testActivationData)
+    return <ServerDataState query={testActivationQuery} />;
 
   return (
     <>

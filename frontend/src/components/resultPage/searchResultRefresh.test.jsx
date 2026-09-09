@@ -6,6 +6,7 @@
 import React from "react";
 import { vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import { waitFor } from "@testing-library/dom";
 import "@testing-library/jest-dom";
 import { IntlProvider } from "react-intl";
 import { MemoryRouter } from "react-router-dom";
@@ -122,5 +123,58 @@ describe("Logbook results refresh", () => {
     expect(await screen.findByText(/ACC7/)).toBeInTheDocument();
     expect(screen.queryByText(/ACC0/)).toBeNull();
     expect(hrefWrittenTo).toBeNull();
+  });
+
+  it.each([1, 0])(
+    "removes stale pagination when the refreshed queue has %i pages",
+    async (totalPages) => {
+      queue = {
+        testResult: [row(0)],
+        paging: { totalPages: 2, currentPage: 1 },
+      };
+      getFromOpenElisServer.mockImplementation((url, callback) => {
+        const response = url.startsWith("/rest/LogbookResults") ? queue : [];
+        queueMicrotask(() => callback(response));
+      });
+      renderScreen();
+      await screen.findByText(/ACC0/);
+      expect(await screen.findByRole("button", { name: "next" })).toBeEnabled();
+      queue = {
+        testResult: totalPages ? [row(7)] : [],
+        paging: { totalPages, currentPage: 1 },
+      };
+      postToOpenElisServerJsonResponse.mockImplementation(
+        (url, body, callback) => callback({ status: "success" }),
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Save" }));
+      await waitFor(() =>
+        expect(screen.queryByText(/ACC0/)).not.toBeInTheDocument(),
+      );
+      expect(
+        screen.queryByRole("button", { name: "next" }),
+      ).not.toBeInTheDocument();
+    },
+  );
+
+  it("starts a fresh row-editing session when a saved queue replaces the old one", async () => {
+    queue = { testResult: [row(0)] };
+    renderScreen();
+    await screen.findByText(/ACC0/);
+
+    fireEvent.change(document.getElementById("testResult0.note"), {
+      target: { value: "Only for ACC0" },
+    });
+    expect(document.getElementById("testResult0.note")).toHaveValue(
+      "Only for ACC0",
+    );
+
+    queue = { testResult: [row(7)] };
+    postToOpenElisServerJsonResponse.mockImplementation((url, body, callback) =>
+      callback({ status: "success" }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(await screen.findByText(/ACC7/)).toBeInTheDocument();
+    expect(document.getElementById("testResult0.note")).toHaveValue("");
   });
 });

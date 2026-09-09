@@ -7,6 +7,7 @@
 import React from "react";
 import { vi } from "vitest";
 import { fireEvent, render, screen } from "@testing-library/react";
+import { waitFor } from "@testing-library/dom";
 import "@testing-library/jest-dom";
 import { IntlProvider } from "react-intl";
 import { MemoryRouter } from "react-router-dom";
@@ -68,8 +69,8 @@ const CONFIG = { AccessionFormat: "", ALLOW_BULK_RELEASE_CLEAR: "true" };
 let queue;
 let assign;
 
-const renderQueue = (rows = [row(0)]) => {
-  queue = { resultList: rows, qcFailureList: [] };
+const renderQueue = (rows = [row(0)], paging) => {
+  queue = { resultList: rows, qcFailureList: [], paging };
   render(
     <MemoryRouter>
       <ConfigurationContext.Provider
@@ -139,6 +140,39 @@ describe("Validation queue refresh", () => {
     expect(screen.getByText(/ACC7/)).toBeInTheDocument();
     expect(screen.queryByText(/ACC0/)).toBeNull();
   });
+
+  it.each([1, 0])(
+    "removes stale pagination after release leaves %i pages",
+    async (totalPages) => {
+      getFromOpenElisServer.mockImplementation((url, callback) => {
+        if (url.startsWith("/rest/AccessionValidation?")) {
+          const response = queue;
+          queueMicrotask(() => callback(response));
+        }
+      });
+      renderQueue([row(0)], { totalPages: 2, currentPage: 1 });
+      await screen.findByText(/ACC0/);
+      expect(await screen.findByRole("button", { name: "next" })).toBeEnabled();
+      queue = {
+        resultList: totalPages ? [row(7)] : [],
+        qcFailureList: [],
+        paging: { totalPages, currentPage: 1 },
+      };
+      fireEvent.click(screen.getByTestId("release-all-clear"));
+      postToOpenElisServerJsonResponse.mockImplementation(
+        (url, body, callback) => callback({ released: ["100"], skipped: [] }),
+      );
+      fireEvent.click(
+        screen.getByTestId("release-all-clear-sign").querySelector("button"),
+      );
+      await waitFor(() =>
+        expect(screen.queryByText(/ACC0/)).not.toBeInTheDocument(),
+      );
+      expect(
+        screen.queryByRole("button", { name: "next" }),
+      ).not.toBeInTheDocument();
+    },
+  );
 
   it("serves the queue the server holds after the bulk release, without a page load", () => {
     renderQueue();

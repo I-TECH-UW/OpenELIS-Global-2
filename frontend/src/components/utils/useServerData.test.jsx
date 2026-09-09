@@ -7,13 +7,13 @@ import { IntlProvider } from "react-intl";
 import messages from "../../languages/en.json";
 import { NotificationContext } from "../layout/contexts";
 import { beforeEach, describe, expect, it, vi } from "vitest";
-import { getFromOpenElisServer } from "./Utils";
+import { fetchFromOpenElisServer } from "./Utils";
 import { createQueryClient } from "./queryClient";
 import { useServerData, useInvalidateServerData } from "./useServerData";
 
 vi.mock("./Utils", async () => {
   const actual = await vi.importActual("./Utils");
-  return { ...actual, getFromOpenElisServer: vi.fn() };
+  return { ...actual, fetchFromOpenElisServer: vi.fn() };
 });
 
 const Screen = ({ endPoint = "/rest/things", second = null }) => {
@@ -47,27 +47,24 @@ const renderWithCache = (props, notificationContext) =>
 
 describe("useServerData", () => {
   beforeEach(() => {
-    getFromOpenElisServer.mockReset();
+    fetchFromOpenElisServer.mockReset();
   });
 
   it("reads the endpoint and shows what the server returned", async () => {
-    getFromOpenElisServer.mockImplementation((url, cb) =>
-      cb({ name: "first" }),
-    );
+    fetchFromOpenElisServer.mockResolvedValue({ name: "first" });
 
     renderWithCache({});
 
     expect(await screen.findByText("first")).toBeInTheDocument();
-    expect(getFromOpenElisServer).toHaveBeenCalledWith(
+    expect(fetchFromOpenElisServer).toHaveBeenCalledWith(
       "/rest/things",
-      expect.any(Function),
       expect.anything(),
     );
   });
 
   it("reads again after the endpoint is invalidated", async () => {
     let onServer = { name: "before" };
-    getFromOpenElisServer.mockImplementation((url, cb) => cb(onServer));
+    fetchFromOpenElisServer.mockImplementation(() => Promise.resolve(onServer));
 
     renderWithCache({});
     expect(await screen.findByText("before")).toBeInTheDocument();
@@ -80,8 +77,8 @@ describe("useServerData", () => {
 
   it("retires every read when no endpoint is named", async () => {
     let onServer = { name: "before" };
-    getFromOpenElisServer.mockImplementation((url, cb) =>
-      cb(
+    fetchFromOpenElisServer.mockImplementation((url) =>
+      Promise.resolve(
         url === "/rest/others"
           ? { ...onServer, name: onServer.name + "-two" }
           : onServer,
@@ -102,20 +99,18 @@ describe("useServerData", () => {
   });
 
   it("holds off until it has an endpoint to read", async () => {
-    getFromOpenElisServer.mockImplementation((url, cb) => cb({ name: "x" }));
+    fetchFromOpenElisServer.mockResolvedValue({ name: "x" });
 
     renderWithCache({ endPoint: null });
 
     await waitFor(() =>
       expect(screen.getByTestId("value")).toHaveTextContent("—"),
     );
-    expect(getFromOpenElisServer).not.toHaveBeenCalled();
+    expect(fetchFromOpenElisServer).not.toHaveBeenCalled();
   });
 
   it("tells the user once when a read fails, instead of spinning forever", async () => {
-    // getFromOpenElisServer reports a failed read by calling back undefined —
-    // fetchFromServer turns that into a rejected query.
-    getFromOpenElisServer.mockImplementation((url, cb) => cb(undefined));
+    fetchFromOpenElisServer.mockRejectedValue(new Error("read failed"));
     const addNotification = vi.fn();
     const setNotificationVisible = vi.fn();
 
@@ -130,7 +125,9 @@ describe("useServerData", () => {
 
     // Re-rendering while the same endpoint keeps failing must not repeat it.
     await userEvent.click(screen.getByRole("button", { name: "refresh one" }));
-    await waitFor(() => expect(getFromOpenElisServer).toHaveBeenCalledTimes(2));
+    await waitFor(() =>
+      expect(fetchFromOpenElisServer).toHaveBeenCalledTimes(2),
+    );
     expect(addNotification).toHaveBeenCalledTimes(1);
   });
 });

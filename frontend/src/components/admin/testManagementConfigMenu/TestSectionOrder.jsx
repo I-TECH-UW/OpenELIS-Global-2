@@ -42,8 +42,10 @@ function TestSectionOrder() {
 
   const handleTestSectionOrderListCall = () => {
     if (!testSectionOrderListPost?.length) {
-      // Nothing to save: read the order again rather than post an empty change.
-      refreshTestSectionOrderList("/rest/TestSectionOrder");
+      // Accepting an unchanged preview is complete once it leaves confirmation.
+      setPendingOrder(null);
+      setTestSectionOrderListPost([]);
+      setConfirmSelection(false);
       return;
     }
     postToOpenElisServerJsonResponse(
@@ -201,6 +203,7 @@ function TestSectionOrder() {
                 onClick={() => {
                   if (confirmSelection) {
                     handleTestSectionOrderListCall();
+                    return;
                   }
                   setConfirmSelection(true);
                 }}

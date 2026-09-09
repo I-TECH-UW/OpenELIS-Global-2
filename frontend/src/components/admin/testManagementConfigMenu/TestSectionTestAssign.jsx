@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import {
   Heading,
-  Loading,
   Grid,
   Column,
   Section,
@@ -22,6 +21,7 @@ import {
 } from "../../common/CustomNotification";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+import ServerDataState from "../../utils/ServerDataState";
 
 const TEST_SECTION_TEST_ASSIGN_ENDPOINT = "/rest/TestSectionTestAssign";
 const NO_SELECTION = {
@@ -58,9 +58,10 @@ function TestSectionTestAssign() {
   const [confirmation, setConfirmation] = useState(false);
   const [testSectionTestAssignModal, setTestSectionTestAssignModal] =
     useState(false);
-  const { data: testSectionTestAssign } = useServerData(
+  const testSectionTestAssignQuery = useServerData(
     TEST_SECTION_TEST_ASSIGN_ENDPOINT,
   );
+  const { data: testSectionTestAssign } = testSectionTestAssignQuery;
   const invalidateServerData = useInvalidateServerData();
   const [testSectionTestAssignPost, setTestSectionTestAssignPost] =
     useState(NO_SELECTION);
@@ -113,13 +114,8 @@ function TestSectionTestAssign() {
     }
   };
 
-  if (!testSectionTestAssign) {
-    return (
-      <>
-        <Loading />
-      </>
-    );
-  }
+  if (!testSectionTestAssign)
+    return <ServerDataState query={testSectionTestAssignQuery} />;
 
   return (
     <>

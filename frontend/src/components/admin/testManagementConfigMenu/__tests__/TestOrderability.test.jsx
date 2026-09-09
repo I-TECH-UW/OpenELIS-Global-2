@@ -1,5 +1,5 @@
 import React from "react";
-import { render, screen, fireEvent } from "@testing-library/react";
+import { render, screen, fireEvent, act } from "@testing-library/react";
 import { waitFor } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import { IntlProvider } from "react-intl";
@@ -17,9 +17,20 @@ import TestOrderability from "../TestOrderability";
 
 vi.mock("../../../utils/Utils", async () => {
   const actual = await vi.importActual("../../../utils/Utils");
+  const getFromOpenElisServer = vi.fn();
   return {
     ...actual,
-    getFromOpenElisServer: vi.fn(),
+    getFromOpenElisServer,
+    fetchFromOpenElisServer: vi.fn(
+      (url) =>
+        new Promise((resolve, reject) =>
+          getFromOpenElisServer(url, (response) =>
+            response === undefined
+              ? reject(new Error("read failed"))
+              : resolve(response),
+          ),
+        ),
+    ),
     postToOpenElisServerJsonResponse: vi.fn(),
   };
 });
@@ -42,6 +53,7 @@ const glucose = () => document.getElementById("1-10");
 const cancelButton = () => screen.getAllByRole("button", { name: "Cancel" })[0];
 
 describe("TestOrderability", () => {
+  let queryClient;
   let reload;
   let assign;
   let onServer;
@@ -50,7 +62,7 @@ describe("TestOrderability", () => {
     render(
       <MemoryRouter>
         <IntlProvider locale="en" messages={messages}>
-          <QueryClientProvider client={createQueryClient()}>
+          <QueryClientProvider client={queryClient}>
             <NotificationContext.Provider
               value={{
                 notificationVisible: false,
@@ -75,6 +87,7 @@ describe("TestOrderability", () => {
   };
 
   beforeEach(() => {
+    queryClient = createQueryClient();
     onServer = orderability();
     getFromOpenElisServer.mockReset();
     getFromOpenElisServer.mockImplementation((url, callback) =>
@@ -96,6 +109,22 @@ describe("TestOrderability", () => {
 
     await waitFor(() => expect(glucose()).toBeChecked());
     expect(document.getElementById("1-11")).toBeChecked();
+  });
+
+  it("keeps the visible draft and submitted changes together after a refetch", async () => {
+    await turnGlucoseOff();
+    onServer = orderability();
+    onServer.orderableTestList[0].activeTests[1].value = "Urea updated";
+    await act(async () => {
+      await queryClient.invalidateQueries({ queryKey: ["serverData"] });
+    });
+
+    expect(glucose()).not.toBeChecked();
+    await userEvent.click(screen.getAllByRole("button", { name: "Submit" })[0]);
+    await userEvent.click(screen.getByRole("button", { name: "Accept" }));
+    const [, payload] = postToOpenElisServerJsonResponse.mock.calls[0];
+    const sent = JSON.parse(JSON.parse(payload).jsonChangeList);
+    expect(JSON.parse(sent.deactivateTest)).toEqual([{ id: "10" }]);
   });
 
   it("turns a test back on when the change is cancelled", async () => {

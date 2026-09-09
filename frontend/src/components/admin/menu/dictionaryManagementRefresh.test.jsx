@@ -70,6 +70,8 @@ describe("Dictionary menu refresh", () => {
     getFromOpenElisServer.mockReset();
     getFromOpenElisServer.mockImplementation((url, callback) => {
       if (url.startsWith("/rest/DictionaryMenu")) return callback(menuList);
+      if (url.startsWith("/rest/SearchDictionaryMenu"))
+        return callback(menuList);
       return callback([]);
     });
     postToOpenElisServer.mockReset();
@@ -90,6 +92,36 @@ describe("Dictionary menu refresh", () => {
 
     await waitFor(() =>
       expect(screen.queryByText("Entry A")).not.toBeInTheDocument(),
+    );
+    expect(
+      document.querySelector('[data-cy="deactivateButton"]'),
+    ).toBeDisabled();
+    expect(document.querySelector('[data-cy="modifyButton"]')).toBeDisabled();
+    fireEvent.click(document.querySelector('[data-cy="deactivateButton"]'));
+    expect(postToOpenElisServer).toHaveBeenCalledOnce();
+  });
+
+  it("does not bring a deleted search result back when search is cleared", async () => {
+    renderScreen();
+    await screen.findByText("Entry A");
+    fireEvent.change(screen.getByRole("searchbox"), {
+      target: { value: "Entry" },
+    });
+    fireEvent.click(screen.getByLabelText("selectRow"));
+    menuList = { menuList: [] };
+    postToOpenElisServer.mockImplementation((url, body, callback) =>
+      callback("200"),
+    );
+    fireEvent.click(document.querySelector('[data-cy="deactivateButton"]'));
+    await waitFor(() =>
+      expect(screen.queryByText("Entry A")).not.toBeInTheDocument(),
+    );
+    fireEvent.change(screen.getByRole("searchbox"), { target: { value: "" } });
+    await waitFor(() =>
+      expect(screen.queryByText("Entry A")).not.toBeInTheDocument(),
+    );
+    expect(getFromOpenElisServer.mock.calls.at(-1)[0]).toContain(
+      "/rest/DictionaryMenu?",
     );
   });
 

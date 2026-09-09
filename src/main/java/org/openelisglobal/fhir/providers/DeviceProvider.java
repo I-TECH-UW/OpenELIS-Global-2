@@ -194,7 +194,9 @@ public class DeviceProvider implements IResourceProvider {
                 throw new InternalErrorException("Analyzer update failed");
             }
 
-            Device updatedDevice = fhirTransformService.transformAnalyzerToDevice(updated);
+            Analyzer updatedWithBinding = analyzerService.getWithBinding(updated.getId())
+                    .orElseThrow(() -> new InternalErrorException("Updated Analyzer not found"));
+            Device updatedDevice = fhirTransformService.transformAnalyzerToDevice(updatedWithBinding);
 
             if (updatedDevice == null) {
                 throw new InternalErrorException("FHIR Device transformation failed");
@@ -238,7 +240,9 @@ public class DeviceProvider implements IResourceProvider {
                 throw new InternalErrorException("Failed deleting Device");
             }
 
-            Device deleted = fhirTransformService.transformAnalyzerToDevice(saved);
+            Analyzer savedWithBinding = analyzerService.getWithBinding(saved.getId())
+                    .orElseThrow(() -> new InternalErrorException("Deactivated Analyzer not found"));
+            Device deleted = fhirTransformService.transformAnalyzerToDevice(savedWithBinding);
 
             if (deleted != null) {
                 FhirProviderUtils.syncToFhirStore(fhirPersistanceService, deleted, getClass().getSimpleName(), method);
@@ -312,7 +316,8 @@ public class DeviceProvider implements IResourceProvider {
             throw new InternalErrorException("Multiple Analyzer records exist for Device UUID");
         }
 
-        return analyzers.get(0);
+        return analyzerService.getWithBinding(analyzers.get(0).getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Device/" + theId.getIdPart()));
     }
 
 }

@@ -24,10 +24,23 @@ vi.mock("../../../common/PageBreadCrumb", () => ({
   },
 }));
 
-vi.mock("../../../utils/Utils", () => ({
-  getFromOpenElisServer: vi.fn(),
-  postToOpenElisServerJsonResponse: vi.fn(),
-}));
+vi.mock("../../../utils/Utils", () => {
+  const getFromOpenElisServer = vi.fn();
+  return {
+    getFromOpenElisServer,
+    fetchFromOpenElisServer: vi.fn(
+      (url) =>
+        new Promise((resolve, reject) =>
+          getFromOpenElisServer(url, (response) =>
+            response === undefined
+              ? reject(new Error("read failed"))
+              : resolve(response),
+          ),
+        ),
+    ),
+    postToOpenElisServerJsonResponse: vi.fn(),
+  };
+});
 
 vi.mock("../../../layout/Layout", () => ({
   NotificationContext: React.createContext({

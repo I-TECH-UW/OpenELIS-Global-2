@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useContext } from "react";
+import React, { useState, useEffect, useContext, useRef } from "react";
 import type { ChangeEvent } from "react";
 import {
   Grid,
@@ -26,7 +26,10 @@ import {
   AlertDialog,
   NotificationKinds,
 } from "../../../common/CustomNotification";
-import { NotificationContext } from "../../../layout/Layout";
+import {
+  ConfigurationContext,
+  NotificationContext,
+} from "../../../layout/Layout";
 
 import { FormattedMessage, useIntl } from "react-intl";
 
@@ -85,6 +88,11 @@ const GenericConfigEdit = ({
 
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext) as NotificationContextValue;
+  const configurationContext = useContext(ConfigurationContext) as {
+    reloadConfiguration?: () => void;
+  } | null;
+  const reloadConfiguration =
+    configurationContext?.reloadConfiguration ?? (() => undefined);
 
   const { data: storedConfig, isLoading: configLoading } =
     useServerData<FormEntryConfig>(`/rest/${menuType}?ID=${ID}`);
@@ -98,7 +106,12 @@ const GenericConfigEdit = ({
       : null,
   );
 
-  const seedFrom = (res?: FormEntryConfig, logo?: { value: string }) => {
+  const seededRecord = useRef<string | null>(null);
+  const recordKey = storedConfig
+    ? `${menuType}:${ID}:${storedConfig.paramName}`
+    : null;
+
+  const seedFrom = (res?: FormEntryConfig) => {
     if (!res) return;
     setFormEntryConfig(res);
     setTextInputEnglishValue(
@@ -110,14 +123,28 @@ const GenericConfigEdit = ({
     setRadioValue(res.valueType === "boolean" ? res.value : "");
     setSelectedDictionaryValue(res.valueType === "dictionary" ? res.value : "");
     setTextInputValue(res.value);
-    setImg(logo?.value ?? null);
+    setImg(null);
     setFile(null);
     setRemoveImage(false);
   };
 
   useEffect(() => {
-    seedFrom(storedConfig, storedLogo);
-  }, [storedConfig, storedLogo]);
+    if (!storedConfig || !recordKey || seededRecord.current === recordKey) {
+      return;
+    }
+    seededRecord.current = recordKey;
+    seedFrom(storedConfig);
+  }, [storedConfig, recordKey]);
+
+  // The image is fetched separately and can arrive after the user has chosen
+  // a file or asked to remove it. It may update the server preview, never a
+  // draft image decision.
+  useEffect(() => {
+    if (storedConfig?.valueType !== "logoUpload" || file || removeImage) {
+      return;
+    }
+    setImg(storedLogo?.value ?? null);
+  }, [storedConfig?.valueType, storedLogo, file, removeImage]);
 
   const updateFormEntryConfig = (newState: Partial<FormEntryConfig>) => {
     setFormEntryConfig((prevState) => ({
@@ -228,6 +255,7 @@ const GenericConfigEdit = ({
         NotificationKinds.success,
       );
       invalidateServerData();
+      reloadConfiguration();
       onDone();
     } else {
       showAlertMessage(

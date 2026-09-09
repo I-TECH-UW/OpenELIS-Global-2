@@ -17,9 +17,20 @@ import UomCreate from "../UomCreate";
 
 vi.mock("../../../utils/Utils", async () => {
   const actual = await vi.importActual("../../../utils/Utils");
+  const getFromOpenElisServer = vi.fn();
   return {
     ...actual,
-    getFromOpenElisServer: vi.fn(),
+    getFromOpenElisServer,
+    fetchFromOpenElisServer: vi.fn(
+      (url) =>
+        new Promise((resolve, reject) =>
+          getFromOpenElisServer(url, (response) =>
+            response === undefined
+              ? reject(new Error("read failed"))
+              : resolve(response),
+          ),
+        ),
+    ),
     postToOpenElisServerJsonResponse: vi.fn(),
   };
 });

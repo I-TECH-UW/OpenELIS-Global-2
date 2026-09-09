@@ -1,32 +1,16 @@
 import { QueryClient } from "@tanstack/react-query";
-import { getFromOpenElisServer } from "./Utils";
+import { fetchFromOpenElisServer } from "./Utils";
 
 /**
- * Reads a GET endpoint through the same helper every screen already uses, so a
- * screen opts into the cache by changing how it calls, not what it calls.
+ * Reads the same server endpoints through the shared request utility, retaining
+ * the application's session credentials and locale headers.
  *
- * getFromOpenElisServer hands its result to a callback and reports failure by
- * passing undefined, which a cache cannot tell apart from an empty body. The
- * query layer needs a rejected promise for that, so an undefined result is
- * treated as a failed read.
+ * The legacy callback helper intentionally preserves its historical response
+ * behavior. Query reads use the promise helper so HTTP failures reject and
+ * reach the screen's retry state rather than being cached as response data.
  */
-export const fetchFromServer = <T>(
-  endPoint: string,
-  signal?: AbortSignal,
-): Promise<T> =>
-  new Promise((resolve, reject) => {
-    getFromOpenElisServer<T>(
-      endPoint,
-      (response) => {
-        if (response === undefined) {
-          reject(new Error(`Request failed: ${endPoint}`));
-          return;
-        }
-        resolve(response);
-      },
-      signal ?? null,
-    );
-  });
+export const fetchFromServer = <T>(endPoint: string, signal?: AbortSignal) =>
+  fetchFromOpenElisServer<T>(endPoint, signal);
 
 /**
  * The endpoint is the key, so a screen invalidates exactly what it read and
@@ -50,6 +34,7 @@ export const createQueryClient = (): QueryClient =>
       queries: {
         retry: false,
         refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
         staleTime: 0,
       },
     },

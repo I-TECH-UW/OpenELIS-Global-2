@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import {
   Heading,
   Button,
-  Loading,
   Grid,
   Column,
   Section,
@@ -22,6 +21,7 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import { CustomSharedList } from "./CustomSharedList";
+import ServerDataState from "../../utils/ServerDataState";
 
 const PANEL_TEST_ASSIGN_ENDPOINT = "/rest/PanelTestAssign";
 
@@ -52,7 +52,8 @@ function PanelTestAssign() {
   // panel is shown as it is stored.
   const [movedTests, setMovedTests] = useState(null);
 
-  const { data: panelTestList } = useServerData(PANEL_TEST_ASSIGN_ENDPOINT);
+  const panelTestQuery = useServerData(PANEL_TEST_ASSIGN_ENDPOINT);
+  const { data: panelTestList } = panelTestQuery;
   const invalidateServerData = useInvalidateServerData();
 
   // Held off until a panel is picked and keyed on it. Until the read for a
@@ -115,13 +116,7 @@ function PanelTestAssign() {
     }
   };
 
-  if (!panelTestList) {
-    return (
-      <>
-        <Loading />
-      </>
-    );
-  }
+  if (!panelTestList) return <ServerDataState query={panelTestQuery} />;
 
   return (
     <>

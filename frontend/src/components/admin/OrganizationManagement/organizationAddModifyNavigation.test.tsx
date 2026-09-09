@@ -78,7 +78,9 @@ describe("OrganizationAddModify navigation", () => {
       // defaults to the truthy string "0" when there is no query string at
       // all, which the component's own guard treats as present.
       renderScreen("/MasterListsPage/organizationEdit?ref=menu");
-      act(() => vi.advanceTimersByTime(1000));
+      act(() => {
+        vi.advanceTimersByTime(1000);
+      });
       expect(await screen.findByText("organization list")).toBeInTheDocument();
     } finally {
       vi.useRealTimers();
@@ -99,7 +101,9 @@ describe("OrganizationAddModify navigation", () => {
           callback(200),
       );
       fireEvent.click(screen.getByText("Save"));
-      act(() => vi.advanceTimersByTime(200));
+      act(() => {
+        vi.advanceTimersByTime(200);
+      });
       expect(await screen.findByText("organization list")).toBeInTheDocument();
     } finally {
       vi.useRealTimers();

@@ -69,9 +69,9 @@ function DictionaryManagement() {
 
   const [paging, setPaging] = useState(null);
   const [startingRecNo, setStartingRecNo] = useState(1);
-  const [isSearching, setIsSearching] = useState(false);
   const [panelSearchTerm, setPanelSearchTerm] = useState("");
   const [searchedMenuList, setSearchedMenuList] = useState([]);
+  const isSearching = Boolean(panelSearchTerm);
 
   const [isMobile, setIsMobile] = useState(window.innerWidth < 530);
 
@@ -182,6 +182,13 @@ function DictionaryManagement() {
       );
     } else {
       setSearchedMenuList([]);
+      // Browse and search are separate response snapshots. When search is
+      // cleared, fetch the now-visible browse representation instead of
+      // exposing the copy that was held before a dictionary write.
+      getFromOpenElisServer(
+        `/rest/DictionaryMenu?paging=${paging}&startingRecNo=${startingRecNo}`,
+        fetchedDictionaryMenu,
+      );
     }
   }, [panelSearchTerm]);
 
@@ -277,7 +284,10 @@ function DictionaryManagement() {
         message: intl.formatMessage({ id: "error.add.edited.msg" }),
       });
     }
-    refreshDictionaryList();
+    if (res.status == "201" || res.status == "200") {
+      setSelectedRowIds([]);
+      refreshDictionaryList();
+    }
   }
 
   const handleSubmitModal = (e) => {
@@ -409,14 +419,13 @@ function DictionaryManagement() {
 
   const handleDeactivation = async (event) => {
     event.preventDefault();
-    if (selectedRowIds) {
+    if (selectedRowIds.length > 0) {
       postToOpenElisServer(
         `/rest/DeleteDictionary?ID=${selectedRowIds.join(",")}`,
         {},
         handleDelete,
       );
     }
-    reloadConfiguration();
   };
 
   const handleDelete = (status) => {
@@ -429,6 +438,8 @@ function DictionaryManagement() {
           id: "dictionary.menu.deactivate.success",
         }),
       });
+      setSelectedRowIds([]);
+      reloadConfiguration();
     } else {
       addNotification({
         kind: NotificationKinds.error,
@@ -442,11 +453,7 @@ function DictionaryManagement() {
   const handlePanelSearchChange = (event) => {
     const query = event.target.value;
     setPanelSearchTerm(query);
-    if (query) {
-      setIsSearching(true);
-    } else {
-      setIsSearching(false);
-    }
+    setPage(1);
   };
 
   return (

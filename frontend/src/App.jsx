@@ -53,7 +53,7 @@ import LandingPage from "./components/home/LandingPage";
  * surfaces as an E2E failure: the RouteErrorBoundary catches the
  * `TypeError: Failed to fetch dynamically imported module` and shows
  * its "module could not be loaded" fallback. Seen as a recurring
- * develop-CI flake on AnalyzerForm chunk fetch; the retry wrapper
+ * develop-CI flake on route chunk fetch; the retry wrapper
  * gives the browser three chances with backoff before giving up.
  *
  * Backoff is intentionally short (0.5s/1s/1.5s): the real failures
@@ -62,9 +62,8 @@ import LandingPage from "./components/home/LandingPage";
  * chunk is genuinely missing (e.g., deploy mismatch).
  */
 function lazyWithRetry(factory, retries = 3, backoffMs = 500) {
-  // eslint-disable-next-line local/no-raw-react-lazy --
-  // This IS the lazyWithRetry helper: it legitimately wraps React.lazy
-  // with retry semantics. The rule flags direct callers elsewhere.
+  // This helper is the one legitimate wrapper around React.lazy.
+  // eslint-disable-next-line local/no-raw-react-lazy
   return React.lazy(async () => {
     let lastError;
     for (let attempt = 0; attempt < retries; attempt += 1) {
@@ -84,23 +83,11 @@ function lazyWithRetry(factory, retries = 3, backoffMs = 500) {
 }
 
 const AnalyzersPage = lazyWithRetry(() => import("./pages/AnalyzersPage"));
-const FieldMapping = lazyWithRetry(
-  () => import("./components/analyzers/FieldMapping/FieldMapping"),
-);
-const ErrorDashboardPage = lazyWithRetry(
-  () => import("./pages/ErrorDashboardPage"),
-);
-const CustomFieldTypeManagementPage = lazyWithRetry(
-  () => import("./pages/CustomFieldTypeManagementPage"),
-);
 const AnalyzerTypesPage = lazyWithRetry(
   () => import("./pages/AnalyzerTypesPage"),
 );
-const AnalyzerFormPage = lazyWithRetry(
-  () => import("./components/analyzers/AnalyzerForm/AnalyzerForm"),
-);
-const QcRulePage = lazyWithRetry(
-  () => import("./components/analyzers/QcRules/QcRuleBuilderModal"),
+const AnalyzerTypeMappingPage = lazyWithRetry(
+  () => import("./pages/AnalyzerTypeMappingPage"),
 );
 import {
   QCDashboard,
@@ -247,7 +234,6 @@ export default function App() {
         });
         if (response.status === 200) {
           const jsonResp = await response.json();
-          console.debug(JSON.stringify(jsonResp));
           if (jsonResp.authenticated) {
             localStorage.setItem("CSRF", jsonResp.csrf);
           }
@@ -1150,7 +1136,7 @@ export default function App() {
                       </Suspense>
                     </RouteErrorBoundary>
                   )}
-                  role={Roles.ANALYSER_IMPORT}
+                  role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
                 />
                 <SecureRoute
                   path="/analyzers/:id/mappings"
@@ -1174,7 +1160,7 @@ export default function App() {
                       </Suspense>
                     </RouteErrorBoundary>
                   )}
-                  role={Roles.ANALYSER_IMPORT}
+                  role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
                 />
                 <SecureRoute
                   path="/analyzers/custom-field-types"
@@ -1195,6 +1181,18 @@ export default function App() {
                     <RouteErrorBoundary {...routeErrorAnalyzers}>
                       <Suspense fallback={null}>
                         <AnalyzerTypesPage />
+                      </Suspense>
+                    </RouteErrorBoundary>
+                  )}
+                  role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
+                />
+                <SecureRoute
+                  path="/analyzers/types/:profileId/mapping"
+                  exact
+                  component={() => (
+                    <RouteErrorBoundary {...routeErrorAnalyzers}>
+                      <Suspense fallback={null}>
+                        <AnalyzerTypeMappingPage />
                       </Suspense>
                     </RouteErrorBoundary>
                   )}

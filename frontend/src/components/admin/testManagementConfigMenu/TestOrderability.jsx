@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from "react";
 import {
   Heading,
   Button,
-  Loading,
   Grid,
   Column,
   Section,
@@ -21,9 +20,14 @@ import {
 } from "../../common/CustomNotification";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+import ServerDataState from "../../utils/ServerDataState";
 
 const ORDERABILITY_ENDPOINT = "/rest/TestOrderability";
 const NO_CHANGES = { activateTest: [], deactivateTest: [] };
+const hasPendingChanges = (changes) =>
+  Object.values(changes).some(
+    (change) => Array.isArray(change) && change.length > 0,
+  );
 
 let breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -49,7 +53,9 @@ function TestOrderability() {
     useState({});
   const [jsonChangeList, setJsonChangeList] = useState(NO_CHANGES);
 
-  const { data: testOrderabilityData } = useServerData(ORDERABILITY_ENDPOINT);
+  const testOrderabilityQuery = useServerData(ORDERABILITY_ENDPOINT);
+  const { data: storedTestOrderabilityData } = testOrderabilityQuery;
+  const [testOrderabilityData, setTestOrderabilityData] = useState();
   const invalidateServerData = useInvalidateServerData();
 
   // What the user has changed but not saved. Reloading the document, and
@@ -277,19 +283,18 @@ function TestOrderability() {
     }
   }
 
-  useEffect(() => {
-    if (testOrderabilityData) {
-      setChangedTestOrderabilityData(testOrderabilityData);
-    }
-  }, [testOrderabilityData]);
+  const orderabilityDraftIsDirty = hasPendingChanges(jsonChangeList);
 
-  if (!testOrderabilityData) {
-    return (
-      <>
-        <Loading />
-      </>
-    );
-  }
+  useEffect(() => {
+    if (storedTestOrderabilityData && !orderabilityDraftIsDirty) {
+      // A refetch must not change the baseline used to compute pending edits.
+      setTestOrderabilityData(storedTestOrderabilityData);
+      setChangedTestOrderabilityData(storedTestOrderabilityData);
+    }
+  }, [storedTestOrderabilityData, orderabilityDraftIsDirty]);
+
+  if (!testOrderabilityData)
+    return <ServerDataState query={testOrderabilityQuery} />;
 
   return (
     <>

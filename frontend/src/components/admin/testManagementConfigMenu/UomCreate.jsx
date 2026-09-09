@@ -2,7 +2,6 @@ import React, { useContext, useState } from "react";
 import {
   Heading,
   Button,
-  Loading,
   Grid,
   Column,
   Section,
@@ -22,6 +21,7 @@ import {
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import { useHistory } from "react-router-dom";
+import ServerDataState from "../../utils/ServerDataState";
 
 const UOM_CREATE_ENDPOINT = "/rest/UomCreate";
 
@@ -54,7 +54,8 @@ function UomCreate() {
   const [uomNew, setUomNew] = useState("");
   const [inputError, setInputError] = useState(false);
 
-  const { data: uomRes } = useServerData(UOM_CREATE_ENDPOINT);
+  const uomQuery = useServerData(UOM_CREATE_ENDPOINT);
+  const { data: uomRes } = uomQuery;
   const invalidateServerData = useInvalidateServerData();
 
   // The names a new one may not collide with, from the same read the screen
@@ -109,12 +110,7 @@ function UomCreate() {
     invalidateServerData();
   };
 
-  if (!uomRes)
-    return (
-      <>
-        <Loading />
-      </>
-    );
+  if (!uomRes) return <ServerDataState query={uomQuery} />;
 
   return (
     <>

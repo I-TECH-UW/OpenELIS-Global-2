@@ -113,4 +113,33 @@ describe("Analyzer results worklist", () => {
     await waitFor(() => expect(screen.queryByText(/ACC0/)).toBeNull());
     expect(hrefWrittenTo).toBeNull();
   });
+
+  it.each([1, 0])(
+    "removes stale server-pagination controls after a refresh leaves %i pages",
+    async (totalPages) => {
+      worklist = {
+        resultList: [row(0)],
+        type: "Demo Analyzer",
+        paging: { totalPages: 2, currentPage: 1, searchTermToPage: [] },
+      };
+      renderScreen();
+      await screen.findByText(/ACC0/);
+      expect(screen.getByRole("button", { name: "next" })).toBeInTheDocument();
+
+      worklist = {
+        resultList: totalPages ? [row(7)] : [],
+        type: "Demo Analyzer",
+        paging: { totalPages, currentPage: 1, searchTermToPage: [] },
+      };
+      postToOpenElisServerFullResponse.mockImplementation(
+        (url, body, callback) => callback({ status: 200 }),
+      );
+      fireEvent.click(screen.getByTestId("Save-btn"));
+
+      await waitFor(() =>
+        expect(screen.queryByText(/ACC0/)).not.toBeInTheDocument(),
+      );
+      expect(screen.queryByRole("button", { name: "next" })).toBeNull();
+    },
+  );
 });

@@ -1,7 +1,6 @@
 import React, { useContext, useState } from "react";
 import {
   Heading,
-  Loading,
   Grid,
   Column,
   Section,
@@ -22,6 +21,7 @@ import {
 } from "../../common/CustomNotification";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+import ServerDataState from "../../utils/ServerDataState";
 
 const SAMPLE_TYPE_TEST_ASSIGN_ENDPOINT = "/rest/SampleTypeTestAssign";
 const NO_SELECTION = {
@@ -58,9 +58,10 @@ function SampleTypeTestAssign() {
   const [confirmation, setConfirmation] = useState(false);
   const [sampleTypeTestAssignModal, setSampleTypeTestAssignModal] =
     useState(false);
-  const { data: sampleTypeTestAssign } = useServerData(
+  const sampleTypeTestAssignQuery = useServerData(
     SAMPLE_TYPE_TEST_ASSIGN_ENDPOINT,
   );
+  const { data: sampleTypeTestAssign } = sampleTypeTestAssignQuery;
   const invalidateServerData = useInvalidateServerData();
   const [sampleTypeTestAssignPost, setSampleTypeTestAssignPost] =
     useState(NO_SELECTION);
@@ -113,13 +114,8 @@ function SampleTypeTestAssign() {
     }
   };
 
-  if (!sampleTypeTestAssign) {
-    return (
-      <>
-        <Loading />
-      </>
-    );
-  }
+  if (!sampleTypeTestAssign)
+    return <ServerDataState query={sampleTypeTestAssignQuery} />;
 
   return (
     <>
