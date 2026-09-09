@@ -71,21 +71,23 @@ public class EQAProgramServiceImpl extends BaseObjectServiceImpl<EQAProgram, Lon
      * caller would only move the hole to the quieter one.
      *
      * <p>
-     * Closed cycles are history and reinterpreting them costs nothing, which is
-     * what makes the rule "no live cycle" rather than "no cycle at all". A
-     * deployment upgraded from V1 carries a backfilled CLOSED cycle for every
-     * completed legacy distribution, and those schemes all took the
-     * INTERNATIONAL_PT default; barring a type change outright would strand every
-     * one of them outside in-house blinding, with no route out from any screen.
+     * A closed cycle cannot be worked on again, which is what makes the rule "no
+     * live cycle" rather than "no cycle at all". A deployment upgraded from V1
+     * carries a backfilled CLOSED cycle for every completed legacy distribution,
+     * and those schemes all took the INTERNATIONAL_PT default; barring a type
+     * change outright would strand every one of them outside in-house blinding,
+     * with no route out from any screen.
      *
      * <p>
-     * SCORED is deliberately not treated as closed. It is still on the scoring
-     * path, scores are distributed from it, and it feeds the rolling window that
-     * decides persistent failure, so reinterpreting the scheme underneath it would
-     * move live work. That makes this rule strict in practice: nothing in the
-     * product closes a cycle today, so a scheme that has run a V2 cycle keeps its
-     * type. The V1 backfill writes CLOSED directly, which is the case the rule
-     * exists to admit.
+     * SCORED is deliberately not treated as closed. The line between them is that a
+     * SCORED cycle is still workable and a CLOSED one is only readable: SCORED is
+     * on the scoring path and scores are distributed from it, while CLOSED has no
+     * outgoing edge on any of the three machines. Both are still read — the rolling
+     * window that decides persistent failure selects SCORED and CLOSED alike — so
+     * being unread is not the distinction and must not be argued as one. That makes
+     * this rule strict in practice: nothing in the product closes a cycle today, so
+     * a scheme that has run a V2 cycle keeps its type. The V1 backfill writes
+     * CLOSED directly, which is the case the rule exists to admit.
      *
      * <p>
      * The comparison reads the stored row rather than trusting the argument: both
