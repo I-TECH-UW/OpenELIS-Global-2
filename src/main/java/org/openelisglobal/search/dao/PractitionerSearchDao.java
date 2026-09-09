@@ -127,6 +127,15 @@ public class PractitionerSearchDao extends BaseFhirDao {
 
         addPredicate(context,
                 createStringPredicate(context, FhirConstants.LAST_NAME_SEARCH_HANDLER, params.getFamily()));
+        addPredicate(context, createStringPredicate(context, FhirConstants.CITY_SEARCH_HANDLER, params.getCity()));
+
+        addPredicate(context, createStringPredicate(context, FhirConstants.STATE_SEARCH_HANDLER, params.getState()));
+
+        addPredicate(context,
+                createStringPredicate(context, FhirConstants.POSTALCODE_SEARCH_HANDLER, params.getPostalCode()));
+
+        addPredicate(context,
+                createStringPredicate(context, FhirConstants.COUNTRY_SEARCH_HANDLER, params.getCountry()));
 
         /*
          * Searches every ContactPoint-related field.
