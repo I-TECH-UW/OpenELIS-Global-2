@@ -251,6 +251,14 @@ public class PractitionerProvider implements IResourceProvider {
 
             @OptionalParam(name = Practitioner.SP_FAMILY) StringAndListParam family,
 
+            @OptionalParam(name = Practitioner.SP_ADDRESS_CITY) StringAndListParam city,
+
+            @OptionalParam(name = Practitioner.SP_ADDRESS_STATE) StringAndListParam state,
+
+            @OptionalParam(name = Practitioner.SP_ADDRESS_POSTALCODE) StringAndListParam postalCode,
+
+            @OptionalParam(name = Practitioner.SP_ADDRESS_COUNTRY) StringAndListParam country,
+
             @OptionalParam(name = Practitioner.SP_TELECOM) TokenAndListParam telecom,
 
             @OptionalParam(name = Practitioner.SP_EMAIL) TokenAndListParam email,
@@ -271,8 +279,8 @@ public class PractitionerProvider implements IResourceProvider {
         LogEvent.logDebug(getClass().getSimpleName(), methodName, "Searching for Practitioners");
 
         try {
-            PractitionerSearchParams params = new PractitionerSearchParams(identifier, name, given, family, telecom,
-                    email, phone, id, lastUpdated, sort, revIncludes);
+            PractitionerSearchParams params = new PractitionerSearchParams(identifier, name, given, family, city, state,
+                    postalCode, country, telecom, email, phone, id, lastUpdated, sort, revIncludes);
 
             return FhirProviderUtils.withPaging(practitionerSearchService.searchPractitioners(params), offset, count);
 
