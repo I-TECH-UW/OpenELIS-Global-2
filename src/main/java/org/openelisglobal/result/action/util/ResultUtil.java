@@ -59,6 +59,7 @@ import org.openelisglobal.note.valueholder.Note;
 import org.openelisglobal.organization.service.OrganizationService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.referral.action.beanitems.ReferralItem;
+import org.openelisglobal.referral.service.ReferralSetService;
 import org.openelisglobal.referral.service.ReferralTypeService;
 import org.openelisglobal.referral.valueholder.Referral;
 import org.openelisglobal.referral.valueholder.ReferralResult;
@@ -434,13 +435,17 @@ public class ResultUtil {
         }
     }
 
-    @SuppressWarnings("deprecation")
     public static void handleReferrals(TestResultItem testResultItem, ReferralItem referralItem, List<Result> results,
             Analysis analysis, ResultsUpdateDataSet actionDataSet, HttpServletRequest request) {
         // List<Referral> referrals = new ArrayList<>();
         Referral referral = new Referral();
         referral.setFhirUuid(UUID.randomUUID());
-        referral.setStatus(ReferralStatus.SENT);
+        // Born DRAFT with its subcontract row, exactly as the Order Entry Refer Out
+        // does: REQUESTED is reached only by a dispatch, and every lifecycle
+        // transition reads the subcontract row (OGC-1188).
+        referral.setStatus(ReferralStatus.DRAFT);
+        referral.setSubcontract(SpringContext.getBean(ReferralSetService.class).buildSubcontractFromItem(referralItem,
+                actionDataSet.getCurrentUserId()));
         referral.setSysUserId(actionDataSet.getCurrentUserId());
         referral.setReferralTypeId(confirmationReferralTypeId());
         referral.setRequesterName(testResultItem.getTechnician());

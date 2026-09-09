@@ -375,5 +375,9 @@
   <!-- OGC-1030 (Validation v4 V4): site flag requiring a note when sending a result for retest. -->
   <include relativeToChangelogFile="true" file="088-validation-retest-note-flag.xml"/>
 
+  <!-- OGC-1188: referrals written by Results Entry with the deprecated SENT status
+       were invisible to the Reference Lab Results page and to shipment dispatch. -->
+  <include relativeToChangelogFile="true" file="089-referral-sent-status-backfill.xml"/>
+
 
 </databaseChangeLog>
