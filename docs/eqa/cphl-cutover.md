@@ -75,9 +75,10 @@ configuration directory, which the container sees at:
 ```
 
 On a Compose deployment that is the host path `./configuration/backend/eqa-programs/`,
-because `docker-compose.yml` mounts `./configuration` there. That directory is
-not in the repository — the deployment owns it, which is why this template
-travels with the checklist.
+because `docker-compose.yml` mounts `./configuration` there. The repository
+carries no such directory and no files under it, so it is created when the
+instance is deployed — which is why this template travels with the checklist
+rather than being read out of the repository.
 
 **Do not mistake the development copy for an installed one.** The repository also
 carries this registry at `volume/configuration/backend/eqa-programs/`, and
