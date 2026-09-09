@@ -302,7 +302,12 @@ class UserManagementPage {
   }
 
   checkUser(columnNum, value) {
-    cy.get(`td:nth-child(${columnNum})`).should("contain", value).click();
+    // Scope to the row holding the value rather than every row's nth cell.
+    // The list keeps the previous rows on screen while a filtered refetch is
+    // in flight, so `td:nth-child()` alone can still match the wider,
+    // pre-filter set — an assertion on that collection passes (one of them
+    // does contain the value) and the click then fails on 4 elements.
+    cy.contains("tr", value).find(`td:nth-child(${columnNum})`).click();
   }
 
   adminUser() {

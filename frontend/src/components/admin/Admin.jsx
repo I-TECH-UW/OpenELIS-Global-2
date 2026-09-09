@@ -22,8 +22,6 @@ import ProviderMenu from "./ProviderMenu/ProviderMenu";
 import DataExportStatus from "./DataExportStatus/DataExportStatus";
 import LabelPresetList from "./labelPresets/LabelPresetList";
 import { Redirect } from "react-router-dom";
-import AnalyzerTestName from "./analyzerTestName/AnalyzerTestName";
-import PluginList from "./pluginFile/PluginFile";
 import ResultReportingConfiguration from "./ResultReportingConfiguration/ResultReportingConfiguration";
 import TestCatalog from "./testManagement/ViewTestCatalog";
 import TestCatalogEditor from "./testCatalog/TestCatalogEditor";
@@ -113,7 +111,6 @@ function Admin() {
         component={TestCatalogEditor}
       />
       <Route path={`${path}/MethodManagement`} component={ManageMethod} />
-      <Route path={`${path}/AnalyzerTestName`} component={AnalyzerTestName} />
       <Route path={`${path}/labNumber`} component={LabNumberManagement} />
       <Route path={`${path}/labelPresets`} component={LabelPresetList} />
       <Route path={`${path}/program`} component={ProgramManagement} />
@@ -251,7 +248,7 @@ function Admin() {
       />
       <Route
         path={`${path}/NonConformityConfigurationMenu`}
-        component={() => (
+        render={() => (
           <ConfigMenuDisplay
             menuType="NonConformityConfigurationMenu"
             label="Non Conformity Configuration Menu"
@@ -261,7 +258,7 @@ function Admin() {
       />
       <Route
         path={`${path}/MenuStatementConfigMenu`}
-        component={() => (
+        render={() => (
           <ConfigMenuDisplay
             menuType="MenuStatementConfigMenu"
             label="Menu Statement Configuration Menu"
@@ -271,7 +268,7 @@ function Admin() {
       />
       <Route
         path={`${path}/ValidationConfigurationMenu`}
-        component={() => (
+        render={() => (
           <ConfigMenuDisplay
             menuType="ValidationConfigurationMenu"
             label="Validation Configuration Menu"
@@ -281,7 +278,7 @@ function Admin() {
       />
       <Route
         path={`${path}/SampleEntryConfigurationMenu`}
-        component={() => (
+        render={() => (
           <ConfigMenuDisplay
             menuType="SampleEntryConfigMenu"
             label="Sample Entry Configuration Menu"
@@ -291,7 +288,7 @@ function Admin() {
       />
       <Route
         path={`${path}/WorkPlanConfigurationMenu`}
-        component={() => (
+        render={() => (
           <ConfigMenuDisplay
             menuType="WorkplanConfigurationMenu"
             label="WorkPlan Configuration Menu"
@@ -301,7 +298,7 @@ function Admin() {
       />
       <Route
         path={`${path}/SiteInformationMenu`}
-        component={() => (
+        render={() => (
           <ConfigMenuDisplay
             menuType="SiteInformationMenu"
             label="Site Information Menu"
@@ -311,7 +308,7 @@ function Admin() {
       />
       <Route
         path={`${path}/ResultConfigurationMenu`}
-        component={() => (
+        render={() => (
           <ConfigMenuDisplay
             menuType="ResultConfigurationMenu"
             label="Result Configuration Menu"
@@ -321,7 +318,7 @@ function Admin() {
       />
       <Route
         path={`${path}/PatientConfigurationMenu`}
-        component={() => (
+        render={() => (
           <ConfigMenuDisplay
             menuType="PatientConfigurationMenu"
             label="Patient Configuration Menu"
@@ -331,7 +328,7 @@ function Admin() {
       />
       <Route
         path={`${path}/PrintedReportsConfigurationMenu`}
-        component={() => (
+        render={() => (
           <ConfigMenuDisplay
             menuType="PrintedReportsConfigurationMenu"
             label="PrintedReports Configuration Menu"
@@ -352,7 +349,6 @@ function Admin() {
         component={NotificationTriggerConfig}
       />
       <Route path={`${path}/DictionaryMenu`} component={DictionaryManagement} />
-      <Route path={`${path}/PluginFile`} component={PluginList} />
       <Route
         path={`${path}/SearchIndexManagement`}
         component={SearchIndexManagement}

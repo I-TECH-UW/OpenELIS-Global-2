@@ -356,7 +356,6 @@
   <include relativeToChangelogFile="true" file="082-reflex-target-sample-type.xml"/>
   <include relativeToChangelogFile="true" file="083-override-default-translation-config.xml"/>
   <include relativeToChangelogFile="true" file="084-panel-loinc-terminology-backfill.xml"/>
-
   <!-- Post-merge (demo-silnas sync): restore develop's "Add Generic Order" rename,
        de-collide the Reports presentation order, and repoint Results > Referred Out
        at the page that replaced the route this sync removed. Renumbered from 068 to
@@ -375,9 +374,28 @@
   <!-- OGC-1030 (Validation v4 V4): site flag requiring a note when sending a result for retest. -->
   <include relativeToChangelogFile="true" file="088-validation-retest-note-flag.xml"/>
 
+  <!-- Unified Results Entry worklist on by default (flips the flag seeded off by 059). -->
+  <include relativeToChangelogFile="true" file="089-results-unified-route-default-on.xml"/>
+  <include relativeToChangelogFile="true" file="090-patient-search-trigram-indexes.xml"/>
+  <include relativeToChangelogFile="true" file="091-backfill-fhir-uuids.xml"/>
+
+  <include relativeToChangelogFile="true" file="085-analyzer-profile-binding.xml"/>
+  <include relativeToChangelogFile="true" file="086-analyzer-site-binding.xml"/>
+  <include relativeToChangelogFile="true" file="088-remove-analyzer-qc-rule.xml"/>
+  <include relativeToChangelogFile="true" file="089-analyzer-site-binding-confirmation.xml"/>
+  <include relativeToChangelogFile="true" file="090-analyzer-verification-evidence.xml"/>
+  <include relativeToChangelogFile="true" file="091-analyzer-activation-record.xml"/>
+  <include relativeToChangelogFile="true" file="092-normalize-analyzer-deleted-status.xml"/>
+  <include relativeToChangelogFile="true" file="093-remove-superseded-analyzer-runtime.xml"/>
+  <include relativeToChangelogFile="true" file="094-remove-openelis-analyzer-connection-runtime.xml"/>
+  <include relativeToChangelogFile="true" file="095-allow-repeated-analyzer-site-binding-fingerprints.xml"/>
+  <include relativeToChangelogFile="true" file="096-analyzer-result-source-context.xml"/>
+  <include relativeToChangelogFile="true" file="097-remove-openelis-analyzer-error-queue.xml"/>
+  <include relativeToChangelogFile="true" file="098-remove-superseded-analyzer-schema.xml"/>
+
   <!-- OGC-1188: referrals written by Results Entry with the deprecated SENT status
        were invisible to the Reference Lab Results page and to shipment dispatch. -->
-  <include relativeToChangelogFile="true" file="089-referral-sent-status-backfill.xml"/>
+  <include relativeToChangelogFile="true" file="099-referral-sent-status-backfill.xml"/>
 
 
 </databaseChangeLog>
