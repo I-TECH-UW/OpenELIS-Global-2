@@ -24,10 +24,11 @@ const CORE_DEMO_TESTS = ["**/demo/core/**/*.spec.ts"];
 // Core foundational verification (ci-safe).
 const CORE_FOUNDATIONAL_TESTS = ["**/foundational/core/**/*.spec.ts"];
 
-// M1 owns the Analyzer Types story. Later mapping, setup, and result-traffic
-// stories run in their owning checkpoints.
+// M2 extends the M1 Analyzer Types story with the shared mapping workflow.
+// Guided setup and result traffic run in their owning checkpoints.
 const HARNESS_FOUNDATIONAL_TESTS = [
   "**/demo/harness/ogc-1054-m1-analyzer-types.spec.ts",
+  "**/demo/harness/ogc-1054-m2-shared-mapping.spec.ts",
 ];
 const HARNESS_DEMO_TESTS = [];
 
