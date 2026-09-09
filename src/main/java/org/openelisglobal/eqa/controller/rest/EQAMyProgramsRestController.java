@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 import org.openelisglobal.analyte.service.AnalyteService;
-import org.openelisglobal.common.util.ControllerUtills;
+import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.eqa.service.EQALabProgramEnrollmentService;
 import org.openelisglobal.eqa.valueholder.EQALabEnrollmentTestMap;
 import org.openelisglobal.eqa.valueholder.EQALabProgramEnrollment;
@@ -28,7 +28,7 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/rest/eqa/my-programs")
 @PreAuthorize(EQAGuards.READ)
-public class EQAMyProgramsRestController extends ControllerUtills {
+public class EQAMyProgramsRestController extends BaseRestController {
 
     @Autowired
     private EQALabProgramEnrollmentService enrollmentService;
@@ -105,7 +105,6 @@ public class EQAMyProgramsRestController extends ControllerUtills {
             updated.setProgramName(programName);
             updated.setProvider(provider);
             updated.setDescription((String) body.get("description"));
-            updated.setIsActive(body.get("isActive") != null ? (Boolean) body.get("isActive") : true);
             updated.setSysUserId(getSysUserId(request));
 
             List<Long> labUnitIds = toLongList(body.get("labUnitIds"));
@@ -120,6 +119,19 @@ public class EQAMyProgramsRestController extends ControllerUtills {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.notFound().build();
         } catch (Exception e) {
+            return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
+        }
+    }
+
+    @PutMapping(value = "/{id}/status", produces = MediaType.APPLICATION_JSON_VALUE)
+    @PreAuthorize(EQAGuards.PARTICIPANT)
+    public ResponseEntity<?> updateMyProgramStatus(HttpServletRequest request, @PathVariable Long id,
+            @RequestBody Map<String, Object> body) {
+        try {
+            EQALabProgramEnrollment updated = enrollmentService.updateStatus(id, stringField(body, "status"),
+                    stringField(body, "reason"), dateField(body, "effectiveDate"), getSysUserId(request));
+            return ResponseEntity.ok(toDto(updated));
+        } catch (IllegalArgumentException e) {
             return ResponseEntity.badRequest().body(Map.of("error", e.getMessage()));
         }
     }
@@ -165,6 +177,10 @@ public class EQAMyProgramsRestController extends ControllerUtills {
         dto.put("provider", enrollment.getProvider());
         dto.put("description", enrollment.getDescription());
         dto.put("isActive", enrollment.getIsActive());
+        dto.put("status", enrollment.getStatus());
+        dto.put("statusReason", enrollment.getStatusReason());
+        dto.put("statusEffectiveDate", enrollment.getStatusEffectiveDate());
+        dto.put("statusChangedDate", enrollment.getStatusChangedDate());
         dto.put("createdDate", enrollment.getCreatedDate());
         dto.put("lastModified", enrollment.getLastModified());
 
