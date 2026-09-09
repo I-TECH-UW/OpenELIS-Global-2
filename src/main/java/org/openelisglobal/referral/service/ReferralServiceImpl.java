@@ -87,7 +87,10 @@ public class ReferralServiceImpl extends AuditableBaseObjectServiceImpl<Referral
     @Override
     @Transactional(readOnly = true)
     public Referral getReferralByAnalysisId(String id) {
-        Referral referral = getMatch("analysis.id", id).orElse(null);
+        // Not getMatch: that returns nothing at all once an analysis has more than one
+        // referral, which is how a re-referred test silently loses its referral on
+        // Results Entry and stops being completed by the manual-entry hook.
+        Referral referral = getBaseObjectDAO().getReferralByAnalysisId(id);
         if (referral != null) {
             Hibernate.initialize(referral.getOrganization());
         }
