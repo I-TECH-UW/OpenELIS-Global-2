@@ -36,6 +36,25 @@ public interface EQACycleSubmissionService {
     boolean advanceCycle(Long cycleId);
 
     /**
+     * Submits a cycle a reviewer has just released, on a scheme that asks a human
+     * to look at each cycle before it goes. The send runs on the same path the
+     * unattended sweep uses, so the result rows carry the channel and timestamp of
+     * a real submission rather than only the cycle carrying a new state.
+     *
+     * <p>
+     * The sweep never revisits a SUBMITTED cycle, so a release that advanced the
+     * state without sending left nothing behind to recover it: the screen reported
+     * a submission the provider never received.
+     *
+     * @throws IllegalArgumentException when no such cycle exists
+     * @throws IllegalStateException    when the cycle is not ready to submit, the
+     *                                  laboratory has no automatic channel, no
+     *                                  validated result is waiting, or the provider
+     *                                  cannot be reached
+     */
+    EQACycle submitAfterReview(Long cycleId, String sysUserId);
+
+    /**
      * FR-V2.2-06 manual fallback: record that this lab submitted outside OpenELIS.
      * The provider's reference is mandatory — an unreferenced manual submission is
      * indistinguishable from a lab claiming it submitted.

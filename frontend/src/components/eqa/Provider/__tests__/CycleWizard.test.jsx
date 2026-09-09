@@ -204,7 +204,9 @@ describe("CycleWizard", () => {
     fireEvent.change(screen.getByLabelText("Sample code"), {
       target: { value: "PS-1" },
     });
-    fireEvent.change(screen.getByLabelText("Test"), { target: { value: "55" } });
+    fireEvent.change(screen.getByLabelText("Test"), {
+      target: { value: "55" },
+    });
     expect(screen.getByRole("button", { name: "Next" })).toBeEnabled();
 
     fireEvent.click(screen.getByRole("button", { name: "Add sample" }));
@@ -234,7 +236,9 @@ describe("CycleWizard", () => {
     fireEvent.change(screen.getByLabelText("Sample code"), {
       target: { value: "PS-1" },
     });
-    fireEvent.change(screen.getByLabelText("Test"), { target: { value: "55" } });
+    fireEvent.change(screen.getByLabelText("Test"), {
+      target: { value: "55" },
+    });
 
     fireEvent.change(screen.getByLabelText("Acceptance low"), {
       target: { value: "46.3" },

@@ -254,13 +254,15 @@ const MyCyclesPage = () => {
     t(`eqa.schemeType.${type}`, type.replace(/_/g, " "));
 
   const handleSubmit = (cycle) => {
-    submitCycle(cycle.id, (updated) => {
-      if (updated) {
-        // transition response is the bare cycle DTO — keep the row's
-        // progress/samples, take the new status
+    submitCycle(cycle.id, (result) => {
+      if (result.ok) {
+        // The response carries the cycle's new state and nothing else, so the
+        // row keeps its own progress and samples.
         setCycles((prev) =>
           prev.map((c) =>
-            c.id === updated.id ? { ...c, status: updated.status } : c,
+            c.id === cycle.id
+              ? { ...c, status: (result.status || "submitted").toLowerCase() }
+              : c,
           ),
         );
         setSubmitNotice({
@@ -271,12 +273,17 @@ const MyCyclesPage = () => {
           ),
         });
       } else {
+        // The server says why the cycle could not go — no automatic channel, or
+        // a provider that could not be reached — and that is more use than a
+        // generic failure, so it is shown as it stands.
         setSubmitNotice({
           kind: "error",
-          text: t(
-            "eqa.cycle.submitted.error",
-            "Submit failed — the cycle was not advanced. Check that all results are validated and try again.",
-          ),
+          text:
+            result.error ||
+            t(
+              "eqa.cycle.submitted.error",
+              "Submit failed — the cycle was not advanced. Check that all results are validated and try again.",
+            ),
         });
       }
     });

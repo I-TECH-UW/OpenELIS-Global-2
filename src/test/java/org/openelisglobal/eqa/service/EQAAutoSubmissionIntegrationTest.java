@@ -382,6 +382,111 @@ public class EQAAutoSubmissionIntegrationTest extends EQASpineTestBase {
         verify(fhirStub, never()).submitCycleViaFhir(anyLong(), anyLong());
     }
 
+    // ---- the reviewer's release on a review-gated scheme ----
+
+    /**
+     * The release used to move the cycle to SUBMITTED through the plain transition
+     * endpoint, which records the state change and nothing else: the result rows
+     * stayed VALIDATED_PARTIAL with no channel and nothing was posted, and the
+     * sweep never revisits a SUBMITTED cycle to recover it. So the screen reported
+     * a submission the provider never received.
+     */
+    @Test
+    public void reviewSubmit_postsTheResultsAndStampsEveryRow() {
+        EQACycle cycle = heldAtTheReviewGate(30);
+
+        EQACycle submitted = cycleSubmissionService.submitAfterReview(cycle.getId(), USER);
+
+        assertEquals(EQACycleStatus.SUBMITTED, submitted.getStatus());
+        verify(fhirStub).submitCycleViaFhir(cycle.getId(), ENROLLMENT);
+
+        Map<String, Object> row = participantResults(cycle.getId()).get(0);
+        assertEquals("SUBMITTED", row.get("submission_status"));
+        assertEquals("FHIR", row.get("submission_channel"));
+        assertTrue("a submitted result is stamped", row.get("submitted_at") != null);
+
+        Map<String, Object> release = lastTransition(cycle.getId());
+        assertEquals("MANUAL", release.get("trigger_type"));
+        assertEquals("MANUAL_OVERRIDE", release.get("trigger_event"));
+        assertEquals(1L, ((Number) release.get("triggered_by")).longValue());
+        assertEquals("Reviewed and submitted from My Cycles", release.get("reason"));
+    }
+
+    @Test
+    public void reviewSubmit_whenTheProviderCannotBeReached_recordsNoSubmission() {
+        EQACycle cycle = heldAtTheReviewGate(31);
+        when(fhirStub.submitCycleViaFhir(anyLong(), anyLong())).thenReturn(false);
+
+        IllegalStateException refused = assertThrows(IllegalStateException.class,
+                () -> cycleSubmissionService.submitAfterReview(cycle.getId(), USER));
+        assertTrue(refused.getMessage(), refused.getMessage().contains("could not be reached"));
+
+        assertEquals(EQACycleStatus.READY_TO_SUBMIT, readBack(cycle.getId()).getStatus());
+        assertUnsent(cycle.getId());
+        assertEquals("a hand-driven send spends none of the sweep's budget", 0, attempts(cycle.getId()));
+    }
+
+    @Test
+    public void reviewSubmit_withNoAutomaticChannel_postsNothingAndRecordsNothing() {
+        EQACycle cycle = heldAtTheReviewGate(32);
+        when(fhirConfig.getLocalFhirStorePath()).thenReturn("");
+
+        IllegalStateException refused = assertThrows(IllegalStateException.class,
+                () -> cycleSubmissionService.submitAfterReview(cycle.getId(), USER));
+        assertTrue(refused.getMessage(), refused.getMessage().contains("submit by hand"));
+
+        verify(fhirStub, never()).submitCycleViaFhir(anyLong(), anyLong());
+        assertEquals(EQACycleStatus.READY_TO_SUBMIT, readBack(cycle.getId()).getStatus());
+        assertUnsent(cycle.getId());
+    }
+
+    @Test
+    public void reviewSubmit_onACycleAlreadySubmitted_isRefused() {
+        EQACycle cycle = heldAtTheReviewGate(33);
+        cycleSubmissionService.submitAfterReview(cycle.getId(), USER);
+
+        IllegalStateException refused = assertThrows(IllegalStateException.class,
+                () -> cycleSubmissionService.submitAfterReview(cycle.getId(), USER));
+        assertTrue(refused.getMessage(), refused.getMessage().contains("ready to submit"));
+
+        verify(fhirStub).submitCycleViaFhir(cycle.getId(), ENROLLMENT);
+        assertEquals(EQACycleStatus.SUBMITTED, readBack(cycle.getId()).getStatus());
+    }
+
+    /**
+     * A cycle on a review-gated scheme, walked to READY_TO_SUBMIT by the sweep and
+     * left there by the gate — which is the state a reviewer finds it in. Walked
+     * rather than seeded, so no hand-chosen id can leave a sequence behind.
+     */
+    private EQACycle heldAtTheReviewGate(int cycleNumber) {
+        EQAProgram scheme = externalScheme(true);
+        EQACycle cycle = readBack(insertCycle(scheme, cycleNumber));
+        Long roundId = insertRound(cycle, 1, "OPEN");
+        eqaOrder(cycle, roundId);
+        finalizedAnalysis(VL_TEST, VL_ANALYTE, "4.75");
+        when(fhirStub.submitCycleViaFhir(anyLong(), anyLong())).thenReturn(true);
+        windowElapsed();
+
+        cycleSubmissionService.advanceCycle(cycle.getId());
+        assertEquals(EQACycleStatus.READY_TO_SUBMIT, readBack(cycle.getId()).getStatus());
+        assertEquals("VALIDATED_PARTIAL", participantResults(cycle.getId()).get(0).get("submission_status"));
+        return readBack(cycle.getId());
+    }
+
+    private void assertUnsent(Long cycleId) {
+        Map<String, Object> row = participantResults(cycleId).get(0);
+        assertEquals("VALIDATED_PARTIAL", row.get("submission_status"));
+        assertNull("an unsent result carries no channel", row.get("submission_channel"));
+        assertNull("an unsent result carries no timestamp", row.get("submitted_at"));
+    }
+
+    private Map<String, Object> lastTransition(Long cycleId) {
+        return jdbc.queryForMap(
+                "SELECT trigger_type, trigger_event, triggered_by, reason"
+                        + " FROM clinlims.eqa_cycle_state_transition WHERE cycle_id = ? ORDER BY id DESC LIMIT 1",
+                cycleId);
+    }
+
     @Test
     public void fiveFailures_stopRetryingAndRaiseExactlyOneAlert() {
         EQAProgram scheme = externalScheme(false);

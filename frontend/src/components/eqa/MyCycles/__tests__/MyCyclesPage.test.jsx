@@ -9,13 +9,11 @@ import MyCyclesPage from "../MyCyclesPage";
 import { MOCK_CYCLES } from "../mockCycles";
 import {
   getFromOpenElisServer,
-  patchToOpenElisServerJsonResponse,
   postToOpenElisServerFullResponse,
 } from "../../../utils/Utils";
 
 vi.mock("../../../utils/Utils", () => ({
   getFromOpenElisServer: vi.fn(),
-  patchToOpenElisServerJsonResponse: vi.fn(),
   postToOpenElisServerFullResponse: vi.fn(),
 }));
 
@@ -368,46 +366,60 @@ describe("MyCyclesPage", () => {
     expect(screen.getByTestId("cycle-row-1")).toBeInTheDocument();
   });
 
-  test("Review & submit PATCHes the transition endpoint and flips the row", () => {
-    patchToOpenElisServerJsonResponse.mockImplementation((url, payload, cb) =>
-      cb({ id: 2, status: "SUBMITTED" }),
+  // The plain cycle transition endpoint records the state change and nothing
+  // else, so releasing a cycle through it reported a submission the provider
+  // never received. The click goes to the endpoint that posts and stamps.
+  test("Review & submit posts the results and flips the row", async () => {
+    postToOpenElisServerFullResponse.mockImplementation((url, body, cb) =>
+      cb({
+        ok: true,
+        json: () =>
+          Promise.resolve({ cycleId: 2, status: "SUBMITTED", channel: "FHIR" }),
+      }),
     );
     renderPage();
     fireEvent.click(screen.getByTestId("cycle-row-2"));
     fireEvent.click(screen.getByText("Review & submit"));
 
-    expect(patchToOpenElisServerJsonResponse).toHaveBeenCalledWith(
-      "/rest/eqa/cycles/2/transition",
-      JSON.stringify({
-        newState: "SUBMITTED",
-        stateMachine: "PARTICIPANT",
-        reason: "Participant review & submit from My Cycles",
-      }),
-      expect.any(Function),
-    );
+    const [url, body] = postToOpenElisServerFullResponse.mock.calls[0];
+    expect(url).toBe("/rest/eqa/cycles/2/review-submit");
+    expect(JSON.parse(body)).toEqual({});
+    expect(
+      await screen.findByText("Cycle submitted to provider — awaiting scores."),
+    ).toBeInTheDocument();
     // leaves the Active bucket, awaiting KPI now counts it
     expect(screen.queryByTestId("cycle-row-2")).not.toBeInTheDocument();
     expect(
       within(screen.getByTestId("kpi-awaiting")).getByText("2"),
     ).toBeTruthy();
-    expect(
-      screen.getByText("Cycle submitted to provider — awaiting scores."),
-    ).toBeInTheDocument();
   });
 
-  test("failed submit (409/422) shows an error and leaves the row in place", () => {
-    patchToOpenElisServerJsonResponse.mockImplementation((url, payload, cb) =>
-      cb(undefined),
+  // A cycle that could not be sent must not read as sent, and the reason the
+  // server gives is more use than a generic failure.
+  test("a cycle that could not be sent keeps its row and shows why", async () => {
+    postToOpenElisServerFullResponse.mockImplementation((url, body, cb) =>
+      cb({
+        ok: false,
+        statusText: "Conflict",
+        json: () =>
+          Promise.resolve({
+            error:
+              "The provider could not be reached, so the cycle was not submitted",
+          }),
+      }),
     );
     renderPage();
     fireEvent.click(screen.getByTestId("cycle-row-2"));
     fireEvent.click(screen.getByText("Review & submit"));
 
-    expect(screen.getByTestId("cycle-row-2")).toBeInTheDocument();
     expect(
-      screen.getByText(
-        "Submit failed — the cycle was not advanced. Check that all results are validated and try again.",
+      await screen.findByText(
+        "The provider could not be reached, so the cycle was not submitted",
       ),
     ).toBeInTheDocument();
+    expect(screen.getByTestId("cycle-row-2")).toBeInTheDocument();
+    expect(
+      within(screen.getByTestId("kpi-awaiting")).getByText("1"),
+    ).toBeTruthy();
   });
 });
