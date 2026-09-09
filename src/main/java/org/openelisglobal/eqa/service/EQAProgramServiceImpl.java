@@ -1,11 +1,14 @@
 package org.openelisglobal.eqa.service;
 
 import java.util.List;
+import java.util.stream.Collectors;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.service.BaseObjectServiceImpl;
+import org.openelisglobal.eqa.dao.EQACycleDAO;
 import org.openelisglobal.eqa.dao.EQAProgramDAO;
 import org.openelisglobal.eqa.dao.EQAProgramTestDAO;
 import org.openelisglobal.eqa.dao.EQASchemeAnalystDAO;
+import org.openelisglobal.eqa.valueholder.EQACycleStatus;
 import org.openelisglobal.eqa.valueholder.EQAProgram;
 import org.openelisglobal.eqa.valueholder.EQAProgramTest;
 import org.openelisglobal.eqa.valueholder.EQASchemeAnalyst;
@@ -26,6 +29,9 @@ public class EQAProgramServiceImpl extends BaseObjectServiceImpl<EQAProgram, Lon
 
     @Autowired
     private EQASchemeAnalystDAO eqaSchemeAnalystDAO;
+
+    @Autowired
+    private EQACycleDAO eqaCycleDAO;
 
     public EQAProgramServiceImpl() {
         super(EQAProgram.class);
@@ -52,7 +58,65 @@ public class EQAProgramServiceImpl extends BaseObjectServiceImpl<EQAProgram, Lon
     @Override
     public EQAProgram update(EQAProgram program) {
         validateProviderRequired(program);
+        validateSchemeTypeNotChangedUnderLiveCycles(program);
         return super.update(program);
+    }
+
+    /**
+     * The scheme type decides whether a provider organization is required, which
+     * blinding lane the scheme travels and which cycle state machine applies, so
+     * changing it reinterprets everything already underneath it. This sits on
+     * update() rather than on the endpoint because the configuration loader writes
+     * the same field on its upsert branch, as the daemon user; a guard on one
+     * caller would only move the hole to the quieter one.
+     *
+     * <p>
+     * A closed cycle cannot be worked on again, which is what makes the rule "no
+     * live cycle" rather than "no cycle at all". A deployment upgraded from V1
+     * carries a backfilled CLOSED cycle for every completed legacy distribution,
+     * and those schemes all took the INTERNATIONAL_PT default; barring a type
+     * change outright would strand every one of them outside in-house blinding,
+     * with no route out from any screen.
+     *
+     * <p>
+     * SCORED is deliberately not treated as closed. The line between them is that a
+     * SCORED cycle is still workable and a CLOSED one is only readable: SCORED is
+     * on the scoring path and scores are distributed from it, while CLOSED has no
+     * outgoing edge on any of the three machines. Both are still read — the rolling
+     * window that decides persistent failure selects SCORED and CLOSED alike — so
+     * being unread is not the distinction and must not be argued as one. That makes
+     * this rule strict in practice: nothing in the product closes a cycle today, so
+     * a scheme that has run a V2 cycle keeps its type. The V1 backfill writes
+     * CLOSED directly, which is the case the rule exists to admit.
+     *
+     * <p>
+     * The comparison reads the stored row rather than trusting the argument: both
+     * callers mutate a detached scheme in place, so by the time update() sees it
+     * the previous type is gone from the object.
+     */
+    private void validateSchemeTypeNotChangedUnderLiveCycles(EQAProgram program) {
+        if (program.getId() == null) {
+            return;
+        }
+        EQASchemeType stored = eqaProgramDAO.get(program.getId()).map(EQAProgram::getSchemeType).orElse(null);
+        if (stored == null || stored == program.getSchemeType()) {
+            return;
+        }
+        // Named by number, not by name: cycle_name is nullable and the number is what
+        // the provider scheme list shows.
+        List<String> live = eqaCycleDAO.findBySchemeIds(List.of(program.getId())).stream()
+                .filter(cycle -> cycle.getStatus() != EQACycleStatus.CLOSED)
+                .map(cycle -> "cycle " + cycle.getCycleNumber()).collect(Collectors.toList());
+        if (!live.isEmpty()) {
+            // The message offers the new scheme and nothing else on purpose. Closing a
+            // cycle would also lift the bar, but nothing in the product asks for CLOSED
+            // — the edge is legal on all three machines and unreachable in practice — so
+            // telling an operator to close it first is advice nobody can take.
+            throw new LIMSRuntimeException("This scheme's type cannot change from " + stored + " to "
+                    + program.getSchemeType() + ": " + String.join(", ", live)
+                    + " has run under the current type and its results are still read against it."
+                    + " Create a new scheme of the type you need.");
+        }
     }
 
     private void validateProviderRequired(EQAProgram program) {
