@@ -35,7 +35,6 @@ import org.hibernate.StaleObjectStateException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.OperationOutcome;
-import org.hl7.fhir.r4.model.Practitioner;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
@@ -237,13 +236,13 @@ public class PatientProvider implements IResourceProvider {
             @OptionalParam(name = org.hl7.fhir.r4.model.Patient.SP_FAMILY) StringAndListParam family,
             @OptionalParam(name = org.hl7.fhir.r4.model.Patient.SP_BIRTHDATE) DateRangeParam birthdate,
             @OptionalParam(name = org.hl7.fhir.r4.model.Patient.SP_GENDER) TokenAndListParam gender,
-            @OptionalParam(name = Practitioner.SP_ADDRESS_CITY) StringAndListParam city,
+            @OptionalParam(name = "address-city") StringAndListParam city,
 
-            @OptionalParam(name = org.hl7.fhir.r4.model.Patient.SP_ADDRESS_STATE) StringAndListParam state,
+            @OptionalParam(name = "address-state") StringAndListParam state,
 
-            @OptionalParam(name = org.hl7.fhir.r4.model.Patient.SP_ADDRESS_POSTALCODE) StringAndListParam postalCode,
+            @OptionalParam(name = "address-postalcode") StringAndListParam postalCode,
 
-            @OptionalParam(name = org.hl7.fhir.r4.model.Patient.SP_ADDRESS_COUNTRY) StringAndListParam country,
+            @OptionalParam(name = "address-country") StringAndListParam country,
 
             @OptionalParam(name = org.hl7.fhir.r4.model.Patient.SP_TELECOM) TokenAndListParam telecom,
 
