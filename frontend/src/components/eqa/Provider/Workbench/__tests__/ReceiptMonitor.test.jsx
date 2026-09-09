@@ -296,6 +296,34 @@ describe("ReceiptMonitor", () => {
     );
   });
 
+  it("says which results the score left without a verdict", async () => {
+    // An analyte with no sealed target on a cycle below the peer floor reaches
+    // SCORED with performance_status NULL. The score still succeeds; the point is
+    // that the operator is told rather than left with a silent null.
+    postToOpenElisServerFullResponse.mockImplementation((_url, _body, cb) =>
+      cb(
+        jsonResponse(true, {
+          cycleStatus: "SCORED",
+          followupCount: 0,
+          unjudgedCount: 3,
+          unjudgedTests: ["Haemoglobin"],
+        }),
+      ),
+    );
+    const onNotice = vi.fn();
+    renderTab("SUBMISSIONS_OPEN", { onNotice });
+
+    await screen.findByText("Mbeya Regional Lab");
+    fireEvent.click(screen.getByRole("button", { name: "Score cycle" }));
+
+    await waitFor(() =>
+      expect(onNotice).toHaveBeenCalledWith({
+        kind: "success",
+        text: "Cycle scored, but 3 result(s) got no verdict, on Haemoglobin. Those analytes carry no sealed target and the cycle has too few peers to place them against.",
+      }),
+    );
+  });
+
   test("Enter results keys a participant's reported values and posts them per test", async () => {
     renderTab();
     getFromOpenElisServer.mockImplementation((url, cb) => {
