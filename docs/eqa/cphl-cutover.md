@@ -46,13 +46,13 @@ Open questions for CPHL:
 Each row maps one thing the Excel workbooks do today to the screen that replaces
 it. Verify each by doing it once on the seeded instance.
 
-| Excel artifact today                                            | OpenELIS replacement                                                                                                                 | FRS        | Verified |
-| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------ | ---------- | -------- |
-| Round planning sheet (which labs get which panel, when)         | Cycle wizard: cycle details, panel samples, participant roster, distribution method (**Provider Cycles → Create new cycle + panel**) | FR-V2.5-02 | ☐        |
-| Aliquot count arithmetic (needed vs produced, reserve)          | Prep workbench: aliquots produced vs needed gauge, homogeneity QC gate                                                               | FR-V2.5-12 | ☐        |
-| Dispatch register (courier, tracking number, date sent per lab) | Shipment workbench: per-participant box, courier details, mark shipped                                                               | FR-V2.5-13 | ☐        |
-| Receipt tracking (phone/email follow-up, arrival dates)         | Receipt monitor: delivery status, overdue rule, temperature-excursion flag                                                           | FR-V2.5-14 | ☐        |
-| Replacement sample notes (damaged/lost panels)                  | Reprovision action ("Send repeat"): reserve decrement, linked repeat shipment                                                        | FR-V2.5-15 | ☐        |
+| Excel artifact today                                            | OpenELIS replacement                                                                                                                                                                                                                       | FRS        | Verified |
+| --------------------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ | ---------- | -------- |
+| Round planning sheet (which labs get which panel, when)         | Cycle wizard: cycle details, panel samples, participant roster, distribution method (**Provider Cycles → Create new cycle + panel**)                                                                                                       | FR-V2.5-02 | ☐        |
+| Aliquot count arithmetic (needed vs produced, reserve)          | Prep workbench: aliquots produced vs needed gauge, homogeneity QC gate                                                                                                                                                                     | FR-V2.5-12 | ☐        |
+| Dispatch register (courier, tracking number, date sent per lab) | Shipment workbench: per-participant box, courier details, mark shipped                                                                                                                                                                     | FR-V2.5-13 | ☐        |
+| Receipt tracking (phone/email follow-up, arrival dates)         | Receipt monitor: delivery status, overdue rule, temperature-excursion flag                                                                                                                                                                 | FR-V2.5-14 | ☐        |
+| Replacement sample notes (damaged/lost panels)                  | Reprovision action ("Send repeat"): reserve decrement, linked repeat shipment                                                                                                                                                              | FR-V2.5-15 | ☐        |
 | Results collection workbook (per-lab result entry)              | Receipt monitor → **Enter results**: keyed per participant (numbers or words such as Reactive) or the participant's export-bundle CSV pasted in; results from a participant OpenELIS arrive through the provider's FHIR store on their own | FR-V2.5-03 | ☐        |
 
 ## 3. Access reporting → OpenELIS
@@ -74,15 +74,52 @@ configuration directory:
 /var/lib/openelis-global/configuration/backend/eqa-programs/cphl-eqa-programs.csv
 ```
 
-Restart the webapp, or call `POST /rest/configuration/domains/reload` to load it
-without a restart. The loader runs the file only when its checksum changes, and
-rows upsert by programme name: a new name inserts, an existing name updates the
-columns the file names — so correcting the CSV and reloading is the whole
-maintenance workflow. A `testSection` value missing from the instance's catalog
-leaves that programme's section blank instead of failing the file (assign it on
-**Schemes & Programs**).
+Restart the webapp, or call `POST /rest/configuration/domains/reload` as an
+administrator to load it without a restart. An empty body reloads every
+configuration domain; to reload only this one, post
+`{"domains": ["eqa-programs"]}`.
 
-Verify with:
+The loader runs the file only when its checksum changes, and rows upsert by
+programme name: a new name inserts, an existing name updates every column the
+file gives a value for. So correcting the CSV and reloading is the whole
+maintenance workflow. Three consequences worth knowing before cutover:
+
+- A **blank cell leaves the existing value alone** rather than clearing it, so
+  the file cannot be used to empty a field. Clear it on **Schemes & Programs**.
+- Re-posting an **unchanged** file does nothing, because its checksum still
+  matches. To re-apply one as it stands, post `{"force": true}` with it.
+- A value edited on **Schemes & Programs** is **overwritten the next time the
+  CSV changes**, if the file gives that column a value. Treat the CSV as the
+  source of truth for the columns it fills, and the screen as the place for
+  everything it does not.
+
+A `testSection` value missing from the instance's catalog leaves that
+programme's section blank instead of failing the file (assign it on **Schemes &
+Programs**). A row the server rejects is logged and skipped, and the rest of the
+file still loads.
+
+The reload answers with what it did to each file, which is the first thing to
+check:
+
+```json
+{
+  "files": [
+    {
+      "domain": "eqa-programs",
+      "fileName": "cphl-eqa-programs.csv",
+      "status": "SKIPPED",
+      "skippedReason": "checksum matches"
+    }
+  ]
+}
+```
+
+`SKIPPED` with `checksum matches` means the file is in the right place and
+already loaded — the expected answer on a second call. A first load reports the
+file as processed instead. An empty `files` list means the loader found nothing,
+which points at the path rather than at the file's contents.
+
+Then verify the rows:
 
 ```sql
 SELECT name, provider, scheme_type, frequency FROM clinlims.eqa_program
