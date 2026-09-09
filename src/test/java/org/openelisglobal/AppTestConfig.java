@@ -38,6 +38,7 @@ import org.openelisglobal.odoo.client.OdooConnection;
 import org.openelisglobal.odoo.config.TestProductMapping;
 import org.openelisglobal.organization.service.OrganizationTypeService;
 import org.openelisglobal.referral.fhir.service.FhirReferralService;
+import org.openelisglobal.reports.service.WHONetReportService;
 import org.openelisglobal.reports.service.WHONetReportServiceImpl;
 import org.openelisglobal.requester.service.RequesterTypeService;
 import org.openelisglobal.result.controller.AnalyzerResultsController;
@@ -174,6 +175,12 @@ public class AppTestConfig implements WebMvcConfigurer {
                                 "Unknown test analyzer profile revision: " + profileId + "@" + revision));
             }
         };
+    }
+
+    @Bean
+    @Profile("test")
+    public WHONetReportService whonetReportService() {
+        return mock(WHONetReportService.class);
     }
 
     @Bean

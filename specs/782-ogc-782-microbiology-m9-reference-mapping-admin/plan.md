@@ -60,7 +60,7 @@ for routes, navigation, fixtures, or tests.
 5. Vitest/RTL proves URL state, Carbon interactions, modal validation, and
    navigation/breadcrumb behavior.
 6. Playwright proves the complete authenticated admin journey locally and on the
-   deployed revision with no arbitrary waits.
+   exact deployed SHA with no arbitrary waits.
 
 ## Constitution Check
 

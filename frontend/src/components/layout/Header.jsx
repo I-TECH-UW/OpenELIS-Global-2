@@ -144,19 +144,6 @@ function OEHeader({
 
   const handleMenuItems = (tag, res) => {
     if (res) {
-      const findMenu = (items, elementId) => {
-        for (const item of items || []) {
-          if (item?.menu?.elementId === elementId) {
-            return item;
-          }
-          const childMatch = findMenu(item?.childMenus, elementId);
-          if (childMatch) {
-            return childMatch;
-          }
-        }
-        return null;
-      };
-      const billingMenuBeforeInit = findMenu(res, "menu_billing");
       // FIX: Initialize expanded property for all menu items
       const initializeExpanded = (items) => {
         return items.map((item) => ({
@@ -169,7 +156,6 @@ function OEHeader({
       };
 
       const initializedMenus = initializeExpanded(res);
-      const billingMenuAfterInit = findMenu(initializedMenus, "menu_billing");
 
       // IMPORTANT: use functional setState so we never drop other menu buckets due to stale closures
       setMenus((prev) => ({ ...prev, [tag]: initializedMenus }));
@@ -547,9 +533,6 @@ function OEHeader({
           })}
           defaultExpanded={carbonExpanded}
           isActive={carbonIsActive}
-          onToggle={() => {
-            setMenuItemExpanded(menuItem);
-          }}
           className={
             level === 0
               ? "top-level-menu-item"
@@ -612,54 +595,6 @@ function OEHeader({
         </span>
       </SideNavMenuItem>
     );
-  };
-
-  const setMenuItemExpanded = (menuItem) => {
-    // IMPORTANT: functional update avoids stale-state races that can scramble expansion state.
-    setMenus((prev) => {
-      const newMenus = { ...prev };
-      const targetId = menuItem?.menu?.elementId;
-
-      // IMPORTANT: toggle expansion by stable elementId, NOT by index-based JSONPath.
-      // Index-based paths can point at the wrong node if the menu shape changes.
-      const toggleById = (items) => {
-        return (items || []).map((it) => {
-          const id = it?.menu?.elementId;
-          if (!id) return it;
-          if (id === targetId) {
-            return { ...it, expanded: !it.expanded };
-          }
-          if (it.childMenus && it.childMenus.length > 0) {
-            return { ...it, childMenus: toggleById(it.childMenus) };
-          }
-          return it;
-        });
-      };
-
-      newMenus.menu = toggleById(newMenus.menu || []);
-
-      // Persist expanded state map for this context
-      try {
-        const expandedMap = {};
-        const captureExpanded = (items) => {
-          (items || []).forEach((it) => {
-            expandedMap[it.menu.elementId] = !!it.expanded;
-            if (it.childMenus) {
-              captureExpanded(it.childMenus);
-            }
-          });
-        };
-        captureExpanded(newMenus.menu || []);
-        localStorage.setItem(
-          `${storageKeyPrefix}ExpandedMap`,
-          JSON.stringify(expandedMap),
-        );
-      } catch {
-        // ignore
-      }
-
-      return newMenus;
-    });
   };
 
   return (

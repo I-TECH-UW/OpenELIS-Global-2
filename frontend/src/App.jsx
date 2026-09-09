@@ -95,6 +95,9 @@ const MicrobiologyPage = lazyWithRetry(
 const MicrobiologyWorklistPage = lazyWithRetry(
   () => import("./pages/MicrobiologyWorklistPage"),
 );
+const MicrobiologyWhonetPage = lazyWithRetry(
+  () => import("./pages/MicrobiologyWhonetPage"),
+);
 import {
   QCDashboard,
   ControlChartDetail,
@@ -119,6 +122,7 @@ import {
   parseMicrobiologyCaseSearch,
   parseMicrobiologyWorklistSearch,
 } from "./components/microbiology/MicrobiologyRoutes";
+import { MICROBIOLOGY_WHONET_PATH } from "./components/microbiology/WhonetRoutes";
 import config from "./config.json";
 import { SecureRoute } from "./components/security";
 import "./index.scss";
@@ -578,6 +582,16 @@ export default function App() {
                     </Suspense>
                   )}
                   role=""
+                />
+                <SecureRoute
+                  path={MICROBIOLOGY_WHONET_PATH}
+                  exact
+                  component={() => (
+                    <Suspense fallback={null}>
+                      <MicrobiologyWhonetPage />
+                    </Suspense>
+                  )}
+                  role={[Roles.GLOBAL_ADMIN, Roles.RESULTS, Roles.REPORTS]}
                 />
                 <Route
                   path="/MicrobiologyCaseView/:caseId"
