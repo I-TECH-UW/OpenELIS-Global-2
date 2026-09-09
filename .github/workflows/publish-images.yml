@@ -302,6 +302,7 @@ jobs:
     uses: DIGI-UW/openelis-docker/.github/workflows/deploy-testing.yml@main
     with:
       image_manifest: ${{ needs.deployment-manifest.outputs.manifest }}
+      enable_review: ${{ vars.TESTING_REVIEW_ENABLED == 'true' }}
     secrets: inherit
 
   deployment-summary:
