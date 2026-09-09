@@ -175,6 +175,50 @@ public class ResultsEntryReferOutLifecycleTest extends BaseWebContextSensitiveTe
         assertFalse("and it is not a manual entry either", Boolean.TRUE.equals(referral.getManuallyEntered()));
     }
 
+    /**
+     * A rival referral on the same test would carry its own subcontract row and its
+     * own FHIR Task, and nothing downstream could say which one the reference lab
+     * is working on.
+     */
+    @Test
+    public void aSecondReferOutIsRefusedWhileTheFirstReferralIsStillOpen() {
+        saveReferOut(today());
+
+        ResultsUpdateDataSet second = attemptReferOut(today());
+
+        assertTrue("no second referral is raised while one is open", second.getSavableReferralSets().isEmpty());
+        assertEquals("the test still carries exactly one referral", 1, referralCountForAnalysis());
+    }
+
+    /** Cancelling releases the test: the bench can refer it somewhere else. */
+    @Test
+    public void referOutIsAllowedAgainOnceTheOpenReferralIsCancelled() {
+        Referral first = saveReferOut(today());
+        jdbcTemplate.update("UPDATE clinlims.referral SET status = ? WHERE id = CAST(? AS numeric)",
+                ReferralStatus.CANCELLED.name(), first.getId());
+
+        ResultsUpdateDataSet second = attemptReferOut(today());
+
+        assertFalse("a cancelled referral no longer blocks a fresh one", second.getSavableReferralSets().isEmpty());
+    }
+
+    /** The writer without the precondition assertions, so a refusal can be read. */
+    private ResultsUpdateDataSet attemptReferOut(String sendDate) {
+        Analysis analysis = analysisService.get(ANALYSIS_ID);
+        ResultsUpdateDataSet dataSet = new ResultsUpdateDataSet(ACTOR);
+        TestResultItem item = referredTestResultItem(sendDate);
+        ResultUtil.handleReferrals(item, item.getReferralItem(), resultsFor(analysis), analysis, dataSet,
+                requestWithLoggedInUser());
+        return dataSet;
+    }
+
+    private int referralCountForAnalysis() {
+        Integer count = jdbcTemplate.queryForObject(
+                "SELECT COUNT(*) FROM clinlims.referral WHERE analysis_id = CAST(? AS numeric)", Integer.class,
+                ANALYSIS_ID);
+        return count == null ? 0 : count;
+    }
+
     /** The Refer Out row posts the date in the locale format the parser expects. */
     private String today() {
         return new java.text.SimpleDateFormat(org.openelisglobal.common.util.DateUtil.getDateFormat())

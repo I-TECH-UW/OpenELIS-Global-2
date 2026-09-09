@@ -600,6 +600,14 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
     private void handleReferrals(TestResultItem testResultItem, ReferralItem referralItem, List<Result> results,
             Analysis analysis, ResultsUpdateDataSet actionDataSet) {
+        // See ResultUtil.hasOpenReferral: a test carrying a live referral is not
+        // referred a second time.
+        if (ResultUtil.hasOpenReferral(analysis)) {
+            LogEvent.logWarn(this.getClass().getSimpleName(), "handleReferrals",
+                    "refused a second referral on analysis " + analysis.getId()
+                            + ": one is still open. Cancel it before referring the test again.");
+            return;
+        }
         // List<Referral> referrals = new ArrayList<>();
         Referral referral = new Referral();
         referral.setFhirUuid(UUID.randomUUID());
