@@ -24,13 +24,13 @@ const CORE_DEMO_TESTS = ["**/demo/core/**/*.spec.ts"];
 // Core foundational verification (ci-safe).
 const CORE_FOUNDATIONAL_TESTS = ["**/foundational/core/**/*.spec.ts"];
 
-// M2 extends the M1 Analyzer Types story with the shared mapping workflow.
-// Guided setup and result traffic run in their owning checkpoints.
+// M3 adds guided setup after the M1 Analyzer Types and M2 shared mapping
+// workflows. Result traffic runs only in M4.
 const HARNESS_FOUNDATIONAL_TESTS = [
   "**/demo/harness/ogc-1054-m1-analyzer-types.spec.ts",
   "**/demo/harness/ogc-1054-m2-shared-mapping.spec.ts",
 ];
-const HARNESS_DEMO_TESTS = [];
+const HARNESS_DEMO_TESTS = ["**/demo/harness/ogc-1054-m3-guided-setup.spec.ts"];
 
 // Manual-only harness coverage (real hardware or operator-managed infra).
 const HARNESS_MANUAL_ONLY_TESTS = [

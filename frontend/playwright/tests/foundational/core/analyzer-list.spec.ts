@@ -33,6 +33,6 @@ test.describe("Analyzer List Page", () => {
 
   test("table renders with column headers", async () => {
     const headers = list.table.locator("thead th");
-    await expect(headers).toHaveCount(7);
+    await expect(headers).toHaveCount(6);
   });
 });

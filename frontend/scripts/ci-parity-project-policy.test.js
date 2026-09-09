@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { readFileSync } from "node:fs";
 import path from "node:path";
 import { fileURLToPath } from "node:url";
 import { describe, expect, test } from "vitest";
@@ -12,6 +13,7 @@ const policy = path.join(
   repoRoot,
   "projects/analyzer-harness/playwright-project-policy.sh",
 );
+const harnessBuild = path.join(repoRoot, "projects/analyzer-harness/build.sh");
 
 const runPolicy = (command) =>
   execFileSync("bash", ["-c", `source "$1"; ${command}`, "test", policy], {
@@ -36,5 +38,12 @@ describe("analyzer harness Playwright project policy", () => {
     expect(
       runPolicy('validate_harness_playwright_project "harness-foundational"'),
     ).toBe("harness-foundational");
+  });
+  test("local build includes every branch-owned harness service", () => {
+    const buildScript = readFileSync(harnessBuild, "utf8");
+
+    expect(buildScript).toContain(
+      "build oe.openelis.org frontend.openelis.org openelis-analyzer-bridge astm-simulator",
+    );
   });
 });

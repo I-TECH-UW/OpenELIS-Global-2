@@ -4,6 +4,7 @@ import ca.uhn.fhir.rest.param.TokenAndListParam;
 import ca.uhn.fhir.rest.param.TokenParam;
 import jakarta.persistence.criteria.CriteriaBuilder;
 import jakarta.persistence.criteria.Expression;
+import jakarta.persistence.criteria.JoinType;
 import jakarta.persistence.criteria.Predicate;
 import jakarta.persistence.criteria.Root;
 import java.util.ArrayList;
@@ -23,19 +24,18 @@ import org.springframework.transaction.annotation.Transactional;
 
 /**
  * Searches OpenELIS Analyzer records with FHIR Device search parameters.
- * Identifier systems mirror the transform: {@code analyzer_uuid},
- * {@code analyzer_machineId} and {@code analyzer_sourceId}; status codes are
- * the inverse of the outbound analyzer-status mapping.
+ * Identifier systems mirror the transform: {@code analyzer_uuid} and
+ * {@code analyzer_bridge_connection}; status codes are the inverse of the
+ * outbound analyzer-status mapping.
  */
 @Repository
 @Transactional(readOnly = true)
 public class DeviceSearchDao extends BaseFhirDao {
 
     private static final String NAME_PROPERTY = "name";
-    private static final String TYPE_PROPERTY = "type";
+    private static final String TYPE_PROPERTY = "siteBindingRevision.siteBinding.profileBinding.profileId";
     private static final String STATUS_PROPERTY = "status";
-    private static final String MACHINE_ID_PROPERTY = "machineId";
-    private static final String SOURCE_ID_PROPERTY = "discoveredSourceId";
+    private static final String BRIDGE_CONNECTION_ID_PROPERTY = "bridgeConnectionId";
 
     public DeviceSearchDao(FhirPropertyResolver propertyResolver) {
         super(propertyResolver);
@@ -50,6 +50,8 @@ public class DeviceSearchDao extends BaseFhirDao {
             throw new IllegalArgumentException("Page size must be greater than zero");
         }
         FhirCriteriaContext<Analyzer, Analyzer> context = createCriteriaContext(Analyzer.class);
+        context.getRoot().fetch("siteBindingRevision", JoinType.LEFT).fetch("siteBinding", JoinType.LEFT)
+                .fetch("profileBinding", JoinType.LEFT);
         if (params != null) {
             addSearchPredicates(context, params);
         }
@@ -96,9 +98,9 @@ public class DeviceSearchDao extends BaseFhirDao {
     }
 
     /**
-     * FHIR device status back to analyzer statuses: active covers setup,
-     * validation, active and offline analyzers; inactive covers inactive and
-     * deleted; entered-in-error is error-pending; unknown is pending registration.
+     * FHIR device status back to analyzer statuses: active covers setup, validation
+     * and active analyzers; inactive covers inactive; entered-in-error is
+     * error-pending; unknown is offline.
      */
     private <R> Optional<Predicate> createStatusPredicate(FhirCriteriaContext<Analyzer, R> context,
             TokenAndListParam status) {
@@ -113,11 +115,10 @@ public class DeviceSearchDao extends BaseFhirDao {
             String code = token.getValue() == null ? "" : token.getValue().trim().toLowerCase(Locale.ROOT);
             return switch (code) {
             case "active" ->
-                Optional.of(criteriaBuilder.or(criteriaBuilder.isNull(expression), expression.in(AnalyzerStatus.SETUP,
-                        AnalyzerStatus.VALIDATION, AnalyzerStatus.ACTIVE, AnalyzerStatus.OFFLINE)));
-            case "inactive" -> Optional.of(expression.in(AnalyzerStatus.INACTIVE, AnalyzerStatus.DELETED));
+                Optional.of(expression.in(AnalyzerStatus.SETUP, AnalyzerStatus.VALIDATION, AnalyzerStatus.ACTIVE));
+            case "inactive" -> Optional.of(criteriaBuilder.equal(expression, AnalyzerStatus.INACTIVE));
             case "entered-in-error" -> Optional.of(criteriaBuilder.equal(expression, AnalyzerStatus.ERROR_PENDING));
-            case "unknown" -> Optional.of(criteriaBuilder.equal(expression, AnalyzerStatus.PENDING_REGISTRATION));
+            case "unknown" -> Optional.of(criteriaBuilder.equal(expression, AnalyzerStatus.OFFLINE));
             default -> Optional.of(criteriaBuilder.disjunction());
             };
         });
@@ -148,17 +149,13 @@ public class DeviceSearchDao extends BaseFhirDao {
         switch (systemKey) {
         case "":
             uuidPredicate(criteriaBuilder, root, value).ifPresent(alternatives::add);
-            alternatives.add(criteriaBuilder.equal(root.get(MACHINE_ID_PROPERTY), value));
-            alternatives.add(criteriaBuilder.equal(root.get(SOURCE_ID_PROPERTY), value));
+            alternatives.add(criteriaBuilder.equal(root.get(BRIDGE_CONNECTION_ID_PROPERTY), value));
             break;
         case "analyzer_uuid":
             uuidPredicate(criteriaBuilder, root, value).ifPresent(alternatives::add);
             break;
-        case "analyzer_machineId":
-            alternatives.add(criteriaBuilder.equal(root.get(MACHINE_ID_PROPERTY), value));
-            break;
-        case "analyzer_sourceId":
-            alternatives.add(criteriaBuilder.equal(root.get(SOURCE_ID_PROPERTY), value));
+        case "analyzer_bridge_connection":
+            alternatives.add(criteriaBuilder.equal(root.get(BRIDGE_CONNECTION_ID_PROPERTY), value));
             break;
         default:
             break;

@@ -73,7 +73,18 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
 
         assertEquals("Device", jsonResponse.get("resourceType").asText());
         assertEquals(COBAS_UUID, jsonResponse.get("id").asText());
-        assertEquals("COBAS6800-001", jsonResponse.get("serialNumber").asText());
+        assertFalse(jsonResponse.has("serialNumber"));
+        assertEquals("bridge-cobas-6800", identifierValue(jsonResponse, "/analyzer_bridge_connection"));
+    }
+
+    @Test
+    public void readsDoNotChangeAnalyzerLastUpdated() throws Exception {
+        String before = String.valueOf(analyzerByUuid(COBAS_UUID).getLastupdated());
+
+        assertEquals(200, serve(buildFhirRequest("GET", "/Device")).getStatus());
+        assertEquals(200, serve(buildFhirRequest("GET", "/Device/" + COBAS_UUID)).getStatus());
+
+        assertEquals(before, String.valueOf(analyzerByUuid(COBAS_UUID).getLastupdated()));
     }
 
     @Test
@@ -118,23 +129,19 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
 
     @Test
     public void createDevice_shouldPersistAnalyzerAndReturnSuccess() throws Exception {
-        cleanRowsInCurrentConnection(new String[] { "analyzer", "analyzer_test_map" });
+        cleanRowsInCurrentConnection(new String[] { "analyzer" });
 
         String deviceJson = """
                 {
                   "resourceType": "Device",
                   "identifier": [{
-                    "system": "test/system",
-                    "value": "NEW-DEVICE-001"
+                    "system": "http://openelis.org/fhir/analyzer_bridge_connection",
+                    "value": "bridge-new-device-001"
                   }],
-                  "serialNumber": "NEW-DEVICE-001",
                   "deviceName": [{
                     "name": "Test Device",
                     "type": "user-friendly-name"
-                  }],
-                  "type": {
-                    "text": "Cobas 6800 Type"
-                  }
+                  }]
                 }
                 """;
 
@@ -148,6 +155,7 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
         assertNotNull(jsonResponse.get("id"));
         Analyzer analyzer = analyzerService.getAll().getFirst();
         assertEquals("Test Device", analyzer.getName());
+        assertEquals("bridge-new-device-001", analyzer.getBridgeConnectionId());
     }
 
     @Test
@@ -179,47 +187,20 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void createDevice_withUnknownCommunicationMode_shouldReturn422() throws Exception {
-
-        String deviceJson = """
-                {
-                  "resourceType": "Device",
-                  "extension": [{
-                    "url": "http://openelis.org/fhir/StructureDefinition/analyzer-communication-mode",
-                    "valueCodeableConcept": {
-                      "coding": [{
-                        "system": "http://openelis.org/fhir/CodeSystem/analyzer-communication-mode",
-                        "code": "CARRIER_PIGEON"
-                      }]
-                    }
-                  }],
-                  "deviceName": [{
-                    "name": "Bad Mode Device",
-                    "type": "user-friendly-name"
-                  }]
-                }
-                """;
-
-        MockHttpServletResponse response = serve(post(deviceJson));
-
-        assertEquals(422, response.getStatus());
-    }
-
-    @Test
     public void updateDevice_shouldModifyAnalyzer() throws Exception {
 
         String updateJson = """
                 {
                   "resourceType": "Device",
                   "id": "%s",
-                  "serialNumber": "UPDATED-SERIAL-123",
+                  "identifier": [{
+                    "system": "http://openelis.org/fhir/analyzer_bridge_connection",
+                    "value": "bridge-updated-123"
+                  }],
                   "deviceName": [{
                     "name": "Updated Device",
                     "type": "user-friendly-name"
-                  }],
-                  "type": {
-                    "text": "MOLECULAR"
-                  }
+                  }]
                 }
                 """.formatted(COBAS_UUID);
 
@@ -229,7 +210,7 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
 
         Analyzer analyzer = analyzerByUuid(COBAS_UUID);
         assertEquals("Updated Device", analyzer.getName());
-        assertEquals("UPDATED-SERIAL-123", analyzer.getMachineId());
+        assertEquals("bridge-updated-123", analyzer.getBridgeConnectionId());
     }
 
     /**
@@ -301,6 +282,15 @@ public class DeviceFacadeTest extends BaseWebContextSensitiveTest {
 
         assertEquals(404, response.getStatus());
         assertEquals("update of an unknown id must not create an analyzer", before, analyzerService.getAll().size());
+    }
+
+    private String identifierValue(JsonNode resource, String systemSuffix) {
+        for (JsonNode identifier : resource.path("identifier")) {
+            if (identifier.path("system").asText().endsWith(systemSuffix)) {
+                return identifier.path("value").asText();
+            }
+        }
+        return null;
     }
 
     private Analyzer analyzerByUuid(String uuid) {
