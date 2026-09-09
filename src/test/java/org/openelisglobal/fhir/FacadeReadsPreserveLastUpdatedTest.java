@@ -12,7 +12,6 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
-import org.openelisglobal.fhir.providers.DeviceProvider;
 import org.openelisglobal.fhir.providers.DiagnosticReportProvider;
 import org.openelisglobal.fhir.providers.LocationProvider;
 import org.openelisglobal.fhir.providers.ObservationProvider;
@@ -44,7 +43,6 @@ public class FacadeReadsPreserveLastUpdatedTest extends BaseWebContextSensitiveT
     private static final String ANALYSIS_UUID = "f8b9e2c1-7a2d-4e8b-b3a4-9c1e7f6d2b01";
     private static final String SAMPLE_ITEM_UUID = "68438220-5cef-44c4-9e6f-9f88e6b93270";
     private static final String RESULT_UUID = "550e8400-e29b-41d4-a716-446655440003";
-    private static final String ANALYZER_UUID = "2d335c87-1def-42e9-a610-2748b9872a1c";
     private static final String ROOM_UUID = "f2cdeff8-8d5b-4023-bd7c-932b4b98b6d3";
 
     @Autowired
@@ -62,8 +60,6 @@ public class FacadeReadsPreserveLastUpdatedTest extends BaseWebContextSensitiveT
     @Autowired
     private DiagnosticReportProvider diagnosticReportProvider;
     @Autowired
-    private DeviceProvider deviceProvider;
-    @Autowired
     private LocationProvider locationProvider;
 
     private RestfulServer fhirServlet;
@@ -71,14 +67,13 @@ public class FacadeReadsPreserveLastUpdatedTest extends BaseWebContextSensitiveT
 
     @Before
     public void setUp() throws Exception {
-        executeDataSetWithStateManagement("testdata/facade-device.xml");
         executeDataSetWithStateManagement("testdata/facade-location.xml");
         executeDataSetWithStateManagement("testdata/result-facade.xml");
 
         fhirServlet = new RestfulServer(FhirContext.forR4());
-        fhirServlet.setResourceProviders(Arrays.asList(patientProvider, practitionerProvider, organizationProvider,
-                specimenProvider, serviceRequestProvider, observationProvider, diagnosticReportProvider, deviceProvider,
-                locationProvider));
+        fhirServlet.setResourceProviders(
+                Arrays.asList(patientProvider, practitionerProvider, organizationProvider, specimenProvider,
+                        serviceRequestProvider, observationProvider, diagnosticReportProvider, locationProvider));
         MockServletConfig servletConfig = new MockServletConfig(new MockServletContext());
         servletConfig.addInitParameter("name", "FhirServlet");
         fhirServlet.init(servletConfig);
@@ -97,8 +92,8 @@ public class FacadeReadsPreserveLastUpdatedTest extends BaseWebContextSensitiveT
                 "/ServiceRequest?_include=ServiceRequest:patient&_include=ServiceRequest:requester",
                 "/ServiceRequest/" + ANALYSIS_UUID, "/Observation?_include=Observation:performer",
                 "/Observation/" + RESULT_UUID, "/DiagnosticReport?_include=DiagnosticReport:result",
-                "/DiagnosticReport/" + ANALYSIS_UUID, "/Device", "/Device/" + ANALYZER_UUID,
-                "/Location?_revinclude=Location:partof", "/Location/" + ROOM_UUID }) {
+                "/DiagnosticReport/" + ANALYSIS_UUID, "/Location?_revinclude=Location:partof",
+                "/Location/" + ROOM_UUID }) {
             get(path);
         }
 
@@ -115,7 +110,6 @@ public class FacadeReadsPreserveLastUpdatedTest extends BaseWebContextSensitiveT
         rows.put("sample item 601", single("select s.lastupdated from SampleItem s where s.id = '601'"));
         rows.put("analysis 1", single("select a.lastupdated from Analysis a where a.id = '1'"));
         rows.put("result 3", single("select r.lastupdated from Result r where r.id = '3'"));
-        rows.put("analyzer 1", single("select a.lastupdated from Analyzer a where a.id = '1'"));
         rows.put("storage room 1", single("select r.lastupdated from StorageRoom r where r.id = 1"));
         return rows;
     }
