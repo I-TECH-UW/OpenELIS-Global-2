@@ -25,6 +25,7 @@ import OrderEntryAdditionalQuestions from "./OrderEntryAdditionalQuestions";
 import OrderSuccessMessage from "./OrderSuccessMessage";
 import EQASampleEntry from "../eqa/EQASampleEntry";
 import EQAOrderForm, { eqaReceiptNoteMissing } from "../eqa/EQAOrderForm";
+import EQAEnrollmentCoverageNotice from "../eqa/EQAEnrollmentCoverageNotice";
 import { FormattedMessage, useIntl } from "react-intl";
 import { createOrderEntryValidationSchema } from "../formModel/validationSchema/OrderEntryValidationSchema";
 import config from "../../config.json";
@@ -914,11 +915,21 @@ const Index = () => {
                 />
               ))}
             {page === samplePageNumber && (
-              <AddSample
-                error={elementError}
-                setSamples={setSamples}
-                samples={samples}
-              />
+              <>
+                {orderFormValues?.sampleOrderItems?.isEQASample && (
+                  <EQAEnrollmentCoverageNotice
+                    enrollmentId={
+                      orderFormValues?.sampleOrderItems?.eqaProgramId
+                    }
+                    samples={samples}
+                  />
+                )}
+                <AddSample
+                  error={elementError}
+                  setSamples={setSamples}
+                  samples={samples}
+                />
+              </>
             )}
             {page === orderPageNumber && (
               <AddOrder

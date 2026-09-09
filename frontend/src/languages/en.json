@@ -8624,5 +8624,7 @@
   "eqa.performance.empty": "No laboratory is enrolled in this scheme yet.",
   "eqa.performance.loadFailed": "Could not load participant performance",
   "eqa.myPrograms.group.active": "Active enrolments ({count})",
-  "eqa.myPrograms.group.inactive": "Inactive enrolments ({count})"
+  "eqa.myPrograms.group.inactive": "Inactive enrolments ({count})",
+  "eqa.order.coverage.title": "Outside this laboratory's enrolment",
+  "eqa.order.coverage.subtitle": "The enrolment for this programme does not cover: {tests}. You can still save the order."
 }
