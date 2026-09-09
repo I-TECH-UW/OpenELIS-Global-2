@@ -16,7 +16,7 @@ import {
   Pagination,
   Search,
 } from "@carbon/react";
-import { postToOpenElisServerJsonResponse } from "../../utils/Utils";
+import { postToOpenElisServer } from "../../utils/Utils";
 import {
   useInvalidateServerData,
   useServerData,
@@ -61,24 +61,27 @@ function ExternalConnectionMenu() {
 
   function deactivateConnection(event) {
     event.preventDefault();
-    postToOpenElisServerJsonResponse(
+    postToOpenElisServer(
       `/rest/DeactivateExternalConnection?ID=${selectedRowIds.join(",")}`,
       JSON.stringify({ selectedIDs: selectedRowIds }),
-      () => {
-        deactivateCallback();
-      },
+      deactivateCallback,
     );
   }
 
-  const deactivateCallback = () => {
+  const deactivateCallback = (status) => {
+    const succeeded = status >= 200 && status < 300;
     setNotificationVisible(true);
     addNotification({
       title: intl.formatMessage({ id: "notification.title" }),
       message: intl.formatMessage({
-        id: "externalconnections.deactivate.success",
+        id: succeeded
+          ? "externalconnections.deactivate.success"
+          : "server.error.msg",
       }),
-      kind: NotificationKinds.success,
+      kind: succeeded ? NotificationKinds.success : NotificationKinds.error,
     });
+    if (!succeeded) return;
+    setSelectedRowIds([]);
     invalidateServerData();
   };
 

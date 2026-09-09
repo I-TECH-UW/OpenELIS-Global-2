@@ -7,10 +7,7 @@ import { MemoryRouter } from "react-router-dom";
 import { QueryClientProvider } from "@tanstack/react-query";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import messages from "../../../languages/en.json";
-import {
-  getFromOpenElisServer,
-  postToOpenElisServerJsonResponse,
-} from "../../utils/Utils";
+import { getFromOpenElisServer, postToOpenElisServer } from "../../utils/Utils";
 import { createQueryClient } from "../../utils/queryClient";
 import { NotificationContext } from "../../layout/Layout";
 import ExternalConnectionMenu from "../externalConnections/ExternalConnectionMenu";
@@ -32,7 +29,7 @@ vi.mock("../../utils/Utils", async () => {
           ),
         ),
     ),
-    postToOpenElisServerJsonResponse: vi.fn(),
+    postToOpenElisServer: vi.fn(),
   };
 });
 
@@ -83,6 +80,7 @@ const SCREENS = [
 describe.each(SCREENS)("$name", ({ Screen, browse, search, rows }) => {
   let reload;
   let onServer;
+  let addNotification;
 
   const renderScreen = () =>
     render(
@@ -93,7 +91,7 @@ describe.each(SCREENS)("$name", ({ Screen, browse, search, rows }) => {
               value={{
                 notificationVisible: false,
                 setNotificationVisible: vi.fn(),
-                addNotification: vi.fn(),
+                addNotification,
               }}
             >
               <Screen />
@@ -111,7 +109,8 @@ describe.each(SCREENS)("$name", ({ Screen, browse, search, rows }) => {
         ? callback(onServer)
         : callback(undefined),
     );
-    postToOpenElisServerJsonResponse.mockReset();
+    postToOpenElisServer.mockReset();
+    addNotification = vi.fn();
     reload = vi.fn();
     Object.defineProperty(window, "location", {
       configurable: true,
@@ -137,12 +136,10 @@ describe.each(SCREENS)("$name", ({ Screen, browse, search, rows }) => {
       expect(screen.getByText("Kepler Lab")).toBeInTheDocument(),
     );
 
-    postToOpenElisServerJsonResponse.mockImplementation(
-      (url, payload, callback) => {
-        onServer = rows(["Brahe Lab"]);
-        callback(true);
-      },
-    );
+    postToOpenElisServer.mockImplementation((url, payload, callback) => {
+      onServer = rows(["Brahe Lab"]);
+      callback(200);
+    });
 
     fireEvent.click(screen.getAllByLabelText("selectRows")[0]);
     await userEvent.click(screen.getByRole("button", { name: "Deactivate" }));
@@ -150,7 +147,29 @@ describe.each(SCREENS)("$name", ({ Screen, browse, search, rows }) => {
     await waitFor(() =>
       expect(screen.getByText("Brahe Lab")).toBeInTheDocument(),
     );
+    expect(screen.getByRole("button", { name: "Modify" })).toBeDisabled();
+    expect(screen.getByRole("button", { name: "Deactivate" })).toBeDisabled();
     // Deactivating used to reload the document, throwing away the whole app.
     expect(reload).not.toHaveBeenCalled();
+  });
+
+  it("keeps the selection and current rows when deactivation fails", async () => {
+    renderScreen();
+    await screen.findByText("Kepler Lab");
+    const readsBefore = getFromOpenElisServer.mock.calls.length;
+    postToOpenElisServer.mockImplementation((url, payload, callback) =>
+      callback(500),
+    );
+
+    fireEvent.click(screen.getAllByLabelText("selectRows")[0]);
+    await userEvent.click(screen.getByRole("button", { name: "Deactivate" }));
+
+    expect(screen.getByRole("button", { name: "Modify" })).toBeEnabled();
+    expect(screen.getByRole("button", { name: "Deactivate" })).toBeEnabled();
+    expect(screen.getByText("Kepler Lab")).toBeInTheDocument();
+    expect(getFromOpenElisServer).toHaveBeenCalledTimes(readsBefore);
+    expect(addNotification).toHaveBeenCalledWith(
+      expect.objectContaining({ kind: "error" }),
+    );
   });
 });

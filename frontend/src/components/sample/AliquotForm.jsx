@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import { FormattedMessage, injectIntl, useIntl } from "react-intl";
 import "../Style.css";
 import { getFromOpenElisServer, postToOpenElisServer } from "../utils/Utils";
@@ -43,11 +43,17 @@ const NO_SAMPLE = { sampleItems: [], accessionNumber: "" };
 
 function AliquotPage() {
   const [sampleForm, setSampleForm] = useState(NO_SAMPLE);
+  const [searchResetVersion, setSearchResetVersion] = useState(0);
   const [searchBy, setSearchBy] = useState({ type: "", doRange: false });
   const [param, setParam] = useState("&accessionNumber=");
 
   const setSampleData = (sampleData) => {
     setSampleForm(sampleData);
+  };
+
+  const completeAliquotSave = () => {
+    setSampleForm(NO_SAMPLE);
+    setSearchResetVersion((version) => version + 1);
   };
 
   return (
@@ -56,12 +62,14 @@ function AliquotPage() {
         setParam={setParam}
         setSearchBy={setSearchBy}
         setSampleData={setSampleData}
+        resetVersion={searchResetVersion}
       />
       <SampleItemsDisplay
         sampleData={sampleForm}
         searchBy={searchBy}
         extraParams={param}
         setSampleData={setSampleData}
+        onSaveSuccess={completeAliquotSave}
       />
     </>
   );
@@ -74,6 +82,7 @@ export function SearchSampleForm(props) {
   const [searchFormValues, setSearchFormValues] = useState({
     accessionNumber: "",
   });
+  const previousResetVersion = useRef(props.resetVersion);
   const intl = useIntl();
 
   const querySearch = (values) => {
@@ -133,11 +142,18 @@ export function SearchSampleForm(props) {
     }
   }, []);
 
+  useEffect(() => {
+    if (previousResetVersion.current === props.resetVersion) return;
+    previousResetVersion.current = props.resetVersion;
+    setSearchFormValues({ accessionNumber: "" });
+  }, [props.resetVersion]);
+
   return (
     <>
       {notificationVisible === true ? <AlertDialog /> : ""}
       {loading && <Loading></Loading>}
       <Formik
+        key={props.resetVersion}
         initialValues={searchFormValues}
         onSubmit={handleSubmit}
         enableReinitialize={true}
@@ -552,7 +568,7 @@ export function SampleItemsDisplay(props) {
         message: intl.formatMessage({ id: "aliquot.save.success" }),
         kind: NotificationKinds.success,
       });
-      props.setSampleData(NO_SAMPLE);
+      props.onSaveSuccess();
       setExpandedRows({});
       setSelectedAliquotValues({});
     } else {

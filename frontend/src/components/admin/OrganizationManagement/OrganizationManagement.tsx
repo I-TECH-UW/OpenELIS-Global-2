@@ -17,7 +17,7 @@ import {
   Pagination,
   Search,
 } from "@carbon/react";
-import { postToOpenElisServerJsonResponse } from "../../utils/Utils";
+import { postToOpenElisServer } from "../../utils/Utils";
 import {
   useInvalidateServerData,
   useServerData,
@@ -120,12 +120,10 @@ function OrganizationManagement() {
     event: FormEvent<HTMLFormElement>,
   ) {
     event.preventDefault();
-    postToOpenElisServerJsonResponse(
+    postToOpenElisServer(
       `/rest/DeleteOrganization?ID=${selectedRowIds.join(",")}&startingRecNo=1`,
       JSON.stringify(selectedRowIdsPost),
-      () => {
-        deleteDeactivateOrganizationManagamentCallback();
-      },
+      deleteDeactivateOrganizationManagamentCallback,
     );
   }
 
@@ -150,17 +148,22 @@ function OrganizationManagement() {
     setSelectedRowIds([]);
   };
 
-  const deleteDeactivateOrganizationManagamentCallback = () => {
+  const deleteDeactivateOrganizationManagamentCallback = (status: number) => {
+    const succeeded = status >= 200 && status < 300;
     setNotificationVisible(true);
     addNotification({
       title: intl.formatMessage({
         id: "notification.title",
       }),
       message: intl.formatMessage({
-        id: "notification.organization.post.delete.success",
+        id: succeeded
+          ? "notification.organization.post.delete.success"
+          : "server.error.msg",
       }),
-      kind: NotificationKinds.success,
+      kind: succeeded ? NotificationKinds.success : NotificationKinds.error,
     });
+    if (!succeeded) return;
+    setSelectedRowIds([]);
     invalidateServerData();
   };
 
