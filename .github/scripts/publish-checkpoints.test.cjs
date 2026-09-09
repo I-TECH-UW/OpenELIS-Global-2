@@ -1,5 +1,6 @@
 const test = require("node:test");
 const assert = require("node:assert/strict");
+const fs = require("node:fs");
 const wait = require("./publish-checkpoints.cjs");
 const sha = "a".repeat(40);
 const backend = (conclusion, id = 1, head_sha = sha) => ({
@@ -72,4 +73,8 @@ test("missing, pending, and skipped backend checks cannot authorize publication"
 test("failed or missing E2E checks cannot authorize publication", async () => {
   await assert.rejects(run([backend("success")], "failure"), /E2E.*failure/);
   await assert.rejects(run([backend("success")], null), /Timed out/);
+});
+test("release publication produces the backend checkpoint required by the gate", () => {
+  const workflow = fs.readFileSync(".github/workflows/backend.yml", "utf8");
+  assert.match(workflow, /\n  release:\n    types: \[published\]\n/);
 });
