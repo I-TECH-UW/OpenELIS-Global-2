@@ -2,7 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import { AlertDialog } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
 import { injectIntl, useIntl } from "react-intl";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 import { StudyReports, STUDY_REPORT_LABELS } from "./study/index";
 import { RoutineReports, ROUTINE_REPORT_LABELS } from "./routine/Index";
@@ -11,6 +11,7 @@ import { Loading } from "@carbon/react";
 const ReportIndex = () => {
   const intl = useIntl();
   const location = useLocation();
+  const history = useHistory();
   const { setNotificationVisible, addNotification, notificationVisible } =
     useContext(NotificationContext);
 
@@ -28,7 +29,7 @@ const ReportIndex = () => {
     if (paramType && paramReport) {
       setIsLoading(false);
     } else {
-      window.location.href = "/";
+      history.replace("/");
     }
   }, [location.search]);
 

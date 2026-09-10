@@ -9,7 +9,7 @@ The analyzer harness CI gate runs from the repository root using:
 - `projects/analyzer-harness/docker-compose.base.yml`
 - `build.docker-compose.yml`
 - `.github/ci/ci.analyzer-harness.yml`
-- `.github/workflows/e2e-playwright-analyzer-harness-reusable.yml`
+- `.github/workflows/e2e-playwright-reusable.yml`
 
 Use `ci-parity-test.sh` for exact local reproduction of that CI path.
 
@@ -163,7 +163,6 @@ Login (local-dev defaults only):
 This harness uses a local `./volume/` directory for:
 
 - `./volume/analyzer-imports` → mounted at `/data/analyzer-imports`
-- `./volume/plugins` → mounted at `/var/lib/openelis-global/plugins`
 - logs under `./volume/logs/*`
 
 ## Notes

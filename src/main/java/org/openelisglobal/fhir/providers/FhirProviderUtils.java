@@ -1,6 +1,7 @@
 package org.openelisglobal.fhir.providers;
 
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.server.IBundleProvider;
 import ca.uhn.fhir.rest.param.DateRangeParam;
 import ca.uhn.fhir.rest.param.ReferenceAndListParam;
 import ca.uhn.fhir.rest.param.StringAndListParam;
@@ -24,6 +25,7 @@ import org.hl7.fhir.r4.model.Resource;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ControllerUtills;
 import org.openelisglobal.dataexchange.fhir.service.FhirPersistanceService;
+import org.openelisglobal.fhir.search.bundleProviders.PagedBundleProvider;
 
 public final class FhirProviderUtils {
 
@@ -90,6 +92,25 @@ public final class FhirProviderUtils {
 
     public static String safeMessage(Exception e) {
         return (e == null || e.getMessage() == null) ? "No error message available" : e.getMessage();
+    }
+
+    /**
+     * Tells a search result which page it is serving.
+     *
+     * <p>
+     * Applied to every search so that the {@code next} link HAPI advertises
+     * actually returns the next page. Results that do not page are left alone.
+     *
+     * @param result the bundle provider about to be returned to HAPI
+     * @param offset zero-based {@code _offset}, null when the client sent none
+     * @param count  {@code _count}, null when the client sent none
+     * @return the same result, for use as a return expression
+     */
+    public static IBundleProvider withPaging(IBundleProvider result, Integer offset, Integer count) {
+        if (result instanceof PagedBundleProvider provider) {
+            provider.setCurrentPage(offset, count);
+        }
+        return result;
     }
 
     public static void validateIdParam(IdType theId, String resourceType, String callerClassName, String method) {
@@ -352,8 +373,11 @@ public final class FhirProviderUtils {
                         .collect(java.util.stream.Collectors.joining("; "));
                 break;
             }
-            if (current instanceof java.sql.SQLException || current.getCause() == null
-                    || current.getCause() == current) {
+            if (current instanceof java.sql.SQLException sqlException) {
+                reason = describeSqlError(sqlException);
+                break;
+            }
+            if (current.getCause() == null || current.getCause() == current) {
                 reason = current.getMessage();
                 break;
             }
@@ -363,5 +387,41 @@ public final class FhirProviderUtils {
             reason = e.getClass().getSimpleName();
         }
         return new UnprocessableEntityException(resourceType + " could not be stored: " + reason.trim());
+    }
+
+    /**
+     * Reduces a JDBC failure to the database's own complaint.
+     *
+     * <p>
+     * A batched insert reports itself as {@code BatchUpdateException}, whose
+     * message is the entire generated statement with every bound value inlined and
+     * the real cause appended at the end. Returning that verbatim gave callers a
+     * diagnostics string thousands of characters long that buried the one sentence
+     * explaining what was wrong, so the driver's chained exception is preferred and
+     * the statement text dropped.
+     */
+    private static String describeSqlError(java.sql.SQLException e) {
+        java.sql.SQLException deepest = e;
+        java.sql.SQLException next = e.getNextException();
+        while (next != null && next != deepest) {
+            deepest = next;
+            next = next.getNextException();
+        }
+        String message = deepest.getMessage();
+        if (message == null || message.isBlank()) {
+            message = e.getMessage();
+        }
+        if (message == null) {
+            return null;
+        }
+        int aborted = message.lastIndexOf("was aborted: ");
+        if (aborted >= 0) {
+            message = message.substring(aborted + "was aborted: ".length());
+        }
+        int callNext = message.indexOf("Call getNextException");
+        if (callNext >= 0) {
+            message = message.substring(0, callNext);
+        }
+        return message.trim();
     }
 }

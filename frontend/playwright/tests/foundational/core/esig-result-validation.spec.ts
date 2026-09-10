@@ -232,18 +232,20 @@ test("E-Signature — full result entry and validation flow", async ({
     // In password-only mode, just enter password
     await modal.locator('input[type="password"]').fill(password);
 
-    // A successful release reloads the validation page; wait for that
-    // navigation so the cleanup step's own navigation cannot collide with it.
-    const queueReloaded = page.waitForEvent("framenavigated", {
-      predicate: (frame) =>
-        frame === page.mainFrame() && frame.url().includes("/validation"),
-      timeout: LONG_TIMEOUT,
-    });
+    // A successful release rereads the queue in place. Sync on that read so
+    // the cleanup step's navigation cannot collide with it, then assert on
+    // what the page shows.
+    const queueReread = page.waitForResponse(
+      (response) =>
+        response.url().includes("/rest/AccessionValidation") &&
+        response.request().method() === "GET",
+      { timeout: LONG_TIMEOUT },
+    );
     await modal.getByRole("button", { name: /sign/i }).click();
 
     await expect(modal).toBeHidden({ timeout: LONG_TIMEOUT });
-    await queueReloaded;
-    await page.waitForLoadState("domcontentloaded");
+    await queueReread;
+    await expect(page).toHaveURL(/\/validation/);
   });
 
   // ── Cleanup: Restore original e-sig setting ───────────────────

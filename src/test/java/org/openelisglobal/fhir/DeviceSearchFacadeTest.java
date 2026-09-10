@@ -57,19 +57,19 @@ public class DeviceSearchFacadeTest extends BaseWebContextSensitiveTest {
     public void search_byIdAndIdentifiers() throws Exception {
         assertEquals(3, search().get("total").asInt());
         assertEquals(List.of(ABL800_UUID), idsOf(search("_id", ABL800_UUID)));
-        assertEquals(List.of(COBAS_UUID), idsOf(search("identifier", "COBAS6800-001")));
-        assertEquals(List.of(SYSMEX_UUID),
-                idsOf(search("identifier", "http://openelis-global.org/analyzer_machineId|SYSMEX-XN1000-45")));
+        assertEquals(List.of(COBAS_UUID), idsOf(search("identifier", "bridge-cobas-6800")));
+        assertEquals(List.of(SYSMEX_UUID), idsOf(
+                search("identifier", "http://openelis-global.org/analyzer_bridge_connection|bridge-sysmex-xn1000")));
         assertEquals(List.of(ABL800_UUID),
                 idsOf(search("identifier", "http://openelis-global.org/analyzer_uuid|" + ABL800_UUID)));
-        assertEquals(0, search("identifier", "http://example.org/other|COBAS6800-001").get("total").asInt());
+        assertEquals(0, search("identifier", "http://example.org/other|bridge-cobas-6800").get("total").asInt());
     }
 
     @Test
     public void search_byNameTypeAndStatus() throws Exception {
         assertEquals(List.of(COBAS_UUID), idsOf(search("device-name", "cobas")));
-        assertEquals(List.of(ABL800_UUID), idsOf(search("type", "CHEMISTRY")));
-        assertEquals(0, search("type", "SEROLOGY").get("total").asInt());
+        assertEquals(List.of(ABL800_UUID), idsOf(search("type", "fixture.abl800")));
+        assertEquals(0, search("type", "fixture.unknown").get("total").asInt());
 
         new JdbcTemplate(dataSource).update("UPDATE clinlims.analyzer SET status = 'INACTIVE' WHERE id = 3");
         assertEquals(List.of(SYSMEX_UUID), idsOf(search("status", "inactive")));
@@ -81,7 +81,7 @@ public class DeviceSearchFacadeTest extends BaseWebContextSensitiveTest {
     public void search_returnsTransformedDevices() throws Exception {
         JsonNode resource = search("_id", COBAS_UUID).get("entry").get(0).get("resource");
         assertEquals("Device", resource.get("resourceType").asText());
-        assertEquals("COBAS6800-001", resource.get("serialNumber").asText());
+        assertEquals("bridge-cobas-6800", resource.get("identifier").get(1).get("value").asText());
         assertTrue(resource.get("deviceName").size() >= 1);
     }
 

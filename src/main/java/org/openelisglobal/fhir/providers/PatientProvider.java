@@ -1,10 +1,12 @@
 package org.openelisglobal.fhir.providers;
 
 import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.IncludeParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -235,6 +237,7 @@ public class PatientProvider implements IResourceProvider {
             @OptionalParam(name = org.hl7.fhir.r4.model.Patient.SP_BIRTHDATE) DateRangeParam birthdate,
             @OptionalParam(name = org.hl7.fhir.r4.model.Patient.SP_GENDER) TokenAndListParam gender,
             @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
+            @Offset Integer offset, @Count Integer count,
             @IncludeParam(reverse = true, allow = { FhirConstants.SERVICE_REQUEST_PATIENT_REV_INCLUDE,
                     FhirConstants.SERVICE_REQUEST_SUBJECT_REV_INCLUDE, FhirConstants.SPECIMEN_PATIENT_REV_INCLUDE,
                     FhirConstants.SPECIMEN_SUBJECT_REV_INCLUDE, FhirConstants.OBSERVATION_PATIENT_REV_INCLUDE,
@@ -248,7 +251,7 @@ public class PatientProvider implements IResourceProvider {
         try {
             PatientSearchParams params = new PatientSearchParams(id, identifier, name, given, family, birthdate, gender,
                     lastUpdated, sort, revIncludes);
-            return patientSearchService.searchPatients(params);
+            return FhirProviderUtils.withPaging(patientSearchService.searchPatients(params), offset, count);
         } catch (InvalidRequestException e) {
             throw e;
         } catch (IllegalArgumentException e) {

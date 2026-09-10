@@ -1,10 +1,12 @@
 package org.openelisglobal.fhir.providers;
 
 import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.IncludeParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -387,6 +389,7 @@ public class ObservationProvider implements IResourceProvider {
             @OptionalParam(name = Observation.SP_STATUS) TokenAndListParam status,
             @OptionalParam(name = Observation.SP_DATE) DateRangeParam date,
             @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
+            @Offset Integer offset, @Count Integer count,
             @IncludeParam(allow = { FhirConstants.OBSERVATION_PATIENT_INCLUDE,
                     FhirConstants.OBSERVATION_SUBJECT_INCLUDE, FhirConstants.OBSERVATION_BASED_ON_INCLUDE,
                     FhirConstants.OBSERVATION_SPECIMEN_INCLUDE,
@@ -402,7 +405,7 @@ public class ObservationProvider implements IResourceProvider {
             ObservationSearchParams params = new ObservationSearchParams(id, identifier,
                     FhirProviderUtils.merge(patient, subject), basedOn, specimen, code, status, date, lastUpdated, sort,
                     includes, revIncludes);
-            return observationSearchService.searchObservations(params);
+            return FhirProviderUtils.withPaging(observationSearchService.searchObservations(params), offset, count);
         } catch (InvalidRequestException e) {
             throw e;
         } catch (IllegalArgumentException e) {

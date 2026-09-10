@@ -1,8 +1,10 @@
 package org.openelisglobal.fhir.providers;
 
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
@@ -192,7 +194,9 @@ public class DeviceProvider implements IResourceProvider {
                 throw new InternalErrorException("Analyzer update failed");
             }
 
-            Device updatedDevice = fhirTransformService.transformAnalyzerToDevice(updated);
+            Analyzer updatedWithBinding = analyzerService.getWithBinding(updated.getId())
+                    .orElseThrow(() -> new InternalErrorException("Updated Analyzer not found"));
+            Device updatedDevice = fhirTransformService.transformAnalyzerToDevice(updatedWithBinding);
 
             if (updatedDevice == null) {
                 throw new InternalErrorException("FHIR Device transformation failed");
@@ -236,7 +240,9 @@ public class DeviceProvider implements IResourceProvider {
                 throw new InternalErrorException("Failed deleting Device");
             }
 
-            Device deleted = fhirTransformService.transformAnalyzerToDevice(saved);
+            Analyzer savedWithBinding = analyzerService.getWithBinding(saved.getId())
+                    .orElseThrow(() -> new InternalErrorException("Deactivated Analyzer not found"));
+            Device deleted = fhirTransformService.transformAnalyzerToDevice(savedWithBinding);
 
             if (deleted != null) {
                 FhirProviderUtils.syncToFhirStore(fhirPersistanceService, deleted, getClass().getSimpleName(), method);
@@ -262,7 +268,7 @@ public class DeviceProvider implements IResourceProvider {
             @OptionalParam(name = Device.SP_TYPE) TokenAndListParam type,
             @OptionalParam(name = Device.SP_STATUS) TokenAndListParam status,
             @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
-            HttpServletRequest request) {
+            @Offset Integer offset, @Count Integer count, HttpServletRequest request) {
 
         String method = "searchDevices";
         LogEvent.logDebug(getClass().getSimpleName(), method, "Searching for Devices");
@@ -270,7 +276,7 @@ public class DeviceProvider implements IResourceProvider {
         try {
             DeviceSearchParams params = new DeviceSearchParams(id, identifier, deviceName, type, status, lastUpdated,
                     sort);
-            return deviceSearchService.searchDevices(params);
+            return FhirProviderUtils.withPaging(deviceSearchService.searchDevices(params), offset, count);
         } catch (InvalidRequestException e) {
             throw e;
         } catch (IllegalArgumentException e) {
@@ -310,7 +316,8 @@ public class DeviceProvider implements IResourceProvider {
             throw new InternalErrorException("Multiple Analyzer records exist for Device UUID");
         }
 
-        return analyzers.get(0);
+        return analyzerService.getWithBinding(analyzers.get(0).getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Device/" + theId.getIdPart()));
     }
 
 }

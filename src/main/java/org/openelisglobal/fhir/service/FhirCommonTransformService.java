@@ -2,6 +2,7 @@ package org.openelisglobal.fhir.service;
 
 import java.text.ParseException;
 import java.util.List;
+import org.hl7.fhir.r4.model.Address;
 import org.hl7.fhir.r4.model.Annotation;
 import org.hl7.fhir.r4.model.ContactPoint;
 import org.hl7.fhir.r4.model.DateType;
@@ -45,4 +46,10 @@ public interface FhirCommonTransformService {
     void addHumanNameToPerson(HumanName humanName, Person person);
 
     void addTelecomToPerson(List<ContactPoint> telecoms, Person person);
+
+    /** Copies a FHIR address onto the person's address columns. */
+    void addAddressToPerson(Address address, Person person);
+
+    /** Renders the person's address columns as a FHIR address. */
+    Address transformToAddress(Person person);
 }
