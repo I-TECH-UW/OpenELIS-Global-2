@@ -3,6 +3,7 @@ const assert = require("node:assert/strict");
 const fs = require("node:fs");
 const wait = require("./publish-checkpoints.cjs");
 const sha = "a".repeat(40);
+const buildContext = "03 Checkpoint - E2E / build-123-2";
 const backend = (conclusion, id = 1, head_sha = sha) => ({
   name: "01 Checkpoint - Backend",
   id,
@@ -11,12 +12,14 @@ const backend = (conclusion, id = 1, head_sha = sha) => ({
   conclusion,
 });
 
-async function run(checks, state = "success") {
+async function run(checks, state = "success", context = buildContext) {
   let clock = 0;
   return wait({
     owner: "test",
     repo: "test",
     sha,
+    buildRunId: 123,
+    buildRunAttempt: 2,
     core: { info() {} },
     github: {
       rest: {
@@ -24,7 +27,7 @@ async function run(checks, state = "success") {
           async listCommitStatusesForRef(request) {
             assert.equal(request.ref, sha);
             return {
-              data: state ? [{ context: "03 Checkpoint - E2E", state }] : [],
+              data: state ? [{ context, state }] : [],
             };
           },
         },
@@ -73,6 +76,25 @@ test("missing, pending, and skipped backend checks cannot authorize publication"
 test("failed or missing E2E checks cannot authorize publication", async () => {
   await assert.rejects(run([backend("success")], "failure"), /E2E.*failure/);
   await assert.rejects(run([backend("success")], null), /Timed out/);
+});
+test("another build or attempt cannot authorize publishing rebuilt images", async () => {
+  for (const context of [
+    "03 Checkpoint - E2E",
+    "03 Checkpoint - E2E / build-122-2",
+    "03 Checkpoint - E2E / build-123-1",
+  ]) {
+    await assert.rejects(
+      run([backend("success")], "success", context),
+      /Timed out/,
+    );
+    await assert.rejects(
+      run([backend("success")], "failure", context),
+      /Timed out/,
+    );
+  }
+});
+test("a missing source build identity fails closed", async () => {
+  await assert.rejects(wait({ sha }), /requires the source build/);
 });
 test("release publication produces the backend checkpoint required by the gate", () => {
   const workflow = fs.readFileSync(".github/workflows/backend.yml", "utf8");
