@@ -8090,7 +8090,7 @@
   "eqa.prep.gate.clear": "All prep requirements met",
   "eqa.prep.noPanel.title": "No panel prepared",
   "eqa.prep.noPanel.body": "Create the cycle's panel and its samples before recording prep progress.",
-  "eqa.prep.needExplained": "{samples} samples x {participants} participants + {reserved} reserved = {needed} aliquots needed; {shipped} shipped so far.",
+  "eqa.prep.needExplained": "{samples, plural, one {# sample} other {# samples}} x {participants, plural, one {# participant} other {# participants}} + {reserved} held in reserve = {needed, plural, one {# aliquot} other {# aliquots}} needed; {shipped, plural, one {# aliquot} other {# aliquots}} dispatched so far.",
   "eqa.prep.produced": "Aliquots produced",
   "eqa.prep.reserved": "Aliquots reserved",
   "eqa.prep.shortfall": "{n} short",
@@ -8100,7 +8100,6 @@
   "eqa.prep.saved": "Prep record updated.",
   "eqa.prep.saveFailed": "Prep record was not saved.",
   "eqa.prep.readyToShip": "Mark cycle ready to ship",
-  "eqa.prep.readyToShip.blocked": "Prep is incomplete, or the cycle is not in prep.",
   "eqa.prep.readyToShip.success": "Cycle cleared to ship — record courier details on the Shipments tab.",
   "eqa.prep.readyToShip.refused": "The cycle was not cleared to ship. Resolve the outstanding prep items and try again.",
   "eqa.shipment.tab": "Shipments",
@@ -8639,5 +8638,12 @@
   "eqa.cycle.close": "Close cycle",
   "eqa.cycle.closeHeading": "Close this cycle",
   "eqa.cycle.closeHelp": "A closed cycle is final: participants see it as closed and no further verdicts are recorded against it. Closing is refused while a follow-up is open or a missed-deadline result is still waiting on an answer.",
-  "eqa.cycle.closeFailed": "Could not close this cycle"
+  "eqa.cycle.closeFailed": "Could not close this cycle",
+  "eqa.prep.ofTotal": "{n} of {total}",
+  "eqa.prep.tile.participants": "Enrolled laboratories selected for this cycle",
+  "eqa.prep.tile.panels": "Material panels prepared",
+  "eqa.prep.dispatched": "Participant shipments dispatched",
+  "eqa.prep.readyToShip.blockedByGate": "Prep is incomplete. The ready-to-ship gate above lists what is still outstanding.",
+  "eqa.prep.readyToShip.notInPrep": "Cycle state: {status}. Clearing to ship is only offered while the cycle is in prep.",
+  "eqa.prep.goToShipments": "Open the Shipments tab"
 }

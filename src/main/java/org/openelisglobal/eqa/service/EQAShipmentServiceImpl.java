@@ -67,6 +67,9 @@ public class EQAShipmentServiceImpl implements EQAShipmentService {
     private EQAProgramEnrollmentDAO eqaProgramEnrollmentDAO;
 
     @Autowired
+    private EQAProgramEnrollmentService eqaProgramEnrollmentService;
+
+    @Autowired
     private EQACycleParticipantDAO eqaCycleParticipantDAO;
 
     @Autowired
@@ -227,6 +230,10 @@ public class EQAShipmentServiceImpl implements EQAShipmentService {
         status.put("distributionMethod",
                 cycle.getDistributionMethod() == null ? null : cycle.getDistributionMethod().name());
         status.put("participantCount", gate.participantCount());
+        // The denominator the tile was missing: a cycle ships to the laboratories
+        // selected onto its roster, which is a subset of the scheme's enrollment.
+        status.put("enrolledParticipantCount", cycle.getScheme() == null ? 0
+                : (int) eqaProgramEnrollmentService.countActiveEnrollments(cycle.getScheme().getId()));
         status.put("panels", panelDtos);
         status.put("blockers", gate.blockers());
         // The button state the workbench renders; the gate itself is enforced on the

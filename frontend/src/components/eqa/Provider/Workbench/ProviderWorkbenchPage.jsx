@@ -45,6 +45,9 @@ const ProviderWorkbenchPage = () => {
   const [rows, setRows] = useState([]);
   const [loading, setLoading] = useState(true);
   const [notice, setNotice] = useState(null);
+  // Controlled so the prep panel can hand an operator to the tab where the
+  // cycle's next step actually lives.
+  const [tab, setTab] = useState(0);
 
   // Reloading after a save keeps the rendered page; only a change of cycle goes
   // back to the spinner, since none of the current page's numbers survive it.
@@ -113,7 +116,10 @@ const ProviderWorkbenchPage = () => {
               workbench surfaces share one cycle banner and one state, so
               sidebar child routes would multiply route plumbing for no
               workflow gain. */}
-          <Tabs>
+          <Tabs
+            selectedIndex={tab}
+            onChange={({ selectedIndex }) => setTab(selectedIndex)}
+          >
             <TabList
               aria-label={t("eqa.provider.workbench.tabs", "Workbenches")}
             >
@@ -126,10 +132,15 @@ const ProviderWorkbenchPage = () => {
               <TabPanel>
                 <PrepWorkbench
                   prep={prep}
+                  shipmentRows={rows}
                   onChanged={(updated) =>
                     updated ? setPrep(updated) : reload()
                   }
                   onNotice={setNotice}
+                  onGoToShipments={(e) => {
+                    e.preventDefault();
+                    setTab(1);
+                  }}
                 />
               </TabPanel>
               <TabPanel>

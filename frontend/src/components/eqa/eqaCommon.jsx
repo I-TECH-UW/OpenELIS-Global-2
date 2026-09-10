@@ -54,6 +54,14 @@ export const calendarOnlyInput = {
   onPaste: (e) => e.preventDefault(),
 };
 
+/**
+ * A participant's box has left the building. Read from either the box state or
+ * the shipment's own date, because the two are written by different steps and a
+ * box dispatched before the shipment row was stamped still counts.
+ */
+export const isDispatched = (row) =>
+  row.boxState === "SENT" || !!row.shippedDate;
+
 /** RFC 4180 cell: everything quoted, embedded quotes doubled. */
 export const csvCell = (value) =>
   `"${String(value ?? "").replace(/"/g, '""')}"`;
