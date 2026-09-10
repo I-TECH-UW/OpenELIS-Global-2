@@ -370,6 +370,8 @@ jobs:
           BASE_URL: https://localhost
           TEST_USER: ${{ inputs.test_user || vars.TEST_USER || 'admin' }}
           TEST_PASS: ${{ inputs.test_pass || vars.TEST_PASS || 'adminADMIN!' }}
+          ANALYZER_INGRESS_USER: ${{ inputs.test_user || vars.TEST_USER || 'admin' }}
+          ANALYZER_INGRESS_PASS: ${{ inputs.test_pass || vars.TEST_PASS || 'adminADMIN!' }}
           ANALYZER_HARNESS: ${{ inputs.setup_analyzer_harness && 'true' || '' }}
 
       - name: Memory snapshot (post-test) + monitor dump

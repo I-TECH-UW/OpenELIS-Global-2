@@ -7,9 +7,16 @@ public class MicrobiologyUatScenarioForm {
     public String accessionNumber;
     public String sampleId;
     public String sampleItemId;
+    public String collectionDate;
+    public String collectionLocalDate;
     public String patientId;
+    public String patientExternalId;
     public String caseId;
     public String siblingCaseId;
+    public String isolateId;
+    public String astRunId;
+    public String analyzerInstrumentId;
+    public String analyzerCardId;
     public String analysisId;
     public String reportableTestAnalyteId;
     public String organismId;
@@ -19,4 +26,9 @@ public class MicrobiologyUatScenarioForm {
     public String activeBreakpointStandardId;
     public String loadedBreakpointStandardId;
     public String methodId;
+    public String alternateMethodId;
+    public String sampleTypeId;
+    public String cultureTestId;
+    public String tbCultureTestId;
+    public String nonCultureTestId;
 }

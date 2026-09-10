@@ -166,10 +166,6 @@
         {
           "elementId": "menu_microbiology_worklist",
           "childMenus": []
-        },
-        {
-          "elementId": "menu_microbiology_whonet",
-          "childMenus": []
         }
       ]
     },
@@ -289,6 +285,10 @@
     {
       "elementId": "menu_reports",
       "childMenus": [
+        {
+          "elementId": "menu_microbiology_whonet",
+          "childMenus": []
+        },
         {
           "elementId": "menu_reports_routine",
           "childMenus": [
@@ -519,7 +519,16 @@
     },
     {
       "elementId": "menu_administration",
-      "childMenus": []
+      "childMenus": [
+        {
+          "elementId": "menu_administration_dashboard",
+          "childMenus": []
+        },
+        {
+          "elementId": "menu_administration_stuck_analyzer_events",
+          "childMenus": []
+        }
+      ]
     },
     {
       "elementId": "menu_billing",
@@ -582,12 +591,42 @@
           "isActive": true,
           "hideInOldUI": true,
           "childMenus": []
-        },
+        }
+      ]
+    },
+    {
+      "elementId": "menu_reports",
+      "childMenus": [
         {
           "elementId": "menu_microbiology_whonet",
           "actionURL": "/Microbiology/whonet",
           "displayKey": "sidenav.label.microbiology.whonet",
           "toolTipKey": "sidenav.label.microbiology.whonet",
+          "presentationOrder": 1,
+          "isActive": true,
+          "hideInOldUI": true,
+          "childMenus": []
+        }
+      ]
+    },
+    {
+      "elementId": "menu_administration",
+      "childMenus": [
+        {
+          "elementId": "menu_administration_dashboard",
+          "actionURL": "/MasterListsPage",
+          "displayKey": "admin.dashboard.title",
+          "toolTipKey": "admin.dashboard.title",
+          "presentationOrder": 1,
+          "isActive": true,
+          "hideInOldUI": true,
+          "childMenus": []
+        },
+        {
+          "elementId": "menu_administration_stuck_analyzer_events",
+          "actionURL": "/AnalyzerResults?view=import-issues",
+          "displayKey": "analyzer.importIssues.events.title",
+          "toolTipKey": "analyzer.importIssues.events.title",
           "presentationOrder": 2,
           "isActive": true,
           "hideInOldUI": true,

@@ -1,16 +1,18 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Button } from "@carbon/react";
 import { useIntl } from "react-intl";
 import MicrobiologyService from "./MicrobiologyService";
 import MicrobiologyOrderDetailFields, {
   emptyMicrobiologyOrderDetail,
 } from "./MicrobiologyOrderDetailFields";
+import { buildSubmissionMicrobiologyOrderDetail } from "../order/orderDataUtils";
 
 const OrderDetailPanel = ({
   caseId,
   orderDetail,
   service = MicrobiologyService,
   onSaved,
+  isReadOnly = false,
 }) => {
   const intl = useIntl();
   const [fields, setFields] = useState({
@@ -18,17 +20,33 @@ const OrderDetailPanel = ({
     ...orderDetail,
   });
   const [saving, setSaving] = useState(false);
+  const [patientOrigins, setPatientOrigins] = useState([]);
+
+  useEffect(() => {
+    let active = true;
+    if (!service.getPatientOrigins) {
+      return undefined;
+    }
+    service.getPatientOrigins().then((response) => {
+      if (active) {
+        setPatientOrigins(response?.options || []);
+      }
+    });
+    return () => {
+      active = false;
+    };
+  }, [service]);
 
   const setField = (name) => (value) =>
     setFields((current) => ({ ...current, [name]: value }));
 
   const save = () => {
     setSaving(true);
-    const payload = {
+    const payload = buildSubmissionMicrobiologyOrderDetail({
       ...fields,
       numberOfSets:
         fields.numberOfSets === "" ? null : Number(fields.numberOfSets),
-    };
+    });
     service.saveOrderDetail(caseId, payload).then((detail) => {
       setSaving(false);
       if (detail && detail.orderDetail) {
@@ -63,12 +81,17 @@ const OrderDetailPanel = ({
         <MicrobiologyOrderDetailFields
           fields={fields}
           onChange={(name, value) => setField(name)(value)}
+          showCultureMethod={false}
+          patientOrigins={patientOrigins}
+          isReadOnly={isReadOnly}
         />
-        <div>
-          <Button onClick={save} disabled={saving}>
-            {intl.formatMessage({ id: "microbiology.orderDetail.save" })}
-          </Button>
-        </div>
+        {!isReadOnly && (
+          <div>
+            <Button onClick={save} disabled={saving}>
+              {intl.formatMessage({ id: "microbiology.orderDetail.save" })}
+            </Button>
+          </div>
+        )}
       </div>
     </section>
   );

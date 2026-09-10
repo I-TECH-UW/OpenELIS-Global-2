@@ -85,10 +85,13 @@
         <class>org.openelisglobal.microbiology.valueholder.MicroCaseActivity</class>
         <class>org.openelisglobal.microbiology.valueholder.MicroCaseAmendment</class>
         <class>org.openelisglobal.microbiology.valueholder.MicroCaseAnalysis</class>
+        <class>org.openelisglobal.microbiology.valueholder.MicroCaseInoculation</class>
         <class>org.openelisglobal.microbiology.valueholder.MicroIsolate</class>
         <class>org.openelisglobal.microbiology.valueholder.MicroIsolateIdentificationEvent</class>
         <class>org.openelisglobal.microbiology.valueholder.MicroAstRun</class>
+        <class>org.openelisglobal.microbiology.valueholder.MicroAstRunAntibiotic</class>
         <class>org.openelisglobal.microbiology.valueholder.MicroAstReading</class>
+        <class>org.openelisglobal.microbiology.valueholder.MicroAstOverrideEvent</class>
         <class>org.openelisglobal.microbiology.valueholder.MicroCriticalCommunication</class>
         <class>org.openelisglobal.microbiology.valueholder.MicroCaseOrderDetail</class>
         <class>org.openelisglobal.microbiology.valueholder.MicroReportVersion</class>
@@ -118,6 +121,7 @@
 
         <!-- Analyzer orchestration and site-binding entities -->
         <class>org.openelisglobal.analyzer.valueholder.Analyzer</class>
+        <class>org.openelisglobal.analyzer.valueholder.AnalyzerEvent</class>
         <class>org.openelisglobal.analyzer.valueholder.AnalyzerProfileBinding</class>
         <class>org.openelisglobal.analyzer.valueholder.AnalyzerSiteBinding</class>
         <class>org.openelisglobal.analyzer.valueholder.AnalyzerSiteBindingRevision</class>

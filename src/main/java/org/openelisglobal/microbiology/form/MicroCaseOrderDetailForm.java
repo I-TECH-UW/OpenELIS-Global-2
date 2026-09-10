@@ -4,8 +4,9 @@ public class MicroCaseOrderDetailForm {
 
     public String caseId;
     public String patientOrigin;
+    public String culturePurpose;
+    public String admissionDate;
     public Integer numberOfSets;
     public String clinicalHistory;
-    public String antibioticExposure;
-    public String criticalNotificationPreference;
+    public Boolean antibioticExposure;
 }

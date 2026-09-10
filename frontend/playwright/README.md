@@ -65,6 +65,10 @@ produces a merged HTML report artifact:
 No `workflow_dispatch` manual workflows exist for Playwright. Video recording
 is local-only via the `-video` project variants.
 
+Analyzer-ingress scenarios require `ANALYZER_INGRESS_USER` and
+`ANALYZER_INGRESS_PASS`. CI supplies the configured test account; local runs
+must provide an account authorized for analyzer import.
+
 ## Fixtures
 
 CI workflows load fixtures via the unified loader script:
@@ -165,10 +169,35 @@ not run against shared review or clinical data.
 ### Prerequisites
 
 1. **Dependencies:** from `frontend/`, run **`npm run ci:deps`** (then **`npm run pw:install`**). Plain **`npm ci`** often prints almost nothing for several minutes while Cypress unpacks — it is not stuck; **`ci:deps`** forces progress + `loglevel=info` so you see steady output. `.npmrc` also sets `progress=true` for normal installs.
-2. App running at `https://localhost` (or set `BASE_URL`)
-3. Auth env vars: `TEST_USER` and `TEST_PASS`
+2. Start the isolated stack from the repository root with
+   **`scripts/dev-stack up`**.
+
+Authentication uses the shared setup project and the repository `.env` values;
+the standard development credentials need no manual export.
 
 ### Commands
+
+```bash
+# Preferred developer entry point, from the repository root. It discovers the
+# current worktree's URL and runs authentication automatically.
+scripts/dev-stack playwright
+
+# Run a specific test (core-app is the default project)
+scripts/dev-stack playwright playwright/tests/foundational/core/microbiology-whonet-export.spec.ts
+
+# Verify only the shared login/session contract
+scripts/dev-stack playwright --project=setup
+
+# Select another registered project
+scripts/dev-stack playwright --project=harness-foundational
+
+# Run the same test against a deployed target
+BASE_URL=https://amr.openelis-global.org \
+  scripts/dev-stack playwright playwright/tests/foundational/core/microbiology-whonet-export.spec.ts
+```
+
+The lower-level package commands below remain the CI interface and are useful
+when debugging Playwright itself:
 
 ```bash
 cd frontend
@@ -373,11 +402,13 @@ test("my demo test", async ({ page }, testInfo) => {
 
 ## Environment Variables
 
-| Variable            | Default             | Description                                                          |
-| ------------------- | ------------------- | -------------------------------------------------------------------- |
-| `BASE_URL`          | `https://localhost` | App URL                                                              |
-| `TEST_USER`         | —                   | Login username (required)                                            |
-| `TEST_PASS`         | —                   | Login password (required)                                            |
-| `PLAYWRIGHT_SLOWMO` | `500`               | Milliseconds of slowMo for `*-demo-video` projects                   |
-| `PLAYWRIGHT_VIDEO`  | `off`               | Global video override (prefer `*-demo-video` projects)               |
-| `CI`                | —                   | Set by GitHub Actions; enables CI mode settings in Playwright config |
+| Variable                | Default             | Description                                                                  |
+| ----------------------- | ------------------- | ---------------------------------------------------------------------------- |
+| `BASE_URL`              | `https://localhost` | App URL                                                                      |
+| `TEST_USER`             | —                   | Login username (required)                                                    |
+| `TEST_PASS`             | —                   | Login password (required)                                                    |
+| `ANALYZER_INGRESS_USER` | —                   | Dedicated account with the Analyser Import role for analyzer-event scenarios |
+| `ANALYZER_INGRESS_PASS` | —                   | Password for the dedicated analyzer-ingress account                          |
+| `PLAYWRIGHT_SLOWMO`     | `500`               | Milliseconds of slowMo for `*-demo-video` projects                           |
+| `PLAYWRIGHT_VIDEO`      | `off`               | Global video override (prefer `*-demo-video` projects)                       |
+| `CI`                    | —                   | Set by GitHub Actions; enables CI mode settings in Playwright config         |

@@ -188,6 +188,10 @@ test.describe("OGC-1054 M3 guided analyzer setup", () => {
     await expect(analyzerRow).toContainText(PROFILE_NAME, {
       timeout: LONG_TIMEOUT,
     });
+    await expect(page.getByTestId("content-wrapper")).toHaveCSS(
+      "margin-left",
+      "0px",
+    );
     await expectNoPageHorizontalOverflow(
       page,
       "Analyzer dashboard should not overflow the mobile page horizontally",
