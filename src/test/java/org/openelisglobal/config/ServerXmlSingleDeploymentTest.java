@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.UnaryOperator;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
@@ -27,8 +28,8 @@ import org.xml.sax.SAXException;
  *
  * <p>
  * Tomcat 10.1's Host documentation says to "turn off automatic application
- * deployment" where contexts are defined explicitly in server.xml, or "the web
- * applications will each be deployed twice".
+ * deployment or specify deployIgnore carefully" where server.xml defines
+ * contexts, or "the web applications will each be deployed twice".
  */
 public class ServerXmlSingleDeploymentTest {
 
@@ -37,7 +38,7 @@ public class ServerXmlSingleDeploymentTest {
         List<String> violations = new ArrayList<>();
         for (Path config : serverXmlConfigs()) {
             for (Element host : elementsNamed(parse(config), "Host")) {
-                String appBase = host.getAttribute("appBase");
+                String appBase = appBaseOf(host);
                 long inAppBase = childElements(host, "Context").stream()
                         .filter(context -> resolvesInside(context.getAttribute("docBase"), appBase)).count();
                 if (inAppBase == 0) {
@@ -62,51 +63,94 @@ public class ServerXmlSingleDeploymentTest {
         List<String> violations = new ArrayList<>();
         for (Path config : serverXmlConfigs()) {
             for (Element host : elementsNamed(parse(config), "Host")) {
-                violations.addAll(repeatedAttribute(config, host, "docBase", "so that WAR deploys twice"));
+                String appBase = appBaseOf(host);
+                violations.addAll(repeatedAttribute(config, host, "docBase", docBase -> docBaseKey(docBase, appBase),
+                        "so that WAR deploys twice"));
                 violations.addAll(
-                        repeatedAttribute(config, host, "path", "so two web applications claim one context path"));
+                        repeatedAttribute(config, host, "path", ServerXmlSingleDeploymentTest::withoutTrailingSlash,
+                                "so two web applications claim one context path"));
             }
         }
         Assert.assertEquals(String.join("\n", violations), List.of(), violations);
     }
 
-    private static List<String> repeatedAttribute(Path config, Element host, String attribute, String consequence) {
+    private static List<String> repeatedAttribute(Path config, Element host, String attribute,
+            UnaryOperator<String> canonical, String consequence) {
         List<String> violations = new ArrayList<>();
         Set<String> seen = new HashSet<>();
         for (Element context : childElements(host, "Context")) {
-            String value = withoutTrailingSlash(context.getAttribute(attribute));
-            if (!value.isEmpty() && !seen.add(value)) {
-                violations.add(describe(config, host) + " declares more than one <Context> with " + attribute + "=\""
-                        + value + "\", " + consequence);
+            String key = canonical.apply(context.getAttribute(attribute));
+            if (!key.isEmpty() && !seen.add(key)) {
+                violations.add(describe(config, host) + " declares more than one <Context> whose " + attribute
+                        + " resolves to \"" + key + "\", " + consequence);
             }
         }
         return violations;
     }
 
-    private static String describe(Path config, Element host) {
-        return config + ": <Host name=\"" + host.getAttribute("name") + "\" appBase=\"" + host.getAttribute("appBase")
-                + "\">";
+    /** Tomcat defaults an absent or empty {@code appBase} to {@code webapps}. */
+    private static String appBaseOf(Element host) {
+        String appBase = host.getAttribute("appBase");
+        return appBase.isEmpty() ? "webapps" : appBase;
     }
 
     /**
-     * A relative {@code docBase} resolves against {@code appBase}; an absolute one
-     * is matched textually, since the file describes a container's layout.
+     * Spellings of one deployable collapse to one key; {@code .war} drops because
+     * Tomcat appends it when the directory a {@code docBase} names is absent.
+     */
+    private static String docBaseKey(String docBase, String appBase) {
+        List<String> doc = resolve(segments(docBase));
+        List<String> tail = new ArrayList<>(
+                doc.subList(Math.max(endOfAppBase(doc, resolve(segments(appBase))), 0), doc.size()));
+        if (!tail.isEmpty() && tail.get(tail.size() - 1).endsWith(".war")) {
+            String name = tail.get(tail.size() - 1);
+            tail.set(tail.size() - 1, name.substring(0, name.length() - ".war".length()));
+        }
+        return String.join("/", tail);
+    }
+
+    private static String describe(Path config, Element host) {
+        return config + ": <Host name=\"" + host.getAttribute("name") + "\" appBase=\"" + appBaseOf(host) + "\">";
+    }
+
+    /**
+     * A relative {@code docBase} resolves against {@code appBase} unless it climbs
+     * out; an absolute one matches textually against a container layout.
      */
     private static boolean resolvesInside(String docBase, String appBase) {
-        List<String> base = segments(appBase);
-        List<String> doc = segments(docBase);
+        List<String> base = resolve(segments(appBase));
+        List<String> doc = resolve(segments(docBase));
         if (base.isEmpty() || doc.isEmpty()) {
             return false;
         }
         if (!docBase.startsWith("/")) {
-            return true;
+            return !"..".equals(doc.get(0));
         }
-        for (int i = 0; i + base.size() < doc.size(); i++) {
+        return endOfAppBase(doc, base) >= 0;
+    }
+
+    /** How far into {@code doc} the {@code base} segments reach, or -1. */
+    private static int endOfAppBase(List<String> doc, List<String> base) {
+        for (int i = 0; !base.isEmpty() && i + base.size() < doc.size(); i++) {
             if (doc.subList(i, i + base.size()).equals(base)) {
-                return true;
+                return i + base.size();
             }
         }
-        return false;
+        return -1;
+    }
+
+    /** A {@code ..} kept where it climbs past the start marks an escape. */
+    private static List<String> resolve(List<String> segments) {
+        List<String> resolved = new ArrayList<>();
+        for (String segment : segments) {
+            String last = resolved.isEmpty() ? null : resolved.get(resolved.size() - 1);
+            if ("..".equals(segment) && last != null && !"..".equals(last)) {
+                resolved.remove(resolved.size() - 1);
+            } else {
+                resolved.add(segment);
+            }
+        }
+        return resolved;
     }
 
     private static List<String> segments(String path) {
