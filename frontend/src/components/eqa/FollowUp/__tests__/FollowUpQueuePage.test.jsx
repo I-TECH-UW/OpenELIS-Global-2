@@ -215,6 +215,27 @@ describe("FollowUpQueuePage", () => {
     expect(screen.getByText("Blind run 1")).toBeInTheDocument();
   });
 
+  it("counts a single queued item in the singular", async () => {
+    // One row, so every count on the page is 1 — where the queue used to read
+    // "1 items" and, once filtered, "The queue holds 1 items from other sources".
+    getFromOpenElisServer.mockImplementation((_url, callback) =>
+      callback([QUEUE[0]]),
+    );
+    renderPage();
+
+    await screen.findByText("2026 Round 2");
+    expect(screen.getByText("Queue · 1 item")).toBeInTheDocument();
+
+    fireEvent.change(screen.getByLabelText("Source"), {
+      target: { value: "in_house" },
+    });
+    expect(
+      screen.getByText(
+        "Nothing from this source is awaiting triage. The queue holds 1 item from other sources.",
+      ),
+    ).toBeInTheDocument();
+  });
+
   it("escalates a row and reports the NCE the server raised", async () => {
     postToOpenElisServerFullResponse.mockImplementation((_url, _body, cb) =>
       cb(jsonResponse(true, { nceId: 12, nceNumber: "NCE-2026-00045" })),

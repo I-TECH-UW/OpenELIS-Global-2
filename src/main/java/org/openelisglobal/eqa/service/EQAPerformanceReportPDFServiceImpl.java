@@ -322,6 +322,11 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
                 scheme == null ? DASH : schemeTypeLabel(scheme.getSchemeType()));
         metaCell(meta, MessageUtil.getMessage("eqa.report.cycle"), cycleIdentifier(cycle));
         metaCell(meta, MessageUtil.getMessage("eqa.report.period"), period(cycle));
+        // Restored now that a cycle records when it was scored. It sits in the meta
+        // block rather than as a per-row column because scoring runs over the whole
+        // cycle at once, so one date covers every row on the page.
+        metaCell(meta, MessageUtil.getMessage("eqa.report.scoredOn"),
+                cycle.getActualEndDate() == null ? DASH : cycle.getActualEndDate().toString());
         metaCell(meta, MessageUtil.getMessage("eqa.report.laboratory"), siteName());
         metaCell(meta, MessageUtil.getMessage("eqa.report.generated"), formatDate(new Date()));
         if (participant != null) {
