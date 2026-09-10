@@ -106,6 +106,10 @@ const BoxCreation = () => {
     fetchRejectionReasons();
     fetchBoxLabelPrefix();
     generateBoxNumber();
+    // Ambient is what an unset box is saved as, so show it as chosen rather than
+    // leaving the field reading "Select" while the summary and the saved box both
+    // say Ambient.
+    setSelectedTemperature(temperatureOptions[0]);
   }, []);
 
   useEffect(() => {
@@ -999,10 +1003,7 @@ const BoxCreation = () => {
                   <FormattedMessage id="shipment.box.temperature" />:
                 </span>
                 <span className="summary-value">
-                  {selectedTemperature?.label ||
-                    intl.formatMessage({
-                      id: "shipment.temperature.ambient",
-                    })}
+                  {selectedTemperature?.label}
                 </span>
               </div>
             </div>
