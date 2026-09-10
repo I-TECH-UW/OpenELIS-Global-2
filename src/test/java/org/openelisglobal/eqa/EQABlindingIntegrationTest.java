@@ -714,6 +714,38 @@ public class EQABlindingIntegrationTest extends EQASpineTestBase {
         assertEquals("the pass is idempotent", 0, blindingService.scoreLateResults(USER));
     }
 
+    /**
+     * T-96. The pass is driven from the missed rows and never looked at the cycle,
+     * so a closed cycle went on gaining verdicts on the next sweep, silently and
+     * with no actor behind it. Closing is meant to end the cycle, and the close
+     * gate refuses while any of these rows is unanswered, so an answer that lands
+     * here arrived after the operator closed it.
+     */
+    @Test
+    public void lateResults_areNotScoredOnceTheCycleIsClosed() {
+        seedEnrollment(9903, "IH Closed Scheme");
+        EQAProgram scheme = inHouseScheme("IH Closed Scheme");
+        EQACycle cycle = readBack(insertCycle(scheme, 1));
+        Long roundId = insertRound(cycle, 1, "OPEN");
+        EQAPanel panel = panelWith(scheme, cycle, EQAPanelStatus.DISTRIBUTED, LocalDate.now().minusDays(1));
+        Long sample = insertPanelSample(panel, "IH-01", "IHCLOSED-1", NUMERIC_ANALYTE, "100", "95", "105");
+        Long late = insertResult(cycle, roundId, 9903, NUMERIC_ANALYTE, EQASubmissionStatus.DRAFT, null, 1L, sample);
+
+        blindingService.unblindAndScore(panel.getId(), USER, EQAUnblindMethod.MANUAL);
+        assertEquals("MISSED_DEADLINE", resultRow(late).get("submission_status"));
+        jdbc.update("UPDATE clinlims.eqa_participant_result SET result_value = '102' WHERE id = ?", late);
+
+        // The control first: on an open cycle this same row is exactly what the pass
+        // picks up, so a zero below means the status stopped it and not the fixture.
+        assertEquals("the row is scorable while the cycle is open", 1, blindingService.scoreLateResults(USER));
+        jdbc.update("UPDATE clinlims.eqa_participant_result SET performance_status = NULL, result_value = '102'"
+                + " WHERE id = ?", late);
+        jdbc.update("UPDATE clinlims.eqa_cycle SET status = 'CLOSED' WHERE id = ?", cycle.getId());
+
+        assertEquals("a closed cycle takes no more verdicts", 0, blindingService.scoreLateResults(USER));
+        assertNull("and the row is left as it was", resultRow(late).get("performance_status"));
+    }
+
     @Test
     public void unblind_secondRunConflictsAndNeverRescores() {
         seedEnrollment(9902, "IH Idempotency Scheme");

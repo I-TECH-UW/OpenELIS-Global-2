@@ -16,11 +16,17 @@ import java.util.regex.Pattern;
 import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.eqa.controller.rest.EQACycleRestController;
+import org.openelisglobal.eqa.dao.EQAPanelSampleDAO;
+import org.openelisglobal.eqa.dao.EQAParticipantFollowupDAO;
 import org.openelisglobal.eqa.service.EQACycleService;
 import org.openelisglobal.eqa.service.EQAInvalidTransitionException;
 import org.openelisglobal.eqa.valueholder.EQACycle;
 import org.openelisglobal.eqa.valueholder.EQACycleStateTransition;
 import org.openelisglobal.eqa.valueholder.EQACycleStatus;
+import org.openelisglobal.eqa.valueholder.EQAFollowupStatus;
+import org.openelisglobal.eqa.valueholder.EQAPanel;
+import org.openelisglobal.eqa.valueholder.EQAPanelSample;
+import org.openelisglobal.eqa.valueholder.EQAParticipantFollowup;
 import org.openelisglobal.eqa.valueholder.EQAProgram;
 import org.openelisglobal.eqa.valueholder.EQARound;
 import org.openelisglobal.eqa.valueholder.EQASchemeType;
@@ -40,9 +46,18 @@ public class EQACycleStateMachineIntegrationTest extends EQASpineTestBase {
     private static final long ENROLLMENT_ID = 9905L;
     private static final long OTHER_ENROLLMENT_ID = 9906L;
     private static final long ANALYTE_HIV_VL = 9802L;
+    /**
+     * Follow-up rows reference a real organisation, one per row: the table is
+     * unique on (cycle, org).
+     */
+    private static final long FIRST_FOLLOWUP_ORG = 9940L;
 
     @Autowired
     private EQACycleService cycleService;
+    @Autowired
+    private EQAPanelSampleDAO eqaPanelSampleDAO;
+    @Autowired
+    private EQAParticipantFollowupDAO eqaParticipantFollowupDAO;
 
     @Before
     @Override
@@ -50,6 +65,13 @@ public class EQACycleStateMachineIntegrationTest extends EQASpineTestBase {
         super.setUp();
         seedEnrollment(ENROLLMENT_ID, "Cycle machine enrollment");
         seedEnrollment(OTHER_ENROLLMENT_ID, "Second lab enrollment");
+        for (long id = FIRST_FOLLOWUP_ORG; id < FIRST_FOLLOWUP_ORG + 3; id++) {
+            jdbc.update(
+                    "INSERT INTO clinlims.organization (id, name, mls_sentinel_lab_flag, is_active, lastupdated)"
+                            + " VALUES (?, ?, 'N', 'Y', now()) ON CONFLICT (id) DO NOTHING",
+                    id, "Close gate lab " + id);
+        }
+        followups = FIRST_FOLLOWUP_ORG;
     }
 
     // ---- FR-V2.1-04 / FR-V2.1-18: legal and illegal edges ----
@@ -418,7 +440,149 @@ public class EQACycleStateMachineIntegrationTest extends EQASpineTestBase {
         assertEquals(EQACycleStatus.CLOSED, cycleService.deriveParticipantState(cycle.getId(), ENROLLMENT_ID));
     }
 
+    // ---- T-96: closing refuses while work is still hanging off the cycle ----
+
+    @Test
+    public void closingRefusesWhileAFollowUpIsStillOpen() {
+        EQACycle cycle = scoredCycle();
+        insertFollowup(cycle, EQAFollowupStatus.UNDER_INVESTIGATION);
+
+        try {
+            close(cycle);
+            fail("a cycle with an unresolved follow-up is not finished");
+        } catch (EQAInvalidTransitionException expected) {
+            assertTrue(expected.getMessage(), expected.getMessage().contains("1 follow-up still open"));
+        }
+        assertEquals("and the cycle is left where it was", EQACycleStatus.SCORED, readBack(cycle.getId()).getStatus());
+    }
+
+    @Test
+    public void closingRefusesWhileAMissedDeadlineResultIsUnanswered() {
+        EQACycle cycle = scoredCycle();
+        missedResultOnAPanelSample(cycle);
+
+        try {
+            close(cycle);
+            fail("the late-score sweep is still watching that row for an answer");
+        } catch (EQAInvalidTransitionException expected) {
+            assertTrue(expected.getMessage(),
+                    expected.getMessage().contains("1 missed-deadline result still waiting on an answer"));
+        }
+    }
+
+    @Test
+    public void closingNamesEveryBlockerAtOnce() {
+        EQACycle cycle = scoredCycle();
+        insertFollowup(cycle, EQAFollowupStatus.NOTIFIED);
+        insertFollowup(cycle, EQAFollowupStatus.ESCALATED);
+        missedResultOnAPanelSample(cycle);
+
+        try {
+            close(cycle);
+            fail("both kinds of outstanding work block a close");
+        } catch (EQAInvalidTransitionException expected) {
+            assertTrue(expected.getMessage(), expected.getMessage().contains("2 follow-ups still open"));
+            assertTrue(
+                    "one refusal lists everything, so the operator does not clear them one round trip at a time: "
+                            + expected.getMessage(),
+                    expected.getMessage().contains("1 missed-deadline result still waiting on an answer"));
+        }
+    }
+
+    @Test
+    public void closingSucceedsOnceTheWorkIsDone() {
+        // The control. Without it the refusals above cannot be told apart from
+        // "closing never works".
+        EQACycle cycle = scoredCycle();
+        insertFollowup(cycle, EQAFollowupStatus.RESOLVED);
+        insertFollowup(cycle, EQAFollowupStatus.REMOVED_FROM_PROGRAM);
+        Long answered = missedResultOnAPanelSample(cycle);
+        jdbc.update("UPDATE clinlims.eqa_participant_result SET performance_status = 'ACCEPTABLE' WHERE id = ?",
+                answered);
+
+        close(cycle);
+
+        assertEquals(EQACycleStatus.CLOSED, readBack(cycle.getId()).getStatus());
+    }
+
+    @Test
+    public void anExternalMissedRowDoesNotBlockCloseForEver() {
+        // No panel sample means no sealed target, and scoreLateResults skips the row,
+        // so nothing will ever give it a verdict. Blocking on it would make the cycle
+        // uncloseable permanently rather than until the work is done.
+        EQACycle cycle = scoredCycle();
+        insertParticipantResult(cycle, roundFor(cycle), ENROLLMENT_ID, ANALYTE_HIV_VL,
+                EQASubmissionStatus.MISSED_DEADLINE, null);
+
+        close(cycle);
+
+        assertEquals(EQACycleStatus.CLOSED, readBack(cycle.getId()).getStatus());
+    }
+
+    @Override
+    protected void cleanEqaTables() {
+        if (jdbc != null) {
+            // A participant result's panel_sample_id outlives the base order, which
+            // clears panel samples before results.
+            jdbc.update("UPDATE clinlims.eqa_participant_result SET panel_sample_id = NULL");
+        }
+        super.cleanEqaTables();
+        if (jdbc != null) {
+            jdbc.update("DELETE FROM clinlims.organization WHERE id BETWEEN ? AND ?", FIRST_FOLLOWUP_ORG,
+                    FIRST_FOLLOWUP_ORG + 3);
+        }
+    }
+
     // ---- helpers ----
+
+    private long followups = FIRST_FOLLOWUP_ORG;
+
+    private EQARound roundFor(EQACycle cycle) {
+        return eqaRoundDAO.get(insertRound(cycle, 1, "OPEN")).orElseThrow(AssertionError::new);
+    }
+
+    private EQACycle scoredCycle() {
+        EQACycle cycle = newCycle();
+        jdbc.update("UPDATE clinlims.eqa_cycle SET status = 'SCORED' WHERE id = ?", cycle.getId());
+        return readBack(cycle.getId());
+    }
+
+    private void close(EQACycle cycle) {
+        cycleService.transition(cycle.getId(), EQACycleStatus.CLOSED, EQAStateMachine.PROVIDER, EQATriggerType.MANUAL,
+                EQATriggerEvent.MANUAL_OVERRIDE, ADMIN_USER_ID, "Round finished", USER);
+    }
+
+    private void insertFollowup(EQACycle cycle, EQAFollowupStatus status) {
+        EQAParticipantFollowup followup = new EQAParticipantFollowup();
+        followup.setScheme(cycle.getScheme());
+        followup.setCycle(cycle);
+        // One row per cycle per organisation is a unique constraint, so each call
+        // needs its own organisation for the two-blocker case to be reachable.
+        followup.setParticipantOrgId(followups++);
+        followup.setFollowupStatus(status);
+        followup.setSysUserId(USER);
+        eqaParticipantFollowupDAO.insert(followup);
+    }
+
+    /**
+     * A missed row the late-score sweep would still pick up: it carries a target.
+     */
+    private Long missedResultOnAPanelSample(EQACycle cycle) {
+        EQAPanel panel = insertPanel(cycle.getScheme(), p -> {
+            p.setCycle(cycle);
+            p.setPanelName("Close gate panel " + cycle.getId());
+        });
+        EQAPanelSample sample = new EQAPanelSample();
+        sample.setPanel(panel);
+        sample.setSampleCode("CG01");
+        sample.setAnalyteId(ANALYTE_HIV_VL);
+        sample.setSysUserId(USER);
+        Long sampleId = eqaPanelSampleDAO.insert(sample);
+        Long resultId = insertParticipantResult(cycle, roundFor(cycle), ENROLLMENT_ID, ANALYTE_HIV_VL,
+                EQASubmissionStatus.MISSED_DEADLINE, null);
+        jdbc.update("UPDATE clinlims.eqa_participant_result SET panel_sample_id = ? WHERE id = ?", sampleId, resultId);
+        return resultId;
+    }
 
     private EQACycle newCycle() {
         EQAProgram scheme = insertScheme("Machine scheme " + System.nanoTime(), EQASchemeType.INTERNATIONAL_PT, "NHLS");

@@ -441,6 +441,15 @@ public class EQABlindingServiceImpl implements EQABlindingService {
             if (target == null || target.getPanel() == null || target.getPanel().getUnblindedAt() == null) {
                 continue; // the panel is still blinded, so nothing is late yet
             }
+            // A closed cycle takes no more verdicts. This pass is driven from the
+            // missed rows and never looked at the cycle, so without this a cycle went
+            // on gaining verdicts after it was closed, on a sweep with no actor behind
+            // it. The close gate already refuses while any of these rows is unanswered,
+            // so reaching here means the answer landed after the operator closed it.
+            EQACycle cycle = target.getPanel().getCycle();
+            if (cycle != null && cycle.getStatus() == EQACycleStatus.CLOSED) {
+                continue;
+            }
             String reported = reportedValueOf(result);
             if (GenericValidator.isBlankOrNull(reported)) {
                 continue; // still unanswered — genuinely a missed deadline

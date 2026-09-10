@@ -174,6 +174,23 @@ export const openSubmissions = (cycleId, reason, callback) =>
     withBody(callback),
   );
 
+/**
+ * Closing ends the cycle: a participant's derived state short-circuits to CLOSED,
+ * and the late-score sweep stops taking verdicts on it. The service refuses while
+ * a follow-up is open or a missed-deadline result is still waiting on an answer,
+ * so the reason recorded here is the operator's, not a substitute for that gate.
+ */
+export const closeCycle = (cycleId, reason, callback) =>
+  patchToOpenElisServerFullResponse(
+    `/rest/eqa/cycles/${cycleId}/transition`,
+    JSON.stringify({
+      newState: "CLOSED",
+      stateMachine: "PROVIDER",
+      reason,
+    }),
+    withBody(callback),
+  );
+
 export const scoreCycle = (cycleId, callback) =>
   postToOpenElisServerFullResponse(
     `/rest/eqa/cycles/${cycleId}/score`,
