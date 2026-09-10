@@ -19,10 +19,16 @@ dotenv.config({ path: new URL("../.env", import.meta.url).pathname });
  */
 
 // Demo story proof on the build stack (video-ready).
-const CORE_DEMO_TESTS = ["**/demo/core/**/*.spec.ts"];
+const CORE_DEMO_TESTS = [
+  "**/demo/core/**/*.spec.ts",
+  "playwright/tests/demo/core/ogc-782-microbiology-mvp.spec.ts",
+];
 
-// Core foundational verification (ci-safe).
+// Core foundational verification on the build stack.
 const CORE_FOUNDATIONAL_TESTS = ["**/foundational/core/**/*.spec.ts"];
+
+// Explicit operator-run verification against a deployed review target.
+const CORE_LIVE_UAT_TESTS = ["**/manual-only/core/**/*.spec.ts"];
 
 // Foundational stories verify the catalog and shared mapping surfaces used by
 // setup. The demo project owns the guided connection and assembled result
@@ -135,6 +141,16 @@ export default defineConfig({
         launchOptions: {
           slowMo: parseInt(process.env.PLAYWRIGHT_SLOWMO || "500"),
         },
+      },
+      dependencies: ["setup"],
+    },
+
+    {
+      name: "core-live-uat",
+      testMatch: CORE_LIVE_UAT_TESTS,
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "playwright/.auth/user.json",
       },
       dependencies: ["setup"],
     },

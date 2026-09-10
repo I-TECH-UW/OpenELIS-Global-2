@@ -35,6 +35,7 @@ import org.openelisglobal.eqa.valueholder.SampleEQA;
 import org.openelisglobal.labelpreset.dto.OrderLabelPersistRequest;
 import org.openelisglobal.labelpreset.service.OrderLabelRequestService;
 import org.openelisglobal.labelpreset.valueholder.OrderLabelRequest;
+import org.openelisglobal.microbiology.service.MicroOrderRoutingService;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.note.valueholder.Note;
@@ -152,6 +153,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     private OrderLabelRequestService orderLabelRequestService;
     @Autowired
     private org.openelisglobal.questionnaire.service.QuestionnaireStorageService questionnaireStorageService;
+    @Autowired(required = false)
+    private MicroOrderRoutingService microOrderRoutingService;
 
     @Transactional
     @Override
@@ -171,7 +174,7 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 
         persistProviderData(updateData);
         persistRequestorContactData(updateData);
-        persistSampleData(updateData);
+        persistSampleData(updateData, form.getMicrobiologyOrderDetail());
 
         // Only persist requester data and observations if sample was successfully
         // created
@@ -355,7 +358,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
         }
     }
 
-    private void persistSampleData(SamplePatientUpdateData updateData) {
+    private void persistSampleData(SamplePatientUpdateData updateData,
+            org.openelisglobal.microbiology.form.MicroCaseOrderDetailRequestForm microbiologyOrderDetail) {
         String analysisRevision = ConfigurationProperties.getInstance().getPropertyValue("analysis.default.revision");
 
         if (updateData.getSample() == null) {
@@ -529,6 +533,8 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
                     persistAnalysisNotificationConfigs(analysis, updateData);
                 }
             }
+            routeMicrobiologyCases(savedItem, sampleTestCollection, updateData.getCurrentUserId(),
+                    microbiologyOrderDetail);
         }
 
         org.openelisglobal.sample.valueholder.Sample submittedSample = updateData.getSample();
@@ -627,6 +633,16 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
 
     private int normalizeLabelQuantity(Integer quantity) {
         return quantity != null && quantity > 0 ? quantity : 1;
+    }
+
+    private void routeMicrobiologyCases(SampleItem sampleItem, SampleTestCollection sampleTestCollection,
+            String currentUserId,
+            org.openelisglobal.microbiology.form.MicroCaseOrderDetailRequestForm microbiologyOrderDetail) {
+        if (microOrderRoutingService == null) {
+            return;
+        }
+        microOrderRoutingService.routeAnalysesForSampleItem(sampleItem, sampleTestCollection.analysises, currentUserId,
+                microbiologyOrderDetail);
     }
 
     /*

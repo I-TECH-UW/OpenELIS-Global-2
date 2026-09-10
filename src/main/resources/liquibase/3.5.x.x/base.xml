@@ -393,6 +393,32 @@
   <include relativeToChangelogFile="true" file="097-remove-openelis-analyzer-error-queue.xml"/>
   <include relativeToChangelogFile="true" file="098-remove-superseded-analyzer-schema.xml"/>
 
+  <!-- OGC-782 M1: microbiology catalog/reference foundations. The historical
+       filename is retained so already-applied demo migrations keep identity. -->
+  <include relativeToChangelogFile="true" file="051-microbiology-reference-foundations.xml"/>
+
+  <!-- OGC-782 M2: microbiology case core -->
+  <include relativeToChangelogFile="true" file="052-microbiology-case-core.xml"/>
+  <include relativeToChangelogFile="true" file="053-microbiology-manual-ast.xml"/>
+  <include relativeToChangelogFile="true" file="054-microbiology-worklists-critical.xml"/>
+
+  <!-- OGC-782 M7 MVP-gap: microbiology order-detail capture (FR-002) -->
+  <include relativeToChangelogFile="true" file="055-microbiology-order-detail.xml"/>
+
+  <!-- OGC-782 M7 MVP-gap: per-run breakpoint-standard selection (M-05) -->
+  <include relativeToChangelogFile="true" file="056-microbiology-ast-breakpoint-standard.xml"/>
+
+  <!-- OGC-782 M7 MVP-gap: alert_entity_ref for string-keyed alerts (M-11) -->
+  <include relativeToChangelogFile="true" file="057-alert-entity-ref.xml"/>
+
+  <!-- OGC-782: keep the referral and critical-result alert types after 057 redeclares the constraint -->
+  <include relativeToChangelogFile="true" file="058-alert-type-union.xml"/>
+  <!-- OGC-782 remediation: explicit critical communication targets and lifecycle -->
+  <include relativeToChangelogFile="true" file="058-microbiology-critical-lifecycle.xml"/>
+
+  <!-- OGC-782 remediation: standard Result projection for microbiology reports -->
+  <include relativeToChangelogFile="true" file="059-microbiology-report-projection.xml"/>
+
   <!-- Cold-storage monitoring hardening (issues #3743/#3904). Its first changeset redeclares
        chk_alert_type wholesale (086's union plus FREEZER_OFFLINE). 092 below redeclares it once more to
        add FREEZER_HUMIDITY and is now the last word on that constraint - see the note there. -->
@@ -408,6 +434,5 @@
   <!-- FREEZER_HUMIDITY on the alert_type constraint. This is now the last changeset anywhere in
        base-changelog.xml that may redeclare chk_alert_type - it inherits 089's ordering invariant. -->
   <include relativeToChangelogFile="true" file="092-freezer-humidity-alert-type.xml"/>
-
 
 </databaseChangeLog>
