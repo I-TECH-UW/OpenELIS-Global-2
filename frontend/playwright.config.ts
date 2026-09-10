@@ -24,11 +24,18 @@ const CORE_DEMO_TESTS = ["**/demo/core/**/*.spec.ts"];
 // Core foundational verification (ci-safe).
 const CORE_FOUNDATIONAL_TESTS = ["**/foundational/core/**/*.spec.ts"];
 
-// Harness demo story proof (video-ready).
-const HARNESS_DEMO_TESTS = ["**/demo/harness/**/*.spec.ts"];
-
-// Harness foundational verification (ci-safe).
-const HARNESS_FOUNDATIONAL_TESTS = ["**/foundational/harness/**/*.spec.ts"];
+// Foundational stories verify the catalog and shared mapping surfaces used by
+// setup. The demo project owns the guided connection and assembled result
+// stories. Video evidence targets the assembled result story alone.
+const HARNESS_FOUNDATIONAL_TESTS = [
+  "**/demo/harness/ogc-1054-m1-analyzer-types.spec.ts",
+  "**/demo/harness/ogc-1054-m2-shared-mapping.spec.ts",
+];
+const HARNESS_DEMO_TESTS = [
+  "**/demo/harness/ogc-1054-m3-guided-setup.spec.ts",
+  "**/demo/harness/ogc-1054-analyzer-mvp.spec.ts",
+];
+const HARNESS_VIDEO_TESTS = ["**/demo/harness/ogc-1054-analyzer-mvp.spec.ts"];
 
 // Manual-only harness coverage (real hardware or operator-managed infra).
 const HARNESS_MANUAL_ONLY_TESTS = [
@@ -65,6 +72,8 @@ export default defineConfig({
   use: {
     baseURL: process.env.BASE_URL || "https://localhost",
     ignoreHTTPSErrors: true,
+    // Story assertions use the source English copy, not regional translations.
+    locale: "en",
 
     // Evidence collection
     trace: "retain-on-failure",
@@ -130,7 +139,16 @@ export default defineConfig({
       dependencies: ["setup"],
     },
 
-    // Analyzer-stack demo story proof (CI: reusable harness workflow only).
+    // Analyzer-stack verification (CI: reusable harness workflow only).
+    {
+      name: "harness-foundational",
+      testMatch: HARNESS_FOUNDATIONAL_TESTS,
+      use: {
+        ...devices["Desktop Chrome"],
+        storageState: "playwright/.auth/user.json",
+      },
+      dependencies: ["setup"],
+    },
     {
       name: "harness-demo",
       testMatch: HARNESS_DEMO_TESTS,
@@ -142,25 +160,15 @@ export default defineConfig({
     },
     {
       name: "harness-demo-video",
-      testMatch: HARNESS_DEMO_TESTS,
+      testMatch: HARNESS_VIDEO_TESTS,
       use: {
         ...devices["Desktop Chrome"],
         storageState: "playwright/.auth/user.json",
+        trace: "on",
         video: "on",
         launchOptions: {
           slowMo: parseInt(process.env.PLAYWRIGHT_SLOWMO || "500"),
         },
-      },
-      dependencies: ["setup"],
-    },
-
-    // Analyzer-stack foundational verification (non-demo, ci-safe).
-    {
-      name: "harness-foundational",
-      testMatch: HARNESS_FOUNDATIONAL_TESTS,
-      use: {
-        ...devices["Desktop Chrome"],
-        storageState: "playwright/.auth/user.json",
       },
       dependencies: ["setup"],
     },
