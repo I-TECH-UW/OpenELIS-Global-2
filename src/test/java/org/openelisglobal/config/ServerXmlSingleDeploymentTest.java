@@ -140,9 +140,8 @@ public class ServerXmlSingleDeploymentTest {
     }
 
     /**
-     * Whether the appBase scan would deploy this {@code <Context>}'s docBase a
-     * second time. It does not when the declared name already matches that docBase,
-     * since {@code HostConfig.deploymentExists} then skips its own copy.
+     * Whether the appBase scan deploys this docBase a second time; it does not when
+     * the declared name matches it, per {@code HostConfig.deploymentExists}.
      */
     private static boolean scanWouldDuplicate(Element context, String appBase) {
         return resolvesInside(context, appBase)
