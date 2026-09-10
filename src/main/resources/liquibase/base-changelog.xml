@@ -156,6 +156,8 @@
   <include file="liquibase/qa/042-eqa-lab-enrollment-status.xml" />
   <!-- EQA V2.5 — OGC-935: menu row for the provider's participant follow-up register (qa-082) -->
   <include file="liquibase/qa/043-eqa-provider-followup-menu.xml" />
+  <!-- EQA V2 — OGC-935: retire the V1 Results & Analysis menu row (qa-083) -->
+  <include file="liquibase/qa/044-retire-v1-eqa-results-menu.xml" />
 
   <!-- Clears an eqa-v2-start tag that an earlier version of qa/040 recorded without
        applying. Last on purpose: it repairs a changelog row, so it has to run after
