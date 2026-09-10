@@ -1,15 +1,18 @@
 package org.openelisglobal.fhir.providers;
 
 import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.IncludeParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.Search;
 import ca.uhn.fhir.rest.annotation.Sort;
 import ca.uhn.fhir.rest.api.MethodOutcome;
 import ca.uhn.fhir.rest.api.SortSpec;
+import ca.uhn.fhir.rest.api.server.IBundleProvider;
 import ca.uhn.fhir.rest.param.DateRangeParam;
 import ca.uhn.fhir.rest.param.ReferenceAndListParam;
 import ca.uhn.fhir.rest.param.TokenAndListParam;
@@ -18,23 +21,22 @@ import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.DiagnosticReport;
 import org.hl7.fhir.r4.model.IdType;
-import org.hl7.fhir.r4.model.Patient;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
-import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
+import org.openelisglobal.fhir.FhirConstants;
+import org.openelisglobal.fhir.search.searchparams.DiagnosticReportSearchParams;
+import org.openelisglobal.search.service.DiagnosticReportSearchService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
@@ -52,7 +54,8 @@ import org.springframework.stereotype.Component;
  * Supported operations:
  * <ul>
  * <li>READ: GET /fhir/DiagnosticReport/{uuid}</li>
- * <li>SEARCH: GET /fhir/DiagnosticReport?patient={uuid}&amp;...</li>
+ * <li>SEARCH: GET /fhir/DiagnosticReport?patient={uuid}&amp;... (answered from
+ * the OpenELIS database)</li>
  * <li>DELETE: DELETE /fhir/DiagnosticReport/{uuid} (cancels the Analysis)</li>
  * </ul>
  */
@@ -69,7 +72,7 @@ public class DiagnosticReportProvider implements IResourceProvider {
     private IStatusService statusService;
 
     @Autowired
-    private FhirUtil util;
+    private DiagnosticReportSearchService diagnosticReportSearchService;
 
     @Override
     public Class<? extends IBaseResource> getResourceType() {
@@ -109,6 +112,9 @@ public class DiagnosticReportProvider implements IResourceProvider {
                     "FHIR transformation error while reading DiagnosticReport: " + e.getMessage());
             throw new InternalErrorException("FHIR transformation failed for DiagnosticReport", e);
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("DiagnosticReport", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method,
                     "Unexpected error while reading DiagnosticReport: " + e.getMessage());
             throw new InternalErrorException("Unexpected server error while reading DiagnosticReport", e);
@@ -155,6 +161,9 @@ public class DiagnosticReportProvider implements IResourceProvider {
         } catch (IllegalArgumentException e) {
             throw new InvalidRequestException("DiagnosticReport ID must be a valid UUID");
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("DiagnosticReport", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method,
                     "Unhandled exception: " + FhirProviderUtils.safeMessage(e));
             throw new InternalErrorException(
@@ -163,39 +172,44 @@ public class DiagnosticReportProvider implements IResourceProvider {
     }
 
     @Search
-    public Bundle searchDiagnosticReports(
-            @OptionalParam(name = DiagnosticReport.SP_PATIENT, chainWhitelist = { "", Patient.SP_IDENTIFIER,
-                    Patient.SP_GIVEN, Patient.SP_FAMILY,
-                    Patient.SP_NAME }, targetTypes = Patient.class) ReferenceAndListParam patientReference,
-            @OptionalParam(name = DiagnosticReport.SP_SUBJECT, chainWhitelist = { "", Patient.SP_IDENTIFIER,
-                    Patient.SP_NAME, Patient.SP_GIVEN, Patient.SP_FAMILY }) ReferenceAndListParam subjectReference,
-            @OptionalParam(name = DiagnosticReport.SP_ISSUED) DateRangeParam issueDate,
-            @OptionalParam(name = DiagnosticReport.SP_CODE) TokenAndListParam code,
-            @OptionalParam(name = DiagnosticReport.SP_RESULT) ReferenceAndListParam result,
+    public IBundleProvider searchDiagnosticReports(
             @OptionalParam(name = DiagnosticReport.SP_RES_ID) TokenAndListParam id,
+            @OptionalParam(name = DiagnosticReport.SP_IDENTIFIER) TokenAndListParam identifier,
+            @OptionalParam(name = DiagnosticReport.SP_PATIENT) ReferenceAndListParam patient,
+            @OptionalParam(name = DiagnosticReport.SP_SUBJECT) ReferenceAndListParam subject,
+            @OptionalParam(name = DiagnosticReport.SP_BASED_ON) ReferenceAndListParam basedOn,
+            @OptionalParam(name = DiagnosticReport.SP_RESULT) ReferenceAndListParam result,
+            @OptionalParam(name = DiagnosticReport.SP_SPECIMEN) ReferenceAndListParam specimen,
+            @OptionalParam(name = DiagnosticReport.SP_CODE) TokenAndListParam code,
+            @OptionalParam(name = DiagnosticReport.SP_STATUS) TokenAndListParam status,
+            @OptionalParam(name = DiagnosticReport.SP_ISSUED) DateRangeParam issued,
             @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
-            @IncludeParam(allow = { "DiagnosticReport:" + DiagnosticReport.SP_ENCOUNTER,
-                    "DiagnosticReport:" + DiagnosticReport.SP_PATIENT,
-                    "DiagnosticReport:" + DiagnosticReport.SP_RESULT }) HashSet<Include> includes,
+            @Offset Integer offset, @Count Integer count,
+            @IncludeParam(allow = { FhirConstants.DIAGNOSTIC_REPORT_PATIENT_INCLUDE,
+                    FhirConstants.DIAGNOSTIC_REPORT_SUBJECT_INCLUDE, FhirConstants.DIAGNOSTIC_REPORT_BASED_ON_INCLUDE,
+                    FhirConstants.DIAGNOSTIC_REPORT_RESULT_INCLUDE,
+                    FhirConstants.DIAGNOSTIC_REPORT_SPECIMEN_INCLUDE }) HashSet<Include> includes,
             HttpServletRequest request) {
+
         String method = "searchDiagnosticReports";
+        LogEvent.logDebug(this.getClass().getSimpleName(), method, "Searching for DiagnosticReports");
+
         try {
-            Bundle resultBundle = util.forwardSearchToFhirStore(request);
-
-            if (resultBundle == null) {
-                resultBundle = new Bundle();
-            }
-
-            if (resultBundle.getType() == null) {
-                resultBundle.setType(Bundle.BundleType.SEARCHSET);
-            }
-
-            if (resultBundle.getEntry() == null) {
-                resultBundle.setEntry(new ArrayList<>());
-            }
-
-            return resultBundle;
+            DiagnosticReportSearchParams params = new DiagnosticReportSearchParams(id, identifier,
+                    FhirProviderUtils.merge(patient, subject), basedOn, result, specimen, code, status, issued,
+                    lastUpdated, sort, includes);
+            return FhirProviderUtils.withPaging(diagnosticReportSearchService.searchDiagnosticReports(params), offset,
+                    count);
+        } catch (InvalidRequestException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            LogEvent.logError(this.getClass().getSimpleName(), method,
+                    "Invalid DiagnosticReport search parameter: " + e.getMessage());
+            throw new InvalidRequestException("Invalid DiagnosticReport search parameter: " + e.getMessage(), e);
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("DiagnosticReport", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method,
                     "Error searching DiagnosticReports: " + e.getMessage());
             throw new InternalErrorException("Unexpected server error searching DiagnosticReports", e);

@@ -1,16 +1,21 @@
 package org.openelisglobal.fhir.providers;
 
 import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.IncludeParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Sort;
 import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.SortSpec;
+import ca.uhn.fhir.rest.api.server.IBundleProvider;
 import ca.uhn.fhir.rest.param.DateRangeParam;
 import ca.uhn.fhir.rest.param.ReferenceAndListParam;
 import ca.uhn.fhir.rest.param.TokenAndListParam;
@@ -27,12 +32,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.hibernate.StaleObjectStateException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.ServiceRequest;
-import org.hl7.fhir.r4.model.Specimen;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.constants.Constants;
@@ -48,6 +50,8 @@ import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
+import org.openelisglobal.fhir.FhirConstants;
+import org.openelisglobal.fhir.search.searchparams.ServiceRequestSearchParams;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.service.PatientService;
@@ -68,6 +72,7 @@ import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.search.service.ServiceRequestSearchService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.service.TestService;
@@ -104,6 +109,9 @@ public class ServiceRequestProvider implements IResourceProvider {
 
     @Autowired
     private FhirUtil util;
+
+    @Autowired
+    private ServiceRequestSearchService serviceRequestSearchService;
 
     @Autowired
     public SampleEditFormValidator formValidator;
@@ -157,6 +165,9 @@ public class ServiceRequestProvider implements IResourceProvider {
         } catch (IllegalArgumentException e) {
             throw new InvalidRequestException("ServiceRequest ID must be a valid UUID");
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("ServiceRequest", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method,
                     "Unexpected error while Reading ServiceRequest: " + e.getMessage());
             throw new InternalErrorException("Unexpected server error while Reading ServiceRequest", e);
@@ -308,6 +319,9 @@ public class ServiceRequestProvider implements IResourceProvider {
             throw e;
 
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("ServiceRequest", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
             throw new InternalErrorException(
                     "Unexpected server error while creating ServiceRequest: " + FhirProviderUtils.safeMessage(e), e);
@@ -466,6 +480,9 @@ public class ServiceRequestProvider implements IResourceProvider {
             throw e;
 
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("ServiceRequest", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
             throw new InternalErrorException(
                     "Unexpected server error while updating ServiceRequest: " + FhirProviderUtils.safeMessage(e), e);
@@ -519,6 +536,9 @@ public class ServiceRequestProvider implements IResourceProvider {
                     "Internal error: " + FhirProviderUtils.safeMessage(e));
             throw e;
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("ServiceRequest", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method,
                     "Unhandled exception: " + FhirProviderUtils.safeMessage(e));
             throw new InternalErrorException("Unexpected server error while deleting ServiceRequest: " + e.getMessage(),
@@ -527,57 +547,42 @@ public class ServiceRequestProvider implements IResourceProvider {
     }
 
     @Search
-    public Bundle searchForServiceRequests(
-            @OptionalParam(name = ServiceRequest.SP_PATIENT, chainWhitelist = { "", Patient.SP_IDENTIFIER,
-                    Patient.SP_GIVEN, Patient.SP_FAMILY,
-                    Patient.SP_NAME }, targetTypes = Patient.class) ReferenceAndListParam patientReference,
-
-            @OptionalParam(name = ServiceRequest.SP_SUBJECT, chainWhitelist = { "", Patient.SP_IDENTIFIER,
-                    Patient.SP_GIVEN, Patient.SP_FAMILY,
-                    Patient.SP_NAME }, targetTypes = Patient.class) ReferenceAndListParam subjectReference,
-
+    public IBundleProvider searchServiceRequests(@OptionalParam(name = ServiceRequest.SP_RES_ID) TokenAndListParam id,
+            @OptionalParam(name = ServiceRequest.SP_IDENTIFIER) TokenAndListParam identifier,
+            @OptionalParam(name = ServiceRequest.SP_PATIENT) ReferenceAndListParam patient,
+            @OptionalParam(name = ServiceRequest.SP_SUBJECT) ReferenceAndListParam subject,
+            @OptionalParam(name = ServiceRequest.SP_REQUESTER) ReferenceAndListParam requester,
+            @OptionalParam(name = ServiceRequest.SP_SPECIMEN) ReferenceAndListParam specimen,
             @OptionalParam(name = ServiceRequest.SP_CODE) TokenAndListParam code,
-
-            @OptionalParam(name = ServiceRequest.SP_REQUESTER, chainWhitelist = { "", Practitioner.SP_IDENTIFIER,
-                    Practitioner.SP_GIVEN, Practitioner.SP_FAMILY,
-                    Practitioner.SP_NAME }, targetTypes = Practitioner.class) ReferenceAndListParam participantReference,
-
-            @OptionalParam(name = ServiceRequest.SP_OCCURRENCE) DateRangeParam occurrence,
-
-            @OptionalParam(name = ServiceRequest.SP_RES_ID) TokenAndListParam uuid,
-
-            @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated,
-
-            @OptionalParam(name = ServiceRequest.SP_SPECIMEN, chainWhitelist = { "",
-                    Specimen.SP_IDENTIFIER }, targetTypes = Specimen.class) ReferenceAndListParam specimenReference,
-
-            @IncludeParam(allow = { "ServiceRequest:" + ServiceRequest.SP_PATIENT,
-                    "ServiceRequest:" + ServiceRequest.SP_SUBJECT, "ServiceRequest:" + ServiceRequest.SP_REQUESTER,
-                    "ServiceRequest:" + ServiceRequest.SP_SPECIMEN }) HashSet<Include> includes,
-
-            @IncludeParam(reverse = true, allow = { "Observation:based-on" }) HashSet<Include> revIncludes,
-
+            @OptionalParam(name = ServiceRequest.SP_STATUS) TokenAndListParam status,
+            @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
+            @Offset Integer offset, @Count Integer count,
+            @IncludeParam(allow = { FhirConstants.SERVICE_REQUEST_PATIENT_INCLUDE,
+                    FhirConstants.SERVICE_REQUEST_SUBJECT_INCLUDE, FhirConstants.SERVICE_REQUEST_REQUESTER_INCLUDE,
+                    FhirConstants.SERVICE_REQUEST_SPECIMEN_INCLUDE }) HashSet<Include> includes,
+            @IncludeParam(reverse = true, allow = { FhirConstants.OBSERVATION_BASED_ON_REV_INCLUDE,
+                    FhirConstants.DIAGNOSTIC_REPORT_BASED_ON_REV_INCLUDE }) HashSet<Include> revIncludes,
             HttpServletRequest request) {
 
-        String method = "search";
+        String method = "searchServiceRequests";
+        LogEvent.logDebug(this.getClass().getSimpleName(), method, "Searching for ServiceRequests");
 
         try {
-            Bundle resultBundle = util.forwardSearchToFhirStore(request);
-
-            if (resultBundle == null) {
-                resultBundle = new Bundle();
-            }
-
-            if (resultBundle.getType() == null) {
-                resultBundle.setType(Bundle.BundleType.SEARCHSET);
-            }
-
-            if (resultBundle.getEntry() == null) {
-                resultBundle.setEntry(new ArrayList<>());
-            }
-
-            return resultBundle;
+            ServiceRequestSearchParams params = new ServiceRequestSearchParams(id, identifier,
+                    FhirProviderUtils.merge(patient, subject), requester, specimen, code, status, lastUpdated, sort,
+                    includes, revIncludes);
+            return FhirProviderUtils.withPaging(serviceRequestSearchService.searchServiceRequests(params), offset,
+                    count);
+        } catch (InvalidRequestException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            LogEvent.logError(this.getClass().getSimpleName(), method,
+                    "Invalid ServiceRequest search parameter: " + e.getMessage());
+            throw new InvalidRequestException("Invalid ServiceRequest search parameter: " + e.getMessage(), e);
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("ServiceRequest", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method,
                     "Error searching ServiceRequest: " + e.getMessage());
             throw new InternalErrorException("Unexpected server error searching ServiceRequest");

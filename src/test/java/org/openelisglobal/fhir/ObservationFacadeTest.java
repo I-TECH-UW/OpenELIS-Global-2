@@ -407,9 +407,10 @@ public class ObservationFacadeTest extends BaseWebContextSensitiveTest {
     }
 
     /**
-     * Result entry validation requires the analysis to belong to a panel; the
-     * fixture's analyses have none, so tests that write through the result workflow
-     * attach one first.
+     * The result workflow merges the analysis together with its panel, and
+     * Hibernate treats a panel without a version (lastupdated) as transient. The
+     * fixture's analyses have no panel, so tests that write through the result
+     * workflow attach a freshly saved, versioned one first.
      */
     private void attachPanelToAnalysis(String analysisId) {
         Analysis analysis = analysisService.getAnalysisById(analysisId);

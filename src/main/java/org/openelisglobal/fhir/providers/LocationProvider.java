@@ -1,18 +1,25 @@
 package org.openelisglobal.fhir.providers;
 
+import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
+import ca.uhn.fhir.rest.annotation.IncludeParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Sort;
 import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.SortSpec;
+import ca.uhn.fhir.rest.api.server.IBundleProvider;
+import ca.uhn.fhir.rest.param.DateRangeParam;
 import ca.uhn.fhir.rest.param.ReferenceAndListParam;
 import ca.uhn.fhir.rest.param.StringAndListParam;
 import ca.uhn.fhir.rest.param.TokenAndListParam;
-import ca.uhn.fhir.rest.param.TokenParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
@@ -21,12 +28,12 @@ import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.UUID;
 import java.util.function.BiConsumer;
 import java.util.function.Function;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Location;
@@ -34,7 +41,9 @@ import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.common.valueholder.BaseObject;
-import org.openelisglobal.dataexchange.fhir.FhirUtil;
+import org.openelisglobal.fhir.FhirConstants;
+import org.openelisglobal.fhir.search.searchparams.LocationSearchParams;
+import org.openelisglobal.search.service.LocationSearchService;
 import org.openelisglobal.storage.fhir.StorageLocationFhirTransform;
 import org.openelisglobal.storage.service.StorageBoxService;
 import org.openelisglobal.storage.service.StorageDeviceService;
@@ -58,9 +67,8 @@ import org.springframework.stereotype.Component;
  * Every level shares one id space, so a Location id is resolved by trying each
  * level in turn. The storage level of an inbound resource is read from the
  * {@code storage-hierarchy} tag, falling back to {@code physicalType.text}.
- * Read and write operations use the OpenELIS database; the result is mirrored
- * to the FHIR store on a best-effort basis. Search still forwards to the FHIR
- * store.
+ * Read, write and search operations use the OpenELIS database; the result of a
+ * write is mirrored to the FHIR store on a best-effort basis.
  *
  * <p>
  * Supported operations:
@@ -104,7 +112,7 @@ public class LocationProvider implements IResourceProvider {
     private StorageLocationService locationService;
 
     @Autowired
-    private FhirUtil util;
+    private LocationSearchService locationSearchService;
 
     private final List<StorageLevel<?>> levels = new ArrayList<>();
 
@@ -181,6 +189,9 @@ public class LocationProvider implements IResourceProvider {
         } catch (ResourceNotFoundException | InvalidRequestException e) {
             throw e;
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("Location", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method,
                     "Unexpected error while reading Location: " + FhirProviderUtils.safeMessage(e));
             throw new InternalErrorException("Unexpected server error while reading Location", e);
@@ -205,6 +216,9 @@ public class LocationProvider implements IResourceProvider {
             LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
             throw e;
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("Location", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
             throw new InternalErrorException(
                     "Unexpected server error while creating Location: " + FhirProviderUtils.safeMessage(e), e);
@@ -233,6 +247,9 @@ public class LocationProvider implements IResourceProvider {
             LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
             throw e;
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("Location", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
             throw new InternalErrorException(
                     "Unexpected server error while updating Location: " + FhirProviderUtils.safeMessage(e), e);
@@ -265,6 +282,9 @@ public class LocationProvider implements IResourceProvider {
                     "Internal error: " + FhirProviderUtils.safeMessage(e));
             throw e;
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("Location", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method,
                     "Unhandled exception: " + FhirProviderUtils.safeMessage(e));
             throw new InternalErrorException(
@@ -273,33 +293,36 @@ public class LocationProvider implements IResourceProvider {
     }
 
     @Search
-    public Bundle searchLocationBundle(@OptionalParam(name = Location.SP_IDENTIFIER) TokenAndListParam identifier,
+    public IBundleProvider searchLocations(@OptionalParam(name = Location.SP_RES_ID) TokenAndListParam id,
+            @OptionalParam(name = Location.SP_IDENTIFIER) TokenAndListParam identifier,
             @OptionalParam(name = Location.SP_NAME) StringAndListParam name,
-            @OptionalParam(name = Location.SP_STATUS) TokenParam status,
+            @OptionalParam(name = Location.SP_STATUS) TokenAndListParam status,
             @OptionalParam(name = Location.SP_PARTOF) ReferenceAndListParam partOf,
-            @OptionalParam(name = Location.SP_ORGANIZATION) ReferenceAndListParam organization,
-            @OptionalParam(name = "physical-type") TokenAndListParam physicalType,
-            @OptionalParam(name = Location.SP_TYPE) TokenAndListParam type,
-            @OptionalParam(name = "_tag") TokenAndListParam tag, HttpServletRequest request) {
+            @OptionalParam(name = "_tag") TokenAndListParam tag,
+            @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
+            @Offset Integer offset, @Count Integer count,
+            @IncludeParam(allow = { FhirConstants.LOCATION_PARTOF_INCLUDE }) HashSet<Include> includes,
+            @IncludeParam(reverse = true, allow = {
+                    FhirConstants.LOCATION_PARTOF_INCLUDE }) HashSet<Include> revIncludes,
+            HttpServletRequest request) {
 
-        final String methodName = "searchLocationBundle";
+        final String methodName = "searchLocations";
+        LogEvent.logDebug(this.getClass().getSimpleName(), methodName, "Searching for Locations");
 
         try {
-            Bundle bundle = util.forwardSearchToFhirStore(request);
-
-            if (bundle == null) {
-                bundle = new Bundle();
-            }
-            if (bundle.getType() == null) {
-                bundle.setType(Bundle.BundleType.SEARCHSET);
-            }
-            if (bundle.getEntry() == null) {
-                bundle.setEntry(new ArrayList<>());
-            }
-
-            return bundle;
-
+            LocationSearchParams params = new LocationSearchParams(id, identifier, name, status, partOf, tag,
+                    lastUpdated, sort, includes, revIncludes);
+            return FhirProviderUtils.withPaging(locationSearchService.searchLocations(params), offset, count);
+        } catch (InvalidRequestException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            LogEvent.logError(this.getClass().getSimpleName(), methodName,
+                    "Invalid Location search parameter: " + e.getMessage());
+            throw new InvalidRequestException("Invalid Location search parameter: " + e.getMessage(), e);
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("Location", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), methodName,
                     "Error searching Locations: " + FhirProviderUtils.safeMessage(e));
             throw new InternalErrorException("Unexpected server error while searching Locations", e);

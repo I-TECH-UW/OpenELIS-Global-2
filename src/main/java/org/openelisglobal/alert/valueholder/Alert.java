@@ -106,6 +106,9 @@ public class Alert extends BaseObject<Long> {
     @JsonIgnoreProperties({ "hibernateLazyInitializer", "handler" })
     private SystemUser acknowledgedBy;
 
+    @Column(name = "acknowledgment_notes", columnDefinition = "TEXT")
+    private String acknowledgmentNotes;
+
     @Column(name = "resolved_at", columnDefinition = "TIMESTAMP WITH TIME ZONE")
     private OffsetDateTime resolvedAt;
 
