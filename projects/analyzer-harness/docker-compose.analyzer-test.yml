@@ -90,8 +90,8 @@ services:
       - BRIDGE_SECURITY_PASSWORD=${ANALYZER_BRIDGE_PASSWORD:-adminADMIN!}
       - BRIDGE_FILE_ENABLED=true
       - LOGGING_LEVEL_ORG_ITECH=INFO
-      # Bridge connects directly to OE (not through proxy), so no /api/ prefix
-      - ORG_ITECH_AHB_FORWARD_HTTP_SERVER_URI=https://oe.openelis.org:8443/OpenELIS-Global/analyzer
+      # Bypasses the proxy; /api/OpenELIS-Global is Tomcat's own context path, not a proxy rewrite
+      - ORG_ITECH_AHB_FORWARD_HTTP_SERVER_URI=https://oe.openelis.org:8443/api/OpenELIS-Global/analyzer
       - ORG_ITECH_AHB_FORWARD_HTTP_SERVER_USERNAME=admin
       - ORG_ITECH_AHB_FORWARD_HTTP_SERVER_PASSWORD=adminADMIN!
       - ORG_ITECH_AHB_FORWARD_HTTP_SERVER_INSECURE_TLS=true
