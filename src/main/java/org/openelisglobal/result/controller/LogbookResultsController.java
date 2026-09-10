@@ -620,11 +620,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
         referral.setRequestDate(new Timestamp(new Date().getTime()));
         referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
-        // See ResultUtil.handleReferrals: the referrer if the form names one, else the
-        // technician saving the result.
         referral.setRequesterName(
-                GenericValidator.isBlankOrNull(referralItem.getReferrer()) ? testResultItem.getTechnician()
-                        : referralItem.getReferrer());
+                ResultUtil.requesterNameFor(referralItem, testResultItem, actionDataSet.getCurrentUserId()));
         referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
         referral.setAnalysis(analysis);
 
