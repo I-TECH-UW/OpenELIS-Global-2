@@ -618,11 +618,13 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                 referralSetService.buildSubcontractFromItem(referralItem, actionDataSet.getCurrentUserId()));
         referral.setSysUserId(actionDataSet.getCurrentUserId());
         referral.setReferralTypeId(REFERRAL_CONFORMATION_ID);
-        referral.setRequesterName(testResultItem.getTechnician());
-
         referral.setRequestDate(new Timestamp(new Date().getTime()));
         referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
-        referral.setRequesterName(referralItem.getReferrer());
+        // See ResultUtil.handleReferrals: the referrer if the form names one, else the
+        // technician saving the result.
+        referral.setRequesterName(
+                GenericValidator.isBlankOrNull(referralItem.getReferrer()) ? testResultItem.getTechnician()
+                        : referralItem.getReferrer());
         referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
         referral.setAnalysis(analysis);
 

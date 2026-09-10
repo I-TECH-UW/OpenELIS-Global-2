@@ -467,11 +467,15 @@ public class ResultUtil {
                 actionDataSet.getCurrentUserId()));
         referral.setSysUserId(actionDataSet.getCurrentUserId());
         referral.setReferralTypeId(confirmationReferralTypeId());
-        referral.setRequesterName(testResultItem.getTechnician());
-
         referral.setRequestDate(new Timestamp(new Date().getTime()));
         referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
-        referral.setRequesterName(referralItem.getReferrer());
+        // Whoever raised this referral: the referrer named on the form if there is
+        // one, otherwise the technician saving the result. This used to set the
+        // technician and then overwrite it with a form field no client sends, so no
+        // referral recorded anybody at all.
+        referral.setRequesterName(
+                GenericValidator.isBlankOrNull(referralItem.getReferrer()) ? testResultItem.getTechnician()
+                        : referralItem.getReferrer());
         referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
         referral.setAnalysis(analysis);
 

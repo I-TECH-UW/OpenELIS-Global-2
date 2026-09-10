@@ -176,6 +176,19 @@ public class ResultsEntryReferOutLifecycleTest extends BaseWebContextSensitiveTe
     }
 
     /**
+     * Someone raised this referral and the reference lab may need to ask them about
+     * it. The writer recorded the technician and then immediately overwrote it with
+     * a form field no client sends, so Original requestor was blank on every
+     * referral in the system.
+     */
+    @Test
+    public void referOutRecordsWhoRaisedIt() {
+        Referral referral = saveReferOut(today());
+
+        assertEquals("the bench who referred the test is on the referral", "bench", referral.getRequesterName());
+    }
+
+    /**
      * A rival referral on the same test would carry its own subcontract row and its
      * own FHIR Task, and nothing downstream could say which one the reference lab
      * is working on.
@@ -268,7 +281,8 @@ public class ResultsEntryReferOutLifecycleTest extends BaseWebContextSensitiveTe
         referralItem.setReferredInstituteId(DESTINATION_ORG_ID);
         referralItem.setReferralReasonId(REFERRAL_REASON_ID);
         referralItem.setReferredTestId(REFERRED_TEST_ID);
-        referralItem.setReferrer("bench");
+        // No referrer: the Results Entry pages do not send one, which is exactly why
+        // the technician has to be what ends up on the referral.
         referralItem.setReferredSendDate(sendDate);
         item.setReferralItem(referralItem);
         return item;
