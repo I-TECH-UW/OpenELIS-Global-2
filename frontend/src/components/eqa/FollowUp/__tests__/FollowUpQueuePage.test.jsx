@@ -115,6 +115,28 @@ describe("FollowUpQueuePage", () => {
     );
   });
 
+  it("names the other register and links to where it actually lives", async () => {
+    renderPage();
+
+    // The subtitle used to send a provider to "EQA Program Management", which
+    // is not where the participant follow-up register lives.
+    expect(
+      await screen.findByText(/Correspondence with the laboratories/i),
+    ).toBeInTheDocument();
+    expect(screen.queryByText(/EQA Program Management/i)).toBeNull();
+
+    const link = screen.getByRole("link", { name: "Participant follow-up" });
+    expect(link).toHaveAttribute("href", "/qa/eqa/provider/follow-ups");
+  });
+
+  it("titles itself so it cannot be mistaken for the provider's register", async () => {
+    renderPage();
+
+    expect(
+      await screen.findByRole("heading", { name: "This Lab's Follow-Up" }),
+    ).toBeInTheDocument();
+  });
+
   it("renders one row per register entry with its source and worst z-score", async () => {
     renderPage();
 

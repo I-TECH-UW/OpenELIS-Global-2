@@ -80,6 +80,32 @@ export const modeBlockers = (roster, mode) =>
 // Deliberately no cipher name — the mockup's "AES-256" is a claim we cannot make
 // per install: EncryptionConverter delegates to Jasypt's TextEncryptor, whose
 // algorithm comes from deployment configuration.
+/**
+ * The distinct analysts a sealed deal was dealt to, in the order they first
+ * appear. An identical-set deal repeats every analyst once per sample, so the
+ * sealed screen would otherwise list the same person as many times as there are
+ * samples. Rows with no analyst contribute nothing.
+ */
+export const assignedAnalysts = (samples, roster) => {
+  // Keyed by analyst id, so a Map is the de-duplication: it keeps each analyst
+  // at the position they first appeared, whatever the deal repeats after that.
+  const names = new Map();
+  (samples || []).forEach((sample) => {
+    if (!sample.analystId) {
+      return;
+    }
+    const analyst = (roster || []).find(
+      (candidate) =>
+        String(candidate.systemUserId) === String(sample.analystId),
+    );
+    names.set(
+      String(sample.analystId),
+      analyst ? analyst.displayName : String(sample.analystId),
+    );
+  });
+  return [...names.values()];
+};
+
 export const sealState = (panel) => {
   if (["SEALED", "DISTRIBUTED"].includes(panel.status)) {
     return { key: "eqa.inhouse.seal.sealed", sealed: true };

@@ -9,7 +9,7 @@ import { seedFollowups, FollowupSeed } from "../../../helpers/seed-eqa-data";
  * One scored cycle carries two follow-up rows — one about this laboratory,
  * one about another participant. Which page a row appears on is decided by
  * nothing more than that: rows about this lab are the participant's own
- * corrective work and belong to the Follow-Up Queue, rows about other labs
+ * corrective work and belong to This Lab's Follow-Up, rows about other labs
  * are correspondence and belong to the provider register. Getting that
  * backwards would put another lab's failure into this lab's non-conformity
  * workflow, which is why both directions are asserted rather than one.
@@ -41,7 +41,7 @@ test.describe("EQA follow-up registers", () => {
     await test.step("the queue holds this lab's row and not the other lab's", async () => {
       await page.goto("/qa/eqa/follow-up-queue", { timeout: NAV_TIMEOUT });
       await expect(
-        page.getByRole("heading", { name: "Follow-Up Queue" }),
+        page.getByRole("heading", { name: "This Lab's Follow-Up" }),
       ).toBeVisible({ timeout: UI_TIMEOUT });
       for (const tile of [
         "kpi-queued",

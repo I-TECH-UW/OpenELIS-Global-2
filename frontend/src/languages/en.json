@@ -7985,7 +7985,7 @@
   "eqa.distribution.updateSuccess": "Draft distribution updated.",
   "banner.menu.eqa.myCycles": "My Cycles",
   "banner.menu.eqa.labPerformance": "Lab Performance",
-  "banner.menu.eqa.followUpQueue": "Follow-Up Queue",
+  "banner.menu.eqa.followUpQueue": "This Lab's Follow-Up",
   "banner.menu.eqa.analystCompetency": "Analyst Competency",
   "banner.menu.eqa.provider": "EQA Provider",
   "eqa.participant.myCycles.title": "My EQA Cycles",
@@ -8297,8 +8297,8 @@
   "eqa.performance.ACCEPTABLE": "Acceptable",
   "eqa.performance.QUESTIONABLE": "Questionable",
   "eqa.performance.UNACCEPTABLE": "Unacceptable",
-  "eqa.oversight.followUpQueue": "Follow-Up Queue",
-  "eqa.oversight.queueSubtitle": "This lab's questionable EQA scores awaiting corrective review, from external providers and our own in-house schemes. Provider-side follow-up on other labs' submissions lives in EQA Program Management.",
+  "eqa.oversight.followUpQueue": "This Lab's Follow-Up",
+  "eqa.oversight.queueSubtitle": "This lab's questionable EQA scores awaiting corrective review, from external providers and this lab's own in-house schemes. Correspondence with the laboratories that take part in the schemes this lab provides is a different register:",
   "eqa.queue.policyTitle": "Auto-NCE policy active.",
   "eqa.queue.policyBody": "Unacceptable scores on any external scheme this lab participates in open an NCE automatically. This queue holds the questionable range (2 < |Z| ≤ 3) and in-house failures, which need human triage.",
   "eqa.queue.kpi.queued": "Items queued",
@@ -8655,5 +8655,12 @@
   "eqa.competency.reason.insufficientEvidence": "{evaluable} assessable samples between {from} and {to}, short of the evidence floor of {floor}. This is not a performance concern: assign this analyst more proficiency testing samples.",
   "eqa.competency.reason.openEscalation": "An escalated non-conformity raised between {from} and {to} is still open, over {evaluable} assessable samples with {failures} failures. Close the non-conformity to clear the band.",
   "eqa.competency.whatIsAnAnalyst": "An analyst is an OpenELIS user account on the scheme's analyst roster, recorded against the sample they ran. That is a separate record from whoever entered the result and whoever validated it.",
-  "eqa.inhouse.roster.help": "Analysts are OpenELIS user accounts. Everyone selected here joins this scheme's roster and can be assigned samples to run; the roster is separate from who enters and who validates a result."
+  "eqa.inhouse.roster.help": "Analysts are OpenELIS user accounts. Everyone selected here joins this scheme's roster and can be assigned samples to run; the roster is separate from who enters and who validates a result.",
+  "banner.menu.eqa.providerFollowups": "Participant Follow-Up",
+  "eqa.oversight.queueSubtitle.link": "Participant follow-up",
+  "eqa.inhouse.sealed.deadline": "Unblind date, and the deadline for the analysts to submit: {date}",
+  "eqa.inhouse.sealed.analysts": "Assigned analysts: {names}",
+  "eqa.inhouse.sealed.noAnalysts": "No analyst is assigned to any sample on this panel.",
+  "eqa.inhouse.sealed.toMyCycles": "Open My Cycles",
+  "eqa.inhouse.sealed.toWorkplan": "Open the Workplan"
 }

@@ -250,13 +250,21 @@ const FollowUpQueuePage = () => {
         <Column lg={16} md={8} sm={4}>
           <Section>
             <Heading>
-              {t("eqa.oversight.followUpQueue", "Follow-Up Queue")}
+              {t("eqa.oversight.followUpQueue", "This Lab's Follow-Up")}
             </Heading>
+            {/* The two registers are easy to confuse — one holds this lab's own
+                corrective actions, the other correspondence about someone
+                else's submissions — so the subtitle names the other one and
+                links to where it actually lives. */}
             <p style={{ ...hintStyle, marginBottom: "1rem" }}>
               {t(
                 "eqa.oversight.queueSubtitle",
-                "This lab's questionable EQA scores awaiting corrective review, from external providers and our own in-house schemes. Provider-side follow-up on other labs' submissions lives in EQA Program Management.",
-              )}
+                "This lab's questionable EQA scores awaiting corrective review, from external providers and this lab's own in-house schemes. Correspondence with the laboratories that take part in the schemes this lab provides is a different register:",
+              )}{" "}
+              <RouterLink to="/qa/eqa/provider/follow-ups">
+                {t("eqa.oversight.queueSubtitle.link", "Participant follow-up")}
+              </RouterLink>
+              .
             </p>
           </Section>
 

@@ -25,6 +25,7 @@ import {
 import { useIntl } from "react-intl";
 import { useHistory } from "react-router-dom";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+import { formatDateOnly } from "../../utils/Utils";
 import { createCycle, createPanel, failed, fetchTests } from "../eqaApi";
 import {
   downloadLabelSheet,
@@ -36,6 +37,7 @@ import {
 } from "./inHouseApi";
 import {
   ASSIGNMENT_MODES,
+  assignedAnalysts,
   expandForMode,
   modeBlockers,
   prepBlockers,
@@ -128,8 +130,8 @@ const BlindingWizard = () => {
     ...modeBlockers(roster, assignmentMode),
   ];
 
-  const label = (id, fallback) =>
-    intl.formatMessage({ id, defaultMessage: fallback });
+  const label = (id, fallback, values) =>
+    intl.formatMessage({ id, defaultMessage: fallback }, values);
 
   const updateSample = (key, field, value) =>
     setSamples((rows) =>
@@ -273,6 +275,8 @@ const BlindingWizard = () => {
     return analyst ? analyst.displayName : "—";
   };
 
+  const assignedAnalystNames = assignedAnalysts(samples, roster);
+
   if (sealed) {
     return (
       <>
@@ -297,6 +301,29 @@ const BlindingWizard = () => {
                   <li key={code}>{code}</li>
                 ))}
               </ul>
+              {/* Sealing hands the panel to two people who are not on this
+                  screen: the analysts who must run it before the unblind date,
+                  and whoever tracks the cycle. Both facts and both destinations
+                  belong here rather than one step back through the menu. */}
+              <p>
+                {label(
+                  "eqa.inhouse.sealed.deadline",
+                  "Unblind date, and the deadline for the analysts to submit: {date}",
+                  { date: formatDateOnly(cycle.unblindDate) },
+                )}
+              </p>
+              <p>
+                {assignedAnalystNames.length > 0
+                  ? label(
+                      "eqa.inhouse.sealed.analysts",
+                      "Assigned analysts: {names}",
+                      { names: assignedAnalystNames.join(", ") },
+                    )
+                  : label(
+                      "eqa.inhouse.sealed.noAnalysts",
+                      "No analyst is assigned to any sample on this panel.",
+                    )}
+              </p>
               <Button
                 kind="tertiary"
                 onClick={() =>
@@ -312,6 +339,18 @@ const BlindingWizard = () => {
                 }
               >
                 {label("eqa.inhouse.labels.print", "Print label sheet")}
+              </Button>{" "}
+              <Button
+                kind="tertiary"
+                onClick={() => history.push("/qa/eqa/my-cycles")}
+              >
+                {label("eqa.inhouse.sealed.toMyCycles", "Open My Cycles")}
+              </Button>{" "}
+              <Button
+                kind="tertiary"
+                onClick={() => history.push("/WorkPlanByTestSection")}
+              >
+                {label("eqa.inhouse.sealed.toWorkplan", "Open the Workplan")}
               </Button>{" "}
               <Button onClick={() => history.push("/qa/eqa/in-house")}>
                 {label("eqa.inhouse.sealed.done", "Back to in-house panels")}
