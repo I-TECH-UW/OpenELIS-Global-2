@@ -409,5 +409,9 @@
        base-changelog.xml that may redeclare chk_alert_type - it inherits 089's ordering invariant. -->
   <include relativeToChangelogFile="true" file="092-freezer-humidity-alert-type.xml"/>
 
+  <!-- OGC-1188: referrals written by Results Entry with the deprecated SENT status
+       were invisible to the Reference Lab Results page and to shipment dispatch. -->
+  <include relativeToChangelogFile="true" file="099-referral-sent-status-backfill.xml"/>
+
 
 </databaseChangeLog>
