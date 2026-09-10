@@ -1,5 +1,4 @@
 const BACKEND = "01 Checkpoint - Backend";
-const E2E = "03 Checkpoint - E2E";
 
 module.exports = async function waitForPublishCheckpoints({
   github,
@@ -7,11 +6,20 @@ module.exports = async function waitForPublishCheckpoints({
   owner,
   repo,
   sha,
+  buildRunId,
+  buildRunAttempt,
   timeoutMs = 45 * 60 * 1000,
   pollMs = 30 * 1000,
   now = Date.now,
   sleep = (ms) => new Promise((resolve) => setTimeout(resolve, ms)),
 }) {
+  if (
+    !/^[1-9][0-9]*$/.test(String(buildRunId)) ||
+    !/^[1-9][0-9]*$/.test(String(buildRunAttempt))
+  ) {
+    throw new Error("Publication requires the source build run and attempt");
+  }
+  const E2E = `03 Checkpoint - E2E / build-${buildRunId}-${buildRunAttempt}`;
   const started = now();
   while (now() - started < timeoutMs) {
     const [statuses, checks] = await Promise.all([
@@ -47,7 +55,7 @@ module.exports = async function waitForPublishCheckpoints({
       backend.conclusion === "success"
     ) {
       core.info(
-        `Backend (including existing-data upgrades) and E2E passed for ${sha}.`,
+        `Backend and E2E passed for ${sha}, build ${buildRunId}, attempt ${buildRunAttempt}.`,
       );
       return;
     }
