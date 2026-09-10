@@ -15,7 +15,6 @@ import {
   CicsSystemGroup,
   QrCode,
   ContainerSoftware,
-  BootVolumeAlt,
   Report,
   Bullhorn,
   User,
@@ -38,6 +37,7 @@ import {
 import { V1_SECTIONS } from "./testCatalog/sectionConfig";
 import { SAMPLE_TYPE_SECTIONS } from "./sampleTypeManagement/sectionConfig";
 import { PANEL_SECTIONS } from "./testCatalog/panelSectionConfig";
+import { LAB_UNIT_SECTIONS } from "./labUnitManagement/sectionConfig";
 
 const getAdminBasePath = (pathname) =>
   pathname.startsWith("/admin") ? "/admin" : "/MasterListsPage";
@@ -122,6 +122,19 @@ export default function AdminSideNav({ isTrainingInstallation = false }) {
   const inSampleTypesContext =
     !!editorSampleTypeId || /\/SampleTypeEditor(\/|$)/.test(location.pathname);
 
+  // Lab Unit editor context: /LabUnitManagement/:labUnitId/:section?
+  // The plain list URL (no trailing id) leaves this null.
+  const labUnitEditorMatch = location.pathname.match(
+    /\/LabUnitManagement\/([^/]+)/,
+  );
+  const editorLabUnitId = labUnitEditorMatch ? labUnitEditorMatch[1] : null;
+
+  // Whether the shell is showing Lab Units, selected or not — mirrors the panel
+  // and sample-type contexts so the plain /LabUnitManagement list greys out the
+  // lab-unit sections instead of falling through to the test sections.
+  const inLabUnitsContext =
+    !!editorLabUnitId || /\/LabUnitManagement(\/|$)/.test(location.pathname);
+
   // Keyed by id so the label never shows a prior test's name while the next loads.
   const [editorTest, setEditorTest] = useState({ id: null, name: null });
   useEffect(() => {
@@ -181,6 +194,39 @@ export default function AdminSideNav({ isTrainingInstallation = false }) {
   const editorSampleTypeName =
     editorSampleType.id === editorSampleTypeId ? editorSampleType.name : null;
 
+  // Lab unit name for the sidenav helper caption. "new" is create-in-place.
+  const [editorLabUnit, setEditorLabUnit] = useState({ id: null, name: null });
+  useEffect(() => {
+    if (!editorLabUnitId || editorLabUnitId === "new") {
+      return undefined;
+    }
+    const controller = new AbortController();
+    getFromOpenElisServer(
+      "/rest/lab-units-management",
+      (res) => {
+        const list =
+          res && res.success && Array.isArray(res.data)
+            ? res.data
+            : Array.isArray(res)
+              ? res
+              : [];
+        const match = list.find(
+          (item) => String(item.id) === String(editorLabUnitId),
+        );
+        setEditorLabUnit({
+          id: editorLabUnitId,
+          name: match ? match.name || match.description || null : null,
+        });
+      },
+      controller.signal,
+    );
+    return () => {
+      controller.abort();
+    };
+  }, [editorLabUnitId]);
+  const editorLabUnitName =
+    editorLabUnit.id === editorLabUnitId ? editorLabUnit.name : null;
+
   // Any Test Catalog Management surface (list or editor, either entity). The
   // menu stays mounted (same key) and expanded across every in-area
   // navigation, so clicking "All Sample Types"/"All Tests" from an editor
@@ -189,7 +235,10 @@ export default function AdminSideNav({ isTrainingInstallation = false }) {
     !!editorTestId ||
     !!editorSampleTypeId ||
     !!editorPanelId ||
-    /\/(TestCatalogList|SampleTypeEditor)(\/|$)/.test(location.pathname);
+    !!editorLabUnitId ||
+    /\/(TestCatalogList|SampleTypeEditor|LabUnitManagement)(\/|$)/.test(
+      location.pathname,
+    );
 
   // Panel name for the sidenav helper caption. "new" is create-in-place.
   const [editorPanel, setEditorPanel] = useState({ id: null, name: null });
@@ -319,7 +368,71 @@ export default function AdminSideNav({ isTrainingInstallation = false }) {
         >
           <FormattedMessage id="label.testCatalog.entity.panels" />
         </SideNavMenuItem>
-        {inPanelsContext ? (
+        {/* OGC-189 — Lab Units is a peer entity of Tests / Panels / Sample
+            Types in this shell (per the v2.0 FRS direction). */}
+        <SideNavMenuItem
+          data-cy="labUnitManagement"
+          {...navProps(`${path}/LabUnitManagement`)}
+        >
+          <FormattedMessage
+            id={
+              editorLabUnitId
+                ? "sidenav.label.admin.labUnit.backToList"
+                : "sidenav.label.admin.labUnitManagement"
+            }
+          />
+        </SideNavMenuItem>
+        {editorLabUnitId ? (
+          <>
+            {editorLabUnitId === "new"
+              ? sectionsCaption(
+                  "labUnitSectionsHelp",
+                  "labUnitSectionsContext",
+                  "sidenav.label.admin.labUnit.addingNew",
+                )
+              : editorLabUnitName
+                ? sectionsCaption(
+                    "labUnitSectionsHelp",
+                    "labUnitSectionsContext",
+                    "sidenav.label.admin.labUnit.editing",
+                    { name: editorLabUnitName },
+                  )
+                : sectionsCaption(
+                    "labUnitSectionsHelp",
+                    "labUnitSectionsContext",
+                    "sidenav.label.admin.labUnit.editingGeneric",
+                  )}
+            {LAB_UNIT_SECTIONS.map((sectionKey) => (
+              <SideNavMenuItem
+                key={sectionKey}
+                data-cy={`labUnit-section-${sectionKey}`}
+                {...navProps(
+                  `${path}/LabUnitManagement/${editorLabUnitId}/${sectionKey}`,
+                )}
+              >
+                <FormattedMessage id={`label.labUnit.section.${sectionKey}`} />
+              </SideNavMenuItem>
+            ))}
+          </>
+        ) : inLabUnitsContext ? (
+          <>
+            {/* OGC-189 — lab-unit context with nothing selected: caption + the
+                lab-unit sections shown greyed, like Panels / Sample Types /
+                Tests, rather than falling through to the test sections. */}
+            {sectionsCaption(
+              "labUnitSectionsHelp",
+              "labUnitSectionsContext",
+              "sidenav.label.admin.labUnit.sectionsHelper",
+            )}
+            {LAB_UNIT_SECTIONS.map((sectionKey) =>
+              disabledSection(
+                `labUnit-section-${sectionKey}`,
+                "labUnitSectionsHelp",
+                <FormattedMessage id={`label.labUnit.section.${sectionKey}`} />,
+              ),
+            )}
+          </>
+        ) : inPanelsContext ? (
           <>
             {/* OGC-224 — panel context: caption + the panel's own sections as
                 SideNav submenu items (FRS: submenus, never tabs). With no panel
@@ -473,12 +586,6 @@ export default function AdminSideNav({ isTrainingInstallation = false }) {
         )}
       </SideNavMenu>
       <SideNavLink
-        renderIcon={ListDropdown}
-        {...navProps(`${path}/AnalyzerTestName`)}
-      >
-        <FormattedMessage id="sidenav.label.admin.analyzerTest" />
-      </SideNavLink>
-      <SideNavLink
         data-cy="labNumberMgmnt"
         renderIcon={CharacterWholeNumber}
         {...navProps(`${path}/labNumber`)}
@@ -505,13 +612,6 @@ export default function AdminSideNav({ isTrainingInstallation = false }) {
         {...navProps(`${path}/labelPresets`)}
       >
         <FormattedMessage id="sidenav.label.admin.labelPresets" />
-      </SideNavLink>
-      <SideNavLink
-        data-cy="pluginFile"
-        renderIcon={BootVolumeAlt}
-        {...navProps(`${path}/PluginFile`)}
-      >
-        <FormattedMessage id="sidenav.label.admin.Listplugin" />
       </SideNavLink>
       <SideNavMenu
         data-cy="vectorSurveillance"
