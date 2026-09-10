@@ -204,14 +204,13 @@
             <property name="hibernate.cfg_xml_file"
                 value="classpath:hibernate/hibernate.cfg.xml" />
             <!--
-                Tomcat deploys this WAR once, at /api/OpenELIS-Global (see
-                conf/server.xml), so one EntityManagerFactory and one Hibernate
-                Search backend own this directory and the Lucene index has a
-                single writer. Nothing reads that index - patient search is
-                served from the database - so it stays unmaintained rather than
-                maintained, and is rebuilt on demand with GET /rest/reindex.
-                Turning indexing on is an untested change that needs its own
-                verification.
+                Tomcat deploys this WAR once (see conf/server.xml), so one
+                EntityManagerFactory and one Hibernate Search backend own this
+                directory and the Lucene index has a single writer. Nothing
+                reads that index - patient search is served from the database -
+                so it stays unmaintained rather than maintained, and is rebuilt
+                on demand with GET /rest/reindex. Turning indexing on is an
+                untested change that needs its own verification.
             -->
             <property name="hibernate.search.automatic_indexing.enabled" value="false" />
             <!--
