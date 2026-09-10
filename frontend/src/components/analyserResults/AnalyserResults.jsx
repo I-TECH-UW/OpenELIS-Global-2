@@ -58,7 +58,6 @@ export const buildHeldResultResolutionUrl = (row, analyzerId) => {
   });
   return `/analyzers/types/${encodeURIComponent(row.sourceProfileId)}/mapping?${query.toString()}`;
 };
-
 const AnalyserResults = (props) => {
   const componentMounted = useRef(false);
 
@@ -181,7 +180,10 @@ const AnalyserResults = (props) => {
     if (response.status == 200) {
       message = intl.formatMessage({ id: "validation.save.success" });
       kind = NotificationKinds.success;
-      window.location.href = buildAnalyzerResultsRedirectUrl(props.analyzerId);
+      // The accepted rows leave the worklist, so the page it was showing may
+      // no longer exist.
+      setPage(1);
+      props.refreshResults?.();
     } else {
       const detail = await response.text().catch(() => "");
       if (detail) {
