@@ -9,6 +9,7 @@ import ReceiptMonitor from "../ReceiptMonitor";
 import UserSessionDetailsContext from "../../../../../UserSessionDetailsContext";
 import {
   getFromOpenElisServer,
+  patchToOpenElisServerFullResponse,
   postToOpenElisServerFullResponse,
 } from "../../../../utils/Utils";
 
@@ -17,6 +18,7 @@ vi.mock("../../../../utils/Utils", async () => {
   return {
     ...actual,
     getFromOpenElisServer: vi.fn(),
+    patchToOpenElisServerFullResponse: vi.fn(),
     postToOpenElisServerFullResponse: vi.fn(),
   };
 });
@@ -322,6 +324,47 @@ describe("ReceiptMonitor", () => {
         text: "Cycle scored, but 3 result(s) got no verdict, on Haemoglobin. Those analytes carry no sealed target and the cycle has too few peers to place them against.",
       }),
     );
+  });
+
+  it("closes a scored cycle through the transition endpoint, with the reason", async () => {
+    patchToOpenElisServerFullResponse.mockImplementation((_url, _body, cb) =>
+      cb(jsonResponse(true, { status: "CLOSED" })),
+    );
+    renderTab("SCORED");
+
+    await screen.findByText("Iringa District Lab");
+    fireEvent.click(screen.getByRole("button", { name: "Close cycle" }));
+    fireEvent.change(screen.getByLabelText("Reason"), {
+      target: { value: "Round finished, scores returned" },
+    });
+    // Two buttons carry this label once the modal is open: the trigger behind it
+    // and the modal's own primary. Scope to the dialog.
+    fireEvent.click(
+      within(screen.getByRole("dialog")).getByRole("button", {
+        name: "Close cycle",
+      }),
+    );
+
+    await waitFor(() =>
+      expect(patchToOpenElisServerFullResponse).toHaveBeenCalledWith(
+        "/rest/eqa/cycles/9/transition",
+        JSON.stringify({
+          newState: "CLOSED",
+          stateMachine: "PROVIDER",
+          reason: "Round finished, scores returned",
+        }),
+        expect.any(Function),
+      ),
+    );
+  });
+
+  it("offers no close action until the cycle is scored", async () => {
+    renderTab("SUBMISSIONS_OPEN");
+
+    await screen.findByText("Mbeya Regional Lab");
+    expect(
+      screen.queryByRole("button", { name: "Close cycle" }),
+    ).not.toBeInTheDocument();
   });
 
   test("Enter results keys a participant's reported values and posts them per test", async () => {

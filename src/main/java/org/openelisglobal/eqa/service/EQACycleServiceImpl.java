@@ -35,6 +35,7 @@ import org.openelisglobal.eqa.dao.EQACycleStateTransitionDAO;
 import org.openelisglobal.eqa.dao.EQAPanelDAO;
 import org.openelisglobal.eqa.dao.EQAPanelReceiptDAO;
 import org.openelisglobal.eqa.dao.EQAPanelSampleDAO;
+import org.openelisglobal.eqa.dao.EQAParticipantFollowupDAO;
 import org.openelisglobal.eqa.dao.EQAParticipantResultDAO;
 import org.openelisglobal.eqa.dao.EQARoundDAO;
 import org.openelisglobal.eqa.service.EQAPrepGate.PanelRequirement;
@@ -43,9 +44,11 @@ import org.openelisglobal.eqa.valueholder.EQACycleParticipant;
 import org.openelisglobal.eqa.valueholder.EQACycleStateTransition;
 import org.openelisglobal.eqa.valueholder.EQACycleStatus;
 import org.openelisglobal.eqa.valueholder.EQADistributionMethod;
+import org.openelisglobal.eqa.valueholder.EQAFollowupStatus;
 import org.openelisglobal.eqa.valueholder.EQAPanel;
 import org.openelisglobal.eqa.valueholder.EQAPanelSample;
 import org.openelisglobal.eqa.valueholder.EQAPanelSourceType;
+import org.openelisglobal.eqa.valueholder.EQAParticipantFollowup;
 import org.openelisglobal.eqa.valueholder.EQAParticipantResult;
 import org.openelisglobal.eqa.valueholder.EQAProgram;
 import org.openelisglobal.eqa.valueholder.EQAProgramEnrollment;
@@ -130,6 +133,8 @@ public class EQACycleServiceImpl extends BaseObjectServiceImpl<EQACycle, Long> i
 
     @Autowired
     private EQAParticipantResultDAO eqaParticipantResultDAO;
+    @Autowired
+    private EQAParticipantFollowupDAO eqaParticipantFollowupDAO;
 
     @Autowired
     private EQAPanelSampleDAO eqaPanelSampleDAO;
@@ -302,6 +307,7 @@ public class EQACycleServiceImpl extends BaseObjectServiceImpl<EQACycle, Long> i
         }
 
         enforcePrepGate(cycle, priorState, newState, machine);
+        enforceCloseGate(cycle, priorState, newState);
 
         cycle.setStatus(newState);
         stampActualDates(cycle, priorState, newState);
@@ -330,6 +336,43 @@ public class EQACycleServiceImpl extends BaseObjectServiceImpl<EQACycle, Long> i
      * gate's own blockers, so the operator reads the same sentences the prep
      * workbench shows.
      */
+    /**
+     * Closing is the one transition that ends a cycle, so it refuses while work is
+     * still hanging off it and names what. Two things outlive SCORED: a provider
+     * follow-up that nobody has resolved, and a missed-deadline result the
+     * late-score sweep is still watching for an answer.
+     *
+     * <p>
+     * Only rows carrying a panel sample count. An external-PT missed row has no
+     * sealed target and {@code scoreLateResults} skips it, so nothing will ever
+     * give it a verdict; blocking on one would make the cycle uncloseable for good
+     * rather than until the work is done.
+     */
+    private void enforceCloseGate(EQACycle cycle, EQACycleStatus priorState, EQACycleStatus newState) {
+        if (newState != CLOSED) {
+            return;
+        }
+        List<String> blockers = new ArrayList<>();
+        long openFollowups = eqaParticipantFollowupDAO.getAllMatching("cycle.id", cycle.getId()).stream()
+                .map(EQAParticipantFollowup::getFollowupStatus).filter(status -> status != EQAFollowupStatus.RESOLVED
+                        && status != EQAFollowupStatus.REMOVED_FROM_PROGRAM)
+                .count();
+        if (openFollowups > 0) {
+            blockers.add(openFollowups + " follow-up" + (openFollowups == 1 ? "" : "s") + " still open");
+        }
+        long unanswered = eqaParticipantResultDAO.getAllMatching("cycle.id", cycle.getId()).stream()
+                .filter(result -> result.getSubmissionStatus() == EQASubmissionStatus.MISSED_DEADLINE)
+                .filter(result -> result.getPanelSampleId() != null && result.getPerformanceStatus() == null).count();
+        if (unanswered > 0) {
+            blockers.add(unanswered + " missed-deadline result" + (unanswered == 1 ? "" : "s")
+                    + " still waiting on an answer");
+        }
+        if (!blockers.isEmpty()) {
+            throw new EQAInvalidTransitionException(priorState, newState,
+                    "Cannot close yet: " + String.join("; ", blockers));
+        }
+    }
+
     private void enforcePrepGate(EQACycle cycle, EQACycleStatus priorState, EQACycleStatus newState,
             EQAStateMachine machine) {
         if (machine != EQAStateMachine.PROVIDER || priorState != PREP_IN_PROGRESS || newState != READY_TO_SHIP) {

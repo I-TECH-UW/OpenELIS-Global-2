@@ -26,6 +26,7 @@ import {
   distributeScores,
   fetchIntake,
   fetchReceiptRows,
+  closeCycle,
   fetchScoreRows,
   importIntakeCsv,
   markDelivered,
@@ -88,6 +89,8 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
   const [overrideNote, setOverrideNote] = useState("");
   const [busy, setBusy] = useState(null);
   const [openingSubmissions, setOpeningSubmissions] = useState(false);
+  const [closing, setClosing] = useState(false);
+  const [closeReason, setCloseReason] = useState("");
   const [openReason, setOpenReason] = useState("");
 
   // The cycle status is a dependency, not decoration: dispatching from the
@@ -191,6 +194,21 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
         "eqa.receipt.submissionsOpened",
         "Submissions are open.",
         "eqa.receipt.submissionsOpenFailed",
+        "qa.manage.eqa",
+      );
+    });
+  };
+
+  const handleCloseCycle = () => {
+    setBusy("close");
+    closeCycle(cycleId, closeReason, (response) => {
+      setClosing(false);
+      setCloseReason("");
+      report(
+        response,
+        "eqa.cycle.closedCopy",
+        "Cycle closed.",
+        "eqa.cycle.closeFailed",
         "qa.manage.eqa",
       );
     });
@@ -382,6 +400,19 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
             {canManage && SCORABLE.includes(cycleStatus) && (
               <Button size="sm" disabled={busy !== null} onClick={handleScore}>
                 {t("eqa.score.scoreCycle", "Score cycle")}
+              </Button>
+            )}
+            {canManage && cycleStatus === "SCORED" && (
+              <Button
+                size="sm"
+                kind="tertiary"
+                disabled={busy !== null}
+                onClick={() => {
+                  setClosing(true);
+                  setCloseReason("");
+                }}
+              >
+                {t("eqa.cycle.close", "Close cycle")}
               </Button>
             )}
             {canManage &&
@@ -678,6 +709,33 @@ const ReceiptMonitor = ({ cycleId, cycleStatus, onChanged, onNotice }) => {
           >
             {t("eqa.intake.import", "Import CSV")}
           </Button>
+        </Modal>
+      )}
+
+      {closing && (
+        <Modal
+          open
+          modalHeading={t("eqa.cycle.closeHeading", "Close this cycle")}
+          primaryButtonText={t("eqa.cycle.close", "Close cycle")}
+          secondaryButtonText={t("eqa.queue.cancel", "Cancel")}
+          primaryButtonDisabled={busy !== null || !closeReason.trim()}
+          onRequestClose={() => setClosing(false)}
+          onSecondarySubmit={() => setClosing(false)}
+          onRequestSubmit={handleCloseCycle}
+        >
+          <p style={{ ...hintStyle, marginBottom: "1rem" }}>
+            {t(
+              "eqa.cycle.closeHelp",
+              "A closed cycle is final: participants see it as closed and no further verdicts are recorded against it. Closing is refused while a follow-up is open or a missed-deadline result is still waiting on an answer.",
+            )}
+          </p>
+          <TextArea
+            id="eqa-close-cycle-reason"
+            labelText={t("eqa.receipt.openSubmissionsReason", "Reason")}
+            value={closeReason}
+            onChange={(event) => setCloseReason(event.target.value)}
+            rows={3}
+          />
         </Modal>
       )}
 

@@ -8635,5 +8635,9 @@
   "eqa.enrollment.withdrawIsFinal": "Withdrawing is final. To take part again, this laboratory enrols in the programme afresh.",
   "eqa.enrollment.statusChanged": "This enrolment is now {status}",
   "eqa.enrollment.statusChangeFailed": "Could not change this enrolment's status",
-  "eqa.score.scoredWithUnjudged": "Cycle scored, but {count} result(s) got no verdict, on {tests}. Those analytes carry no sealed target and the cycle has too few peers to place them against."
+  "eqa.score.scoredWithUnjudged": "Cycle scored, but {count} result(s) got no verdict, on {tests}. Those analytes carry no sealed target and the cycle has too few peers to place them against.",
+  "eqa.cycle.close": "Close cycle",
+  "eqa.cycle.closeHeading": "Close this cycle",
+  "eqa.cycle.closeHelp": "A closed cycle is final: participants see it as closed and no further verdicts are recorded against it. Closing is refused while a follow-up is open or a missed-deadline result is still waiting on an answer.",
+  "eqa.cycle.closeFailed": "Could not close this cycle"
 }
