@@ -39,6 +39,7 @@ import React, {
 } from "react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { useHistory, useLocation } from "react-router-dom";
+import { AlertDialog } from "../common/CustomNotification";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 import { NotificationContext } from "../layout/Layout";
 import ShipmentNavigation from "../shipment/ShipmentNavigation";
@@ -313,6 +314,10 @@ const ReferenceLabResults = () => {
 
   return (
     <div className="reference-lab-results">
+      {/* Without this the page's own messages are created and thrown away: every
+          accept, reject, mark-lost and notify said nothing at all, whether it
+          worked or failed. */}
+      <AlertDialog />
       <PageBreadCrumb
         breadcrumbs={[
           { label: "home.label", link: "/" },
