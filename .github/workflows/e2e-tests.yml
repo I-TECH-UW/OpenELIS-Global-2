@@ -128,13 +128,14 @@ jobs:
       - name: Post checkpoint status
         uses: actions/github-script@v8
         with:
+          retries: 3
           script: |
             const sha = '${{ needs.setup.outputs.status_sha }}';
             const contexts = ['03 Checkpoint - E2E',
               '03 Checkpoint - E2E / build-${{ github.event.workflow_run.id }}-${{ github.event.workflow_run.run_attempt }}'];
             const runUrl = `${context.serverUrl}/${context.repo.owner}/${context.repo.repo}/actions/runs/${context.runId}`;
 
-            for (const contextName of contexts) await github.rest.repos.createCommitStatus({
+            const outcomes = await Promise.allSettled(contexts.map(contextName => github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
               sha,
@@ -142,7 +143,9 @@ jobs:
               context: contextName,
               description: 'Playwright, Cypress, and analyzer-harness suites are running...',
               target_url: runUrl
-            });
+            })));
+            const failures = outcomes.filter(outcome => outcome.status === 'rejected');
+            if (failures.length) throw new AggregateError(failures.map(outcome => outcome.reason), 'Could not post all E2E statuses');
 
   # ─── Fork Image Publish (No Rebuild) ───────────────────────────────────────
   # Fork PR builds hand off prebuilt Docker images as an artifact. This job
@@ -376,6 +379,7 @@ jobs:
       - name: Update checkpoint status
         uses: actions/github-script@v8
         with:
+          retries: 3
           script: |
             const sha = '${{ needs.setup.outputs.status_sha }}';
             const contexts = ['03 Checkpoint - E2E',
@@ -398,7 +402,7 @@ jobs:
               state = 'failure';
               description = 'One or more E2E suites failed';
             }
-            for (const contextName of contexts) await github.rest.repos.createCommitStatus({
+            const outcomes = await Promise.allSettled(contexts.map(contextName => github.rest.repos.createCommitStatus({
               owner: context.repo.owner,
               repo: context.repo.repo,
               sha,
@@ -406,4 +410,6 @@ jobs:
               context: contextName,
               description,
               target_url: runUrl
-            });
+            })));
+            const failures = outcomes.filter(outcome => outcome.status === 'rejected');
+            if (failures.length) throw new AggregateError(failures.map(outcome => outcome.reason), 'Could not post all E2E statuses');

@@ -6,6 +6,7 @@ import datetime
 import fcntl
 import importlib.util
 import json
+import os
 import pathlib
 import re
 import shutil
@@ -16,23 +17,31 @@ import tempfile
 
 APP_REPOSITORY = "https://github.com/DIGI-UW/OpenELIS-Global-2.git"
 SERVICES = {
-    "oe.openelis.org": "itechuw/openelis-global-2",
-    "db.openelis.org": "itechuw/openelis-global-2-database",
-    "fhir.openelis.org": "itechuw/openelis-global-2-fhir",
-    "frontend.openelis.org": "itechuw/openelis-global-2-frontend",
-    "proxy": "itechuw/openelis-global-2-proxy",
+    "oe.openelis.org": "openelis-global-2",
+    "db.openelis.org": "openelis-global-2-database",
+    "fhir.openelis.org": "openelis-global-2-fhir",
+    "frontend.openelis.org": "openelis-global-2-frontend",
+    "proxy": "openelis-global-2-proxy",
 }
 
 
-def validate_manifest(manifest):
-    if not re.fullmatch(r"[0-9a-f]{40}", manifest.get("appSha", "")):
+def validate_manifest(manifest, namespace="itechuw"):
+    if not isinstance(namespace, str) or not re.fullmatch(r"[a-z0-9][a-z0-9_-]*", namespace):
+        raise ValueError("Invalid DockerHub namespace")
+    if not isinstance(manifest, dict):
+        raise ValueError("Manifest must be a JSON object")
+    sha = manifest.get("appSha")
+    if not isinstance(sha, str) or not re.fullmatch(r"[0-9a-f]{40}", sha):
         raise ValueError("Manifest must identify the tested application commit")
     if manifest.get("appBranch") != "develop":
         raise ValueError("Testing requires a develop image manifest")
-    if set(manifest.get("images", {})) != set(SERVICES):
+    images = manifest.get("images")
+    if not isinstance(images, dict) or set(images) != set(SERVICES):
         raise ValueError("Manifest must include exactly the five application images")
     for service, repository in SERVICES.items():
-        if not re.fullmatch(re.escape(repository) + r"@sha256:[0-9a-f]{64}", manifest["images"][service]):
+        reference = images[service]
+        if not isinstance(reference, str) or not re.fullmatch(
+                re.escape(namespace + "/" + repository) + r"@sha256:[0-9a-f]{64}", reference):
             raise ValueError(f"{service} must use a published DockerHub image digest")
     return manifest
 
@@ -54,8 +63,44 @@ def write_json(path, value):
     temporary.replace(path)
 
 
+def require_stack_owner(app_dir):
+    containers = run(["docker", "ps", "--filter", "publish=80", "--filter", "publish=443",
+                      "--format", "{{.ID}}"], app_dir, True).split()
+    if not containers:
+        return
+    for container in json.loads(run(["docker", "inspect", *containers], app_dir, True)):
+        labels = container.get("Config", {}).get("Labels") or {}
+        owner = labels.get("com.docker.compose.project.working_dir")
+        if not owner or pathlib.Path(owner).resolve() != app_dir:
+            raise ValueError("Ports 80/443 belong to another Docker stack; an explicit cutover is required")
+
+
+def update_infrastructure(app_dir, state_dir):
+    # Upstream tracks .env; restore site overrides after the fast-forward.
+    env_path = app_dir / ".env"
+    backup = state_dir / "server.env.backup"
+    if backup.exists():
+        raise ValueError("An interrupted update left .openelis-ci/server.env.backup; restore .env before retrying")
+    run(["git", "fetch", "origin", "main"], app_dir)
+    tracked = run(["git", "ls-files", "--", ".env"], app_dir, True).strip()
+    if not tracked:
+        run(["git", "merge", "--ff-only", "origin/main"], app_dir)
+        return
+    original_mode = env_path.stat().st_mode & 0o777
+    original_env = env_path.read_bytes()
+    with os.fdopen(os.open(backup, os.O_CREAT | os.O_EXCL | os.O_WRONLY, 0o600), "wb") as output:
+        output.write(original_env)
+    try:
+        env_path.write_text(run(["git", "show", "HEAD:.env"], app_dir, True), encoding="utf-8")
+        run(["git", "merge", "--ff-only", "origin/main"], app_dir)
+    finally:
+        env_path.write_bytes(backup.read_bytes())
+        env_path.chmod(original_mode)
+        backup.unlink()
+
+
 def deploy(request, diagnostics):
-    manifest = validate_manifest(request["manifest"])
+    manifest = validate_manifest(request["manifest"], request.get("dockerhub_namespace", "itechuw"))
     spec = importlib.util.spec_from_file_location("readiness", pathlib.Path(__file__).with_name("check-readiness.py"))
     readiness = importlib.util.module_from_spec(spec)
     spec.loader.exec_module(readiness)
@@ -69,20 +114,21 @@ def deploy(request, diagnostics):
     base_compose = ["docker", "compose", "-f", "docker-compose.yml"]
     compose = base_compose + ["-f", str(override)]
     try:
-        # Called under the host deployment lock, then repeated after slow pulls.
         require_current_candidate(manifest["appSha"], app_dir)
-        run(["git", "fetch", "origin", "main"], app_dir)
-        run(["git", "merge", "--ff-only", "origin/main"], app_dir)
-        infra_sha = run(["git", "rev-parse", "HEAD"], app_dir, True).strip()
+        require_stack_owner(app_dir)
         state_dir.mkdir(exist_ok=True)
-        # Leave the saved image selection untouched if pulling or freshness
-        # validation fails. Stage on the same filesystem for atomic promotion.
+        update_infrastructure(app_dir, state_dir)
+        infra_sha = run(["git", "rev-parse", "HEAD"], app_dir, True).strip()
+        # Stage on the same filesystem so promotion is atomic.
         with tempfile.TemporaryDirectory(prefix="candidate-", dir=state_dir) as candidate_dir:
             candidate_override = pathlib.Path(candidate_dir) / override.name
             write_json(candidate_override, {"services": {service: {"image": image}
                                                         for service, image in manifest["images"].items()}})
             run(base_compose + ["-f", str(candidate_override), "pull", *SERVICES], app_dir)
             require_current_candidate(manifest["appSha"], app_dir)
+            require_stack_owner(app_dir)
+            if override.is_file():
+                shutil.copy2(override, diagnostics / "previous-images.json")
             candidate_override.replace(override)
         target_path = state_dir / "target.json"
         if target_path.is_file():
@@ -112,10 +158,9 @@ def deploy(request, diagnostics):
         write_json(diagnostics / "target.json", target)
         print(f"Testing is ready at {manifest['appSha']}", flush=True)
     finally:
-        # The base configuration also works when validation/pulling failed before
-        # an override was available. Status/logs do not need the candidate images.
+        # The image override may not exist after a failed pull.
         for filename, args in [("compose-status.txt", ["ps", "--all"]),
-                               ("service-logs.txt", ["logs", "--no-color", "--tail", "250", "oe.openelis.org", "proxy"])]:
+                               ("service-logs.txt", ["logs", "--no-color", "--tail", "250", *SERVICES])]:
             with (diagnostics / filename).open("w", encoding="utf-8") as output:
                 subprocess.run(base_compose + args, cwd=app_dir, stdout=output, stderr=subprocess.STDOUT, check=False)
 

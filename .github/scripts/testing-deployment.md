@@ -1,19 +1,11 @@
-Testing deployment is owned by the application's `Publish Images` workflow. It
-uses the existing `/home/ubuntu/openelis-docker/docker-compose.yml` on the VM;
-no reusable workflow or pending change in that repository is required.
+`Publish Images` deploys tested `develop` image digests using the VM's
+`/home/ubuntu/openelis-docker/docker-compose.yml`. It preserves the site's
+`.env` and volumes, rejects superseded commits and competing stacks on ports
+80/443, and verifies running images and JSON application health.
 
-The publication gate requires backend success for the application commit and E2E
-success for the particular image build run and attempt. Testing deployment
-checks that the candidate is still `develop` HEAD under a host lock, deploys the
-five published image digests, verifies the running images, then requires JSON
-application health. A candidate superseded during image pulls fails before
-restarting containers. The server's configured `.env` and data volumes are
-preserved; a conflicting infrastructure fast-forward fails without resetting
-local files.
-
-The existing `TESTING_VM_SSH_KEY` secret and `DEPLOY_HOST`, `TESTING_VM_USER`,
-`DEPLOY_PORT`, and `DEPLOY_PATH` variables still configure access. Optional
-readiness variables are:
+Configure access with `TESTING_VM_SSH_KEY`, `DEPLOY_HOST`, `TESTING_VM_USER`,
+`DEPLOY_PORT`, and `DEPLOY_PATH`. `DOCKERHUB_USERNAME` controls the image
+namespace. Optional readiness variables are:
 
 | Variable                     | Default                                                          |
 | ---------------------------- | ---------------------------------------------------------------- |
@@ -22,11 +14,19 @@ readiness variables are:
 | `TESTING_READINESS_JSON_KEY` | `status` (supports dotted nested keys)                           |
 | `TESTING_READINESS_EXPECTED` | `"UP"` (JSON-encoded value)                                      |
 
-Redirects, HTML responses, and unexpected JSON values fail readiness. Compose
-status, bounded backend/proxy logs, and readiness results are attached to the
-workflow. A verified `target.json` is retained in the artifact and on the host
-at `.openelis-ci/target.json`; it is not a public endpoint. Review widget
-installation is a separate follow-up.
+Diagnostics include Compose status, logs for all five services, readiness, and
+the previous image selection. Successful deployment records
+`.openelis-ci/target.json`. Rollback is manual because older images may be
+incompatible with applied database migrations. Images and orphan services are
+retained.
+
+If an interrupted update leaves `.openelis-ci/server.env.backup`, restore `.env`
+from that private backup, verify the configuration, and remove the backup before
+retrying. New upstream environment defaults require explicit site configuration.
+
+The host lock covers this deployment script only. Do not run the harness
+deployer or the infrastructure repository's manual deployment workflow on the
+same VM.
 
 Run the focused checks from the repository root:
 

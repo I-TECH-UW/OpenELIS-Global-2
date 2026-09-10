@@ -326,6 +326,7 @@ jobs:
       - name: Validate deployment request
         env:
           IMAGE_MANIFEST: ${{ needs.deployment-manifest.outputs.manifest }}
+          DOCKERHUB_NAMESPACE: ${{ vars.DOCKERHUB_USERNAME }}
           READINESS_URL: ${{ vars.TESTING_READINESS_URL || 'https://testing.openelis-global.org/api/OpenELIS-Global/health' }}
           READINESS_TIMEOUT: ${{ vars.TESTING_READINESS_TIMEOUT || '300' }}
           READINESS_JSON_KEY: ${{ vars.TESTING_READINESS_JSON_KEY || 'status' }}
@@ -340,7 +341,8 @@ jobs:
           spec = importlib.util.spec_from_file_location('deploy', '.github/scripts/deploy-published-testing.py')
           module = importlib.util.module_from_spec(spec)
           spec.loader.exec_module(module)
-          request = {'manifest': module.validate_manifest(json.loads(env['IMAGE_MANIFEST'])),
+          request = {'manifest': module.validate_manifest(json.loads(env['IMAGE_MANIFEST']), env['DOCKERHUB_NAMESPACE']),
+                     'dockerhub_namespace': env['DOCKERHUB_NAMESPACE'],
                      'deploy_path': env['DEPLOY_PATH'], 'run_id': env['GITHUB_RUN_ID'] + '-' + env['GITHUB_RUN_ATTEMPT'],
                      'readiness': {'url': env['READINESS_URL'], 'timeout': float(env['READINESS_TIMEOUT']),
                                    'key': env['READINESS_JSON_KEY'], 'expected': json.loads(env['READINESS_EXPECTED'])}}
