@@ -52,7 +52,10 @@ import RejectModal from "./RejectModal";
 import "./ReferenceLabResults.css";
 
 const VIEWS = ["outstanding", "returned", "history"];
-const PRIORITIES = ["Routine", "Urgent", "STAT"];
+// The real OrderPriority enum, which is what a sample actually carries. The
+// filter used to offer Routine/Urgent/STAT, a vocabulary the backend has never
+// used, so selecting any of them matched nothing.
+const PRIORITIES = ["ROUTINE", "STAT", "ASAP", "TIMED", "FUTURE_STAT"];
 
 const STATUS_TAG_KIND = {
   draft: "gray",
@@ -66,10 +69,16 @@ const STATUS_TAG_KIND = {
 };
 
 const PRIORITY_TAG_KIND = {
-  Routine: "gray",
-  Urgent: "warm-gray",
+  ROUTINE: "gray",
   STAT: "red",
+  ASAP: "orange",
+  TIMED: "cyan",
+  FUTURE_STAT: "magenta",
 };
+
+// The stored value is the enum name; what a person reads is a translated label.
+const priorityLabel = (priority, intl) =>
+  intl.formatMessage({ id: `sample.priority.${priority}` });
 
 const OUTCOME_TAG_KIND = {
   Reconciled: "teal",
@@ -485,7 +494,7 @@ const ReferenceLabResults = () => {
                 id: "referral.filter.allPriorities",
               })}
               items={PRIORITIES}
-              itemToString={(i) => i}
+              itemToString={(i) => (i ? priorityLabel(i, intl) : "")}
               selectedItems={filterPriority}
               onChange={({ selectedItems }) =>
                 setFilterPriority(selectedItems || [])
@@ -639,11 +648,11 @@ const renderStatus = (status) => {
   );
 };
 
-const renderPriority = (priority) => {
+const renderPriority = (priority, intl) => {
   if (!priority) return null;
   return (
     <Tag type={PRIORITY_TAG_KIND[priority] || "gray"} size="sm">
-      {priority}
+      {priorityLabel(priority, intl)}
     </Tag>
   );
 };
@@ -831,7 +840,7 @@ const OutstandingTable = ({
               <TableCell>{renderDate(row.sentDate)}</TableCell>
               <TableCell>{renderStatus(row.status)}</TableCell>
               <TableCell>{renderDays(row.daysOutstanding)}</TableCell>
-              <TableCell>{renderPriority(row.priority)}</TableCell>
+              <TableCell>{renderPriority(row.priority, intl)}</TableCell>
               <TableCell onClick={(e) => e.stopPropagation()}>
                 <Button
                   kind="tertiary"
@@ -1071,7 +1080,7 @@ const ExpandPanel = ({
         />
         <DetailRow
           label={intl.formatMessage({ id: "referral.expand.detail.priority" })}
-          value={renderPriority(row.priority)}
+          value={renderPriority(row.priority, intl)}
         />
       </Column>
 

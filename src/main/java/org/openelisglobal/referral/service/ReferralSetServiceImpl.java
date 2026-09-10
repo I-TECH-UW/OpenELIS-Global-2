@@ -47,6 +47,8 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.SystemUserService;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.service.TestService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -77,6 +79,8 @@ public class ReferralSetServiceImpl implements ReferralSetService {
     private OrganizationService organizationService;
     @Autowired
     private ReferralTypeService referralTypeService;
+    @Autowired
+    private SystemUserService systemUserService;
     @Autowired
     private ReferralStatusHistoryDAO statusHistoryDAO;
     @Autowired
@@ -269,7 +273,7 @@ public class ReferralSetServiceImpl implements ReferralSetService {
 
             referral.setRequestDate(new Timestamp(new Date().getTime()));
             referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
-            referral.setRequesterName(referralItem.getReferrer());
+            referral.setRequesterName(requesterName(referralItem, updateData.getCurrentUserId()));
             referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
             referral.setSubcontract(buildSubcontractFromItem(referralItem, updateData.getCurrentUserId()));
             for (SampleTestCollection sampleItemTest : updateData.getSampleItemsTests()) {
@@ -316,7 +320,11 @@ public class ReferralSetServiceImpl implements ReferralSetService {
             existing.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
         }
         existing.setReferralReasonId(referralItem.getReferralReasonId());
-        existing.setRequesterName(referralItem.getReferrer());
+        // Only when the form names someone: an edit that leaves the field empty
+        // must not erase who raised the referral in the first place.
+        if (!GenericValidator.isBlankOrNull(referralItem.getReferrer())) {
+            existing.setRequesterName(referralItem.getReferrer());
+        }
         if (!GenericValidator.isBlankOrNull(referralItem.getReferredSendDate())) {
             existing.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
         }
@@ -478,5 +486,22 @@ public class ReferralSetServiceImpl implements ReferralSetService {
         history.setChangedAt(DateUtil.getNowAsTimestamp());
         history.setSysUserId(actorUserId);
         statusHistoryDAO.insert(history);
+    }
+
+    /**
+     * Whoever raised the referral: the referrer named on the form if there is one,
+     * otherwise the user saving the order. Order Entry sends no referrer, so this
+     * column used to be empty on every referral and the reference lab had nobody to
+     * go back to.
+     */
+    private String requesterName(ReferralItem referralItem, String currentUserId) {
+        if (!GenericValidator.isBlankOrNull(referralItem.getReferrer())) {
+            return referralItem.getReferrer();
+        }
+        if (GenericValidator.isBlankOrNull(currentUserId)) {
+            return null;
+        }
+        SystemUser user = systemUserService.getUserById(currentUserId);
+        return user == null ? null : user.getDisplayName();
     }
 }

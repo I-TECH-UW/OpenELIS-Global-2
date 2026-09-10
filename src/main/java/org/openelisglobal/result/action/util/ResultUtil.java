@@ -77,6 +77,8 @@ import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.spring.util.SpringContext;
+import org.openelisglobal.systemuser.service.SystemUserService;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.testanalyte.service.TestAnalyteService;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
@@ -443,6 +445,32 @@ public class ResultUtil {
      * working on. Results Entry hides the action once a test is referred; this is
      * the same rule for anything that reaches a save directly.
      */
+    /**
+     * Whoever raised this referral: the referrer named on the form, else the
+     * technician credited with the result, else the person saving.
+     *
+     * <p>
+     * All three rungs are needed. The writers used to set the technician and then
+     * overwrite it with the form's referrer, which no client sends, so nothing was
+     * recorded at all; and the unified Results page shows a technician but never
+     * asks for one, so on the page the bench actually uses both of the first two
+     * are empty.
+     */
+    public static String requesterNameFor(ReferralItem referralItem, TestResultItem testResultItem,
+            String actorUserId) {
+        if (!GenericValidator.isBlankOrNull(referralItem.getReferrer())) {
+            return referralItem.getReferrer();
+        }
+        if (!GenericValidator.isBlankOrNull(testResultItem.getTechnician())) {
+            return testResultItem.getTechnician();
+        }
+        if (GenericValidator.isBlankOrNull(actorUserId)) {
+            return null;
+        }
+        SystemUser user = SpringContext.getBean(SystemUserService.class).getUserById(actorUserId);
+        return user == null ? null : user.getDisplayName();
+    }
+
     public static boolean hasOpenReferral(Analysis analysis) {
         return analysis != null && analysis.getId() != null
                 && SpringContext.getBean(ReferralService.class).hasOpenReferral(analysis.getId());
@@ -467,11 +495,9 @@ public class ResultUtil {
                 actionDataSet.getCurrentUserId()));
         referral.setSysUserId(actionDataSet.getCurrentUserId());
         referral.setReferralTypeId(confirmationReferralTypeId());
-        referral.setRequesterName(testResultItem.getTechnician());
-
         referral.setRequestDate(new Timestamp(new Date().getTime()));
         referral.setSentDate(DateUtil.convertStringDateToTruncatedTimestamp(referralItem.getReferredSendDate()));
-        referral.setRequesterName(referralItem.getReferrer());
+        referral.setRequesterName(requesterNameFor(referralItem, testResultItem, actionDataSet.getCurrentUserId()));
         referral.setOrganization(organizationService.get(referralItem.getReferredInstituteId()));
         referral.setAnalysis(analysis);
 

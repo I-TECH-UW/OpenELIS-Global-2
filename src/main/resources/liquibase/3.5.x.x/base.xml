@@ -397,5 +397,9 @@
        were invisible to the Reference Lab Results page and to shipment dispatch. -->
   <include relativeToChangelogFile="true" file="099-referral-sent-status-backfill.xml"/>
 
+  <!-- A referral dispatched by a shipment box had no sent date, so it never aged
+       into the days-outstanding buckets or the stuck view. -->
+  <include relativeToChangelogFile="true" file="100-referral-sent-date-backfill.xml"/>
+
 
 </databaseChangeLog>
