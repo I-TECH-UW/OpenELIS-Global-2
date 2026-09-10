@@ -64,7 +64,7 @@ describe("InlineEnrollmentForm", () => {
       target: { value: "Virology PT" },
     });
 
-    expect(screen.getByLabelText("Program Name")).toHaveValue("Virology PT");
+    expect(screen.getByLabelText("Scheme Name")).toHaveValue("Virology PT");
     expect(screen.getByLabelText("Provider")).toHaveValue("NHLS");
 
     fireEvent.click(screen.getByRole("button", { name: "Save Enrollment" }));
@@ -80,7 +80,7 @@ describe("InlineEnrollmentForm", () => {
     const onSave = vi.fn();
     renderForm({ enrollment: null, enrollments: [], onSave });
 
-    fireEvent.change(screen.getByLabelText("Program Name"), {
+    fireEvent.change(screen.getByLabelText("Scheme Name"), {
       target: { value: "Regional TB PT" },
     });
     fireEvent.change(screen.getByLabelText("Provider"), {
@@ -109,7 +109,7 @@ describe("InlineEnrollmentForm", () => {
     });
 
     expect(screen.getByLabelText("Scheme")).toBeDisabled();
-    expect(screen.getByLabelText("Program Name")).toBeDisabled();
+    expect(screen.getByLabelText("Scheme Name")).toBeDisabled();
     expect(screen.getByLabelText("Provider")).toBeDisabled();
     expect(
       screen.getByText(
@@ -131,7 +131,7 @@ describe("InlineEnrollmentForm", () => {
     });
 
     expect(screen.getByLabelText("Scheme")).toBeEnabled();
-    expect(screen.getByLabelText("Program Name")).toBeEnabled();
+    expect(screen.getByLabelText("Scheme Name")).toBeEnabled();
     expect(screen.getByLabelText("Provider")).toBeEnabled();
   });
 });

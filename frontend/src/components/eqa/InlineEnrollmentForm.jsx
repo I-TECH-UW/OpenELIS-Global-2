@@ -311,6 +311,9 @@ const InlineEnrollmentForm = ({
               placeholder={intl.formatMessage({
                 id: "eqa.enrollment.selectPanels",
               })}
+              helperText={intl.formatMessage({
+                id: "eqa.enrollment.panels.help",
+              })}
             />
           </Column>
         </Grid>

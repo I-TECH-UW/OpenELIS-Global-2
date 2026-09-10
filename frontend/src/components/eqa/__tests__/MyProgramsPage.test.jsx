@@ -114,7 +114,7 @@ describe("MyProgramsPage", () => {
 
   test("renders page title", () => {
     renderPage();
-    expect(screen.getByText("My EQA Programs")).toBeTruthy();
+    expect(screen.getByText("My EQA Schemes")).toBeTruthy();
   });
 
   test("renders page subtitle", () => {
@@ -132,18 +132,18 @@ describe("MyProgramsPage", () => {
     expect(screen.getByText("CDC")).toBeTruthy();
   });
 
-  test("renders Enroll in Program button", () => {
+  test("renders Enroll in Scheme button", () => {
     renderPage();
-    expect(screen.getByText("Enroll in Program")).toBeTruthy();
+    expect(screen.getByText("Enroll in Scheme")).toBeTruthy();
   });
 
   test("renders table column headers", () => {
     renderPage();
-    expect(screen.getByText("Program Name")).toBeTruthy();
+    expect(screen.getByText("Scheme Name")).toBeTruthy();
     expect(screen.getByText("Provider")).toBeTruthy();
     expect(screen.getByText("Lab Unit(s)")).toBeTruthy();
     expect(screen.getByText("Tests")).toBeTruthy();
-    expect(screen.getByText("Panels")).toBeTruthy();
+    expect(screen.getByText("Test panels")).toBeTruthy();
     expect(screen.getByText("Status")).toBeTruthy();
     expect(screen.getByText("Actions")).toBeTruthy();
   });
@@ -227,10 +227,10 @@ describe("MyProgramsPage", () => {
     expect(putToOpenElisServerFullResponse).not.toHaveBeenCalled();
   });
 
-  test("shows inline enrollment form when Enroll in Program is clicked", () => {
+  test("shows inline enrollment form when Enroll in Scheme is clicked", () => {
     renderPage();
-    const enrollButton = screen.getByText("Enroll in Program");
+    const enrollButton = screen.getByText("Enroll in Scheme");
     fireEvent.click(enrollButton);
-    expect(screen.getByText("New EQA Program Enrollment")).toBeTruthy();
+    expect(screen.getByText("New EQA Scheme Enrollment")).toBeTruthy();
   });
 });
