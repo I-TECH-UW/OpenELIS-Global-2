@@ -943,43 +943,403 @@ public class StorageLocationServiceIntegrationTest extends BaseWebContextSensiti
     }
 
     @Test
-    public void testIsCodeUniqueForRoom_ReturnTrueWhenCodeIsNullOrEmpty() {
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsNull() {
+        assertEquals("Cannot delete location: location is null",
+                storageLocationService.getDeleteConstraintMessage(null));
+    }
+
+    @Test
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsInstanceOfStorageRoom_AndDeviceCountIsGreaterZero() {
+        StorageRoom storageRoom = (StorageRoom) storageLocationService.getRoom(5000);
+        assertEquals("Cannot delete Room '" + storageRoom.getName() + "' because it contains 3 device(s)",
+                storageLocationService.getDeleteConstraintMessage(storageRoom));
+    }
+
+    @Test
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsInstanceOfStorageRoom_AndDeviceCountIsNotGreaterZero() {
+        StorageRoom storageRoom = (StorageRoom) storageLocationService.getRoom(5002);
+        assertEquals("Cannot delete room: unknown constraint",
+                storageLocationService.getDeleteConstraintMessage(storageRoom));
+    }
+
+    @Test
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsInstanceOfStorageDevice_AndShelfCountIsGreaterZero() {
+        StorageDevice storageDevice = (StorageDevice) storageLocationService.get(5000, StorageDevice.class);
+        assertEquals("Cannot delete Device '" + storageDevice.getName() + "' because it contains 2 shelf(s)",
+                storageLocationService.getDeleteConstraintMessage(storageDevice));
+    }
+
+    @Test
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsInstanceOfStorageDevice_AndSampleCountIsGreaterZero() {
+        StorageDevice storageDevice = (StorageDevice) storageLocationService.get(5002, StorageDevice.class);
+        assertEquals("Cannot delete Device '" + storageDevice.getName() + "' because it has 1 sample(s) assigned",
+                storageLocationService.getDeleteConstraintMessage(storageDevice));
+    }
+
+    @Test
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsInstanceOfStorageDevice_AndShelfCountOrSampleCountIsNotGreaterZero() {
+        StorageDevice storageDevice = (StorageDevice) storageLocationService.get(5008, StorageDevice.class);
+        assertEquals("Cannot delete device: unknown constraint",
+                storageLocationService.getDeleteConstraintMessage(storageDevice));
+    }
+
+    @Test
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsInstanceOfStorageShelf_AndRackCountIsGreaterZero() {
+        StorageShelf storageShelf = (StorageShelf) storageLocationService.get(5000, StorageShelf.class);
+        assertEquals("Cannot delete Shelf '" + storageShelf.getLabel() + "' because it contains 2 rack(s)",
+                storageLocationService.getDeleteConstraintMessage(storageShelf));
+    }
+
+    @Test
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsInstanceOfStorageShelf_AndSampleCountIsGreaterZero() {
+        StorageShelf storageShelf = (StorageShelf) storageLocationService.get(5003, StorageShelf.class);
+        assertEquals("Cannot delete Shelf '" + storageShelf.getLabel() + "' because it has 1 sample(s) assigned",
+                storageLocationService.getDeleteConstraintMessage(storageShelf));
+    }
+
+    @Test
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsInstanceOfStorageShelf_AndRackCountOrSampleCountIsNotGreaterZero() {
+        StorageShelf storageShelf = (StorageShelf) storageLocationService.get(5005, StorageShelf.class);
+        assertEquals("Cannot delete shelf: unknown constraint",
+                storageLocationService.getDeleteConstraintMessage(storageShelf));
+    }
+
+    @Test
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsInstanceOfStorageRack_AndSampleCountIsGreaterZero() {
+        StorageRack storageRack = (StorageRack) storageLocationService.get(5000, StorageRack.class);
+        assertEquals("Cannot delete Rack '" + storageRack.getLabel() + "' because it has 2 sample(s) assigned",
+                storageLocationService.getDeleteConstraintMessage(storageRack));
+    }
+
+    @Test
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsInstanceOfStorageRack_AndSampleCountIsNotGreaterZero() {
+        StorageRack storageRoom = (StorageRack) storageLocationService.get(5002, StorageRack.class);
+        assertEquals("Cannot delete rack: unknown constraint",
+                storageLocationService.getDeleteConstraintMessage(storageRoom));
+    }
+
+    @Test
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsInstanceOfStorageBox_AndSampleCountIsGreaterZero() {
+        StorageBox storageBox = (StorageBox) storageLocationService.get(5004, StorageBox.class);
+        assertEquals("Cannot delete Box '" + storageBox.getLabel() + "' because it has 2 sample(s) assigned",
+                storageLocationService.getDeleteConstraintMessage(storageBox));
+    }
+
+    @Test
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsInstanceOfStorageBox_AndSampleCountIsNotGreaterZero() {
+        StorageBox storageBox = (StorageBox) storageLocationService.get(5001, StorageBox.class);
+        assertEquals("Cannot delete box: unknown constraint",
+                storageLocationService.getDeleteConstraintMessage(storageBox));
+    }
+
+    @Test
+    public void testGetDeleteConstraintMessage_WhenLocationEntityIsUnKnown() {
+        SampleItem sampleItem = new SampleItem();
+        assertEquals("Cannot delete location: unknown type",
+                storageLocationService.getDeleteConstraintMessage(sampleItem));
+    }
+
+    @Test
+    public void testDeleteLocationWithCascade_ThrowExceptionWhenLocationEntityIsNull() {
+        assertThrows(LIMSRuntimeException.class, () -> {
+            storageLocationService.deleteLocationWithCascade(5003, null);
+        });
+    }
+
+    @Test
+    public void testCanDeleteRoom_ReturnSuccessWhenRoomIsNull() {
+        StorageRoom storageRoom = (StorageRoom) storageLocationService.get(7802, StorageRoom.class);
+        assertNull(storageRoom);
+        DeletionValidationResult validationResult = storageLocationService.canDeleteRoom(7802);
+        assertTrue(validationResult.isSuccess());
+        assertNull(validationResult.getMessage());
+    }
+
+    @Test
+    public void testCanDeleteRoom_ReturnReferentialIntegrityViolationWhenChildDevicesIsNotEmpty() {
+        StorageRoom storageRoom = (StorageRoom) storageLocationService.get(5000, StorageRoom.class);
+        assertNotNull(storageRoom);
+        DeletionValidationResult validationResult = storageLocationService.canDeleteRoom(5000);
+        assertFalse(validationResult.isSuccess());
+
+        assertTrue(validationResult.getDependentCount() > 0);
+        assertNotNull(validationResult.getMessage());
+        assertEquals("Cannot delete Room '" + storageRoom.getName() + "': contains "
+                + validationResult.getDependentCount() + " devices", validationResult.getMessage());
+    }
+
+    @Test
+    public void testCanDeleteRoom_ReturnSuccessWhenChildDevicesIsEmpty() {
+        StorageRoom storageRoom = (StorageRoom) storageLocationService.get(5003, StorageRoom.class);
+        assertNotNull(storageRoom);
+        DeletionValidationResult validationResult = storageLocationService.canDeleteRoom(5003);
+        assertEquals(0, validationResult.getDependentCount());
+        assertTrue(validationResult.isSuccess());
+        assertNull(validationResult.getMessage());
+    }
+
+    @Test
+    public void testCanDeleteDevice_ReturnSuccessWhenDeviceIsNull() {
+        StorageDevice storageDevice = (StorageDevice) storageLocationService.get(1278, StorageDevice.class);
+        assertNull(storageDevice);
+        DeletionValidationResult validationResult = storageLocationService.canDeleteDevice(1278);
+        assertTrue(validationResult.isSuccess());
+        assertNull(validationResult.getMessage());
+    }
+
+    @Test
+    public void testCanDeleteDevice_ReturnReferentialIntegrityViolationWhenChildShelvesIsNotEmpty() {
+        StorageDevice storageDevice = (StorageDevice) storageLocationService.get(5000, StorageDevice.class);
+        assertNotNull(storageDevice);
+        DeletionValidationResult validationResult = storageLocationService.canDeleteDevice(5000);
+        assertFalse(validationResult.isSuccess());
+
+        assertTrue(validationResult.getDependentCount() > 0);
+        assertNotNull(validationResult.getMessage());
+        assertEquals("Cannot delete Device '" + storageDevice.getName() + "': contains "
+                + validationResult.getDependentCount() + " shelves", validationResult.getMessage());
+    }
+
+    @Test
+    public void testCanDeleteDevice_ReturnSuccessWhenWhenChildShelvesIsEmpty() {
+        StorageDevice storageDevice = (StorageDevice) storageLocationService.get(5003, StorageDevice.class);
+        assertNotNull(storageDevice);
+        DeletionValidationResult validationResult = storageLocationService.canDeleteDevice(5003);
+        assertEquals(0, validationResult.getDependentCount());
+        assertTrue(validationResult.isSuccess());
+        assertNull(validationResult.getMessage());
+    }
+
+    @Test
+    public void testCanDeleteShelf_ReturnSuccessWhenShelfIsNull() {
+        StorageShelf storageShelf = (StorageShelf) storageLocationService.get(2507, StorageShelf.class);
+        assertNull(storageShelf);
+        DeletionValidationResult validationResult = storageLocationService.canDeleteShelf(2507);
+        assertTrue(validationResult.isSuccess());
+        assertNull(validationResult.getMessage());
+    }
+
+    @Test
+    public void testCanDeleteShelf_ReturnReferentialIntegrityViolationWhenChildRacksIsNotEmpty() {
+        StorageShelf storageShelf = (StorageShelf) storageLocationService.get(5000, StorageShelf.class);
+        assertNotNull(storageShelf);
+        DeletionValidationResult validationResult = storageLocationService.canDeleteShelf(5000);
+        assertFalse(validationResult.isSuccess());
+
+        assertTrue(validationResult.getDependentCount() > 0);
+        assertNotNull(validationResult.getMessage());
+        assertEquals("Cannot delete Shelf '" + storageShelf.getLabel() + "': contains "
+                + validationResult.getDependentCount() + " racks", validationResult.getMessage());
+    }
+
+    @Test
+    public void testCanDeleteShelf_ReturnSuccessWhenChildDRacksIsEmpty() {
+        StorageShelf storageShelf = (StorageShelf) storageLocationService.get(5003, StorageShelf.class);
+        assertNotNull(storageShelf);
+        DeletionValidationResult validationResult = storageLocationService.canDeleteShelf(5003);
+        assertEquals(0, validationResult.getDependentCount());
+        assertTrue(validationResult.isSuccess());
+        assertNull(validationResult.getMessage());
+    }
+
+    @Test
+    public void testCanDeleteRack_ReturnSuccessWhenRackIsNull() {
+        StorageRack storageRack = (StorageRack) storageLocationService.get(4301, StorageRack.class);
+        assertNull(storageRack);
+        DeletionValidationResult validationResult = storageLocationService.canDeleteRack(4301);
+        assertTrue(validationResult.isSuccess());
+        assertNull(validationResult.getMessage());
+    }
+
+    @Test
+    public void testCanDeleteRack_ReturnActiveAssignmentsWhenSampleCountIsGreaterThanZero() {
+        StorageRack storageRack = (StorageRack) storageLocationService.get(5000, StorageRack.class);
+        assertNotNull(storageRack);
+        DeletionValidationResult validationResult = storageLocationService.canDeleteRack(5000);
+        assertFalse(validationResult.isSuccess());
+        assertTrue(validationResult.getDependentCount() > 0);
+        assertNotNull(validationResult.getMessage());
+        assertEquals("Cannot delete Rack '" + storageRack.getLabel() + "': has " + validationResult.getDependentCount()
+                + " assigned samples", validationResult.getMessage());
+    }
+
+    @Test
+    public void testCanDeleteRack_ReturnSuccessWhenSampleCountIsZero() {
+        StorageRack storageRack = (StorageRack) storageLocationService.get(5002, StorageRack.class);
+        assertNotNull(storageRack);
+        DeletionValidationResult validationResult = storageLocationService.canDeleteRack(5002);
+        assertEquals(0, validationResult.getDependentCount());
+        assertTrue(validationResult.isSuccess());
+        assertNull(validationResult.getMessage());
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_ReturnTrueWhenNameIsNull() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent(null, 5001, "rack", 5000));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_ReturnTrueWhenNameIsEmptyOrWhiteSpace() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent("           ", 5001, "rack", 5000));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_WhenLocationTypeIsRoom_ReturnTrueWhenNoExistingRoomFound() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent("NO-ROOM", null, "room", 5000));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_WhenLocationTypeIsRoom_ReturnTrueWhenNameBelongsToExcludedId() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent("Test Room 1", null, "room", 5000));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_WhenLocationTypeIsRoom_ReturnFalseWhenNameIsDuplicate() {
+        assertFalse(storageLocationService.isNameUniqueWithinParent("Test Room 3", null, "room", 5003));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_WhenLocationTypeIsDevice_ReturnTrueWhenParentIdIsNull() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent("Test Refrigerator 1", null, "device", 5001));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_WhenLocationTypeIsDevice_ReturnTrueWhenNoExistingDeviceFound() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent("NO-DEVICE", 5000, "device", 5001));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_WhenLocationTypeIsDevice_ReturnTrueWhenNameBelongsToExcludedId() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent("Test Refrigerator 1", 5000, "device", 5001));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_WhenLocationTypeIsShelf_ReturnTrueWhenParentIdIsNull() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent("Shelf C", null, "shelf", 5002));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_WhenLocationTypeIsShelf_ReturnTrueWhenNoExistingShelfFound() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent("NO-SHELF", 5001, "shelf", 5002));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_WhenLocationTypeIsShelf_ReturnTrueWhenNameBelongsToExcludedId() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent("Shelf C", 5001, "shelf", 5002));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_WhenLocationTypeIsRack_ReturnTrueWhenParentIdIsNull() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent("Rack Flexible", null, "rack", 5003));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_WhenLocationTypeIsRack_ReturnTrueWhenNoExistingRackFound() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent("NO-RACK", 5002, "rack", 5003));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_WhenLocationTypeIsRack_ReturnTrueWhenNameBelongsToExcludedId() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent("Rack Flexible", 5002, "rack", 5003));
+    }
+
+    @Test
+    public void testIsNameUniqueWithinParent_JustReturnTrueWhenLocationTypeIsOtherwise() {
+        assertTrue(storageLocationService.isNameUniqueWithinParent("Rack Flexible", 5002, "random-type", 5003));
+    }
+
+    @Test
+    public void testIsCodeUniqueForRoom_ReturnTrueWhenCodeIsNull() {
         assertTrue(storageLocationService.isCodeUniqueForRoom(null, 5002));
     }
 
     @Test
-    public void testIsCodeUniqueForRoom_ReturnTrueWhenCodeIsNotNullOrEmpty() {
-        assertTrue(storageLocationService.isCodeUniqueForRoom("TEST-RR1", 5000));
+    public void testIsCodeUniqueForRoom_ReturnTrueWhenCodeIsEmptyOrWhitespace() {
+        assertTrue(storageLocationService.isCodeUniqueForRoom("               ", 5002));
     }
 
     @Test
-    public void testIsCodeUniqueForDevice_ReturnTrueWhenCodeIsNullOrEmpty() {
-        assertTrue(storageLocationService.isCodeUniqueForDevice(null, 5000));
+    public void testIsCodeUniqueForRoom_ReturnTrueWhenNoExistingRoomFound() {
+        assertTrue(storageLocationService.isCodeUniqueForRoom("CODE-ZERO", 5000));
     }
 
     @Test
-    public void testIsCodeUniqueForDevice_ReturnTrueWhenCodeIsNotNullOrEmpty() {
-        assertTrue(storageLocationService.isCodeUniqueForDevice("TEST-F01", 5000));
+    public void testIsCodeUniqueForRoom_ReturnTrueWhenCodeBelongsToExcludedId() {
+        assertTrue(storageLocationService.isCodeUniqueForRoom("TEST-R01", 5000));
     }
 
     @Test
-    public void testIsCodeUniqueForShelf_ReturnTrueWhenCodeIsNullOrEmpty() {
+    public void testIsCodeUniqueForDevice_ReturnTrueWhenCodeIsNull() {
+        assertTrue(storageLocationService.isCodeUniqueForDevice(null, 5002));
+    }
+
+    @Test
+    public void testIsCodeUniqueForDevice_ReturnTrueWhenCodeIsEmptyOrWhiteSpace() {
+        assertTrue(storageLocationService.isCodeUniqueForDevice("    ", 5002));
+    }
+
+    @Test
+    public void testIsCodeUniqueForDevice_ReturnTrueWhenNoExistingDeviceFound() {
+        assertTrue(storageLocationService.isCodeUniqueForRoom("CODE-ZERO", 5002));
+    }
+
+    @Test
+    public void testIsCodeUniqueForDevice_ReturnTrueWhenCodeBelongsToExcludedId() {
+        assertTrue(storageLocationService.isCodeUniqueForDevice("TEST-C01", 5002));
+    }
+
+    @Test
+    public void testIsCodeUniqueForDevice_ReturnFalseWhenCodeIsDuplicate() {
+        assertFalse(storageLocationService.isCodeUniqueForDevice("TEST-D08", 5008));
+    }
+
+    @Test
+    public void testIsCodeUniqueForShelf_ReturnTrueWhenCodeIsNull() {
         assertTrue(storageLocationService.isCodeUniqueForShelf(null, 5003));
     }
 
     @Test
-    public void testIsCodeUniqueForShelf_ReturnTrueWhenCodeIsNotNullOrEmpty() {
-        assertTrue(storageLocationService.isCodeUniqueForShelf("TEST-SI", 5003));
+    public void testIsCodeUniqueForShelf_ReturnTrueWhenCodeIsEmptyOrWhiteSpace() {
+        assertTrue(storageLocationService.isCodeUniqueForShelf("    ", 5003));
     }
 
     @Test
-    public void testIsCodeUniqueForRack_ReturnTrueWhenCodeIsNullOrEmpty() {
-        assertTrue(storageLocationService.isCodeUniqueForRack(null, 5001));
+    public void testIsCodeUniqueForShelf_ReturnTrueWhenNoExistingShelfFound() {
+        assertTrue(storageLocationService.isCodeUniqueForShelf("CODE-ZERO", 5003));
     }
 
     @Test
-    public void testIsCodeUniqueForRack_ReturnTrueWhenCodeIsNotNullOrEmpty() {
-        assertTrue(storageLocationService.isCodeUniqueForRack("TEST-RR2", 5001));
+    public void testIsCodeUniqueForShelf_ReturnTrueWhenCodeBelongsToExcludedId() {
+        assertTrue(storageLocationService.isCodeUniqueForShelf("TEST-SB", 5001));
     }
 
+    @Test
+    public void testIsCodeUniqueForShelf_ReturnFalseWhenCodeBelongsIsDuplicate() {
+        assertFalse(storageLocationService.isCodeUniqueForShelf("TEST-SI", 5004));
+    }
+
+    @Test
+    public void testIsCodeUniqueForRack_ReturnTrueWhenCodeIsNull() {
+        assertTrue(storageLocationService.isCodeUniqueForRack(null, 5004));
+    }
+
+    @Test
+    public void testIsCodeUniqueForRack_ReturnTrueWhenCodeIsEmptyOrWhiteSpace() {
+        assertTrue(storageLocationService.isCodeUniqueForRack("         ", 5004));
+    }
+
+    @Test
+    public void testIsCodeUniqueForRack_ReturnTrueWhenNoExistingRackFound() {
+        assertTrue(storageLocationService.isCodeUniqueForRack("CODE-ZERO", 5004));
+    }
+
+    @Test
+    public void testIsCodeUniqueForRack_ReturnTrueWhenCodeBelongsToExcludedId() {
+        assertTrue(storageLocationService.isCodeUniqueForRack("TEST-RR3", 5002));
+    }
+
+    @Test
+    public void testIsCodeUniqueForRack_ReturnFalseWhenCodeBelongsIsDuplicate() {
+        assertFalse(storageLocationService.isCodeUniqueForRack("TEST-RF", 5004));
+    }
 }
