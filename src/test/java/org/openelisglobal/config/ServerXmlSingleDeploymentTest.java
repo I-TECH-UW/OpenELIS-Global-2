@@ -8,7 +8,7 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.UnaryOperator;
+import java.util.function.Function;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
@@ -22,9 +22,9 @@ import org.xml.sax.SAXException;
 /**
  * A WAR deploys twice when a Host's appBase scan ({@code autoDeploy} and
  * {@code deployOnStartup}, true while absent) covers a WAR an explicit
- * {@code <Context>} also declares, or when two {@code <Context>} children share
- * a {@code docBase}: the second context brings a second Spring root context and
- * scheduler, firing every {@code @Scheduled} method again.
+ * {@code <Context>} also declares, or when two of its contexts resolve to one
+ * {@code docBase}: the second brings its own Spring root context, so each
+ * {@code @Scheduled} method fires twice; two Hosts over one WAR go unflagged.
  *
  * <p>
  * Tomcat 10.1's Host documentation says to "turn off automatic application
@@ -40,7 +40,7 @@ public class ServerXmlSingleDeploymentTest {
             for (Element host : elementsNamed(parse(config), "Host")) {
                 String appBase = appBaseOf(host);
                 long inAppBase = childElements(host, "Context").stream()
-                        .filter(context -> resolvesInside(context.getAttribute("docBase"), appBase)).count();
+                        .filter(context -> resolvesInside(context, appBase)).count();
                 if (inAppBase == 0) {
                     continue;
                 }
@@ -64,10 +64,10 @@ public class ServerXmlSingleDeploymentTest {
         for (Path config : serverXmlConfigs()) {
             for (Element host : elementsNamed(parse(config), "Host")) {
                 String appBase = appBaseOf(host);
-                violations.addAll(repeatedAttribute(config, host, "docBase", docBase -> docBaseKey(docBase, appBase),
+                violations.addAll(repeatedAttribute(config, host, "docBase", context -> docBaseKey(context, appBase),
                         "so that WAR deploys twice"));
                 violations.addAll(
-                        repeatedAttribute(config, host, "path", ServerXmlSingleDeploymentTest::withoutTrailingSlash,
+                        repeatedAttribute(config, host, "path", context -> baseName(context.getAttribute("path")),
                                 "so two web applications claim one context path"));
             }
         }
@@ -75,14 +75,14 @@ public class ServerXmlSingleDeploymentTest {
     }
 
     private static List<String> repeatedAttribute(Path config, Element host, String attribute,
-            UnaryOperator<String> canonical, String consequence) {
+            Function<Element, String> key, String consequence) {
         List<String> violations = new ArrayList<>();
         Set<String> seen = new HashSet<>();
         for (Element context : childElements(host, "Context")) {
-            String key = canonical.apply(context.getAttribute(attribute));
-            if (!key.isEmpty() && !seen.add(key)) {
+            String resolved = key.apply(context);
+            if (!seen.add(resolved)) {
                 violations.add(describe(config, host) + " declares more than one <Context> whose " + attribute
-                        + " resolves to \"" + key + "\", " + consequence);
+                        + " resolves to \"" + resolved + "\", " + consequence);
             }
         }
         return violations;
@@ -98,8 +98,8 @@ public class ServerXmlSingleDeploymentTest {
      * Spellings of one deployable collapse to one key; {@code .war} drops because
      * Tomcat appends it when the directory a {@code docBase} names is absent.
      */
-    private static String docBaseKey(String docBase, String appBase) {
-        List<String> doc = resolve(segments(docBase));
+    private static String docBaseKey(Element context, String appBase) {
+        List<String> doc = resolvedDocBase(context, appBase);
         List<String> tail = new ArrayList<>(
                 doc.subList(Math.max(endOfAppBase(doc, resolve(segments(appBase))), 0), doc.size()));
         if (!tail.isEmpty() && tail.get(tail.size() - 1).endsWith(".war")) {
@@ -109,37 +109,61 @@ public class ServerXmlSingleDeploymentTest {
         return String.join("/", tail);
     }
 
+    /**
+     * What {@code ContextConfig#fixDocBase} resolves: a relative {@code docBase}
+     * from inside {@code appBase}, and an absent one from {@code path}.
+     */
+    private static List<String> resolvedDocBase(Element context, String appBase) {
+        String docBase = context.getAttribute("docBase");
+        if (docBase.isEmpty()) {
+            docBase = baseName(context.getAttribute("path"));
+        }
+        List<String> joined = new ArrayList<>();
+        if (!docBase.startsWith("/")) {
+            joined.addAll(segments(appBase));
+        }
+        joined.addAll(segments(docBase));
+        return resolve(joined);
+    }
+
+    /** {@code ContextName#getBaseName}: {@code /a/b/} names the WAR {@code a#b}. */
+    private static String baseName(String path) {
+        List<String> segments = segments(path);
+        return segments.isEmpty() ? "ROOT" : String.join("#", segments);
+    }
+
     private static String describe(Path config, Element host) {
         return config + ": <Host name=\"" + host.getAttribute("name") + "\" appBase=\"" + appBaseOf(host) + "\">";
     }
 
     /**
-     * A relative {@code docBase} resolves against {@code appBase} unless it climbs
-     * out; an absolute one matches textually against a container layout.
+     * Whether the appBase scan reaches this {@code <Context>} too; a placeholder
+     * {@code appBase} is unmatchable, so it counts as containing the docBase.
      */
-    private static boolean resolvesInside(String docBase, String appBase) {
-        List<String> base = resolve(segments(appBase));
-        List<String> doc = resolve(segments(docBase));
-        if (base.isEmpty() || doc.isEmpty()) {
-            return false;
+    private static boolean resolvesInside(Element context, String appBase) {
+        if (appBase.contains("${")) {
+            return true;
         }
-        if (!docBase.startsWith("/")) {
-            return !"..".equals(doc.get(0));
-        }
-        return endOfAppBase(doc, base) >= 0;
+        return endOfAppBase(resolvedDocBase(context, appBase), resolve(segments(appBase))) >= 0;
     }
 
-    /** How far into {@code doc} the {@code base} segments reach, or -1. */
+    /**
+     * How far into {@code doc} the deepest {@code base} match reaches, or -1;
+     * deepest, so {@code webapps/../webapps/App} keys as {@code App} does.
+     */
     private static int endOfAppBase(List<String> doc, List<String> base) {
+        int end = -1;
         for (int i = 0; !base.isEmpty() && i + base.size() < doc.size(); i++) {
             if (doc.subList(i, i + base.size()).equals(base)) {
-                return i + base.size();
+                end = i + base.size();
             }
         }
-        return -1;
+        return end;
     }
 
-    /** A {@code ..} kept where it climbs past the start marks an escape. */
+    /**
+     * A {@code ..} drops the segment it follows; a leftover one had none to drop.
+     */
     private static List<String> resolve(List<String> segments) {
         List<String> resolved = new ArrayList<>();
         for (String segment : segments) {
@@ -161,10 +185,6 @@ public class ServerXmlSingleDeploymentTest {
             }
         }
         return segments;
-    }
-
-    private static String withoutTrailingSlash(String value) {
-        return value.length() > 1 && value.endsWith("/") ? value.substring(0, value.length() - 1) : value;
     }
 
     private static List<Path> serverXmlConfigs() throws IOException, InterruptedException {
