@@ -23,6 +23,11 @@ class DeploymentTest(unittest.TestCase):
         self.target = self.root / ".openelis-ci/target.json"
         self.target.parent.mkdir(parents=True)
         self.target.write_text('{"deploymentId":"previous-ready"}')
+        self.override = self.target.with_name("deployment-images.json")
+        self.previous_override = json.dumps({"services": {
+            service: {"image": repository + "@sha256:" + "d" * 64}
+            for service, repository in deployment.SERVICES.items()}})
+        self.override.write_text(self.previous_override)
         self.sha = "a" * 40
         self.request = {"manifest": {"appSha": self.sha, "appBranch": "develop", "images": {
             service: repository + "@sha256:" + "b" * 64 for service, repository in deployment.SERVICES.items()}},
@@ -79,11 +84,39 @@ class DeploymentTest(unittest.TestCase):
                 self.branch_head = "c" * 40
             return result
 
-        with patch.object(deployment, "run", side_effect=advance_during_pull), patch.object(deployment.subprocess, "run"):
-            with self.assertRaisesRegex(ValueError, "obsolete deployment"):
+        for existing_override in (True, False):
+            with self.subTest(existing_override=existing_override):
+                if not existing_override:
+                    self.override.unlink()
+                self.branch_head = self.sha
+                self.commands.clear()
+                with patch.object(deployment, "run", side_effect=advance_during_pull), patch.object(deployment.subprocess, "run"):
+                    with self.assertRaisesRegex(ValueError, "obsolete deployment"):
+                        deployment.deploy(self.request, self.diagnostics)
+                self.assertFalse(any("up" in command for command in self.commands))
+                self.assertEqual("previous-ready", json.loads(self.target.read_text())["deploymentId"])
+                if existing_override:
+                    self.assertEqual(self.previous_override, self.override.read_text())
+                else:
+                    self.assertFalse(self.override.exists())
+                self.assertEqual({"target.json"} | ({"deployment-images.json"} if existing_override else set()),
+                                 {path.name for path in self.target.parent.iterdir()})
+
+    def test_failed_image_pull_preserves_the_previous_override(self):
+        def fail_pull(args, cwd, capture=False):
+            result = self.command(args, cwd, capture)
+            if "pull" in args:
+                raise deployment.subprocess.CalledProcessError(1, args)
+            return result
+
+        with patch.object(deployment, "run", side_effect=fail_pull), patch.object(deployment.subprocess, "run"):
+            with self.assertRaises(deployment.subprocess.CalledProcessError):
                 deployment.deploy(self.request, self.diagnostics)
         self.assertFalse(any("up" in command for command in self.commands))
+        self.assertEqual(self.previous_override, self.override.read_text())
         self.assertEqual("previous-ready", json.loads(self.target.read_text())["deploymentId"])
+        self.assertEqual({"target.json", "deployment-images.json"},
+                         {path.name for path in self.target.parent.iterdir()})
 
     def test_failed_startup_withdraws_stale_ready_identity_and_keeps_it_in_diagnostics(self):
         with patch.object(deployment, "run", side_effect=self.command), patch.object(deployment.subprocess, "run"):
@@ -110,12 +143,28 @@ class DeploymentTest(unittest.TestCase):
         self.addCleanup(test_readiness.ReadinessTest.tearDownClass)
         test_readiness.ReadinessTest.server.response = (200, "application/json", b'{"status": "UP"}')
         self.request["readiness"].update(url=test_readiness.ReadinessTest.url, timeout=1)
-        with patch.object(deployment, "run", side_effect=self.command), patch.object(deployment.subprocess, "run"):
+        expected_override = {"services": {service: {"image": reference}
+                                          for service, reference in self.request["manifest"]["images"].items()}}
+
+        def check_selected_images(args, cwd, capture=False):
+            if "pull" in args or "up" in args:
+                selected_override = Path(args[args.index("-f", 4) + 1])
+                self.assertEqual(expected_override, json.loads(selected_override.read_text()))
+                if "pull" in args:
+                    self.assertEqual(self.previous_override, self.override.read_text())
+                else:
+                    self.assertEqual(self.override, selected_override)
+            return self.command(args, cwd, capture)
+
+        with patch.object(deployment, "run", side_effect=check_selected_images), patch.object(deployment.subprocess, "run"):
             deployment.deploy(self.request, self.diagnostics)
         target = json.loads(self.target.read_text())
         self.assertEqual(self.sha, target["appSha"])
         self.assertEqual(5, len(target["images"]))
         self.assertTrue(target["verification"]["readiness"]["ready"])
+        self.assertEqual(expected_override, json.loads(self.override.read_text()))
+        self.assertEqual({"target.json", "deployment-images.json"},
+                         {path.name for path in self.target.parent.iterdir()})
 
 
 if __name__ == "__main__":

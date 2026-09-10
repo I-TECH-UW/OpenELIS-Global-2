@@ -11,6 +11,7 @@ import re
 import shutil
 import subprocess
 import sys
+import tempfile
 
 
 APP_REPOSITORY = "https://github.com/DIGI-UW/OpenELIS-Global-2.git"
@@ -74,10 +75,15 @@ def deploy(request, diagnostics):
         run(["git", "merge", "--ff-only", "origin/main"], app_dir)
         infra_sha = run(["git", "rev-parse", "HEAD"], app_dir, True).strip()
         state_dir.mkdir(exist_ok=True)
-        write_json(override, {"services": {service: {"image": image}
-                                          for service, image in manifest["images"].items()}})
-        run(compose + ["pull", *SERVICES], app_dir)
-        require_current_candidate(manifest["appSha"], app_dir)
+        # Leave the saved image selection untouched if pulling or freshness
+        # validation fails. Stage on the same filesystem for atomic promotion.
+        with tempfile.TemporaryDirectory(prefix="candidate-", dir=state_dir) as candidate_dir:
+            candidate_override = pathlib.Path(candidate_dir) / override.name
+            write_json(candidate_override, {"services": {service: {"image": image}
+                                                        for service, image in manifest["images"].items()}})
+            run(base_compose + ["-f", str(candidate_override), "pull", *SERVICES], app_dir)
+            require_current_candidate(manifest["appSha"], app_dir)
+            candidate_override.replace(override)
         target_path = state_dir / "target.json"
         if target_path.is_file():
             shutil.copy2(target_path, diagnostics / "previous-target.json")
