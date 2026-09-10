@@ -1,4 +1,5 @@
 import {
+  assignedAnalysts,
   expandForMode,
   modeBlockers,
   panelKpis,
@@ -163,5 +164,39 @@ describe("landing KPI tiles", () => {
     // The far-off SEALED panel and the already-scored ones are out; a
     // null unblind date must not count as imminent.
     expect(panelKpis(panels, today).unblindingSoon).toBe(2);
+  });
+});
+
+describe("the analysts a sealed deal was dealt to", () => {
+  const roster = [
+    { systemUserId: 7, displayName: "Aisha Nakato" },
+    { systemUserId: 8, displayName: "Brian Okello" },
+  ];
+
+  test("names each analyst once however many samples they hold", () => {
+    // An identical-set deal repeats the whole roster per sample, which is what
+    // would otherwise print one person four times.
+    const deal = [
+      { key: "a", analystId: 7 },
+      { key: "b", analystId: 8 },
+      { key: "c", analystId: 7 },
+      { key: "d", analystId: 8 },
+    ];
+    expect(assignedAnalysts(deal, roster)).toEqual([
+      "Aisha Nakato",
+      "Brian Okello",
+    ]);
+  });
+
+  test("skips rows with no analyst rather than listing a blank", () => {
+    expect(
+      assignedAnalysts([{ key: "a", analystId: null }, { key: "b" }], roster),
+    ).toEqual([]);
+  });
+
+  test("falls back to the id when the roster does not hold the analyst", () => {
+    expect(assignedAnalysts([{ key: "a", analystId: 99 }], roster)).toEqual([
+      "99",
+    ]);
   });
 });

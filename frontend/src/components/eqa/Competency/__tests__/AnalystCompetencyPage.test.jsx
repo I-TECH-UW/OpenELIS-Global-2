@@ -20,10 +20,14 @@ vi.mock("../../../common/PageBreadCrumb", () => ({
 }));
 
 const ROLLUP = {
+  windowStart: "2025-09-10",
+  windowEnd: "2026-09-10",
+  windowMonths: 12,
+  evidenceFloor: 4,
   kpis: {
-    analystCount: 3,
+    analystCount: 4,
     competentCount: 1,
-    underReviewCount: 1,
+    underReviewCount: 2,
     notCompetentCount: 1,
     assessedSampleCount: 14,
   },
@@ -38,11 +42,20 @@ const ROLLUP = {
       failureCount: 0,
       mostRecentPerformance: "acceptable",
       mostRecentDate: "2026-07-30",
+      statusReasons: [
+        {
+          reason: "MEETS_EVIDENCE",
+          analyteName: "HIV viral load",
+          evaluableCount: 6,
+          failureCount: 0,
+        },
+      ],
       analytes: [
         {
           analyteId: 1,
           analyteName: "HIV viral load",
           status: "COMPETENT",
+          reason: "MEETS_EVIDENCE",
           evaluableCount: 6,
           failureCount: 0,
           latestPerformance: "acceptable",
@@ -73,11 +86,20 @@ const ROLLUP = {
       failureCount: 1,
       mostRecentPerformance: "unacceptable",
       mostRecentDate: "2026-08-02",
+      statusReasons: [
+        {
+          reason: "OPEN_ESCALATION",
+          analyteName: "CD4 count",
+          evaluableCount: 5,
+          failureCount: 1,
+        },
+      ],
       analytes: [
         {
           analyteId: 2,
           analyteName: "CD4 count",
           status: "NOT_COMPETENT",
+          reason: "OPEN_ESCALATION",
           evaluableCount: 5,
           failureCount: 1,
           latestPerformance: "unacceptable",
@@ -118,7 +140,60 @@ const ROLLUP = {
       failureCount: 0,
       mostRecentPerformance: "acceptable",
       mostRecentDate: "2026-06-01",
-      analytes: [],
+      statusReasons: [
+        {
+          reason: "INSUFFICIENT_EVIDENCE",
+          analyteName: "Syphilis RPR",
+          evaluableCount: 3,
+          failureCount: 0,
+        },
+      ],
+      analytes: [
+        {
+          analyteId: 3,
+          analyteName: "Syphilis RPR",
+          status: "UNDER_REVIEW",
+          reason: "INSUFFICIENT_EVIDENCE",
+          evaluableCount: 3,
+          failureCount: 0,
+          latestPerformance: "acceptable",
+          latestDate: "2026-06-01",
+          openEscalation: false,
+        },
+      ],
+      history: [],
+    },
+    {
+      analystId: 14,
+      analystName: "Daniel Mwangi",
+      status: "UNDER_REVIEW",
+      sampleCount: 5,
+      sampleCountThisYear: 5,
+      evaluableCount: 5,
+      failureCount: 2,
+      mostRecentPerformance: "unacceptable",
+      mostRecentDate: "2026-08-20",
+      statusReasons: [
+        {
+          reason: "REPEATED_FAILURE",
+          analyteName: "Hepatitis B surface antigen",
+          evaluableCount: 5,
+          failureCount: 2,
+        },
+      ],
+      analytes: [
+        {
+          analyteId: 4,
+          analyteName: "Hepatitis B surface antigen",
+          status: "UNDER_REVIEW",
+          reason: "REPEATED_FAILURE",
+          evaluableCount: 5,
+          failureCount: 2,
+          latestPerformance: "unacceptable",
+          latestDate: "2026-08-20",
+          openEscalation: false,
+        },
+      ],
       history: [],
     },
   ],
@@ -144,12 +219,12 @@ describe("AnalystCompetencyPage", () => {
   it("counts the analysts in each band", async () => {
     renderPage();
 
-    expect(await screen.findByTestId("kpi-analysts")).toHaveTextContent("3");
+    expect(await screen.findByTestId("kpi-analysts")).toHaveTextContent("4");
     expect(screen.getByTestId("kpi-analysts")).toHaveTextContent(
       "14 PT samples",
     );
     expect(screen.getByTestId("kpi-competent")).toHaveTextContent("1");
-    expect(screen.getByTestId("kpi-under-review")).toHaveTextContent("1");
+    expect(screen.getByTestId("kpi-under-review")).toHaveTextContent("2");
     expect(screen.getByTestId("kpi-not-competent")).toHaveTextContent("1");
   });
 
@@ -179,6 +254,60 @@ describe("AnalystCompetencyPage", () => {
     expect(history).toHaveTextContent("Dismissed — equipment");
     expect(history).toHaveTextContent("Excused");
     expect(history).toHaveTextContent("Failure");
+  });
+
+  it("tells the two under-review rules apart on the row itself", async () => {
+    const { container } = renderPage();
+
+    await screen.findByText("Carol Achieng");
+    const rowFor = (name) =>
+      [...container.querySelectorAll("tbody tr")].find((tr) =>
+        tr.textContent.includes(name),
+      );
+
+    // Same band, opposite findings. Carol has done too little to judge; Daniel
+    // has failed twice. The band alone cannot separate them, so the rule does.
+    const carol = rowFor("Carol Achieng");
+    expect(carol).toHaveTextContent("Under review");
+    expect(carol).toHaveTextContent("Insufficient evidence · Syphilis RPR");
+    expect(carol).toHaveTextContent("short of the evidence floor of 4");
+    expect(carol).toHaveTextContent("not a performance concern");
+    expect(carol).toHaveTextContent(
+      "assign this analyst more proficiency testing samples",
+    );
+
+    const daniel = rowFor("Daniel Mwangi");
+    expect(daniel).toHaveTextContent("Under review");
+    expect(daniel).toHaveTextContent(
+      "Repeated failure · Hepatitis B surface antigen",
+    );
+    expect(daniel).toHaveTextContent("2 failures in 5 assessable samples");
+    expect(daniel).toHaveTextContent("This is a performance concern");
+    expect(daniel).not.toHaveTextContent("Insufficient evidence");
+  });
+
+  it("names the rule behind a band that is not under review", async () => {
+    const { container } = renderPage();
+
+    await screen.findByText("Brian Okello");
+    const brian = [...container.querySelectorAll("tbody tr")].find((tr) =>
+      tr.textContent.includes("Brian Okello"),
+    );
+    expect(brian).toHaveTextContent("Open non-conformity · CD4 count");
+    expect(brian).toHaveTextContent(
+      "Close the non-conformity to clear the band",
+    );
+  });
+
+  it("says what an analyst is, and what it is not", async () => {
+    renderPage();
+
+    expect(
+      await screen.findByText(/An analyst is an OpenELIS user account/i),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(/separate record from whoever entered the result/i),
+    ).toBeInTheDocument();
   });
 
   it("filters the table by analyst name", async () => {

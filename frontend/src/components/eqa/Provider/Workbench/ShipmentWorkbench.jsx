@@ -20,7 +20,7 @@ import {
   resolveApiErrorMessage,
   toLocalIsoDate,
 } from "../../../utils/Utils";
-import { calendarOnlyInput, hintStyle } from "../../eqaCommon";
+import { calendarOnlyInput, hintStyle, isDispatched } from "../../eqaCommon";
 import {
   generateLabelPDF,
   generateManifestPDF,
@@ -75,8 +75,6 @@ const ShipmentWorkbench = ({ cycleId, prep, rows, onChanged, onNotice }) => {
       ...prev,
       [organizationId]: { ...(prev[organizationId] || {}), ...patch },
     }));
-
-  const dispatched = (row) => row.boxState === "SENT" || !!row.shippedDate;
 
   const handleSave = (row) => {
     const draft = draftOf(row);
@@ -224,7 +222,7 @@ const ShipmentWorkbench = ({ cycleId, prep, rows, onChanged, onNotice }) => {
     });
   };
 
-  const selectable = rows.filter((row) => !dispatched(row) && row.boxId);
+  const selectable = rows.filter((row) => !isDispatched(row) && row.boxId);
   const allSelected =
     selectable.length > 0 && selected.length === selectable.length;
 
@@ -295,7 +293,7 @@ const ShipmentWorkbench = ({ cycleId, prep, rows, onChanged, onNotice }) => {
             <TableBody>
               {rows.map((row) => {
                 const draft = draftOf(row);
-                const isDispatched = dispatched(row);
+                const rowDispatched = isDispatched(row);
                 return (
                   <TableRow key={row.organizationId}>
                     <TableCell>
@@ -308,7 +306,7 @@ const ShipmentWorkbench = ({ cycleId, prep, rows, onChanged, onNotice }) => {
                         )}
                         hideLabel
                         checked={selected.includes(row.organizationId)}
-                        disabled={isDispatched || !row.boxId}
+                        disabled={rowDispatched || !row.boxId}
                         onChange={(_e, { checked }) =>
                           setSelected((prev) =>
                             checked
@@ -342,7 +340,7 @@ const ShipmentWorkbench = ({ cycleId, prep, rows, onChanged, onNotice }) => {
                         hideLabel
                         size="sm"
                         value={draft.courier}
-                        disabled={isDispatched}
+                        disabled={rowDispatched}
                         onChange={(e) =>
                           setDraft(row.organizationId, {
                             courier: e.target.value,
@@ -361,7 +359,7 @@ const ShipmentWorkbench = ({ cycleId, prep, rows, onChanged, onNotice }) => {
                         hideLabel
                         size="sm"
                         value={draft.trackingNumber}
-                        disabled={isDispatched}
+                        disabled={rowDispatched}
                         onChange={(e) =>
                           setDraft(row.organizationId, {
                             trackingNumber: e.target.value,
@@ -396,13 +394,13 @@ const ShipmentWorkbench = ({ cycleId, prep, rows, onChanged, onNotice }) => {
                           hideLabel
                           size="sm"
                           placeholder="dd/mm/yyyy"
-                          disabled={isDispatched}
+                          disabled={rowDispatched}
                           {...calendarOnlyInput}
                         />
                       </DatePicker>
                     </TableCell>
                     <TableCell>
-                      {!isDispatched && (
+                      {!rowDispatched && (
                         <Button
                           kind="ghost"
                           size="sm"
@@ -430,7 +428,7 @@ const ShipmentWorkbench = ({ cycleId, prep, rows, onChanged, onNotice }) => {
                           </Button>
                         </>
                       )}
-                      {isDispatched && (
+                      {rowDispatched && (
                         <div style={hintStyle}>
                           {t("eqa.shipment.shippedOn", "Shipped {date}", {
                             date: (row.shippedDate || "").slice(0, 10),

@@ -44,6 +44,7 @@ const PREP_SHORT = {
   cycleName: "2026 Round 1",
   cycleStatus: "PREP_IN_PROGRESS",
   participantCount: 2,
+  enrolledParticipantCount: 3,
   panels: [
     {
       panelId: 11,
@@ -126,16 +127,86 @@ const renderWorkbench = (prep = PREP_SHORT, rows = ROWS, samplesByUrl = {}) => {
   );
 };
 
-/**
- * Carbon renders this button's hint as a title attribute, so the accessible name
- * is the hint rather than the label — reach it through its visible text.
- */
 const readyToShipButton = () =>
   screen.getByText("Mark cycle ready to ship").closest("button");
 
 describe("ProviderWorkbenchPage", () => {
   beforeEach(() => {
     vi.clearAllMocks();
+  });
+
+  test("the participants tile counts the roster against the scheme's enrollment", () => {
+    renderWorkbench();
+
+    // 2 of the scheme's 3 enrolled laboratories were selected onto this cycle.
+    expect(screen.getByText("2 of 3")).toBeInTheDocument();
+    expect(
+      screen.getByText("Enrolled laboratories selected for this cycle"),
+    ).toBeInTheDocument();
+  });
+
+  test("the dispatch tile counts shipments that have actually left", () => {
+    renderWorkbench(PREP_SHORT, [
+      { ...ROWS[0], boxState: "SENT", shippedDate: "2026-09-02 09:00:00" },
+      ROWS[1],
+    ]);
+
+    expect(screen.getByText("1 of 2")).toBeInTheDocument();
+    expect(
+      screen.getByText("Participant shipments dispatched"),
+    ).toBeInTheDocument();
+  });
+
+  test("the arithmetic line names a unit for every number and pluralises", () => {
+    renderWorkbench({
+      ...PREP_SHORT,
+      participantCount: 1,
+      enrolledParticipantCount: 1,
+      panels: [
+        {
+          ...PREP_SHORT.panels[0],
+          sampleCount: 1,
+          aliquotsReserved: 0,
+          aliquotsNeeded: 1,
+          aliquotsShipped: 1,
+          shortfall: 0,
+        },
+      ],
+    });
+
+    expect(
+      screen.getByText(
+        "1 sample x 1 participant + 0 held in reserve = 1 aliquot needed; 1 aliquot dispatched so far.",
+      ),
+    ).toBeInTheDocument();
+  });
+
+  test("a disabled button in prep points at the gate, not at the cycle state", () => {
+    renderWorkbench();
+
+    expect(readyToShipButton()).toBeDisabled();
+    expect(
+      screen.getByText(
+        "Prep is incomplete. The ready-to-ship gate above lists what is still outstanding.",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByText("Open the Shipments tab")).toBeNull();
+  });
+
+  test("a cycle past prep says which state it is in and offers the next step", () => {
+    renderWorkbench({ ...PREP_CLEAR, cycleStatus: "SHIPPED" });
+
+    expect(readyToShipButton()).toBeDisabled();
+    expect(
+      screen.getByText(
+        "Cycle state: Shipped. Clearing to ship is only offered while the cycle is in prep.",
+      ),
+    ).toBeInTheDocument();
+
+    // The link is the "where the next step lives" half: it moves the page to the
+    // tab that owns the work, so the reason is actionable rather than only true.
+    fireEvent.click(screen.getByText("Open the Shipments tab"));
+    expect(screen.getByText("District Lab A")).toBeInTheDocument();
   });
 
   test("prep tab shows the shortfall and every gate blocker", () => {

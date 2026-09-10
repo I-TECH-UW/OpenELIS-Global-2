@@ -50,6 +50,11 @@ public class EQAAnalystCompetencyIntegrationTest extends EQASpineTestBase {
     private static final String UNDER_REVIEW = "UNDER_REVIEW";
     private static final String NOT_COMPETENT = "NOT_COMPETENT";
 
+    private static final String MEETS_EVIDENCE = "MEETS_EVIDENCE";
+    private static final String REPEATED_FAILURE = "REPEATED_FAILURE";
+    private static final String INSUFFICIENT_EVIDENCE = "INSUFFICIENT_EVIDENCE";
+    private static final String OPEN_ESCALATION = "OPEN_ESCALATION";
+
     @Autowired
     private EQAAnalystCompetencyService competencyService;
 
@@ -108,6 +113,7 @@ public class EQAAnalystCompetencyIntegrationTest extends EQASpineTestBase {
         assertEquals(1, analytes.size());
         assertEquals(ANALYTE_NAME, analytes.get(0).get("analyteName"));
         assertEquals(COMPETENT, analytes.get(0).get("status"));
+        assertEquals(MEETS_EVIDENCE, analytes.get(0).get("reason"));
         assertEquals(4, analytes.get(0).get("evaluableCount"));
     }
 
@@ -122,6 +128,10 @@ public class EQAAnalystCompetencyIntegrationTest extends EQASpineTestBase {
                 analyst.get("status"));
         assertEquals(3, analyst.get("evaluableCount"));
         assertEquals(0, analyst.get("failureCount"));
+        // The half of the pair that is not a performance finding: same band as
+        // twoFailuresAmongFourSamplesAssertUnderReview, opposite rule.
+        assertEquals(INSUFFICIENT_EVIDENCE, analytes(analyst).get(0).get("reason"));
+        assertEquals(INSUFFICIENT_EVIDENCE, headlineReasons(analyst).get(0).get("reason"));
     }
 
     @Test
@@ -135,6 +145,10 @@ public class EQAAnalystCompetencyIntegrationTest extends EQASpineTestBase {
         assertEquals(UNDER_REVIEW, analyst.get("status"));
         assertEquals(4, analyst.get("evaluableCount"));
         assertEquals(2, analyst.get("failureCount"));
+        // Same band as threeAcceptableResultsAreInsufficientEvidence, and the
+        // reason is what tells the two apart.
+        assertEquals(REPEATED_FAILURE, analytes(analyst).get(0).get("reason"));
+        assertEquals(REPEATED_FAILURE, headlineReasons(analyst).get(0).get("reason"));
         assertEquals("the worst recent verdict is what the page shows", "unacceptable",
                 analyst.get("mostRecentPerformance"));
     }
@@ -287,6 +301,7 @@ public class EQAAnalystCompetencyIntegrationTest extends EQASpineTestBase {
         assertEquals("an escalated score is one failed sample, not two", 1, analyst.get("failureCount"));
         assertEquals(5, analyst.get("evaluableCount"));
         assertEquals(Boolean.TRUE, analytes(analyst).get(0).get("openEscalation"));
+        assertEquals(OPEN_ESCALATION, analytes(analyst).get(0).get("reason"));
     }
 
     @Test
@@ -325,6 +340,30 @@ public class EQAAnalystCompetencyIntegrationTest extends EQASpineTestBase {
         assertEquals(SECOND_ANALYTE_NAME, analytes.get(1).get("analyteName"));
         assertEquals(UNDER_REVIEW, analytes.get(1).get("status"));
         assertEquals(2, analytes.get(1).get("failureCount"));
+
+        // The headline reason names the analyte that produced it and carries that
+        // analyte's own counts, not the analyst's. The competent analyte
+        // contributes nothing, which is the control: a reason list that simply
+        // collected every analyte would hold two entries here.
+        List<Map<String, Object>> why = headlineReasons(analyst);
+        assertEquals(1, why.size());
+        assertEquals(REPEATED_FAILURE, why.get(0).get("reason"));
+        assertEquals(SECOND_ANALYTE_NAME, why.get(0).get("analyteName"));
+        assertEquals("the rule read two samples, not the analyst's six", 2, why.get(0).get("evaluableCount"));
+        assertEquals(2, why.get(0).get("failureCount"));
+        assertEquals("the analyst's own totals span both analytes", 6, analyst.get("evaluableCount"));
+    }
+
+    @Test
+    public void theRollupPublishesTheWindowAndFloorItJudgedAgainst() {
+        scoredResult(EQAPerformanceStatus.ACCEPTABLE, ANALYTE);
+
+        Map<String, Object> page = competencyService.getCompetencyRollup();
+        assertEquals(12, page.get("windowMonths"));
+        assertEquals(4, page.get("evidenceFloor"));
+        assertEquals(LocalDate.now().toString(), page.get("windowEnd"));
+        assertEquals("the window is the twelve months the rollup actually read",
+                LocalDate.now().minusMonths(12).toString(), page.get("windowStart"));
     }
 
     @Test
@@ -516,6 +555,11 @@ public class EQAAnalystCompetencyIntegrationTest extends EQASpineTestBase {
     @SuppressWarnings("unchecked")
     private List<Map<String, Object>> analytes(Map<String, Object> analyst) {
         return (List<Map<String, Object>>) analyst.get("analytes");
+    }
+
+    @SuppressWarnings("unchecked")
+    private List<Map<String, Object>> headlineReasons(Map<String, Object> analyst) {
+        return (List<Map<String, Object>>) analyst.get("statusReasons");
     }
 
     @SuppressWarnings("unchecked")

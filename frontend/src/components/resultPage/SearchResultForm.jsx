@@ -1180,7 +1180,7 @@ export function SearchResults(props) {
           label={intl.formatMessage({
             id: "eqa.result.analyst.tooltip",
             defaultMessage:
-              "Shown because this run includes an EQA sample whose scheme records who ran each sample. Non-EQA rows take no input.",
+              "Shown because this run includes an EQA sample whose scheme records who ran each sample. Choose the OpenELIS user who ran the sample, from the scheme's analyst roster — that is a separate record from whoever enters this result and whoever validates it. Non-EQA rows take no input.",
           })}
         >
           <span>

@@ -5,6 +5,7 @@ import {
   Column,
   Grid,
   InlineNotification,
+  Link,
   NumberInput,
   Tag,
   TextArea,
@@ -12,7 +13,12 @@ import {
 } from "@carbon/react";
 import { useIntl } from "react-intl";
 import { resolveApiErrorMessage } from "../../../utils/Utils";
-import { hintStyle, kpiLabelStyle, kpiValueStyle } from "../../eqaCommon";
+import {
+  hintStyle,
+  isDispatched,
+  kpiLabelStyle,
+  kpiValueStyle,
+} from "../../eqaCommon";
 import { savePrep, requestReadyToShip } from "./workbenchApi";
 
 /**
@@ -23,7 +29,13 @@ import { savePrep, requestReadyToShip } from "./workbenchApi";
  * the request is still refused server-side with 409 when a stale page clicks it
  * — the gate has one home, in the cycle transition.
  */
-const PrepWorkbench = ({ prep, onChanged, onNotice }) => {
+const PrepWorkbench = ({
+  prep,
+  shipmentRows = [],
+  onChanged,
+  onNotice,
+  onGoToShipments,
+}) => {
   const intl = useIntl();
   const t = (id, defaultMessage, values) =>
     intl.formatMessage({ id, defaultMessage }, values);
@@ -33,6 +45,13 @@ const PrepWorkbench = ({ prep, onChanged, onNotice }) => {
 
   const panels = prep?.panels || [];
   const blockers = prep?.blockers || [];
+  const selected = prep?.participantCount ?? 0;
+  const enrolled = prep?.enrolledParticipantCount ?? selected;
+  const dispatchedCount = shipmentRows.filter(isDispatched).length;
+  // Prep can only clear a cycle while it is in prep, so every other state is a
+  // reason in its own right rather than a missing prerequisite.
+  const inPrep = prep?.cycleStatus === "PREP_IN_PROGRESS";
+  const pastPrep = !inPrep && prep?.cycleStatus !== "PLANNED";
 
   const draftOf = (panel) => ({
     aliquotsProduced: panel.aliquotsProduced,
@@ -100,16 +119,39 @@ const PrepWorkbench = ({ prep, onChanged, onNotice }) => {
       <Grid style={{ marginBottom: "1rem" }}>
         <Column sm={4} md={2} lg={4}>
           <Tile>
-            <div style={kpiValueStyle}>{prep?.participantCount ?? 0}</div>
+            <div style={kpiValueStyle}>
+              {t("eqa.prep.ofTotal", "{n} of {total}", {
+                n: selected,
+                total: enrolled,
+              })}
+            </div>
             <div style={kpiLabelStyle}>
-              {t("eqa.prep.participants", "Participants")}
+              {t(
+                "eqa.prep.tile.participants",
+                "Enrolled laboratories selected for this cycle",
+              )}
             </div>
           </Tile>
         </Column>
         <Column sm={4} md={2} lg={4}>
           <Tile>
             <div style={kpiValueStyle}>{panels.length}</div>
-            <div style={kpiLabelStyle}>{t("eqa.prep.panels", "Panels")}</div>
+            <div style={kpiLabelStyle}>
+              {t("eqa.prep.tile.panels", "Material panels prepared")}
+            </div>
+          </Tile>
+        </Column>
+        <Column sm={4} md={2} lg={4}>
+          <Tile>
+            <div style={kpiValueStyle}>
+              {t("eqa.prep.ofTotal", "{n} of {total}", {
+                n: dispatchedCount,
+                total: shipmentRows.length,
+              })}
+            </div>
+            <div style={kpiLabelStyle}>
+              {t("eqa.prep.dispatched", "Participant shipments dispatched")}
+            </div>
           </Tile>
         </Column>
         <Column sm={4} md={4} lg={8}>
@@ -153,7 +195,7 @@ const PrepWorkbench = ({ prep, onChanged, onNotice }) => {
             <div style={hintStyle}>
               {t(
                 "eqa.prep.needExplained",
-                "{samples} samples x {participants} participants + {reserved} reserved = {needed} aliquots needed; {shipped} shipped so far.",
+                "{samples, plural, one {# sample} other {# samples}} x {participants, plural, one {# participant} other {# participants}} + {reserved} held in reserve = {needed, plural, one {# aliquot} other {# aliquots}} needed; {shipped, plural, one {# aliquot} other {# aliquots}} dispatched so far.",
                 {
                   samples: panel.sampleCount,
                   participants: prep.participantCount,
@@ -242,20 +284,40 @@ const PrepWorkbench = ({ prep, onChanged, onNotice }) => {
         );
       })}
 
-      <Button
-        disabled={!prep?.readyToShipAllowed}
-        onClick={handleReadyToShip}
-        title={
-          prep?.readyToShipAllowed
-            ? undefined
-            : t(
-                "eqa.prep.readyToShip.blocked",
-                "Prep is incomplete, or the cycle is not in prep.",
-              )
-        }
-      >
+      <Button disabled={!prep?.readyToShipAllowed} onClick={handleReadyToShip}>
         {t("eqa.prep.readyToShip", "Mark cycle ready to ship")}
       </Button>
+      {/* A disabled control has to say which of the two rules stopped it: an
+          unmet prerequisite, or a cycle that is simply past this step. The
+          second is not a failure, so it reads as the state it is in and points
+          at where the work continues. */}
+      {!prep?.readyToShipAllowed && (
+        <div style={{ ...hintStyle, marginTop: "0.5rem" }}>
+          {inPrep
+            ? t(
+                "eqa.prep.readyToShip.blockedByGate",
+                "Prep is incomplete. The ready-to-ship gate above lists what is still outstanding.",
+              )
+            : t(
+                "eqa.prep.readyToShip.notInPrep",
+                "Cycle state: {status}. Clearing to ship is only offered while the cycle is in prep.",
+                {
+                  status: t(
+                    `eqa.cycle.status.${(prep?.cycleStatus || "").toLowerCase()}`,
+                    prep?.cycleStatus || "",
+                  ),
+                },
+              )}
+          {pastPrep && onGoToShipments && (
+            <>
+              {" "}
+              <Link href="#" onClick={onGoToShipments}>
+                {t("eqa.prep.goToShipments", "Open the Shipments tab")}
+              </Link>
+            </>
+          )}
+        </div>
+      )}
     </>
   );
 };

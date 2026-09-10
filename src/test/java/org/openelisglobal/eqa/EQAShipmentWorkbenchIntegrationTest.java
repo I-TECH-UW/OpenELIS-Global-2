@@ -129,6 +129,8 @@ public class EQAShipmentWorkbenchIntegrationTest extends EQASpineTestBase {
         Map<String, Object> prep = shipmentService.getPrepStatus(cycle.getId());
 
         assertEquals(2, prep.get("participantCount"));
+        assertEquals("no roster, so the cycle is sized by the scheme's enrollment", 2,
+                prep.get("enrolledParticipantCount"));
         Map<String, Object> panelRow = panels(prep).get(0);
         assertEquals("2 samples x 2 participants + 0 reserve", 4, panelRow.get("aliquotsNeeded"));
         assertEquals(4, panelRow.get("shortfall"));
@@ -384,8 +386,11 @@ public class EQAShipmentWorkbenchIntegrationTest extends EQASpineTestBase {
         enroll(ORG_C);
         addToRoster(ORG_A);
 
-        assertEquals("3 enrolled, 1 on this cycle's roster", 1,
-                shipmentService.getPrepStatus(cycle.getId()).get("participantCount"));
+        Map<String, Object> prep = shipmentService.getPrepStatus(cycle.getId());
+        assertEquals("3 enrolled, 1 on this cycle's roster", 1, prep.get("participantCount"));
+        // The tile's denominator is the scheme's enrollment, not the roster, so the
+        // two numbers have to differ here or the workbench reads "1 of 1".
+        assertEquals(3, prep.get("enrolledParticipantCount"));
         List<Map<String, Object>> rows = shipmentService.getShipmentRows(cycle.getId());
         assertEquals(1, rows.size());
         assertEquals(ORG_A, rows.get(0).get("organizationId"));

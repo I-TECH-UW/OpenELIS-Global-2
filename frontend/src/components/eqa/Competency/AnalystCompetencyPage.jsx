@@ -88,6 +88,29 @@ const AnalystCompetencyPage = () => {
       dismissed: t("eqa.competency.outcome.dismissed", "Dismissed on triage"),
     })[outcome] || "—";
 
+  /**
+   * Under review is reached by two rules that mean opposite things, so the band
+   * alone is not a finding. The short name separates them at a glance and the
+   * sentence carries the rule, the window it was read over, the denominator and
+   * what the reviewer should do next.
+   */
+  const ruleLabel = (reason) =>
+    ({
+      MEETS_EVIDENCE: t("eqa.competency.rule.meetsEvidence", "Evidence met"),
+      REPEATED_FAILURE: t(
+        "eqa.competency.rule.repeatedFailure",
+        "Repeated failure",
+      ),
+      INSUFFICIENT_EVIDENCE: t(
+        "eqa.competency.rule.insufficientEvidence",
+        "Insufficient evidence",
+      ),
+      OPEN_ESCALATION: t(
+        "eqa.competency.rule.openEscalation",
+        "Open non-conformity",
+      ),
+    })[reason] || null;
+
   const eventLabel = (eventType) =>
     eventType
       ? t(`eqa.competency.event.${eventType}`, eventType.replace(/_/g, " "))
@@ -103,6 +126,64 @@ const AnalystCompetencyPage = () => {
   }
 
   const { kpis, analysts } = data;
+  const judgedOver = {
+    from: formatDateOnly(data.windowStart),
+    to: formatDateOnly(data.windowEnd),
+    floor: data.evidenceFloor,
+  };
+
+  /** The sentence behind one band: rule, window, denominator, next action. */
+  const reasonSentence = (reason, evaluable, failures) => {
+    const values = { ...judgedOver, evaluable, failures };
+    switch (reason) {
+      case "MEETS_EVIDENCE":
+        return t(
+          "eqa.competency.reason.meetsEvidence",
+          "{evaluable} assessable samples with {failures} failures between {from} and {to}, at or above the evidence floor of {floor}. Nothing to action.",
+          values,
+        );
+      case "REPEATED_FAILURE":
+        return t(
+          "eqa.competency.reason.repeatedFailure",
+          "{failures} failures in {evaluable} assessable samples between {from} and {to}. This is a performance concern: review the failed results and raise a non-conformity, or dismiss them on triage.",
+          values,
+        );
+      case "INSUFFICIENT_EVIDENCE":
+        return t(
+          "eqa.competency.reason.insufficientEvidence",
+          "{evaluable} assessable samples between {from} and {to}, short of the evidence floor of {floor}. This is not a performance concern: assign this analyst more proficiency testing samples.",
+          values,
+        );
+      case "OPEN_ESCALATION":
+        return t(
+          "eqa.competency.reason.openEscalation",
+          "An escalated non-conformity raised between {from} and {to} is still open, over {evaluable} assessable samples with {failures} failures. Close the non-conformity to clear the band.",
+          values,
+        );
+      default:
+        return null;
+    }
+  };
+
+  /**
+   * The band's rule and its sentence, under whichever tag it explains. The
+   * analyte is named because a rule reads over one analyte at a time, so its
+   * counts are that analyte's rather than the analyst's.
+   */
+  const BandReason = ({ reason, analyteName, evaluable, failures }) =>
+    ruleLabel(reason) ? (
+      <div style={{ marginTop: "0.25rem" }}>
+        <div style={{ ...hintStyle, fontWeight: 600 }}>
+          {analyteName
+            ? `${ruleLabel(reason)} · ${analyteName}`
+            : ruleLabel(reason)}
+        </div>
+        <div style={hintStyle}>
+          {reasonSentence(reason, evaluable, failures)}
+        </div>
+      </div>
+    ) : null;
+
   const rows = analysts.filter((analyst) =>
     filter
       ? (analyst.analystName || "").toLowerCase().includes(filter.toLowerCase())
@@ -149,10 +230,16 @@ const AnalystCompetencyPage = () => {
             <Heading>
               {t("banner.menu.eqa.analystCompetency", "Analyst Competency")}
             </Heading>
-            <p style={{ ...hintStyle, marginBottom: "1.5rem" }}>
+            <p style={hintStyle}>
               {t(
                 "eqa.competency.subtitle",
                 "Every analyst assigned to proficiency testing in the last twelve months, banded per analyte. An analyst is competent only where the evidence says so — fewer than four assessable samples reads as under review, not as a pass.",
+              )}
+            </p>
+            <p style={{ ...hintStyle, marginBottom: "1.5rem" }}>
+              {t(
+                "eqa.competency.whatIsAnAnalyst",
+                "An analyst is an OpenELIS user account on the scheme's analyst roster, recorded against the sample they ran. That is a separate record from whoever entered the result and whoever validated it.",
               )}
             </p>
           </Section>
@@ -312,6 +399,15 @@ const AnalystCompetencyPage = () => {
                       <Tag type={BAND_TAG[analyst.status]} size="sm">
                         {bandLabel(analyst.status)}
                       </Tag>
+                      {(analyst.statusReasons || []).map((why) => (
+                        <BandReason
+                          key={`${why.reason}-${why.analyteName}`}
+                          reason={why.reason}
+                          analyteName={why.analyteName}
+                          evaluable={why.evaluableCount}
+                          failures={why.failureCount}
+                        />
+                      ))}
                     </TableCell>
                     <TableCell>
                       <Button
@@ -390,6 +486,11 @@ const AnalystCompetencyPage = () => {
                                   >
                                     {bandLabel(analyte.status)}
                                   </Tag>
+                                  <BandReason
+                                    reason={analyte.reason}
+                                    evaluable={analyte.evaluableCount}
+                                    failures={analyte.failureCount}
+                                  />
                                 </TableCell>
                               </TableRow>
                             ))}

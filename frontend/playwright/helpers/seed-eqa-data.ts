@@ -448,7 +448,7 @@ export function seedReportedResults(
 /**
  * The organization this installation calls itself, which is what splits the
  * two follow-up surfaces: rows about this lab belong to the participant
- * Follow-Up Queue, every other row to the provider register. The backend
+ * This Lab's Follow-Up, every other row to the provider register. The backend
  * resolves it from the SiteName site-information value, falling back to the
  * literal "This laboratory" when that is blank, and returns null when no
  * organization carries the name — in which case the queue can never
