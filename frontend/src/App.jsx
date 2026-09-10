@@ -40,7 +40,6 @@ import AnalystCompetencyPage from "./components/eqa/Competency/AnalystCompetency
 import BlindingWizard from "./components/eqa/InHouse/BlindingWizard";
 import MyProgramsPage from "./components/eqa/MyProgramsPage";
 import EQAParticipantsPage from "./components/eqa/EQAParticipantsPage";
-import EQAResultsPage from "./components/eqa/EQAResultsPage";
 import QAPlaceholder from "./components/qa/QAPlaceholder";
 import QAOverview from "./components/qa/overview/QAOverview";
 import QIDashboard from "./components/qa/qi/QIDashboard";
@@ -754,7 +753,6 @@ export default function App() {
                   to="/qa/eqa/my-programs"
                 />
                 <Redirect exact from="/EQAManagement" to="/qa/eqa/management" />
-                <Redirect exact from="/EQAResults" to="/qa/eqa/results" />
                 <Redirect
                   exact
                   from="/EQAParticipants"
@@ -768,6 +766,12 @@ export default function App() {
                     orders live on My Cycles, distributions are provider cycles. The
                     old URLs redirect for one release so bookmarks keep working. */}
                 <Redirect exact from="/qa/eqa/orders" to="/qa/eqa/my-cycles" />
+                {/* The V1 Results & Analysis page listed the same /rest/eqa/orders
+                    My Cycles reads, under a name it did not earn: its statistics
+                    half had already been disconnected. Scoring lives on the
+                    provider workbench and analysis in the participant report. */}
+                <Redirect exact from="/qa/eqa/results" to="/qa/eqa/my-cycles" />
+                <Redirect exact from="/EQAResults" to="/qa/eqa/my-cycles" />
                 <Redirect
                   from="/qa/eqa/distribution"
                   to="/qa/eqa/provider/schemes"
@@ -797,13 +801,6 @@ export default function App() {
                   path="/qa/eqa/management"
                   exact
                   component={() => <EQAProgramManagement />}
-                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
-                  permission="qa.view.eqa"
-                />
-                <SecureRoute
-                  path="/qa/eqa/results"
-                  exact
-                  component={() => <EQAResultsPage />}
                   role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
                   permission="qa.view.eqa"
                 />

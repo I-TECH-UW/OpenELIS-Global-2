@@ -45,7 +45,8 @@ import org.springframework.util.FileCopyUtils;
  * <li>the rollback removes exactly what the backfill created, and refuses when
  * a migrated cycle has been used since;
  * <li>the superseded legacy menu rows are off, My Programs stays on and moves
- * directly under EQA once its one-child group is retired.
+ * directly under EQA once its one-child group is retired, and the management
+ * group keeps the two children that still earn it.
  * </ul>
  */
 public class EQAV1AbsorptionMigrationTest extends EQASpineTestBase {
@@ -219,7 +220,7 @@ public class EQAV1AbsorptionMigrationTest extends EQASpineTestBase {
     @Test
     public void supersededLegacyMenuRowsAreOff_myProgramsStaysOn() {
         for (String elementId : new String[] { "menu_eqa_orders", "menu_eqa_distribution",
-                "menu_eqa_mgmt_distributions" }) {
+                "menu_eqa_mgmt_distributions", "menu_eqa_mgmt_results" }) {
             assertFalse(elementId + " should be deactivated", menuIsActive(elementId));
         }
         assertTrue("menu_eqa_my_programs should stay active", menuIsActive("menu_eqa_my_programs"));
@@ -230,6 +231,22 @@ public class EQAV1AbsorptionMigrationTest extends EQASpineTestBase {
                 + " WHERE m.element_id = 'menu_eqa_my_programs'");
         assertEquals("menu_eqa", myPrograms.get("parent"));
         assertEquals(25, ((Number) myPrograms.get("presentation_order")).intValue());
+    }
+
+    /**
+     * The management group keeps its place because two children still earn it.
+     * Asserting the survivors as well as the count is what separates "we switched
+     * off the right row" from "we switched off a row": a query that deactivated too
+     * much would still leave a number here, just a different one.
+     */
+    @Test
+    public void retiringResultsAndAnalysisLeavesTheManagementGroupItsTwoChildren() {
+        List<String> active = jdbc
+                .queryForList("SELECT m.element_id FROM clinlims.menu m JOIN clinlims.menu p ON p.id = m.parent_id"
+                        + " WHERE p.element_id = 'menu_eqa_mgmt' AND m.is_active = true"
+                        + " ORDER BY m.presentation_order", String.class);
+        assertEquals(List.of("menu_eqa_mgmt_programs", "menu_eqa_mgmt_participants"), active);
+        assertTrue("the group itself stays", menuIsActive("menu_eqa_mgmt"));
     }
 
     private void runSql(String classpathFile) throws IOException {
