@@ -2,11 +2,8 @@ package org.openelisglobal.config;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.FileVisitResult;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.util.ArrayList;
 import java.util.List;
 import javax.xml.parsers.DocumentBuilderFactory;
@@ -43,13 +40,12 @@ public class ServerXmlSingleDeploymentTest {
 
     private static final String DEPLOYED_CONTEXT_PATH = "/api/OpenELIS-Global/";
 
-    private static final List<String> PRUNED_DIRECTORIES = List.of("node_modules", "target", ".git");
-
     @Test
     public void hostsDeclaringAnInAppBaseContextDoNotAlsoScanAppBase() throws Exception {
         List<String> violations = new ArrayList<>();
-        List<Path> configs = filesMatching(name -> name.endsWith("server.xml"));
-        Assert.assertFalse("found no Tomcat server.xml to check; the search itself is broken", configs.isEmpty());
+        List<Path> configs = trackedFilesMatching(name -> name.endsWith("server.xml"));
+        Assert.assertFalse("found no tracked Tomcat server.xml to check; the search itself is broken",
+                configs.isEmpty());
 
         for (Path config : configs) {
             for (Element host : elementsNamed(parse(config), "Host")) {
@@ -84,7 +80,7 @@ public class ServerXmlSingleDeploymentTest {
         List<String> violations = new ArrayList<>();
         List<String> uris = new ArrayList<>();
 
-        for (Path config : filesMatching(name -> name.endsWith(".yml") || name.endsWith(".yaml"))) {
+        for (Path config : trackedFilesMatching(name -> name.endsWith(".yml") || name.endsWith(".yaml"))) {
             for (String line : Files.readAllLines(config, StandardCharsets.UTF_8)) {
                 String statement = line.strip();
                 if (statement.startsWith("#")) {
@@ -137,23 +133,17 @@ public class ServerXmlSingleDeploymentTest {
         return !path.isAbsolute() || (!appBase.isEmpty() && path.startsWith(Path.of(appBase).toAbsolutePath()));
     }
 
-    private static List<Path> filesMatching(java.util.function.Predicate<String> nameMatches) throws IOException {
+    private static List<Path> trackedFilesMatching(java.util.function.Predicate<String> nameMatches)
+            throws IOException, InterruptedException {
+        Process git = new ProcessBuilder("git", "ls-files", "-z").redirectErrorStream(true).start();
+        String listing = new String(git.getInputStream().readAllBytes(), StandardCharsets.UTF_8);
+        Assert.assertEquals("git ls-files failed: " + listing, 0, git.waitFor());
         List<Path> matches = new ArrayList<>();
-        Files.walkFileTree(Path.of("."), new SimpleFileVisitor<Path>() {
-            @Override
-            public FileVisitResult preVisitDirectory(Path directory, BasicFileAttributes attributes) {
-                return PRUNED_DIRECTORIES.contains(directory.getFileName().toString()) ? FileVisitResult.SKIP_SUBTREE
-                        : FileVisitResult.CONTINUE;
+        for (String entry : listing.split("\0")) {
+            if (!entry.isEmpty() && nameMatches.test(Path.of(entry).getFileName().toString())) {
+                matches.add(Path.of(entry));
             }
-
-            @Override
-            public FileVisitResult visitFile(Path file, BasicFileAttributes attributes) {
-                if (nameMatches.test(file.getFileName().toString())) {
-                    matches.add(file);
-                }
-                return FileVisitResult.CONTINUE;
-            }
-        });
+        }
         matches.sort(null);
         return matches;
     }
