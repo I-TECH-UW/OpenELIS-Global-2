@@ -40,7 +40,7 @@ public class ServerXmlSingleDeploymentTest {
             for (Element host : elementsNamed(parse(config), "Host")) {
                 String appBase = appBaseOf(host);
                 long inAppBase = childElements(host, "Context").stream()
-                        .filter(context -> resolvesInside(context, appBase)).count();
+                        .filter(context -> scanWouldDuplicate(context, appBase)).count();
                 if (inAppBase == 0) {
                     continue;
                 }
@@ -88,7 +88,10 @@ public class ServerXmlSingleDeploymentTest {
         return violations;
     }
 
-    /** Tomcat defaults an absent or empty {@code appBase} to {@code webapps}. */
+    /**
+     * Tomcat defaults an absent {@code appBase} to {@code webapps}; an empty one it
+     * keeps.
+     */
     private static String appBaseOf(Element host) {
         String appBase = host.getAttribute("appBase");
         return appBase.isEmpty() ? "webapps" : appBase;
@@ -134,6 +137,16 @@ public class ServerXmlSingleDeploymentTest {
 
     private static String describe(Path config, Element host) {
         return config + ": <Host name=\"" + host.getAttribute("name") + "\" appBase=\"" + appBaseOf(host) + "\">";
+    }
+
+    /**
+     * Whether the appBase scan would deploy this {@code <Context>}'s docBase a
+     * second time. It does not when the declared name already matches that docBase,
+     * since {@code HostConfig.deploymentExists} then skips its own copy.
+     */
+    private static boolean scanWouldDuplicate(Element context, String appBase) {
+        return resolvesInside(context, appBase)
+                && !docBaseKey(context, appBase).equals(baseName(context.getAttribute("path")));
     }
 
     /**
