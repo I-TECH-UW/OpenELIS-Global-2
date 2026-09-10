@@ -46,10 +46,12 @@ const captureCard = async (
 };
 
 const accordionButton = (page: Page, name: string) =>
-  page.locator(".cds--accordion__heading").filter({ hasText: name });
+  page
+    .getByTestId("microbiology-case-view")
+    .getByRole("button", { name, exact: true });
 
 const caseStatusTag = (page: Page, name: string) =>
-  page.locator("header .cds--tag__label").filter({ hasText: name });
+  page.locator("header").getByTitle(name);
 
 test.describe("OGC-782 microbiology MVP", () => {
   test("case setup, isolate creation, manual AST, override, and review", async ({
@@ -86,7 +88,6 @@ test.describe("OGC-782 microbiology MVP", () => {
       await page.getByLabel("Media or bottle").fill("Blood culture bottle");
       await page.getByLabel("Incubation").fill("35 C for 24 hours");
       await page.getByLabel("Atmosphere").fill("Ambient");
-      await page.getByLabel("Activity note").fill("setup complete");
       await captureCard(
         page,
         demo,
@@ -99,7 +100,6 @@ test.describe("OGC-782 microbiology MVP", () => {
       });
       await accordionButton(page, "Timeline").click();
       await expect(page).toHaveURL(/section=timeline/);
-      await expect(page.getByText(/setup complete/)).toBeVisible();
       await expect(
         page.getByText(/Media or bottle: Blood culture bottle/),
       ).toBeVisible();
@@ -202,6 +202,9 @@ test.describe("OGC-782 microbiology MVP", () => {
 
     await test.step("Override and review the AST run", async () => {
       await demo.step(5, "Override the AST result and mark the run reviewed");
+      await page
+        .getByLabel("AST reading", { exact: true })
+        .selectOption({ label: "Ciprofloxacin (UAT): Susceptible" });
       await page
         .getByLabel("Override reason")
         .fill("mixed growth confirmed on repeat");

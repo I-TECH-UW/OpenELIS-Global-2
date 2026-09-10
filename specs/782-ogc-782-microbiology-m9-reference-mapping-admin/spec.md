@@ -2,6 +2,8 @@
 
 **Feature Branch**: `feat/782-ogc-782-microbiology-m9-reference-mapping-admin`
 **Created**: 2026-08-04
+**Status**: Implemented and deployed; automated validation complete; human UAT
+pending
 **Parent**: OGC-782
 **Primary Jira**: OGC-786, OGC-787
 
@@ -137,6 +139,10 @@ navigation and follow linkable breadcrumbs.
 - **FR-008**: CSV import MUST provide deterministic row-level validation,
   idempotent application, and protection for local corrections.
 - **FR-009**: Every admin list/detail state MUST be representable by its URL.
+- **FR-010**: All user-facing text MUST be internationalized and all controls
+  MUST use Carbon components and interaction semantics.
+- **FR-011**: Test and UAT data MUST be provisioned through application services;
+  no direct SQL, fixed primary keys, or DAO bypass is permitted.
 - **FR-012**: Actor identity MUST come from the authenticated request, not a
   client-supplied identifier.
 
@@ -159,6 +165,5 @@ navigation and follow linkable breadcrumbs.
   standard after newer versions are published or activated.
 - **SC-004**: A mixed-validity CSV produces deterministic imported/skipped
   counts and the expected row-specific errors.
-- **SC-005**: An authorized reviewer can complete the administration workflow
-  using keyboard navigation, meaningful labels, and visible validation feedback
-  without losing the selected URL state.
+- **SC-005**: Focused backend, ORM, Liquibase update/rollback, component,
+  accessibility, and Playwright evidence passes against the deployed SHA.

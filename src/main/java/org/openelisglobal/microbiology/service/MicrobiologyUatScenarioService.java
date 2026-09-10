@@ -15,10 +15,25 @@ import org.openelisglobal.analyte.valueholder.Analyte;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.SampleStatus;
+import org.openelisglobal.inventory.service.InventoryItemService;
+import org.openelisglobal.inventory.service.InventoryLotService;
+import org.openelisglobal.inventory.service.InventoryManagementService;
+import org.openelisglobal.inventory.valueholder.InventoryEnums.ItemType;
+import org.openelisglobal.inventory.valueholder.InventoryEnums.LotStatus;
+import org.openelisglobal.inventory.valueholder.InventoryEnums.QCStatus;
+import org.openelisglobal.inventory.valueholder.InventoryItem;
+import org.openelisglobal.inventory.valueholder.InventoryLot;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.method.service.MethodService;
 import org.openelisglobal.method.valueholder.Method;
+import org.openelisglobal.microbiology.form.MicroAntibioticAdminForm;
+import org.openelisglobal.microbiology.form.MicroAstPanelAdminForm;
+import org.openelisglobal.microbiology.form.MicroBreakpointImportPreviewForm;
+import org.openelisglobal.microbiology.form.MicroBreakpointStandardAdminForm;
+import org.openelisglobal.microbiology.form.MicroOrganismAdminForm;
+import org.openelisglobal.microbiology.form.MicroReferenceAdminPageForm;
+import org.openelisglobal.microbiology.form.MicroReferenceAdminQueryForm;
 import org.openelisglobal.microbiology.form.MicrobiologyUatScenarioForm;
 import org.openelisglobal.microbiology.form.MicrobiologyUatScenarioRequestForm;
 import org.openelisglobal.microbiology.valueholder.MicroAntibiotic;
@@ -27,6 +42,7 @@ import org.openelisglobal.microbiology.valueholder.MicroBreakpointRule;
 import org.openelisglobal.microbiology.valueholder.MicroBreakpointStandard;
 import org.openelisglobal.microbiology.valueholder.MicroCase;
 import org.openelisglobal.microbiology.valueholder.MicroCultureSetup;
+import org.openelisglobal.microbiology.valueholder.MicroOrganism;
 import org.openelisglobal.microbiology.valueholder.MicroWorkflowType;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
@@ -44,6 +60,8 @@ import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.testanalyte.service.TestAnalyteService;
 import org.openelisglobal.testanalyte.valueholder.TestAnalyte;
+import org.openelisglobal.testreagentlink.service.TestReagentLinkService;
+import org.openelisglobal.testreagentlink.valueholder.TestReagentLink;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
@@ -64,6 +82,8 @@ public class MicrobiologyUatScenarioService {
 
     private static final String BACTERIOLOGY = MicroWorkflowType.BACTERIOLOGY.name();
     private static final String WORKLIST_SCENARIO = "WORKLIST";
+    private static final String REFERENCE_ADMIN_SCENARIO = "M3";
+    private static final String WHONET_EXPORT_SCENARIO = "M4";
     private static final String UAT_METHOD_NAME = "UAT micro culture";
     private static final String UAT_METHOD_DESCRIPTION = "UAT microbiology culture method";
     private static final String UAT_TEST_DESCRIPTION = "UAT microbiology culture";
@@ -73,6 +93,8 @@ public class MicrobiologyUatScenarioService {
     private static final String UAT_PATIENT_EXTERNAL_ID_PREFIX = "UATMICRO-";
     private static final String UAT_PATIENT_LAST_NAME = "Microbiology";
     private static final String UAT_PATIENT_BIRTH_DATE = "1990-03-13 00:00:00";
+    private static final String UAT_MEDIA_NAME = "UAT microbiology blood agar";
+    private static final String UAT_AST_CARD_NAME = "UAT microbiology AST card";
 
     private final MethodService methodService;
     private final SampleService sampleService;
@@ -93,6 +115,13 @@ public class MicrobiologyUatScenarioService {
     private final MicrobiologyConfigurationService configurationService;
     private final MicroCaseService caseService;
     private final MicroOrderRoutingService orderRoutingService;
+    private final InventoryItemService inventoryItemService;
+    private final InventoryLotService inventoryLotService;
+    private final InventoryManagementService inventoryManagementService;
+    private final TestReagentLinkService testReagentLinkService;
+    private final MicrobiologyReferenceAdminService referenceAdminService;
+    private final MicroBreakpointAdminService breakpointAdminService;
+    private final MicroBreakpointImportService breakpointImportService;
 
     public MicrobiologyUatScenarioService(MethodService methodService, SampleService sampleService,
             SampleItemService sampleItemService, PatientService patientService, PersonService personService,
@@ -102,7 +131,10 @@ public class MicrobiologyUatScenarioService {
             AnalyteService analyteService, TestAnalyteService testAnalyteService, AnalysisService analysisService,
             TestResultService testResultService, IStatusService statusService,
             MicrobiologyConfigurationService configurationService, MicroCaseService caseService,
-            MicroOrderRoutingService orderRoutingService) {
+            MicroOrderRoutingService orderRoutingService, InventoryItemService inventoryItemService,
+            InventoryLotService inventoryLotService, InventoryManagementService inventoryManagementService,
+            TestReagentLinkService testReagentLinkService, MicrobiologyReferenceAdminService referenceAdminService,
+            MicroBreakpointAdminService breakpointAdminService, MicroBreakpointImportService breakpointImportService) {
         this.methodService = methodService;
         this.sampleService = sampleService;
         this.sampleItemService = sampleItemService;
@@ -122,6 +154,13 @@ public class MicrobiologyUatScenarioService {
         this.configurationService = configurationService;
         this.caseService = caseService;
         this.orderRoutingService = orderRoutingService;
+        this.inventoryItemService = inventoryItemService;
+        this.inventoryLotService = inventoryLotService;
+        this.inventoryManagementService = inventoryManagementService;
+        this.testReagentLinkService = testReagentLinkService;
+        this.referenceAdminService = referenceAdminService;
+        this.breakpointAdminService = breakpointAdminService;
+        this.breakpointImportService = breakpointImportService;
     }
 
     @Transactional
@@ -146,11 +185,18 @@ public class MicrobiologyUatScenarioService {
         }
         Patient patient = getOrCreateUatPatient(suffix, performedBy);
         ensurePatientLink(sample, patient, performedBy);
-        createAstReferenceData();
+        AstReferenceData astReferenceData = createAstReferenceData(performedBy);
+        ReferenceAdminData referenceAdminData = isReferenceScenario(scenario)
+                ? createReferenceAdminData(astReferenceData, performedBy)
+                : null;
+        MicroOrganism unmappedOrganism = WHONET_EXPORT_SCENARIO.equals(scenario)
+                ? getOrCreateUnmappedReferenceOrganism(suffix, performedBy)
+                : null;
 
         ensureSampleType(sampleItem, performedBy);
         Method method = getOrCreateUatMethod(performedBy);
         Test test = getOrCreateUatTest(method, performedBy);
+        ensureInventoryTraceability(test, performedBy);
         ensureOrderableSampleTypeMapping(sampleItem.getTypeOfSample(), test, performedBy);
         ensureRemarkTestResult(test, performedBy);
         TestAnalyte reportableTestAnalyte = getOrCreateReportableTestAnalyte(test, performedBy);
@@ -174,7 +220,99 @@ public class MicrobiologyUatScenarioService {
         form.siblingCaseId = sibling == null ? null : sibling.getId();
         form.analysisId = analysis.getId();
         form.reportableTestAnalyteId = reportableTestAnalyte.getId();
+        form.methodId = method.getId();
+        if (referenceAdminData != null) {
+            form.organismId = referenceAdminData.organismId();
+            form.antibioticId = referenceAdminData.antibioticId();
+            form.astPanelId = referenceAdminData.astPanelId();
+            form.activeBreakpointStandardId = referenceAdminData.activeStandardId();
+            form.loadedBreakpointStandardId = referenceAdminData.loadedStandardId();
+        }
+        form.unmappedOrganismId = unmappedOrganism == null ? null : unmappedOrganism.getId();
         return form;
+    }
+
+    private boolean isReferenceScenario(String scenario) {
+        return REFERENCE_ADMIN_SCENARIO.equals(scenario) || WHONET_EXPORT_SCENARIO.equals(scenario);
+    }
+
+    private void ensureInventoryTraceability(Test test, String performedBy) {
+        InventoryItem media = getOrCreateInventoryItem(UAT_MEDIA_NAME, ItemType.REAGENT, "plate", performedBy);
+        InventoryItem astCard = getOrCreateInventoryItem(UAT_AST_CARD_NAME, ItemType.CARTRIDGE, "card", performedBy);
+        getOrCreateReagentLink(test, media, "PRIMARY", "plate", performedBy);
+        getOrCreateReagentLink(test, astCard, "SECONDARY", "card", performedBy);
+
+        ensureLot(media, "UAT-MICRO-MEDIA-EXPIRED", -1, 10.0, performedBy);
+        ensureLot(media, "UAT-MICRO-MEDIA-FEFO", 30, 20.0, performedBy);
+        ensureLot(media, "UAT-MICRO-MEDIA-LATER", 90, 20.0, performedBy);
+        ensureLot(astCard, "UAT-MICRO-CARD-FEFO", 45, 10.0, performedBy);
+        ensureLot(astCard, "UAT-MICRO-CARD-LATER", 120, 10.0, performedBy);
+    }
+
+    private InventoryItem getOrCreateInventoryItem(String name, ItemType itemType, String units, String performedBy) {
+        InventoryItem item = inventoryItemService.searchByName(name).stream()
+                .filter(candidate -> name.equals(candidate.getName())).findFirst().orElse(null);
+        if (item == null) {
+            item = new InventoryItem();
+            item.setFhirUuid(UUID.randomUUID());
+            item.setName(name);
+            item.setDescription("Property-gated microbiology UAT traceability fixture");
+            item.setItemType(itemType);
+            item.setCategory("Microbiology UAT");
+            item.setUnits(units);
+            item.setQuantityPerUnit(1);
+            item.setLowStockThreshold(1);
+            item.setExpirationAlertDays(30);
+            item.setIsActive(IActionConstants.YES);
+            item.setSysUserId(performedBy);
+            inventoryItemService.insert(item);
+        }
+        return item;
+    }
+
+    private void getOrCreateReagentLink(Test test, InventoryItem item, String role, String unit, String performedBy) {
+        TestReagentLink link = testReagentLinkService.getByTestIdAndReagentId(test.getId(), item.getId());
+        boolean created = link == null;
+        if (created) {
+            link = new TestReagentLink();
+            link.setTestId(test.getId());
+            link.setReagentId(item.getId());
+        }
+        link.setUsageType(role);
+        link.setQuantityPerTest(BigDecimal.ONE);
+        link.setQuantityUnit(unit);
+        link.setSysUserId(performedBy);
+        if (created) {
+            testReagentLinkService.insert(link);
+        } else {
+            testReagentLinkService.update(link);
+        }
+    }
+
+    private void ensureLot(InventoryItem item, String lotNumber, int expiresInDays, double quantity,
+            String performedBy) {
+        InventoryLot lot = inventoryLotService.getByLotNumber(lotNumber);
+        Timestamp expiration = Timestamp.from(Instant.now().plusSeconds(expiresInDays * 86_400L));
+        if (lot == null) {
+            lot = new InventoryLot();
+            lot.setInventoryItem(item);
+            lot.setLotNumber(lotNumber);
+            lot.setExpirationDate(expiration);
+            lot.setInitialQuantity(quantity);
+            lot.setCurrentQuantity(quantity);
+            lot.setQcStatus(QCStatus.PASSED);
+            lot.setStatus(LotStatus.ACTIVE);
+            inventoryManagementService.receiveInventory(lot, performedBy);
+            return;
+        }
+        lot.setExpirationDate(expiration);
+        lot.setStatus(LotStatus.ACTIVE);
+        lot.setQcStatus(QCStatus.PASSED);
+        if (lot.getCurrentQuantity() == null || lot.getCurrentQuantity() < quantity) {
+            lot.setCurrentQuantity(quantity);
+        }
+        lot.setSysUserId(performedBy);
+        inventoryLotService.update(lot);
     }
 
     private Sample createSample(String accessionNumber, String performedBy) {
@@ -210,6 +348,7 @@ public class MicrobiologyUatScenarioService {
     }
 
     private String requireSampleEnteredStatus() {
+        statusService.refreshCache();
         String statusId = statusService.getStatusID(SampleStatus.Entered);
         if ("-1".equals(statusId)) {
             throw new IllegalStateException("SampleStatus.Entered is required for microbiology UAT scenarios");
@@ -277,7 +416,7 @@ public class MicrobiologyUatScenarioService {
         }
     }
 
-    private void createAstReferenceData() {
+    private AstReferenceData createAstReferenceData(String performedBy) {
         MicroAntibiotic ciprofloxacin = configurationService.getOrCreateAntibiotic("Ciprofloxacin (UAT)", "CIPUAT",
                 "Fluoroquinolone");
         MicroAntibiotic gentamicin = configurationService.getOrCreateAntibiotic("Gentamicin (UAT)", "GENUAT",
@@ -291,6 +430,98 @@ public class MicrobiologyUatScenarioService {
                 new Date(System.currentTimeMillis()));
         configurationService.getOrCreateBreakpointRule(micBreakpointRule(standard.getId(), ciprofloxacin.getId()));
         configurationService.getOrCreateBreakpointRule(micBreakpointRule(standard.getId(), gentamicin.getId()));
+        breakpointAdminService.activate(standard.getId(), new Date(System.currentTimeMillis()), performedBy);
+        return new AstReferenceData(panel, standard);
+    }
+
+    private ReferenceAdminData createReferenceAdminData(AstReferenceData astReferenceData, String performedBy) {
+        MicroAstPanelAdminForm currentPanel = currentPanel(astReferenceData.panel());
+        MicroOrganismAdminForm organism = getOrCreateReferenceOrganism(currentPanel.id, performedBy);
+        MicroAntibioticAdminForm antibiotic = getOrCreateReferenceAntibiotic(performedBy);
+
+        String csv = "publisher,version,organism_or_group,antibiotic_whonet_code,method,specimen_type_id,"
+                + "breakpoint_type,susceptible_value,intermediate_lower_value,intermediate_upper_value,"
+                + "resistant_value,units\n"
+                + "CLSI,SYNTH-UAT-LOADED,group:UAT_SYNTHETIC,REFUAT,MIC,,MIC,1,2,2,4,synthetic-mg/L\n";
+        MicroBreakpointImportPreviewForm preview = breakpointImportService.preview(csv);
+        breakpointImportService.apply(preview.previewToken, performedBy);
+
+        MicroReferenceAdminQueryForm standardQuery = new MicroReferenceAdminQueryForm();
+        standardQuery.q = "SYNTH-UAT-LOADED";
+        MicroBreakpointStandardAdminForm loaded = breakpointAdminService.getStandards(standardQuery).rows.stream()
+                .filter(candidate -> "SYNTH-UAT-LOADED".equals(candidate.version)).findFirst()
+                .orElseThrow(() -> new IllegalStateException("Synthetic loaded breakpoint standard was not created"));
+        return new ReferenceAdminData(organism.id, antibiotic.id, currentPanel.id, astReferenceData.standard().getId(),
+                loaded.id);
+    }
+
+    private MicroAstPanelAdminForm currentPanel(MicroAstPanel fallback) {
+        MicroReferenceAdminQueryForm query = new MicroReferenceAdminQueryForm();
+        query.q = fallback.getName();
+        query.pageSize = 100;
+        return referenceAdminService.getAstPanels(query).rows.stream()
+                .filter(panel -> panel.current && fallback.getName().equals(panel.name)).findFirst()
+                .orElseThrow(() -> new IllegalStateException("Current UAT AST panel was not found"));
+    }
+
+    private MicroOrganismAdminForm getOrCreateReferenceOrganism(String panelId, String performedBy) {
+        MicroReferenceAdminQueryForm query = new MicroReferenceAdminQueryForm();
+        query.q = "Reference organism (UAT)";
+        MicroReferenceAdminPageForm<MicroOrganismAdminForm> page = referenceAdminService.getOrganisms(query);
+        MicroOrganismAdminForm organism = page.rows.stream()
+                .filter(candidate -> "REFUAT".equalsIgnoreCase(candidate.whonetCode)).findFirst()
+                .orElseGet(MicroOrganismAdminForm::new);
+        organism.displayName = "Reference organism (UAT)";
+        organism.shortName = "UAT reference";
+        organism.whonetCode = "refuat";
+        organism.organismGroup = "UAT_SYNTHETIC";
+        organism.gramStain = "GRAM_NEGATIVE";
+        organism.initialSignificance = "POSSIBLE";
+        organism.defaultAstPanelId = panelId;
+        organism.notes = "Synthetic UAT reference only; not clinical guidance";
+        organism.active = true;
+        return referenceAdminService.saveOrganism(organism.id, organism, performedBy);
+    }
+
+    private MicroOrganism getOrCreateUnmappedReferenceOrganism(String suffix, String performedBy) {
+        String displayName = "WHONET mapping pending (UAT " + suffix + ")";
+        MicroReferenceAdminQueryForm query = new MicroReferenceAdminQueryForm();
+        query.q = displayName;
+        MicroOrganismAdminForm existing = referenceAdminService.getOrganisms(query).rows.stream()
+                .filter(candidate -> displayName.equals(candidate.displayName)).findFirst().orElse(null);
+        if (existing != null) {
+            MicroOrganism organism = new MicroOrganism();
+            organism.setId(existing.id);
+            organism.setDisplayName(existing.displayName);
+            organism.setWhonetCode(existing.whonetCode);
+            return organism;
+        }
+
+        MicroOrganism organism = new MicroOrganism();
+        organism.setDisplayName(displayName);
+        organism.setShortName("UAT mapping pending");
+        organism.setOrganismGroup("UAT_SYNTHETIC");
+        organism.setGramStain("GRAM_NEGATIVE");
+        organism.setInitialSignificance("POSSIBLE");
+        organism.setNotes("Synthetic UAT reference intentionally missing a WHONET code");
+        organism.setLastUpdatedBy(performedBy);
+        return configurationService.createOrganism(organism);
+    }
+
+    private MicroAntibioticAdminForm getOrCreateReferenceAntibiotic(String performedBy) {
+        MicroReferenceAdminQueryForm query = new MicroReferenceAdminQueryForm();
+        query.q = "REFUAT";
+        MicroReferenceAdminPageForm<MicroAntibioticAdminForm> page = referenceAdminService.getAntibiotics(query);
+        MicroAntibioticAdminForm antibiotic = page.rows.stream()
+                .filter(candidate -> "REFUAT".equalsIgnoreCase(candidate.whonetCode)).findFirst()
+                .orElseGet(MicroAntibioticAdminForm::new);
+        antibiotic.displayName = "Reference antibiotic (UAT)";
+        antibiotic.whonetCode = "REFUAT";
+        antibiotic.antibioticClass = "Synthetic UAT";
+        antibiotic.route = "BOTH";
+        antibiotic.notes = "Synthetic UAT reference only; not clinical guidance";
+        antibiotic.active = true;
+        return referenceAdminService.saveAntibiotic(antibiotic.id, antibiotic, performedBy);
     }
 
     private MicroBreakpointRule micBreakpointRule(String standardId, String antibioticId) {
@@ -558,8 +789,9 @@ public class MicrobiologyUatScenarioService {
 
     private String normalizeScenario(String scenario) {
         String normalized = scenario == null ? "MVP" : scenario.trim().toUpperCase(Locale.ROOT);
-        if (!"CASE".equals(normalized) && !"MVP".equals(normalized) && !WORKLIST_SCENARIO.equals(normalized)) {
-            throw new IllegalArgumentException("scenario must be CASE, MVP, or WORKLIST");
+        if (!"CASE".equals(normalized) && !"MVP".equals(normalized) && !WORKLIST_SCENARIO.equals(normalized)
+                && !REFERENCE_ADMIN_SCENARIO.equals(normalized) && !WHONET_EXPORT_SCENARIO.equals(normalized)) {
+            throw new IllegalArgumentException("scenario must be CASE, MVP, WORKLIST, M3, or M4");
         }
         return normalized;
     }
@@ -574,5 +806,12 @@ public class MicrobiologyUatScenarioService {
     private String deterministicSuffix(String scenarioKey) {
         UUID uuid = UUID.nameUUIDFromBytes(scenarioKey.getBytes(StandardCharsets.UTF_8));
         return uuid.toString().replace("-", "").substring(0, 10).toUpperCase(Locale.ROOT);
+    }
+
+    private record AstReferenceData(MicroAstPanel panel, MicroBreakpointStandard standard) {
+    }
+
+    private record ReferenceAdminData(String organismId, String antibioticId, String astPanelId,
+            String activeStandardId, String loadedStandardId) {
     }
 }

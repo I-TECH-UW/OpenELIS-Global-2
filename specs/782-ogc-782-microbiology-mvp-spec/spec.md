@@ -18,9 +18,11 @@ binding product requirements.
 - M-00 parent:
   [m-00-micro-module-parent.md](https://github.com/DIGI-UW/openelis-work/blob/main/designs/microbiology/m-00-micro-module-parent.md)
 - M-01 reference data:
-  [m-01-amr-reference-data.md](https://github.com/DIGI-UW/openelis-work/blob/main/designs/microbiology/m-01-amr-reference-data.md)
+  [m-01-amr-reference-data.md](https://github.com/DIGI-UW/openelis-work/blob/main/designs/microbiology/m-01-amr-reference-data.md),
+  [Organism Master visual mock](https://digi-uw.github.io/openelis-work/designs/microbiology/m-01-organism-master.html)
 - M-02 breakpoint catalog:
-  [m-02-breakpoint-catalog.md](https://github.com/DIGI-UW/openelis-work/blob/main/designs/microbiology/m-02-breakpoint-catalog.md)
+  [m-02-breakpoint-catalog.md](https://github.com/DIGI-UW/openelis-work/blob/main/designs/microbiology/m-02-breakpoint-catalog.md),
+  [Breakpoint Catalog visual mock](https://digi-uw.github.io/openelis-work/designs/microbiology/m-02-breakpoint-catalog.html)
 - M-03 order entry hook:
   [m-03-order-entry-micro-hook.md](https://github.com/DIGI-UW/openelis-work/blob/main/designs/microbiology/m-03-order-entry-micro-hook.md)
 - M-04 case workbench:
@@ -49,7 +51,7 @@ binding product requirements.
 ## Interpretation Rules for Planning
 
 - This spec defines product behavior and acceptance expectations.
-- Detailed M-* source files provide workflow detail and mockup context, but
+- Detailed M-\* source files provide workflow detail and mockup context, but
   implementation-heavy language in them must be filtered through the local
   engineering crosswalk.
 - Planning and tasks may choose table names, service boundaries, API shapes,
@@ -70,8 +72,8 @@ The merge-blocking MVP is routine bacteriology order routing and order details,
 case work, isolate identification, manual AST, worklist navigation, critical
 communication, preliminary/final report propagation, and WHONET readiness.
 Amendment/re-identification history, reagent/card lot linkage, expert rules,
-full WHONET export and mapping UI, operational TB processing, antibiograms, and
-GLASS reporting are explicit later work.
+authoritative WHONET interoperability, operational TB processing, antibiograms,
+and GLASS reporting are explicit later work.
 
 ## User Scenarios & Testing _(mandatory)_
 
@@ -313,9 +315,9 @@ or missing mapping for export.
   surveillance export by tracking export-relevant organism, specimen,
   antibiotic, breakpoint, and interpretation information.
 - **FR-021**: Phase 1A MUST support manual bacteriology workflow end-to-end;
-  analyzer automation, expert rules, full WHONET export, TB workflow, and GLASS
-  reporting may be planned extensions unless included in an explicit later
-  slice.
+  analyzer automation, expert rules, authoritative WHONET interoperability, TB
+  workflow, and GLASS reporting may be planned extensions unless included in an
+  explicit later slice.
 - **FR-022**: Product specs and Jira tickets for this feature MUST describe
   workflow behavior and acceptance outcomes, not required table names, service
   names, route names, or storage layout.
@@ -332,11 +334,42 @@ PR #3789:
   reidentified. The MVP instead locks final cases against isolate and AST
   mutation.
 - **V2-002**: Link reagent/card lots and richer multi-row AST run metadata.
-- **V2-003**: Provide full WHONET export and code-mapping administration.
+- **V2-003**: Complete WHONET interoperability beyond the first manual-export
+  slice, including authoritative wide-format/profile packaging, remaining
+  vocabulary mappings, scheduling, and delivery.
 - **V2-004**: Provide operational TB, expert-rule, antibiogram, and GLASS
   workflows.
 - **V2-005**: Review analyzer-ingested AST results with mandatory human review
   before final reporting.
+
+Follow-up status: branch
+`feat/782-ogc-782-microbiology-m8-clinical-completeness` implements and
+qualifies V2-001 plus repeat/retest AST and policy-neutral reagent/card-lot
+traceability from V2-002. The required/optional/substitute policy remains open
+because existing Test Catalog roles cannot safely supply it. This status note
+does not change PR #3789's historical MVP acceptance boundary; none of the
+follow-up behavior is claimed as part of that milestone until its own branch is
+merged.
+
+Branch `feat/782-ogc-782-microbiology-m9-reference-mapping-admin` implements the
+M-01/M-02 administration slice: organism and antibiotic vocabularies, immutable
+AST panel versions, culture defaults on the existing Method vocabulary,
+breakpoint lifecycle, protected local corrections, and guarded CSV import. M1,
+M2, and M3 are deployed together for review, but remain an open PR stack and
+have not completed human UAT.
+
+Branch `feat/782-ogc-782-microbiology-m10-whonet-export` implements the first
+manual WHONET export slice: period and policy selection, used-set organism and
+antibiotic readiness, direct mapping repair, preview, audited CSV generation,
+canonical URL state, and desktop/mobile accessibility evidence. It remains
+stacked on M3 and is not accepted or deployed until its own PR, live checklist,
+exact-SHA deployment, and human UAT records are complete.
+
+The delivered stack is not the full microbiology module. Authoritative
+wide-format WHONET/profile packaging, the remaining mapping vocabularies,
+scheduled delivery, expert rules, macro workflows, richer worklist/dashboard
+depth, analyzer-ingested AST, operational TB, antibiograms, GLASS reporting,
+catalog subscription, and the remaining OGC-783 NFRs remain follow-up work.
 
 ### Constitution Compliance Requirements (OpenELIS Global)
 
@@ -385,7 +418,7 @@ shape during planning.
 - **Microbiology Worklist**: The shared operational queue of microbiology cases
   and AST work requiring attention.
 - **Surveillance Export Readiness**: The finalized result and mapping state
-  needed to produce WHONET-compatible surveillance output.
+  needed to produce surveillance output for WHONET import validation.
 
 ## Success Criteria _(mandatory)_
 
@@ -417,9 +450,10 @@ shape during planning.
   filtered view, open a case, refresh either page, and return without losing
   the relevant worklist or case-section context.
 
-The source M-NFR target for a 200-item worklist and sub-second read p95 remains
-unverified performance-qualification work. PR #3789 must not claim that target
-until a repeatable service-created data set and measurements exist.
+PR #3789 did not claim the source M-NFR 200-item worklist and sub-second read
+p95 target. The later M8 branch now carries repeatable service-created API and
+browser measurements for that target; those follow-up results do not alter the
+MVP PR's historical evidence.
 
 ## Planning Notes
 

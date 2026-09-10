@@ -337,11 +337,6 @@ const renderHeader = (options = {}) => {
 };
 
 describe("Header Component - M2b Enhancement Tests", () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-    localStorageMock.clear();
-  });
-
   test("preserves stable selectors on Carbon parent and leaf menu labels", async () => {
     const { container } = renderHeader();
 
@@ -354,6 +349,11 @@ describe("Header Component - M2b Enhancement Tests", () => {
         container.querySelector("span#menu_sample_add"),
       ).toBeInTheDocument();
     });
+  });
+
+  beforeEach(() => {
+    vi.clearAllMocks();
+    localStorageMock.clear();
   });
 
   test("renders Carbon sidenav lists with direct list-item children", async () => {

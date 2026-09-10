@@ -14,16 +14,23 @@ import org.openelisglobal.microbiology.valueholder.MicroAstPanel;
 import org.openelisglobal.microbiology.valueholder.MicroAstPanelAntibiotic;
 import org.openelisglobal.microbiology.valueholder.MicroAstReading;
 import org.openelisglobal.microbiology.valueholder.MicroAstRun;
+import org.openelisglobal.microbiology.valueholder.MicroBreakpointActivationEvent;
 import org.openelisglobal.microbiology.valueholder.MicroBreakpointRule;
 import org.openelisglobal.microbiology.valueholder.MicroBreakpointStandard;
 import org.openelisglobal.microbiology.valueholder.MicroCase;
 import org.openelisglobal.microbiology.valueholder.MicroCaseActivity;
+import org.openelisglobal.microbiology.valueholder.MicroCaseAmendment;
 import org.openelisglobal.microbiology.valueholder.MicroCaseAnalysis;
 import org.openelisglobal.microbiology.valueholder.MicroCaseOrderDetail;
 import org.openelisglobal.microbiology.valueholder.MicroCriticalCommunication;
 import org.openelisglobal.microbiology.valueholder.MicroCultureSetup;
+import org.openelisglobal.microbiology.valueholder.MicroInventoryUsageLink;
 import org.openelisglobal.microbiology.valueholder.MicroIsolate;
+import org.openelisglobal.microbiology.valueholder.MicroIsolateIdentificationEvent;
 import org.openelisglobal.microbiology.valueholder.MicroOrganism;
+import org.openelisglobal.microbiology.valueholder.MicroReportVersion;
+import org.openelisglobal.microbiology.valueholder.MicroReportVersionSource;
+import org.openelisglobal.microbiology.valueholder.MicroWhonetExportRun;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class MicrobiologyOrmValidationTest extends BaseWebContextSensitiveTest {
@@ -47,15 +54,22 @@ public class MicrobiologyOrmValidationTest extends BaseWebContextSensitiveTest {
         assertNotNull(metamodel.entity(MicroAstPanelAntibiotic.class));
         assertNotNull(metamodel.entity(MicroBreakpointStandard.class));
         assertNotNull(metamodel.entity(MicroBreakpointRule.class));
+        assertNotNull(metamodel.entity(MicroBreakpointActivationEvent.class));
         assertNotNull(metamodel.entity(MicroCultureSetup.class));
         assertNotNull(metamodel.entity(MicroCase.class));
         assertNotNull(metamodel.entity(MicroCaseActivity.class));
+        assertNotNull(metamodel.entity(MicroCaseAmendment.class));
         assertNotNull(metamodel.entity(MicroCaseAnalysis.class));
         assertNotNull(metamodel.entity(MicroIsolate.class));
+        assertNotNull(metamodel.entity(MicroIsolateIdentificationEvent.class));
         assertNotNull(metamodel.entity(MicroAstRun.class));
         assertNotNull(metamodel.entity(MicroAstReading.class));
         assertNotNull(metamodel.entity(MicroCriticalCommunication.class));
         assertNotNull(metamodel.entity(MicroCaseOrderDetail.class));
+        assertNotNull(metamodel.entity(MicroReportVersion.class));
+        assertNotNull(metamodel.entity(MicroReportVersionSource.class));
+        assertNotNull(metamodel.entity(MicroInventoryUsageLink.class));
+        assertNotNull(metamodel.entity(MicroWhonetExportRun.class));
     }
 
     @Test
