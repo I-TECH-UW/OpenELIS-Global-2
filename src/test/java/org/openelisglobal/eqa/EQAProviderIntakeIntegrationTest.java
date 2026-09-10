@@ -226,6 +226,16 @@ public class EQAProviderIntakeIntegrationTest extends EQASpineTestBase {
 
         assertTrue("the report names the laboratory it is about, not just the provider",
                 text.contains("Intake lab " + failing));
+        // The meta block is four columns and every fact adds two cells, so an odd
+        // number of facts leaves a short last row that iText drops without saying
+        // so. These two are the last pair on the block: if the row is not padded,
+        // whichever fact lands there disappears from a report nobody re-reads.
+        // The meta block is four columns and every fact adds two cells, so an odd
+        // number of facts leaves a short last row that iText drops without saying
+        // so. Both of these sit at the end of the block: unpadded, whichever lands
+        // there disappears from a report nobody re-reads.
+        assertTrue("the generation stamp survives the block's last row", text.contains("Generated"));
+        assertTrue("and so does the laboratory this copy is about", text.contains("Intake lab " + failing));
         assertTrue("the analyte the laboratory reported", text.contains("Intake HIV serology test"));
         assertTrue("the value it reported", text.contains("Non-reactive"));
         assertTrue("the target it was judged against", text.contains("Reactive"));
@@ -239,8 +249,14 @@ public class EQAProviderIntakeIntegrationTest extends EQASpineTestBase {
         // ever be blank on this lane reads as a missing value.
         assertTrue("no NCE column on a provider's copy", !text.contains("NCE"));
         assertTrue("no Analyst column on a provider's copy", !text.contains("Analyst"));
-        assertTrue("no Scored on column either: eqa_result carries no per-row scoring stamp",
-                !text.contains("Scored on"));
+        // "Scored on" was dropped entirely when nothing recorded a scoring date.
+        // eqa_cycle.actual_end_date records one now, so it comes back — but as a
+        // header fact, because the date is the cycle's and eqa_result still carries
+        // no per-row stamp. Asserting the printed value equals the cycle's own date
+        // is what pins the grain: a per-row column could not be filled from it.
+        assertTrue("the scoring date is a header fact", text.contains("Scored on"));
+        assertTrue("and it is the cycle's own scoring date",
+                text.contains(readBack(cycle.getId()).getActualEndDate().toString()));
 
         // Same grain as the scores CSV beside it on the workbench, so the two cannot
         // disagree about which rows belong to a laboratory.

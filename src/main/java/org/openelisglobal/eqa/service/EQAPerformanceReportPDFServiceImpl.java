@@ -335,6 +335,12 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
             // indistinguishable.
             metaCell(meta, MessageUtil.getMessage("eqa.report.participant"), participant);
         }
+        // The block is four columns and each fact adds two cells, so an odd number
+        // of facts leaves the last row short — and iText renders only complete
+        // rows, dropping it silently. That already cost the cycle-level report its
+        // Generated line, which has seven facts. Padding the row makes the block
+        // hold whatever it is given rather than depending on the count being even.
+        meta.completeRow();
         document.add(meta);
 
         if (rowCount == 0) {
