@@ -4,7 +4,7 @@
 
 openelis:
   # HttpForwardingRouter appends /astm, /hl7, /csv per message protocol
-  url: https://oe.openelis.org:8443/api/OpenELIS-Global/analyzer
+  url: https://oe.openelis.org:8443/OpenELIS-Global/analyzer
   timeout: 30000
   ssl:
     verify: false  # Development only - uses self-signed certs
