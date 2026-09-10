@@ -610,29 +610,6 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
         }
     }
 
-    /**
-     * An isolate keeps only its organism id once identified, so rows carry that id
-     * as their display text. Surveillance controls are read by people, so the
-     * catalog name replaces it wherever one exists.
-     */
-    private void applyOrganismLabels(List<MicroWorklistRowForm> rows) {
-        List<String> ids = rows.stream().map(row -> row.organismId).filter(value -> value != null && !value.isBlank())
-                .distinct().toList();
-        if (ids.isEmpty()) {
-            return;
-        }
-        Map<String, String> names = organismDAO.getByIds(ids).stream()
-                .filter(organism -> organism.getDisplayName() != null && !organism.getDisplayName().isBlank())
-                .collect(Collectors.toMap(MicroOrganism::getId, MicroOrganism::getDisplayName,
-                        (first, ignored) -> first));
-        for (MicroWorklistRowForm row : rows) {
-            String name = names.get(row.organismId);
-            if (name != null) {
-                row.organismDisplay = name;
-            }
-        }
-    }
-
     private Map<String, String> patientOriginLabels(List<MicroWorklistRowForm> rows) {
         List<String> codes = rows.stream().map(row -> row.patientOrigin)
                 .filter(value -> value != null && !value.isBlank()).distinct().toList();
