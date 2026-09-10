@@ -204,25 +204,15 @@
             <property name="hibernate.cfg_xml_file"
                 value="classpath:hibernate/hibernate.cfg.xml" />
             <!--
-                Tomcat used to deploy this WAR twice into one JVM (/OpenELIS-Global
-                and /api/OpenELIS-Global, see conf/server.xml), and each context got
-                its own classloader, EntityManagerFactory and Hibernate Search
-                backend over this one directory. A Lucene index allows a single
-                writer, so whichever context did not take the lock fails every
-                save with OverlappingFileLockException - after the row is
-                committed, so the caller sees a 500 for a patient that was
-                actually created. Patient search is served from the database, so
-                nothing reads this index; it is left unmaintained rather than
-                maintained unsafely. Rebuild it on demand with GET /rest/reindex.
-                The double deployment is fixed, so the lock contention is gone, but
-                switching indexing back on is a separate untested change.
+                Nothing reads this Lucene index: patient search is served from the
+                database. It is left unmaintained rather than maintained, and
+                rebuilt on demand with GET /rest/reindex. Turning indexing on is an
+                untested change that needs its own verification.
             -->
             <property name="hibernate.search.automatic_indexing.enabled" value="false" />
             <!--
-                And do not create or validate that index at start-up either: while
-                the WAR deployed twice, both contexts tried it and one logged an
-                OverlappingFileLockException on every boot. Nothing reads the index,
-                so there is nothing to manage.
+                The index is not created or validated at start-up either; nothing
+                reads it, so there is nothing to manage.
             -->
             <property name="hibernate.search.schema_management.strategy" value="none" />
             <property name="hibernate.search.backend.directory.type" value="local-filesystem" />
