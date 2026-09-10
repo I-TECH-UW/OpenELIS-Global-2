@@ -1,7 +1,11 @@
 import { test, expect } from "../../../helpers/test-base";
 import type { Page } from "@playwright/test";
 import { createDemoPresentation } from "../../../helpers/demo-presentation";
-import { selectCarbonRadio } from "../../../helpers/microbiology-ui";
+import {
+  createMicrobiologyIsolate,
+  identifyMicrobiologyIsolate,
+  selectCarbonRadio,
+} from "../../../helpers/microbiology-ui";
 import { seedMicrobiologyMvpCase } from "../../../helpers/seed-microbiology-data";
 import { LONG_TIMEOUT } from "../../../helpers/timeouts";
 
@@ -61,6 +65,10 @@ test.describe("OGC-782 microbiology MVP", () => {
     test.setTimeout(180_000);
     const demo = createDemoPresentation(page, testInfo);
     const seeded = await seedMicrobiologyMvpCase(page);
+    const { organismId } = seeded;
+    if (!organismId) {
+      throw new Error("Microbiology MVP scenario is missing organismId");
+    }
 
     await demo.title(
       "OGC-782 Microbiology MVP",
@@ -102,11 +110,11 @@ test.describe("OGC-782 microbiology MVP", () => {
       await captureCard(
         page,
         demo,
-        "microbiology-setup-card",
+        "microbiology-case-section-setup",
         "ogc-782-02-inoculation-ready",
       );
       await setup.getByRole("button", { name: "Save media" }).click();
-      await expect(caseStatusTag(page, "Setup Recorded")).toBeVisible({
+      await expect(caseStatusTag(page, "Incubating")).toBeVisible({
         timeout: LONG_TIMEOUT,
       });
       await accordionButton(page, "Timeline").click();
@@ -131,31 +139,21 @@ test.describe("OGC-782 microbiology MVP", () => {
 
     await test.step("Create a clinically significant isolate", async () => {
       await demo.step(3, "Add a clinically significant isolate");
-      await accordionButton(page, "Isolates").click();
+      await createMicrobiologyIsolate(page);
       await expect(page).toHaveURL(/section=isolates/);
-      await page.getByLabel("Preliminary organism").fill("Escherichia coli");
-      await page.getByRole("button", { name: "Create isolate" }).click();
-      await expect(page.getByText(/ISO-1: Escherichia coli/)).toBeVisible({
-        timeout: LONG_TIMEOUT,
-      });
       await captureCard(
         page,
         demo,
         "microbiology-isolates-card",
         "ogc-782-04-isolate-created",
       );
-      await page.getByRole("button", { name: "Update identification" }).click();
-      await page
-        .getByLabel("Preliminary organism")
-        .fill("Escherichia coli confirmed");
-      await page.getByLabel("Identification status").selectOption("CONFIRMED");
-      await page.getByRole("button", { name: "Save identification" }).click();
+      await identifyMicrobiologyIsolate(page, organismId);
       await expect(
-        page.getByText(/ISO-1: Escherichia coli confirmed/),
+        page.getByText(/ISO-1: Escherichia coli \(UAT\)/),
       ).toBeVisible({ timeout: LONG_TIMEOUT });
       await expect(
-        page.getByText(/Clinically significant · Confirmed/),
-      ).toBeVisible();
+        page.getByTestId("microbiology-isolates-card"),
+      ).toContainText("MALDI-TOF · 99.5% · Clinically significant");
     });
 
     await test.step("Start an AST run and record a MIC reading", async () => {
@@ -347,7 +345,7 @@ test.describe("OGC-782 microbiology MVP", () => {
       await accordionButton(page, "Isolates").click();
       await expect(page).toHaveURL(/section=isolates/);
       await expect(
-        page.getByRole("button", { name: "Update identification" }),
+        page.getByRole("button", { name: "Edit isolate" }),
       ).toBeDisabled();
       await expect(
         page.getByRole("button", { name: "Create isolate" }),

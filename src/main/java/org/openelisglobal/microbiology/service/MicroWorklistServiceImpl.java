@@ -15,6 +15,7 @@ import org.openelisglobal.microbiology.dao.MicroCaseDAO;
 import org.openelisglobal.microbiology.dao.MicroCaseOrderDetailDAO;
 import org.openelisglobal.microbiology.dao.MicroCriticalCommunicationDAO;
 import org.openelisglobal.microbiology.dao.MicroIsolateDAO;
+import org.openelisglobal.microbiology.dao.MicroOrganismDAO;
 import org.openelisglobal.microbiology.dao.MicroPatientOriginDAO;
 import org.openelisglobal.microbiology.dao.MicroReviewedAstWorklistQuery;
 import org.openelisglobal.microbiology.dao.MicroReviewedAstWorklistRow;
@@ -41,6 +42,7 @@ import org.openelisglobal.microbiology.valueholder.MicroCriticalCommunication;
 import org.openelisglobal.microbiology.valueholder.MicroCriticalCommunicationStatus;
 import org.openelisglobal.microbiology.valueholder.MicroIsolate;
 import org.openelisglobal.microbiology.valueholder.MicroIsolateSignificance;
+import org.openelisglobal.microbiology.valueholder.MicroOrganism;
 import org.openelisglobal.microbiology.valueholder.MicroPatientOrigin;
 import org.openelisglobal.microbiology.valueholder.MicroWorkflowType;
 import org.springframework.stereotype.Service;
@@ -62,10 +64,12 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
     private final MicroWorklistContextDAO contextDAO;
     private final MicroAstPanelDAO panelDAO;
     private final MicroPatientOriginDAO patientOriginDAO;
+    private final MicroOrganismDAO organismDAO;
 
     public MicroWorklistServiceImpl(MicroCaseDAO caseDAO, MicroCaseOrderDetailDAO caseOrderDetailDAO,
             MicroIsolateDAO isolateDAO, MicroAstRunDAO astRunDAO, MicroCriticalCommunicationDAO communicationDAO,
-            MicroWorklistContextDAO contextDAO, MicroAstPanelDAO panelDAO, MicroPatientOriginDAO patientOriginDAO) {
+            MicroWorklistContextDAO contextDAO, MicroAstPanelDAO panelDAO, MicroPatientOriginDAO patientOriginDAO,
+            MicroOrganismDAO organismDAO) {
         this.caseDAO = caseDAO;
         this.caseOrderDetailDAO = caseOrderDetailDAO;
         this.isolateDAO = isolateDAO;
@@ -74,6 +78,7 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
         this.contextDAO = contextDAO;
         this.panelDAO = panelDAO;
         this.patientOriginDAO = patientOriginDAO;
+        this.organismDAO = organismDAO;
     }
 
     @Override
@@ -118,6 +123,7 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
         List<MicroWorklistRowForm> rows = AST_GRAIN.equals(normalized.grain)
                 ? toAstRows(worklistCases, isolatesByCase, runsByIsolate)
                 : toCultureRows(worklistCases, isolatesByCase, runsByIsolate, communicationsByCase, casesBySampleItem);
+        applyOrganismLabels(rows);
         enrichRows(rows, specimenContextBySampleItem, activityContextByCase, panelsById, orderDetailsByCase);
         enrichCultureTiming(rows, indexBy(worklistCases, MicroCase::getId), inoculationContextByCase,
                 timingContextByMethodAndWorkflow);
@@ -165,10 +171,12 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
                 MicroCaseOrderDetail::getCaseId);
         List<String> panelIds = selected.stream().map(item -> item.run().getPanelId())
                 .filter(panelId -> panelId != null && !panelId.isBlank()).distinct().toList();
+        applyOrganismLabels(rows);
         enrichRows(rows, specimens, activities, indexBy(panelDAO.getByIds(panelIds), MicroAstPanel::getId),
                 orderDetails);
 
         MicroWorklistPageForm page = new MicroWorklistPageForm();
+        page.filterOptions = surveillanceFilterOptions(rows, patientOriginLabels(rows));
         page.total = (int) Math.min(Integer.MAX_VALUE, astRunDAO.countReviewedWorklist(reviewedQuery));
         page.page = query.page;
         page.pageSize = query.pageSize;
@@ -610,6 +618,24 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
                         origin -> origin.getDisplayName() == null || origin.getDisplayName().isBlank()
                                 ? origin.getCode()
                                 : origin.getDisplayName()));
+    }
+
+    private void applyOrganismLabels(List<MicroWorklistRowForm> rows) {
+        List<String> ids = rows.stream().map(row -> row.organismId).filter(value -> value != null && !value.isBlank())
+                .distinct().toList();
+        if (ids.isEmpty()) {
+            return;
+        }
+        Map<String, String> names = organismDAO.getByIds(ids).stream()
+                .filter(organism -> organism.getDisplayName() != null && !organism.getDisplayName().isBlank())
+                .collect(Collectors.toMap(MicroOrganism::getId, MicroOrganism::getDisplayName,
+                        (first, ignored) -> first));
+        for (MicroWorklistRowForm row : rows) {
+            String name = names.get(row.organismId);
+            if (name != null) {
+                row.organismDisplay = name;
+            }
+        }
     }
 
     private MicroWhonetFilterOptionsForm surveillanceFilterOptions(List<MicroWorklistRowForm> rows,

@@ -29,6 +29,38 @@ describe("CaseTimelinePanel", () => {
     expect(trigger).toHaveFocus();
   });
 
+  it("shows the conditions recorded for an inoculation", () => {
+    render(
+      <IntlProvider locale="en" messages={messages}>
+        <CaseTimelinePanel
+          timelineSectionId="timeline"
+          activities={[
+            {
+              id: "a1",
+              activityType: "INOCULATION_RECORDED",
+              note: "UAT-DEMO-BOTTLE-1 - Blood culture bottle",
+              occurredAt: "2026-09-07T10:00:00Z",
+              structuredData: JSON.stringify({
+                media: "Blood culture bottle",
+                incubation: "35 C for 24 hours",
+                atmosphere: "Ambient",
+              }),
+            },
+          ]}
+          onAddNote={vi.fn()}
+        />
+      </IntlProvider>,
+    );
+
+    expect(
+      screen.getByText("Media or bottle: Blood culture bottle"),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("Incubation: 35 C for 24 hours"),
+    ).toBeInTheDocument();
+    expect(screen.getByText("Atmosphere: Ambient")).toBeInTheDocument();
+  });
+
   it("offers only a note action and labels system versus manual history", async () => {
     const user = userEvent.setup();
     const onAddNote = vi.fn().mockResolvedValue({});

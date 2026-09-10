@@ -70,8 +70,11 @@ public class MicroCaseInoculationServiceTest {
         ArgumentCaptor<MicroCaseActivity> activity = ArgumentCaptor.forClass(MicroCaseActivity.class);
         verify(activityDAO).insert(activity.capture());
         assertEquals(MicroCaseActivityType.INOCULATION_RECORDED.name(), activity.getValue().getActivityType());
-        assertEquals(result.getId(),
-                new ObjectMapper().readTree(activity.getValue().getStructuredData()).get("inoculationId").asText());
+        var auditData = new ObjectMapper().readTree(activity.getValue().getStructuredData());
+        assertEquals(result.getId(), auditData.get("inoculationId").asText());
+        assertEquals("Blood agar", auditData.get("media").asText());
+        assertEquals("24h at 35 C", auditData.get("incubation").asText());
+        assertEquals("Ambient", auditData.get("atmosphere").asText());
         verify(inoculationDAO).insert(result);
         verify(reagentLotService).recordSelections("case-1", MicroInventoryUsageContext.CULTURE_SETUP,
                 activity.getValue().getId(), lots, "42");

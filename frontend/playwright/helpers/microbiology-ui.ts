@@ -18,10 +18,7 @@ export const selectCarbonRadio = async (page: Page, radio: Locator) => {
   await expect(radio).toBeChecked();
 };
 
-export const createAndIdentifyMicrobiologyIsolate = async (
-  page: Page,
-  organismId: string,
-) => {
+export const createMicrobiologyIsolate = async (page: Page) => {
   await openMicrobiologyCaseSection(page, "Isolates");
   await page.getByLabel("Gram stain").fill("Gram negative rods");
   await page
@@ -31,7 +28,12 @@ export const createAndIdentifyMicrobiologyIsolate = async (
   await expect(page.getByText("Identification pending")).toBeVisible({
     timeout: LONG_TIMEOUT,
   });
+};
 
+export const identifyMicrobiologyIsolate = async (
+  page: Page,
+  organismId: string,
+) => {
   await page.getByRole("button", { name: "Identify organism" }).click();
   await page.getByLabel("Organism").selectOption(organismId);
   await page.getByLabel("ID method").selectOption("MALDI_TOF");
@@ -40,4 +42,12 @@ export const createAndIdentifyMicrobiologyIsolate = async (
   await expect(page.getByText("Identified", { exact: true })).toBeVisible({
     timeout: LONG_TIMEOUT,
   });
+};
+
+export const createAndIdentifyMicrobiologyIsolate = async (
+  page: Page,
+  organismId: string,
+) => {
+  await createMicrobiologyIsolate(page);
+  await identifyMicrobiologyIsolate(page, organismId);
 };

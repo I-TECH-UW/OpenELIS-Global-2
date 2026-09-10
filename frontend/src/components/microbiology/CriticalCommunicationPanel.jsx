@@ -150,7 +150,6 @@ const CriticalCommunicationPanel = ({
     <section
       className="microbiology-card"
       data-testid="microbiology-critical-card"
-      aria-labelledby="microbiology-critical-heading"
     >
       <div className="microbiology-card__header">
         <div>

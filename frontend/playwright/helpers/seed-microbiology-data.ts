@@ -7,11 +7,11 @@ const API_PREFIX = "/api/OpenELIS-Global";
 const requireAnalyzerIngressCredential = (
   name: "ANALYZER_INGRESS_USER" | "ANALYZER_INGRESS_PASS",
 ) => {
-  const value = process.env[name]?.trim();
+  const sharedName =
+    name === "ANALYZER_INGRESS_USER" ? "TEST_USER" : "TEST_PASS";
+  const value = process.env[name]?.trim() || process.env[sharedName]?.trim();
   if (!value) {
-    throw new Error(
-      `${name} is required for analyzer-ingress Playwright scenarios`,
-    );
+    throw new Error(`${name} or ${sharedName} is required`);
   }
   return value;
 };

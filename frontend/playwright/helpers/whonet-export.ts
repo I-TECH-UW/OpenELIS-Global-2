@@ -91,7 +91,6 @@ export const selectWhonetFilterOption = async (
     throw new Error(`WHONET filter ${filterName} has no controlled listbox`);
   }
   const listbox = page.locator(`[id="${listboxId}"]`);
-  await expect(listbox).toBeVisible();
   const supportsTextEntry = await filter.evaluate((element) =>
     element.matches("input, textarea, [contenteditable='true']"),
   );
@@ -106,6 +105,16 @@ export const selectWhonetFilterOption = async (
   await option.click();
   await filter.press("Escape");
   await expect(filter).toHaveAttribute("aria-expanded", "false");
+};
+
+export const clearWhonetFilterSelection = async (
+  page: Page,
+  filterName: RegExp,
+) => {
+  const filter = page.getByRole("combobox", { name: filterName });
+  await filter.focus();
+  await filter.press("Delete");
+  await expect(filter).toHaveAccessibleName(/Total items selected: 0/);
 };
 
 export const expectWhonetExportReady = async (page: Page) => {

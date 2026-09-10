@@ -2,6 +2,7 @@ import { expect, test } from "../../../helpers/test-base";
 import { seedMicrobiologyWhonetWorklistHandoffCase } from "../../../helpers/seed-microbiology-data";
 import { LONG_TIMEOUT } from "../../../helpers/timeouts";
 import {
+  clearWhonetFilterSelection,
   expectWhonetExportReady,
   selectWhonetFilterOption,
   whonetFixtureLabels,
@@ -170,11 +171,7 @@ test.describe("OGC-782 R12 AST worklist to WHONET handoff", () => {
       await expect(
         page.getByRole("textbox", { name: "To", exact: true }),
       ).toHaveValue(currentQuarter.to);
-      await selectWhonetFilterOption(
-        page,
-        /^Patient origins/,
-        whonetFixtureLabels.inpatient,
-      );
+      await clearWhonetFilterSelection(page, /^Patient origins/);
       const editedUrl = new URL(page.url());
       expect(editedUrl.searchParams.has("origin")).toBe(false);
       expect(editedUrl.searchParams.getAll("specimen")).toEqual([

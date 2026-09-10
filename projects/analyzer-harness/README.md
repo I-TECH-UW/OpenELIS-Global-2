@@ -62,13 +62,13 @@ Use `scripts/dev-stack env` to supply its URLs and analyzer network addresses to
 Playwright.
 
 The startup path does not execute SQL fixture loaders or use fixed primary keys.
-It calls `seed-analyzers.sh --ensure-connections` to create missing profile-backed
-harness connections through authenticated application services. Ordinary restarts
-preserve existing connection configuration, mappings, and review data; they do not
-replay result traffic. The seeder's default mode remains the explicit full fixture
-setup used by CI. Feature-specific scenarios follow the same service-layer rule.
-CI parity is a separate validation command because it intentionally reproduces
-CI packaging.
+It calls `seed-analyzers.sh --ensure-connections` to create missing
+profile-backed harness connections through authenticated application services.
+Ordinary restarts preserve existing connection configuration, mappings, and
+review data; they do not replay result traffic. The seeder's default mode
+remains the explicit full fixture setup used by CI. Feature-specific scenarios
+follow the same service-layer rule. CI parity is a separate validation command
+because it intentionally reproduces CI packaging.
 
 To remove this worktree's data explicitly:
 

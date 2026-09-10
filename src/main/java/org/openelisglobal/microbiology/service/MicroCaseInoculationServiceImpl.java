@@ -124,8 +124,9 @@ public class MicroCaseInoculationServiceImpl implements MicroCaseInoculationServ
         try {
             return objectMapper.writeValueAsString(Map.of("inoculationId", inoculation.getId(), "sourceInoculationId",
                     valueOrEmpty(inoculation.getSourceInoculationId()), "containerIdentifier",
-                    inoculation.getContainerIdentifier(), "media", inoculation.getMedia(), "methodId",
-                    valueOrEmpty(inoculation.getMethodId())));
+                    inoculation.getContainerIdentifier(), "media", inoculation.getMedia(), "incubation",
+                    valueOrEmpty(inoculation.getIncubation()), "atmosphere", valueOrEmpty(inoculation.getAtmosphere()),
+                    "methodId", valueOrEmpty(inoculation.getMethodId())));
         } catch (JsonProcessingException exception) {
             throw new IllegalStateException("MICROBIOLOGY_INOCULATION_AUDIT_SERIALIZATION_FAILED", exception);
         }
