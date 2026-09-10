@@ -464,7 +464,7 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
         row.createdAt = microCase.getCreatedAt();
         row.needsAstReview = needsAstReview(runs);
         row.hasOpenCriticalCommunication = hasOpenCriticalCommunication(communications);
-        row.dueAction = dueAction(microCase, isolates, row.needsAstReview);
+        row.dueAction = dueAction(microCase, isolates, runs, row.needsAstReview);
         row.urgency = urgency(microCase, row.needsAstReview, row.hasOpenCriticalCommunication);
         for (MicroCase sibling : siblingCases) {
             if (!sibling.getId().equals(microCase.getId())) {
@@ -675,7 +675,8 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
         return false;
     }
 
-    private String dueAction(MicroCase microCase, List<MicroIsolate> isolates, boolean needsAstReview) {
+    private String dueAction(MicroCase microCase, List<MicroIsolate> isolates, List<MicroAstRun> runs,
+            boolean needsAstReview) {
         if (MicroWorkflowType.UNASSIGNED.name().equals(microCase.getWorkflowType())) {
             return "NEEDS_WORKFLOW";
         }
@@ -695,7 +696,11 @@ public class MicroWorklistServiceImpl implements MicroWorklistService {
             return "ISOLATE_ID";
         }
         for (MicroIsolate isolate : isolates) {
-            if (MicroIsolateSignificance.CLINICALLY_SIGNIFICANT.name().equals(isolate.getSignificance())) {
+            // A significant isolate whose AST work is already reviewed is ready for
+            // case review; only one with no run yet still needs AST entry.
+            boolean isolateHasRun = runs.stream().anyMatch(run -> isolate.getId().equals(run.getIsolateId()));
+            if (MicroIsolateSignificance.CLINICALLY_SIGNIFICANT.name().equals(isolate.getSignificance())
+                    && !isolateHasRun) {
                 return "AST_ENTRY";
             }
         }

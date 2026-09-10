@@ -33,6 +33,77 @@
       "elementId": "menu_sample",
       "childMenus": [
         {
+          "elementId": "menu_clinical_workflow",
+          "childMenus": [
+            {
+              "elementId": "menu_clinical_dashboard",
+              "childMenus": []
+            },
+            {
+              "elementId": "menu_clinical_enter",
+              "childMenus": []
+            },
+            {
+              "elementId": "menu_clinical_collect",
+              "childMenus": []
+            },
+            {
+              "elementId": "menu_clinical_label",
+              "childMenus": []
+            },
+            {
+              "elementId": "menu_clinical_qa",
+              "childMenus": []
+            }
+          ]
+        },
+        {
+          "elementId": "menu_environmental_workflow",
+          "childMenus": [
+            {
+              "elementId": "menu_environmental_dashboard",
+              "childMenus": []
+            },
+            {
+              "elementId": "menu_environmental_enter",
+              "childMenus": []
+            },
+            {
+              "elementId": "menu_environmental_collect",
+              "childMenus": []
+            },
+            {
+              "elementId": "menu_environmental_label",
+              "childMenus": []
+            },
+            {
+              "elementId": "menu_environmental_qa",
+              "childMenus": []
+            }
+          ]
+        },
+        {
+          "elementId": "menu_vector_workflow",
+          "childMenus": [
+            {
+              "elementId": "menu_vector_dashboard",
+              "childMenus": []
+            },
+            {
+              "elementId": "menu_vector_enter",
+              "childMenus": []
+            },
+            {
+              "elementId": "menu_vector_label",
+              "childMenus": []
+            },
+            {
+              "elementId": "menu_vector_qa",
+              "childMenus": []
+            }
+          ]
+        },
+        {
           "elementId": "menu_sample_add",
           "childMenus": []
         },

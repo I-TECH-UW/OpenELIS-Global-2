@@ -1,6 +1,7 @@
 package org.openelisglobal.menu.util;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
 import java.io.File;
@@ -164,6 +165,30 @@ public class MenuConfigurationLoaderTest {
         assertEquals("menu_reports", whonet.getParent().getElementId());
         assertTrue(menus.stream().noneMatch(menu -> "menu_microbiology_whonet".equals(menu.getElementId())
                 && menu.getParent() != null && "menu_microbiology".equals(menu.getParent().getElementId())));
+    }
+
+    @Test
+    public void distributionMenu_offersEachOrderEntryDomainDirectlyUnderTheOrderMenu() throws Exception {
+        // Strict: the deployed file must be one complete JSON document, not merely
+        // start with one, since the application reads it leniently and would hide
+        // trailing garbage.
+        com.fasterxml.jackson.databind.JsonNode config = new com.fasterxml.jackson.databind.ObjectMapper()
+                .enable(com.fasterxml.jackson.databind.DeserializationFeature.FAIL_ON_TRAILING_TOKENS)
+                .readTree(new File("volume/menu/menu_config.json"));
+        com.fasterxml.jackson.databind.JsonNode sample = null;
+        for (com.fasterxml.jackson.databind.JsonNode node : config.get("includes")) {
+            if ("menu_sample".equals(node.path("elementId").asText())) {
+                sample = node;
+            }
+        }
+        assertNotNull(sample);
+        java.util.List<String> children = new ArrayList<>();
+        for (com.fasterxml.jackson.databind.JsonNode child : sample.get("childMenus")) {
+            children.add(child.path("elementId").asText());
+        }
+        assertTrue(children.containsAll(
+                java.util.List.of("menu_clinical_workflow", "menu_environmental_workflow", "menu_vector_workflow")));
+        assertTrue("the generic parent is not something a deployment can select", !children.contains("menu_add_order"));
     }
 
     private Menu menu(String id, String elementId, int presentationOrder) {

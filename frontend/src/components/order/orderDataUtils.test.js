@@ -3,6 +3,8 @@ import {
   buildLoadedOrderData,
   buildSubmissionMicrobiologyOrderDetail,
   buildSubmissionSampleOrderItems,
+  buildSubmittedMicrobiologyOrderDetail,
+  isMicrobiologyOrder,
   isMicrobiologyOrderReady,
 } from "./orderDataUtils";
 
@@ -36,18 +38,10 @@ describe("buildLoadedOrderData", () => {
     });
   });
 
-  it("retains microbiology defaults when no draft exists", () => {
+  it("carries no microbiology details when the order has none", () => {
     const loaded = buildLoadedOrderData({ labNumber: "20260806-002" });
 
-    expect(loaded.microbiologyOrderDetail).toEqual({
-      culturePurpose: "CLINICAL_DIAGNOSTIC",
-      cultureMethodId: "",
-      patientOrigin: "",
-      admissionDate: "",
-      numberOfSets: "",
-      clinicalHistory: "",
-      antibioticExposure: false,
-    });
+    expect(loaded.microbiologyOrderDetail).toBeUndefined();
   });
 
   it("preserves an explicitly unspecified culture purpose from legacy data", () => {
@@ -174,5 +168,64 @@ describe("buildSubmissionSampleOrderItems", () => {
     expect(serialized).not.toHaveProperty("microbiologyPreviousProgramId");
     expect(serialized).not.toHaveProperty("domain");
     expect(serialized).not.toHaveProperty("programCode");
+  });
+});
+
+const cultureSample = {
+  tests: [
+    { id: "42", name: "Blood culture", cultureWorkflowType: "BACTERIOLOGY" },
+  ],
+};
+const routineSample = { tests: [{ id: "7", name: "Sodium" }] };
+const enteredDetail = {
+  culturePurpose: "CLINICAL_DIAGNOSTIC",
+  clinicalHistory: "Fever",
+  numberOfSets: 2,
+};
+
+describe("the microbiology order decision", () => {
+  it("qualifies an order that selects a culture-workflow test", () => {
+    expect(isMicrobiologyOrder({}, [cultureSample])).toBe(true);
+  });
+
+  it("qualifies an order whose program is explicitly Microbiology", () => {
+    const orderData = {
+      sampleOrderItems: { programId: "8", microbiologyProgramId: "8" },
+    };
+
+    expect(isMicrobiologyOrder(orderData, [routineSample])).toBe(true);
+  });
+
+  it("does not qualify an order with neither signal", () => {
+    const orderData = {
+      sampleOrderItems: { programId: "3", microbiologyProgramId: "8" },
+    };
+
+    expect(isMicrobiologyOrder(orderData, [routineSample])).toBe(false);
+    expect(isMicrobiologyOrder({}, [routineSample])).toBe(false);
+  });
+});
+
+describe("the submitted microbiology details", () => {
+  it("are sent for a qualifying order", () => {
+    const submitted = buildSubmittedMicrobiologyOrderDetail(
+      { microbiologyOrderDetail: enteredDetail },
+      [cultureSample],
+    );
+
+    expect(submitted).toMatchObject({
+      culturePurpose: "CLINICAL_DIAGNOSTIC",
+      clinicalHistory: "Fever",
+      numberOfSets: 2,
+    });
+  });
+
+  it("are withheld from a routine order even when the form still holds them", () => {
+    const submitted = buildSubmittedMicrobiologyOrderDetail(
+      { microbiologyOrderDetail: enteredDetail },
+      [routineSample],
+    );
+
+    expect(submitted).toBeUndefined();
   });
 });

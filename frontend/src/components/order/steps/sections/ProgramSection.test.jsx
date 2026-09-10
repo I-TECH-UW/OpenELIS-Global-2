@@ -353,6 +353,6 @@ describe("ProgramSection microbiology derivation", () => {
       screen.queryByRole("heading", { name: "Microbiology Program Details" }),
     ).not.toBeInTheDocument();
     expect(latestOrderData.sampleOrderItems.programId).toBe("1");
-    expect(latestOrderData.microbiologyOrderDetail.clinicalHistory).toBe("");
+    expect(latestOrderData.microbiologyOrderDetail).toBeUndefined();
   });
 });

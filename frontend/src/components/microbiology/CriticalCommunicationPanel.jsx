@@ -116,6 +116,12 @@ const CriticalCommunicationPanel = ({
           onEntryComplete();
         }
       })
+      .catch((saveError) => {
+        setError(
+          saveError?.message ||
+            intl.formatMessage({ id: "microbiology.case.error" }),
+        );
+      })
       .finally(() => setSaving(false));
   };
 

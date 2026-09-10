@@ -41,8 +41,12 @@ public class MicroReportReleaseServiceImpl implements MicroReportReleaseService 
     @Override
     @Transactional
     public MicroCase releasePreliminary(String caseId, String performedBy) {
-        MicroReportProjectionResult projection = reportProjectionService.releasePreliminary(caseId, performedBy);
         MicroCase microCase = getCase(caseId);
+        if (MicroCaseFinalReleaseState.FINAL_RELEASED.name().equals(microCase.getFinalReleaseState())
+                || MicroCaseStage.FINAL_RELEASED.name().equals(microCase.getStage())) {
+            throw new IllegalStateException("Preliminary release is blocked: CASE_FINAL_RELEASED");
+        }
+        MicroReportProjectionResult projection = reportProjectionService.releasePreliminary(caseId, performedBy);
         microCase.setFinalReleaseState(MicroCaseFinalReleaseState.PRELIMINARY_RELEASED.name());
         microCase.setStage(MicroCaseStage.PRELIM_RELEASED.name());
         MicroCase updated = caseDAO.update(microCase);

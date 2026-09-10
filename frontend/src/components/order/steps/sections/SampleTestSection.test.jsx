@@ -209,10 +209,7 @@ describe("SampleTestSection microbiology metadata", () => {
       }),
     ).toEqual(
       expect.objectContaining({
-        microbiologyOrderDetail: expect.objectContaining({
-          cultureMethodId: "",
-          clinicalHistory: "",
-        }),
+        microbiologyOrderDetail: undefined,
         sampleOrderItems: expect.objectContaining({ programId: "1" }),
       }),
     );

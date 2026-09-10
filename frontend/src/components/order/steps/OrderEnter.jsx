@@ -15,6 +15,7 @@ import {
 } from "@carbon/react";
 import { Printer } from "@carbon/icons-react";
 import OrderWorkflowLayout from "../OrderWorkflowLayout";
+import SaveFailureNotice from "../SaveFailureNotice";
 import { useOrderContext } from "../OrderContext";
 import { NotificationContext, ConfigurationContext } from "../../layout/Layout";
 import {
@@ -58,6 +59,8 @@ const OrderEnter = () => {
     setSamples,
     labNumber,
     saveOrderEntry, // Step 1 uses saveOrderEntry (creates sample_type_requests, not sample_items)
+    isSubmitting,
+    fieldErrors,
     markStepComplete,
     isReadOnly,
     isEditMode,
@@ -258,7 +261,7 @@ const OrderEnter = () => {
       return;
     }
     try {
-      await saveOrderEntry(false); // silent=false
+      await saveOrderEntry();
       addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
@@ -283,7 +286,7 @@ const OrderEnter = () => {
       return;
     }
     try {
-      await saveOrderEntry(false); // silent=false
+      await saveOrderEntry();
       markStepComplete("enter");
       const isVector =
         orderData?.sampleOrderItems?.environmentalFields?.workflowType ===
@@ -319,7 +322,7 @@ const OrderEnter = () => {
       return;
     }
     try {
-      await saveOrderEntry(true); // silent=true
+      await saveOrderEntry();
       addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
@@ -355,7 +358,7 @@ const OrderEnter = () => {
           kind="tertiary"
           onClick={handleSaveAsDraft}
           size="md"
-          disabled={!canSave}
+          disabled={isSubmitting || !canSave}
         >
           <FormattedMessage
             id="button.save.draft"
@@ -365,6 +368,7 @@ const OrderEnter = () => {
       }
     >
       {notificationVisible && <AlertDialog />}
+      <SaveFailureNotice inlineFields={["sampleOrderItems.labNo"]} />
 
       <Stack gap={7}>
         {/* Section 1: Lab Number */}
@@ -392,6 +396,8 @@ const OrderEnter = () => {
                   }
                   value={localLabNumber}
                   onChange={handleLabNumberChange}
+                  invalid={Boolean(fieldErrors?.["sampleOrderItems.labNo"])}
+                  invalidText={fieldErrors?.["sampleOrderItems.labNo"]}
                   placeholder={intl.formatMessage({
                     id: "order.labNumber.placeholder",
                     defaultMessage: "Enter or generate lab number",

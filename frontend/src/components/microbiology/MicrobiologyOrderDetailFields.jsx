@@ -31,6 +31,12 @@ export const emptyMicrobiologyOrderDetail = {
   antibioticExposure: false,
 };
 
+// Starting values for an order that qualifies for the microbiology workflow.
+export const defaultMicrobiologyOrderDetail = {
+  ...emptyMicrobiologyOrderDetail,
+  culturePurpose: "CLINICAL_DIAGNOSTIC",
+};
+
 export const formatAdmissionDateForPicker = formatIsoDateForBackend;
 export const formatAdmissionDateForApi = formatPickerDateForIso;
 
@@ -226,6 +232,9 @@ const MicrobiologyOrderDetailFields = ({
         id={`${idPrefix}-number-of-sets`}
         label={intl.formatMessage({
           id: "microbiology.orderDetail.numberOfSets",
+        })}
+        helperText={intl.formatMessage({
+          id: "microbiology.orderDetail.numberOfSets.helper",
         })}
         value={fields.numberOfSets}
         min={1}

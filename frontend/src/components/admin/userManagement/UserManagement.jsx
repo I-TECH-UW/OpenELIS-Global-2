@@ -430,6 +430,7 @@ function UserManagement() {
             <Column lg={8} md={8} sm={4}>
               <CustomCheckBox
                 id="only-active"
+                checked={filters.includes("isActive")}
                 label={<FormattedMessage id="menu.label.filter.active" />}
                 onChange={(isChecked) => {
                   if (isChecked) {
@@ -444,6 +445,7 @@ function UserManagement() {
               <br />
               <CustomCheckBox
                 id="only-administrator"
+                checked={filters.includes("isAdmin")}
                 label={<FormattedMessage id="menu.label.filter.admin" />}
                 onChange={(isChecked) => {
                   if (isChecked) {

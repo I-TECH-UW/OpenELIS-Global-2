@@ -5,8 +5,17 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.microbiology.form.MicroCaseOrderDetailRequestForm;
 import org.openelisglobal.microbiology.valueholder.MicroCase;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.test.valueholder.Test;
 
 public interface MicroOrderRoutingService {
+    /**
+     * The single microbiology eligibility decision for an order: a configured
+     * culture-workflow test, or an explicitly selected microbiology program as the
+     * documented fallback. Callers must not re-derive this from test names, program
+     * codes, or a submitted order-detail payload.
+     */
+    boolean isMicrobiologyOrder(List<Test> tests, boolean microbiologyProgramSelected);
+
     List<MicroCase> routeAnalysesForSampleItem(SampleItem sampleItem, List<Analysis> analyses, String performedBy);
 
     /**
