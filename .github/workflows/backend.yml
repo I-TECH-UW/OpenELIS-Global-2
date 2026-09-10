@@ -48,7 +48,7 @@ jobs:
               - '.github/scripts/publish-checkpoints*.cjs'
               - 'tomcat/**'
               - 'volume/tomcat/**'
-              - 'demo/**'
+              - 'dev/tomcat/**'
               - 'install/installerTemplate/**'
 
   backend-verify:

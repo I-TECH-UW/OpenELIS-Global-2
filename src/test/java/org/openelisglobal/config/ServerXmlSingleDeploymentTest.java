@@ -4,7 +4,10 @@ import java.io.IOException;
 import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import org.junit.Assert;
@@ -16,36 +19,23 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 /**
- * A Tomcat {@code <Host>} deploys a web application from two independent
- * sources: its own deployer, which scans {@code appBase} when
- * {@code deployOnStartup} is true — the default when the attribute is absent —
- * and any explicitly configured {@code <Context>} children. When a
- * {@code <Context>}'s {@code docBase} resolves inside that same Host's
- * {@code appBase}, one WAR is the target of both and deploys twice: once at the
- * filename-derived path and once at the declared one. Two web application
- * contexts mean two Spring root contexts and two of every singleton in them,
- * including two schedulers, so every {@code @Scheduled} method fires twice.
+ * A WAR deploys twice when a Host's appBase scan ({@code autoDeploy} and
+ * {@code deployOnStartup}, true while absent) covers a WAR an explicit
+ * {@code <Context>} also declares, or when two {@code <Context>} children share
+ * a {@code docBase}: the second context brings a second Spring root context and
+ * scheduler, firing every {@code @Scheduled} method again.
  *
  * <p>
- * The Tomcat 10.1 Host documentation names the remedy this pins: "if you are
- * defining contexts explicitly in server.xml, you should probably turn off
- * automatic application deployment ... Otherwise, the web applications will
- * each be deployed twice".
- *
- * <p>
- * This reads the shipped configuration as data; nothing about the application
- * is arranged to make it observable.
+ * Tomcat 10.1's Host documentation says to "turn off automatic application
+ * deployment" where contexts are defined explicitly in server.xml, or "the web
+ * applications will each be deployed twice".
  */
 public class ServerXmlSingleDeploymentTest {
 
     @Test
     public void hostsDeclaringAnInAppBaseContextDoNotAlsoScanAppBase() throws Exception {
         List<String> violations = new ArrayList<>();
-        List<Path> configs = trackedFilesMatching("server.xml");
-        Assert.assertFalse("found no tracked Tomcat server.xml to check; the search itself is broken",
-                configs.isEmpty());
-
-        for (Path config : configs) {
+        for (Path config : serverXmlConfigs()) {
             for (Element host : elementsNamed(parse(config), "Host")) {
                 String appBase = host.getAttribute("appBase");
                 long inAppBase = childElements(host, "Context").stream()
@@ -53,11 +43,10 @@ public class ServerXmlSingleDeploymentTest {
                 if (inAppBase == 0) {
                     continue;
                 }
-                // Absence is the defect, not merely a value of "true": an absent
-                // deployOnStartup defaults to true and deploys appBase anyway.
                 for (String attribute : List.of("autoDeploy", "deployOnStartup")) {
-                    if (!"false".equals(host.getAttribute(attribute))) {
-                        violations.add(config + ": <Host appBase=\"" + appBase + "\"> declares " + inAppBase
+                    // An absent deployOnStartup defaults to true and scans appBase anyway.
+                    if (!(host.hasAttribute(attribute) && !Boolean.parseBoolean(host.getAttribute(attribute)))) {
+                        violations.add(describe(config, host) + " declares " + inAppBase
                                 + " in-appBase <Context> element(s) but " + attribute + " is "
                                 + (host.hasAttribute(attribute) ? "\"" + host.getAttribute(attribute) + "\"" : "absent")
                                 + " rather than \"false\", so that WAR deploys twice");
@@ -65,21 +54,80 @@ public class ServerXmlSingleDeploymentTest {
                 }
             }
         }
-
         Assert.assertEquals(String.join("\n", violations), List.of(), violations);
     }
 
+    @Test
+    public void noTwoContextsOfOneHostShareADocBaseOrAPath() throws Exception {
+        List<String> violations = new ArrayList<>();
+        for (Path config : serverXmlConfigs()) {
+            for (Element host : elementsNamed(parse(config), "Host")) {
+                violations.addAll(repeatedAttribute(config, host, "docBase", "so that WAR deploys twice"));
+                violations.addAll(
+                        repeatedAttribute(config, host, "path", "so two web applications claim one context path"));
+            }
+        }
+        Assert.assertEquals(String.join("\n", violations), List.of(), violations);
+    }
+
+    private static List<String> repeatedAttribute(Path config, Element host, String attribute, String consequence) {
+        List<String> violations = new ArrayList<>();
+        Set<String> seen = new HashSet<>();
+        for (Element context : childElements(host, "Context")) {
+            String value = withoutTrailingSlash(context.getAttribute(attribute));
+            if (!value.isEmpty() && !seen.add(value)) {
+                violations.add(describe(config, host) + " declares more than one <Context> with " + attribute + "=\""
+                        + value + "\", " + consequence);
+            }
+        }
+        return violations;
+    }
+
+    private static String describe(Path config, Element host) {
+        return config + ": <Host name=\"" + host.getAttribute("name") + "\" appBase=\"" + host.getAttribute("appBase")
+                + "\">";
+    }
+
     /**
-     * Tomcat resolves a relative {@code docBase} against the Host's
-     * {@code appBase}, and an absolute one that points back inside {@code appBase}
-     * double-deploys just the same.
+     * A relative {@code docBase} resolves against {@code appBase}; an absolute one
+     * is matched textually, since the file describes a container's layout.
      */
     private static boolean resolvesInside(String docBase, String appBase) {
-        if (docBase.isEmpty()) {
+        List<String> base = segments(appBase);
+        List<String> doc = segments(docBase);
+        if (base.isEmpty() || doc.isEmpty()) {
             return false;
         }
-        Path path = Path.of(docBase);
-        return !path.isAbsolute() || (!appBase.isEmpty() && path.startsWith(Path.of(appBase).toAbsolutePath()));
+        if (!docBase.startsWith("/")) {
+            return true;
+        }
+        for (int i = 0; i + base.size() < doc.size(); i++) {
+            if (doc.subList(i, i + base.size()).equals(base)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private static List<String> segments(String path) {
+        List<String> segments = new ArrayList<>();
+        for (String segment : Arrays.asList(path.split("/"))) {
+            if (!segment.isEmpty() && !".".equals(segment)) {
+                segments.add(segment);
+            }
+        }
+        return segments;
+    }
+
+    private static String withoutTrailingSlash(String value) {
+        return value.length() > 1 && value.endsWith("/") ? value.substring(0, value.length() - 1) : value;
+    }
+
+    private static List<Path> serverXmlConfigs() throws IOException, InterruptedException {
+        List<Path> configs = trackedFilesMatching("server.xml");
+        Assert.assertFalse("found no tracked Tomcat server.xml to check; the search itself is broken",
+                configs.isEmpty());
+        return configs;
     }
 
     /**
