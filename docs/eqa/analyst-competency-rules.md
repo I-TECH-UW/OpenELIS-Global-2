@@ -112,6 +112,35 @@ failure:
 4. **Competent** — everything else, which is `evaluable_n ≥ 4` and
    `failure_n ≤ 1`.
 
+### Which rule fired travels with the band
+
+Rows 2 and 3 both produce **Under review**, and they mean opposite things: one
+analyst has failed twice, the other has not been given enough work to judge. A
+reviewer who sees only the band cannot tell a performance concern from a gap in
+the evidence, and the two call for opposite actions.
+
+So `band()` emits a `reason` beside every `status`:
+
+| `reason`                | Band          | What the reviewer should do                                                  |
+| ----------------------- | ------------- | ---------------------------------------------------------------------------- |
+| `OPEN_ESCALATION`       | Not competent | Close the non-conformity.                                                    |
+| `REPEATED_FAILURE`      | Under review  | Review the failed results; raise a non-conformity or dismiss them on triage. |
+| `INSUFFICIENT_EVIDENCE` | Under review  | Assign more proficiency testing samples. Nothing is wrong with the analyst.  |
+| `MEETS_EVIDENCE`        | Competent     | Nothing.                                                                     |
+
+**The stored status is not split.** `reason` is derived on every read, like the
+band itself, so there is no second value to keep in step and no migration.
+
+The analyst's headline row carries `statusReasons`: one entry per analyte
+sitting at the headline band, each with **that analyte's** evaluable and failure
+counts. The analyst's own totals span every analyte and are not the denominator
+any rule fired on, so quoting them beside a rule would be arithmetic that does
+not add up.
+
+The rollup also publishes `windowStart`, `windowEnd`, `windowMonths` and
+`evidenceFloor`, so the page states the window and the floor it was judged
+against rather than repeating the constants in copy.
+
 ### Three clauses deliberately not implemented
 
 - **"2+ consecutive `questionable_score`"** (FRS, band table row 4). Every

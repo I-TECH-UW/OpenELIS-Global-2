@@ -48,6 +48,18 @@ public class EQAAnalystCompetencyServiceImpl implements EQAAnalystCompetencyServ
     private static final String NOT_COMPETENT = "NOT_COMPETENT";
 
     /**
+     * Which rule produced a band. UNDER_REVIEW is reached by two rules that mean
+     * opposite things — an analyst who has failed twice, and an analyst nobody has
+     * given enough work to judge — and they call for opposite actions. The stored
+     * status stays one value; this says which branch of {@link #band} set it, so
+     * the page can tell the reader what to do about it.
+     */
+    private static final String MEETS_EVIDENCE = "MEETS_EVIDENCE";
+    private static final String REPEATED_FAILURE = "REPEATED_FAILURE";
+    private static final String INSUFFICIENT_EVIDENCE = "INSUFFICIENT_EVIDENCE";
+    private static final String OPEN_ESCALATION = "OPEN_ESCALATION";
+
+    /**
      * Statuses that close a non-conformity, as the Lab Performance rollup reads
      * them.
      */
@@ -183,6 +195,12 @@ public class EQAAnalystCompetencyServiceImpl implements EQAAnalystCompetencyServ
         Map<String, Object> page = new LinkedHashMap<>();
         List<Map<String, Object>> analysts = analysts(rows, openEscalatedNces());
         page.put("kpis", kpis(analysts));
+        // The rule's own parameters travel with its verdicts, so the page quotes the
+        // window and the floor it was actually judged against.
+        page.put("windowStart", windowStart.toString());
+        page.put("windowEnd", LocalDate.now().toString());
+        page.put("windowMonths", WINDOW_MONTHS);
+        page.put("evidenceFloor", EVIDENCE_FLOOR);
         page.put("analysts", analysts);
         return page;
     }
@@ -290,6 +308,22 @@ public class EQAAnalystCompetencyServiceImpl implements EQAAnalystCompetencyServ
                 headline = worst(headline, (String) banded.get("status"));
             }
             analytes.sort(Comparator.comparing(row -> String.valueOf(row.get("analyteName"))));
+            // The headline is the worst band across the analytes, so the rules that
+            // produced it are those of the analytes sitting at that band. Each one
+            // carries its own counts: a rule reads over one analyte, and the
+            // analyst's totals across every analyte are not the denominator it
+            // fired on.
+            List<Map<String, Object>> headlineReasons = new ArrayList<>();
+            for (Map<String, Object> banded : analytes) {
+                if (headline.equals(banded.get("status"))) {
+                    Map<String, Object> why = new LinkedHashMap<>();
+                    why.put("reason", banded.get("reason"));
+                    why.put("analyteName", banded.get("analyteName"));
+                    why.put("evaluableCount", banded.get("evaluableCount"));
+                    why.put("failureCount", banded.get("failureCount"));
+                    headlineReasons.add(why);
+                }
+            }
 
             List<EQACompetencyRow> facts = facts(owned);
             EQACompetencyRow latest = facts.stream().filter(row -> VERDICT.containsValue(row.outcome))
@@ -299,6 +333,7 @@ public class EQAAnalystCompetencyServiceImpl implements EQAAnalystCompetencyServ
             dto.put("analystId", entry.getKey());
             dto.put("analystName", analystName(entry.getKey()));
             dto.put("status", headline);
+            dto.put("statusReasons", headlineReasons);
             dto.put("sampleCount", facts.size());
             dto.put("sampleCountThisYear",
                     (int) facts.stream().filter(row -> row.date.getYear() == currentYear).count());
@@ -335,18 +370,24 @@ public class EQAAnalystCompetencyServiceImpl implements EQAAnalystCompetencyServ
                 .anyMatch(row -> row.escalation && (row.nceId == null || openNces.contains(row.nceId)));
 
         String status;
+        String reason;
         if (openEscalation) {
             status = NOT_COMPETENT;
+            reason = OPEN_ESCALATION;
         } else if (failures >= 2) {
             status = UNDER_REVIEW;
+            reason = REPEATED_FAILURE;
         } else if (evaluable < EVIDENCE_FLOOR) {
             status = UNDER_REVIEW;
+            reason = INSUFFICIENT_EVIDENCE;
         } else {
             status = COMPETENT;
+            reason = MEETS_EVIDENCE;
         }
 
         Map<String, Object> dto = new LinkedHashMap<>();
         dto.put("status", status);
+        dto.put("reason", reason);
         dto.put("evaluableCount", evaluable);
         dto.put("failureCount", failures);
         dto.put("openEscalation", openEscalation);

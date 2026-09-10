@@ -8499,7 +8499,7 @@
   "eqa.program.perAnalyst": "Record the analyst on every result",
   "eqa.program.perAnalyst.on": "Analyst recorded",
   "eqa.program.perAnalyst.off": "Not recorded",
-  "eqa.result.analyst.tooltip": "Shown because this run includes an EQA sample whose scheme records who ran each sample. Non-EQA rows take no input.",
+  "eqa.result.analyst.tooltip": "Shown because this run includes an EQA sample whose scheme records who ran each sample. Choose the OpenELIS user who ran the sample, from the scheme's analyst roster — that is a separate record from whoever enters this result and whoever validates it. Non-EQA rows take no input.",
   "shipment.settings.siteOrgUnsetTitle": "Site organization not set",
   "shipment.settings.siteOrgUnsetSubtitle": "Incoming consignments are not filtered to this site and outgoing boxes carry no sender. Select the organization that represents this laboratory.",
   "shipment.settings.siteOrgUnmatchedTitle": "Set to an organization this instance does not hold",
@@ -8645,5 +8645,15 @@
   "eqa.prep.dispatched": "Participant shipments dispatched",
   "eqa.prep.readyToShip.blockedByGate": "Prep is incomplete. The ready-to-ship gate above lists what is still outstanding.",
   "eqa.prep.readyToShip.notInPrep": "Cycle state: {status}. Clearing to ship is only offered while the cycle is in prep.",
-  "eqa.prep.goToShipments": "Open the Shipments tab"
+  "eqa.prep.goToShipments": "Open the Shipments tab",
+  "eqa.competency.rule.meetsEvidence": "Evidence met",
+  "eqa.competency.rule.repeatedFailure": "Repeated failure",
+  "eqa.competency.rule.insufficientEvidence": "Insufficient evidence",
+  "eqa.competency.rule.openEscalation": "Open non-conformity",
+  "eqa.competency.reason.meetsEvidence": "{evaluable} assessable samples with {failures} failures between {from} and {to}, at or above the evidence floor of {floor}. Nothing to action.",
+  "eqa.competency.reason.repeatedFailure": "{failures} failures in {evaluable} assessable samples between {from} and {to}. This is a performance concern: review the failed results and raise a non-conformity, or dismiss them on triage.",
+  "eqa.competency.reason.insufficientEvidence": "{evaluable} assessable samples between {from} and {to}, short of the evidence floor of {floor}. This is not a performance concern: assign this analyst more proficiency testing samples.",
+  "eqa.competency.reason.openEscalation": "An escalated non-conformity raised between {from} and {to} is still open, over {evaluable} assessable samples with {failures} failures. Close the non-conformity to clear the band.",
+  "eqa.competency.whatIsAnAnalyst": "An analyst is an OpenELIS user account on the scheme's analyst roster, recorded against the sample they ran. That is a separate record from whoever entered the result and whoever validated it.",
+  "eqa.inhouse.roster.help": "Analysts are OpenELIS user accounts. Everyone selected here joins this scheme's roster and can be assigned samples to run; the roster is separate from who enters and who validates a result."
 }

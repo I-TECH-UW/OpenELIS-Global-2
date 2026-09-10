@@ -686,6 +686,10 @@ const BlindingWizard = () => {
               onChange={({ selectedItems }) =>
                 setRosterUsers((selectedItems || []).map((user) => user.id))
               }
+              helperText={label(
+                "eqa.inhouse.roster.help",
+                "Analysts are OpenELIS user accounts. Everyone selected here joins this scheme's roster and can be assigned samples to run; the roster is separate from who enters and who validates a result.",
+              )}
             />
             <Select
               id="inhouse-assignment-mode"
