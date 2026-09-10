@@ -830,7 +830,7 @@ const OutstandingTable = ({
               <TableCell>{row.referenceLabName || "—"}</TableCell>
               <TableCell>
                 {row.boxId ? (
-                  <CarbonLink href={`/SampleShipment/box/${row.boxId}`}>
+                  <CarbonLink href={`/SampleShipment/box/${row.boxKey}`}>
                     {row.boxId}
                   </CarbonLink>
                 ) : (
@@ -1098,7 +1098,7 @@ const ExpandPanel = ({
           label={intl.formatMessage({ id: "referral.expand.detail.boxId" })}
           value={
             row.boxId ? (
-              <CarbonLink href={`/SampleShipment/box/${row.boxId}`}>
+              <CarbonLink href={`/SampleShipment/box/${row.boxKey}`}>
                 {row.boxId}
               </CarbonLink>
             ) : null
