@@ -17,6 +17,7 @@ import {
 import { Printer } from "@carbon/icons-react";
 import CustomDatePicker from "../../../common/CustomDatePicker";
 import { getFromOpenElisServer } from "../../../utils/Utils";
+import GpsCoordinatesCapture from "../../../addOrder/GpsCoordinatesCapture";
 import {
   currentLocalTime,
   formatIsoDateForBackend,
@@ -359,6 +360,24 @@ const SampleCollectionCard = ({
             onChange={(e) =>
               handleFieldChange("sampleTemperature", e.target.value)
             }
+            disabled={isReadOnly}
+          />
+        </Column>
+
+        {/* V-8: clinical collection had no way to record where the specimen was
+            taken; env and vector only showed GPS read-only from the site
+            record. The same capture control the legacy screen used is reused
+            here so the coordinates land on the sample itself. */}
+        <Column lg={16} md={8} sm={4}>
+          <GpsCoordinatesCapture
+            index={sampleIndex}
+            sampleXml={{
+              gpsLatitude: sample.gpsLatitude || "",
+              gpsLongitude: sample.gpsLongitude || "",
+              gpsAccuracy: sample.gpsAccuracy || null,
+              gpsCaptureMethod: sample.gpsCaptureMethod || "",
+            }}
+            onChange={(gps) => onUpdate(sampleIndex, gps)}
             disabled={isReadOnly}
           />
         </Column>
