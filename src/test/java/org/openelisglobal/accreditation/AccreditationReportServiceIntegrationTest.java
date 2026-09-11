@@ -71,6 +71,9 @@ public class AccreditationReportServiceIntegrationTest extends BaseWebContextSen
         super.setUp();
         jdbc = new JdbcTemplate(dataSource);
         executeDataSetWithStateManagement("testdata/accreditation.xml");
+        // Earlier suites leave fixture-loaded image rows whose ids sit ahead of the
+        // sequence, so the first logo insert here would reuse a taken primary key.
+        resyncSequence("clinlims.image_seq", "clinlims.image");
         clean();
     }
 
