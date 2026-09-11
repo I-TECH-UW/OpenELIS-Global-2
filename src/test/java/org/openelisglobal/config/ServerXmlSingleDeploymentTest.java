@@ -22,9 +22,10 @@ import org.xml.sax.SAXException;
 /**
  * A WAR deploys twice when a Host's appBase scan ({@code autoDeploy} and
  * {@code deployOnStartup}, true while absent) covers a WAR an explicit
- * {@code <Context>} also declares, or when two of its contexts resolve to one
- * {@code docBase}: the second brings its own Spring root context, so each
- * {@code @Scheduled} method fires twice; two Hosts over one WAR go unflagged.
+ * {@code <Context>} declares under another name, or when two of its contexts
+ * resolve to one {@code docBase}: the second brings its own Spring root
+ * context, so each {@code @Scheduled} method fires twice; two Hosts over one
+ * WAR go unflagged.
  *
  * <p>
  * Tomcat 10.1's Host documentation says to "turn off automatic application
@@ -89,8 +90,8 @@ public class ServerXmlSingleDeploymentTest {
     }
 
     /**
-     * Tomcat defaults an absent {@code appBase} to {@code webapps}; an empty one it
-     * keeps.
+     * {@code webapps}, the documented default, for both an absent {@code appBase}
+     * and an empty one, which {@code getAttribute} reports alike.
      */
     private static String appBaseOf(Element host) {
         String appBase = host.getAttribute("appBase");
@@ -150,13 +151,14 @@ public class ServerXmlSingleDeploymentTest {
 
     /**
      * Whether the appBase scan reaches this {@code <Context>} too; a placeholder
-     * {@code appBase} is unmatchable, so it counts as containing the docBase.
+     * {@code appBase} and one of no segments are read as containing the docBase.
      */
     private static boolean resolvesInside(Element context, String appBase) {
         if (appBase.contains("${")) {
             return true;
         }
-        return endOfAppBase(resolvedDocBase(context, appBase), resolve(segments(appBase))) >= 0;
+        List<String> base = resolve(segments(appBase));
+        return base.isEmpty() || endOfAppBase(resolvedDocBase(context, appBase), base) >= 0;
     }
 
     /**
