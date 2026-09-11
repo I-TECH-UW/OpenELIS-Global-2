@@ -2128,6 +2128,8 @@
   "collect.sample.collectionConditions.placeholder": "Note any special conditions...",
   "collect.sample.collectionDate": "Collection Date",
   "collect.sample.collectionMethod": "Collection Method",
+  "collect.addTests.title": "Add Tests or Panels",
+  "collect.addTests.helper": "Add a test the clinician asked for after the order was entered, or one that only becomes appropriate with the specimen in hand.",
   "collect.consentRequired.title": "Informed consent is required",
   "collect.consentRequired.subtitle": "This laboratory requires consent to be recorded before a collection can proceed.",
   "sample.holdingLimit": "Holding time: {limit}",

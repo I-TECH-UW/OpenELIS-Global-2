@@ -23,6 +23,7 @@ import {
   NotificationKinds,
 } from "../../common/CustomNotification";
 import LabNumberField from "./sections/LabNumberField";
+import OrderAttachmentsSection from "./sections/OrderAttachmentsSection";
 import VectorSection from "./sections/VectorSection";
 import RequesterSection from "./sections/RequesterSection";
 import ProgramSection from "./sections/ProgramSection";
@@ -370,6 +371,12 @@ const VectorOrderEnter = () => {
             onSubmitSuccess={() => setShowNceForm(false)}
           />
         )}
+        {/* T: order attachments existed on the legacy screen with an
+            unchanged REST API; only the new lanes had no way in. */}
+        <OrderAttachmentsSection
+          labNumber={localLabNumber}
+          isReadOnly={isReadOnly && !isEditMode}
+        />
       </Stack>
     </OrderWorkflowLayout>
   );

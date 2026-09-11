@@ -21,6 +21,7 @@ import {
 import SampleAcceptanceReview from "./sections/SampleAcceptanceReview";
 import { getEnforcement } from "../api/sampleAcceptanceApi";
 import RequestedTestsSection from "./sections/RequestedTestsSection";
+import CollectTestPickerSection from "./sections/CollectTestPickerSection";
 import SamplesCollectionSection from "./sections/SamplesCollectionSection";
 import ConsentAccordionSection from "./sections/ConsentAccordionSection";
 import "../order-workflow.scss";
@@ -307,6 +308,13 @@ const OrderCollect = () => {
           assignTestToSample={assignTestToSample}
           removeTestFromSample={removeTestFromSample}
           sampleTypes={sampleTypes}
+          isReadOnly={isReadOnly && !isEditMode}
+        />
+
+        {/* A: the collector could see the ordered tests but not add one. */}
+        <CollectTestPickerSection
+          samples={samples}
+          setSamples={setSamples}
           isReadOnly={isReadOnly && !isEditMode}
         />
 

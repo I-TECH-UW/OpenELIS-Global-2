@@ -22,6 +22,7 @@ import {
   NotificationKinds,
 } from "../../common/CustomNotification";
 import LabNumberField from "./sections/LabNumberField";
+import OrderAttachmentsSection from "./sections/OrderAttachmentsSection";
 import PatientSearchSection from "./sections/PatientSearchSection";
 import ProgramSection from "./sections/ProgramSection";
 import ClinicalInfoSection from "./sections/ClinicalInfoSection";
@@ -382,6 +383,12 @@ const ClinicalOrderEnter = () => {
           setOrderData={setOrderData}
           isReadOnly={isReadOnly && !isEditMode}
           workflowType={WORKFLOW_TYPE}
+        />
+        {/* T: order attachments existed on the legacy screen with an
+            unchanged REST API; only the new lanes had no way in. */}
+        <OrderAttachmentsSection
+          labNumber={localLabNumber}
+          isReadOnly={isReadOnly && !isEditMode}
         />
       </Stack>
     </OrderWorkflowLayout>
