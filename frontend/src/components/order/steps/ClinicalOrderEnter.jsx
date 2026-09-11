@@ -15,6 +15,7 @@ import OrderWorkflowLayout from "../OrderWorkflowLayout";
 import SaveFailureNotice from "../SaveFailureNotice";
 import { useOrderContext } from "../OrderContext";
 import { useNewOrderReset } from "../useNewOrderReset";
+import { describeUnmetRequirements } from "../saveRequirements";
 import { NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,
@@ -117,7 +118,15 @@ const ClinicalOrderEnter = () => {
     orderData?.patientProperties?.nationalId
   );
   const hasSampleTypes = samples.some((s) => s.sampleTypeId);
-  const canSave = localLabNumber && hasPatientOrSite && hasSampleTypes;
+  const saveRequirements = [
+    {
+      met: Boolean(localLabNumber),
+      labelId: "order.save.requirement.labNumber",
+    },
+    { met: hasPatientOrSite, labelId: "order.save.requirement.patient" },
+    { met: hasSampleTypes, labelId: "order.save.requirement.sampleType" },
+  ];
+  const canSave = saveRequirements.every((requirement) => requirement.met);
 
   const canProceed =
     canSave &&
@@ -128,11 +137,7 @@ const ClinicalOrderEnter = () => {
       addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({
-          id: "order.save.incomplete",
-          defaultMessage:
-            "Please add a patient and at least one sample type before saving.",
-        }),
+        message: describeUnmetRequirements(intl, saveRequirements),
       });
       setNotificationVisible(true);
       return;
@@ -180,11 +185,7 @@ const ClinicalOrderEnter = () => {
       addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({
-          id: "order.save.incomplete",
-          defaultMessage:
-            "Please add a patient and at least one sample type before saving.",
-        }),
+        message: describeUnmetRequirements(intl, saveRequirements),
       });
       setNotificationVisible(true);
       return;

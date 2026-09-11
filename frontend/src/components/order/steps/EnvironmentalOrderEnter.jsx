@@ -16,6 +16,7 @@ import SaveFailureNotice from "../SaveFailureNotice";
 import InlineNceForm from "../../nonconform/common/InlineNceForm";
 import { useOrderContext } from "../OrderContext";
 import { useNewOrderReset } from "../useNewOrderReset";
+import { describeUnmetRequirements } from "../saveRequirements";
 import { NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,
@@ -124,8 +125,19 @@ const EnvironmentalOrderEnter = () => {
   const allSamplesHaveTests = samples
     .filter((s) => s.sampleTypeId)
     .every((s) => (s.tests?.length || 0) + (s.panels?.length || 0) > 0);
-  const canSave =
-    localLabNumber && hasPatientOrSite && hasSampleTypes && allSamplesHaveTests;
+  const saveRequirements = [
+    {
+      met: Boolean(localLabNumber),
+      labelId: "order.save.requirement.labNumber",
+    },
+    { met: hasPatientOrSite, labelId: "order.save.requirement.samplingSite" },
+    { met: hasSampleTypes, labelId: "order.save.requirement.sampleType" },
+    {
+      met: hasSampleTypes && allSamplesHaveTests,
+      labelId: "order.save.requirement.testsPerSample",
+    },
+  ];
+  const canSave = saveRequirements.every((requirement) => requirement.met);
   const canProceed = canSave;
 
   // Stamp collection date/time on samples that don't already have one.
@@ -155,11 +167,7 @@ const EnvironmentalOrderEnter = () => {
       addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({
-          id: "order.save.incomplete",
-          defaultMessage:
-            "Please add a sampling site, at least one sample type, and at least one test or panel per sample before saving.",
-        }),
+        message: describeUnmetRequirements(intl, saveRequirements),
       });
       setNotificationVisible(true);
       return;
@@ -209,11 +217,7 @@ const EnvironmentalOrderEnter = () => {
       addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({
-          id: "order.save.incomplete",
-          defaultMessage:
-            "Please add a sampling site, at least one sample type, and at least one test or panel per sample before saving.",
-        }),
+        message: describeUnmetRequirements(intl, saveRequirements),
       });
       setNotificationVisible(true);
       return;

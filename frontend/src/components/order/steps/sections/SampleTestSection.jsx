@@ -1003,20 +1003,18 @@ const SampleTestSection = ({
                           onClick={() => handleDuplicateSample(sampleIndex)}
                           disabled={isReadOnly}
                         />
-                        {samples.length > 1 && (
-                          <Button
-                            kind="ghost"
-                            size="sm"
-                            hasIconOnly
-                            iconDescription={intl.formatMessage({
-                              id: "sample.remove.action",
-                              defaultMessage: "Remove Sample",
-                            })}
-                            renderIcon={TrashCan}
-                            onClick={() => handleRemoveSample(sampleIndex)}
-                            disabled={isReadOnly}
-                          />
-                        )}
+                        <Button
+                          kind="ghost"
+                          size="sm"
+                          hasIconOnly
+                          iconDescription={intl.formatMessage({
+                            id: "sample.remove.action",
+                            defaultMessage: "Remove Sample",
+                          })}
+                          renderIcon={TrashCan}
+                          onClick={() => handleRemoveSample(sampleIndex)}
+                          disabled={isReadOnly}
+                        />
                       </td>
                     </tr>
                     {isExpanded && sample.sampleTypeId && (
@@ -1262,12 +1260,17 @@ const SampleTestSection = ({
       <h4 className="section-title">
         <FormattedMessage id="label.button.sample" defaultMessage="Sample" />
       </h4>
-      <p className="helper-text">
-        <FormattedMessage
-          id="sample.optional.info"
-          defaultMessage="Sample and test selection is optional at this step. Tests and sample type can be specified later during collection."
-        />
-      </p>
+      {/* Only the clinical lane has a Collect step to defer this to; telling an
+          environmental or vector user they can specify it "later during
+          collection" points at a step their workflow does not have. */}
+      {workflowType === "clinical" && (
+        <p className="helper-text">
+          <FormattedMessage
+            id="sample.optional.info"
+            defaultMessage="Sample and test selection is optional at this step. Tests and sample type can be specified later during collection."
+          />
+        </p>
+      )}
 
       {/* Sample Cards — only render regular (non-QC), non-rejected samples at top
           level. Rejected/resampled specimens are read-only in the QA intake-
@@ -1295,24 +1298,22 @@ const SampleTestSection = ({
                   </>
                 )}
               </h5>
-              {samples.length > 1 && (
-                <Link
-                  onClick={() => handleRemoveSample(sampleIndex)}
-                  disabled={isReadOnly}
-                >
-                  {workflowType === "vector" ? (
-                    <FormattedMessage
-                      id="vector.animalOrganism.remove"
-                      defaultMessage="Remove Animal/Organism"
-                    />
-                  ) : (
-                    <FormattedMessage
-                      id="sample.remove.action"
-                      defaultMessage="Remove Sample"
-                    />
-                  )}
-                </Link>
-              )}
+              <Link
+                onClick={() => handleRemoveSample(sampleIndex)}
+                disabled={isReadOnly}
+              >
+                {workflowType === "vector" ? (
+                  <FormattedMessage
+                    id="vector.animalOrganism.remove"
+                    defaultMessage="Remove Animal/Organism"
+                  />
+                ) : (
+                  <FormattedMessage
+                    id="sample.remove.action"
+                    defaultMessage="Remove Sample"
+                  />
+                )}
+              </Link>
             </div>
 
             <Grid>

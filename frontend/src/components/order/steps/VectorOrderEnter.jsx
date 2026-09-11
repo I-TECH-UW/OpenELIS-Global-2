@@ -16,6 +16,7 @@ import SaveFailureNotice from "../SaveFailureNotice";
 import InlineNceForm from "../../nonconform/common/InlineNceForm";
 import { useOrderContext } from "../OrderContext";
 import { useNewOrderReset } from "../useNewOrderReset";
+import { describeUnmetRequirements } from "../saveRequirements";
 import { NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,
@@ -116,7 +117,18 @@ const VectorOrderEnter = () => {
     envFields.vecOrganismGroupId
   );
   const hasSampleTypes = samples.some((s) => s.sampleTypeId);
-  const canSave = localLabNumber && hasCollectionSite && hasSampleTypes;
+  const saveRequirements = [
+    {
+      met: Boolean(localLabNumber),
+      labelId: "order.save.requirement.labNumber",
+    },
+    {
+      met: hasCollectionSite,
+      labelId: "order.save.requirement.collectionSite",
+    },
+    { met: hasSampleTypes, labelId: "order.save.requirement.sampleType" },
+  ];
+  const canSave = saveRequirements.every((requirement) => requirement.met);
   const canProceed = canSave;
 
   const handleSave = async () => {
@@ -124,11 +136,7 @@ const VectorOrderEnter = () => {
       addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({
-          id: "order.save.incomplete",
-          defaultMessage:
-            "Please add a collection site and at least one sample type before saving.",
-        }),
+        message: describeUnmetRequirements(intl, saveRequirements),
       });
       setNotificationVisible(true);
       return;
@@ -177,11 +185,7 @@ const VectorOrderEnter = () => {
       addNotification({
         kind: NotificationKinds.error,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({
-          id: "order.save.incomplete",
-          defaultMessage:
-            "Please add a collection site and at least one sample type before saving.",
-        }),
+        message: describeUnmetRequirements(intl, saveRequirements),
       });
       setNotificationVisible(true);
       return;
