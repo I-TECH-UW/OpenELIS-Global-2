@@ -428,6 +428,18 @@ public class TestResultItem implements ResultItem, Serializable {
     private String qcStatus;
     private String qcDetail;
 
+    /**
+     * FR-V2.3-04: the row's scheme captures who ran the sample, so result entry
+     * shows the Analyst column for it.
+     */
+    private boolean eqaPerAnalyst = false;
+
+    /** The scheme the Analyst picker reads its eligible-analyst list from. */
+    private String eqaSchemeId;
+
+    /** The analyst chosen at result entry; round-trips back on save. */
+    private String eqaAnalystId;
+
     private ReferralItem referralItem;
     private ResultFileForm resultFile;
 
@@ -1205,6 +1217,30 @@ public class TestResultItem implements ResultItem, Serializable {
 
     public void setEqaPriority(String eqaPriority) {
         this.eqaPriority = eqaPriority;
+    }
+
+    public boolean getEqaPerAnalyst() {
+        return eqaPerAnalyst;
+    }
+
+    public void setEqaPerAnalyst(boolean eqaPerAnalyst) {
+        this.eqaPerAnalyst = eqaPerAnalyst;
+    }
+
+    public String getEqaSchemeId() {
+        return eqaSchemeId;
+    }
+
+    public void setEqaSchemeId(String eqaSchemeId) {
+        this.eqaSchemeId = eqaSchemeId;
+    }
+
+    public String getEqaAnalystId() {
+        return eqaAnalystId;
+    }
+
+    public void setEqaAnalystId(String eqaAnalystId) {
+        this.eqaAnalystId = eqaAnalystId;
     }
 
     public String getQualifiedDictionaryId() {

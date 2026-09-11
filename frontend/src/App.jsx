@@ -27,12 +27,19 @@ import AddLocationPage from "./components/storage/pages/AddLocationPage";
 import AddBoxPage from "./components/storage/pages/AddBoxPage";
 import AlertsDashboard from "./components/alerts/AlertsDashboard";
 import EQAProgramManagement from "./components/eqa/EQAProgram/ProgramManagement";
-import EQADistributionDashboard from "./components/eqa/EQADistributionDashboard";
-import CreateDistribution from "./components/eqa/EQADistribution/CreateDistribution";
-import EQAOrdersPage from "./components/eqa/EQAOrdersPage";
+import MyCyclesPage from "./components/eqa/MyCycles/MyCyclesPage";
+import ProviderSchemeList from "./components/eqa/Provider/ProviderSchemeList";
+import ParticipantPerformance from "./components/eqa/Provider/ParticipantPerformance";
+import CycleWizard from "./components/eqa/Provider/CycleWizard";
+import ProviderWorkbenchPage from "./components/eqa/Provider/Workbench/ProviderWorkbenchPage";
+import InHousePanelsPage from "./components/eqa/InHouse/InHousePanelsPage";
+import FollowUpQueuePage from "./components/eqa/FollowUp/FollowUpQueuePage";
+import ProviderFollowupRegister from "./components/eqa/FollowUp/ProviderFollowupRegister";
+import LabPerformancePage from "./components/eqa/Performance/LabPerformancePage";
+import AnalystCompetencyPage from "./components/eqa/Competency/AnalystCompetencyPage";
+import BlindingWizard from "./components/eqa/InHouse/BlindingWizard";
 import MyProgramsPage from "./components/eqa/MyProgramsPage";
 import EQAParticipantsPage from "./components/eqa/EQAParticipantsPage";
-import EQAResultsPage from "./components/eqa/EQAResultsPage";
 import QAPlaceholder from "./components/qa/QAPlaceholder";
 import QAOverview from "./components/qa/overview/QAOverview";
 import QIDashboard from "./components/qa/qi/QIDashboard";
@@ -845,6 +852,7 @@ export default function App() {
                   exact
                   render={() => <NonConformIndex form="NceDashboard" />}
                   role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  permission="qa.view.eqa"
                 />
                 <SecureRoute
                   path="/ReportNonConformingEvent"
@@ -853,6 +861,7 @@ export default function App() {
                     <NonConformIndex form="ReportNonConformingEvent" />
                   )}
                   role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  permission="qa.view.eqa"
                 />
                 <SecureRoute
                   path="/ViewNonConformingEvent"
@@ -861,6 +870,7 @@ export default function App() {
                     <NonConformIndex form="ViewNonConformingEvent" />
                   )}
                   role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  permission="qa.view.eqa"
                 />
 
                 <SecureRoute
@@ -868,6 +878,7 @@ export default function App() {
                   exact
                   render={() => <NonConformIndex form="NCECorrectiveAction" />}
                   role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  permission="qa.view.eqa"
                 />
 
                 <SecureRoute
@@ -902,70 +913,197 @@ export default function App() {
                   role={[Roles.RECEPTION, Roles.RESULTS]}
                 />
                 {/* QA v0.5 IA rehome (OGC-691): EQA pages moved to /qa/eqa/* */}
-                <Redirect exact from="/EQAOrders" to="/qa/eqa/orders" />
+                <Redirect exact from="/EQAOrders" to="/qa/eqa/my-cycles" />
                 <Redirect
                   exact
                   from="/EQAMyPrograms"
                   to="/qa/eqa/my-programs"
                 />
                 <Redirect exact from="/EQAManagement" to="/qa/eqa/management" />
-                <Redirect exact from="/EQAResults" to="/qa/eqa/results" />
                 <Redirect
                   exact
                   from="/EQAParticipants"
                   to="/qa/eqa/participants"
                 />
                 <Redirect
-                  exact
-                  from="/EQADistribution/create"
-                  to="/qa/eqa/distribution/create"
+                  from="/EQADistribution"
+                  to="/qa/eqa/provider/schemes"
                 />
+                {/* EQA V2 absorbed the V1 order list and distribution pages (OGC-608):
+                    orders live on My Cycles, distributions are provider cycles. The
+                    old URLs redirect for one release so bookmarks keep working. */}
+                <Redirect exact from="/qa/eqa/orders" to="/qa/eqa/my-cycles" />
+                {/* The V1 Results & Analysis page listed the same /rest/eqa/orders
+                    My Cycles reads, under a name it did not earn: its statistics
+                    half had already been disconnected. Scoring lives on the
+                    provider workbench and analysis in the participant report. */}
+                <Redirect exact from="/qa/eqa/results" to="/qa/eqa/my-cycles" />
+                <Redirect exact from="/EQAResults" to="/qa/eqa/my-cycles" />
+                <Redirect
+                  from="/qa/eqa/distribution"
+                  to="/qa/eqa/provider/schemes"
+                />
+                {/* qa/019 menu row (T-12) ships the FRS path; page lives in the
+                    /qa/eqa/* family with its V1 siblings (T-24 card note). */}
                 <Redirect
                   exact
-                  from="/EQADistribution"
-                  to="/qa/eqa/distribution"
+                  from="/eqa/participant/cycles"
+                  to="/qa/eqa/my-cycles"
                 />
                 <SecureRoute
-                  path="/qa/eqa/orders"
+                  path="/qa/eqa/my-cycles"
                   exact
-                  render={() => <EQAOrdersPage />}
-                  role={[Roles.RECEPTION, Roles.RESULTS]}
+                  render={() => <MyCyclesPage />}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
                 />
                 <SecureRoute
                   path="/qa/eqa/my-programs"
                   exact
                   render={() => <MyProgramsPage />}
-                  role={[Roles.RECEPTION, Roles.RESULTS]}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
                 />
                 <SecureRoute
                   path="/qa/eqa/management"
                   exact
                   render={() => <EQAProgramManagement />}
-                  role={[Roles.RECEPTION, Roles.RESULTS]}
-                />
-                <SecureRoute
-                  path="/qa/eqa/results"
-                  exact
-                  render={() => <EQAResultsPage />}
-                  role={[Roles.RECEPTION, Roles.RESULTS]}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
                 />
                 <SecureRoute
                   path="/qa/eqa/participants"
                   exact
                   render={() => <EQAParticipantsPage />}
-                  role={[Roles.RECEPTION, Roles.RESULTS]}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
+                />
+                {/* Provider lane (T-24 + T-25): the scheme list is the entry
+                    point qa/030 points the menu row at, the wizard creates a
+                    cycle, and the workbenches run the one it created. */}
+                <SecureRoute
+                  path="/qa/eqa/provider/schemes/:schemeId/cycles/new"
+                  exact
+                  render={() => <CycleWizard />}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
+                />
+                {/* FR-V2.5-05 participant performance: the trend the workbench's
+                    per-cycle view cannot show. Declared before the bare scheme
+                    list so the more specific path wins. */}
+                <SecureRoute
+                  path="/qa/eqa/provider/schemes/:schemeId/performance"
+                  exact
+                  render={() => <ParticipantPerformance />}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
+                />
+                {/* Both of these 404'd after the provider lane moved: the FRS path is
+                    what qa/019 seeded into the menu, and /provider/workbench is the URL
+                    the cycle picker shipped at before the scheme list replaced it. */}
+                <Redirect
+                  exact
+                  from="/eqa/management/provider/schemes"
+                  to="/qa/eqa/provider/schemes"
+                />
+                <Redirect
+                  exact
+                  from="/qa/eqa/provider/workbench"
+                  to="/qa/eqa/provider/schemes"
                 />
                 <SecureRoute
-                  path="/qa/eqa/distribution/create"
+                  path="/qa/eqa/provider/schemes"
                   exact
-                  render={() => <CreateDistribution />}
-                  role={[Roles.RECEPTION, Roles.RESULTS]}
+                  render={() => <ProviderSchemeList />}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
                 />
                 <SecureRoute
-                  path="/qa/eqa/distribution"
+                  path="/qa/eqa/provider/cycles/:cycleId/workbench"
                   exact
-                  render={() => <EQADistributionDashboard />}
-                  role={[Roles.RECEPTION, Roles.RESULTS]}
+                  render={() => <ProviderWorkbenchPage />}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
+                />
+                {/* Oversight lane (T-18): the follow-up queue. qa/019 seeded
+                    its menu row at the FRS path, so that path redirects here
+                    the way My Cycles does. Triage writes carry their own
+                    qa.manage.eqa guard server-side. */}
+                <Redirect
+                  exact
+                  from="/eqa/oversight/follow-up-queue"
+                  to="/qa/eqa/follow-up-queue"
+                />
+                <SecureRoute
+                  path="/qa/eqa/follow-up-queue"
+                  exact
+                  render={() => <FollowUpQueuePage />}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
+                />
+                {/* Provider-side counterpart (T-27): follow-up with other labs,
+                    which never becomes a local non-conformity. */}
+                <SecureRoute
+                  path="/qa/eqa/provider/follow-ups"
+                  exact
+                  render={() => <ProviderFollowupRegister />}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
+                />
+                {/* Lab Performance (T-20): two views of one rollup, as sibling
+                    routes rather than in-page tabs — the FRS makes these
+                    submenu children. */}
+                <Redirect
+                  exact
+                  from="/eqa/oversight/lab-performance/coverage"
+                  to="/qa/eqa/lab-performance/coverage"
+                />
+                <SecureRoute
+                  path="/qa/eqa/lab-performance/recent"
+                  exact
+                  render={() => <LabPerformancePage view="recent" />}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
+                />
+                <SecureRoute
+                  path="/qa/eqa/lab-performance/coverage"
+                  exact
+                  render={() => <LabPerformancePage view="coverage" />}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
+                />
+                {/* Analyst Competency (T-19): the last oversight menu row.
+                    qa/019 seeded it at the FRS path, which redirects here the
+                    way its two siblings do. Read-only — competency events are
+                    service-written, never posted from this page. */}
+                <Redirect
+                  exact
+                  from="/eqa/oversight/analyst-track"
+                  to="/qa/eqa/analyst-competency"
+                />
+                <SecureRoute
+                  path="/qa/eqa/analyst-competency"
+                  exact
+                  render={() => <AnalystCompetencyPage />}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
+                />
+                {/* In-house blinding (T-21): landing list, then the 4-step
+                    wizard. The wizard's writes carry their own qa.manage.eqa
+                    guard server-side, so both routes sit on the read umbrella. */}
+                <SecureRoute
+                  path="/qa/eqa/in-house/new"
+                  exact
+                  render={() => <BlindingWizard />}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
+                />
+                <SecureRoute
+                  path="/qa/eqa/in-house"
+                  exact
+                  render={() => <InHousePanelsPage />}
+                  role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  permission="qa.view.eqa"
                 />
                 {/* QA menu (OGC-688): Overview shell + placeholder leaves.
                     No pillar-landing routes: sidenav parents expand-only
@@ -1051,6 +1189,7 @@ export default function App() {
                     <NonConformIndex form="ViewNonConformingEvent" />
                   )}
                   role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  permission="qa.view.qms"
                 />
                 <SecureRoute
                   path="/qa/qms/audit-trail"

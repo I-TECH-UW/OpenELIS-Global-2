@@ -1,7 +1,6 @@
 package org.openelisglobal.shipment;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -48,9 +47,11 @@ public class ShippingBoxFhirTransformTest extends BaseWebContextSensitiveTest {
         assertEquals(SupplyDeliveryStatus.INPROGRESS, supplyDelivery.getStatus());
         assertEquals("BOX-TEST-0001", supplyDelivery.getIdentifierFirstRep().getValue());
 
-        // no Organization reference (the HAPI-0931 regression), display only
+        // no Organization reference (the HAPI-0931 regression): the destination points
+        // at a contained Location, which is the only reference type R4 allows here
         assertNotNull(supplyDelivery.getDestination());
-        assertFalse("destination must not carry a resource reference", supplyDelivery.getDestination().hasReference());
+        assertTrue("destination must reference a contained Location, never an Organization",
+                supplyDelivery.getDestination().getReference().startsWith("#"));
         assertEquals("Test Org", supplyDelivery.getDestination().getDisplay());
 
         // org UUID lives in the extension
@@ -75,7 +76,7 @@ public class ShippingBoxFhirTransformTest extends BaseWebContextSensitiveTest {
 
         SupplyDelivery supplyDelivery = shippingBoxFhirTransform.transformToSupplyDelivery(box);
 
-        assertFalse(supplyDelivery.getDestination().hasReference());
+        assertTrue(supplyDelivery.getDestination().getReference().startsWith("#"));
         assertEquals("Unmatched Org", supplyDelivery.getDestination().getDisplay());
         assertEquals("no UUID → no destination-org extension", null,
                 supplyDelivery.getExtensionByUrl(EXT_DESTINATION_ORG));
