@@ -59,23 +59,29 @@
         </preConditions>
         <comment>
             Extend the alert_type CHECK with EQA_SUBMISSION_FAILED. The Java enum alone is
-            not enough: alert_type is guarded by a DB CHECK (last set by
-            3.5.x.x/070-critical-result-alert-type.xml), so the insert that reports a failed
-            submission would itself fail — the one alert a lab must not miss.
+            not enough: alert_type is guarded by a DB CHECK, so the insert that reports a
+            failed submission would itself fail — the one alert a lab must not miss.
+
+            Postgres cannot extend a CHECK in place, so this redeclares it as the union of
+            every AlertType constant. This changeset runs after
+            3.5.x.x/092-freezer-humidity-alert-type.xml, so it is the last word on the
+            constraint: a list narrower than 092's would reject the freezer, referral and
+            microbiology alerts that changeset admits. Keep this list equal to AlertType.
         </comment>
         <sql>
             ALTER TABLE clinlims.alert DROP CONSTRAINT IF EXISTS chk_alert_type;
             ALTER TABLE clinlims.alert ADD CONSTRAINT chk_alert_type
             CHECK (alert_type IN (
-            'FREEZER_TEMPERATURE', 'EQUIPMENT_FAILURE', 'INVENTORY_LOW', 'SAMPLE_TRACKING', 'OTHER',
-            'EQA_DEADLINE', 'SAMPLE_EXPIRATION', 'STAT_UPCOMING', 'STAT_OVERDUE', 'CRITICAL_UNACKNOWLEDGED',
-            'CRITICAL_RESULT', 'EQA_SUBMISSION_FAILED'
+            'FREEZER_TEMPERATURE', 'FREEZER_HUMIDITY', 'FREEZER_OFFLINE', 'EQUIPMENT_FAILURE', 'INVENTORY_LOW',
+            'SAMPLE_TRACKING', 'OTHER', 'EQA_DEADLINE', 'SAMPLE_EXPIRATION', 'STAT_UPCOMING', 'STAT_OVERDUE',
+            'CRITICAL_UNACKNOWLEDGED', 'REQUIRED_BY_DEADLINE', 'REFERRAL_CRITICAL_RESULT', 'REFERRAL_REJECTED',
+            'CRITICAL_RESULT', 'MICROBIOLOGY_CRITICAL', 'EQA_SUBMISSION_FAILED'
             ));
         </sql>
         <rollback>
             <sql>
-                <!-- These alerts name a feature that is being removed, and the narrow
-                     CHECK 3.5.x.x/070 owns cannot come back while they are on file.
+                <!-- These alerts name a feature that is being removed, and the CHECK
+                     3.5.x.x/092 owns cannot come back while they are on file.
                      Unlike the state-transition rows, the alert table survives the
                      rollback, so this is a real deletion: it is scoped to the one
                      alert type this changeset introduced. -->
@@ -84,9 +90,10 @@
                 ALTER TABLE clinlims.alert DROP CONSTRAINT IF EXISTS chk_alert_type;
                 ALTER TABLE clinlims.alert ADD CONSTRAINT chk_alert_type
                 CHECK (alert_type IN (
-                'FREEZER_TEMPERATURE', 'EQUIPMENT_FAILURE', 'INVENTORY_LOW', 'SAMPLE_TRACKING', 'OTHER',
-                'EQA_DEADLINE', 'SAMPLE_EXPIRATION', 'STAT_UPCOMING', 'STAT_OVERDUE', 'CRITICAL_UNACKNOWLEDGED',
-                'CRITICAL_RESULT'
+                'FREEZER_TEMPERATURE', 'FREEZER_HUMIDITY', 'FREEZER_OFFLINE', 'EQUIPMENT_FAILURE', 'INVENTORY_LOW',
+                'SAMPLE_TRACKING', 'OTHER', 'EQA_DEADLINE', 'SAMPLE_EXPIRATION', 'STAT_UPCOMING', 'STAT_OVERDUE',
+                'CRITICAL_UNACKNOWLEDGED', 'REQUIRED_BY_DEADLINE', 'REFERRAL_CRITICAL_RESULT', 'REFERRAL_REJECTED',
+                'CRITICAL_RESULT', 'MICROBIOLOGY_CRITICAL'
                 ));
             </sql>
         </rollback>

@@ -13,7 +13,6 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpSession;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -59,9 +58,6 @@ public class EQACycleRestControllerTest {
     @Mock
     private HttpServletRequest request;
 
-    @Mock
-    private HttpSession session;
-
     @InjectMocks
     private EQACycleRestController controller;
 
@@ -69,8 +65,7 @@ public class EQACycleRestControllerTest {
     public void setUp() {
         UserSessionData usd = new UserSessionData();
         usd.setSytemUserId((int) SESSION_USER_ID);
-        when(request.getSession()).thenReturn(session);
-        when(session.getAttribute(IActionConstants.USER_SESSION_DATA)).thenReturn(usd);
+        when(request.getAttribute(IActionConstants.USER_SESSION_DATA)).thenReturn(usd);
         when(cycleService.transition(anyLong(), any(), any(), any(), any(), any(), any(), anyString()))
                 .thenReturn(new EQACycle());
     }
