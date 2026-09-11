@@ -644,6 +644,10 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
       // Pass environmentalFields for GPS fallback in environmental workflow
       const envFields = orderData?.sampleOrderItems?.environmentalFields || {};
       const effectiveSamples = samplesOverride || samples;
+      // Only the decoupled entry step may legitimately persist no specimens;
+      // every other save that carries a sample type must produce sample_items.
+      const expectsSampleItems =
+        !orderEntryOnly && effectiveSamples.some((s) => s.sampleTypeId);
       const sampleXML = buildSampleXML(effectiveSamples, envFields);
       const referralItems = buildReferralItems(effectiveSamples);
       const useReferral = referralItems.length > 0;
@@ -771,12 +775,26 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
                         },
                       }));
                     }
+                    // A 200 is not proof the specimens were written. When this
+                    // save was meant to create sample_items, the reload has to
+                    // show them; otherwise the screen would report success over
+                    // an order that persisted nothing.
+                    const reloadedSamples = response?.samples || [];
+                    if (expectsSampleItems && reloadedSamples.length === 0) {
+                      // A message bundle key — SaveFailureNotice resolves it,
+                      // the same way it resolves the server's own keys.
+                      setSaveStatus(SaveStatus.ERROR);
+                      setError("order.save.notPersisted");
+                      setIsDirty(true);
+                      reject(new Error("order.save.notPersisted"));
+                      return;
+                    }
                     // Return the freshly-loaded samples (with sampleItemIds) so
                     // callers can immediately use them for downstream actions
                     // like storage assignment, without waiting for the next render.
                     resolve({
                       success: true,
-                      samples: response?.samples || [],
+                      samples: reloadedSamples,
                     });
                   },
                 );
@@ -924,6 +942,18 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
                 async (response) => {
                   if (response) {
                     const sampleId = response.id;
+                    // The entry step legitimately persists only
+                    // sample_type_requests, but the order itself must exist.
+                    // Without this the screen reported a saved order that the
+                    // server never created.
+                    if (!sampleId) {
+                      setSaveStatus(SaveStatus.ERROR);
+                      setError("order.save.notPersisted");
+                      setIsDirty(true);
+                      setIsSubmitting(false);
+                      reject(new Error("order.save.notPersisted"));
+                      return;
+                    }
                     setOrderId(sampleId);
 
                     // Pull the persisted sample_items back into context so
