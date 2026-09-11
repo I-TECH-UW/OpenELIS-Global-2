@@ -24,7 +24,12 @@ import {
   buildSubmissionSampleOrderItems,
   buildSubmittedMicrobiologyOrderDetail,
 } from "./orderDataUtils";
-import { formatIsoDateForBackend, normalizeDateForState } from "./dateUtils";
+import {
+  currentLocalTime,
+  formatIsoDateForBackend,
+  normalizeDateForState,
+  todayLocalIso,
+} from "./dateUtils";
 
 /**
  * OrderContext - Shared state for the decoupled sample collection workflow.
@@ -833,8 +838,8 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
     let entrySampleXML = "";
     if (workflowType === "vector" && samples.some((s) => s.sampleTypeId)) {
       const now = new Date();
-      const todayIso = now.toISOString().slice(0, 10); // YYYY-MM-DD
-      const currentTime = now.toTimeString().slice(0, 5); // HH:MM
+      const todayIso = todayLocalIso(now);
+      const currentTime = currentLocalTime(now);
       const providerFirst =
         orderData?.sampleOrderItems?.providerFirstName || "";
       const providerLast = orderData?.sampleOrderItems?.providerLastName || "";

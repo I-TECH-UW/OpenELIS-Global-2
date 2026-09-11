@@ -17,9 +17,11 @@ import {
 import { Printer } from "@carbon/icons-react";
 import CustomDatePicker from "../../../common/CustomDatePicker";
 import {
+  currentLocalTime,
   formatIsoDateForBackend,
   formatPickerDateForIso,
   isCollectionDateBeforeAdmissionDate,
+  todayLocalIso,
 } from "../../dateUtils";
 
 /**
@@ -76,17 +78,10 @@ const SampleCollectionCard = ({
       const updates = {};
 
       if (!sample.collectionDate) {
-        const now = new Date();
-        const yyyy = now.getFullYear();
-        const mm = String(now.getMonth() + 1).padStart(2, "0");
-        const dd = String(now.getDate()).padStart(2, "0");
-        updates.collectionDate = `${yyyy}-${mm}-${dd}`;
+        updates.collectionDate = todayLocalIso();
       }
       if (!sample.collectionTime) {
-        const now = new Date();
-        const hh = String(now.getHours()).padStart(2, "0");
-        const min = String(now.getMinutes()).padStart(2, "0");
-        updates.collectionTime = `${hh}:${min}`;
+        updates.collectionTime = currentLocalTime();
       }
       if (!sample.receivedDate && serverReceivedDate) {
         updates.receivedDate = serverReceivedDate;

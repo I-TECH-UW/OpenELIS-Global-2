@@ -9,6 +9,19 @@ import {
 export const configuredDatePattern = (dateLocale) =>
   dateLocale === "fr-FR" ? "dd/MM/yyyy" : "MM/dd/yyyy";
 
+/**
+ * Today in the browser's own time zone as `yyyy-MM-dd`.
+ *
+ * `toISOString()` reports UTC, which puts a lab west of Greenwich a day behind
+ * and a lab east of it a day ahead for part of every day. Collection and
+ * receipt dates are wall-clock events at the site, so they are stamped from
+ * local time.
+ */
+export const todayLocalIso = (now = new Date()) => format(now, "yyyy-MM-dd");
+
+/** The current wall-clock time at the site as `HH:mm`. */
+export const currentLocalTime = (now = new Date()) => format(now, "HH:mm");
+
 export const formatIsoDateForBackend = (isoDate, dateLocale) => {
   if (!isoDate) {
     return "";

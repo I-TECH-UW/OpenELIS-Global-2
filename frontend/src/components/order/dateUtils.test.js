@@ -1,9 +1,11 @@
 import { describe, expect, it } from "vitest";
 import {
+  currentLocalTime,
   daysBetweenIsoDates,
   formatIsoDateForBackend,
   isCollectionDateBeforeAdmissionDate,
   normalizeDateForState,
+  todayLocalIso,
 } from "./dateUtils";
 
 describe("order date utilities", () => {
@@ -31,5 +33,18 @@ describe("order date utilities", () => {
   it("computes calendar days between admission and collection", () => {
     expect(daysBetweenIsoDates("2026-08-03", "2026-08-07")).toBe(4);
     expect(daysBetweenIsoDates("", "2026-08-07")).toBeNull();
+  });
+
+  // OGC-1201 O: vector orders were stamped from toISOString(), i.e. UTC, so a
+  // late-evening collection west of Greenwich was stored as the next day.
+  it("stamps the site's own calendar day, not the UTC one", () => {
+    const lateEveningLocal = new Date(2026, 7, 13, 23, 30);
+
+    expect(todayLocalIso(lateEveningLocal)).toBe("2026-08-13");
+    expect(currentLocalTime(lateEveningLocal)).toBe("23:30");
+  });
+
+  it("stamps an early-morning time with a padded hour", () => {
+    expect(currentLocalTime(new Date(2026, 7, 13, 6, 5))).toBe("06:05");
   });
 });
