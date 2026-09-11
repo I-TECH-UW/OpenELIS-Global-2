@@ -1,27 +1,26 @@
-import React, { useContext, useState, useEffect, useRef } from "react";
+import React, { useContext, useState, useEffect, useCallback } from "react";
 import { useHistory, useLocation } from "react-router-dom";
 import { useIntl, FormattedMessage } from "react-intl";
 import {
   Grid,
   Column,
   Stack,
-  TextInput,
   Button,
   Tile,
   Accordion,
   AccordionItem,
-  Link,
 } from "@carbon/react";
 import { Printer } from "@carbon/icons-react";
 import OrderWorkflowLayout from "../OrderWorkflowLayout";
 import SaveFailureNotice from "../SaveFailureNotice";
 import { useOrderContext } from "../OrderContext";
+import { useNewOrderReset } from "../useNewOrderReset";
 import { NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,
   NotificationKinds,
 } from "../../common/CustomNotification";
-import { getFromOpenElisServer } from "../../utils/Utils";
+import LabNumberField from "./sections/LabNumberField";
 import PatientSearchSection from "./sections/PatientSearchSection";
 import ProgramSection from "./sections/ProgramSection";
 import ClinicalInfoSection from "./sections/ClinicalInfoSection";
@@ -30,12 +29,12 @@ import SampleTestSection from "./sections/SampleTestSection";
 import "../order-workflow.scss";
 
 const WORKFLOW_TYPE = "clinical";
+const WORKFLOW_PREFIX = "/order/clinical";
 
 const ClinicalOrderEnter = () => {
   const intl = useIntl();
   const history = useHistory();
   const location = useLocation();
-  const componentMounted = useRef(true);
   const {
     orderData,
     setOrderData,
@@ -48,32 +47,21 @@ const ClinicalOrderEnter = () => {
     markStepComplete,
     isReadOnly,
     isEditMode,
-    resetOrder,
   } = useOrderContext();
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
 
+  const isNewOrder = useNewOrderReset(WORKFLOW_PREFIX);
+
   // Initialise empty — populated by the sync effect below after the mount
-  // reset guard runs, preventing stale cross-domain lab numbers from bleeding in.
+  // reset runs, preventing stale cross-domain lab numbers from bleeding in.
   const [localLabNumber, setLocalLabNumber] = useState("");
-  const [isGeneratingLabNo, setIsGeneratingLabNo] = useState(false);
   const [printLabelsExpanded, setPrintLabelsExpanded] = useState(false);
   const [errors, setErrors] = useState({});
   const [phoneValidation, setPhoneValidation] = useState({
     primaryPhone: { body: "", status: true },
     contactPhone: { body: "", status: true },
   });
-
-  // Reset on mount for new orders. Only skip reset when ?order= is present
-  // AND the URL path belongs to this workflow — prevents a stale ?order= from
-  // a different domain blocking the reset when switching between workflows.
-  useEffect(() => {
-    const orderParam = new URLSearchParams(location.search).get("order");
-    const pathMatchesWorkflow = location.pathname.startsWith("/order/clinical");
-    if (!isEditMode && !(orderParam && pathMatchesWorkflow)) {
-      resetOrder();
-    }
-  }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   // Seed workflowType into orderData on mount (or when editing an existing order
   // that already has a workflowType — keep it so it is not reset on re-render).
@@ -101,7 +89,7 @@ const ClinicalOrderEnter = () => {
   // Sync local lab number when context changes (e.g., order loaded from dashboard)
   useEffect(() => {
     const contextLabNo = labNumber || orderData?.sampleOrderItems?.labNo;
-    const pathMatchesWorkflow = location.pathname.startsWith("/order/clinical");
+    const pathMatchesWorkflow = location.pathname.startsWith(WORKFLOW_PREFIX);
     if (!pathMatchesWorkflow) return;
     if (contextLabNo && contextLabNo !== localLabNumber) {
       setLocalLabNumber(contextLabNo);
@@ -110,47 +98,19 @@ const ClinicalOrderEnter = () => {
     }
   }, [labNumber, orderData?.sampleOrderItems?.labNo, location.pathname]);
 
-  useEffect(() => {
-    componentMounted.current = true;
-    return () => {
-      componentMounted.current = false;
-    };
-  }, []);
-
-  const handleGenerateLabNumber = () => {
-    setIsGeneratingLabNo(true);
-    getFromOpenElisServer(
-      "/rest/SampleEntryGenerateScanProvider",
-      (response) => {
-        if (componentMounted.current) {
-          setIsGeneratingLabNo(false);
-          if (response?.body) {
-            const newLabNo = response.body;
-            setLocalLabNumber(newLabNo);
-            setOrderData({
-              ...orderData,
-              sampleOrderItems: {
-                ...orderData.sampleOrderItems,
-                labNo: newLabNo,
-              },
-            });
-          }
-        }
-      },
-    );
-  };
-
-  const handleLabNumberChange = (e) => {
-    const newLabNo = e.target.value;
-    setLocalLabNumber(newLabNo);
-    setOrderData({
-      ...orderData,
-      sampleOrderItems: {
-        ...orderData.sampleOrderItems,
-        labNo: newLabNo,
-      },
-    });
-  };
+  const handleLabNumberChange = useCallback(
+    (newLabNo) => {
+      setLocalLabNumber(newLabNo);
+      setOrderData((prev) => ({
+        ...prev,
+        sampleOrderItems: {
+          ...prev.sampleOrderItems,
+          labNo: newLabNo,
+        },
+      }));
+    },
+    [setOrderData],
+  );
 
   const hasPatientOrSite = !!(
     orderData?.patientProperties?.lastName ||
@@ -285,52 +245,14 @@ const ClinicalOrderEnter = () => {
 
           <Grid>
             <Column lg={12} md={6} sm={4}>
-              <div className="lab-number-field">
-                <TextInput
-                  id="labNumber"
-                  labelText={
-                    <span>
-                      <FormattedMessage
-                        id="order.labNumber"
-                        defaultMessage="Lab Number"
-                      />
-                      <span className="required-indicator"> *</span>
-                    </span>
-                  }
-                  value={localLabNumber}
-                  onChange={handleLabNumberChange}
-                  invalid={Boolean(fieldErrors?.["sampleOrderItems.labNo"])}
-                  invalidText={fieldErrors?.["sampleOrderItems.labNo"]}
-                  placeholder={intl.formatMessage({
-                    id: "order.labNumber.placeholder",
-                    defaultMessage: "Enter or generate lab number",
-                  })}
-                  disabled={isReadOnly && !isEditMode}
-                />
-                <Link
-                  className="generate-link"
-                  onClick={handleGenerateLabNumber}
-                  disabled={isGeneratingLabNo || (isReadOnly && !isEditMode)}
-                >
-                  {isGeneratingLabNo ? (
-                    <FormattedMessage
-                      id="generating"
-                      defaultMessage="Generating..."
-                    />
-                  ) : (
-                    <FormattedMessage
-                      id="order.labNumber.generate"
-                      defaultMessage="Generate"
-                    />
-                  )}
-                </Link>
-              </div>
-              <p className="helper-text">
-                <FormattedMessage
-                  id="order.labNumber.helper"
-                  defaultMessage="Auto-generated per existing lab number rules. Assigned here to enable tracking across all steps."
-                />
-              </p>
+              <LabNumberField
+                value={localLabNumber}
+                onLabNumberChange={handleLabNumberChange}
+                disabled={isReadOnly && !isEditMode}
+                autoGenerate={isNewOrder}
+                invalid={Boolean(fieldErrors?.["sampleOrderItems.labNo"])}
+                invalidText={fieldErrors?.["sampleOrderItems.labNo"]}
+              />
             </Column>
           </Grid>
 
