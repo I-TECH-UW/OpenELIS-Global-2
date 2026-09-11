@@ -5,6 +5,8 @@
     http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.8.xsd">
 
   <changeSet id="3.5.0-092-add-freezer-humidity-alert-type" author="mherman22">
+    <!-- Accept the published freezer-only revision; 099 upgrades its constraint. -->
+    <validCheckSum>8:9874f4ac18e40bc491bab25d06051072</validCheckSum>
     <preConditions onFail="MARK_RAN">
       <tableExists schemaName="clinlims" tableName="alert"/>
     </preConditions>

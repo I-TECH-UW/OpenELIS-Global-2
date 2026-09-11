@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.8.xsd">
+
+  <changeSet id="3.5.0-099-reconcile-freezer-microbiology-alert-types" author="pmanko">
+    <preConditions onFail="HALT">
+      <tableExists schemaName="clinlims" tableName="alert"/>
+    </preConditions>
+    <comment>The published 089/092 revisions did not include MICROBIOLOGY_CRITICAL.
+      Accepting their checksums alone does not rerun their SQL. Reconcile the constraint
+      explicitly, preserving every freezer and shared alert type and all existing rows.</comment>
+    <sql>
+      ALTER TABLE clinlims.alert DROP CONSTRAINT IF EXISTS chk_alert_type;
+      ALTER TABLE clinlims.alert ADD CONSTRAINT chk_alert_type
+      CHECK (alert_type IN (
+        'FREEZER_TEMPERATURE', 'FREEZER_HUMIDITY', 'FREEZER_OFFLINE', 'EQUIPMENT_FAILURE', 'INVENTORY_LOW',
+        'SAMPLE_TRACKING', 'OTHER', 'EQA_DEADLINE', 'SAMPLE_EXPIRATION', 'STAT_UPCOMING', 'STAT_OVERDUE',
+        'CRITICAL_UNACKNOWLEDGED', 'REQUIRED_BY_DEADLINE', 'REFERRAL_CRITICAL_RESULT', 'REFERRAL_REJECTED',
+        'CRITICAL_RESULT', 'MICROBIOLOGY_CRITICAL'
+      ));
+    </sql>
+    <rollback>
+      <!-- The preceding 092 in this release declares this same union. Keep it on
+           rollback so previously recorded microbiology alerts remain valid. -->
+      <sql>
+        ALTER TABLE clinlims.alert DROP CONSTRAINT IF EXISTS chk_alert_type;
+        ALTER TABLE clinlims.alert ADD CONSTRAINT chk_alert_type
+        CHECK (alert_type IN (
+          'FREEZER_TEMPERATURE', 'FREEZER_HUMIDITY', 'FREEZER_OFFLINE', 'EQUIPMENT_FAILURE', 'INVENTORY_LOW',
+          'SAMPLE_TRACKING', 'OTHER', 'EQA_DEADLINE', 'SAMPLE_EXPIRATION', 'STAT_UPCOMING', 'STAT_OVERDUE',
+          'CRITICAL_UNACKNOWLEDGED', 'REQUIRED_BY_DEADLINE', 'REFERRAL_CRITICAL_RESULT', 'REFERRAL_REJECTED',
+          'CRITICAL_RESULT', 'MICROBIOLOGY_CRITICAL'
+        ));
+      </sql>
+    </rollback>
+  </changeSet>
+</databaseChangeLog>
