@@ -8,7 +8,7 @@ import InlineNceForm from "../../nonconform/common/InlineNceForm";
 import OrderWorkflowLayout from "../OrderWorkflowLayout";
 import SaveFailureNotice from "../SaveFailureNotice";
 import { useOrderContext } from "../OrderContext";
-import { NotificationContext } from "../../layout/Layout";
+import { ConfigurationContext, NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,
   NotificationKinds,
@@ -61,6 +61,8 @@ const OrderCollect = () => {
 
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+  const { configurationProperties = {} } =
+    useContext(ConfigurationContext) || {};
 
   // Sample types from API
   const [showNceForm, setShowNceForm] = useState(false);
@@ -164,15 +166,23 @@ const OrderCollect = () => {
   }, [orderId]);
 
   // Validate that at least one sample with a sample type is present.
-  // Informed consent is advisory only (FRS FR-5-001/FR-5-002) — does not gate submission.
+  // Informed consent stays advisory by default, which is what FRS FR-5-001/
+  // FR-5-002 describes, but a site whose regulator requires consent before
+  // collection can turn consentRequiredForCollection on and have it gate.
+  // Environmental and vector samples have no human subject, so they capture
+  // no consent and the gate never applies to them.
   const admissionDate = orderData?.microbiologyOrderDetail?.admissionDate || "";
   const hasCollectionDateConflict = samples.some((sample) =>
     isCollectionDateBeforeAdmissionDate(sample.collectionDate, admissionDate),
   );
+  const consentRequired =
+    configurationProperties.consentRequiredForCollection === "true";
+  const consentSatisfied = !consentRequired || consentData.consentGiven;
   const canProceed =
     samples?.length > 0 &&
     samples.some((s) => s.sampleTypeId) &&
-    !hasCollectionDateConflict;
+    !hasCollectionDateConflict &&
+    consentSatisfied;
 
   // Check if we have any tests ordered
   const hasOrderedTests = samples.some(
@@ -254,6 +264,23 @@ const OrderCollect = () => {
       <SaveFailureNotice />
 
       <Stack gap={7}>
+        {consentRequired && !consentData.consentGiven && (
+          <InlineNotification
+            kind="warning"
+            title={intl.formatMessage({
+              id: "collect.consentRequired.title",
+              defaultMessage: "Informed consent is required",
+            })}
+            subtitle={intl.formatMessage({
+              id: "collect.consentRequired.subtitle",
+              defaultMessage:
+                "This laboratory requires consent to be recorded before a collection can proceed.",
+            })}
+            hideCloseButton
+            lowContrast
+          />
+        )}
+
         {/* Warning if no tests ordered */}
         {!hasOrderedTests && (
           <InlineNotification

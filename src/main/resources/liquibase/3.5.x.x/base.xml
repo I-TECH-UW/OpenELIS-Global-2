@@ -519,4 +519,7 @@
        base-changelog.xml that may redeclare chk_alert_type - it inherits 089's ordering invariant. -->
   <include relativeToChangelogFile="true" file="092-freezer-humidity-alert-type.xml"/>
 
+  <!-- Consent gating for the clinical collect step, off by default. -->
+  <include relativeToChangelogFile="true" file="099-order-consent-required.xml"/>
+
 </databaseChangeLog>
