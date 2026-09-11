@@ -10,6 +10,7 @@ import { useLocation } from "react-router-dom";
 import {
   getFromOpenElisServer,
   postToOpenElisServerFullResponse,
+  postToOpenElisServerJsonResponse,
   putToOpenElisServer,
 } from "../utils/Utils";
 import {
@@ -596,6 +597,27 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
   }, []);
 
   /**
+   * Records the deliberate decision to order without a patient, once the order
+   * exists to hang it on. Recorded rather than merely allowed: downstream
+   * consumers cannot otherwise tell a patient-less order from one whose
+   * patient was forgotten, and EQA from a clinical order that went without.
+   */
+  const recordNoPatientOverride = useCallback((labNo, sampleOrderItems) => {
+    if (!labNo || !sampleOrderItems?.noPatientOverride) {
+      return;
+    }
+    postToOpenElisServerJsonResponse(
+      `/rest/order-override/${encodeURIComponent(labNo)}`,
+      JSON.stringify({
+        overrideType: "NO_PATIENT",
+        reasonCode: sampleOrderItems.noPatientReasonCode || "MANUAL",
+        reason: sampleOrderItems.noPatientReason || "",
+      }),
+      () => {},
+    );
+  }, []);
+
+  /**
    * Reads a blocked save so the screen can show what to correct: the server's
    * message plus one entry per rejected field.
    */
@@ -734,6 +756,10 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
                       if (response.labNumber) {
                         setLabNumber(response.labNumber);
                       }
+                      recordNoPatientOverride(
+                        response.labNumber || labNo,
+                        orderData?.sampleOrderItems,
+                      );
                       // Only replace samples state when the server returns actual
                       // sample_items (which carry all field values back). The
                       // sample_type_request DTO only carries typeOfSampleId/
@@ -969,6 +995,7 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
                       return;
                     }
                     setOrderId(sampleId);
+                    recordNoPatientOverride(labNo, orderData?.sampleOrderItems);
 
                     // Pull the persisted sample_items back into context so
                     // downstream steps (Label & Store, QA, Complete) see

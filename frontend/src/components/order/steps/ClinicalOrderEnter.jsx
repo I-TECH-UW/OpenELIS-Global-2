@@ -22,6 +22,7 @@ import {
   NotificationKinds,
 } from "../../common/CustomNotification";
 import LabNumberField from "./sections/LabNumberField";
+import EqaAndNoPatientSection from "./sections/EqaAndNoPatientSection";
 import OrderAttachmentsSection from "./sections/OrderAttachmentsSection";
 import PatientSearchSection from "./sections/PatientSearchSection";
 import ProgramSection from "./sections/ProgramSection";
@@ -126,6 +127,11 @@ const ClinicalOrderEnter = () => {
     orderData?.patientProperties?.lastName ||
     orderData?.patientProperties?.nationalId
   );
+  // A recorded decision, not a silent fallthrough: an order may go without a
+  // patient when the user (or EQA) has said so and why.
+  const noPatientOverride = Boolean(
+    orderData?.sampleOrderItems?.noPatientOverride,
+  );
   const hasSampleTypes = samples.some((s) => s.sampleTypeId);
   const hasSite = Boolean(orderData?.sampleOrderItems?.referringSiteId);
   const hasProvider = Boolean(
@@ -141,7 +147,7 @@ const ClinicalOrderEnter = () => {
       labelId: "order.save.requirement.labNumber",
     },
     {
-      met: hasPatient || !patientRequired,
+      met: hasPatient || noPatientOverride || !patientRequired,
       labelId: "order.save.requirement.patient",
     },
     { met: hasSite || !siteRequired, labelId: "order.save.requirement.site" },
@@ -341,6 +347,14 @@ const ClinicalOrderEnter = () => {
             </AccordionItem>
           </Accordion>
         </Tile>
+
+        {/* AL and W: the two adjacent decisions — EQA, and no patient. */}
+        <EqaAndNoPatientSection
+          orderData={orderData}
+          setOrderData={setOrderData}
+          isReadOnly={isReadOnly && !isEditMode}
+          patientRequired={patientRequired}
+        />
 
         {/* Patient Search */}
         <PatientSearchSection

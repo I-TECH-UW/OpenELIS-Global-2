@@ -522,4 +522,8 @@
   <!-- Consent gating for the clinical collect step, off by default. -->
   <include relativeToChangelogFile="true" file="099-order-consent-required.xml"/>
 
+  <!-- One record per deliberate decision to proceed past a control on an order
+       (no patient, continue with testing). -->
+  <include relativeToChangelogFile="true" file="100-order-override-record.xml"/>
+
 </databaseChangeLog>
