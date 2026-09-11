@@ -32,7 +32,8 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
-    sourcemap: true,
+    // Maps are 40 MB against 22 MB of JS and ship readable source in the image.
+    sourcemap: false,
   },
   test: {
     alias: [
