@@ -38,7 +38,8 @@
       <column name="recorded_date" type="TIMESTAMP" defaultValueComputed="now()">
         <constraints nullable="false"/>
       </column>
-      <column name="lastupdated" type="TIMESTAMP" defaultValueComputed="now()"/>
+      <!-- BaseObject maps its lastupdated property to a last_updated column. -->
+      <column name="last_updated" type="TIMESTAMP" defaultValueComputed="now()"/>
     </createTable>
 
     <addForeignKeyConstraint

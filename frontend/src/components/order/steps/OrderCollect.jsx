@@ -176,8 +176,9 @@ const OrderCollect = () => {
   const hasCollectionDateConflict = samples.some((sample) =>
     isCollectionDateBeforeAdmissionDate(sample.collectionDate, admissionDate),
   );
+  // Published under the Property enum's name, the way REQUESTER_REQUIRED is.
   const consentRequired =
-    configurationProperties.consentRequiredForCollection === "true";
+    configurationProperties.CONSENT_REQUIRED_FOR_COLLECTION === "true";
   const consentSatisfied = !consentRequired || consentData.consentGiven;
   const canProceed =
     samples?.length > 0 &&

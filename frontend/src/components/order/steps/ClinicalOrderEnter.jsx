@@ -154,14 +154,16 @@ const ClinicalOrderEnter = () => {
     orderData?.sampleOrderItems?.noPatientOverride,
   );
   const hasSampleTypes = samples.some((s) => s.sampleTypeId);
-  const hasSite = Boolean(orderData?.sampleOrderItems?.referringSiteId);
   const hasProvider = Boolean(
     orderData?.sampleOrderItems?.providerPersonId ||
     orderData?.sampleOrderItems?.providerId,
   );
-  // These settings have always existed; the lanes just never read them, so a
-  // deployment that requires a patient, a site or a requester silently got
-  // orders without one.
+  // These settings have always existed; the lanes just never read them.
+  // SampleEntryReferralSiteNameRequired marks the field — that is all it has
+  // ever done, in the legacy screen it was written for — so it drives the
+  // asterisk that regressed, not a save gate. REQUESTER_REQUIRED is a real
+  // validation gate in the legacy flow, and PatientRequired is honoured with
+  // the recorded no-patient override as its escape hatch.
   const saveRequirements = [
     {
       met: Boolean(localLabNumber),
@@ -171,7 +173,6 @@ const ClinicalOrderEnter = () => {
       met: hasPatient || noPatientOverride || !patientRequired,
       labelId: "order.save.requirement.patient",
     },
-    { met: hasSite || !siteRequired, labelId: "order.save.requirement.site" },
     {
       met: hasProvider || !providerRequired,
       labelId: "order.save.requirement.provider",

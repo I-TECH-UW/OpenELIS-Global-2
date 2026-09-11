@@ -11,10 +11,7 @@ import {
 import { getFromOpenElisServer } from "../../../utils/Utils";
 import CustomDatePicker from "../../../common/CustomDatePicker";
 import { ConfigurationContext } from "../../../layout/Layout";
-import {
-  formatIsoDateForBackend,
-  normalizeDateForState,
-} from "../../dateUtils";
+import { formatIsoDateForBackend } from "../../dateUtils";
 
 /**
  * ClinicalInfoSection - Clinical diagnosis and payment status
@@ -78,8 +75,12 @@ const ClinicalInfoSection = ({ orderData, setOrderData, isReadOnly }) => {
       sampleOrderItems: { ...prev.sampleOrderItems, [field]: value },
     }));
 
+  // sampleOrderItems dates are held in the site's display format — that is
+  // what the server sends in currentDate and what it parses back — unlike the
+  // per-sample dates, which are ISO in state and converted on submit. Storing
+  // ISO here is rejected by the backend date parser.
   const handleDateChange = (field) => (pickerDate) =>
-    updateOrderField(field, normalizeDateForState(pickerDate, dateLocale));
+    updateOrderField(field, pickerDate || "");
 
   const testLocationCodes =
     orderData?.sampleOrderItems?.testLocationCodeList || [];

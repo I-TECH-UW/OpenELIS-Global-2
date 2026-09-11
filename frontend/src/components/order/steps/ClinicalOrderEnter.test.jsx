@@ -200,27 +200,16 @@ describe("ClinicalOrderEnter required-field configuration", () => {
     };
   });
 
-  // OGC-1201 K: neither the site nor the provider appeared in the save gate,
-  // and ClinicalOrderEnter never read the configuration at all.
-  it("blocks the save when the deployment requires a site it does not have", () => {
+  // OGC-1201 K: the provider never appeared in the save gate, and
+  // ClinicalOrderEnter never read the configuration at all.
+  //
+  // The site setting only ever marked the field — that is all it does in the
+  // legacy screen it was written for, and no server validation reads it — so
+  // it drives the asterisk, not the gate. Turning it into a gate blocks every
+  // order on the profiles that set it, which is not what it has ever meant.
+  it("does not block the save on the site marker setting", () => {
     configurationValue.configurationProperties = {
       SampleEntryReferralSiteNameRequired: "true",
-    };
-    renderEnter();
-
-    expect(screen.getByRole("button", { name: "Save Draft" })).toBeDisabled();
-  });
-
-  it("allows the save once that site is chosen", () => {
-    configurationValue.configurationProperties = {
-      SampleEntryReferralSiteNameRequired: "true",
-    };
-    orderContextValue.orderData = {
-      patientProperties: { lastName: "Ada" },
-      sampleOrderItems: {
-        referringSiteId: "7",
-        environmentalFields: { workflowType: "clinical" },
-      },
     };
     renderEnter();
 
