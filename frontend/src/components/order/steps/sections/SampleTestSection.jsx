@@ -24,6 +24,11 @@ import {
 } from "@carbon/icons-react";
 import { getFromOpenElisServer } from "../../../utils/Utils";
 import { hasCultureWorkflowTest } from "../../orderDataUtils";
+import {
+  formatHoldingMinutes,
+  holdingDeadline,
+  shortestHoldingMinutes,
+} from "../../dateUtils";
 
 const SampleTestSection = ({
   samples,
@@ -179,6 +184,36 @@ const SampleTestSection = ({
     return term
       ? panels.filter((p) => p.name?.toLowerCase().includes(term))
       : panels;
+  };
+
+  // AP: holding time is already on the per-test payload but was never shown
+  // at order time, so the limit only surfaced on Results — and there it is
+  // measured from collection rather than from lab receipt.
+  const renderHoldingLimit = (sample) => {
+    const minutes = shortestHoldingMinutes(sample.tests);
+    if (!minutes) {
+      return null;
+    }
+    const deadline = holdingDeadline(sample, sample.tests);
+    return (
+      <p className="sample-holding-limit">
+        <FormattedMessage
+          id="sample.holdingLimit"
+          defaultMessage="Holding time: {limit}"
+          values={{ limit: formatHoldingMinutes(minutes) }}
+        />
+        {deadline && (
+          <>
+            {" — "}
+            <FormattedMessage
+              id="sample.holdingLimit.testBy"
+              defaultMessage="test by {deadline}"
+              values={{ deadline: deadline.toLocaleString() }}
+            />
+          </>
+        )}
+      </p>
+    );
   };
 
   const handleAddSample = () => {
@@ -561,6 +596,7 @@ const SampleTestSection = ({
                 />
               ))}
             </div>
+            {renderHoldingLimit(sample)}
             {getFilteredTests(sampleIndex).length > 0 ? (
               <>
                 <Search
@@ -788,6 +824,12 @@ const SampleTestSection = ({
                 </th>
                 <th>
                   <FormattedMessage
+                    id="env.sample.receivedAtLab"
+                    defaultMessage="Received at Lab"
+                  />
+                </th>
+                <th>
+                  <FormattedMessage
                     id="env.sample.testsAndPanels"
                     defaultMessage="Tests & Panels"
                   />
@@ -966,6 +1008,42 @@ const SampleTestSection = ({
                           disabled={isReadOnly}
                         />
                       </td>
+                      {/* Receipt at the lab was stamped silently at save time,
+                          which recorded the order-entry moment rather than
+                          when the specimen actually arrived. Capturing it
+                          here makes it correctable and back-datable. */}
+                      <td className="env-manifest-cell">
+                        <input
+                          id={`receivedAtLab-${sampleIndex}`}
+                          type="datetime-local"
+                          className="env-manifest-datetime"
+                          aria-label={intl.formatMessage({
+                            id: "env.sample.receivedAtLab",
+                            defaultMessage: "Received at Lab",
+                          })}
+                          value={
+                            sample.receivedDate && sample.receivedTime
+                              ? `${sample.receivedDate}T${sample.receivedTime}`
+                              : sample.receivedDate || ""
+                          }
+                          onChange={(e) => {
+                            const val = e.target.value;
+                            if (val && val.includes("T")) {
+                              const [date, time] = val.split("T");
+                              handleEnvFieldsChange(sampleIndex, {
+                                receivedDate: date,
+                                receivedTime: time,
+                              });
+                            } else {
+                              handleEnvFieldsChange(sampleIndex, {
+                                receivedDate: val,
+                                receivedTime: "",
+                              });
+                            }
+                          }}
+                          disabled={isReadOnly}
+                        />
+                      </td>
                       <td className="env-manifest-cell env-manifest-cell--toggle">
                         <Button
                           kind={
@@ -1019,7 +1097,7 @@ const SampleTestSection = ({
                     </tr>
                     {isExpanded && sample.sampleTypeId && (
                       <tr className="env-manifest-row--expanded">
-                        <td colSpan={10}>
+                        <td colSpan={11}>
                           {renderTestPanelPicker(sampleIndex)}
                         </td>
                       </tr>
@@ -1597,6 +1675,7 @@ const SampleTestSection = ({
                         />
                       ))}
                     </div>
+                    {renderHoldingLimit(sample)}
                     {getFilteredTests(sampleIndex).length > 0 ? (
                       <>
                         <Search
