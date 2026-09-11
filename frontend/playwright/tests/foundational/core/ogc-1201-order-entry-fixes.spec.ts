@@ -47,6 +47,9 @@ test.describe("OGC-1201 order entry", () => {
     await page.keyboard.press("Tab");
     await expect(generate).toBeFocused();
 
+    await expect(page.locator("#labNumber")).not.toHaveValue("", {
+      timeout: NAV_TIMEOUT,
+    });
     const before = await page.locator("#labNumber").inputValue();
     await page.keyboard.press("Enter");
     await expect(page.locator("#labNumber")).not.toHaveValue(before, {
@@ -75,16 +78,20 @@ test.describe("OGC-1201 order entry", () => {
   // re-entering Enter Order carried the previous order onto a new form.
   test("AR: entering a new order clears the previous one", async ({ page }) => {
     await openEntry(page, CLINICAL_ENTER);
+    await expect(page.locator("#labNumber")).not.toHaveValue("", {
+      timeout: NAV_TIMEOUT,
+    });
     const first = await page.locator("#labNumber").inputValue();
-    expect(first).not.toBe("");
 
     // Navigate away and back in, the way the side navigation does.
     await page.goto("/order/clinical", { waitUntil: "domcontentloaded" });
     await openEntry(page, CLINICAL_ENTER);
 
-    const second = await page.locator("#labNumber").inputValue();
-    expect(second).not.toBe("");
-    expect(second).not.toBe(first);
+    // A different order, not the one just left behind.
+    await expect(page.locator("#labNumber")).not.toHaveValue("", {
+      timeout: NAV_TIMEOUT,
+    });
+    await expect(page.locator("#labNumber")).not.toHaveValue(first);
   });
 
   // AR, second half — the clinical and vector guards read only ?order=, so a
@@ -95,16 +102,28 @@ test.describe("OGC-1201 order entry", () => {
   test("AR: a URL-addressed order is not reset and regenerated", async ({
     page,
   }) => {
+    // Counting the generator call is what distinguishes the two paths: a new
+    // order asks for a number, an addressed one must leave the order to the
+    // context to load.
+    let generatorCalls = 0;
+    await page.route("**/rest/SampleEntryGenerateScanProvider*", (route) => {
+      generatorCalls += 1;
+      return route.continue();
+    });
+
     await page.goto(`${CLINICAL_ENTER}?labNumber=DOES-NOT-EXIST-1201`, {
       waitUntil: "domcontentloaded",
     });
+    // Wait for the form to finish rendering, not for a fixed delay.
     await expect(page.locator("#labNumber")).toBeVisible({
       timeout: NAV_TIMEOUT,
     });
+    await expect(page.locator("#isEQASample")).toBeVisible({
+      timeout: NAV_TIMEOUT,
+    });
+    await expect(page.getByText("Attachments", { exact: true })).toHaveCount(0);
 
-    // Give the generate-on-mount path every chance to fire before asserting
-    // that it did not: a new order fills this field within a second or two.
-    await page.waitForTimeout(4000);
+    expect(generatorCalls).toBe(0);
     await expect(page.locator("#labNumber")).toHaveValue("");
   });
 
