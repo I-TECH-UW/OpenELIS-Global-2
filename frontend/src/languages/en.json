@@ -4560,6 +4560,8 @@
   "order.save.requirement.samplingSite": "a sampling site",
   "order.save.requirement.collectionSite": "a collection site",
   "order.save.requirement.sampleType": "at least one sample type",
+  "order.save.requirement.site": "a requesting site",
+  "order.save.requirement.provider": "a requesting provider",
   "order.save.requirement.testsPerSample": "at least one test or panel on every sample",
   "order.saved.draft": "Draft saved",
   "order.saved.title": "Order {labNumber} saved",

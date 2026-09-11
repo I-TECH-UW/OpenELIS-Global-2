@@ -5,40 +5,42 @@ import { IntlProvider } from "react-intl";
 import { vi } from "vitest";
 import messages from "../../../languages/en.json";
 
-const { orderContextValue, programSectionProps } = vi.hoisted(() => ({
-  orderContextValue: {
-    orderData: {
-      patientProperties: { lastName: "Ada" },
-      sampleOrderItems: {
-        environmentalFields: { workflowType: "clinical" },
+const { orderContextValue, programSectionProps, configurationValue } =
+  vi.hoisted(() => ({
+    configurationValue: { configurationProperties: {} },
+    orderContextValue: {
+      orderData: {
+        patientProperties: { lastName: "Ada" },
+        sampleOrderItems: {
+          environmentalFields: { workflowType: "clinical" },
+        },
       },
+      setOrderData: vi.fn(),
+      samples: [
+        {
+          sampleTypeId: "blood",
+          tests: [
+            {
+              id: "culture-test",
+              cultureWorkflowType: "BACTERIOLOGY",
+            },
+          ],
+        },
+      ],
+      setSamples: vi.fn(),
+      labNumber: "LAB-1",
+      isSubmitting: false,
+      saveStatus: "saved",
+      error: null,
+      fieldErrors: {},
+      saveOrderEntry: vi.fn(),
+      markStepComplete: vi.fn(),
+      isReadOnly: false,
+      isEditMode: false,
+      resetOrder: vi.fn(),
     },
-    setOrderData: vi.fn(),
-    samples: [
-      {
-        sampleTypeId: "blood",
-        tests: [
-          {
-            id: "culture-test",
-            cultureWorkflowType: "BACTERIOLOGY",
-          },
-        ],
-      },
-    ],
-    setSamples: vi.fn(),
-    labNumber: "LAB-1",
-    isSubmitting: false,
-    saveStatus: "saved",
-    error: null,
-    fieldErrors: {},
-    saveOrderEntry: vi.fn(),
-    markStepComplete: vi.fn(),
-    isReadOnly: false,
-    isEditMode: false,
-    resetOrder: vi.fn(),
-  },
-  programSectionProps: vi.fn(),
-}));
+    programSectionProps: vi.fn(),
+  }));
 
 vi.mock("react-router-dom", () => ({
   useHistory: () => ({ push: vi.fn(), replace: vi.fn() }),
@@ -61,6 +63,7 @@ vi.mock("../../layout/Layout", () => ({
     setNotificationVisible: vi.fn(),
     addNotification: vi.fn(),
   }),
+  ConfigurationContext: React.createContext(configurationValue),
 }));
 
 vi.mock("../../common/CustomNotification", () => ({
@@ -96,8 +99,12 @@ vi.mock("./sections/ClinicalInfoSection", () => ({
   default: () => null,
 }));
 
+const requesterSectionProps = vi.fn();
 vi.mock("./sections/RequesterSection", () => ({
-  default: () => null,
+  default: (props) => {
+    requesterSectionProps(props);
+    return null;
+  },
 }));
 
 vi.mock("./sections/SampleTestSection", () => ({
@@ -168,5 +175,90 @@ describe("ClinicalOrderEnter", () => {
     expect(programSectionProps).toHaveBeenCalledWith(
       expect.objectContaining({ samples: orderContextValue.samples }),
     );
+  });
+});
+
+describe("ClinicalOrderEnter required-field configuration", () => {
+  const renderEnter = () =>
+    render(
+      <IntlProvider locale="en" messages={messages}>
+        <ClinicalOrderEnter />
+      </IntlProvider>,
+    );
+
+  beforeEach(() => {
+    requesterSectionProps.mockClear();
+    configurationValue.configurationProperties = {};
+    orderContextValue.isSubmitting = false;
+    orderContextValue.saveStatus = "saved";
+    orderContextValue.error = null;
+    orderContextValue.fieldErrors = {};
+    orderContextValue.orderData = {
+      patientProperties: { lastName: "Ada" },
+      sampleOrderItems: { environmentalFields: { workflowType: "clinical" } },
+    };
+  });
+
+  // OGC-1201 K: neither the site nor the provider appeared in the save gate,
+  // and ClinicalOrderEnter never read the configuration at all.
+  it("blocks the save when the deployment requires a site it does not have", () => {
+    configurationValue.configurationProperties = {
+      SampleEntryReferralSiteNameRequired: "true",
+    };
+    renderEnter();
+
+    expect(screen.getByRole("button", { name: "Save Draft" })).toBeDisabled();
+  });
+
+  it("allows the save once that site is chosen", () => {
+    configurationValue.configurationProperties = {
+      SampleEntryReferralSiteNameRequired: "true",
+    };
+    orderContextValue.orderData = {
+      patientProperties: { lastName: "Ada" },
+      sampleOrderItems: {
+        referringSiteId: "7",
+        environmentalFields: { workflowType: "clinical" },
+      },
+    };
+    renderEnter();
+
+    expect(screen.getByRole("button", { name: "Save Draft" })).toBeEnabled();
+  });
+
+  it("blocks the save when the deployment requires a requester", () => {
+    configurationValue.configurationProperties = { REQUESTER_REQUIRED: "true" };
+    renderEnter();
+
+    expect(screen.getByRole("button", { name: "Save Draft" })).toBeDisabled();
+  });
+
+  it("leaves the save open when the deployment requires neither", () => {
+    renderEnter();
+
+    expect(screen.getByRole("button", { name: "Save Draft" })).toBeEnabled();
+  });
+
+  it("marks the required fields so the user can see them", () => {
+    configurationValue.configurationProperties = {
+      SampleEntryReferralSiteNameRequired: "true",
+      REQUESTER_REQUIRED: "true",
+    };
+    renderEnter();
+
+    expect(requesterSectionProps).toHaveBeenCalledWith(
+      expect.objectContaining({ siteRequired: true, providerRequired: true }),
+    );
+  });
+
+  // PatientRequired is TRUE in DefaultFormFields and every shipped profile,
+  // so an absent value must not read as "patient optional".
+  it("requires a patient unless the deployment turns it off", () => {
+    orderContextValue.orderData = {
+      patientProperties: {},
+      sampleOrderItems: { environmentalFields: { workflowType: "clinical" } },
+    };
+    renderEnter();
+    expect(screen.getByRole("button", { name: "Save Draft" })).toBeDisabled();
   });
 });

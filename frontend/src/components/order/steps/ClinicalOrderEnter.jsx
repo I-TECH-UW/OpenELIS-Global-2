@@ -16,7 +16,7 @@ import SaveFailureNotice from "../SaveFailureNotice";
 import { useOrderContext } from "../OrderContext";
 import { useNewOrderReset } from "../useNewOrderReset";
 import { describeUnmetRequirements } from "../saveRequirements";
-import { NotificationContext } from "../../layout/Layout";
+import { ConfigurationContext, NotificationContext } from "../../layout/Layout";
 import {
   AlertDialog,
   NotificationKinds,
@@ -51,6 +51,14 @@ const ClinicalOrderEnter = () => {
   } = useOrderContext();
   const { notificationVisible, setNotificationVisible, addNotification } =
     useContext(NotificationContext);
+
+  const { configurationProperties = {} } =
+    useContext(ConfigurationContext) || {};
+  const patientRequired = configurationProperties.PatientRequired !== "false";
+  const siteRequired =
+    configurationProperties.SampleEntryReferralSiteNameRequired === "true";
+  const providerRequired =
+    configurationProperties.REQUESTER_REQUIRED === "true";
 
   const isNewOrder = useNewOrderReset(WORKFLOW_PREFIX);
 
@@ -113,17 +121,33 @@ const ClinicalOrderEnter = () => {
     [setOrderData],
   );
 
-  const hasPatientOrSite = !!(
+  const hasPatient = !!(
     orderData?.patientProperties?.lastName ||
     orderData?.patientProperties?.nationalId
   );
   const hasSampleTypes = samples.some((s) => s.sampleTypeId);
+  const hasSite = Boolean(orderData?.sampleOrderItems?.referringSiteId);
+  const hasProvider = Boolean(
+    orderData?.sampleOrderItems?.providerPersonId ||
+    orderData?.sampleOrderItems?.providerId,
+  );
+  // These settings have always existed; the lanes just never read them, so a
+  // deployment that requires a patient, a site or a requester silently got
+  // orders without one.
   const saveRequirements = [
     {
       met: Boolean(localLabNumber),
       labelId: "order.save.requirement.labNumber",
     },
-    { met: hasPatientOrSite, labelId: "order.save.requirement.patient" },
+    {
+      met: hasPatient || !patientRequired,
+      labelId: "order.save.requirement.patient",
+    },
+    { met: hasSite || !siteRequired, labelId: "order.save.requirement.site" },
+    {
+      met: hasProvider || !providerRequired,
+      labelId: "order.save.requirement.provider",
+    },
     { met: hasSampleTypes, labelId: "order.save.requirement.sampleType" },
   ];
   const canSave = saveRequirements.every((requirement) => requirement.met);
@@ -346,6 +370,8 @@ const ClinicalOrderEnter = () => {
           setOrderData={setOrderData}
           isReadOnly={isReadOnly && !isEditMode}
           workflowType={WORKFLOW_TYPE}
+          siteRequired={siteRequired}
+          providerRequired={providerRequired}
         />
 
         {/* Sample & Test Selection */}

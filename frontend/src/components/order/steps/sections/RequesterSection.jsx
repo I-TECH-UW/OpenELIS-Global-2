@@ -39,6 +39,8 @@ const RequesterSection = ({
   setOrderData,
   isReadOnly,
   workflowType,
+  siteRequired = false,
+  providerRequired = false,
 }) => {
   const intl = useIntl();
   const componentMounted = useRef(true);
@@ -902,7 +904,12 @@ const RequesterSection = ({
             <TextInput
               id="siteName"
               labelText={
-                <FormattedMessage id="site.name" defaultMessage="Site Name" />
+                <span>
+                  <FormattedMessage id="site.name" defaultMessage="Site Name" />
+                  {siteRequired && (
+                    <span className="required-indicator"> *</span>
+                  )}
+                </span>
               }
               placeholder={intl.formatMessage({
                 id: "site.name.placeholder",
@@ -1649,10 +1656,17 @@ const RequesterSection = ({
             <Column lg={6} md={4} sm={4}>
               <TextInput
                 id="providerName"
-                labelText={intl.formatMessage({
-                  id: "provider.name",
-                  defaultMessage: "Provider Name",
-                })}
+                labelText={
+                  <span>
+                    <FormattedMessage
+                      id="provider.name"
+                      defaultMessage="Provider Name"
+                    />
+                    {providerRequired && (
+                      <span className="required-indicator"> *</span>
+                    )}
+                  </span>
+                }
                 placeholder={intl.formatMessage({
                   id: "provider.name.placeholder",
                   defaultMessage: "Enter provider name",
