@@ -6,6 +6,7 @@ import { Stack, InlineNotification, Button } from "@carbon/react";
 import { Warning } from "@carbon/icons-react";
 import InlineNceForm from "../../nonconform/common/InlineNceForm";
 import OrderWorkflowLayout from "../OrderWorkflowLayout";
+import SaveFailureNotice from "../SaveFailureNotice";
 import { useOrderContext } from "../OrderContext";
 import { NotificationContext } from "../../layout/Layout";
 import {
@@ -230,6 +231,7 @@ const OrderCollect = () => {
       }
     >
       {notificationVisible && <AlertDialog />}
+      <SaveFailureNotice />
 
       <Stack gap={7}>
         {/* Warning if no tests ordered */}
