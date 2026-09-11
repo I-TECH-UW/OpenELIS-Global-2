@@ -7,6 +7,9 @@
   <property name="now" value="now()" dbms="postgresql"/>
 
   <changeSet id="3.5.0-089-add-freezer-offline-alert-type" author="mherman22">
+    <!-- Published before MICROBIOLOGY_CRITICAL was added to this SQL. Migration 099
+         applies that addition to databases where this changeset already ran. -->
+    <validCheckSum>8:962f26e3c0dbd5ab8e6f18de6f6c3d7b</validCheckSum>
     <preConditions onFail="MARK_RAN">
       <tableExists schemaName="clinlims" tableName="alert"/>
     </preConditions>

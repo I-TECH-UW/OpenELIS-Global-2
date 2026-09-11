@@ -71,6 +71,20 @@ jobs:
         with:
           repository: ${{github.repository}}
           submodules: recursive
+          fetch-depth: 2
+
+      - name: Preserve the prior revision's migration history for compatibility checks
+        env:
+          BASE_SHA: ${{ github.event.pull_request.base.sha || github.event.before }}
+        run: |
+          baseline="${BASE_SHA:-$(git rev-parse HEAD^)}"
+          if [ "$baseline" = "0000000000000000000000000000000000000000" ]; then
+            baseline="$(git rev-parse HEAD^)"
+          fi
+          git fetch --depth=1 origin "$baseline"
+          mkdir -p "$RUNNER_TEMP/published-migrations"
+          git archive FETCH_HEAD src/main/resources | tar -x -C "$RUNNER_TEMP/published-migrations"
+          echo "LIQUIBASE_BASELINE_DIR=$RUNNER_TEMP/published-migrations/src/main/resources" >> "$GITHUB_ENV"
 
       - name: check formatting
         run: mvn spotless:check
