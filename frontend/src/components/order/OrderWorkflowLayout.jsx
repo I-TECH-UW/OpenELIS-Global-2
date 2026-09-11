@@ -1,7 +1,13 @@
 import React from "react";
-import { Stack, Button, Tag, InlineLoading } from "@carbon/react";
+import {
+  Stack,
+  Button,
+  Tag,
+  InlineLoading,
+  ActionableNotification,
+} from "@carbon/react";
 import { Edit } from "@carbon/icons-react";
-import { useLocation } from "react-router-dom";
+import { useHistory, useLocation } from "react-router-dom";
 import { FormattedMessage, useIntl } from "react-intl";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 import OrderStepper, {
@@ -75,17 +81,56 @@ const SaveStatusIndicator = () => {
   );
 };
 
+/**
+ * After the entry step saves, the screen states plainly that the order exists
+ * and what comes next, instead of a passing toast.
+ */
+const SavedNextAction = ({ steps, activeStep }) => {
+  const intl = useIntl();
+  const history = useHistory();
+  const { saveStatus, isDirty, labNumber } = useOrderContext();
+  const next = steps[activeStep + 1];
+  if (
+    activeStep !== 0 ||
+    isDirty ||
+    saveStatus !== SaveStatus.SAVED ||
+    !labNumber ||
+    !next
+  ) {
+    return null;
+  }
+  return (
+    <ActionableNotification
+      kind="success"
+      lowContrast
+      hideCloseButton
+      inline
+      className="order-saved-next-action"
+      title={intl.formatMessage(
+        { id: "order.saved.title", defaultMessage: "Order {labNumber} saved" },
+        { labNumber },
+      )}
+      subtitle={intl.formatMessage(
+        { id: "order.saved.next", defaultMessage: "Next: {step}" },
+        { step: intl.formatMessage({ id: next.label }) },
+      )}
+      actionButtonLabel={intl.formatMessage({ id: next.label })}
+      onActionButtonClick={() => history.push(next.path)}
+    />
+  );
+};
+
 const OrderWorkflowLayout = ({
   children,
   currentStep,
   title,
   canProceed = true,
+  canSave = true,
   onSave,
   onSaveAndNext,
   extraButtons,
   showSaveButtons = true,
 }) => {
-  const intl = useIntl();
   const location = useLocation();
   const { isReadOnly, isEditMode, enableEditMode, labNumber, orderData } =
     useOrderContext();
@@ -112,9 +157,15 @@ const OrderWorkflowLayout = ({
     return "/order/clinical";
   })();
 
+  const workflowLabel = {
+    "/order/vector": "sidenav.label.vector.order",
+    "/order/environmental": "sidenav.label.environmental.order",
+    "/order/clinical": "sidenav.label.clinical.order",
+  }[workflowRoot];
+
   const breadcrumbs = [
     { label: "home.label", link: "/" },
-    { label: "sidenav.label.addorder", link: workflowRoot },
+    { label: workflowLabel, link: workflowRoot },
     {
       label: steps[activeStep]?.label || "order.step.enter",
       link: steps[activeStep]?.path || `${workflowRoot}/enter`,
@@ -187,6 +238,8 @@ const OrderWorkflowLayout = ({
             <OrderContextCard className="order-context-section" />
           )}
 
+          <SavedNextAction steps={steps} activeStep={activeStep} />
+
           {/* Main Content Area */}
           <div
             className={`order-content-section ${isReadOnly && !isEditMode ? "readonly-mode" : ""}`}
@@ -200,6 +253,7 @@ const OrderWorkflowLayout = ({
               <SaveNavigationButtons
                 currentStep={activeStep}
                 canProceed={canProceed}
+                canSave={canSave}
                 onSave={onSave}
                 onSaveAndNext={onSaveAndNext}
               />
