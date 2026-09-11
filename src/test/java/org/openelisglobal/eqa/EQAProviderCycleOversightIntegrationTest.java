@@ -323,6 +323,40 @@ public class EQAProviderCycleOversightIntegrationTest extends EQASpineTestBase {
         assertTrue("the peer Z is a plain decimal", csv.contains(",-0.2"));
     }
 
+    /**
+     * The last column is named for scoring and used to be filled from the
+     * submission date, which is a different fact — and participating laboratories
+     * import this file. Scoring runs over the whole cycle, so the date is the
+     * cycle's actual end date, stamped the first time it reached SCORED.
+     *
+     * <p>
+     * The submission date is backdated first, because both dates are otherwise
+     * today in a test and the assertion could not tell the two columns apart.
+     */
+    @Test
+    public void theScoreCsvDatesEachRowByWhenTheCycleWasScoredNotWhenItWasSubmitted() {
+        toSubmissionsOpen();
+        seedPeerResults();
+        scoringService.scoreCycle(cycle.getId(), USER);
+
+        java.sql.Date scoredOn = readBack(cycle.getId()).getActualEndDate();
+        assertNotNull("scoring stamps the cycle's actual end date", scoredOn);
+        // eqa_result is what the CSV iterates; its rows hang off the cycle's
+        // distribution rather than off the cycle directly.
+        int backdated = jdbc.update(
+                "UPDATE clinlims.eqa_result SET submission_date = ? WHERE eqa_distribution_id IN"
+                        + " (SELECT id FROM clinlims.eqa_distribution WHERE cycle_id = ?)",
+                java.sql.Timestamp.valueOf("2026-01-15 09:30:00"), cycle.getId());
+        assertTrue("the backdate must actually hit the rows the CSV reads", backdated > 0);
+
+        String[] lines = scoringService.buildScoreCsv(cycle.getId(), FIRST_SCORING_ORG).trim().split("\n");
+        assertEquals("scored_on", lines[0].substring(lines[0].lastIndexOf(',') + 1));
+
+        String printed = lines[1].substring(lines[1].lastIndexOf(',') + 1);
+        assertEquals("the column carries the scoring date", scoredOn.toString(), printed);
+        assertFalse("and not the submission date it used to carry", printed.startsWith("2026-01-15"));
+    }
+
     @Test
     public void scoreRowsAreEmptyUntilResultsArrive() {
         assertTrue(scoringService.getScoreRows(cycle.getId()).isEmpty());

@@ -349,12 +349,16 @@ const FollowUpQueuePage = () => {
             >
               <strong>
                 {sourceFilter === "all"
-                  ? t("eqa.queue.count", "Queue · {count} items", {
-                      count: rows.length,
-                    })
+                  ? t(
+                      "eqa.queue.count",
+                      "Queue · {count, plural, one {# item} other {# items}}",
+                      {
+                        count: rows.length,
+                      },
+                    )
                   : t(
                       "eqa.queue.countFiltered",
-                      "Queue · {count} of {total} items",
+                      "Queue · {count} of {total, plural, one {# item} other {# items}}",
                       { count: visibleRows.length, total: rows.length },
                     )}
               </strong>
@@ -414,7 +418,7 @@ const FollowUpQueuePage = () => {
             <Tile>
               {t(
                 "eqa.queue.emptyForSource",
-                "Nothing from this source is awaiting triage. The queue holds {total} items from other sources.",
+                "Nothing from this source is awaiting triage. The queue holds {total, plural, one {# item} other {# items}} from other sources.",
                 { total: rows.length },
               )}
             </Tile>

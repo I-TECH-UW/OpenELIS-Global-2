@@ -202,6 +202,12 @@ public class EQAProviderScoringServiceImpl implements EQAProviderScoringService 
         // imports these scores: test ids and names are the provider's own.
         StringBuilder csv = new StringBuilder(
                 "test,analyte_name,result_value,target_value,z_score,performance_status,scored_on\n");
+        // The column has always been named for scoring and filled from the
+        // submission date, which is a different fact, and participating
+        // laboratories import this file. Scoring runs over the whole cycle at once,
+        // so the date is the cycle's: stamped the first time it reached SCORED, and
+        // blank on a cycle scored before anything recorded that.
+        String scoredOn = scoredOn(cycle(cycleId));
         for (EQAResult result : resultsFor(cycleId, organizationId)) {
             // Only the free-text cells are escaped. Running a decimal through csvEscape
             // would quote a negative Z as a formula and print it as '-0.28 (found
@@ -214,8 +220,7 @@ public class EQAProviderScoringServiceImpl implements EQAProviderScoringService 
                     .append(',').append(number(result.getTargetValue())).append(',').append(number(result.getZScore()))
                     .append(',')
                     .append(result.getPerformanceStatus() == null ? "" : result.getPerformanceStatus().name())
-                    .append(',').append(result.getSubmissionDate() == null ? "" : result.getSubmissionDate())
-                    .append('\n');
+                    .append(',').append(scoredOn).append('\n');
         }
         return csv.toString();
     }
@@ -487,6 +492,19 @@ public class EQAProviderScoringServiceImpl implements EQAProviderScoringService 
     private EQACycle cycle(Long cycleId) {
         return eqaCycleDAO.get(cycleId)
                 .orElseThrow(() -> new ObjectNotFoundException(cycleId, EQACycle.class.getName()));
+    }
+
+    /**
+     * When this cycle was scored: {@code actual_end_date}, stamped the first time
+     * the cycle reached SCORED and never overwritten, so a re-score cannot move it.
+     *
+     * <p>
+     * Empty rather than a substitute when the column is null. A cycle scored before
+     * anything wrote that date has no recorded scoring date, and a blank cell says
+     * so; the submission date this used to print said something else entirely.
+     */
+    static String scoredOn(EQACycle cycle) {
+        return cycle == null || cycle.getActualEndDate() == null ? "" : cycle.getActualEndDate().toString();
     }
 
     /** The cycle's distribution, or null when no results have been taken in yet. */

@@ -322,6 +322,11 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
                 scheme == null ? DASH : schemeTypeLabel(scheme.getSchemeType()));
         metaCell(meta, MessageUtil.getMessage("eqa.report.cycle"), cycleIdentifier(cycle));
         metaCell(meta, MessageUtil.getMessage("eqa.report.period"), period(cycle));
+        // Restored now that a cycle records when it was scored. It sits in the meta
+        // block rather than as a per-row column because scoring runs over the whole
+        // cycle at once, so one date covers every row on the page.
+        metaCell(meta, MessageUtil.getMessage("eqa.report.scoredOn"),
+                cycle.getActualEndDate() == null ? DASH : cycle.getActualEndDate().toString());
         metaCell(meta, MessageUtil.getMessage("eqa.report.laboratory"), siteName());
         metaCell(meta, MessageUtil.getMessage("eqa.report.generated"), formatDate(new Date()));
         if (participant != null) {
@@ -330,6 +335,12 @@ public class EQAPerformanceReportPDFServiceImpl implements EQAPerformanceReportP
             // indistinguishable.
             metaCell(meta, MessageUtil.getMessage("eqa.report.participant"), participant);
         }
+        // The block is four columns and each fact adds two cells, so an odd number
+        // of facts leaves the last row short — and iText renders only complete
+        // rows, dropping it silently. That already cost the cycle-level report its
+        // Generated line, which has seven facts. Padding the row makes the block
+        // hold whatever it is given rather than depending on the count being even.
+        meta.completeRow();
         document.add(meta);
 
         if (rowCount == 0) {
