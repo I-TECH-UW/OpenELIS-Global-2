@@ -2,6 +2,8 @@ package org.openelisglobal.eqa.valueholder;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
@@ -52,6 +54,31 @@ public class EQAProgram extends BaseObject<Long> {
 
     @Column(name = "frequency", length = 50)
     private String frequency;
+
+    /**
+     * Arrangement type (FR-V2.1-06, gate G1 alter-in-place). V1 rows default to
+     * INTERNATIONAL_PT. BR-004: provider required unless IN_HOUSE — enforced in
+     * EQAProgramServiceImpl.
+     */
+    @Enumerated(EnumType.STRING)
+    @Column(name = "scheme_type", nullable = false, length = 30)
+    private EQASchemeType schemeType = EQASchemeType.INTERNATIONAL_PT;
+
+    /**
+     * FR-V2.1-09. When true the participant cycle stops at ready_to_submit for a QA
+     * officer's single confirmation on the Review &amp; Submit panel (FR-V2.2-07)
+     * and T-14's auto-submit stands down. Off by default, so schemes that predate
+     * the flag keep auto-submitting.
+     */
+    @Column(name = "requires_cycle_review", nullable = false)
+    private Boolean requiresCycleReview = false;
+
+    /**
+     * FR-V2.3-04: standard result entry shows the Analyst column for this scheme's
+     * samples, and every EQA result under it names who ran it.
+     */
+    @Column(name = "per_analyst", nullable = false)
+    private Boolean perAnalyst = false;
 
     @Column(name = "is_active", nullable = false)
     private Boolean isActive = true;

@@ -89,5 +89,11 @@ public enum AlertType {
      * communication remains authoritative; this type projects it into the shared
      * alert workflow.
      */
-    MICROBIOLOGY_CRITICAL
+    MICROBIOLOGY_CRITICAL,
+
+    /**
+     * Automatic EQA result submission exhausted its retries (FR-V2.2-05); entity is
+     * the EQA CYCLE that could not be submitted
+     */
+    EQA_SUBMISSION_FAILED
 }

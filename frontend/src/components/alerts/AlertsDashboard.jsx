@@ -121,6 +121,12 @@ const AlertsDashboard = () => {
               })}
             />
             <SelectItem
+              value="EQA_SUBMISSION_FAILED"
+              text={intl.formatMessage({
+                id: "alerts.type.eqa_submission_failed",
+              })}
+            />
+            <SelectItem
               value="SAMPLE_EXPIRATION"
               text={intl.formatMessage({ id: "alerts.type.sample_expiration" })}
             />
