@@ -18,6 +18,8 @@ import {
   getPendingRequests,
   convertRequestsToSamples,
 } from "../api/sampleTypeRequestApi";
+import SampleAcceptanceReview from "./sections/SampleAcceptanceReview";
+import { getEnforcement } from "../api/sampleAcceptanceApi";
 import RequestedTestsSection from "./sections/RequestedTestsSection";
 import SamplesCollectionSection from "./sections/SamplesCollectionSection";
 import ConsentAccordionSection from "./sections/ConsentAccordionSection";
@@ -62,6 +64,9 @@ const OrderCollect = () => {
 
   // Sample types from API
   const [showNceForm, setShowNceForm] = useState(false);
+  // Intake acceptance is hidden when this order's domain enforcement is OFF,
+  // matching QA Review. Default false → fail open.
+  const [acceptanceOff, setAcceptanceOff] = useState(false);
 
   // Sample types from API
   const [sampleTypes, setSampleTypes] = useState([]);
@@ -97,6 +102,21 @@ const OrderCollect = () => {
       componentMounted.current = false;
     };
   }, []);
+
+  const workflowType =
+    orderData?.sampleOrderItems?.environmentalFields?.workflowType ||
+    "clinical";
+
+  useEffect(() => {
+    let active = true;
+    getEnforcement().then((modes) => {
+      if (!active) return;
+      setAcceptanceOff((modes?.[workflowType] || "").toUpperCase() === "OFF");
+    });
+    return () => {
+      active = false;
+    };
+  }, [workflowType]);
 
   // Load pending sample type requests when orderId is available
   useEffect(() => {
@@ -269,6 +289,19 @@ const OrderCollect = () => {
           onConsentChange={handleConsentChange}
           isReadOnly={isReadOnly && !isEditMode}
         />
+
+        {/* A collector holding a hemolyzed specimen could log an NCE here but
+            had to walk to QA Review to reject or resample it. The same
+            per-specimen acceptance table is mounted here, without the submit
+            gate that belongs to QA. Acceptance is recorded against
+            sample_items, so it appears once the collection has been saved. */}
+        {!acceptanceOff && samples.some((s) => s.sampleItemId) && (
+          <SampleAcceptanceReview
+            orderId={orderId}
+            labNumber={labNumber}
+            samples={samples}
+          />
+        )}
 
         {/* Section 3: Samples Collection */}
         <SamplesCollectionSection

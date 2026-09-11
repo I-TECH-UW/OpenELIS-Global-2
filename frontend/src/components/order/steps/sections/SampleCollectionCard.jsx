@@ -1,4 +1,4 @@
-import { useContext, useEffect, useRef } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 import { useIntl, FormattedMessage } from "react-intl";
 import { ConfigurationContext } from "../../../layout/Layout";
 import {
@@ -16,6 +16,7 @@ import {
 } from "@carbon/react";
 import { Printer } from "@carbon/icons-react";
 import CustomDatePicker from "../../../common/CustomDatePicker";
+import { getFromOpenElisServer } from "../../../utils/Utils";
 import {
   currentLocalTime,
   formatIsoDateForBackend,
@@ -57,6 +58,8 @@ const SampleCollectionCard = ({
     sample.sampleItemId ||
     sample.sampleTypeRequestId ||
     `sample-index-${sampleIndex}`;
+  const [collectionMethods, setCollectionMethods] = useState([]);
+  const [specimenOrigins, setSpecimenOrigins] = useState([]);
   const { configurationProperties = {} } =
     useContext(ConfigurationContext) || {};
   const dateLocale = configurationProperties.DEFAULT_DATE_LOCALE || "en-US";
@@ -64,6 +67,25 @@ const SampleCollectionCard = ({
     sample.collectionDate,
     admissionDate,
   );
+
+  useEffect(() => {
+    let active = true;
+    getFromOpenElisServer(
+      "/rest/clinical/dictionary/collection-methods",
+      (data) => {
+        if (active) setCollectionMethods(Array.isArray(data) ? data : []);
+      },
+    );
+    getFromOpenElisServer(
+      "/rest/clinical/dictionary/specimen-origins",
+      (data) => {
+        if (active) setSpecimenOrigins(Array.isArray(data) ? data : []);
+      },
+    );
+    return () => {
+      active = false;
+    };
+  }, []);
 
   useEffect(() => {
     if (initializedSampleIdentity.current !== sampleIdentity) {
@@ -259,6 +281,88 @@ const SampleCollectionCard = ({
         </Column>
 
         {/* Collection Conditions */}
+        {/* Clinical collection previously captured only free-text conditions,
+            while the environmental lane had a coded method. These are the
+            coded equivalents; sample_item already stores all three. */}
+        <Column lg={5} md={4} sm={4}>
+          <Select
+            id={`collectionMethod-${sampleIndex}`}
+            labelText={intl.formatMessage({
+              id: "collect.sample.collectionMethod",
+              defaultMessage: "Collection Method",
+            })}
+            value={sample.collectionMethod || ""}
+            onChange={(e) =>
+              handleFieldChange("collectionMethod", e.target.value)
+            }
+            disabled={isReadOnly}
+          >
+            <SelectItem
+              value=""
+              text={intl.formatMessage({
+                id: "label.select",
+                defaultMessage: "Select...",
+              })}
+            />
+            {collectionMethods.map((method) => (
+              <SelectItem
+                key={method.id}
+                value={method.dictEntry}
+                text={method.localizedName || method.dictEntry}
+              />
+            ))}
+          </Select>
+        </Column>
+
+        <Column lg={5} md={4} sm={4}>
+          <Select
+            id={`specimenOrigin-${sampleIndex}`}
+            labelText={intl.formatMessage({
+              id: "collect.sample.specimenOrigin",
+              defaultMessage: "Specimen Origin",
+            })}
+            value={sample.specimenOrigin || ""}
+            onChange={(e) =>
+              handleFieldChange("specimenOrigin", e.target.value)
+            }
+            disabled={isReadOnly}
+          >
+            <SelectItem
+              value=""
+              text={intl.formatMessage({
+                id: "label.select",
+                defaultMessage: "Select...",
+              })}
+            />
+            {specimenOrigins.map((origin) => (
+              <SelectItem
+                key={origin.id}
+                value={origin.dictEntry}
+                text={origin.localizedName || origin.dictEntry}
+              />
+            ))}
+          </Select>
+        </Column>
+
+        <Column lg={4} md={4} sm={4}>
+          <TextInput
+            id={`sampleTemperature-${sampleIndex}`}
+            labelText={intl.formatMessage({
+              id: "collect.sample.temperature",
+              defaultMessage: "Sample Temperature",
+            })}
+            placeholder={intl.formatMessage({
+              id: "collect.sample.temperature.placeholder",
+              defaultMessage: "e.g. 4 C",
+            })}
+            value={sample.sampleTemperature || ""}
+            onChange={(e) =>
+              handleFieldChange("sampleTemperature", e.target.value)
+            }
+            disabled={isReadOnly}
+          />
+        </Column>
+
         <Column lg={6} md={4} sm={4}>
           <TextInput
             id={`collectionConditions-${sampleIndex}`}

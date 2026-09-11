@@ -127,6 +127,9 @@ export const sampleObject = {
   quantity: "",
   quantityUnit: "",
   collectionConditions: "",
+  collectionMethod: "",
+  sampleTemperature: "",
+  specimenOrigin: "",
   collectionDate: "",
   collectionTime: "",
   collectorId: "",
@@ -171,6 +174,9 @@ const flattenSampleManifestFields = (
         dateLocale,
       ),
       collectionTime: s.collectionTime || xml.collectionTime || "",
+      collectionMethod: s.collectionMethod || xml.collectionMethod || "",
+      sampleTemperature: s.sampleTemperature || xml.sampleTemperature || "",
+      specimenOrigin: s.specimenOrigin || xml.specimenOrigin || "",
       container: s.container || xml.container || "",
       locationDetails: s.locationDetails || xml.locationDetails || "",
       gpsLatitude: s.gpsLatitude || xml.gpsLatitude || "",
@@ -446,6 +452,14 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
             sampleItem.collectionConditions ||
             sampleXMLData.collectionConditions ||
             "";
+          const collectionMethod =
+            sampleItem.collectionMethod || sampleXMLData.collectionMethod || "";
+          const sampleTemperature =
+            sampleItem.sampleTemperature ||
+            sampleXMLData.sampleTemperature ||
+            "";
+          const specimenOrigin =
+            sampleItem.specimenOrigin || sampleXMLData.specimenOrigin || "";
           const quantity = sampleItem.quantity || sampleXMLData.quantity || "";
           const uom = sampleItem.quantityUnit || sampleXMLData.uom || "";
           const rejected = sampleItem.sampleRejected ? "true" : "false";
@@ -512,7 +526,7 @@ export const OrderProvider = ({ children, workflowType = "clinical" }) => {
             envFields.vecCollectionSiteId ||
             "";
 
-          sampleXmlString += `<sample sampleID='${sampleIndex}' typeId='${sampleItem.sampleTypeId}' sampleItemId='${sampleItemId}' date='${collectionDate}' time='${collectionTime}' collector='${collector}' collectionConditions='${collectionConditions}' quantity='${quantity}' uom='${uom}' receivedDate='${receivedDate}' receivedTime='${receivedTime}' tests='${tests}' testSectionMap='' testSampleTypeMap='' panels='${panels}' rejected='${rejected}' rejectReasonId='${rejectReasonId}' initialConditionIds='' storageLocationId='${storageLocationId}' storageLocationType='${storageLocationType}' storagePositionCoordinate='${storagePositionCoordinate}' gpsLatitude='${gpsLatitude}' gpsLongitude='${gpsLongitude}' gpsAccuracy='${gpsAccuracy}' gpsCaptureMethod='${gpsCaptureMethod}' container='${container}' locationDetails='${locationDetails}' labPerformedSampling='${labPerformedSampling}' collectionLocationId='${collectionLocationId}' qcType='${qcType}' qcParentSampleIndex='${qcParentSampleIndex}' qcExpectedValue='${qcExpectedValue}'/>`;
+          sampleXmlString += `<sample sampleID='${sampleIndex}' typeId='${sampleItem.sampleTypeId}' sampleItemId='${sampleItemId}' date='${collectionDate}' time='${collectionTime}' collector='${collector}' collectionConditions='${collectionConditions}' collectionMethod='${collectionMethod}' sampleTemperature='${sampleTemperature}' specimenOrigin='${specimenOrigin}' quantity='${quantity}' uom='${uom}' receivedDate='${receivedDate}' receivedTime='${receivedTime}' tests='${tests}' testSectionMap='' testSampleTypeMap='' panels='${panels}' rejected='${rejected}' rejectReasonId='${rejectReasonId}' initialConditionIds='' storageLocationId='${storageLocationId}' storageLocationType='${storageLocationType}' storagePositionCoordinate='${storagePositionCoordinate}' gpsLatitude='${gpsLatitude}' gpsLongitude='${gpsLongitude}' gpsAccuracy='${gpsAccuracy}' gpsCaptureMethod='${gpsCaptureMethod}' container='${container}' locationDetails='${locationDetails}' labPerformedSampling='${labPerformedSampling}' collectionLocationId='${collectionLocationId}' qcType='${qcType}' qcParentSampleIndex='${qcParentSampleIndex}' qcExpectedValue='${qcExpectedValue}'/>`;
         }
       });
 
