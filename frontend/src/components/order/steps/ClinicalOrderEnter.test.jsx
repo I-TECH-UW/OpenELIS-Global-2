@@ -42,9 +42,10 @@ const { orderContextValue, programSectionProps, configurationValue } =
     programSectionProps: vi.fn(),
   }));
 
+const currentLocation = { pathname: "/order/clinical/enter", search: "" };
 vi.mock("react-router-dom", () => ({
   useHistory: () => ({ push: vi.fn(), replace: vi.fn() }),
-  useLocation: () => ({ pathname: "/order/clinical/enter", search: "" }),
+  useLocation: () => currentLocation,
 }));
 
 vi.mock("../OrderContext", () => ({
@@ -260,5 +261,64 @@ describe("ClinicalOrderEnter required-field configuration", () => {
     };
     renderEnter();
     expect(screen.getByRole("button", { name: "Save Draft" })).toBeDisabled();
+  });
+});
+
+describe("ClinicalOrderEnter EQA pre-set", () => {
+  beforeEach(() => {
+    configurationValue.configurationProperties = {};
+    orderContextValue.setOrderData = vi.fn();
+    orderContextValue.orderData = {
+      patientProperties: {},
+      sampleOrderItems: { environmentalFields: { workflowType: "clinical" } },
+    };
+  });
+
+  afterEach(() => {
+    currentLocation.search = "";
+  });
+
+  // OGC-1201 W: the EQA worklist used to push at the legacy screen with
+  // ?isEQA=true. EQA is a control on the shared form now, and a caller can
+  // pre-set it — which is what keeps the override a recorded decision rather
+  // than something only a human click can produce.
+  it("arrives with EQA and no-patient already declared", () => {
+    currentLocation.search = "?eqa=true";
+    render(
+      <IntlProvider locale="en" messages={messages}>
+        <ClinicalOrderEnter />
+      </IntlProvider>,
+    );
+
+    const applied = orderContextValue.setOrderData.mock.calls
+      .map(([value]) => value)
+      .filter((value) => typeof value === "function")
+      .map((value) => value(orderContextValue.orderData))
+      .find((next) => next.sampleOrderItems?.isEQASample);
+
+    expect(applied).toBeDefined();
+    expect(applied.sampleOrderItems).toEqual(
+      expect.objectContaining({
+        isEQASample: true,
+        noPatientOverride: true,
+        noPatientReasonCode: "EQA",
+      }),
+    );
+  });
+
+  it("leaves an ordinary new order alone", () => {
+    render(
+      <IntlProvider locale="en" messages={messages}>
+        <ClinicalOrderEnter />
+      </IntlProvider>,
+    );
+
+    const applied = orderContextValue.setOrderData.mock.calls
+      .map(([value]) => value)
+      .filter((value) => typeof value === "function")
+      .map((value) => value(orderContextValue.orderData))
+      .find((next) => next.sampleOrderItems?.isEQASample);
+
+    expect(applied).toBeUndefined();
   });
 });

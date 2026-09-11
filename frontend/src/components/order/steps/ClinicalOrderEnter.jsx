@@ -74,6 +74,27 @@ const ClinicalOrderEnter = () => {
     contactPhone: { body: "", status: true },
   });
 
+  // A caller can pre-set the EQA control, which is what makes the override a
+  // recorded decision rather than something only a human click can produce:
+  // the EQA worklist links straight in here with it already on.
+  useEffect(() => {
+    if (!isNewOrder) {
+      return;
+    }
+    if (new URLSearchParams(location.search).get("eqa") !== "true") {
+      return;
+    }
+    setOrderData((prev) => ({
+      ...prev,
+      sampleOrderItems: {
+        ...prev.sampleOrderItems,
+        isEQASample: true,
+        noPatientOverride: true,
+        noPatientReasonCode: "EQA",
+      },
+    }));
+  }, []); // eslint-disable-line react-hooks/exhaustive-deps
+
   // Seed workflowType into orderData on mount (or when editing an existing order
   // that already has a workflowType — keep it so it is not reset on re-render).
   useEffect(() => {
