@@ -82,19 +82,19 @@ describe("ProgramManagement", () => {
 
   test("renders title", () => {
     renderWithIntl(<ProgramManagement />);
-    expect(screen.getByText("Program Administration")).toBeTruthy();
+    expect(screen.getByText("Scheme Administration")).toBeTruthy();
   });
 
   test("renders add program button", () => {
     renderWithIntl(<ProgramManagement />);
-    expect(screen.getByText("Add Program")).toBeTruthy();
+    expect(screen.getByText("Add Scheme")).toBeTruthy();
   });
 
   test("hides create and edit controls from a reader without the provider grant", () => {
     // Program CRUD is provider-lane, so a bench reader sees the list but no
     // controls that would answer 403.
     renderWithIntl(<ProgramManagement />, { permissions: ["qa.view.eqa"] });
-    expect(screen.queryByText("Add Program")).toBeNull();
+    expect(screen.queryByText("Add Scheme")).toBeNull();
     // byRole, not byLabelText: Carbon icon-only buttons name themselves through
     // aria-labelledby, which queryByLabelText does not resolve — the assertion
     // would pass with the gate removed.
@@ -130,7 +130,7 @@ describe("ProgramManagement", () => {
 
   test("renders summary tiles", () => {
     renderWithIntl(<ProgramManagement />);
-    expect(screen.getByText("Active Programs")).toBeTruthy();
+    expect(screen.getByText("Active Schemes")).toBeTruthy();
     expect(
       screen.getAllByText("Enrolled Participants").length,
     ).toBeGreaterThanOrEqual(1);
@@ -139,9 +139,7 @@ describe("ProgramManagement", () => {
 
   test("renders tabs", () => {
     renderWithIntl(<ProgramManagement />);
-    expect(screen.getAllByText("EQA Programs").length).toBeGreaterThanOrEqual(
-      1,
-    );
+    expect(screen.getAllByText("EQA Schemes").length).toBeGreaterThanOrEqual(1);
     // The participants tab was removed: enrollment administration lives on
     // the standalone /qa/eqa/participants page.
     expect(screen.queryByText("Participants")).toBeNull();
@@ -161,8 +159,8 @@ describe("ProgramManagement", () => {
 
   test("opens create form when button clicked", () => {
     renderWithIntl(<ProgramManagement />);
-    fireEvent.click(screen.getByText("Add Program"));
-    expect(screen.getByText("Add New EQA Program")).toBeTruthy();
+    fireEvent.click(screen.getByText("Add Scheme"));
+    expect(screen.getByText("Add New EQA Scheme")).toBeTruthy();
   });
 });
 
@@ -185,7 +183,7 @@ describe("ProgramForm", () => {
     fireEvent.change(container.querySelector("#program-name"), {
       target: { value: "In-house blinded PT" },
     });
-    fireEvent.click(screen.getByText("Add Program"));
+    fireEvent.click(screen.getByText("Add Scheme"));
 
     expect(screen.queryByText("Provider is required")).toBeNull();
     const [, payload] = postToOpenElisServerFullResponse.mock.calls[0];
@@ -210,7 +208,7 @@ describe("ProgramForm", () => {
     fireEvent.change(container.querySelector("#program-provider"), {
       target: { value: "CPHL" },
     });
-    fireEvent.click(screen.getByText("Add Program"));
+    fireEvent.click(screen.getByText("Add Scheme"));
 
     const [, payload] = postToOpenElisServerFullResponse.mock.calls[0];
     expect(JSON.parse(payload).schemeType).toBe("REGIONAL_PT");
@@ -234,7 +232,7 @@ describe("ProgramForm", () => {
       target: { value: "CPHL" },
     });
     fireEvent.click(container.querySelector("#program-requires-cycle-review"));
-    fireEvent.click(screen.getByText("Add Program"));
+    fireEvent.click(screen.getByText("Add Scheme"));
 
     const [, payload] = postToOpenElisServerFullResponse.mock.calls[0];
     expect(JSON.parse(payload).requiresCycleReview).toBe(true);
@@ -261,7 +259,7 @@ describe("ProgramForm", () => {
 
   test("renders create mode with correct heading", () => {
     renderWithIntl(<ProgramForm program={null} onClose={vi.fn()} />);
-    expect(screen.getByText("Add New EQA Program")).toBeTruthy();
+    expect(screen.getByText("Add New EQA Scheme")).toBeTruthy();
   });
 
   test("renders edit mode with program data", () => {
@@ -273,12 +271,12 @@ describe("ProgramForm", () => {
       isActive: true,
     };
     renderWithIntl(<ProgramForm program={program} onClose={vi.fn()} />);
-    expect(screen.getByText("Edit EQA Program")).toBeTruthy();
+    expect(screen.getByText("Edit EQA Scheme")).toBeTruthy();
   });
 
   test("shows validation error when name is empty", () => {
     renderWithIntl(<ProgramForm program={null} onClose={vi.fn()} />);
-    fireEvent.click(screen.getByText("Add Program"));
+    fireEvent.click(screen.getByText("Add Scheme"));
     expect(screen.getByText("Program name is required")).toBeTruthy();
   });
 
@@ -394,7 +392,7 @@ describe("ProgramForm test assignments", () => {
       expect(container.querySelector("#program-tests")).toBeTruthy(),
     );
 
-    fireEvent.change(screen.getByLabelText("Program Name"), {
+    fireEvent.change(screen.getByLabelText("Scheme Name"), {
       target: { value: "HIV Viral Load" },
     });
     fireEvent.change(screen.getByLabelText("Provider"), {
@@ -403,7 +401,7 @@ describe("ProgramForm test assignments", () => {
     // The menu opens off the combobox input, not the wrapper the id sits on.
     fireEvent.click(screen.getByPlaceholderText("Select tests to assign"));
     fireEvent.click(await screen.findByText("Determine(Serum)"));
-    fireEvent.click(screen.getByText("Add Program"));
+    fireEvent.click(screen.getByText("Add Scheme"));
 
     await waitFor(() => expect(onClose).toHaveBeenCalled());
     expect(putToOpenElisServerFullResponse).toHaveBeenCalledWith(

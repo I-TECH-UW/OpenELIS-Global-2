@@ -70,7 +70,9 @@ const STATUS_ACTION_KEY = {
 
 const breadcrumbs = [
   { label: "home.label", link: "/" },
-  { label: "banner.menu.eqa.tests", link: "" },
+  // qa-076 deactivated menu_eqa_tests when the group was flattened; My Programs
+  // now sits directly under EQA.
+  { label: "banner.menu.eqa", link: "" },
   { label: "eqa.myPrograms.title", link: "/EQAMyPrograms" },
 ];
 
