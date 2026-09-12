@@ -8,7 +8,7 @@
 
 // ========== MOCKS (before imports) ==========
 // Factory must be self-contained (hoisted above imports) — no outer refs.
-vi.mock("../../../layout/Layout", async () => {
+vi.mock("../../../layout/contexts", async () => {
   const React = await import("react");
   return {
     NotificationContext: React.createContext({
