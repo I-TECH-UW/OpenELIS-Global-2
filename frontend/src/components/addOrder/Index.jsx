@@ -17,6 +17,7 @@ import { createSampleOrderFormValues } from "../formModel/innitialValues/OrderEn
 import { NotificationContext, ConfigurationContext } from "../layout/contexts";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import {
+  apiFetch,
   getFromOpenElisServer,
   postToOpenElisServerFormData,
   postToOpenElisServerJsonResponse,
@@ -158,15 +159,12 @@ const Index = () => {
       };
     }
 
-    fetch(
+    apiFetch(
       config.serverBaseUrl +
         "/ajaxQueryXML?asJSON=true&provider=LabOrderSearchProvider&orderNumber=" +
         orderNumber,
       {
         method: "get",
-        headers: {
-          "X-CSRF-Token": localStorage.getItem("CSRF"),
-        },
       },
     )
       .then((response) => response.json())

@@ -272,7 +272,7 @@ import {
   LegacyResultsGate,
   UnifiedResultsRoute,
 } from "./components/resultPage/unified/routeGates";
-import { getFromOpenElisServer } from "./components/utils/Utils";
+import { apiFetch, getFromOpenElisServer } from "./components/utils/Utils";
 import { loadAndApplyBranding } from "./components/utils/BrandingUtils";
 import {
   resolveMessagesForLocale,
@@ -318,7 +318,9 @@ const GenericSampleResults = lazyWithRetry(
   () => import("./components/genericSample/GenericSampleResults"),
 );
 
-import RouteErrorBoundary from "./components/common/RouteErrorBoundary";
+import RouteErrorBoundary, {
+  RouteErrorBoundary as AppShellErrorBoundary,
+} from "./components/common/RouteErrorBoundary";
 import {
   OrderProvider,
   OrderDashboard,
@@ -350,7 +352,8 @@ export default function App() {
     "en";
 
   // English renders immediately; the chosen catalog is its own chunk now, so it
-  // arrives a moment later rather than holding up first paint for 24 languages.
+  // arrives a moment later rather than holding up first paint for every
+  // catalog in the build.
   const [locale, setLocale] = useState(requestedLocale);
   const [messages, setMessages] = useState(fallbackMessages);
 
@@ -437,12 +440,11 @@ export default function App() {
 
   const logout = () => {
     if (userSessionDetails.loginMethod === "SAML") {
-      fetch(config.serverBaseUrl + "/Logout?useSAML=true", {
+      apiFetch(config.serverBaseUrl + "/Logout?useSAML=true", {
         //includes the browser sessionId in the Header for Authentication on the backend server
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": localStorage.getItem("CSRF"),
         },
       })
         .then((response) => response.text())
@@ -476,12 +478,11 @@ export default function App() {
           console.error(error);
         });
     } else {
-      fetch(config.serverBaseUrl + "/Logout", {
+      apiFetch(config.serverBaseUrl + "/Logout", {
         //includes the browser sessionId in the Header for Authentication on the backend server
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          "X-CSRF-Token": localStorage.getItem("CSRF"),
         },
       })
         .then((response) => response.status)
@@ -581,27 +582,40 @@ export default function App() {
           refresh,
         }}
       >
-        <>
+        {/* Login and Layout are lazy, and nothing above App is an error
+            boundary, so a chunk that fails every lazyWithRetry attempt would
+            otherwise unmount the tree to a blank page with no way back. */}
+        <AppShellErrorBoundary>
           <Router>
             {/* The contexts come from LayoutProvider, which carries no chrome,
-                so the signed-out routes below render without pulling Layout —
-                and with it Header and most of the component library — onto the
-                first-paint path. Layout wraps only the routes that need it, and
-                this Suspense is its boundary as well as the lazy pages'. */}
+                so /login renders without pulling Layout — and with it Header
+                and most of the component library — onto the first-paint path.
+                Every other route stays inside Layout, and this Suspense is its
+                boundary as well as the lazy pages'. */}
             <LayoutProvider>
               <Suspense fallback={null}>
                 <Switch>
-                  <Route path="/login" exact render={() => <Login />} />
+                  {/* /login is the one route without the Header, so it carries
+                      the locale selector the Header would have given it. */}
                   <Route
-                    path="/ChangePasswordLogin"
+                    path="/login"
                     exact
-                    render={() => <ChangePassword />}
+                    render={() => <Login onChangeLanguage={onChangeLanguage} />}
                   />
-                  <Route path="/landing" exact render={() => <LandingPage />} />
                   <Route
                     render={() => (
                       <Layout onChangeLanguage={onChangeLanguage}>
                         <Switch>
+                          <Route
+                            path="/ChangePasswordLogin"
+                            exact
+                            render={() => <ChangePassword />}
+                          />
+                          <Route
+                            path="/landing"
+                            exact
+                            render={() => <LandingPage />}
+                          />
                           <SecureRoute
                             path="/"
                             exact
@@ -1840,7 +1854,7 @@ export default function App() {
               </Suspense>
             </LayoutProvider>
           </Router>
-        </>
+        </AppShellErrorBoundary>
       </UserSessionDetailsContext.Provider>
     </IntlProvider>
   );

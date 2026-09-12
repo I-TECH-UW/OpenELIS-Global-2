@@ -224,6 +224,33 @@ describe("a rejected CSRF token", () => {
     expect(reload).not.toHaveBeenCalled();
   });
 
+  it("reloads when the session has expired and the refresh yields no token", async () => {
+    // What a timed-out session actually answers: authenticated false, and no
+    // csrf field at all, because the backend issues one only when authenticated.
+    const fetchMock = vi.fn().mockImplementation((url: string) =>
+      Promise.resolve(
+        String(url).endsWith("/session")
+          ? asResponse({
+              ok: true,
+              status: 200,
+              json: async () => ({
+                authenticated: false,
+                sessionId: "expired",
+              }),
+            })
+          : asResponse(CSRF_REJECTION),
+      ),
+    );
+    vi.stubGlobal("fetch", fetchMock);
+    const callback = vi.fn();
+
+    postToOpenElisServer("/rest/thing", "{}" as unknown as never, callback);
+    await settlePromiseChain();
+
+    expect(reload).toHaveBeenCalledTimes(1);
+    expect(store.CSRF).toBe("stale-token");
+  });
+
   it("still reloads when the replay is rejected too", async () => {
     const fetchMock = vi.fn().mockImplementation((url: string) =>
       Promise.resolve(

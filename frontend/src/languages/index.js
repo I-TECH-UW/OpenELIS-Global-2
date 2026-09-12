@@ -3,11 +3,11 @@ import en from "./en.json";
 /**
  * Every locale bundle in this directory, as loaders rather than contents.
  * Dropping a new Transifex pull (e.g. fr_MG.json) here is still all it takes —
- * Vite statically analyzes the glob either way — but without `eager` the
- * catalogs become their own chunks instead of 16 MB inside the entry, which the
- * login screen was downloading in 24 languages to render in one. English stays
- * imported above: it is the fallback every other bundle layers over, so it is
- * needed before any choice of locale is known.
+ * Vite statically analyzes the glob either way — but without `eager` each
+ * catalog becomes its own chunk instead of joining the entry, which the login
+ * screen was downloading whole to render in one locale. English stays
+ * statically imported: it is the fallback every other bundle layers over, so
+ * it is needed before any choice of locale is known.
  */
 const bundleLoaders = import.meta.glob("./*.json");
 
@@ -42,6 +42,12 @@ export const availableLocaleCodes = Object.keys(loaderByCode);
 
 const loadedBundles = { en };
 
+/**
+ * The bundle for a code, or null where there is none to be had. A catalog is
+ * its own chunk now, so fetching one can fail the way any chunk fetch can; a
+ * null here leaves the caller on the bundles that did load instead of rejecting
+ * into a language switch that would otherwise abandon the user mid-change.
+ */
 const loadRawBundle = async (code) => {
   if (code in loadedBundles) {
     return loadedBundles[code];
@@ -50,9 +56,14 @@ const loadRawBundle = async (code) => {
   if (!load) {
     return null;
   }
-  const mod = await load();
-  loadedBundles[code] = mod.default ?? mod;
-  return loadedBundles[code];
+  try {
+    const mod = await load();
+    loadedBundles[code] = mod.default ?? mod;
+    return loadedBundles[code];
+  } catch (error) {
+    console.error(`Could not load the ${code} message catalog`, error);
+    return null;
+  }
 };
 
 /**
@@ -118,9 +129,11 @@ export const languages = Object.fromEntries(
  * first, then the base language's, then English. The returned code is the
  * canonical form of what was asked for (valid BCP 47, safe for react-intl and
  * the Intl APIs), so a selector showing the configured locale stays in sync
- * with intl.locale even when the messages had to fall back. Never returns
- * undefined messages, so a stale localStorage value or an unconfigured
- * navigator.language cannot break startup or a switch.
+ * with intl.locale even when the messages had to fall back. Resolves rather
+ * than rejects — its callers apply the result without a catch — so a stale
+ * localStorage value, an unconfigured navigator.language or a catalog chunk
+ * that will not load leaves the user on the most specific bundle that did
+ * load, English at worst.
  */
 export const resolveMessagesForLocale = async (code) => {
   const canonical = normalizeLocaleCode(code);
@@ -142,11 +155,10 @@ export const fallbackMessages = en;
  * Builds the languages object from backend-provided locales, keyed by the
  * canonical code so the header selector, react-intl and the message lookup all
  * agree — the config file may spell a code either way (fr_MG or fr-MG).
- * Falls back to the code itself if displayName is not provided, and to the
- * base language's (then English) messages if no bundle exists for a
- * configured locale.
+ * Falls back to the code itself if displayName is not provided. Messages are
+ * not attached: resolveMessagesForLocale loads a catalog when one is chosen.
  * @param {Array} supportedLocales - Array of {localeCode, displayName, fallback} from backend
- * @returns {Object} Languages object with {[canonicalCode]: {label, messages, fallback}}
+ * @returns {Object} Languages object with {[canonicalCode]: {label, fallback}}
  */
 export function buildLanguagesFromConfig(supportedLocales) {
   if (!supportedLocales || supportedLocales.length === 0) {

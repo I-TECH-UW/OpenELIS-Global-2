@@ -131,14 +131,15 @@ const refreshCsrfToken = (): Promise<string> => {
 };
 
 /**
- * The one fetch the helpers below go through. It stamps the current CSRF token,
- * and when the backend rejects it — the token is per session and Spring rotates
- * it on login, so a second tab or a re-login leaves this one stale — fetches a
- * fresh token and replays the request once. Reloading the document also
- * recovers, by remounting App and re-reading /session, but it discards whatever
- * the user had typed, so it is the last resort rather than the first response.
+ * The one fetch every helper in this module goes through. It stamps the current CSRF
+ * token, and when the backend rejects it — the token is per session and Spring
+ * rotates it on login, so a second tab or a re-login leaves this one stale —
+ * fetches a fresh token and replays the request once. Reloading the document
+ * also recovers, by remounting App and re-reading /session, but it discards
+ * whatever the user had typed, so it is the last resort rather than the first
+ * response.
  */
-const apiFetch = async (
+export const apiFetch = async (
   input: string,
   init: RequestInit = {},
 ): Promise<Response> => {
@@ -155,12 +156,14 @@ const apiFetch = async (
     return response;
   }
 
+  // An empty refresh means the session itself is gone: LoginPageController
+  // issues a token only to an authenticated session, so a timed-out session
+  // answers /session without one. There is nothing left to replay with, and
+  // handing the caller a bare 403 leaves the user typing into a page that can
+  // no longer save — so take the reload that lands them back on /login.
   const refreshed = await refreshCsrfToken();
-  if (!refreshed) {
-    return response;
-  }
-  const replayed = await send(refreshed);
-  if (await isCsrfRejection(replayed)) {
+  const replayed = refreshed ? await send(refreshed) : response;
+  if (!refreshed || (await isCsrfRejection(replayed))) {
     alert(
       "Your session has expired. The page will reload so you can continue.",
     );

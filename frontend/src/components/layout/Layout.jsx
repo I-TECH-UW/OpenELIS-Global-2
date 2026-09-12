@@ -4,12 +4,6 @@ import Header from "./Header";
 import Footer from "./Footer";
 import { Content, Theme } from "@carbon/react";
 import UserSessionDetailsContext from "../../UserSessionDetailsContext";
-import { ConfigurationContext, NotificationContext } from "./contexts";
-
-// Declared in ./contexts so a component Layout renders can read one without
-// importing Layout back; re-exported here because this is where the rest of the
-// app has always imported them from.
-export { ConfigurationContext, NotificationContext };
 
 const isAdminNavRoute = (pathname) =>
   pathname === "/admin" ||
@@ -109,13 +103,12 @@ export default function Layout(props) {
     closeSideNav();
   }, [location.pathname, closeSideNav]);
 
-  // Credential-change screens are login-adjacent and render focused (no sidenav),
-  // matching /login regardless of auth state.
+  // Credential-change screens are login-adjacent: header and footer, no sidenav,
+  // regardless of auth state.
   const isFocusedAuthRoute = location.pathname === "/ChangePasswordLogin";
 
   // Only push content when the persistent sidenav is actually present
-  // (authenticated desktop UX with the nav pinned). Unauthenticated pages
-  // like /login have no sidenav to make room for.
+  // (authenticated desktop UX with the nav pinned).
   const isLocked =
     userSessionDetails.authenticated && navPersistent && !isFocusedAuthRoute;
 
