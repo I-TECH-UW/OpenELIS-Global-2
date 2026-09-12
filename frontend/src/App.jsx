@@ -89,6 +89,15 @@ const AnalyzerTypesPage = lazyWithRetry(
 const AnalyzerTypeMappingPage = lazyWithRetry(
   () => import("./pages/AnalyzerTypeMappingPage"),
 );
+const MicrobiologyPage = lazyWithRetry(
+  () => import("./pages/MicrobiologyPage"),
+);
+const MicrobiologyWorklistPage = lazyWithRetry(
+  () => import("./pages/MicrobiologyWorklistPage"),
+);
+const MicrobiologyWhonetPage = lazyWithRetry(
+  () => import("./pages/MicrobiologyWhonetPage"),
+);
 import {
   QCDashboard,
   ControlChartDetail,
@@ -105,6 +114,15 @@ import {
 import { getFromOpenElisServer } from "./components/utils/Utils";
 import { loadAndApplyBranding } from "./components/utils/BrandingUtils";
 import { resolveMessagesForLocale } from "./languages";
+import {
+  getMicrobiologyCaseUrl,
+  getMicrobiologyWorklistUrl,
+  MICROBIOLOGY_CASE_PATH,
+  MICROBIOLOGY_WORKLIST_PATH,
+  parseMicrobiologyCaseSearch,
+  parseMicrobiologyWorklistSearch,
+} from "./components/microbiology/MicrobiologyRoutes";
+import { MICROBIOLOGY_WHONET_PATH } from "./components/microbiology/WhonetRoutes";
 import config from "./config.json";
 import { SecureRoute } from "./components/security";
 import "./index.scss";
@@ -189,6 +207,11 @@ import {
   VectorIdentificationWorklist,
   VectorDeconvolutionWorklist,
 } from "./components/vectorIdentification";
+
+export const ANALYZER_RESULTS_ROLES = [
+  Roles.GLOBAL_ADMIN,
+  Roles.ANALYSER_IMPORT,
+];
 
 export default function App() {
   // The stored preference, or the browser's full tag (region kept: fr-MG
@@ -546,6 +569,59 @@ export default function App() {
                   labUnitRole={{ Cytology: [Roles.RESULTS] }}
                 />
                 <SecureRoute
+                  path={`${MICROBIOLOGY_CASE_PATH}/:caseId`}
+                  exact
+                  component={() => (
+                    <Suspense fallback={null}>
+                      <MicrobiologyPage />
+                    </Suspense>
+                  )}
+                  role={[Roles.GLOBAL_ADMIN, Roles.RESULTS, Roles.VALIDATION]}
+                />
+                <SecureRoute
+                  path={MICROBIOLOGY_WORKLIST_PATH}
+                  exact
+                  component={() => (
+                    <Suspense fallback={null}>
+                      <MicrobiologyWorklistPage />
+                    </Suspense>
+                  )}
+                  role={[Roles.GLOBAL_ADMIN, Roles.RESULTS, Roles.VALIDATION]}
+                />
+                <SecureRoute
+                  path={MICROBIOLOGY_WHONET_PATH}
+                  exact
+                  component={() => (
+                    <Suspense fallback={null}>
+                      <MicrobiologyWhonetPage />
+                    </Suspense>
+                  )}
+                  role={[Roles.GLOBAL_ADMIN, Roles.RESULTS, Roles.REPORTS]}
+                />
+                <Route
+                  path="/MicrobiologyCaseView/:caseId"
+                  exact
+                  render={({ location, match }) => (
+                    <Redirect
+                      to={getMicrobiologyCaseUrl(
+                        match.params.caseId,
+                        parseMicrobiologyCaseSearch(location.search),
+                      )}
+                    />
+                  )}
+                />
+                <Route
+                  path="/MicrobiologyWorklist"
+                  exact
+                  render={({ location }) => (
+                    <Redirect
+                      to={getMicrobiologyWorklistUrl(
+                        parseMicrobiologyWorklistSearch(location.search),
+                      )}
+                    />
+                  )}
+                />
+                <SecureRoute
                   path="/GenericSample/Order"
                   exact
                   render={() => (
@@ -583,7 +659,7 @@ export default function App() {
                       <FreezerMonitoringDashboard />
                     </Suspense>
                   )}
-                  role={Roles.RECEPTION}
+                  role={[Roles.RECEPTION, Roles.GLOBAL_ADMIN]}
                 />
                 <SecureRoute
                   path="/SamplePatientEntry"
@@ -1490,7 +1566,7 @@ export default function App() {
                       </Suspense>
                     </RouteErrorBoundary>
                   )}
-                  role={Roles.ANALYSER_IMPORT}
+                  role={ANALYZER_RESULTS_ROLES}
                 />
                 <Route path="*" render={() => <RedirectOldUI />} />
               </Switch>
