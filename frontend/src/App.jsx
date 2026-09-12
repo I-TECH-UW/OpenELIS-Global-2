@@ -8,6 +8,7 @@ import {
   Switch,
 } from "react-router-dom";
 import RedirectOldUI from "./RedirectOldUI";
+import Layout from "./components/layout/Layout";
 import UserSessionDetailsContext from "./UserSessionDetailsContext";
 
 /**
@@ -50,7 +51,6 @@ function lazyWithRetry(factory, retries = 3, backoffMs = 500) {
   });
 }
 
-const Layout = lazyWithRetry(() => import("./components/layout/Layout"));
 const BoxDetails = lazyWithRetry(
   () => import("./components/shipment/BoxDetails"),
 );
@@ -563,1240 +563,1145 @@ export default function App() {
       >
         <>
           <Router>
-            {/* The signed-out routes render without Layout, and Layout is a
-                lazy import, so reaching the login form does not download the
-                header, its search, or anything the shared chunk drags with it. */}
-            <Suspense fallback={null}>
-              <Switch>
-                <Route path="/login" exact render={() => <Login />} />
-                <Route
-                  path="/ChangePasswordLogin"
-                  exact
-                  render={() => <ChangePassword />}
-                />
-                <Route path="/landing" exact render={() => <LandingPage />} />
-                <Route
-                  render={() => (
-                    <Layout onChangeLanguage={onChangeLanguage}>
-                      <Switch>
-                        <SecureRoute
-                          path="/"
-                          exact
-                          render={() => <Home />}
-                          role=""
-                        />
-                        <SecureRoute
-                          path="/Dashboard"
-                          exact
-                          render={() => <Home />}
-                          role=""
-                        />
-                        <SecureRoute
-                          path="/admin"
-                          render={() => <Admin />}
-                          role={Roles.GLOBAL_ADMIN}
-                        />
-                        <SecureRoute
-                          path="/MasterListsPage"
-                          render={() => <Admin />}
-                          role={Roles.GLOBAL_ADMIN}
-                        />
-                        <SecureRoute
-                          path="/PathologyDashboard"
-                          exact
-                          render={() => <PathologyDashboard />}
-                          role=""
-                          labUnitRole={{ Pathology: [Roles.RESULTS] }}
-                        />
-                        <SecureRoute
-                          path="/PathologyCaseView/:pathologySampleId"
-                          exact
-                          render={() => <PathologyCaseView />}
-                          role=""
-                          labUnitRole={{ Pathology: [Roles.RESULTS] }}
-                        />
-                        <SecureRoute
-                          path="/ImmunohistochemistryDashboard"
-                          exact
-                          render={() => <ImmunohistochemistryDashboard />}
-                          role=""
-                          labUnitRole={{
-                            Immunohistochemistry: [Roles.RESULTS],
-                          }}
-                        />
-                        <SecureRoute
-                          path="/ImmunohistochemistryCaseView/:immunohistochemistrySampleId"
-                          exact
-                          render={() => <ImmunohistochemistryCaseView />}
-                          role=""
-                          labUnitRole={{
-                            Immunohistochemistry: [Roles.RESULTS],
-                          }}
-                        />
-                        <SecureRoute
-                          path="/CytologyDashboard"
-                          exact
-                          render={() => <CytologyDashboard />}
-                          role=""
-                        />
-                        <SecureRoute
-                          path="/genericProgram"
-                          exact
-                          render={() => <ProgramDashboard />}
-                          role={Roles.RECEPTION}
-                        />
-                        <SecureRoute
-                          path="/programView/:programSampleId"
-                          exact
-                          render={() => <ProgramCaseView />}
-                          role={Roles.RECEPTION}
-                        />
-                        <SecureRoute
-                          path="/NoteBookDashboard"
-                          exact
-                          render={() => <NoteBookDashBoard />}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.VALIDATION,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/EnvironmentalDashboard"
-                          exact
-                          render={() => <EnvironmentalDashboard />}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/NoteBookEntryForm/:notebookid"
-                          exact
-                          render={() => <NoteBookEntryForm />}
-                          role={Roles.GLOBAL_ADMIN}
-                        />
-                        <SecureRoute
-                          path="/NoteBookEntryForm"
-                          exact
-                          render={() => <NoteBookEntryForm />}
-                          role={Roles.GLOBAL_ADMIN}
-                        />
-                        <SecureRoute
-                          path="/NoteBookInstanceEntryForm/:notebookid"
-                          exact
-                          render={() => <NoteBookInstanceEntryForm />}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/NoteBookInstanceEditForm/:notebookentryid"
-                          exact
-                          render={() => <NoteBookInstanceEntryForm />}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/NotebookSampleOrder/:notebookId/:notebookEntryId"
-                          exact
-                          render={() => <NotebookSampleOrder />}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/NotebookSampleOrder/:notebookId"
-                          exact
-                          render={() => <NotebookSampleOrder />}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/CytologyCaseView/:cytologySampleId"
-                          exact
-                          render={() => <CytologyCaseView />}
-                          role=""
-                          labUnitRole={{ Cytology: [Roles.RESULTS] }}
-                        />
-                        <SecureRoute
-                          path={`${MICROBIOLOGY_CASE_PATH}/:caseId`}
-                          exact
-                          component={() => (
-                            <Suspense fallback={null}>
-                              <MicrobiologyPage />
-                            </Suspense>
-                          )}
-                          role={[
-                            Roles.GLOBAL_ADMIN,
-                            Roles.RESULTS,
-                            Roles.VALIDATION,
-                          ]}
-                        />
-                        <SecureRoute
-                          path={MICROBIOLOGY_WORKLIST_PATH}
-                          exact
-                          component={() => (
-                            <Suspense fallback={null}>
-                              <MicrobiologyWorklistPage />
-                            </Suspense>
-                          )}
-                          role={[
-                            Roles.GLOBAL_ADMIN,
-                            Roles.RESULTS,
-                            Roles.VALIDATION,
-                          ]}
-                        />
-                        <SecureRoute
-                          path={MICROBIOLOGY_WHONET_PATH}
-                          exact
-                          component={() => (
-                            <Suspense fallback={null}>
-                              <MicrobiologyWhonetPage />
-                            </Suspense>
-                          )}
-                          role={[
-                            Roles.GLOBAL_ADMIN,
-                            Roles.RESULTS,
-                            Roles.REPORTS,
-                          ]}
-                        />
-                        <Route
-                          path="/MicrobiologyCaseView/:caseId"
-                          exact
-                          render={({ location, match }) => (
-                            <Redirect
-                              to={getMicrobiologyCaseUrl(
-                                match.params.caseId,
-                                parseMicrobiologyCaseSearch(location.search),
-                              )}
-                            />
-                          )}
-                        />
-                        <Route
-                          path="/MicrobiologyWorklist"
-                          exact
-                          render={({ location }) => (
-                            <Redirect
-                              to={getMicrobiologyWorklistUrl(
-                                parseMicrobiologyWorklistSearch(
-                                  location.search,
-                                ),
-                              )}
-                            />
-                          )}
-                        />
-                        <SecureRoute
-                          path="/GenericSample/Order"
-                          exact
-                          render={() => (
-                            <Suspense fallback={null}>
-                              <GenericSampleOrder />
-                            </Suspense>
-                          )}
-                          role={Roles.RECEPTION}
-                        />
-                        <SecureRoute
-                          path="/GenericSample/Edit"
-                          exact
-                          render={() => (
-                            <Suspense fallback={null}>
-                              <GenericSampleOrderEdit />
-                            </Suspense>
-                          )}
-                          role={Roles.RECEPTION}
-                        />
-                        <SecureRoute
-                          path="/GenericSample/Import"
-                          exact
-                          render={() => (
-                            <Suspense fallback={null}>
-                              <GenericSampleOrderImport />
-                            </Suspense>
-                          )}
-                          role={Roles.RECEPTION}
-                        />
-                        <SecureRoute
-                          path="/FreezerMonitoring"
-                          exact
-                          render={() => (
-                            <Suspense fallback={null}>
-                              <FreezerMonitoringDashboard />
-                            </Suspense>
-                          )}
-                          role={[Roles.RECEPTION, Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/SamplePatientEntry"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary
-                              {...routeErrorSamplePatientEntry}
-                            >
-                              <AddOrder />
-                            </RouteErrorBoundary>
-                          )}
-                          role={Roles.RECEPTION}
-                        />
-                        {/* Clinical Order Workflow */}
-                        <Route
-                          path="/order/clinical"
-                          render={({ match }) => (
-                            <OrderProvider workflowType="clinical">
-                              <Switch>
-                                <SecureRoute
-                                  path={`${match.path}`}
-                                  exact
-                                  render={() => <OrderDashboard />}
-                                  role={Roles.RECEPTION}
-                                />
-                                <SecureRoute
-                                  path={`${match.path}/enter`}
-                                  exact
-                                  render={() => <ClinicalOrderEnter />}
-                                  role={Roles.RECEPTION}
-                                />
-                                <SecureRoute
-                                  path={`${match.path}/collect`}
-                                  exact
-                                  render={() => <OrderCollect />}
-                                  role={Roles.RECEPTION}
-                                />
-                                <SecureRoute
-                                  path={`${match.path}/label`}
-                                  exact
-                                  render={() => <OrderLabel />}
-                                  role={Roles.RECEPTION}
-                                />
-                                <SecureRoute
-                                  path={`${match.path}/qa`}
-                                  exact
-                                  render={() => <OrderQA />}
-                                  role={Roles.RECEPTION}
-                                />
-                              </Switch>
-                            </OrderProvider>
-                          )}
-                        />
-                        {/* Environmental Order Workflow */}
-                        <Route
-                          path="/order/environmental"
-                          render={({ match }) => (
-                            <OrderProvider workflowType="environmental">
-                              <Switch>
-                                <SecureRoute
-                                  path={`${match.path}`}
-                                  exact
-                                  render={() => <OrderDashboard />}
-                                  role={Roles.RECEPTION}
-                                />
-                                <SecureRoute
-                                  path={`${match.path}/enter`}
-                                  exact
-                                  render={() => <EnvironmentalOrderEnter />}
-                                  role={Roles.RECEPTION}
-                                />
-                                <SecureRoute
-                                  path={`${match.path}/label`}
-                                  exact
-                                  render={() => <OrderLabel />}
-                                  role={Roles.RECEPTION}
-                                />
-                                <SecureRoute
-                                  path={`${match.path}/qa`}
-                                  exact
-                                  render={() => <OrderQA />}
-                                  role={Roles.RECEPTION}
-                                />
-                              </Switch>
-                            </OrderProvider>
-                          )}
-                        />
-                        {/* Vector Surveillance Order Workflow (no Collect step) */}
-                        <Route
-                          path="/order/vector"
-                          render={({ match }) => (
-                            <OrderProvider workflowType="vector">
-                              <Switch>
-                                <SecureRoute
-                                  path={`${match.path}`}
-                                  exact
-                                  render={() => <OrderDashboard />}
-                                  role={Roles.RECEPTION}
-                                />
-                                <SecureRoute
-                                  path={`${match.path}/enter`}
-                                  exact
-                                  render={() => <VectorOrderEnter />}
-                                  role={Roles.RECEPTION}
-                                />
-                                <SecureRoute
-                                  path={`${match.path}/label`}
-                                  exact
-                                  render={() => <OrderLabel />}
-                                  role={Roles.RECEPTION}
-                                />
-                                <SecureRoute
-                                  path={`${match.path}/qa`}
-                                  exact
-                                  render={() => <OrderQA />}
-                                  role={Roles.RECEPTION}
-                                />
-                                <SecureRoute
-                                  path={`${match.path}/complete`}
-                                  exact
-                                  render={() => <VectorOrderComplete />}
-                                  role={Roles.RECEPTION}
-                                />
-                              </Switch>
-                            </OrderProvider>
-                          )}
-                        />
-                        {/* Redirect legacy /order and /order/enter to clinical workflow */}
-                        <Route
-                          path="/order/enter"
-                          exact
-                          render={() => <Redirect to="/order/clinical/enter" />}
-                        />
-                        <Route
-                          path="/order"
-                          exact
-                          render={() => <Redirect to="/order/clinical" />}
-                        />
-                        <SecureRoute
-                          path="/vector/identification"
-                          exact
-                          render={() => <VectorIdentificationWorklist />}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/vector/deconvolution"
-                          exact
-                          render={() => <VectorDeconvolutionWorklist />}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/ModifyOrder"
-                          exact
-                          render={() => <ModifyOrder />}
-                          role={Roles.RECEPTION}
-                        />
-                        <SecureRoute
-                          path="/SampleEdit"
-                          exact
-                          render={() => <FindOrder />}
-                          role={Roles.RECEPTION}
-                        />
-                        <SecureRoute
-                          path="/NceDashboard"
-                          exact
-                          render={() => <NonConformIndex form="NceDashboard" />}
-                          role={[Roles.RECEPTION, Roles.VALIDATION]}
-                        />
-                        <SecureRoute
-                          path="/ReportNonConformingEvent"
-                          exact
-                          render={() => (
-                            <NonConformIndex form="ReportNonConformingEvent" />
-                          )}
-                          role={[Roles.RECEPTION, Roles.VALIDATION]}
-                        />
-                        <SecureRoute
-                          path="/ViewNonConformingEvent"
-                          exact
-                          render={() => (
-                            <NonConformIndex form="ViewNonConformingEvent" />
-                          )}
-                          role={[Roles.RECEPTION, Roles.VALIDATION]}
-                        />
+            <Layout onChangeLanguage={onChangeLanguage}>
+              {/* One boundary for every lazily routed page below. */}
+              <Suspense fallback={null}>
+                <Switch>
+                  <Route path="/login" exact render={() => <Login />} />
+                  <Route
+                    path="/ChangePasswordLogin"
+                    exact
+                    render={() => <ChangePassword />}
+                  />
+                  <Route path="/landing" exact render={() => <LandingPage />} />
+                  <SecureRoute path="/" exact render={() => <Home />} role="" />
+                  <SecureRoute
+                    path="/Dashboard"
+                    exact
+                    render={() => <Home />}
+                    role=""
+                  />
+                  <SecureRoute
+                    path="/admin"
+                    render={() => <Admin />}
+                    role={Roles.GLOBAL_ADMIN}
+                  />
+                  <SecureRoute
+                    path="/MasterListsPage"
+                    render={() => <Admin />}
+                    role={Roles.GLOBAL_ADMIN}
+                  />
+                  <SecureRoute
+                    path="/PathologyDashboard"
+                    exact
+                    render={() => <PathologyDashboard />}
+                    role=""
+                    labUnitRole={{ Pathology: [Roles.RESULTS] }}
+                  />
+                  <SecureRoute
+                    path="/PathologyCaseView/:pathologySampleId"
+                    exact
+                    render={() => <PathologyCaseView />}
+                    role=""
+                    labUnitRole={{ Pathology: [Roles.RESULTS] }}
+                  />
+                  <SecureRoute
+                    path="/ImmunohistochemistryDashboard"
+                    exact
+                    render={() => <ImmunohistochemistryDashboard />}
+                    role=""
+                    labUnitRole={{
+                      Immunohistochemistry: [Roles.RESULTS],
+                    }}
+                  />
+                  <SecureRoute
+                    path="/ImmunohistochemistryCaseView/:immunohistochemistrySampleId"
+                    exact
+                    render={() => <ImmunohistochemistryCaseView />}
+                    role=""
+                    labUnitRole={{
+                      Immunohistochemistry: [Roles.RESULTS],
+                    }}
+                  />
+                  <SecureRoute
+                    path="/CytologyDashboard"
+                    exact
+                    render={() => <CytologyDashboard />}
+                    role=""
+                  />
+                  <SecureRoute
+                    path="/genericProgram"
+                    exact
+                    render={() => <ProgramDashboard />}
+                    role={Roles.RECEPTION}
+                  />
+                  <SecureRoute
+                    path="/programView/:programSampleId"
+                    exact
+                    render={() => <ProgramCaseView />}
+                    role={Roles.RECEPTION}
+                  />
+                  <SecureRoute
+                    path="/NoteBookDashboard"
+                    exact
+                    render={() => <NoteBookDashBoard />}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.VALIDATION]}
+                  />
+                  <SecureRoute
+                    path="/EnvironmentalDashboard"
+                    exact
+                    render={() => <EnvironmentalDashboard />}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/NoteBookEntryForm/:notebookid"
+                    exact
+                    render={() => <NoteBookEntryForm />}
+                    role={Roles.GLOBAL_ADMIN}
+                  />
+                  <SecureRoute
+                    path="/NoteBookEntryForm"
+                    exact
+                    render={() => <NoteBookEntryForm />}
+                    role={Roles.GLOBAL_ADMIN}
+                  />
+                  <SecureRoute
+                    path="/NoteBookInstanceEntryForm/:notebookid"
+                    exact
+                    render={() => <NoteBookInstanceEntryForm />}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/NoteBookInstanceEditForm/:notebookentryid"
+                    exact
+                    render={() => <NoteBookInstanceEntryForm />}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/NotebookSampleOrder/:notebookId/:notebookEntryId"
+                    exact
+                    render={() => <NotebookSampleOrder />}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/NotebookSampleOrder/:notebookId"
+                    exact
+                    render={() => <NotebookSampleOrder />}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/CytologyCaseView/:cytologySampleId"
+                    exact
+                    render={() => <CytologyCaseView />}
+                    role=""
+                    labUnitRole={{ Cytology: [Roles.RESULTS] }}
+                  />
+                  <SecureRoute
+                    path={`${MICROBIOLOGY_CASE_PATH}/:caseId`}
+                    exact
+                    component={() => (
+                      <Suspense fallback={null}>
+                        <MicrobiologyPage />
+                      </Suspense>
+                    )}
+                    role={[Roles.GLOBAL_ADMIN, Roles.RESULTS, Roles.VALIDATION]}
+                  />
+                  <SecureRoute
+                    path={MICROBIOLOGY_WORKLIST_PATH}
+                    exact
+                    component={() => (
+                      <Suspense fallback={null}>
+                        <MicrobiologyWorklistPage />
+                      </Suspense>
+                    )}
+                    role={[Roles.GLOBAL_ADMIN, Roles.RESULTS, Roles.VALIDATION]}
+                  />
+                  <SecureRoute
+                    path={MICROBIOLOGY_WHONET_PATH}
+                    exact
+                    component={() => (
+                      <Suspense fallback={null}>
+                        <MicrobiologyWhonetPage />
+                      </Suspense>
+                    )}
+                    role={[Roles.GLOBAL_ADMIN, Roles.RESULTS, Roles.REPORTS]}
+                  />
+                  <Route
+                    path="/MicrobiologyCaseView/:caseId"
+                    exact
+                    render={({ location, match }) => (
+                      <Redirect
+                        to={getMicrobiologyCaseUrl(
+                          match.params.caseId,
+                          parseMicrobiologyCaseSearch(location.search),
+                        )}
+                      />
+                    )}
+                  />
+                  <Route
+                    path="/MicrobiologyWorklist"
+                    exact
+                    render={({ location }) => (
+                      <Redirect
+                        to={getMicrobiologyWorklistUrl(
+                          parseMicrobiologyWorklistSearch(location.search),
+                        )}
+                      />
+                    )}
+                  />
+                  <SecureRoute
+                    path="/GenericSample/Order"
+                    exact
+                    render={() => (
+                      <Suspense fallback={null}>
+                        <GenericSampleOrder />
+                      </Suspense>
+                    )}
+                    role={Roles.RECEPTION}
+                  />
+                  <SecureRoute
+                    path="/GenericSample/Edit"
+                    exact
+                    render={() => (
+                      <Suspense fallback={null}>
+                        <GenericSampleOrderEdit />
+                      </Suspense>
+                    )}
+                    role={Roles.RECEPTION}
+                  />
+                  <SecureRoute
+                    path="/GenericSample/Import"
+                    exact
+                    render={() => (
+                      <Suspense fallback={null}>
+                        <GenericSampleOrderImport />
+                      </Suspense>
+                    )}
+                    role={Roles.RECEPTION}
+                  />
+                  <SecureRoute
+                    path="/FreezerMonitoring"
+                    exact
+                    render={() => (
+                      <Suspense fallback={null}>
+                        <FreezerMonitoringDashboard />
+                      </Suspense>
+                    )}
+                    role={[Roles.RECEPTION, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/SamplePatientEntry"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorSamplePatientEntry}>
+                        <AddOrder />
+                      </RouteErrorBoundary>
+                    )}
+                    role={Roles.RECEPTION}
+                  />
+                  {/* Clinical Order Workflow */}
+                  <Route
+                    path="/order/clinical"
+                    render={({ match }) => (
+                      <OrderProvider workflowType="clinical">
+                        <Switch>
+                          <SecureRoute
+                            path={`${match.path}`}
+                            exact
+                            render={() => <OrderDashboard />}
+                            role={Roles.RECEPTION}
+                          />
+                          <SecureRoute
+                            path={`${match.path}/enter`}
+                            exact
+                            render={() => <ClinicalOrderEnter />}
+                            role={Roles.RECEPTION}
+                          />
+                          <SecureRoute
+                            path={`${match.path}/collect`}
+                            exact
+                            render={() => <OrderCollect />}
+                            role={Roles.RECEPTION}
+                          />
+                          <SecureRoute
+                            path={`${match.path}/label`}
+                            exact
+                            render={() => <OrderLabel />}
+                            role={Roles.RECEPTION}
+                          />
+                          <SecureRoute
+                            path={`${match.path}/qa`}
+                            exact
+                            render={() => <OrderQA />}
+                            role={Roles.RECEPTION}
+                          />
+                        </Switch>
+                      </OrderProvider>
+                    )}
+                  />
+                  {/* Environmental Order Workflow */}
+                  <Route
+                    path="/order/environmental"
+                    render={({ match }) => (
+                      <OrderProvider workflowType="environmental">
+                        <Switch>
+                          <SecureRoute
+                            path={`${match.path}`}
+                            exact
+                            render={() => <OrderDashboard />}
+                            role={Roles.RECEPTION}
+                          />
+                          <SecureRoute
+                            path={`${match.path}/enter`}
+                            exact
+                            render={() => <EnvironmentalOrderEnter />}
+                            role={Roles.RECEPTION}
+                          />
+                          <SecureRoute
+                            path={`${match.path}/label`}
+                            exact
+                            render={() => <OrderLabel />}
+                            role={Roles.RECEPTION}
+                          />
+                          <SecureRoute
+                            path={`${match.path}/qa`}
+                            exact
+                            render={() => <OrderQA />}
+                            role={Roles.RECEPTION}
+                          />
+                        </Switch>
+                      </OrderProvider>
+                    )}
+                  />
+                  {/* Vector Surveillance Order Workflow (no Collect step) */}
+                  <Route
+                    path="/order/vector"
+                    render={({ match }) => (
+                      <OrderProvider workflowType="vector">
+                        <Switch>
+                          <SecureRoute
+                            path={`${match.path}`}
+                            exact
+                            render={() => <OrderDashboard />}
+                            role={Roles.RECEPTION}
+                          />
+                          <SecureRoute
+                            path={`${match.path}/enter`}
+                            exact
+                            render={() => <VectorOrderEnter />}
+                            role={Roles.RECEPTION}
+                          />
+                          <SecureRoute
+                            path={`${match.path}/label`}
+                            exact
+                            render={() => <OrderLabel />}
+                            role={Roles.RECEPTION}
+                          />
+                          <SecureRoute
+                            path={`${match.path}/qa`}
+                            exact
+                            render={() => <OrderQA />}
+                            role={Roles.RECEPTION}
+                          />
+                          <SecureRoute
+                            path={`${match.path}/complete`}
+                            exact
+                            render={() => <VectorOrderComplete />}
+                            role={Roles.RECEPTION}
+                          />
+                        </Switch>
+                      </OrderProvider>
+                    )}
+                  />
+                  {/* Redirect legacy /order and /order/enter to clinical workflow */}
+                  <Route
+                    path="/order/enter"
+                    exact
+                    render={() => <Redirect to="/order/clinical/enter" />}
+                  />
+                  <Route
+                    path="/order"
+                    exact
+                    render={() => <Redirect to="/order/clinical" />}
+                  />
+                  <SecureRoute
+                    path="/vector/identification"
+                    exact
+                    render={() => <VectorIdentificationWorklist />}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/vector/deconvolution"
+                    exact
+                    render={() => <VectorDeconvolutionWorklist />}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/ModifyOrder"
+                    exact
+                    render={() => <ModifyOrder />}
+                    role={Roles.RECEPTION}
+                  />
+                  <SecureRoute
+                    path="/SampleEdit"
+                    exact
+                    render={() => <FindOrder />}
+                    role={Roles.RECEPTION}
+                  />
+                  <SecureRoute
+                    path="/NceDashboard"
+                    exact
+                    render={() => <NonConformIndex form="NceDashboard" />}
+                    role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  />
+                  <SecureRoute
+                    path="/ReportNonConformingEvent"
+                    exact
+                    render={() => (
+                      <NonConformIndex form="ReportNonConformingEvent" />
+                    )}
+                    role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  />
+                  <SecureRoute
+                    path="/ViewNonConformingEvent"
+                    exact
+                    render={() => (
+                      <NonConformIndex form="ViewNonConformingEvent" />
+                    )}
+                    role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  />
 
-                        <SecureRoute
-                          path="/NCECorrectiveAction"
-                          exact
-                          render={() => (
-                            <NonConformIndex form="NCECorrectiveAction" />
-                          )}
-                          role={[Roles.RECEPTION, Roles.VALIDATION]}
-                        />
+                  <SecureRoute
+                    path="/NCECorrectiveAction"
+                    exact
+                    render={() => (
+                      <NonConformIndex form="NCECorrectiveAction" />
+                    )}
+                    role={[Roles.RECEPTION, Roles.VALIDATION]}
+                  />
 
-                        <SecureRoute
-                          path="/SampleBatchEntrySetup"
-                          exact
-                          render={() => <SampleBatchEntrySetup />}
-                          role={Roles.RECEPTION}
-                        />
+                  <SecureRoute
+                    path="/SampleBatchEntrySetup"
+                    exact
+                    render={() => <SampleBatchEntrySetup />}
+                    role={Roles.RECEPTION}
+                  />
 
-                        <SecureRoute
-                          path="/ElectronicOrders"
-                          exact
-                          render={() => <EOrderPage />}
-                          role={Roles.RECEPTION}
-                        />
-                        <SecureRoute
-                          path="/PrintBarcode"
-                          exact
-                          render={() => <PrintBarcode />}
-                          role={Roles.RECEPTION}
-                        />
-                        <SecureRoute
-                          path="/PatientManagement/:patientId?"
-                          exact
-                          render={() => <PatientManagement />}
-                          role={Roles.RECEPTION}
-                        />
-                        <SecureRoute
-                          path="/Alerts"
-                          exact
-                          render={() => <AlertsDashboard />}
-                          role={[Roles.RECEPTION, Roles.RESULTS]}
-                        />
-                        <SecureRoute
-                          path="/EQAOrders"
-                          exact
-                          render={() => <EQAOrdersPage />}
-                          role={[Roles.RECEPTION, Roles.RESULTS]}
-                        />
-                        <SecureRoute
-                          path="/EQAMyPrograms"
-                          exact
-                          render={() => <MyProgramsPage />}
-                          role={[Roles.RECEPTION, Roles.RESULTS]}
-                        />
-                        <SecureRoute
-                          path="/EQAManagement"
-                          exact
-                          render={() => <EQAProgramManagement />}
-                          role={[Roles.RECEPTION, Roles.RESULTS]}
-                        />
-                        <SecureRoute
-                          path="/EQAResults"
-                          exact
-                          render={() => <EQAResultsPage />}
-                          role={[Roles.RECEPTION, Roles.RESULTS]}
-                        />
-                        <SecureRoute
-                          path="/EQAParticipants"
-                          exact
-                          render={() => <EQAParticipantsPage />}
-                          role={[Roles.RECEPTION, Roles.RESULTS]}
-                        />
-                        <SecureRoute
-                          path="/EQADistribution/create"
-                          exact
-                          render={() => <CreateDistribution />}
-                          role={[Roles.RECEPTION, Roles.RESULTS]}
-                        />
-                        <SecureRoute
-                          path="/EQADistribution"
-                          exact
-                          render={() => <EQADistributionDashboard />}
-                          role={[Roles.RECEPTION, Roles.RESULTS]}
-                        />
-                        <SecureRoute
-                          path="/Storage"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <StorageDashboard />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/Storage/sample-items"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <SampleItemsPage />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/Storage/sample-items/:id/manage-location"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <ManageLocationPage />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/Storage/rooms"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <RoomsPage />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/Storage/devices"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <DevicesPage />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/Storage/shelves"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <ShelvesPage />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/Storage/racks"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <RacksPage />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/Storage/boxes"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <BoxesPage />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/Storage/rooms/new"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <AddLocationPage type="room" />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/Storage/devices/new"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <AddLocationPage type="device" />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/Storage/shelves/new"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <AddLocationPage type="shelf" />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/Storage/racks/new"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <AddLocationPage type="rack" />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/Storage/boxes/new"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <AddBoxPage />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/Storage/rooms/:id/edit"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <EditLocationPage type="room" />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/Storage/devices/:id/edit"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <EditLocationPage type="device" />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/Storage/shelves/:id/edit"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <EditLocationPage type="shelf" />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/Storage/racks/:id/edit"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <EditLocationPage type="rack" />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/Storage/boxes/:id/edit"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorStorage}>
-                              <EditBoxPage />
-                            </RouteErrorBoundary>
-                          )}
-                          role={[Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/inventory"
-                          exact
-                          render={() => <InventoryManagement />}
-                          role={[Roles.RESULTS, Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/SampleShipment"
-                          exact
-                          render={() => <ShipmentDashboard />}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/SampleShipment/create-box"
-                          exact
-                          render={() => <BoxCreation />}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/SampleShipment/box/:boxId"
-                          exact
-                          component={BoxDetails}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/SampleShipment/receive"
-                          exact
-                          render={() => <ReceptionWorkflow />}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/SampleShipment/reports"
-                          exact
-                          render={() => (
-                            <Suspense fallback={null}>
-                              <ShipmentReport />
-                            </Suspense>
-                          )}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/SampleShipment/settings"
-                          exact
-                          render={() => <ShipmentSettings />}
-                          role={[Roles.RECEPTION, Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/SampleShipment/reference-lab-results"
-                          exact
-                          render={() => <ReferenceLabResults />}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/SampleShipment/:tab"
-                          render={() => <ShipmentDashboard />}
-                          role={[
-                            Roles.RECEPTION,
-                            Roles.RESULTS,
-                            Roles.GLOBAL_ADMIN,
-                          ]}
-                        />
-                        <SecureRoute
-                          path="/SampleManagement"
-                          exact
-                          render={() => <SampleManagement />}
-                          role={[Roles.RECEPTION, Roles.RESULTS]}
-                        />
-                        <SecureRoute
-                          path="/analyzers/new"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorAnalyzers}>
-                              <Suspense fallback={null}>
-                                <AnalyzerFormPage />
-                              </Suspense>
-                            </RouteErrorBoundary>
-                          )}
-                          role={Roles.GLOBAL_ADMIN}
-                        />
-                        <SecureRoute
-                          path="/analyzers/:id/edit"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorAnalyzers}>
-                              <Suspense fallback={null}>
-                                <AnalyzerFormPage />
-                              </Suspense>
-                            </RouteErrorBoundary>
-                          )}
-                          role={Roles.GLOBAL_ADMIN}
-                        />
-                        <SecureRoute
-                          path="/analyzers/:id/qc-rules"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorAnalyzers}>
-                              <Suspense fallback={null}>
-                                <QcRulePage />
-                              </Suspense>
-                            </RouteErrorBoundary>
-                          )}
-                          role={Roles.GLOBAL_ADMIN}
-                        />
-                        <SecureRoute
-                          path="/analyzers"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorAnalyzers}>
-                              <Suspense fallback={null}>
-                                <AnalyzersPage />
-                              </Suspense>
-                            </RouteErrorBoundary>
-                          )}
-                          role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/analyzers/:id/mappings"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorAnalyzers}>
-                              <Suspense fallback={null}>
-                                <FieldMapping />
-                              </Suspense>
-                            </RouteErrorBoundary>
-                          )}
-                          role={Roles.ANALYSER_IMPORT}
-                        />
-                        <SecureRoute
-                          path="/analyzers/errors"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorAnalyzers}>
-                              <Suspense fallback={null}>
-                                <ErrorDashboardPage />
-                              </Suspense>
-                            </RouteErrorBoundary>
-                          )}
-                          role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/analyzers/custom-field-types"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorAnalyzers}>
-                              <Suspense fallback={null}>
-                                <CustomFieldTypeManagementPage />
-                              </Suspense>
-                            </RouteErrorBoundary>
-                          )}
-                          role={Roles.ANALYSER_IMPORT}
-                        />
-                        <SecureRoute
-                          path="/analyzers/types"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorAnalyzers}>
-                              <Suspense fallback={null}>
-                                <AnalyzerTypesPage />
-                              </Suspense>
-                            </RouteErrorBoundary>
-                          )}
-                          role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
-                        />
-                        <SecureRoute
-                          path="/analyzers/types/:profileId/mapping"
-                          exact
-                          component={() => (
-                            <RouteErrorBoundary {...routeErrorAnalyzers}>
-                              <Suspense fallback={null}>
-                                <AnalyzerTypeMappingPage />
-                              </Suspense>
-                            </RouteErrorBoundary>
-                          )}
-                          role={Roles.ANALYSER_IMPORT}
-                        />
-                        <SecureRoute
-                          path="/analyzers/qc/instruments/:instrumentId"
-                          exact
-                          render={() => <InstrumentDetailPage />}
-                          role={Roles.LAB_SUPERVISOR}
-                        />
-                        <SecureRoute
-                          path="/analyzers/qc/db"
-                          exact
-                          render={() => <QCDashboard />}
-                          role={Roles.LAB_SUPERVISOR}
-                        />
-                        <SecureRoute
-                          path="/analyzers/qc/charts/:analyzerId"
-                          exact
-                          render={() => <ControlChartDetail />}
-                          role={Roles.LAB_SUPERVISOR}
-                        />
-                        <SecureRoute
-                          path="/analyzers/qc/control-lots"
-                          exact
-                          render={() => <ControlLotList />}
-                          role={Roles.LAB_SUPERVISOR}
-                        />
-                        <SecureRoute
-                          path="/analyzers/qc/control-lots/new"
-                          exact
-                          render={() => <ControlLotSetup />}
-                          role={Roles.LAB_SUPERVISOR}
-                        />
-                        <SecureRoute
-                          path="/analyzers/qc/control-lots/:id"
-                          exact
-                          render={() => <ControlLotSetup />}
-                          role={Roles.LAB_SUPERVISOR}
-                        />
-                        <SecureRoute
-                          path="/analyzers/qc/rule-config"
-                          exact
-                          render={() => <RuleConfigPanel />}
-                          role={Roles.LAB_SUPERVISOR}
-                        />
-                        <SecureRoute
-                          path="/PatientHistory"
-                          exact
-                          render={() => <PatientHistory />}
-                          role={Roles.RECEPTION}
-                        />
-                        <SecureRoute
-                          path="/PatientMerge"
-                          exact
-                          render={() => <PatientMerge />}
-                          role={Roles.RECEPTION}
-                        />
-                        <SecureRoute
-                          path="/GenericSample/Results"
-                          exact
-                          render={() => (
-                            <Suspense fallback={null}>
-                              <GenericSampleResults />
-                            </Suspense>
-                          )}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/Aliquot"
-                          exact
-                          render={() => <Aliquot />}
-                          role={Roles.RECEPTION}
-                        />
+                  <SecureRoute
+                    path="/ElectronicOrders"
+                    exact
+                    render={() => <EOrderPage />}
+                    role={Roles.RECEPTION}
+                  />
+                  <SecureRoute
+                    path="/PrintBarcode"
+                    exact
+                    render={() => <PrintBarcode />}
+                    role={Roles.RECEPTION}
+                  />
+                  <SecureRoute
+                    path="/PatientManagement/:patientId?"
+                    exact
+                    render={() => <PatientManagement />}
+                    role={Roles.RECEPTION}
+                  />
+                  <SecureRoute
+                    path="/Alerts"
+                    exact
+                    render={() => <AlertsDashboard />}
+                    role={[Roles.RECEPTION, Roles.RESULTS]}
+                  />
+                  <SecureRoute
+                    path="/EQAOrders"
+                    exact
+                    render={() => <EQAOrdersPage />}
+                    role={[Roles.RECEPTION, Roles.RESULTS]}
+                  />
+                  <SecureRoute
+                    path="/EQAMyPrograms"
+                    exact
+                    render={() => <MyProgramsPage />}
+                    role={[Roles.RECEPTION, Roles.RESULTS]}
+                  />
+                  <SecureRoute
+                    path="/EQAManagement"
+                    exact
+                    render={() => <EQAProgramManagement />}
+                    role={[Roles.RECEPTION, Roles.RESULTS]}
+                  />
+                  <SecureRoute
+                    path="/EQAResults"
+                    exact
+                    render={() => <EQAResultsPage />}
+                    role={[Roles.RECEPTION, Roles.RESULTS]}
+                  />
+                  <SecureRoute
+                    path="/EQAParticipants"
+                    exact
+                    render={() => <EQAParticipantsPage />}
+                    role={[Roles.RECEPTION, Roles.RESULTS]}
+                  />
+                  <SecureRoute
+                    path="/EQADistribution/create"
+                    exact
+                    render={() => <CreateDistribution />}
+                    role={[Roles.RECEPTION, Roles.RESULTS]}
+                  />
+                  <SecureRoute
+                    path="/EQADistribution"
+                    exact
+                    render={() => <EQADistributionDashboard />}
+                    role={[Roles.RECEPTION, Roles.RESULTS]}
+                  />
+                  <SecureRoute
+                    path="/Storage"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <StorageDashboard />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/sample-items"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <SampleItemsPage />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/sample-items/:id/manage-location"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <ManageLocationPage />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/rooms"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <RoomsPage />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/devices"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <DevicesPage />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/shelves"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <ShelvesPage />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/racks"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <RacksPage />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/boxes"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <BoxesPage />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/rooms/new"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <AddLocationPage type="room" />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/devices/new"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <AddLocationPage type="device" />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/shelves/new"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <AddLocationPage type="shelf" />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/racks/new"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <AddLocationPage type="rack" />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/boxes/new"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <AddBoxPage />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/rooms/:id/edit"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <EditLocationPage type="room" />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/devices/:id/edit"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <EditLocationPage type="device" />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/shelves/:id/edit"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <EditLocationPage type="shelf" />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/racks/:id/edit"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <EditLocationPage type="rack" />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/Storage/boxes/:id/edit"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorStorage}>
+                        <EditBoxPage />
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/inventory"
+                    exact
+                    render={() => <InventoryManagement />}
+                    role={[Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/SampleShipment"
+                    exact
+                    render={() => <ShipmentDashboard />}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/SampleShipment/create-box"
+                    exact
+                    render={() => <BoxCreation />}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/SampleShipment/box/:boxId"
+                    exact
+                    component={BoxDetails}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/SampleShipment/receive"
+                    exact
+                    render={() => <ReceptionWorkflow />}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/SampleShipment/reports"
+                    exact
+                    render={() => (
+                      <Suspense fallback={null}>
+                        <ShipmentReport />
+                      </Suspense>
+                    )}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/SampleShipment/settings"
+                    exact
+                    render={() => <ShipmentSettings />}
+                    role={[Roles.RECEPTION, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/SampleShipment/reference-lab-results"
+                    exact
+                    render={() => <ReferenceLabResults />}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/SampleShipment/:tab"
+                    render={() => <ShipmentDashboard />}
+                    role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/SampleManagement"
+                    exact
+                    render={() => <SampleManagement />}
+                    role={[Roles.RECEPTION, Roles.RESULTS]}
+                  />
+                  <SecureRoute
+                    path="/analyzers/new"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorAnalyzers}>
+                        <Suspense fallback={null}>
+                          <AnalyzerFormPage />
+                        </Suspense>
+                      </RouteErrorBoundary>
+                    )}
+                    role={Roles.GLOBAL_ADMIN}
+                  />
+                  <SecureRoute
+                    path="/analyzers/:id/edit"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorAnalyzers}>
+                        <Suspense fallback={null}>
+                          <AnalyzerFormPage />
+                        </Suspense>
+                      </RouteErrorBoundary>
+                    )}
+                    role={Roles.GLOBAL_ADMIN}
+                  />
+                  <SecureRoute
+                    path="/analyzers/:id/qc-rules"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorAnalyzers}>
+                        <Suspense fallback={null}>
+                          <QcRulePage />
+                        </Suspense>
+                      </RouteErrorBoundary>
+                    )}
+                    role={Roles.GLOBAL_ADMIN}
+                  />
+                  <SecureRoute
+                    path="/analyzers"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorAnalyzers}>
+                        <Suspense fallback={null}>
+                          <AnalyzersPage />
+                        </Suspense>
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/analyzers/:id/mappings"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorAnalyzers}>
+                        <Suspense fallback={null}>
+                          <FieldMapping />
+                        </Suspense>
+                      </RouteErrorBoundary>
+                    )}
+                    role={Roles.ANALYSER_IMPORT}
+                  />
+                  <SecureRoute
+                    path="/analyzers/errors"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorAnalyzers}>
+                        <Suspense fallback={null}>
+                          <ErrorDashboardPage />
+                        </Suspense>
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/analyzers/custom-field-types"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorAnalyzers}>
+                        <Suspense fallback={null}>
+                          <CustomFieldTypeManagementPage />
+                        </Suspense>
+                      </RouteErrorBoundary>
+                    )}
+                    role={Roles.ANALYSER_IMPORT}
+                  />
+                  <SecureRoute
+                    path="/analyzers/types"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorAnalyzers}>
+                        <Suspense fallback={null}>
+                          <AnalyzerTypesPage />
+                        </Suspense>
+                      </RouteErrorBoundary>
+                    )}
+                    role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
+                  />
+                  <SecureRoute
+                    path="/analyzers/types/:profileId/mapping"
+                    exact
+                    component={() => (
+                      <RouteErrorBoundary {...routeErrorAnalyzers}>
+                        <Suspense fallback={null}>
+                          <AnalyzerTypeMappingPage />
+                        </Suspense>
+                      </RouteErrorBoundary>
+                    )}
+                    role={Roles.ANALYSER_IMPORT}
+                  />
+                  <SecureRoute
+                    path="/analyzers/qc/instruments/:instrumentId"
+                    exact
+                    render={() => <InstrumentDetailPage />}
+                    role={Roles.LAB_SUPERVISOR}
+                  />
+                  <SecureRoute
+                    path="/analyzers/qc/db"
+                    exact
+                    render={() => <QCDashboard />}
+                    role={Roles.LAB_SUPERVISOR}
+                  />
+                  <SecureRoute
+                    path="/analyzers/qc/charts/:analyzerId"
+                    exact
+                    render={() => <ControlChartDetail />}
+                    role={Roles.LAB_SUPERVISOR}
+                  />
+                  <SecureRoute
+                    path="/analyzers/qc/control-lots"
+                    exact
+                    render={() => <ControlLotList />}
+                    role={Roles.LAB_SUPERVISOR}
+                  />
+                  <SecureRoute
+                    path="/analyzers/qc/control-lots/new"
+                    exact
+                    render={() => <ControlLotSetup />}
+                    role={Roles.LAB_SUPERVISOR}
+                  />
+                  <SecureRoute
+                    path="/analyzers/qc/control-lots/:id"
+                    exact
+                    render={() => <ControlLotSetup />}
+                    role={Roles.LAB_SUPERVISOR}
+                  />
+                  <SecureRoute
+                    path="/analyzers/qc/rule-config"
+                    exact
+                    render={() => <RuleConfigPanel />}
+                    role={Roles.LAB_SUPERVISOR}
+                  />
+                  <SecureRoute
+                    path="/PatientHistory"
+                    exact
+                    render={() => <PatientHistory />}
+                    role={Roles.RECEPTION}
+                  />
+                  <SecureRoute
+                    path="/PatientMerge"
+                    exact
+                    render={() => <PatientMerge />}
+                    role={Roles.RECEPTION}
+                  />
+                  <SecureRoute
+                    path="/GenericSample/Results"
+                    exact
+                    render={() => (
+                      <Suspense fallback={null}>
+                        <GenericSampleResults />
+                      </Suspense>
+                    )}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/Aliquot"
+                    exact
+                    render={() => <Aliquot />}
+                    role={Roles.RECEPTION}
+                  />
 
-                        <SecureRoute
-                          path="/PatientResults/:patientId"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary
-                              {...routeErrorPatientResultsViewer}
-                            >
-                              <Suspense fallback={null}>
-                                <RoutedResultsViewer />
-                              </Suspense>
-                            </RouteErrorBoundary>
-                          )}
-                          role={Roles.RECEPTION}
-                        />
+                  <SecureRoute
+                    path="/PatientResults/:patientId"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorPatientResultsViewer}>
+                        <Suspense fallback={null}>
+                          <RoutedResultsViewer />
+                        </Suspense>
+                      </RouteErrorBoundary>
+                    )}
+                    role={Roles.RECEPTION}
+                  />
 
-                        <SecureRoute
-                          path="/WorkPlanByTestSection"
-                          exact
-                          render={() => <Workplan type="unit" />}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/WorkplanByTest"
-                          exact
-                          render={() => <Workplan type="test" />}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/WorkplanByPanel"
-                          exact
-                          render={() => <Workplan type="panel" />}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/WorkplanByPriority"
-                          exact
-                          render={() => <Workplan type="priority" />}
-                          role={Roles.RESULTS}
-                        />
-                        {/* OGC-1020 (R1): canonical unified worklist, gated by the
+                  <SecureRoute
+                    path="/WorkPlanByTestSection"
+                    exact
+                    render={() => <Workplan type="unit" />}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/WorkplanByTest"
+                    exact
+                    render={() => <Workplan type="test" />}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/WorkplanByPanel"
+                    exact
+                    render={() => <Workplan type="panel" />}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/WorkplanByPriority"
+                    exact
+                    render={() => <Workplan type="priority" />}
+                    role={Roles.RESULTS}
+                  />
+                  {/* OGC-1020 (R1): canonical unified worklist, gated by the
                     results.entry.unifiedRoute site flag */}
-                        <SecureRoute
-                          path="/Results"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorResultsSearch}>
-                              <UnifiedResultsRoute />
-                            </RouteErrorBoundary>
-                          )}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/result"
-                          exact
-                          render={() => (
-                            <LegacyResultsGate>
-                              <RouteErrorBoundary {...routeErrorResultsSearch}>
-                                <ResultSearch />
-                              </RouteErrorBoundary>
-                            </LegacyResultsGate>
-                          )}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/LogbookResults"
-                          exact
-                          render={() => (
-                            <LegacyResultsGate>
-                              <RouteErrorBoundary {...routeErrorResultsSearch}>
-                                <ResultSearch />
-                              </RouteErrorBoundary>
-                            </LegacyResultsGate>
-                          )}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/PatientResults"
-                          exact
-                          render={() => (
-                            <LegacyResultsGate>
-                              <RouteErrorBoundary {...routeErrorResultsSearch}>
-                                <ResultSearch />
-                              </RouteErrorBoundary>
-                            </LegacyResultsGate>
-                          )}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/AccessionResults"
-                          exact
-                          render={() => (
-                            <LegacyResultsGate>
-                              <RouteErrorBoundary {...routeErrorResultsSearch}>
-                                <ResultSearch />
-                              </RouteErrorBoundary>
-                            </LegacyResultsGate>
-                          )}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/StatusResults"
-                          exact
-                          render={() => (
-                            <LegacyResultsGate>
-                              <RouteErrorBoundary {...routeErrorResultsSearch}>
-                                <ResultSearch />
-                              </RouteErrorBoundary>
-                            </LegacyResultsGate>
-                          )}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/RangeResults"
-                          exact
-                          render={() => (
-                            <LegacyResultsGate>
-                              <RouteErrorBoundary {...routeErrorResultsSearch}>
-                                <ResultSearch />
-                              </RouteErrorBoundary>
-                            </LegacyResultsGate>
-                          )}
-                          role={Roles.RESULTS}
-                        />
-                        <SecureRoute
-                          path="/RoutineReports"
-                          exact
-                          render={() => <RoutineReports />}
-                          role={Roles.REPORTS}
-                        />
-                        <SecureRoute
-                          path="/RoutineReport"
-                          exact
-                          render={() => <RoutineIndex />}
-                          role={Roles.REPORTS}
-                        />
-                        <SecureRoute
-                          path="/StudyReports"
-                          exact
-                          render={() => <StudyReports />}
-                          role={Roles.REPORTS}
-                        />
-                        <SecureRoute
-                          path="/StudyReport"
-                          exact
-                          render={() => <StudyIndex />}
-                          role={Roles.REPORTS}
-                        />
-                        <SecureRoute
-                          path="/Report"
-                          exact
-                          render={() => <ReportIndex />}
-                          role={Roles.REPORTS}
-                        />
-                        <SecureRoute
-                          path="/AuditTrailReport"
-                          exact
-                          render={() => <AuditTrailReportIndex />}
-                          role={Roles.GLOBAL_ADMIN}
-                        />
-                        <SecureRoute
-                          path="/TATReport"
-                          exact
-                          render={() => <TATReport />}
-                          role={Roles.REPORTS}
-                        />
-                        <SecureRoute
-                          path="/VectorSurveillanceReport"
-                          exact
-                          render={() => <VectorSurveillanceReport />}
-                          role={Roles.REPORTS}
-                        />
-                        <SecureRoute
-                          path="/LaporanHasil"
-                          exact
-                          render={() => <LaporanHasilReport />}
-                          role={Roles.REPORTS}
-                        />
-                        <SecureRoute
-                          path="/VectorManualEntry"
-                          exact
-                          render={() => <ManualEntryHelper />}
-                          role={Roles.REPORTS}
-                        />
-                        <SecureRoute
-                          path="/validation"
-                          exact
-                          render={() => <StudyValidation />}
-                          role={Roles.VALIDATION}
-                        />
-                        <SecureRoute
-                          path="/ResultValidation"
-                          exact
-                          render={() => <StudyValidation />}
-                          role={Roles.VALIDATION}
-                        />
-                        <SecureRoute
-                          path="/AccessionValidation"
-                          exact
-                          render={() => <StudyValidation />}
-                          role={Roles.VALIDATION}
-                        />
-                        <SecureRoute
-                          path="/AccessionValidationRange"
-                          exact
-                          render={() => <StudyValidation />}
-                          role={Roles.VALIDATION}
-                        />
-                        <SecureRoute
-                          path="/ResultValidationByTestDate"
-                          exact
-                          render={() => <StudyValidation />}
-                          role={Roles.VALIDATION}
-                        />
-                        <SecureRoute
-                          path="/AnalyzerResults"
-                          exact
-                          render={() => (
-                            <RouteErrorBoundary {...routeErrorAnalyzerResults}>
-                              <Suspense fallback={null}>
-                                <AnalyserResultIndex />
-                              </Suspense>
-                            </RouteErrorBoundary>
-                          )}
-                          role={ANALYZER_RESULTS_ROLES}
-                        />
-                        <Route path="*" render={() => <RedirectOldUI />} />
-                      </Switch>
-                    </Layout>
-                  )}
-                />
-              </Switch>
-            </Suspense>
+                  <SecureRoute
+                    path="/Results"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorResultsSearch}>
+                        <UnifiedResultsRoute />
+                      </RouteErrorBoundary>
+                    )}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/result"
+                    exact
+                    render={() => (
+                      <LegacyResultsGate>
+                        <RouteErrorBoundary {...routeErrorResultsSearch}>
+                          <ResultSearch />
+                        </RouteErrorBoundary>
+                      </LegacyResultsGate>
+                    )}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/LogbookResults"
+                    exact
+                    render={() => (
+                      <LegacyResultsGate>
+                        <RouteErrorBoundary {...routeErrorResultsSearch}>
+                          <ResultSearch />
+                        </RouteErrorBoundary>
+                      </LegacyResultsGate>
+                    )}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/PatientResults"
+                    exact
+                    render={() => (
+                      <LegacyResultsGate>
+                        <RouteErrorBoundary {...routeErrorResultsSearch}>
+                          <ResultSearch />
+                        </RouteErrorBoundary>
+                      </LegacyResultsGate>
+                    )}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/AccessionResults"
+                    exact
+                    render={() => (
+                      <LegacyResultsGate>
+                        <RouteErrorBoundary {...routeErrorResultsSearch}>
+                          <ResultSearch />
+                        </RouteErrorBoundary>
+                      </LegacyResultsGate>
+                    )}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/StatusResults"
+                    exact
+                    render={() => (
+                      <LegacyResultsGate>
+                        <RouteErrorBoundary {...routeErrorResultsSearch}>
+                          <ResultSearch />
+                        </RouteErrorBoundary>
+                      </LegacyResultsGate>
+                    )}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/RangeResults"
+                    exact
+                    render={() => (
+                      <LegacyResultsGate>
+                        <RouteErrorBoundary {...routeErrorResultsSearch}>
+                          <ResultSearch />
+                        </RouteErrorBoundary>
+                      </LegacyResultsGate>
+                    )}
+                    role={Roles.RESULTS}
+                  />
+                  <SecureRoute
+                    path="/RoutineReports"
+                    exact
+                    render={() => <RoutineReports />}
+                    role={Roles.REPORTS}
+                  />
+                  <SecureRoute
+                    path="/RoutineReport"
+                    exact
+                    render={() => <RoutineIndex />}
+                    role={Roles.REPORTS}
+                  />
+                  <SecureRoute
+                    path="/StudyReports"
+                    exact
+                    render={() => <StudyReports />}
+                    role={Roles.REPORTS}
+                  />
+                  <SecureRoute
+                    path="/StudyReport"
+                    exact
+                    render={() => <StudyIndex />}
+                    role={Roles.REPORTS}
+                  />
+                  <SecureRoute
+                    path="/Report"
+                    exact
+                    render={() => <ReportIndex />}
+                    role={Roles.REPORTS}
+                  />
+                  <SecureRoute
+                    path="/AuditTrailReport"
+                    exact
+                    render={() => <AuditTrailReportIndex />}
+                    role={Roles.GLOBAL_ADMIN}
+                  />
+                  <SecureRoute
+                    path="/TATReport"
+                    exact
+                    render={() => <TATReport />}
+                    role={Roles.REPORTS}
+                  />
+                  <SecureRoute
+                    path="/VectorSurveillanceReport"
+                    exact
+                    render={() => <VectorSurveillanceReport />}
+                    role={Roles.REPORTS}
+                  />
+                  <SecureRoute
+                    path="/LaporanHasil"
+                    exact
+                    render={() => <LaporanHasilReport />}
+                    role={Roles.REPORTS}
+                  />
+                  <SecureRoute
+                    path="/VectorManualEntry"
+                    exact
+                    render={() => <ManualEntryHelper />}
+                    role={Roles.REPORTS}
+                  />
+                  <SecureRoute
+                    path="/validation"
+                    exact
+                    render={() => <StudyValidation />}
+                    role={Roles.VALIDATION}
+                  />
+                  <SecureRoute
+                    path="/ResultValidation"
+                    exact
+                    render={() => <StudyValidation />}
+                    role={Roles.VALIDATION}
+                  />
+                  <SecureRoute
+                    path="/AccessionValidation"
+                    exact
+                    render={() => <StudyValidation />}
+                    role={Roles.VALIDATION}
+                  />
+                  <SecureRoute
+                    path="/AccessionValidationRange"
+                    exact
+                    render={() => <StudyValidation />}
+                    role={Roles.VALIDATION}
+                  />
+                  <SecureRoute
+                    path="/ResultValidationByTestDate"
+                    exact
+                    render={() => <StudyValidation />}
+                    role={Roles.VALIDATION}
+                  />
+                  <SecureRoute
+                    path="/AnalyzerResults"
+                    exact
+                    render={() => (
+                      <RouteErrorBoundary {...routeErrorAnalyzerResults}>
+                        <Suspense fallback={null}>
+                          <AnalyserResultIndex />
+                        </Suspense>
+                      </RouteErrorBoundary>
+                    )}
+                    role={ANALYZER_RESULTS_ROLES}
+                  />
+                  <Route path="*" render={() => <RedirectOldUI />} />
+                </Switch>
+              </Suspense>
+            </Layout>
           </Router>
         </>
       </UserSessionDetailsContext.Provider>
