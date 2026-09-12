@@ -225,19 +225,17 @@ describe("a rejected CSRF token", () => {
   });
 
   it("still reloads when the replay is rejected too", async () => {
-    const fetchMock = vi
-      .fn()
-      .mockImplementation((url: string) =>
-        Promise.resolve(
-          String(url).endsWith("/session")
-            ? asResponse({
-                ok: true,
-                status: 200,
-                json: async () => ({ csrf: "fresh-token" }),
-              })
-            : asResponse(CSRF_REJECTION),
-        ),
-      );
+    const fetchMock = vi.fn().mockImplementation((url: string) =>
+      Promise.resolve(
+        String(url).endsWith("/session")
+          ? asResponse({
+              ok: true,
+              status: 200,
+              json: async () => ({ csrf: "fresh-token" }),
+            })
+          : asResponse(CSRF_REJECTION),
+      ),
+    );
     vi.stubGlobal("fetch", fetchMock);
 
     postToOpenElisServer("/rest/thing", "{}" as unknown as never, vi.fn());

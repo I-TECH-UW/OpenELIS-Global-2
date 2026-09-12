@@ -131,7 +131,7 @@ vi.mock("../../common/CustomDatePicker", () => ({
 }));
 
 import CreatePatientForm from "../CreatePatientForm";
-import { ConfigurationContext } from "../../layout/Layout";
+import { ConfigurationContext } from "../../layout/contexts";
 
 const renderForm = (configurationProperties = madagascarRegistrationConfig) =>
   render(

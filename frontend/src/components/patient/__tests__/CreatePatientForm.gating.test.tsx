@@ -64,7 +64,7 @@ vi.mock("../../common/CustomDatePicker", () => ({
 }));
 
 import CreatePatientForm from "../CreatePatientForm";
-import { ConfigurationContext } from "../../layout/Layout";
+import { ConfigurationContext } from "../../layout/contexts";
 
 // Render the form with a per-test configurationProperties override. We can't
 // just mutate the module-scope context default, so we wrap in a Provider —

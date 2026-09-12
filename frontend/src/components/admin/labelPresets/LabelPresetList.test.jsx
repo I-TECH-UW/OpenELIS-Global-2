@@ -29,7 +29,7 @@ vi.mock("../../layout/Layout", async () => {
 });
 
 import { getFromOpenElisServer } from "../../utils/Utils";
-import { NotificationContext } from "../../layout/Layout";
+import { NotificationContext } from "../../layout/contexts";
 
 const mockPresets = [
   {
