@@ -184,6 +184,9 @@ public class OrderSearchRestController extends BaseRestController {
     @Autowired
     private SampleComplianceStandardService sampleComplianceStandardService;
 
+    /** Dashboard filter value for orders that have been referred out. */
+    private static final String REFERRED_OUT_FILTER = "referred_out";
+
     @Autowired
     private ReferralService referralService;
 
@@ -363,8 +366,16 @@ public class OrderSearchRestController extends BaseRestController {
                     orderStatus = "in_progress";
                 }
 
-                // Filter by status
-                if (status != null && !status.isEmpty() && !"all".equals(status)) {
+                // Referred-out is a property of the referral, not a second sample
+                // status: the FHIR-aligned ReferralStatus already models the
+                // lifecycle, and a parallel sample status could only disagree with
+                // it. The dashboard filter therefore asks whether the order has a
+                // referral rather than reading a status column (OGC-1201 U).
+                if (REFERRED_OUT_FILTER.equals(status)) {
+                    if (!hasReferral(sampleItemsForProgress)) {
+                        continue;
+                    }
+                } else if (status != null && !status.isEmpty() && !"all".equals(status)) {
                     if (!orderStatus.equals(status)) {
                         continue; // Skip this sample
                     }
@@ -851,6 +862,18 @@ public class OrderSearchRestController extends BaseRestController {
             LogEvent.logError(this.getClass().getName(), "searchOrder", "Error searching for order: " + e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    private boolean hasReferral(List<SampleItem> sampleItems) {
+        for (SampleItem sampleItem : sampleItems) {
+            for (Analysis analysis : analysisService.getAnalysesBySampleItem(sampleItem)) {
+                Referral referral = referralService.getReferralByAnalysisId(analysis.getId());
+                if (referral != null && referral.getId() != null) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     void addMicrobiologyOrderDetail(Map<String, Object> response, Sample sample) {

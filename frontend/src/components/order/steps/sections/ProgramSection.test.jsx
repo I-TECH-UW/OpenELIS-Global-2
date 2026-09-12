@@ -356,3 +356,72 @@ describe("ProgramSection microbiology derivation", () => {
     expect(latestOrderData.microbiologyOrderDetail).toBeUndefined();
   });
 });
+
+describe("ProgramSection program-specific fields", () => {
+  const renderWithPrograms = (programs, questionnaire, programId) => {
+    getFromOpenElisServer.mockReset();
+    getFromOpenElisServer.mockImplementation((url, callback) => {
+      if (url === "/rest/user-programs") {
+        callback(programs);
+      } else if (url.endsWith("/questionnaire")) {
+        callback(questionnaire);
+      } else {
+        callback({});
+      }
+    });
+    return render(
+      <IntlProvider locale="en" messages={messages}>
+        <ProgramSection
+          orderData={{
+            ...orderData,
+            sampleOrderItems: { ...orderData.sampleOrderItems, programId },
+          }}
+          setOrderData={vi.fn()}
+          samples={[]}
+          isReadOnly={false}
+        />
+      </IntlProvider>,
+    );
+  };
+
+  // OGC-1201 Y: isVLProgram was a bare `includes("vl")` on the programme
+  // name, so any programme whose name merely contains those letters took the
+  // viral-load branch.
+  it("does not take the viral load branch for a name that merely contains vl", async () => {
+    renderWithPrograms(
+      [{ id: "3", value: "Sylvatic Surveillance", code: "SYLV" }],
+      null,
+      "3",
+    );
+
+    expect(
+      await screen.findByRole("combobox", { name: "Program" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(/Pregnancy \/ Breastfeeding Status/),
+    ).not.toBeInTheDocument();
+  });
+
+  it("takes the viral load branch on the programme code", async () => {
+    renderWithPrograms([{ id: "4", value: "Routine", code: "VL" }], null, "4");
+
+    expect(
+      await screen.findByLabelText(/Pregnancy \/ Breastfeeding Status/),
+    ).toBeInTheDocument();
+  });
+
+  // The VL panel used to render *instead of* the questionnaire, so a VL
+  // programme's configured questionnaire could never be reached.
+  it("renders a configured questionnaire even for a viral load programme", async () => {
+    renderWithPrograms(
+      [{ id: "5", value: "Viral Load", code: "VL" }],
+      { item: [{ linkId: "q1", text: "Pregnant?", type: "boolean" }] },
+      "5",
+    );
+
+    expect(await screen.findByTestId("questionnaire")).toBeInTheDocument();
+    expect(
+      screen.queryByLabelText(/Pregnancy \/ Breastfeeding Status/),
+    ).not.toBeInTheDocument();
+  });
+});

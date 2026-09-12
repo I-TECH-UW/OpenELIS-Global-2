@@ -565,15 +565,21 @@ const ProgramSection = ({
     </div>
   );
 
-  // Check if VL program is selected
+  // Identify the programme by its configured code, the way Microbiology above
+  // does. The name is only a fallback, and then only on a whole-word match:
+  // a bare "vl" substring also fires on names like Sylvatic or Salvador.
+  const programCode = selectedProgram?.code?.toUpperCase() || "";
+  const programName = selectedProgram?.value?.toLowerCase() || "";
   const isVLProgram =
-    selectedProgram?.value?.toLowerCase().includes("vl") ||
-    selectedProgram?.value?.toLowerCase().includes("viral load");
+    programCode === "VL" ||
+    programCode === "VIRAL_LOAD" ||
+    /\bvl\b/.test(programName) ||
+    programName.includes("viral load");
 
   // Check if the Vector Field Survey program is selected (custom larval/pupal panel)
-  const isVectorFieldSurvey = selectedProgram?.value
-    ?.toLowerCase()
-    .includes("vector field survey");
+  const isVectorFieldSurvey =
+    programCode === "VECTOR_FIELD_SURVEY" ||
+    programName.includes("vector field survey");
 
   return (
     <Tile className="order-section program-section">
@@ -672,10 +678,11 @@ const ProgramSection = ({
             />
           </p>
 
-          {/* Render program-specific fields or fall back to the generic Questionnaire */}
-          {isVLProgram ? (
-            renderVLProgramFields()
-          ) : isVectorFieldSurvey && displayedQuestionnaire ? (
+          {/* A configured questionnaire governs. The built-in VL panel used to
+              render instead of it, which made a VL programme's own
+              questionnaire — pregnancy included — unreachable; it is now the
+              fallback for VL programmes that have not configured one. */}
+          {isVectorFieldSurvey && displayedQuestionnaire ? (
             <VectorFieldSurveyPanel
               questionnaire={displayedQuestionnaire}
               getAnswer={getAnswer}
@@ -688,6 +695,8 @@ const ProgramSection = ({
               onAnswerChange={handleAnswerChange}
               getAnswer={getAnswer}
             />
+          ) : isVLProgram ? (
+            renderVLProgramFields()
           ) : null}
         </div>
       )}
