@@ -35,7 +35,6 @@ import {
   postToOpenElisServerJsonResponse,
   putToOpenElisServer,
 } from "../utils/Utils";
-import "./BoxCreation.css";
 import ShipmentNavigation from "./ShipmentNavigation";
 
 const BoxCreation = () => {

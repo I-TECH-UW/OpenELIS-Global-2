@@ -15,7 +15,6 @@ import {
 } from "@carbon/react";
 import React, { useState, useContext, useEffect } from "react";
 import "../Style.css";
-import "./wpStyle.css";
 import { FormattedMessage, useIntl } from "react-intl";
 import WorkplanSearchForm from "./WorkplanSearchForm";
 import {

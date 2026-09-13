@@ -33,7 +33,6 @@ import {
 } from "../../utils/Utils";
 import NceFileAttachment from "./NceFileAttachment";
 import UserSessionDetailsContext from "../../../UserSessionDetailsContext";
-import "./ReportNonConformingEvent.css";
 
 const initialReportFormValues = {
   type: undefined,

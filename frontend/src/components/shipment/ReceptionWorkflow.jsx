@@ -31,7 +31,6 @@ import { NotificationContext } from "../layout/contexts";
 import { AlertDialog } from "../common/CustomNotification";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 import ShipmentNavigation from "./ShipmentNavigation";
-import "./ReceptionWorkflow.css";
 
 const ReceptionWorkflow = () => {
   const intl = useIntl();

@@ -101,10 +101,8 @@
   margin-left: 5px;
 }
 
-// Carbon's own reset has equal specificity and loads later; without !important
-// this rule is inert.
 .cds--accordion__heading {
-  background-color: #d9d8d9 !important;
+  background-color: #d9d8d9;
 }
 
 .cds--accordion__content {

@@ -34,7 +34,6 @@ import { FormattedMessage, useIntl } from "react-intl";
 import ConfirmPopup from "../common/ConfirmPopup";
 import PatientHeader from "../common/PatientHeader";
 import QuestionnaireResponse from "../common/QuestionnaireResponse";
-import "../pathology/PathologyDashboard.css";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 import PostSavePrintDialog from "../barcodeWorkflow/PostSavePrintDialog";
 let breadcrumbs = [

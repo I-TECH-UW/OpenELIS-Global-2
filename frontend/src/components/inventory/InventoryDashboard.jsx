@@ -32,7 +32,6 @@ import LotAdjustmentModal from "./LotAdjustmentModal";
 import DisposeLotModal from "./DisposeLotModal";
 import UpdateQCStatusModal from "./UpdateQCStatusModal";
 import LotDetailsPanel from "./LotDetailsPanel";
-import "./InventoryList.css";
 
 const InventoryDashboard = () => {
   const intl = useIntl();

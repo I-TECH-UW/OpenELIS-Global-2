@@ -49,7 +49,6 @@ import {
 } from "../utils/Utils";
 import MarkLostModal from "./MarkLostModal";
 import RejectModal from "./RejectModal";
-import "./ReferenceLabResults.css";
 
 const VIEWS = ["outstanding", "returned", "history"];
 const PRIORITIES = ["Routine", "Urgent", "STAT"];

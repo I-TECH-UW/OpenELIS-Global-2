@@ -26,7 +26,6 @@ import {
   NotificationKinds,
 } from "../../common/CustomNotification";
 import { FormattedMessage, useIntl } from "react-intl";
-import "./ReflexStyles.css";
 
 var defaultTestResultList = {};
 var defaultSampleTests = { conditions: {}, actions: {} };

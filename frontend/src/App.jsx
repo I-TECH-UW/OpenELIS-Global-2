@@ -291,6 +291,8 @@ import { MICROBIOLOGY_WHONET_PATH } from "./components/microbiology/WhonetRoutes
 import config from "./config.json";
 import { SecureRoute } from "./components/security";
 import "./index.scss";
+// After ./index.scss on purpose: see appWideStylesAfterCarbon.scss.
+import "./appWideStylesAfterCarbon.scss";
 const AnalyserResultIndex = lazyWithRetry(
   () => import("./components/analyserResults/Index"),
 );

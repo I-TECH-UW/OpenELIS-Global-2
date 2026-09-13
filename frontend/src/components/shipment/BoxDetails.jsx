@@ -34,7 +34,6 @@ import {
   putToOpenElisServer,
   putToOpenElisServerJsonResponse,
 } from "../utils/Utils";
-import "./BoxDetails.css";
 import SampleAssignmentModal from "./SampleAssignmentModal";
 import ShipmentNavigation from "./ShipmentNavigation";
 import { generateLabelPDF, generateManifestPDF } from "./utils/pdfGenerator";

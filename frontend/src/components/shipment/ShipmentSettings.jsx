@@ -18,7 +18,6 @@ import {
   getFromOpenElisServer,
   putToOpenElisServerFullResponse,
 } from "../utils/Utils";
-import "./ShipmentDashboard.css";
 import ShipmentNavigation from "./ShipmentNavigation";
 
 const ShipmentSettings = () => {

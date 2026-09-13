@@ -35,7 +35,6 @@ import { getFromOpenElisServer, postToOpenElisServer } from "../../utils/Utils";
 import config from "../../../config.json";
 import { NotificationContext } from "../../layout/contexts";
 import { useHistory } from "react-router-dom";
-import "./NceDashboard.css";
 
 const STATUS_CONFIG = {
   Pending: { type: "green", icon: InProgress, labelKey: "nce.status.open" },

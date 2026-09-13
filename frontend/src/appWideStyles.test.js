@@ -64,11 +64,20 @@ function topLevelSelectors(stylesheet) {
       depth--;
       if (depth === 0) buffer = "";
     } else if (depth === 0) {
-      buffer += character;
+      // A top-level ";" ends an @use/@import; without this the next selector
+      // reads as "@use ... .microbiology-admin" and looks like an at-rule.
+      buffer = character === ";" ? "" : buffer + character;
     }
   }
   return selectors.filter((selector) => selector && !selector.startsWith("@"));
 }
+
+// Split at Carbon: appWideStylesAfterCarbon.scss is imported from App.jsx
+// after ./index.scss, appWideStyles.scss from index.jsx before it.
+const AGGREGATES = [
+  path.join(SRC, "appWideStyles.scss"),
+  path.join(SRC, "appWideStylesAfterCarbon.scss"),
+];
 
 const allFiles = walk(SRC);
 const isTest = (file) =>
@@ -95,6 +104,20 @@ for (const module of modules) {
   dynamicImports.set(module, resolve(dynamics));
 }
 
+// Sass resolves an extensionless @import against stylesheets only, so reusing
+// resolveImport here would point "./components/home/Dashboard" at Dashboard.tsx.
+function resolveStylesheetImport(importer, specifier) {
+  if (!specifier.startsWith(".")) return null;
+  const base = path.resolve(path.dirname(importer), specifier);
+  for (const extension of ["", ".scss", ".css"]) {
+    const candidate = base + extension;
+    if (fs.existsSync(candidate) && fs.statSync(candidate).isFile()) {
+      return candidate;
+    }
+  }
+  return null;
+}
+
 for (const stylesheet of stylesheets) {
   const references = [
     ...fs
@@ -104,7 +127,7 @@ for (const stylesheet of stylesheets) {
   staticImports.set(stylesheet, [
     ...new Set(
       references
-        .map((match) => resolveImport(stylesheet, match[1]))
+        .map((match) => resolveStylesheetImport(stylesheet, match[1]))
         .filter(Boolean),
     ),
   ]);
@@ -194,12 +217,13 @@ describe("app-wide stylesheet reach", () => {
   });
 
   it("keeps element-wide rules out of the app-wide stylesheets", () => {
-    const aggregate = path.join(SRC, "appWideStyles.scss");
-    const imported = [
-      ...fs
-        .readFileSync(aggregate, "utf8")
-        .matchAll(/^\s*@import\s+"([^"]+)"/gm),
-    ].map((match) => resolveImport(aggregate, match[1]));
+    const imported = AGGREGATES.flatMap((aggregate) =>
+      [
+        ...fs
+          .readFileSync(aggregate, "utf8")
+          .matchAll(/^\s*@import\s+"([^"]+)"/gm),
+      ].map((match) => resolveStylesheetImport(aggregate, match[1])),
+    );
     const leaks = [];
     for (const stylesheet of imported) {
       for (const selector of selectorsByStylesheet.get(stylesheet) || []) {

@@ -21,7 +21,6 @@ import {
   getErrorMessage,
 } from "./patientMerge/patientMergeService";
 import type { Nullable, PatientMergeResult, PatientRecord } from "./types";
-import "./patientMerge/PatientMerge.scss";
 import "../../components/Style.css";
 
 const breadcrumbs = [

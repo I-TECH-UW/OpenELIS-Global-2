@@ -21,7 +21,6 @@ import {
   TabList,
   Tag,
 } from "@carbon/react";
-import "./Dashboard.css";
 import {
   Minimize,
   Maximize,

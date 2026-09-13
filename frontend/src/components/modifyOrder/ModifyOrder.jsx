@@ -10,7 +10,6 @@ import {
 } from "@carbon/react";
 import EditSample from "./EditSample";
 import AddOrder from "../addOrder/AddOrder";
-import "../addOrder/add-order.scss";
 import { ModifyOrderFormValues } from "../formModel/innitialValues/OrderEntryFormValues";
 import { NotificationContext } from "../layout/contexts";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
