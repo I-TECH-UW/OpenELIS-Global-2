@@ -100,6 +100,7 @@ public class ResultUtil {
     private static final ResultSignatureService resultSigService = SpringContext.getBean(ResultSignatureService.class);
 
     private static String RESULT_EDIT_ROLE_ID;
+    private static boolean resultEditRoleMissingLogged;
     private static String REFERRAL_CONFORMATION_ID;
 
     /**
@@ -112,8 +113,13 @@ public class ResultUtil {
             org.openelisglobal.role.valueholder.Role editRole = SpringContext
                     .getBean(org.openelisglobal.role.service.RoleService.class)
                     .getRoleByName(org.openelisglobal.common.constants.Constants.ROLE_RESULTS);
-            if (editRole != null) {
+            if (editRole != null && !"-1".equals(editRole.getId())) {
                 RESULT_EDIT_ROLE_ID = editRole.getId();
+            } else if (!resultEditRoleMissingLogged) {
+                resultEditRoleMissingLogged = true;
+                LogEvent.logWarn("ResultUtil", "resultEditRoleId", "Results role '"
+                        + org.openelisglobal.common.constants.Constants.ROLE_RESULTS
+                        + "' not found; non-admin result editing is denied when roleRequiredForModifyResults is enabled");
             }
         }
         return RESULT_EDIT_ROLE_ID;

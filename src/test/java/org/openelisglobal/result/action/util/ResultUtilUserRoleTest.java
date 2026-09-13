@@ -5,6 +5,7 @@ import static org.junit.Assert.assertTrue;
 
 import java.lang.reflect.Field;
 import java.util.List;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
@@ -26,6 +27,11 @@ public class ResultUtilUserRoleTest extends BaseWebContextSensitiveTest {
         super.setUp();
         executeDataSetWithStateManagement("testdata/result-edit-role.xml");
         resetCachedResultEditRoleId();
+    }
+
+    @After
+    public void tearDownSecurityContext() {
+        SecurityContextHolder.clearContext();
     }
 
     @Test
@@ -63,5 +69,8 @@ public class ResultUtilUserRoleTest extends BaseWebContextSensitiveTest {
         Field field = ResultUtil.class.getDeclaredField("RESULT_EDIT_ROLE_ID");
         field.setAccessible(true);
         field.set(null, null);
+        Field logged = ResultUtil.class.getDeclaredField("resultEditRoleMissingLogged");
+        logged.setAccessible(true);
+        logged.set(null, false);
     }
 }
