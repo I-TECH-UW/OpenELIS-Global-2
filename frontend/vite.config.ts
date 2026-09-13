@@ -54,7 +54,7 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
-    // Maps are 40 MB against 22 MB of JS and ship readable source in the image.
+    // Maps outweigh the JS they describe and ship readable source in the image.
     sourcemap: false,
   },
   test: {

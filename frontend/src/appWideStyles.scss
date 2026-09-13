@@ -1,0 +1,41 @@
+// Route stylesheets the whole app depends on.
+//
+// Each of these carries unscoped rules - .orderLegendBody, .section-title,
+// #order_requestDate - that components in other feature areas already use. They
+// reached those components because App.jsx imported their routes statically;
+// lazy routes moved that CSS into chunks those components never load, and
+// nothing in the build or the test suite can see the difference.
+// appWideStyles.test.js re-derives which classes need this file - run it before
+// dropping a line.
+//
+// Import without the extension: `@import "x.css"` is a plain-CSS import that
+// Sass hoists above everything else, which reorders the cascade. The order
+// below is the order develop's entry bundle emitted these files in, and later
+// files here override earlier ones.
+@import "./components/admin/reflexTests/ReflexStyles";
+@import "./components/layout/search/searchBar";
+@import "./components/shipment/ShipmentDashboard";
+@import "./components/shipment/ShipmentNavigation";
+@import "./components/admin/microbiologyReference/microbiologyReference";
+@import "./components/home/Dashboard";
+@import "./components/storage/StorageDashboard/StorageLocationsMetricCard";
+@import "./components/storage/StorageDashboard";
+@import "./components/storage/SampleStorage/SampleActionsOverflowMenu";
+@import "./components/storage/SampleStorage/DisposeSampleModal";
+@import "./components/inventory/LotDetailsPanel";
+@import "./components/inventory/InventoryList";
+@import "./components/shipment/BoxCreation";
+@import "./components/shipment/BoxDetails";
+@import "./components/shipment/SampleAssignmentModal";
+@import "./components/shipment/ReceptionWorkflow";
+@import "./components/referenceLabResults/ReferenceLabResults";
+@import "./components/patient/patientMerge/PatientMerge";
+@import "./components/workplan/wpStyle";
+@import "./components/barcodeWorkflow/LabelsSection";
+@import "./components/addOrder/add-order";
+@import "./components/barcodeWorkflow/PostSavePrintDialog";
+@import "./components/pathology/PathologyDashboard";
+@import "./components/notebook/NoteBook";
+@import "./components/nonconform/common/ReportNonConformingEvent";
+@import "./components/nonconform/common/NceDashboard";
+@import "./components/program/programCaseView";
