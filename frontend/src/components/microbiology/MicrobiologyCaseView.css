@@ -170,6 +170,14 @@
   min-width: 0;
 }
 
+/* Carbon insets accordion content by 25%, which collapses the isolate value
+   column to zero width here. This page used to be spared by an unscoped
+   override in another route's stylesheet, which stopped reaching it when that
+   route became lazy; scope it to this page rather than rely on that again. */
+.microbiology-workbench__content .cds--accordion__content {
+  padding: 0;
+}
+
 .microbiology-workbench__content :is(button, a, input, select, textarea) {
   scroll-margin-block-end: 5rem;
 }
