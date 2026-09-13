@@ -236,4 +236,37 @@ describe("app-wide stylesheet reach", () => {
     }
     expect(leaks).toEqual([]);
   });
+
+  // The reach assertion asks only whether SOME owner sheet is in the closure,
+  // so a sheet imported by both an aggregate and its own component passes it
+  // while Vite emits that sheet into the entry AND into that route's lazy
+  // chunk. The preload helper appends the lazy copy after the entry and never
+  // removes it, so from the first visit to the route its rules win every
+  // equal-specificity tie for the rest of the session, app-wide.
+  it("gives each aggregated sheet exactly one importer", () => {
+    const importers = new Map();
+    for (const graph of [staticImports, dynamicImports]) {
+      for (const [importer, targets] of graph) {
+        for (const target of targets) {
+          if (!importers.has(target)) importers.set(target, new Set());
+          importers.get(target).add(importer);
+        }
+      }
+    }
+    const shared = [];
+    for (const aggregate of AGGREGATES) {
+      for (const sheet of staticImports.get(aggregate) || []) {
+        const others = [...(importers.get(sheet) || [])].filter(
+          (importer) => importer !== aggregate,
+        );
+        if (!others.length) continue;
+        shared.push(
+          `${path.relative(SRC, sheet)} is aggregated by ` +
+            `${path.relative(SRC, aggregate)} and also imported by ` +
+            others.map((other) => path.relative(SRC, other)).join(", "),
+        );
+      }
+    }
+    expect(shared).toEqual([]);
+  });
 });
