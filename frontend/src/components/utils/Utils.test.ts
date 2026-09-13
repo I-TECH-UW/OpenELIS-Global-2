@@ -224,9 +224,10 @@ describe("a rejected CSRF token", () => {
     expect(reload).not.toHaveBeenCalled();
   });
 
-  it("reloads when the session has expired and the refresh yields no token", async () => {
-    // What a timed-out session actually answers: authenticated false, and no
-    // csrf field at all, because the backend issues one only when authenticated.
+  it("reloads when the refresh yields no token", async () => {
+    // A /session answer with no csrf field at all. Reaching this needs a 403
+    // with the CSRF body, which SecurityConfig writes only for a principal that
+    // is still authenticated, so it is not the timed-out case.
     const fetchMock = vi.fn().mockImplementation((url: string) =>
       Promise.resolve(
         String(url).endsWith("/session")

@@ -28,14 +28,7 @@ interface UserSessionDetails {
   roles?: string[];
 }
 
-/** Absent where storage is unavailable, which is not an error worth throwing on. */
-const csrfToken = (): string => {
-  try {
-    return localStorage.getItem("CSRF") ?? "";
-  } catch {
-    return "";
-  }
-};
+const csrfToken = (): string => localStorage.getItem("CSRF") ?? "";
 
 /**
  * Get the current locale from localStorage for API requests.
@@ -156,11 +149,13 @@ export const apiFetch = async (
     return response;
   }
 
-  // An empty refresh means the session itself is gone: LoginPageController
-  // issues a token only to an authenticated session, so a timed-out session
-  // answers /session without one. There is nothing left to replay with, and
-  // handing the caller a bare 403 leaves the user typing into a page that can
-  // no longer save — so take the reload that lands them back on /login.
+  // Nothing left to replay with, or a replay the backend rejected again.
+  // Handing the caller that 403 leaves the user typing into a page that can no
+  // longer save, so reload instead.
+  // A session that has already timed out is redirected to /LoginPage before
+  // any of this runs, by SecurityConfig's invalidSessionUrl and its form-login
+  // entry point for an anonymous request. fetch follows that redirect, so the
+  // caller gets a 200 of login HTML. That case is still unhandled.
   const refreshed = await refreshCsrfToken();
   const replayed = refreshed ? await send(refreshed) : response;
   if (!refreshed || (await isCsrfRejection(replayed))) {

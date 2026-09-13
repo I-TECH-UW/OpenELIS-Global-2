@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useContext, useCallback } from "react";
+import React, {
+  Suspense,
+  useState,
+  useEffect,
+  useContext,
+  useCallback,
+} from "react";
 import { useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
@@ -136,7 +142,10 @@ export default function Layout(props) {
             isAdminContext ? " content-admin-context" : ""
           }`.trim()}
         >
-          {children}
+          {/* React 17 hides a suspended boundary's mounted DOM with display:none,
+              so the nearest boundary to a lazy page has to be below the chrome:
+              above it, a late page chunk blanks the header and side nav too. */}
+          <Suspense fallback={null}>{children}</Suspense>
         </Content>
       </Theme>
       <Footer />

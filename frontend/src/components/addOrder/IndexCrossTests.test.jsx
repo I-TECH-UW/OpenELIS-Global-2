@@ -16,6 +16,7 @@ import messages from "../../languages/en.json";
 
 const { utilsMock } = vi.hoisted(() => ({
   utilsMock: {
+    apiFetch: vi.fn(),
     getFromOpenElisServer: vi.fn(),
     postToOpenElisServerFormData: vi.fn(),
     postToOpenElisServerJsonResponse: vi.fn(),
@@ -81,9 +82,9 @@ const crossTestOrder = () => ({
 
 const renderWithOrder = () => {
   window.history.pushState({}, "", "/SamplePatientEntry?ID=EORD1145X1");
-  global.fetch = vi.fn(() =>
-    Promise.resolve({ json: () => Promise.resolve(crossTestOrder()) }),
-  );
+  utilsMock.apiFetch.mockResolvedValue({
+    json: () => Promise.resolve(crossTestOrder()),
+  });
   return render(
     <MemoryRouter>
       <IntlProvider locale="en" messages={messages}>

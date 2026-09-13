@@ -590,8 +590,9 @@ export default function App() {
             {/* The contexts come from LayoutProvider, which carries no chrome,
                 so /login renders without pulling Layout — and with it Header
                 and most of the component library — onto the first-paint path.
-                Every other route stays inside Layout, and this Suspense is its
-                boundary as well as the lazy pages'. */}
+                Every other route stays inside Layout, and this Suspense is
+                the boundary for those two lazy chromes. Layout carries its own
+                for the pages it renders, so a page chunk does not blank it. */}
             <LayoutProvider>
               <Suspense fallback={null}>
                 <Switch>
@@ -750,7 +751,7 @@ export default function App() {
                           <SecureRoute
                             path={`${MICROBIOLOGY_CASE_PATH}/:caseId`}
                             exact
-                            component={() => (
+                            render={() => (
                               <Suspense fallback={null}>
                                 <MicrobiologyPage />
                               </Suspense>
@@ -764,7 +765,7 @@ export default function App() {
                           <SecureRoute
                             path={MICROBIOLOGY_WORKLIST_PATH}
                             exact
-                            component={() => (
+                            render={() => (
                               <Suspense fallback={null}>
                                 <MicrobiologyWorklistPage />
                               </Suspense>
@@ -778,7 +779,7 @@ export default function App() {
                           <SecureRoute
                             path={MICROBIOLOGY_WHONET_PATH}
                             exact
-                            component={() => (
+                            render={() => (
                               <Suspense fallback={null}>
                                 <MicrobiologyWhonetPage />
                               </Suspense>
@@ -1526,7 +1527,7 @@ export default function App() {
                           <SecureRoute
                             path="/analyzers/types/:profileId/mapping"
                             exact
-                            component={() => (
+                            render={() => (
                               <RouteErrorBoundary {...routeErrorAnalyzers}>
                                 <Suspense fallback={null}>
                                   <AnalyzerTypeMappingPage />
