@@ -116,7 +116,7 @@ const compare = (a, b) => {
   return String(a).localeCompare(String(b));
 };
 
-const InventoryItemsBoard = ({ reloadKey }) => {
+const InventoryItemsBoard = () => {
   const intl = useIntl();
   const [rows, setRows] = useState([]);
   const [lots, setLots] = useState([]);
@@ -169,7 +169,7 @@ const InventoryItemsBoard = ({ reloadKey }) => {
 
   useEffect(() => {
     refresh().finally(() => setLoading(false));
-  }, [refresh, reloadKey]);
+  }, [refresh]);
 
   const closeAction = () => setAction(null);
 
