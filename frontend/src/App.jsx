@@ -202,6 +202,8 @@ export const ANALYZER_RESULTS_ROLES = [
   Roles.ANALYSER_IMPORT,
 ];
 
+export const ANALYZER_SETUP_ROLES = [Roles.GLOBAL_ADMIN];
+
 // The quality-indicator reports: same route shape, same roles, each gated on its
 // own indicator being enabled.
 const QI_INDICATOR_ROUTES = [
@@ -1436,7 +1438,7 @@ export default function App() {
                       </Suspense>
                     </RouteErrorBoundary>
                   )}
-                  role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
+                  role={ANALYZER_SETUP_ROLES}
                 />
                 <SecureRoute
                   path="/analyzers/types"
@@ -1448,7 +1450,7 @@ export default function App() {
                       </Suspense>
                     </RouteErrorBoundary>
                   )}
-                  role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
+                  role={ANALYZER_SETUP_ROLES}
                 />
                 <SecureRoute
                   path="/analyzers/types/:profileId/mapping"
@@ -1460,7 +1462,7 @@ export default function App() {
                       </Suspense>
                     </RouteErrorBoundary>
                   )}
-                  role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
+                  role={ANALYZER_SETUP_ROLES}
                 />
                 <SecureRoute
                   path="/analyzers/:analyzerId/mapping"
@@ -1472,7 +1474,7 @@ export default function App() {
                       </Suspense>
                     </RouteErrorBoundary>
                   )}
-                  role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
+                  role={ANALYZER_SETUP_ROLES}
                 />
                 <SecureRoute
                   path="/analyzers/:analyzerId/adoption"
@@ -1484,7 +1486,7 @@ export default function App() {
                       </Suspense>
                     </RouteErrorBoundary>
                   )}
-                  role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
+                  role={ANALYZER_SETUP_ROLES}
                 />
                 <SecureRoute
                   path="/analyzers/qc/instruments/:instrumentId"
