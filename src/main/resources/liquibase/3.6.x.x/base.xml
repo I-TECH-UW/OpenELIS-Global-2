@@ -40,4 +40,5 @@
   <!-- OGC-1517: every observation type the application writes is seeded by Liquibase, not by an optional CSV -->
   <include relativeToChangelogFile="true" file="022-observation-types-seed.xml"/>
 
+  <include relativeToChangelogFile="true" file="014-microbiology-case-result-entry.xml"/>
 </databaseChangeLog>
