@@ -306,16 +306,16 @@ public class PatientSearchRestController extends BaseRestController {
 
         // Add non-null identifiers to the map
         if (STNumber != null) {
-            identifierMappings.put("stnumber", STNumber);
+            identifierMappings.put("stNumber", STNumber);
         }
         if (subjectNumber != null) {
-            identifierMappings.put("subjectnumber", subjectNumber);
+            identifierMappings.put("subjectNumber", subjectNumber);
         }
         if (nationalID != null) {
-            identifierMappings.put("nationalid", nationalID);
+            identifierMappings.put("nationalId", nationalID);
         }
         if (patientID != null) {
-            identifierMappings.put("patientid", patientID);
+            identifierMappings.put("patientId", patientID);
         }
         if (guid != null) {
             identifierMappings.put("guid", guid);
@@ -326,7 +326,7 @@ public class PatientSearchRestController extends BaseRestController {
             String value = entry.getValue();
             if (!GenericValidator.isBlankOrNull(value)) {
                 query = query.where(org.hl7.fhir.r4.model.Patient.IDENTIFIER.exactly()
-                        .systemAndCode("http://openelis-global.org/pat_" + entry.getKey(), value));
+                        .systemAndCode(fhirConfig.getOeFhirSystem() + "/pat_" + entry.getKey(), value));
                 LogEvent.logInfo("PatientSearchRestController", "buildPatientSearchQuery()",
                         "Added identifier (" + entry.getKey() + ") to query.");
             }
