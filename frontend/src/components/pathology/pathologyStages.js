@@ -2,8 +2,8 @@
  * The eleven bench stages a pathology case moves through, in the order the
  * bench actually works them. Kept as a pure module (no React, no I/O) so the
  * dashboard, the case view and any later pathology screen read the same
- * order and the same groupings the backend dashboard tiles use, rather than
- * each screen re-deriving its own list and drifting apart.
+ * order, the in-progress grouping the backend tiles use and the landing
+ * worklist, rather than each screen re-deriving its own list and drifting.
  */
 
 export const PATHOLOGY_STAGES = Object.freeze([

@@ -208,6 +208,13 @@ function PathologyDashboard() {
 
     if (value === "All") {
       setFilters({ ...filters, statuses: statuses });
+    } else if (value === "NOT_COMPLETED") {
+      setFilters({
+        ...filters,
+        statuses: notCompletedStageIds(statuses.map((status) => status.id)).map(
+          (statusId) => ({ id: statusId }),
+        ),
+      });
     } else if (value === "IN_PROGRESS") {
       setFilters({ ...filters, statuses: inProgressStatusObjects });
     } else {
@@ -215,16 +222,25 @@ function PathologyDashboard() {
     }
   };
 
-  const getSelectedValue = () => {
-    const selectedValue =
-      filters.statuses.length === inProgressStatuses.length &&
-      filters.statuses.every((status) => inProgressStatuses.includes(status.id))
-        ? "IN_PROGRESS"
-        : filters.statuses.length > 1
-          ? "All"
-          : filters.statuses[0]?.id || "IN_PROGRESS";
+  const holdsExactly = (stageIds) =>
+    filters.statuses.length === stageIds.length &&
+    filters.statuses.every((status) => stageIds.includes(status.id));
 
-    return selectedValue;
+  const getSelectedValue = () => {
+    if (holdsExactly(inProgressStatuses)) {
+      return "IN_PROGRESS";
+    }
+    if (
+      holdsExactly(notCompletedStageIds(statuses.map((status) => status.id)))
+    ) {
+      return "NOT_COMPLETED";
+    }
+    if (filters.statuses.length > 1) {
+      return "All";
+    }
+    // Before the stage list arrives, name the set the landing load will ask
+    // for.
+    return filters.statuses[0]?.id || "NOT_COMPLETED";
   };
 
   const filtersToParameters = () => {
@@ -431,6 +447,10 @@ function PathologyDashboard() {
                 <SelectItem
                   text={intl.formatMessage({ id: "common.all" })}
                   value="All"
+                />
+                <SelectItem
+                  text={intl.formatMessage({ id: "common.notCompleted" })}
+                  value="NOT_COMPLETED"
                 />
                 <SelectItem
                   text={intl.formatMessage({ id: "common.inProgress" })}

@@ -1,7 +1,8 @@
 /**
- * The landing worklist is every stage but COMPLETED, so a case waiting for a
- * pathologist is listed; the "In Progress" option is narrower and matches the
- * backend tile grouping. Stage names render localized, never as raw enum ids.
+ * The landing worklist is every stage but COMPLETED, named by the "Not
+ * Completed" option, so a case waiting for a pathologist is listed; the "In
+ * Progress" option is narrower and matches the backend tile grouping. Stage
+ * names render localized, never as raw enum ids.
  */
 import React from "react";
 import { vi } from "vitest";
@@ -180,9 +181,43 @@ it("lists a case waiting for a pathologist on landing, with its Start button", a
 
   expect(dashboardRequests().at(-1)).toEqual(LANDING_WORKLIST_STAGES);
 
-  // Pins the known knock-on, not desired behaviour: no option names the
-  // landing set, so the control reads All while COMPLETED is excluded.
-  expect(container.querySelector("#statusFilter").value).toBe("All");
+  // The landing set has its own option, so the control names it.
+  expect(container.querySelector("#statusFilter").value).toBe("NOT_COMPLETED");
+});
+
+it("names the landing worklist before the stage list has arrived", () => {
+  // The stage list is held back: only the worklist and the counts answer.
+  getFromOpenElisServer.mockImplementation((url, callback) => {
+    if (url.startsWith("/rest/pathology/dashboard/count")) {
+      return callback(DASHBOARD_COUNTS);
+    }
+    if (url.startsWith("/rest/pathology/dashboard?")) {
+      return callback({
+        items: [],
+        paging: { currentPage: "1", totalPages: "1" },
+      });
+    }
+    return undefined;
+  });
+  const { container } = renderDashboard();
+
+  expect(container.querySelector("#statusFilter").value).toBe("NOT_COMPLETED");
+});
+
+it("lists the waiting case again once Not Completed is chosen after Completed", async () => {
+  const { container } = renderDashboard({ roles: ["Pathologist"] });
+  await screen.findByText("ACC7");
+  const select = container.querySelector("#statusFilter");
+
+  fireEvent.change(select, { target: { value: "COMPLETED" } });
+  await waitFor(() => {
+    expect(screen.queryByText("ACC7")).not.toBeInTheDocument();
+  });
+
+  fireEvent.change(select, { target: { value: "NOT_COMPLETED" } });
+  await screen.findByText("ACC7");
+  expect(dashboardRequests().at(-1)).toEqual(LANDING_WORKLIST_STAGES);
+  expect(select.value).toBe("NOT_COMPLETED");
 });
 
 it("requests only the In Progress grouping once it is chosen, dropping the waiting case", async () => {
@@ -200,16 +235,35 @@ it("requests only the In Progress grouping once it is chosen, dropping the waiti
   expect(dashboardRequests().at(-1)).toEqual(IN_PROGRESS_OPTION_STAGES);
 });
 
+it("reads the single stage chosen, not the grouping that contains it", async () => {
+  const { container } = renderDashboard();
+  await screen.findByText("ACC9");
+  const select = container.querySelector("#statusFilter");
+
+  fireEvent.change(select, { target: { value: "MICROTOMY" } });
+
+  await waitFor(() => {
+    expect(dashboardRequests().at(-1)).toEqual(["MICROTOMY"]);
+  });
+  expect(select.value).toBe("MICROTOMY");
+});
+
 it("lists the eleven bench stages in order with localized labels in the status filter", async () => {
   const { container } = renderDashboard();
   await screen.findByText("ACC9");
 
   const select = container.querySelector("#statusFilter");
-  const stageOptionTexts = Array.from(select.querySelectorAll("option"))
-    .slice(3)
-    .map((option) => option.textContent);
+  const optionTexts = Array.from(select.querySelectorAll("option")).map(
+    (option) => option.textContent,
+  );
 
-  expect(stageOptionTexts).toEqual([
+  expect(optionTexts.slice(0, 4)).toEqual([
+    messages["common.status"],
+    messages["common.all"],
+    messages["common.notCompleted"],
+    messages["common.inProgress"],
+  ]);
+  expect(optionTexts.slice(4)).toEqual([
     messages["pathology.stage.accessioned"],
     messages["pathology.stage.grossing"],
     messages["pathology.stage.decalcification"],
@@ -234,6 +288,7 @@ it("issues a request scoped to COMPLETED only when the Completed stage is chosen
   await waitFor(() => {
     expect(dashboardRequests().at(-1)).toEqual(["COMPLETED"]);
   });
+  expect(select.value).toBe("COMPLETED");
 });
 
 it("keeps the page the user moved to when an earlier search answers late", async () => {
