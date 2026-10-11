@@ -41,11 +41,15 @@ import org.openelisglobal.common.rest.provider.bean.PatientInfoBean;
 import org.openelisglobal.common.rest.util.DashboardPaging;
 import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.DisplayListService.ListType;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.RequesterService;
+import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
+import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
+import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryService;
 import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
 import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
@@ -91,7 +95,9 @@ import org.openelisglobal.storage.dao.SampleStorageAssignmentDAO;
 import org.openelisglobal.storage.service.SampleStorageService;
 import org.openelisglobal.storage.valueholder.SampleStorageAssignment;
 import org.openelisglobal.systemuser.controller.UnifiedSystemUserController;
+import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.service.UserService;
+import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.dto.TestSelectionDTO;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
@@ -104,6 +110,7 @@ import org.openelisglobal.vector.service.VectorSamplingSiteService;
 import org.openelisglobal.vector.valueholder.VectorPool;
 import org.openelisglobal.vector.valueholder.VectorSamplingSite;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -129,6 +136,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RequestMapping("/rest/order")
 public class OrderSearchRestController extends BaseRestController {
 
+    @Lazy
+    @Autowired
+    private FhirTransformService fhirTransformService;
     @Autowired
     private SampleService sampleService;
 
@@ -137,6 +147,9 @@ public class OrderSearchRestController extends BaseRestController {
 
     @Autowired
     private SampleHumanService sampleHumanService;
+
+    @Autowired
+    private SystemUserService systemUserService;
 
     @Autowired
     private PatientService patientService;
@@ -198,11 +211,15 @@ public class OrderSearchRestController extends BaseRestController {
     @Autowired
     private SampleComplianceStandardService sampleComplianceStandardService;
 
-    /** Dashboard filter value for orders that have been referred out. */
+    /** Dashboard filter value for orders whose every test is referred out. */
     private static final String REFERRED_OUT_FILTER = "referred_out";
+    /** Dashboard filter value for orders with at least one referred test. */
+    private static final String HAS_REFERRED_FILTER = "has_referred";
 
     @Autowired
     private ReferralService referralService;
+    @Autowired
+    private IStatusService statusService;
 
     @Autowired
     private PanelItemService panelItemService;
@@ -236,7 +253,6 @@ public class OrderSearchRestController extends BaseRestController {
     private TestMethodService testMethodService;
 
     @Autowired(required = false)
-    private org.openelisglobal.microbiology.service.MicroCaseOrderDetailService microCaseOrderDetailService;
     private String ADDRESS_PART_VILLAGE_ID;
     private String ADDRESS_PART_COMMUNE_ID;
     private String ADDRESS_PART_DEPT_ID;
@@ -264,18 +280,24 @@ public class OrderSearchRestController extends BaseRestController {
         final boolean qa;
         final OrderProgressStatus progress;
         final boolean complete;
+        final boolean fullyReferred;
 
-        StepState(boolean collect, boolean label, boolean qa, OrderProgressStatus progress, boolean complete) {
+        StepState(boolean collect, boolean label, boolean qa, OrderProgressStatus progress, boolean complete,
+                boolean fullyReferred) {
             this.collect = collect;
             this.label = label;
             this.qa = qa;
             this.progress = progress;
             this.complete = complete;
+            this.fullyReferred = fullyReferred;
         }
 
         String status() {
             if (progress == OrderProgressStatus.CANCELLED) {
                 return CANCELLED_FILTER;
+            }
+            if (fullyReferred && progress.isAtLeast(OrderProgressStatus.SAMPLES_PREPARED)) {
+                return REFERRED_OUT_FILTER;
             }
             if (complete) {
                 return "completed";
@@ -401,7 +423,7 @@ public class OrderSearchRestController extends BaseRestController {
                     continue;
                 } else {
                     List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sample.getId());
-                    if (REFERRED_OUT_FILTER.equals(status)) {
+                    if (HAS_REFERRED_FILTER.equals(status)) {
                         if (!hasReferral(sampleItems)) {
                             continue;
                         }
@@ -512,8 +534,40 @@ public class OrderSearchRestController extends BaseRestController {
             labelComplete = prepared;
             qaComplete = progress == OrderProgressStatus.READY_FOR_TESTING;
         }
+        boolean fullyReferred = orderProgressService.isFullyReferred(sample.getId());
         return new StepState(collectComplete, labelComplete, qaComplete, progress,
-                orderProgressService.isComplete(progress, workflowType));
+                orderProgressService.isComplete(progress, workflowType, fullyReferred), fullyReferred);
+    }
+
+    /**
+     * How much of the order is referred out, for the dashboard row: the referred
+     * and total test counts and the receiving laboratories.
+     */
+    Map<String, Object> referralSummary(List<SampleItem> sampleItems) {
+        int total = 0;
+        int referred = 0;
+        java.util.Set<String> laboratories = new java.util.LinkedHashSet<>();
+        for (SampleItem sampleItem : sampleItems) {
+            for (Analysis analysis : analysisService.getAnalysesBySampleItem(sampleItem)) {
+                if (statusService.matches(analysis.getStatusId(), AnalysisStatus.Canceled)) {
+                    continue;
+                }
+                total++;
+                Referral referral = referralService.getReferralByAnalysisId(analysis.getId());
+                if (!orderProgressService.isOpenReferral(referral)) {
+                    continue;
+                }
+                referred++;
+                if (referral.getOrganization() != null) {
+                    laboratories.add(referral.getOrganization().getOrganizationName());
+                }
+            }
+        }
+        Map<String, Object> summary = new HashMap<>();
+        summary.put("referredTests", referred);
+        summary.put("totalTests", total);
+        summary.put("referredTo", String.join(", ", laboratories));
+        return summary;
     }
 
     /** One dashboard row, built only for the samples on the page shown. */
@@ -565,15 +619,18 @@ public class OrderSearchRestController extends BaseRestController {
             facilityName = referringOrg.getOrganizationName();
         orderData.put("facilityName", facilityName.isEmpty() ? "---" : facilityName);
 
+        boolean finished = steps.complete && steps.progress != OrderProgressStatus.CANCELLED;
         Map<String, Boolean> stepProgress = new HashMap<>();
         stepProgress.put("enter", isEnterComplete(sample));
-        stepProgress.put("collect", steps.collect);
-        stepProgress.put("label", steps.label);
-        stepProgress.put("qa", steps.qa);
+        stepProgress.put("collect", steps.collect || finished);
+        stepProgress.put("label", steps.label || finished);
+        stepProgress.put("qa", steps.qa || finished);
         orderData.put("stepProgress", stepProgress);
         orderData.put("status", steps.status());
+        orderData.put("referralSummary", referralSummary(sampleItems));
         putProgress(orderData, sample,
-                GenericValidator.isBlankOrNull(sampleWorkflowType) ? "clinical" : sampleWorkflowType, steps.progress);
+                GenericValidator.isBlankOrNull(sampleWorkflowType) ? "clinical" : sampleWorkflowType, steps.progress,
+                steps.complete, steps.fullyReferred);
         orderData.put("storageSkipped", Boolean.TRUE.equals(sample.getStorageSkipped()));
 
         if (sampleWorkflowType != null) {
@@ -772,6 +829,7 @@ public class OrderSearchRestController extends BaseRestController {
                         sampleItem.getSampleTemperature() != null ? sampleItem.getSampleTemperature() : "");
                 sampleItemData.put("specimenOrigin",
                         sampleItem.getSpecimenOrigin() != null ? sampleItem.getSpecimenOrigin() : "");
+                putReceiptAndArrival(sampleItemData, sampleItem);
 
                 String receivedDateDisplay = "";
                 String receivedTimeDisplay = "";
@@ -796,6 +854,9 @@ public class OrderSearchRestController extends BaseRestController {
                 sampleXML.put("specimenOrigin",
                         sampleItem.getSpecimenOrigin() != null ? sampleItem.getSpecimenOrigin() : "");
                 sampleXML.put("container", sampleItem.getContainer() != null ? sampleItem.getContainer() : "");
+                sampleXML.put("cultureSetNumber", sampleItem.getCultureSetNumber());
+                sampleXML.put("bodySite", sampleItem.getBodySite() != null ? sampleItem.getBodySite() : "");
+                sampleXML.put("collectionLocationId", sampleItem.getCollectionLocationId());
                 sampleXML.put("locationDetails",
                         sampleItem.getLocationDetails() != null ? sampleItem.getLocationDetails() : "");
                 sampleXML.put("gpsLatitude", sampleItem.getGpsLatitude() != null ? sampleItem.getGpsLatitude() : "");
@@ -939,8 +1000,6 @@ public class OrderSearchRestController extends BaseRestController {
             Map<String, Object> sampleOrderItems = buildSampleOrderItems(sample);
             response.put("sampleOrderItems", sampleOrderItems);
 
-            addMicrobiologyOrderDetail(response, sample);
-
             // Step progress - determine based on actual data
             boolean isVectorOrder = "V".equals(sample.getDomain());
             Map<String, Boolean> stepProgress = new HashMap<>();
@@ -1036,8 +1095,16 @@ public class OrderSearchRestController extends BaseRestController {
 
     private void putProgress(Map<String, Object> target, Sample sample, String workflowType,
             OrderProgressStatus status) {
+        boolean fullyReferred = orderProgressService.isFullyReferred(sample.getId());
+        putProgress(target, sample, workflowType, status,
+                orderProgressService.isComplete(status, workflowType, fullyReferred), fullyReferred);
+    }
+
+    private void putProgress(Map<String, Object> target, Sample sample, String workflowType, OrderProgressStatus status,
+            boolean complete, boolean fullyReferred) {
         target.put("progressStatus", status.name());
-        target.put("complete", orderProgressService.isComplete(status, workflowType));
+        target.put("complete", complete);
+        target.put("fullyReferred", fullyReferred);
         target.put("sampleCheckEnabled", orderProgressService.sampleCheckEnabled(workflowType));
         Map<String, Object> progress = new HashMap<>();
         progress.put("enteredAt", timestampText(sample.getOrderEnteredAt()));
@@ -1071,6 +1138,7 @@ public class OrderSearchRestController extends BaseRestController {
         }
         try {
             Sample cancelled = orderProgressService.cancel(sample.getId(), body.get("reason"), getSysUserId(request));
+            republishToFhir(cancelled);
             Map<String, Object> response = new HashMap<>();
             response.put("labNumber", cancelled.getAccessionNumber());
             putProgress(response, cancelled, workflowTypeOf(cancelled),
@@ -1083,26 +1151,33 @@ public class OrderSearchRestController extends BaseRestController {
         }
     }
 
-    private boolean hasReferral(List<SampleItem> sampleItems) {
+    /**
+     * Sends the cancelled order to the FHIR store again, so its Task reads
+     * cancelled and its ServiceRequests revoked instead of the order as it was
+     * entered. The cancellation itself has committed; a failed publish is logged
+     * and does not undo it.
+     */
+    private void republishToFhir(Sample cancelled) {
+        try {
+            fhirTransformService.transformPersistObjectsUnderSamples(List.of(cancelled.getId()));
+        } catch (FhirLocalPersistingException | RuntimeException e) {
+            LogEvent.logError(this.getClass().getSimpleName(), "republishToFhir",
+                    "could not republish cancelled order " + cancelled.getAccessionNumber() + ": " + e.getMessage());
+        }
+    }
+
+    boolean hasReferral(List<SampleItem> sampleItems) {
         for (SampleItem sampleItem : sampleItems) {
             for (Analysis analysis : analysisService.getAnalysesBySampleItem(sampleItem)) {
-                Referral referral = referralService.getReferralByAnalysisId(analysis.getId());
-                if (referral != null && referral.getId() != null) {
+                if (statusService.matches(analysis.getStatusId(), AnalysisStatus.Canceled)) {
+                    continue;
+                }
+                if (orderProgressService.isOpenReferral(referralService.getReferralByAnalysisId(analysis.getId()))) {
                     return true;
                 }
             }
         }
         return false;
-    }
-
-    void addMicrobiologyOrderDetail(Map<String, Object> response, Sample sample) {
-        if (microCaseOrderDetailService == null) {
-            return;
-        }
-        var microbiologyOrderDetail = microCaseOrderDetailService.getOrderDraft(sample.getId());
-        if (microbiologyOrderDetail != null) {
-            response.put("microbiologyOrderDetail", microbiologyOrderDetail);
-        }
     }
 
     TestSelectionDTO buildSelectedTestData(org.openelisglobal.test.valueholder.Test test) {
@@ -1843,5 +1918,29 @@ public class OrderSearchRestController extends BaseRestController {
             }
         }
         return false;
+    }
+
+    /**
+     * Who received the sample and the condition it arrived in, with display names
+     * (OGC-1424). Empty strings where nothing was recorded.
+     */
+    void putReceiptAndArrival(Map<String, Object> sampleItemData, SampleItem sampleItem) {
+        sampleItemData.put("receivedById", sampleItem.getReceivedById() == null ? "" : sampleItem.getReceivedById());
+        sampleItemData.put("receivedByName", userName(sampleItem.getReceivedById()));
+        sampleItemData.put("arrivalCondition",
+                sampleItem.getArrivalCondition() == null ? "" : sampleItem.getArrivalCondition());
+        sampleItemData.put("arrivalTemperature", sampleItem.getArrivalTemperature() == null ? ""
+                : sampleItem.getArrivalTemperature().stripTrailingZeros().toPlainString());
+        sampleItemData.put("arrivalRecordedByName", userName(sampleItem.getArrivalRecordedById()));
+        sampleItemData.put("arrivalRecordedAt",
+                sampleItem.getArrivalRecordedAt() == null ? "" : sampleItem.getArrivalRecordedAt().toString());
+    }
+
+    private String userName(String systemUserId) {
+        if (GenericValidator.isBlankOrNull(systemUserId)) {
+            return "";
+        }
+        SystemUser user = systemUserService.getUserById(systemUserId);
+        return user == null ? "" : user.getNameForDisplay().trim();
     }
 }

@@ -38,11 +38,12 @@ import { priorities } from "../data/orderOptions";
 import { NotificationKinds } from "../common/CustomNotification";
 import AutoComplete from "../common/AutoComplete";
 import OrderResultReporting from "./OrderResultReporting";
-import LabelsSection from "../barcodeWorkflow/LabelsSection";
+import LabelsSection, {
+  seedPersistPayload,
+} from "../barcodeWorkflow/LabelsSection";
 import { FormattedMessage, useIntl } from "react-intl";
 import { ConfigurationContext } from "../layout/Layout";
-import MicrobiologyOrderEntrySection from "../microbiology/MicrobiologyOrderEntrySection";
-import { isMicrobiologyOrder } from "../order/orderDataUtils";
+import { RequiredMarker, requiredProps } from "../common/RequiredMarker";
 const AddOrder = (props) => {
   const { setNotificationVisible, addNotification } =
     useContext(NotificationContext);
@@ -789,10 +790,17 @@ const AddOrder = (props) => {
 
   // Fetch POST /api/orderEntry/labelRequest with all selected test ids + the
   // filtered samples (each carrying its positional sample_id_local). Renders via
-  // LabelsSection's API mode. Clears when no sample carries tests.
+  // LabelsSection's API mode. Clears when no sample carries tests. Modify Order
+  // shares this component but its save (/rest/SampleEdit) carries no label
+  // request, so the section is not offered there.
   useEffect(() => {
+    if (isModifyOrder) {
+      setLabelRequest(null);
+      return;
+    }
     if (orderLabelSamples.length === 0) {
       setLabelRequest(null);
+      setOrderFormValues((prev) => ({ ...prev, labelPersistRequest: null }));
       return;
     }
     const testIds = [
@@ -815,11 +823,15 @@ const AddOrder = (props) => {
       (response) => {
         if (response && !response.error) {
           setLabelRequest(response);
+          setOrderFormValues((prev) => ({
+            ...prev,
+            labelPersistRequest: seedPersistPayload(response),
+          }));
         }
       },
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [orderLabelSignature]);
+  }, [orderLabelSignature, isModifyOrder]);
 
   // Human-facing row label for the sample table: the sample type name, falling
   // back to "Sample N" (the filtered position the backend correlates by).
@@ -838,6 +850,9 @@ const AddOrder = (props) => {
   // as OrderLabelPersistRequest) and lift it onto orderFormValues so Index.jsx's
   // save POST body carries it as the top-level labelPersistRequest.
   const handleOrderLabelsChange = ({ persistPayload }) => {
+    if (isModifyOrder) {
+      return;
+    }
     setOrderFormValues((prev) => ({
       ...prev,
       labelPersistRequest: persistPayload,
@@ -864,12 +879,6 @@ const AddOrder = (props) => {
   return (
     <>
       <Stack gap={10}>
-        <MicrobiologyOrderEntrySection
-          samples={samples}
-          orderFormValues={orderFormValues}
-          setOrderFormValues={setOrderFormValues}
-          enabled={isMicrobiologyOrder(orderFormValues, samples)}
-        />
         <div className="orderLegendBody">
           <Grid>
             <Column lg={16} md={8} sm={4}>
@@ -1013,10 +1022,11 @@ const AddOrder = (props) => {
                     onKeyPress={handleKeyPress}
                     labelText={
                       <>
-                        <FormattedMessage id="sample.label.labnumber" />{" "}
-                        <span className="requiredlabel">*</span>
+                        <FormattedMessage id="sample.label.labnumber" />
+                        <RequiredMarker />
                       </>
                     }
+                    {...requiredProps()}
                     id="labNo"
                     invalid={
                       changed["sampleOrderItems.labNo"] &&
@@ -1146,8 +1156,8 @@ const AddOrder = (props) => {
                 onSelect={handleAutoCompleteSiteName}
                 label={
                   <>
-                    <FormattedMessage id="order.search.site.name" />{" "}
-                    <span className="requiredlabel">*</span>
+                    <FormattedMessage id="order.search.site.name" />
+                    <RequiredMarker />
                   </>
                 }
                 style={{ width: "!important 100%" }}
@@ -1196,10 +1206,12 @@ const AddOrder = (props) => {
                 onChange={clearProviderId}
                 label={
                   <>
-                    <FormattedMessage id="order.search.requester.label" />{" "}
-                    {configurationProperties.REQUESTER_REQUIRED === "true" && (
-                      <span className="requiredlabel">*</span>
-                    )}
+                    <FormattedMessage id="order.search.requester.label" />
+                    <RequiredMarker
+                      required={
+                        configurationProperties.REQUESTER_REQUIRED === "true"
+                      }
+                    />
                   </>
                 }
                 style={{ width: "!important 100%" }}
@@ -1243,12 +1255,17 @@ const AddOrder = (props) => {
                 })}
                 labelText={
                   <>
-                    <FormattedMessage id="order.requester.firstName.label" />{" "}
-                    {configurationProperties.REQUESTER_REQUIRED === "true" && (
-                      <span className="requiredlabel">*</span>
-                    )}
+                    <FormattedMessage id="order.requester.firstName.label" />
+                    <RequiredMarker
+                      required={
+                        configurationProperties.REQUESTER_REQUIRED === "true"
+                      }
+                    />
                   </>
                 }
+                {...requiredProps(
+                  configurationProperties.REQUESTER_REQUIRED === "true",
+                )}
                 disabled={
                   configurationProperties.restrictFreeTextProviderEntry ===
                   "true"
@@ -1281,12 +1298,17 @@ const AddOrder = (props) => {
                 })}
                 labelText={
                   <>
-                    <FormattedMessage id="order.requester.lastName.label" />{" "}
-                    {configurationProperties.REQUESTER_REQUIRED === "true" && (
-                      <span className="requiredlabel">*</span>
-                    )}
+                    <FormattedMessage id="order.requester.lastName.label" />
+                    <RequiredMarker
+                      required={
+                        configurationProperties.REQUESTER_REQUIRED === "true"
+                      }
+                    />
                   </>
                 }
+                {...requiredProps(
+                  configurationProperties.REQUESTER_REQUIRED === "true",
+                )}
                 disabled={
                   configurationProperties.restrictFreeTextProviderEntry ===
                   "true"
