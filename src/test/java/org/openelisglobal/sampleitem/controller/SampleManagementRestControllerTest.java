@@ -116,7 +116,7 @@ public class SampleManagementRestControllerTest extends BaseWebContextSensitiveT
     }
 
     @Test
-    public void createAliquot_shouldCreateChildSampleItemWithCorrectQuantities() throws Exception {
+    public void createAliquot_shouldPersistChildSampleItemLinkedToParent() throws Exception {
         SampleItem initialParent = sampleItemService.getData("10001");
         assertEquals("10001", initialParent.getId());
         assertEquals(10.0, initialParent.getRemainingQuantity().doubleValue(), 0.001);
