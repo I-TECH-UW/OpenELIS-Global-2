@@ -154,6 +154,8 @@ public class TestCatalogEditorGroupRangesIntegrationTest extends BaseWebContextS
         r.highCritical = 8d;
         r.lowValid = 0d;
         r.highValid = 10d;
+        r.setLowReporting(0.2d);
+        r.setHighReporting(9d);
         return r;
     }
 
@@ -206,9 +208,29 @@ public class TestCatalogEditorGroupRangesIntegrationTest extends BaseWebContextS
             assertEquals(Double.valueOf(8d), written.highCritical);
             assertEquals(Double.valueOf(0d), written.lowValid);
             assertEquals(Double.valueOf(10d), written.highValid);
+            assertEquals(Double.valueOf(0.2d), written.lowReporting);
+            assertEquals(Double.valueOf(9d), written.highReporting);
         }
         assertEquals("the seed test has that specimen, so the scope stands", sampleTypeId, seed.sampleTypeId);
         assertNull("the sibling does not have that specimen, so its range is shared across its own",
                 sibling.sampleTypeId);
+    }
+
+    /**
+     * OGC-1238: each test's ranges carry their component's code, which siblings
+     * share, so the group editor can tell identical ranges on different tests'
+     * components apart from ones that really differ.
+     */
+    @org.junit.Test
+    public void getRanges_carriesTheComponentCodeSharedBySiblings() {
+        GroupRangesUpdate body = new GroupRangesUpdate();
+        body.testIds = List.of(String.valueOf(SEED_TEST_ID), String.valueOf(SIBLING_TEST_ID));
+        body.ranges = List.of(sharedRange());
+        controller.saveGroupRanges(body, authedRequest());
+
+        RangeDto seed = rangesOf(SEED_TEST_ID).get(0);
+        RangeDto sibling = rangesOf(SIBLING_TEST_ID).get(0);
+        assertEquals("PRIMARY", seed.componentCode);
+        assertEquals("PRIMARY", sibling.componentCode);
     }
 }
