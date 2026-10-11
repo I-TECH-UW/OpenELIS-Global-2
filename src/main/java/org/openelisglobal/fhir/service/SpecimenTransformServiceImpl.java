@@ -217,13 +217,12 @@ public class SpecimenTransformServiceImpl implements SpecimenTransformService {
                         item.setQuantity(q.getValue().doubleValue());
                     }
 
-                    if (q.hasCode()) {
-                        UnitOfMeasure unitOfMeasure = new UnitOfMeasure();
-                        unitOfMeasure.setUnitOfMeasureName(q.getCode());
-                        UnitOfMeasure uom = unitOfMeasureService.getUnitOfMeasureByName(unitOfMeasure);
-                        if (uom != null) {
-                            item.setUnitOfMeasure(uom);
-                        }
+                    UnitOfMeasure uom = unitOfMeasureNamed(q.getUnit());
+                    if (uom == null) {
+                        uom = unitOfMeasureNamed(q.getCode());
+                    }
+                    if (uom != null) {
+                        item.setUnitOfMeasure(uom);
                     }
                 }
             }
@@ -258,6 +257,15 @@ public class SpecimenTransformServiceImpl implements SpecimenTransformService {
         item.setSysUserId(sysuserId);
 
         return item;
+    }
+
+    private UnitOfMeasure unitOfMeasureNamed(String name) {
+        if (GenericValidator.isBlankOrNull(name)) {
+            return null;
+        }
+        UnitOfMeasure unitOfMeasure = new UnitOfMeasure();
+        unitOfMeasure.setUnitOfMeasureName(name);
+        return unitOfMeasureService.getUnitOfMeasureByName(unitOfMeasure);
     }
 
     /**
@@ -364,9 +372,13 @@ public class SpecimenTransformServiceImpl implements SpecimenTransformService {
             quantity.setValue(sampleItem.getQuantity());
 
             if (sampleItem.getUnitOfMeasure() != null && sampleItem.getUnitOfMeasure().getName() != null) {
-
-                quantity.setCode(sampleItem.getUnitOfMeasure().getName());
-                quantity.setSystem("http://unitsofmeasure.org");
+                UnitOfMeasure unitOfMeasure = sampleItem.getUnitOfMeasure();
+                quantity.setUnit(unitOfMeasure.getName());
+                String ucumCode = UcumUnits.isValid(unitOfMeasure.getUcumCode()) ? unitOfMeasure.getUcumCode()
+                        : UcumUnits.isValid(unitOfMeasure.getName()) ? unitOfMeasure.getName() : null;
+                if (ucumCode != null) {
+                    quantity.setSystem(UcumUnits.SYSTEM).setCode(ucumCode);
+                }
             }
 
             container.setSpecimenQuantity(quantity);
