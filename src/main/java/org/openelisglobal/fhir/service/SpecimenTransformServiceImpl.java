@@ -221,6 +221,9 @@ public class SpecimenTransformServiceImpl implements SpecimenTransformService {
                     if (uom == null) {
                         uom = unitOfMeasureNamed(q.getCode());
                     }
+                    if (uom == null) {
+                        uom = unitOfMeasureWithUcumCode(q.getCode());
+                    }
                     if (uom != null) {
                         item.setUnitOfMeasure(uom);
                     }
@@ -257,6 +260,13 @@ public class SpecimenTransformServiceImpl implements SpecimenTransformService {
         item.setSysUserId(sysuserId);
 
         return item;
+    }
+
+    private UnitOfMeasure unitOfMeasureWithUcumCode(String code) {
+        if (GenericValidator.isBlankOrNull(code)) {
+            return null;
+        }
+        return unitOfMeasureService.getAllMatching("ucumCode", code).stream().findFirst().orElse(null);
     }
 
     private UnitOfMeasure unitOfMeasureNamed(String name) {

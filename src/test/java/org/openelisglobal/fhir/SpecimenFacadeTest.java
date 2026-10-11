@@ -459,6 +459,22 @@ public class SpecimenFacadeTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
+    public void updateSpecimen_withOnlyAUcumCode_findsTheUnitThatCarriesIt() throws Exception {
+        String specimenUuid = specimenWithQuantity("10^3/µl", "10*3/uL");
+        jdbcSetUnitOfMeasure(null);
+        ObjectNode asRead = (ObjectNode) readSpecimen(specimenUuid);
+        ObjectNode quantity = (ObjectNode) asRead.get("container").get(0).get("specimenQuantity");
+        quantity.remove("unit");
+        quantity.put("system", "http://unitsofmeasure.org");
+        quantity.put("code", "10*3/uL");
+
+        MockHttpServletResponse response = putSpecimen(specimenUuid, asRead.toString());
+
+        assertEquals(response.getContentAsString(), 200, response.getStatus());
+        assertEquals("1400", sampleItemService.get("2").getUnitOfMeasure().getId());
+    }
+
+    @Test
     public void updateSpecimen_withTheResourceAsRead_keepsALabTypedUnit() throws Exception {
         String specimenUuid = specimenWithQuantity("10^3/µl", null);
         String unitId = sampleItemService.get("2").getUnitOfMeasure().getId();
@@ -467,6 +483,11 @@ public class SpecimenFacadeTest extends BaseWebContextSensitiveTest {
 
         assertEquals(response.getContentAsString(), 200, response.getStatus());
         assertEquals("1400", sampleItemService.get("2").getUnitOfMeasure().getId());
+    }
+
+    private void jdbcSetUnitOfMeasure(String uomId) {
+        new JdbcTemplate(dataSource).update("UPDATE clinlims.sample_item SET uom_id = CAST(? AS numeric) WHERE id = 2",
+                uomId);
     }
 
     private String specimenWithQuantity(String unitName, String ucumCode) {
