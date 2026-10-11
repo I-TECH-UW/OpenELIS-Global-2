@@ -26,6 +26,7 @@ import org.openelisglobal.common.services.StatusService.SampleStatus;
 import org.openelisglobal.dataexchange.fhir.FhirConfig;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.sample.service.SampleService;
+import org.openelisglobal.sample.valueholder.OrderProgressStatus;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 
@@ -102,6 +103,13 @@ public class OrderTaskStatusAndOutputTest {
     @Test
     public void aRejectedSampleIsRejected() {
         assertEquals(TaskStatus.REJECTED, statusFor("27"));
+    }
+
+    @Test
+    public void anOrderCancelledFromTheDashboardIsCancelled() {
+        sample.setOrderProgressStatus(OrderProgressStatus.CANCELLED.name());
+
+        assertEquals(TaskStatus.CANCELLED, statusFor("1"));
     }
 
     @Test

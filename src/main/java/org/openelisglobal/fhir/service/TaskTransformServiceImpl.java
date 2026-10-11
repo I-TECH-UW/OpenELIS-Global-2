@@ -23,6 +23,7 @@ import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.OrderPriority;
+import org.openelisglobal.sample.valueholder.OrderProgressStatus;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -124,6 +125,9 @@ public class TaskTransformServiceImpl implements TaskTransformService {
      * one.
      */
     private TaskStatus taskStatusFor(Sample sample) {
+        if (OrderProgressStatus.CANCELLED == OrderProgressStatus.fromStored(sample.getOrderProgressStatus())) {
+            return TaskStatus.CANCELLED;
+        }
         String statusId = sample.getStatusId();
         if (statusId != null) {
             if (statusId.equals(statusService.getStatusID(OrderStatus.Entered))
