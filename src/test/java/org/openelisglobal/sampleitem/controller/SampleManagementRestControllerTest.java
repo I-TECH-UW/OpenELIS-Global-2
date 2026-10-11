@@ -13,6 +13,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import java.math.BigDecimal;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
@@ -29,6 +30,8 @@ import org.openelisglobal.sampleitem.dto.SearchSamplesResponse;
 import org.openelisglobal.sampleitem.form.AddTestsForm;
 import org.openelisglobal.sampleitem.form.CancelTestForm;
 import org.openelisglobal.sampleitem.form.CreateAliquotForm;
+import org.openelisglobal.sampleitem.service.SampleItemService;
+import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
 import org.springframework.mock.web.MockHttpSession;
@@ -39,25 +42,20 @@ import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.security.web.context.HttpSessionSecurityContextRepository;
-import org.springframework.test.annotation.Rollback;
 import org.springframework.test.web.servlet.MvcResult;
 
-/**
- * Integration tests for {@link SampleManagementRestController} exercising all
- * four REST endpoints through the full Spring MVC stack with MockMvc.
- *
- * <p>
- * Related: Feature 001-sample-management
- */
-@Rollback
 @WithMockUser(username = "admin", roles = { "ADMIN", "RESULTS" })
 public class SampleManagementRestControllerTest extends BaseWebContextSensitiveTest {
 
     private static final String BASE_PATH = "/rest/sample-management";
     private static final String ACCESSION = "SM-TEST-001";
+    private static final String DEFAULT_PASSWORD = "adminADMIN!";
 
     @Autowired
     private AnalysisService analysisService;
+
+    @Autowired
+    private SampleItemService sampleItemService;
 
     @Autowired
     private IStatusService statusService;
@@ -75,7 +73,7 @@ public class SampleManagementRestControllerTest extends BaseWebContextSensitiveT
     }
 
     @Test
-    public void searchByAccessionNumber_shouldReturnExactlyTwoSampleItems() throws Exception {
+    public void searchByAccessionNumber_shouldReturnSampleItems() throws Exception {
         MvcResult result = mockMvc
                 .perform(get(BASE_PATH + "/search").param("accessionNumber", ACCESSION).session(session))
                 .andExpect(status().isOk()).andExpect(content().contentType(MediaType.APPLICATION_JSON)).andReturn();
@@ -119,6 +117,10 @@ public class SampleManagementRestControllerTest extends BaseWebContextSensitiveT
 
     @Test
     public void createAliquot_shouldCreateChildSampleItemWithCorrectQuantities() throws Exception {
+        SampleItem initialParent = sampleItemService.getData("10001");
+        assertEquals("10001", initialParent.getId());
+        assertEquals(10.0, initialParent.getRemainingQuantity().doubleValue(), 0.001);
+
         CreateAliquotForm form = new CreateAliquotForm();
         form.setParentSampleItemId("10001");
         form.setQuantityToTransfer(new BigDecimal("2.5"));
@@ -134,12 +136,21 @@ public class SampleManagementRestControllerTest extends BaseWebContextSensitiveT
                 CreateAliquotResponse.class);
 
         assertEquals(1, response.getAliquotCount());
-        assertTrue("Aliquot external ID must follow SM-TEST-001-1.{n} format",
-                response.getAliquot().getExternalId().matches("SM-TEST-001-1\\.\\d+"));
-
+        assertTrue(response.getAliquot().getExternalId().matches("SM-TEST-001-1\\.\\d+"));
         assertEquals(7.5, response.getParentUpdatedRemainingQuantity().doubleValue(), 0.001);
-
         assertEquals(2.5, response.getQuantityPerAliquot().doubleValue(), 0.001);
+
+        SampleItem updatedParent = sampleItemService.getData("10001");
+        assertEquals("10001", updatedParent.getId());
+        assertEquals(7.5, updatedParent.getRemainingQuantity().doubleValue(), 0.001);
+
+        String childId = response.getAliquot().getId();
+        SampleItem child = sampleItemService.getData(childId);
+        assertEquals(response.getAliquot().getExternalId(), child.getExternalId());
+        assertEquals("10001", child.getParentSampleItem().getId());
+        assertEquals(2.5, child.getQuantity(), 0.001);
+        assertEquals(2.5, child.getRemainingQuantity().doubleValue(), 0.001);
+        assertEquals(initialParent.getSample().getId(), child.getSample().getId());
     }
 
     @Test
@@ -169,6 +180,12 @@ public class SampleManagementRestControllerTest extends BaseWebContextSensitiveT
 
     @Test
     public void addTestsToSamples_shouldLinkTestToSampleItemAndReportSuccess() throws Exception {
+        SampleItem sampleItem = sampleItemService.getData("10001");
+        assertEquals("10001", sampleItem.getId());
+        List<Analysis> initialAnalyses = analysisService.getAnalysesBySampleItem(sampleItem);
+        assertEquals(1, initialAnalyses.size());
+        assertEquals("1", initialAnalyses.get(0).getTest().getId());
+
         AddTestsForm form = new AddTestsForm();
         form.setSampleItemIds(Arrays.asList("10001"));
         form.setTestIds(Arrays.asList("2"));
@@ -187,11 +204,16 @@ public class SampleManagementRestControllerTest extends BaseWebContextSensitiveT
         assertEquals("10001", response.getResults().get(0).getSampleItemId());
         assertEquals(Arrays.asList("2"), response.getResults().get(0).getAddedTestIds());
         assertEquals(Collections.emptyList(), response.getResults().get(0).getSkippedTestIds());
+
+        List<Analysis> postAnalyses = analysisService.getAnalysesBySampleItem(sampleItem);
+        assertEquals(2, postAnalyses.size());
+        boolean test2Persisted = postAnalyses.stream()
+                .anyMatch(a -> a.getTest() != null && "2".equals(a.getTest().getId()));
+        assertTrue(test2Persisted);
     }
 
     @Test
     public void addTestsToSamples_duplicateTest_isSkippedAndReportedCorrectly() throws Exception {
-        // Sample item 10002 already has test 1 attached (via analysis fixture)
         AddTestsForm form = new AddTestsForm();
         form.setSampleItemIds(Arrays.asList("10002"));
         form.setTestIds(Arrays.asList("1"));
@@ -226,6 +248,11 @@ public class SampleManagementRestControllerTest extends BaseWebContextSensitiveT
 
     @Test
     public void cancelTest_shouldTransitionAnalysisStatusToCancelled() throws Exception {
+        Analysis initialAnalysis = analysisService.getAnalysisById("10001");
+        String notStartedStatusId = statusService.getStatusID(StatusService.AnalysisStatus.NotStarted);
+        assertEquals("10001", initialAnalysis.getId());
+        assertEquals(notStartedStatusId, initialAnalysis.getStatusId());
+
         CancelTestForm form = new CancelTestForm();
         form.setAnalysisId("10001");
         form.setSampleItemId("10001");
@@ -248,6 +275,11 @@ public class SampleManagementRestControllerTest extends BaseWebContextSensitiveT
 
     @Test
     public void cancelTest_finalizedAnalysis_returnsInvalidStateError() throws Exception {
+        Analysis initialAnalysis = analysisService.getAnalysisById("10002");
+        String finalizedStatusId = statusService.getStatusID(StatusService.AnalysisStatus.Finalized);
+        assertEquals("10002", initialAnalysis.getId());
+        assertEquals(finalizedStatusId, initialAnalysis.getStatusId());
+
         CancelTestForm form = new CancelTestForm();
         form.setAnalysisId("10002");
         form.setSampleItemId("10002");
@@ -256,13 +288,17 @@ public class SampleManagementRestControllerTest extends BaseWebContextSensitiveT
                 .content(objectMapper.writeValueAsString(form)).session(session)).andExpect(status().isBadRequest())
                 .andExpect(jsonPath("$.error").value("Invalid State"))
                 .andExpect(jsonPath("$.message").value("Cannot cancel test: analysis is already Finalized"));
+
+        Analysis postAttemptAnalysis = analysisService.getAnalysisById("10002");
+        assertEquals(finalizedStatusId, postAttemptAnalysis.getStatusId());
     }
 
     private MockHttpSession buildAuthenticatedSession() {
-        UserDetails userDetails = User.withUsername("admin").password("N/A").authorities("ROLE_ADMIN", "ROLE_RESULTS")
-                .build();
+        UserDetails userDetails = User.withUsername("admin").password(DEFAULT_PASSWORD)
+                .authorities("ROLE_ADMIN", "ROLE_RESULTS").build();
         SecurityContext sc = new SecurityContextImpl();
-        sc.setAuthentication(new UsernamePasswordAuthenticationToken(userDetails, "N/A", userDetails.getAuthorities()));
+        sc.setAuthentication(
+                new UsernamePasswordAuthenticationToken(userDetails, DEFAULT_PASSWORD, userDetails.getAuthorities()));
 
         UserSessionData usd = new UserSessionData();
         usd.setSytemUserId(1);
