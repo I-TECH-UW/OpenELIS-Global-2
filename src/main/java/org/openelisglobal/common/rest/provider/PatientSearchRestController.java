@@ -112,7 +112,7 @@ public class PatientSearchRestController extends BaseRestController {
                 String crSearchParam = request.getParameter("crSearch");
                 if (crSearchParam != null && crSearchParam.contains("true")) {
                     List<PatientSearchResults> fhirResults = searchPatientInClientRegistry(lastName, firstName,
-                            STNumber, subjectNumber, nationalID, null, guid, dateOfBirth, gender);
+                            STNumber, subjectNumber, nationalID, guid, dateOfBirth, gender);
                     LogEvent.logWarn("PatientSearchRestController", "getPatientResults()",
                             "final results have been added");
                     results = fhirResults;
@@ -174,7 +174,7 @@ public class PatientSearchRestController extends BaseRestController {
     }
 
     private List<PatientSearchResults> searchPatientInClientRegistry(String lastName, String firstName, String STNumber,
-            String subjectNumber, String nationalID, String patientID, String guid, String dateOfBirth, String gender) {
+            String subjectNumber, String nationalID, String guid, String dateOfBirth, String gender) {
         LogEvent.logWarn("PatientSearchRestController", "searchPatientInClientRegistry()",
                 "searchPatientInClientRegistry method has been reached");
         if (isClientRegistryConfigInvalid()) {
@@ -187,7 +187,7 @@ public class PatientSearchRestController extends BaseRestController {
                 "ClientRegistry connected successfully");
 
         IQuery<IBaseBundle> query = buildPatientSearchQuery(clientRegistry, lastName, firstName, STNumber,
-                subjectNumber, nationalID, patientID, guid, dateOfBirth, gender);
+                subjectNumber, nationalID, guid, dateOfBirth, gender);
 
         Bundle bundle = query.returnBundle(Bundle.class).execute();
         List<org.hl7.fhir.r4.model.Patient> externalPatients = new ArrayList<>();
@@ -287,8 +287,7 @@ public class PatientSearchRestController extends BaseRestController {
     }
 
     public IQuery<IBaseBundle> buildPatientSearchQuery(IGenericClient clientRegistry, String lastName, String firstName,
-            String STNumber, String subjectNumber, String nationalID, String patientID, String guid, String dateOfBirth,
-            String gender) {
+            String STNumber, String subjectNumber, String nationalID, String guid, String dateOfBirth, String gender) {
         IQuery<IBaseBundle> query = clientRegistry.search().forResource(org.hl7.fhir.r4.model.Patient.class);
         if (!GenericValidator.isBlankOrNull(lastName)) {
             query = query.where(org.hl7.fhir.r4.model.Patient.FAMILY.matches().value(lastName));
@@ -300,8 +299,7 @@ public class PatientSearchRestController extends BaseRestController {
             LogEvent.logWarn("PatientSearchRestController", "buildPatientSearchQuery()", "first name added to query");
         }
 
-        // Map for identifier-based queries (STNumber, SubjectNumber, NationalId,
-        // PatientID, GUID)
+        // Map for identifier-based queries (STNumber, SubjectNumber, NationalId, GUID)
         Map<String, String> identifierMappings = new HashMap<>();
 
         // Add non-null identifiers to the map
@@ -313,9 +311,6 @@ public class PatientSearchRestController extends BaseRestController {
         }
         if (nationalID != null) {
             identifierMappings.put("nationalId", nationalID);
-        }
-        if (patientID != null) {
-            identifierMappings.put("patientId", patientID);
         }
         if (guid != null) {
             identifierMappings.put("guid", guid);

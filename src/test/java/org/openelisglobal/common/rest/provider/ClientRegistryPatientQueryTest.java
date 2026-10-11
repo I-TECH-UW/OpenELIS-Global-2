@@ -55,8 +55,8 @@ public class ClientRegistryPatientQueryTest {
             }
         });
         try {
-            controller.buildPatientSearchQuery(registry, null, null, stNumber, subjectNumber, nationalId, null, null,
-                    null, null).returnBundle(Bundle.class).execute();
+            controller.buildPatientSearchQuery(registry, null, null, stNumber, subjectNumber, nationalId, null, null, null)
+                    .returnBundle(Bundle.class).execute();
         } catch (FhirClientConnectionException e) {
         }
         return URLDecoder.decode(url.toString(), StandardCharsets.UTF_8);
