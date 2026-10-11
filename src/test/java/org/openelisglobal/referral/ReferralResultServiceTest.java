@@ -19,13 +19,13 @@ public class ReferralResultServiceTest extends BaseWebContextSensitiveTest {
     private ReferralResultService referralResultService;
 
     @Before
+    public void setUp() throws Exception {
+        executeDataSetWithStateManagement("testdata/referral-result.xml");
+    }
+
     @After
     public void cleanUp() throws Exception {
         cleanRowsInCurrentConnection(new String[] { "referral_result", "referral", "result" });
-    }
-
-    public void setUp() throws Exception {
-        executeDataSetWithStateManagement("testdata/referral-result.xml");
     }
 
     @Test

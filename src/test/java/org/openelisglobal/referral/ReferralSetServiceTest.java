@@ -75,7 +75,6 @@ public class ReferralSetServiceTest extends BaseWebContextSensitiveTest {
     private FhirReferralService fhirReferralServiceMock;
     private Object originalFhirReferralServiceOnSetService;
 
-    @Before
     @After
     public void cleanUp() throws Exception {
         cleanRowsInCurrentConnection(new String[] { "referral_result", "referral", "analysis", "sample_item", "sample",
