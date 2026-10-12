@@ -20,6 +20,7 @@ vi.mock("./InventoryService", () => ({
     getById: vi.fn(),
     markOrdered: vi.fn(),
     clearOrdered: vi.fn(),
+    getTags: vi.fn(),
   },
   InventoryManagementAPI: { consume: vi.fn() },
 }));
@@ -65,8 +66,14 @@ vi.mock("./UpdateQCStatusModal", () =>
 vi.mock("./DisposeLotModal", () =>
   modalStub("dispose", (p) => `lot:${p.lot.id}`),
 );
+vi.mock("./ManageTagsModal", () =>
+  modalStub("manage-tags", () => "manage-tags"),
+);
 vi.mock("./InventoryItemForm", () =>
-  modalStub("item-form", (p) => `item:${p.item.id}:${p.item.name}`),
+  modalStub(
+    "item-form",
+    (p) => `item:${p.item.id}:${p.item.name}:observed=${p.observedLeadTime}`,
+  ),
 );
 
 vi.mock("./LotDetailsPanel", () => ({
@@ -96,7 +103,7 @@ const CARTRIDGE = {
   itemId: 1,
   code: "GENEXPERT_MTB_RIF",
   name: "GeneXpert MTB/RIF cartridge",
-  itemType: "CARTRIDGE",
+  tags: ["Cartridge", "TB", "Cold chain"],
   units: "tests",
   onHand: 12,
   lowStockThreshold: 20,
@@ -119,7 +126,7 @@ const SYPHILIS = {
   itemId: 2,
   code: "SYPHILIS_RDT_KIT",
   name: "Syphilis RDT kit",
-  itemType: "SYPHILIS_KIT",
+  tags: ["Syphilis kit"],
   units: "tests",
   onHand: 8,
   lowStockThreshold: 10,
@@ -142,7 +149,7 @@ const MALARIA = {
   itemId: 3,
   code: "MALARIA_RDT",
   name: "Malaria RDT (P.f/P.v)",
-  itemType: "RDT",
+  tags: ["RDT", "Malaria"],
   units: "tests",
   onHand: 60,
   lowStockThreshold: 25,
@@ -259,6 +266,14 @@ const rowNamed = (name) =>
 
 beforeEach(() => {
   vi.clearAllMocks();
+  InventoryItemAPI.getTags.mockResolvedValue([
+    "Cartridge",
+    "TB",
+    "Cold chain",
+    "Syphilis kit",
+    "RDT",
+    "Malaria",
+  ]);
 });
 
 describe("InventoryItemsBoard", () => {
@@ -270,7 +285,8 @@ describe("InventoryItemsBoard", () => {
     // cells[0] is the expand control column.
     expect(cells[1]).toHaveTextContent(CARTRIDGE.name);
     expect(cells[1]).toHaveTextContent("GENEXPERT_MTB_RIF");
-    expect(cells[1]).toHaveTextContent("Analyzer Cartridge");
+    expect(cells[1]).toHaveTextContent("Cartridge");
+    expect(cells[1]).toHaveTextContent("TB");
     expect(cells[2]).toHaveTextContent("12 tests");
     expect(cells[3]).toHaveTextContent("+40% / 30d");
     expect(cells[4]).toHaveTextContent(`${dayLabel(8)} – ${dayLabel(12)}`);
@@ -435,6 +451,146 @@ describe("InventoryItemsBoard", () => {
     expect(bodyRows().map((row) => row.textContent)[2]).toContain(
       SYPHILIS.name,
     );
+  });
+
+  it("finds an item by a tag that appears nowhere in its name, code or lots", async () => {
+    await renderBoard();
+    fireEvent.change(screen.getByRole("searchbox"), {
+      target: { value: "Cold chain" },
+    });
+    expect(bodyRows()).toHaveLength(1);
+    expect(bodyRows()[0]).toHaveTextContent(CARTRIDGE.name);
+  });
+
+  it("matches a tag without regard to case", async () => {
+    await renderBoard();
+    fireEvent.change(screen.getByRole("searchbox"), {
+      target: { value: "COLD CHAIN" },
+    });
+    expect(bodyRows()).toHaveLength(1);
+    expect(bodyRows()[0]).toHaveTextContent(CARTRIDGE.name);
+  });
+
+  it("shows an item's tags on its row so the search term is visible", async () => {
+    await renderBoard();
+    const row = rowNamed(MALARIA.name);
+    expect(within(row).getByText("RDT")).toBeInTheDocument();
+    expect(within(row).getByText("Malaria")).toBeInTheDocument();
+  });
+
+  it("renders a row with no tags without leaving a stray separator", async () => {
+    await renderBoard([{ ...CARTRIDGE, tags: [] }], []);
+    const row = rowNamed(CARTRIDGE.name);
+    expect(within(row).getAllByRole("cell")[1]).toHaveTextContent(
+      CARTRIDGE.code,
+    );
+    expect(within(row).queryByText("Cartridge")).not.toBeInTheDocument();
+  });
+
+  it("does not take the keyboard hostage with a dialog role", async () => {
+    await renderBoard();
+
+    expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+    expect(screen.getByRole("status")).toBeInTheDocument();
+    expect(document.body).toHaveFocus();
+  });
+
+  // FilterableMultiSelect updates through Downshift a tick after the click; await assertions
+  const openTagFilter = () =>
+    fireEvent.click(screen.getByRole("combobox", { name: /filter by tags/i }));
+
+  // Scoped: the two Select dropdowns in the same toolbar also render options.
+  const offeredTags = () =>
+    within(document.querySelector(".board-tag-filter"))
+      .getAllByRole("option")
+      .map((option) => option.textContent);
+
+  // The menu stays open between selections; clicking the field again would close it
+  const selectTag = async (name) =>
+    fireEvent.click(await screen.findByRole("option", { name }));
+
+  it("matches an item carrying any one of the selected tags", async () => {
+    await renderBoard();
+
+    openTagFilter();
+    await selectTag("Cold chain");
+    await selectTag("Syphilis kit");
+
+    await waitFor(() => expect(bodyRows()).toHaveLength(2));
+  });
+
+  it("narrows to one item on a single tag", async () => {
+    await renderBoard();
+
+    openTagFilter();
+    await selectTag("Cold chain");
+
+    await waitFor(() => expect(bodyRows()).toHaveLength(1));
+    expect(bodyRows()[0]).toHaveTextContent(CARTRIDGE.name);
+  });
+
+  it("shows each selected tag as a removable chip, not a count", async () => {
+    await renderBoard();
+    openTagFilter();
+    await selectTag("Cold chain");
+    await waitFor(() => expect(bodyRows()).toHaveLength(1));
+
+    const chips = document.querySelector(".board-tag-chips");
+    expect(chips).toHaveTextContent("Cold chain");
+
+    fireEvent.click(within(chips).getAllByRole("button")[0]);
+
+    await waitFor(() => expect(bodyRows()).toHaveLength(3));
+  });
+
+  it("clears every tag at once", async () => {
+    await renderBoard();
+    openTagFilter();
+    await selectTag("Cold chain");
+    await waitFor(() => expect(bodyRows()).toHaveLength(1));
+
+    fireEvent.click(screen.getByRole("button", { name: "Clear tags" }));
+
+    await waitFor(() => expect(bodyRows()).toHaveLength(3));
+    expect(document.querySelector(".board-tag-chips")).toBeNull();
+  });
+
+  it("offers only tags the board's own rows carry", async () => {
+    await renderBoard();
+
+    openTagFilter();
+
+    const offered = offeredTags();
+    expect(offered).toContain("Cold chain");
+    expect(offered).not.toContain("Reagent");
+  });
+
+  it("stops offering a retired tag as a filter but keeps showing it on the row", async () => {
+    InventoryItemAPI.getTags.mockResolvedValue([
+      "Cartridge",
+      "Cold chain",
+      "Syphilis kit",
+      "RDT",
+      "Malaria",
+    ]);
+    await renderBoard();
+
+    openTagFilter();
+    const offered = offeredTags();
+    expect(offered).not.toContain("TB");
+    expect(offered).toContain("Cartridge");
+
+    expect(
+      within(rowNamed(CARTRIDGE.name)).getByText("TB"),
+    ).toBeInTheDocument();
+  });
+
+  it("opens the tag directory from the toolbar", async () => {
+    await renderBoard();
+
+    fireEvent.click(screen.getByRole("button", { name: "Manage tags" }));
+
+    expect(screen.getByTestId("manage-tags")).toBeInTheDocument();
   });
 
   it("offers a recovery hint when filters match nothing", async () => {
@@ -626,6 +782,43 @@ describe("InventoryItemsBoard", () => {
       );
     });
 
+    it("offers a learned lead time to the editor only when that is the tier in use", async () => {
+      await renderBoard([
+        { ...MALARIA, leadTimeTier: "OBSERVED", leadTimeDays: 12 },
+        CARTRIDGE,
+      ]);
+      InventoryItemAPI.getById.mockResolvedValue({
+        id: MALARIA.itemId,
+        name: MALARIA.name,
+      });
+
+      await openRowMenu(MALARIA.name);
+      fireEvent.click(screen.getByText("Edit item details"));
+
+      await waitFor(() =>
+        expect(screen.getByTestId("item-form-target")).toHaveTextContent(
+          "observed=12",
+        ),
+      );
+    });
+
+    it("offers nothing to the editor when the lab already set a lead time", async () => {
+      await renderBoard();
+      InventoryItemAPI.getById.mockResolvedValue({
+        id: CARTRIDGE.itemId,
+        name: CARTRIDGE.name,
+      });
+
+      await openRowMenu(CARTRIDGE.name);
+      fireEvent.click(screen.getByText("Edit item details"));
+
+      await waitFor(() =>
+        expect(screen.getByTestId("item-form-target")).toHaveTextContent(
+          "observed=null",
+        ),
+      );
+    });
+
     it("opens each lot action against the lot clicked, not the row position", async () => {
       await renderBoard();
       // Sort first: Carbon reorders rendered rows, and the cartridge moves.
@@ -798,7 +991,7 @@ describe("InventoryItemsBoard", () => {
 
     it("banners only the items that are critical and not already ordered", async () => {
       await renderBoard();
-      const banner = screen.getByRole("alertdialog");
+      const banner = screen.getByRole("status");
       expect(banner).toHaveTextContent(CARTRIDGE.name);
       expect(banner).not.toHaveTextContent(MALARIA.name);
     });
@@ -809,7 +1002,7 @@ describe("InventoryItemsBoard", () => {
         SYPHILIS,
         MALARIA,
       ]);
-      expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
+      expect(screen.queryByRole("status")).not.toBeInTheDocument();
 
       const row = rowNamed(CARTRIDGE.name);
       expect(row).toBeInTheDocument();
