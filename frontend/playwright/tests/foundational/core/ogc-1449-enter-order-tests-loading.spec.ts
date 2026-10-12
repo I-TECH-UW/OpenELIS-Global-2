@@ -58,7 +58,7 @@ test.describe("Enter Order tests loading (OGC-1449)", () => {
       new RegExp(`sample-type-tests\\?sampleType=${first.id}$`),
       async (route) => {
         await new Promise((resolve) => setTimeout(resolve, 4000));
-        await route.continue().catch(() => {});
+        await route.continue().catch(() => undefined);
       },
     );
     await page.goto(ENTER_ORDER, { timeout: NAV_TIMEOUT });
