@@ -28,8 +28,6 @@ import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.patientidentitytype.util.PatientIdentityTypeMap;
-import org.openelisglobal.referencetables.service.ReferenceTablesService;
-import org.openelisglobal.referencetables.valueholder.ReferenceTables;
 import org.openelisglobal.security.WithDaemonUser;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -283,33 +281,6 @@ public abstract class BaseWebContextSensitiveTest extends AbstractTransactionalJ
             } else {
                 jdbcConn.commit();
                 ensureAuditSystemUser();
-                ensureReferenceSeedRows();
-
-                // The explicit allowlist above covers the legacy generators; this
-                // catches every other dataset-named table whose sequence follows the
-                // <table>_seq convention, so a fixture id can never collide with a
-                // later sequence-backed insert. After the commit: it reads the tables
-                // on its own connection, which the uncommitted TRUNCATE still locks.
-                resyncSequencesForTables(dataset.getTableNames());
-
-                // Refresh StatusService cache to pick up any status_of_sample changes
-                // from the loaded test data
-                if (statusService != null) {
-                    statusService.refreshCache();
-                }
-                // Same for ObservationHistoryService — it caches ObservationType → id
-                // on first call and never invalidates unless asked. Without this,
-                // earlier-running test classes' fixtures pin a stale mapping.
-                if (observationHistoryService != null) {
-                    observationHistoryService.refreshTypeIdCache();
-                }
-                // PatientIdentityTypeMap is a process-level singleton that caches
-                // identity_type name→id mappings. If a fixture truncates
-                // patient_identity_type (directly or via CASCADE), the cache holds
-                // stale IDs whose rows no longer exist, causing FK violations on
-                // the next patient save (e.g. identity_type_id=59 not found).
-                PatientIdentityTypeMap.reset();
-            } catch (Exception e) {
             }
             refreshFixtureCaches();
         } catch (Exception e) {
@@ -337,6 +308,12 @@ public abstract class BaseWebContextSensitiveTest extends AbstractTransactionalJ
         if (observationHistoryService != null) {
             observationHistoryService.refreshTypeIdCache();
         }
+        // PatientIdentityTypeMap is a process-level singleton that caches
+        // identity_type name→id mappings. If a fixture truncates
+        // patient_identity_type (directly or via CASCADE), the cache holds
+        // stale IDs whose rows no longer exist, causing FK violations on
+        // the next patient save (e.g. identity_type_id=59 not found).
+        PatientIdentityTypeMap.reset();
     }
 
     /**

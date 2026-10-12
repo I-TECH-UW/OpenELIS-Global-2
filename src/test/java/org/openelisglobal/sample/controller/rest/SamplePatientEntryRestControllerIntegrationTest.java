@@ -537,6 +537,7 @@ public class SamplePatientEntryRestControllerIntegrationTest extends BaseWebCont
         patient.put("firstName", "Ann");
         patient.put("gender", "F");
         patient.put("nationalId", "NID" + PATIENT_SEQUENCE.incrementAndGet());
+        patient.put("birthDateForDisplay", DateUtil.formatDateAsText(new java.sql.Date(631152000000L)));
 
         return form;
     }
