@@ -38,6 +38,7 @@
         <class>org.openelisglobal.testterminology.valueholder.TestTerminologyMapping</class>
         <class>org.openelisglobal.sampletypeterminology.valueholder.SampleTypeTerminologyMapping</class>
         <class>org.openelisglobal.panelterminology.valueholder.PanelTerminologyMapping</class>
+        <class>org.openelisglobal.dictionaryterminology.valueholder.DictionaryTerminologyMapping</class>
         <class>org.openelisglobal.testreagentlink.valueholder.TestReagentLink</class>
         <class>org.openelisglobal.testalertrule.valueholder.TestAlertRule</class>
         <class>org.openelisglobal.testsamplehandling.valueholder.TestSampleHandlingHistory</class>
@@ -157,15 +158,14 @@
         <class>org.openelisglobal.shipment.valueholder.Shipment</class>
         <class>org.openelisglobal.shipment.valueholder.BoxSampleItem</class>
 
-        <!-- Analyzer orchestration and site-binding entities -->
+        <!-- Analyzer orchestration and analyzer-owned mapping entities -->
         <class>org.openelisglobal.analyzer.valueholder.Analyzer</class>
         <class>org.openelisglobal.analyzer.valueholder.AnalyzerEvent</class>
-        <class>org.openelisglobal.analyzer.valueholder.AnalyzerProfileBinding</class>
-        <class>org.openelisglobal.analyzer.valueholder.AnalyzerSiteBinding</class>
-        <class>org.openelisglobal.analyzer.valueholder.AnalyzerSiteBindingRevision</class>
-        <class>org.openelisglobal.analyzer.valueholder.AnalyzerSiteBindingTest</class>
-        <class>org.openelisglobal.analyzer.valueholder.AnalyzerSiteBindingResult</class>
-        <class>org.openelisglobal.analyzer.valueholder.AnalyzerSiteBindingConfirmation</class>
+        <class>org.openelisglobal.analyzer.valueholder.AnalyzerMapping</class>
+        <class>org.openelisglobal.analyzer.valueholder.AnalyzerMappingTest</class>
+        <class>org.openelisglobal.analyzer.valueholder.AnalyzerMappingResult</class>
+        <class>org.openelisglobal.analyzer.valueholder.AnalyzerMappingConfirmation</class>
+        <class>org.openelisglobal.analyzer.valueholder.AnalyzerBridgePairing</class>
         <class>org.openelisglobal.analyzer.valueholder.AnalyzerActivationRecord</class>
         <class>org.openelisglobal.analyzerimport.valueholder.AnalyzerDeliveryReceipt</class>
         <class>org.openelisglobal.analyzerresults.valueholder.AnalyzerResults</class>
