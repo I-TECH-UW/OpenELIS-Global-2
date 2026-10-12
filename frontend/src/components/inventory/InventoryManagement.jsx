@@ -10,7 +10,7 @@ import {
 } from "@carbon/react";
 import { FormattedMessage } from "react-intl";
 import PageBreadCrumb from "../common/PageBreadCrumb";
-import InventoryDashboard from "./InventoryDashboard";
+import InventoryItemsBoard from "./InventoryItemsBoard";
 import InventoryCatalog from "./InventoryCatalog";
 import InventoryReports from "./InventoryReports";
 import "./InventoryList.css";
@@ -33,9 +33,9 @@ const InventoryManagement = () => {
       <Grid fullWidth={true}>
         <Column lg={16} md={8} sm={4}>
           <div className="orderLegendBody">
-            <h2>
+            <h1 className="page-heading-05">
               <FormattedMessage id="inventory.list.title" />
-            </h2>
+            </h1>
 
             <Tabs
               selectedIndex={selectedTab}
@@ -43,7 +43,7 @@ const InventoryManagement = () => {
             >
               <TabList aria-label="Inventory management tabs" contained>
                 <Tab>
-                  <FormattedMessage id="inventory.tab.dashboard" />
+                  <FormattedMessage id="inventory.board.title" />
                 </Tab>
                 <Tab>
                   <FormattedMessage id="inventory.tab.catalog" />
@@ -54,9 +54,9 @@ const InventoryManagement = () => {
               </TabList>
 
               <TabPanels>
-                {/* Dashboard Tab - Metrics + Lots Table */}
+                {/* Items Tab - Items Board */}
                 <TabPanel>
-                  <InventoryDashboard active={selectedTab === 0} />
+                  <InventoryItemsBoard />
                 </TabPanel>
 
                 {/* Catalog Tab - Manage Inventory Items */}
