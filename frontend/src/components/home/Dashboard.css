@@ -102,6 +102,9 @@
 
 .dashboard-tile__value-view {
   margin: 0.5rem 0 0;
+  font-size: var(--cds-heading-06-font-size, 2.625rem);
+  font-weight: var(--cds-heading-06-font-weight, 300);
+  line-height: var(--cds-heading-06-line-height, 1.199);
 }
 
 @media (max-width: 925px) {

@@ -186,6 +186,7 @@ import {
   VectorIdentificationWorklist,
   VectorDeconvolutionWorklist,
 } from "./components/vectorIdentification";
+import { endServerSession } from "./components/utils/endServerSession";
 
 // QA-context breadcrumb for the TAT report mounted at /qa/qi/tat (OGC-696).
 // Labels are i18n keys resolved by PageBreadCrumb.
@@ -363,22 +364,12 @@ export default function App() {
           console.error(error);
         });
     } else {
-      fetch(config.serverBaseUrl + "/Logout", {
-        //includes the browser sessionId in the Header for Authentication on the backend server
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": localStorage.getItem("CSRF"),
-        },
-      })
-        .then((response) => response.status)
-        .then(() => {
+      endServerSession(config.serverBaseUrl, localStorage.getItem("CSRF")).then(
+        () => {
           getUserSessionDetails();
           window.location.href = config.loginRedirect;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+        },
+      );
     }
   };
 

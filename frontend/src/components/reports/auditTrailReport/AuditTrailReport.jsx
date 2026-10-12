@@ -48,7 +48,7 @@ const AuditTrailReport = ({ id }) => {
     getFromOpenElisServer(
       "/rest/AuditTrailReport?accessionNumber=" + labNo,
       (data) => {
-        if (!data.log) {
+        if (!data?.log) {
           setIsLabNoError("label.audittrail.labNo.invalidaccessionnumber");
           setData(null);
           setAuditTrailItems([]);
@@ -68,7 +68,11 @@ const AuditTrailReport = ({ id }) => {
                 hour12: false,
               },
             ); // Convert timestamp to localized format (DD/MM/YYYY HH:mm)
-            return { ...item, id: index + 1, timeStamp: formattedTimeStamp };
+            return {
+              ...item,
+              id: String(index + 1),
+              timeStamp: formattedTimeStamp,
+            };
           });
 
           setIsLabNoError(null);
@@ -112,16 +116,10 @@ const AuditTrailReport = ({ id }) => {
               onChange={(event, rowVal) =>
                 setLabNo(rowVal ? rowVal : event?.target?.value)
               }
-              invalid={
-                isLabNoError
-                  ? intl.formatMessage({
-                      id: "label.audittrail.labNo.missing",
-                    })
-                  : ""
+              invalid={Boolean(isLabNoError)}
+              invalidText={
+                isLabNoError ? intl.formatMessage({ id: isLabNoError }) : ""
               }
-              invalidText={intl.formatMessage({
-                id: `${isLabNoError}`,
-              })}
             />
           </Column>
         </Grid>
@@ -207,7 +205,7 @@ const AuditTrailReport = ({ id }) => {
                 </span>
               </div>
               <div style={{ marginBottom: "10px", color: "#555" }}>
-                {data?.sampleOrderItems.priority}
+                {data?.sampleOrderItems?.priority}
               </div>
             </Column>
             <Column lg={8} style={{ marginBottom: "20px" }}>
@@ -247,7 +245,7 @@ const AuditTrailReport = ({ id }) => {
                 </span>
               </div>
               <div style={{ marginBottom: "10px" }}>
-                {data?.sampleOrderItems.referringSiteName}
+                {data?.sampleOrderItems?.referringSiteName}
               </div>
             </Column>
 
@@ -284,7 +282,7 @@ const AuditTrailReport = ({ id }) => {
       <Column lg={16}>
         <DataTable
           rows={auditTrailItems ?? []}
-          headers={auditTrailHeaderData}
+          headers={auditTrailHeaderData(intl)}
           isSortable
         >
           {({ rows, headers, getHeaderProps, getTableProps }) => (

@@ -242,7 +242,7 @@ const InventoryItemsBoard = () => {
       onClick={() => toggleSort(key)}
       {...extraProps}
     >
-      <FormattedMessage id={labelId} />
+      {intl.formatMessage({ id: labelId })}
     </TableHeader>
   );
 
