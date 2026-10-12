@@ -3438,6 +3438,7 @@
   "error.order.staleSave": "This order was updated by {0} at {1}. Refresh to see the latest version, then make your change again.",
   "error.patient.staleSave": "This patient was updated by {0} at {1}. Refresh to see the latest version, then make your change again.",
   "error.testCatalog.staleSave": "This test was updated by {0} at {1}. Refresh to see the latest version, then make your change again.",
+  "error.staleSave.section": "Someone else changed this after you opened it. Nothing was saved. Refresh to see the latest version, then make your change again.",
   "error.load.failed": "Could not load this list. Reload to try again.",
   "error.save.failed": "Failed to save",
   "error.save.msg": "Error While saving",

@@ -10,6 +10,7 @@ import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.management.controller.rest.LabUnitManagementRestController;
 import org.openelisglobal.common.management.controller.rest.LabUnitManagementRestController.BulkTestAssignmentRequest;
 import org.openelisglobal.common.management.controller.rest.LabUnitManagementRestController.DeactivationRequest;
+import org.openelisglobal.common.management.controller.rest.LabUnitManagementRestController.LabUnitManagementDTO;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -240,5 +241,28 @@ public class TestCatalogLabUnitStatusIntegrationTest extends BaseWebContextSensi
                 labUnits.reassignTests(request(), String.valueOf(ACTIVE_C), reassign).getStatusCode().value());
         assertEquals(Long.valueOf(INACTIVE_B), unitOfTest());
         assertEquals("N", status(INACTIVE_B));
+    }
+
+    /**
+     * OGC-1463: a save from a page loaded before another admin deactivated the unit
+     * is refused as stale, so the unit stays off; so is a deactivation asked from a
+     * page older than the unit's last change.
+     */
+    @org.junit.Test
+    public void aSaveFromAPageOlderThanTheDeactivationIsRefusedAsStale() throws Exception {
+        LabUnitManagementDTO pageA = labUnits.getLabUnit(String.valueOf(ACTIVE_C)).getBody().getData();
+        DeactivationRequest deactivation = new DeactivationRequest();
+        deactivation.confirmation = "DEACTIVATE";
+        deactivation.option = "keep";
+        deactivation.lastupdated = pageA.getLastupdated();
+        assertEquals(200,
+                labUnits.deactivateLabUnit(request(), String.valueOf(ACTIVE_C), deactivation).getStatusCode().value());
+
+        pageA.setDescription("Changed on an old page");
+        assertEquals(409, labUnits.updateLabUnit(request(), String.valueOf(ACTIVE_C), pageA).getStatusCode().value());
+        assertEquals("N", status(ACTIVE_C));
+
+        assertEquals("a second deactivation from the same old page is stale too", 409,
+                labUnits.deactivateLabUnit(request(), String.valueOf(ACTIVE_C), deactivation).getStatusCode().value());
     }
 }

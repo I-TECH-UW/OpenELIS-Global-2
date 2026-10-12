@@ -1059,6 +1059,39 @@ public class TestCatalogEditorRestController {
         public String refusal;
         /** The component the refusal is about, when there is one. */
         public String refusedComponent;
+        /**
+         * The version of the components the editor loaded; a save against a newer one
+         * is refused with conflict "stale" (OGC-1463).
+         */
+        public String version;
+        /** Set only on a 409 body: "stale". */
+        public String conflict;
+        public String messageKey;
+    }
+
+    private static final String STALE_SECTION = "error.staleSave.section";
+
+    private static SampleResults staleSampleResults(SampleResults current) {
+        SampleResults body = new SampleResults();
+        body.testId = current.testId;
+        body.version = current.version;
+        body.conflict = "stale";
+        body.messageKey = STALE_SECTION;
+        return body;
+    }
+
+    /**
+     * True when the save names a component of this test that was removed: only a
+     * page loaded before the removal still holds it (OGC-1463).
+     */
+    private boolean namesRemovedComponent(String testId, List<ResultComponentDto> components) {
+        Set<String> removed = new HashSet<>();
+        for (TestResultComponent component : componentService.getComponentsByTestId(testId)) {
+            if (!"Y".equals(component.getIsActive())) {
+                removed.add(component.getId());
+            }
+        }
+        return components.stream().anyMatch(c -> !isBlank(c.id) && removed.contains(c.id));
     }
 
     private static ResponseEntity<SampleResults> refusedSampleResults(String testId, String refusal, String component) {
@@ -1111,6 +1144,11 @@ public class TestCatalogEditorRestController {
         Test test = testService.getTestById(testId);
         if (test == null) {
             return ResponseEntity.notFound().build();
+        }
+        SampleResults current = toSampleResults(testId);
+        if (StaleSaveGuard.isStaleVersion(body.version, current.version)
+                || namesRemovedComponent(testId, body.components)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(staleSampleResults(current));
         }
         if (body.components.isEmpty() && test.isActive()) {
             return refusedSampleResults(testId, "components.activeNeedsComponent", null);
@@ -1286,6 +1324,7 @@ public class TestCatalogEditorRestController {
             }
             sr.components.add(dto);
         }
+        sr.version = StaleSaveGuard.versionOf(sr.components);
         return sr;
     }
 
@@ -2084,6 +2123,14 @@ public class TestCatalogEditorRestController {
         // OGC-1145 FR-13: the test's associated sample types, so the editor can
         // offer the per-specimen override picker without a second request.
         public List<SampleTypeOption> sampleTypes = new ArrayList<>();
+        /**
+         * The version of the mappings the editor loaded; a save against a newer one is
+         * refused with conflict "stale" (OGC-1463).
+         */
+        public String version;
+        /** Set only on a 409 body: "stale". */
+        public String conflict;
+        public String messageKey;
     }
 
     @GetMapping(value = "/tests/{testId}/terminology", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -2113,6 +2160,15 @@ public class TestCatalogEditorRestController {
         Set<String> associatedTypeIds = new HashSet<>();
         for (TypeOfSample type : testService.getTypeOfSamples(test)) {
             associatedTypeIds.add(type.getId());
+        }
+        TerminologyResponse current = toTerminology(testId);
+        if (StaleSaveGuard.isStaleVersion(body.version, current.version)) {
+            TerminologyResponse stale = new TerminologyResponse();
+            stale.testId = testId;
+            stale.version = current.version;
+            stale.conflict = "stale";
+            stale.messageKey = STALE_SECTION;
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(stale);
         }
         Set<String> seen = new HashSet<>();
         List<TestTerminologyMapping> desired = new ArrayList<>();
@@ -2183,6 +2239,7 @@ public class TestCatalogEditorRestController {
             option.domain = Domain.normalize(type.getDomain());
             resp.sampleTypes.add(option);
         }
+        resp.version = StaleSaveGuard.versionOf(resp.mappings);
         return resp;
     }
 
@@ -2273,6 +2330,11 @@ public class TestCatalogEditorRestController {
     public static class PanelTestOrderResponse {
         public String panelId;
         public List<PanelTestRow> tests = new ArrayList<>();
+        /**
+         * The version of the member list the editor loaded; a member save sent with a
+         * newer one is refused as stale (OGC-1463).
+         */
+        public String version;
     }
 
     public static class MembershipItem {
@@ -2807,6 +2869,10 @@ public class TestCatalogEditorRestController {
         if (panelService.getPanelById(panelId) == null) {
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(panelTestOrder(panelId));
+    }
+
+    private PanelTestOrderResponse panelTestOrder(String panelId) {
         PanelTestOrderResponse resp = new PanelTestOrderResponse();
         resp.panelId = panelId;
         for (PanelItem pi : panelItemService.getPanelItemsForPanel(panelId)) {
@@ -2827,7 +2893,9 @@ public class TestCatalogEditorRestController {
             String bn = b.testName == null ? "" : b.testName;
             return an.compareToIgnoreCase(bn);
         });
-        return ResponseEntity.ok(resp);
+        resp.version = StaleSaveGuard
+                .versionOf(resp.tests.stream().map(row -> row.testId + "@" + row.position).toList());
+        return resp;
     }
 
     @PutMapping(value = "/tests/{testId}/panels", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -2923,6 +2991,8 @@ public class TestCatalogEditorRestController {
          * before this write — editing never auto-flips.
          */
         public Boolean autoActivate;
+        /** The member-list version the editor loaded (OGC-1463). */
+        public String version;
     }
 
     public static class PanelTestsResponse {
@@ -2934,6 +3004,11 @@ public class TestCatalogEditorRestController {
         public String refusal;
         /** With {@code tests.inactive}: the inactive tests the write tried to add. */
         public List<ConflictingTest> refusedTests = new ArrayList<>();
+        /** The member-list version after the write, or the current one on a 409. */
+        public String version;
+        /** Set only on a 409 body: "stale". */
+        public String conflict;
+        public String messageKey;
     }
 
     @PutMapping(value = "/panels/{panelId}/tests", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -2945,6 +3020,14 @@ public class TestCatalogEditorRestController {
         }
         if (body == null || body.tests == null || body.tests.stream().anyMatch(Objects::isNull)) {
             return ResponseEntity.badRequest().build();
+        }
+        String currentVersion = panelTestOrder(panelId).version;
+        if (StaleSaveGuard.isStaleVersion(body.version, currentVersion)) {
+            PanelTestsResponse stale = new PanelTestsResponse();
+            stale.version = currentVersion;
+            stale.conflict = "stale";
+            stale.messageKey = STALE_SECTION;
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(stale);
         }
         String sysUserId = ControllerUtills.getSysUserId(request);
         Map<String, Integer> positionByTestId = new LinkedHashMap<>();
@@ -3015,7 +3098,9 @@ public class TestCatalogEditorRestController {
         refreshPanelDisplayLists();
         PanelTestsResponse resp = new PanelTestsResponse();
         resp.panel = toPanelOption(panelService.getPanelById(panel.getId()));
-        resp.tests = getPanelTestOrder(panel.getId()).getBody().tests;
+        PanelTestOrderResponse saved = panelTestOrder(panel.getId());
+        resp.tests = saved.tests;
+        resp.version = saved.version;
         return ResponseEntity.ok(resp);
     }
 
