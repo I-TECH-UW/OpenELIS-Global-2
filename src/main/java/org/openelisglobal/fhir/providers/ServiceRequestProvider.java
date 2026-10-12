@@ -199,9 +199,9 @@ public class ServiceRequestProvider implements IResourceProvider {
             final String patientRefId = requireNonBlank(serviceRequest.getSubject().getReferenceElement().getIdPart(),
                     "ServiceRequest.subject reference is invalid");
 
-            final org.openelisglobal.patient.valueholder.Patient existingPatient = requireNonNull(
-                    fhirTransformService.getItemByFhirId(patientRefId, patientService),
-                    "Patient not found for given subject reference");
+            final org.openelisglobal.patient.valueholder.Patient existingPatient = fhirTransformService
+                    .getItemByFhirId(patientRefId, patientService);
+            requireTrue(existingPatient != null, "Patient not found for given subject reference");
 
             final String patientId = requireNonBlank(existingPatient.getId(), "Resolved patient has no ID");
 
