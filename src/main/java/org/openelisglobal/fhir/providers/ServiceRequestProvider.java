@@ -192,6 +192,8 @@ public class ServiceRequestProvider implements IResourceProvider {
 
             requireNonNull(serviceRequest, "ServiceRequest resource cannot be null");
             requireTrue(serviceRequest.hasSubject(), "ServiceRequest.subject is required");
+            requireTrue(FhirUtil.refersToPatient(serviceRequest.getSubject()),
+                    "ServiceRequest.subject must reference a Patient; orders without a patient are entered in OpenELIS");
             requireTrue(serviceRequest.hasCode(), "ServiceRequest.code is required");
 
             final String patientRefId = requireNonBlank(serviceRequest.getSubject().getReferenceElement().getIdPart(),
