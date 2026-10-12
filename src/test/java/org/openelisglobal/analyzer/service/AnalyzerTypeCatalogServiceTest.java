@@ -215,7 +215,7 @@ public class AnalyzerTypeCatalogServiceTest {
     public void aSavedRevisionNewerThanTheOneInForceIsReportedForVerification() throws Exception {
         when(mappingDAO.findAnalyzersInForceOnProfile("site.mock-hematology"))
                 .thenReturn(List.of(analyzer("501", "Hematology - Main Lab", 2, 1)));
-        when(mappingDAO.findLatestByAnalyzerId("501")).thenReturn(Optional.of(mapping(2)));
+        when(mappingDAO.findLatestByAnalyzerId("501")).thenReturn(Optional.of(mapping(2, 2)));
         when(bridgeCatalogService.getProfile("site.mock-hematology", 2))
                 .thenReturn(profileRevision(2, "Mock Hematology revision 2"));
 
@@ -226,9 +226,57 @@ public class AnalyzerTypeCatalogServiceTest {
         assertFalse(result.newerProfileRevision());
     }
 
-    private static AnalyzerMapping mapping(int revisionNumber) {
+    @Test
+    public void aSavedAdoptionOfThisRevisionAwaitsVerificationInsteadOfOfferingAdoptionAgain() throws Exception {
+        when(mappingDAO.findAnalyzersInForceOnProfile("site.mock-hematology"))
+                .thenReturn(List.of(analyzer("501", "Hematology - Main Lab", 1, 1)));
+        when(mappingDAO.findLatestByAnalyzerId("501")).thenReturn(Optional.of(mapping(2, 2)));
+        when(bridgeCatalogService.getProfile("site.mock-hematology", 2))
+                .thenReturn(profileRevision(2, "Mock Hematology revision 2"));
+
+        AnalyzerTypeCatalogView.AffectedAnalyzer result = service.getType("site.mock-hematology", 2)
+                .affectedAnalyzers().get(0);
+
+        assertTrue(result.newerMappingRevision());
+        assertFalse("revision 2 is already adopted and saved", result.newerProfileRevision());
+    }
+
+    @Test
+    public void aTestsPartsCountOnBothSidesOfTheMappedFigures() throws Exception {
+        when(mappingDAO.findAnalyzersInForceOnProfile("site.mock-panel")).thenReturn(List.of());
+        JsonNode profile = objectMapper.readTree(
+                """
+                        {
+                          "schemaVersion":"1.0",
+                          "profileMeta":{"id":"site.mock-panel","version":"1.0.0","displayName":"Mock Panel","confidence":"VALIDATED"},
+                          "protocol":{"name":"ASTM","version":"LIS2-A2"},
+                          "default_test_mappings":[
+                            {"test_code":"FLAG","loinc":"58410-2","result_type":"qualitative","values":["POS","NEG"],
+                             "value_codes":{"POS":[{"system":"http://loinc.org","code":"LA6576-8"}],"NEG":[{"system":"http://loinc.org","code":"LA6577-6"}]},
+                             "components":[
+                               {"code":"CALL","label":"Call","result_type":"qualitative","sub_identity":"CALL","values":["POS","NEG"],
+                                "value_codes":{"POS":[{"system":"http://loinc.org","code":"LA6576-8"}],"NEG":[{"system":"http://loinc.org","code":"LA6577-6"}]}},
+                               {"code":"CALL Ct","label":"Call Ct","result_type":"quantitative","sub_identity":"CALL&Ct"}
+                             ]}
+                          ],
+                          "catalog":{"revision":1,"revisionFingerprint":"sha256:4444444444444444444444444444444444444444444444444444444444444444","source":"SHIPPED","status":"ACTIVE"}
+                        }
+                        """);
+        when(bridgeCatalogService.getProfile("site.mock-panel", 1)).thenReturn(new BridgeProfileCatalog.ProfileRevision(
+                profile, objectMapper.createObjectNode().put("action", "CREATED")));
+
+        AnalyzerTypeCatalogView.TypeSummary result = service.getType("site.mock-panel", 1);
+
+        assertEquals("the test and each of its parts is a record to map", 3, result.testMappings().total());
+        assertTrue(result.testMappings().mapped() <= result.testMappings().total());
+        assertEquals("the test's answers and its part's answers", 4, result.resultMappings().total());
+        assertTrue(result.resultMappings().mapped() <= result.resultMappings().total());
+    }
+
+    private static AnalyzerMapping mapping(int revisionNumber, int profileRevision) {
         AnalyzerMapping mapping = new AnalyzerMapping();
         mapping.setRevisionNumber(revisionNumber);
+        mapping.setProfileRevision(profileRevision);
         return mapping;
     }
 

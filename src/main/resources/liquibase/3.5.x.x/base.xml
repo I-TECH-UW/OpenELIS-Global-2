@@ -644,6 +644,9 @@
   <include relativeToChangelogFile="true" file="128-analyzer-result-instrument-provenance.xml"/>
   <include relativeToChangelogFile="true" file="129-dictionary-terminology-mapping.xml"/>
   <include relativeToChangelogFile="true" file="130-analyzer-mapping-assay-enabled.xml"/>
+  <include relativeToChangelogFile="true" file="133-analyzer-mapping-drop-instrument-code.xml"/>
+  <include relativeToChangelogFile="true" file="134-analyzer-result-instrument-sample-flags.xml"/>
+  <include relativeToChangelogFile="true" file="135-analyzer-accept-notes-on-their-analysis.xml"/>
 
   <!-- Printed reports: the paper size they are laid out on (A4 or Letter). -->
   <include relativeToChangelogFile="true" file="120-report-paper-size.xml"/>

@@ -50,6 +50,16 @@ public class AnalyzerNormalizedResultContractTest {
     }
 
     @Test
+    public void aWarningTheInstrumentRaisedAboutTheSampleIsAFlagNotAResult() throws IOException {
+        AnalyzerNormalizedResultContract contract = AnalyzerNormalizedResultContract
+                .parse(fixture("normalized-sample-flag.fhir.json"), FHIR);
+
+        assertEquals(1, contract.results().size());
+        assertEquals("WBC", contract.results().get(0).rawTestCode());
+        assertEquals(java.util.List.of("Anemia"), contract.sampleFlags());
+    }
+
+    @Test
     public void readsTheInstrumentReportedPatientFromTheObservationSubject() throws IOException {
         Bundle bundle = fixture("normalized-known-test.fhir.json");
         addPatient(bundle, "urn:uuid:patient-1", "PAT-77", "Doe, Jane", true);

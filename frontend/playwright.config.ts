@@ -45,11 +45,8 @@ const HARNESS_FOUNDATIONAL_TESTS = [
   "**/demo/harness/ogc-1054-m1-analyzer-types.spec.ts",
 ];
 const HARNESS_DEMO_TESTS = ["**/demo/harness/ogc-1054-m3-guided-setup.spec.ts"];
-const HARNESS_VIDEO_TESTS = [
-  "**/demo/harness/ogc-1054-m3-guided-setup.spec.ts",
-  "**/foundational/harness/analyzer-setup-to-result.spec.ts",
-  "**/foundational/harness/ogc-1054-delivery-issues.spec.ts",
-];
+// The recorded viewport is the video frame, so nothing is scaled or padded.
+const HARNESS_VIDEO_FRAME = { width: 1280, height: 800 };
 
 // Manual-only harness coverage (real hardware or operator-managed infra).
 const HARNESS_MANUAL_ONLY_TESTS = [
@@ -240,12 +237,16 @@ export default defineConfig({
       name: "harness-demo-video",
       timeout: HARNESS_HANG_GUARD,
       expect: { timeout: 0 },
-      testMatch: HARNESS_VIDEO_TESTS,
+      // Every harness story tagged @evidence, and nothing else; the tag also
+      // names the story's lane and stage (see scripts/pw-evidence-videos.mjs).
+      testMatch: [...HARNESS_FOUNDATIONAL_TESTS, ...HARNESS_DEMO_TESTS],
+      grep: /@evidence/,
       use: {
         ...devices["Desktop Chrome"],
         storageState: "playwright/.auth/user.json",
         trace: "on",
-        video: { mode: "on", size: { width: 1600, height: 1000 } },
+        viewport: HARNESS_VIDEO_FRAME,
+        video: { mode: "on", size: HARNESS_VIDEO_FRAME },
         launchOptions: {
           slowMo: parseInt(process.env.PLAYWRIGHT_SLOWMO || "500"),
         },

@@ -201,6 +201,20 @@ public class AnalyzerNormalizedResultImportServiceTest {
     }
 
     @Test
+    public void theWarningsTheInstrumentRaisedAboutTheSampleAreKeptOnItsResultsAndAreNeverResults() throws IOException {
+        arrangeBinding(List.of(boundTest("WBC", "501")), List.of());
+
+        AnalyzerNormalizedResultImportSummary summary = service
+                .importBundle(fixture("normalized-sample-flag.fhir.json"), "7");
+
+        assertEquals(1, summary.resultsStaged());
+        assertEquals(0, summary.resultsHeld());
+        AnalyzerResults row = capturedRow();
+        assertEquals("WBC", row.getRawTestCode());
+        assertEquals("Anemia", row.getInstrumentSampleFlags());
+    }
+
+    @Test
     public void anAccessionIsStoredAsReportedAndAsTheInstrumentsSpecimenId() throws IOException {
         arrangeBinding(List.of(boundTest("WBC", "501")), List.of());
 
@@ -265,6 +279,46 @@ public class AnalyzerNormalizedResultImportServiceTest {
         assertEquals("9001", updated.getValue().getId());
         assertEquals(AnalyzerResults.IMPORT_ISSUE_TEST_MAPPING_NOT_READY, updated.getValue().getImportIssueReason());
         assertTrue(updated.getValue().isReadOnly());
+    }
+
+    @Test
+    public void aHeldResultRecoveredByANewMappingKeepsItsSamplesFlags() throws IOException {
+        analyzer = analyzer("site.unknown-capable", 3);
+        when(analyzerService.findByBridgeConnectionIdForUpdate("bridge-connection-7f3c"))
+                .thenReturn(Optional.of(analyzer));
+        arrangeBinding(List.of(), List.of());
+        service.importBundle(fixture("normalized-unknown-test.fhir.json"), "7");
+        AnalyzerResults held = capturedRow();
+        held.setId("9001");
+        held.setInstrumentSampleFlags("Anemia, Hypochromia");
+
+        arrangeBinding(List.of(boundTest("VENDOR-NEW-42", "501")), List.of());
+        when(analyzerService.getWithMapping("42")).thenReturn(Optional.of(analyzer));
+        when(analyzerResultsService.findHeldMappingResultsByAnalyzer("42")).thenReturn(List.of(held));
+
+        assertEquals(1, service.recoverHeldMappingResults("42", "7"));
+        ArgumentCaptor<AnalyzerResults> updated = ArgumentCaptor.forClass(AnalyzerResults.class);
+        verify(analyzerResultsService).update(updated.capture());
+        assertEquals("Anemia, Hypochromia", updated.getValue().getInstrumentSampleFlags());
+    }
+
+    @Test
+    public void aHeldResultWhoseCodeTheLabNowExcludesLeavesTheReviewScreen() throws IOException {
+        analyzer = analyzer("site.unknown-capable", 3);
+        when(analyzerService.findByBridgeConnectionIdForUpdate("bridge-connection-7f3c"))
+                .thenReturn(Optional.of(analyzer));
+        arrangeBinding(List.of(), List.of());
+        service.importBundle(fixture("normalized-unknown-test.fhir.json"), "7");
+        AnalyzerResults held = capturedRow();
+        held.setId("9001");
+
+        arrangeBinding(List.of(excludedTest("VENDOR-NEW-42")), List.of());
+        when(analyzerService.getWithMapping("42")).thenReturn(Optional.of(analyzer));
+        when(analyzerResultsService.findHeldMappingResultsByAnalyzer("42")).thenReturn(List.of(held));
+
+        assertEquals(0, service.recoverHeldMappingResults("42", "7"));
+        verify(analyzerResultsService).delete("9001", "7");
+        verify(analyzerResultsService, never()).update(any(AnalyzerResults.class));
     }
 
     @Test

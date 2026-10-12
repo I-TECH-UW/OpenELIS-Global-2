@@ -134,6 +134,53 @@ describe("AnalyserResults", () => {
     );
   });
 
+  it("leaves a grouping unticked when saving all if its patient cannot be checked against the order", () => {
+    const first = matched("2101", 1, {
+      placement: {
+        ...matched("2101", 1).placement,
+        patient: { status: "MATCH", instrumentId: "PAT-1" },
+      },
+    });
+    const unverified = matched("2102", 2, {
+      placement: {
+        ...matched("2102", 2).placement,
+        patient: { status: "NO_ORDER_PATIENT", instrumentId: "PAT-77" },
+      },
+    });
+    renderResults([first, unverified], [first, unverified]);
+
+    fireEvent.click(screen.getByLabelText("Save All Results"));
+
+    expect(document.getElementById("resultList2101.isAccepted").checked).toBe(
+      true,
+    );
+    expect(document.getElementById("resultList2102.isAccepted").checked).toBe(
+      false,
+    );
+  });
+
+  it("lets the reviewer write the note a mismatch held for placement needs", () => {
+    const held = matched("3101", 1, {
+      importIssueReason: "awaiting_placement",
+      placement: {
+        ...matched("3101", 1).placement,
+        patient: { status: "MISMATCH", instrumentId: "PAT-9", orderName: "B" },
+      },
+    });
+    renderResults([held]);
+
+    fireEvent.change(document.getElementById("resultList3101.note"), {
+      target: { value: "Relabelled tube, checked with the ward" },
+    });
+    fireEvent.click(document.getElementById("resultList3101.isAccepted"));
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    const submitted = JSON.parse(postResults.mock.calls[0][1]);
+    expect(submitted.resultList[0].note).toBe(
+      "Relabelled tube, checked with the ward",
+    );
+  });
+
   it("keeps a result held for placement actionable and posts the chosen analysis", () => {
     const held = matched("3001", 1, {
       importIssueReason: "awaiting_placement",
@@ -190,6 +237,15 @@ describe("AnalyserResults", () => {
     expect(screen.getByTestId("InstrumentSpecimenId")).toHaveTextContent(
       "Instrument sent: ACC-1-2",
     );
+  });
+
+  it("shows the warnings the instrument raised about a sample once, with its lab number", () => {
+    const flags = { instrumentSampleFlags: "Anemia, Hypochromia" };
+    renderResults([matched("4101", 1, flags), matched("4102", 1, flags)]);
+
+    const shown = screen.getAllByTestId("InstrumentSampleFlags");
+    expect(shown).toHaveLength(1);
+    expect(shown[0]).toHaveTextContent("Analyzer flags: Anemia, Hypochromia");
   });
 
   it("opens the delivery bundle from the row", async () => {
@@ -523,6 +579,25 @@ describe("AnalyserResults", () => {
       ).not.toBeNull();
     });
 
+    it("unticking a test's Save leaves its parts unsaved with it", async () => {
+      renderResults([
+        { ...viralLoad, isAccepted: true },
+        part("7002", "Log viral load", "3.00", { isAccepted: true }),
+      ]);
+      await screen.findByTestId("result-parts-7001");
+
+      fireEvent.click(document.getElementById("resultList7001.isAccepted"));
+      fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+      const submitted = JSON.parse(postResults.mock.calls[0][1]);
+      expect(
+        submitted.resultList.map((row) => [row.id, row.isAccepted]),
+      ).toEqual([
+        ["7001", false],
+        ["7002", false],
+      ]);
+    });
+
     it("shows a test's parts beneath its main result, under its decision", async () => {
       renderResults([viralLoad, part("7002", "Log viral load", "3.00")]);
 
@@ -550,6 +625,44 @@ describe("AnalyserResults", () => {
       const parts = await screen.findByTestId("result-parts-7001");
       expect(within(parts).getByText("Call")).toBeInTheDocument();
       expect(within(parts).getByText("Held")).toBeInTheDocument();
+    });
+
+    it("lets the reviewer open the mapping a held part waits for", async () => {
+      renderResults([
+        viralLoad,
+        part("7004", "Call", "NOT DETECTED", {
+          importIssueReason: "unknown_analyzer_result_value",
+          rawTestCode: "HIVVL",
+          rawResultValue: "NOT DETECTED",
+          sourceProfileId: "genexpert-astm",
+          sourceProfileRevision: 3,
+          readOnly: true,
+        }),
+      ]);
+
+      const parts = await screen.findByTestId("result-parts-7001");
+      expect(
+        within(parts).getByRole("link", { name: "Review analyzer mapping" }),
+      ).toBeInTheDocument();
+    });
+
+    it("lets the reviewer dismiss a part held as a failed run", async () => {
+      postResults.mockImplementation(() => {});
+      renderResults([
+        viralLoad,
+        part("7005", "Log viral load", "ERROR", {
+          importIssueReason: "run_failed",
+          readOnly: true,
+        }),
+      ]);
+
+      const parts = await screen.findByTestId("result-parts-7001");
+      fireEvent.click(
+        within(parts).getByRole("button", { name: "Dismiss as failed run" }),
+      );
+      expect(postResults.mock.calls[0][0]).toBe(
+        "/rest/analyzer/results/7005/failed-run",
+      );
     });
   });
 

@@ -8,17 +8,21 @@ set -euo pipefail
 
 # --no-mock-network: the mock sends to each connection's own Bridge listener
 #   port, so a stack without the Docker socket skips per-analyzer networks.
+# --networks-only: create the mock transports and no analyzer, for a stack whose
+#   analyzers are all set up by the stories that run on it (the evidence recording).
 # A newly created analyzer is set up as an operator would in the setup screens:
 # its shipped defaults confirmed, applied and activated. An analyzer whose
 # defaults leave a row unresolved stays in Setup. This seed runs on dev, demo and
 # testing stacks only, never at a lab.
 ENSURE_CONNECTIONS=false
 MOCK_NETWORK=true
+NETWORKS_ONLY=false
 for arg in "$@"; do
   case "$arg" in
     --ensure-connections) ENSURE_CONNECTIONS=true ;;
     --no-mock-network) MOCK_NETWORK=false ;;
-    *) echo "Usage: $0 [--ensure-connections] [--no-mock-network]" >&2; exit 2 ;;
+    --networks-only) NETWORKS_ONLY=true ;;
+    *) echo "Usage: $0 [--ensure-connections] [--no-mock-network] [--networks-only]" >&2; exit 2 ;;
   esac
 done
 
@@ -47,7 +51,7 @@ if [ "${DEV_STACK_TLS:-self-signed}" = "self-signed" ]; then
 fi
 
 GENEXPERT_PROFILE_ID="cepheid-genexpert-astm"
-FLUOROCYCLER_PROFILE_ID="hain-fluorocycler-xt"
+FLUOROCYCLER_PROFILE_ID="hain-fluorocycler-xt-madagascar"
 QUANTSTUDIO_PROFILE_ID="thermo-quantstudio"
 
 CATALOG_FILE="$(mktemp)"
@@ -359,6 +363,11 @@ if [ "$MOCK_NETWORK" = true ]; then
     exit 1
   fi
   echo "  genexpert -> $GENEXPERT_IP:9600"
+fi
+
+if [ "$NETWORKS_ONLY" = true ]; then
+  echo "Done. Mock transports only; no analyzer instances."
+  exit 0
 fi
 
 echo "Creating profile-pinned analyzer instances..."
