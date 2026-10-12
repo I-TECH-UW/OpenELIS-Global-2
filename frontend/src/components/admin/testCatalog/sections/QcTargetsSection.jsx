@@ -202,6 +202,14 @@ const QcTargetsSection = ({ testId }) => {
     return null;
   };
 
+  /** A row never saved, switched off and left empty has nothing to store. */
+  const isWorthSending = (t) =>
+    !!t.id ||
+    isActive(t) ||
+    !isBlank(t.expectedValue) ||
+    !isBlank(t.uncertainty) ||
+    !isBlank(t.expectedDictResultId);
+
   const isRefusal = (status) => status === 400 || status === 422;
 
   /**
@@ -241,7 +249,7 @@ const QcTargetsSection = ({ testId }) => {
     setSaving(true);
     const payload = {
       testId,
-      targets: targets.map((t) => ({
+      targets: targets.filter(isWorthSending).map((t) => ({
         id: t.id || null,
         componentId: t.componentId || null,
         controlLevel: t.controlLevel,

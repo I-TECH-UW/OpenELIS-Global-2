@@ -269,6 +269,23 @@ describe("QcTargetsSection", () => {
     });
   });
 
+  /** OGC-1462: a row switched off before it was filled is not sent. */
+  it("does not send a new row that was switched off before it was filled", async () => {
+    load(WITH_NORMAL);
+    renderSection();
+    fireEvent.click(await screen.findByTestId("qc-target-add-HIGH"));
+    fireEvent.click(screen.getByTestId("qc-target-toggle-HIGH"));
+
+    fireEvent.click(screen.getByTestId("qc-targets-save"));
+
+    await waitFor(() =>
+      expect(putToOpenElisServerFullResponse).toHaveBeenCalledTimes(1),
+    );
+    expect(savedPayload().targets.map((t) => t.controlLevel)).toEqual([
+      "NORMAL",
+    ]);
+  });
+
   it("offers the expected outcome for a qualitative test", async () => {
     load({
       ...EMPTY,
