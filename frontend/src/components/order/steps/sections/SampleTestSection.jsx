@@ -223,7 +223,14 @@ const SampleTestSection = ({
             <FormattedMessage id="common.retry" defaultMessage="Retry" />
           </Button>
         </div>
-      ) : null;
+      ) : (
+        <p className="no-items-message">
+          <FormattedMessage
+            id="sample.testsLoadFailed"
+            defaultMessage="The tests for this sample type could not be loaded."
+          />
+        </p>
+      );
     }
     return (
       <p className="no-items-message">
@@ -336,6 +343,12 @@ const SampleTestSection = ({
     setSamples(next);
   };
 
+  /**
+   * Adds a copy of a sample (an environmental row, or a culture bottle) with
+   * its own catalogue request. Copying the source's lists instead showed "No
+   * tests available" for good when the source's request had failed or was
+   * still loading (OGC-1449).
+   */
   const handleDuplicateSample = (sourceIndex) => {
     const source = samples[sourceIndex];
     const newIndex = samples.length;
@@ -351,18 +364,8 @@ const SampleTestSection = ({
         : "",
     };
     setSamples([...samples, duplicate]);
-
-    // Clone tests/panels state for the new index
-    setTestsPerSample((prev) => ({
-      ...prev,
-      [newIndex]: prev[sourceIndex] || [],
-    }));
-    setPanelsPerSample((prev) => ({
-      ...prev,
-      [newIndex]: prev[sourceIndex] || [],
-    }));
-    setLoadingPerSample((prev) => ({ ...prev, [newIndex]: false }));
     fetchedSampleTypesRef.current[newIndex] = source.sampleTypeId;
+    fetchTestsForSampleType(newIndex, source.sampleTypeId);
   };
 
   // Add QC sample linked to a specific parent sample.

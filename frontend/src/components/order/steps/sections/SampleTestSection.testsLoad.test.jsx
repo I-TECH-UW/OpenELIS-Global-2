@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import "@testing-library/jest-dom";
 import { vi } from "vitest";
@@ -20,10 +20,12 @@ import SampleTestSection from "./SampleTestSection";
  */
 
 const pendingTests = {};
+const testsRequests = [];
 
 beforeEach(() => {
   getFromOpenElisServer.mockReset();
   Object.keys(pendingTests).forEach((key) => delete pendingTests[key]);
+  testsRequests.length = 0;
   getFromOpenElisServer.mockImplementation((url, callback) => {
     if (url.startsWith("/rest/user-sample-types")) {
       callback([
@@ -35,6 +37,7 @@ beforeEach(() => {
         "sampleType",
       );
       pendingTests[sampleType] = callback;
+      testsRequests.push({ sampleType, callback });
     }
   });
 });
@@ -83,9 +86,9 @@ describe("SampleTestSection tests loading (OGC-1449)", () => {
     act(() => pendingTests.ST1(undefined));
 
     expect(screen.queryByText(/^Loading/)).not.toBeInTheDocument();
-    expect(
-      screen.getByText("The tests for this sample type could not be loaded."),
-    ).toBeInTheDocument();
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "The tests for this sample type could not be loaded.",
+    );
 
     fireEvent.click(screen.getByRole("button", { name: "Retry" }));
     act(() => pendingTests.ST1(serumTests));
@@ -94,5 +97,62 @@ describe("SampleTestSection tests loading (OGC-1449)", () => {
     expect(
       screen.queryByText("The tests for this sample type could not be loaded."),
     ).not.toBeInTheDocument();
+  });
+
+  describe("Duplicate sample", () => {
+    const EnvironmentalOrder = () => {
+      const [samples, setSamples] = useState([
+        { sampleTypeId: "ST1", tests: [], panels: [] },
+      ]);
+      return (
+        <IntlProvider locale="en" messages={messages}>
+          <SampleTestSection
+            samples={samples}
+            setSamples={setSamples}
+            orderData={{}}
+            setOrderData={vi.fn()}
+            isReadOnly={false}
+            workflowType="environmental"
+          />
+        </IntlProvider>
+      );
+    };
+
+    const duplicateFirstSample = () =>
+      fireEvent.click(
+        screen.getAllByRole("button", { name: "Duplicate sample" })[0],
+      );
+
+    const showTestsOf = (sampleIndex) =>
+      fireEvent.click(
+        screen.getAllByRole("button", { name: /Tests & Panels/ })[sampleIndex],
+      );
+
+    it("loads the copy's own tests when the source's request had failed", () => {
+      render(<EnvironmentalOrder />);
+      act(() => testsRequests[0].callback(undefined));
+
+      duplicateFirstSample();
+
+      expect(testsRequests).toHaveLength(2);
+      act(() => testsRequests[1].callback(serumTests));
+      showTestsOf(1);
+      expect(screen.getByText("Serum albumin")).toBeInTheDocument();
+    });
+
+    it("loads the copy's own tests when the source is still loading", () => {
+      render(<EnvironmentalOrder />);
+
+      duplicateFirstSample();
+
+      expect(testsRequests).toHaveLength(2);
+      act(() => testsRequests[0].callback(serumTests));
+      act(() => testsRequests[1].callback(serumTests));
+      showTestsOf(1);
+      expect(screen.getAllByText("Serum albumin").length).toBeGreaterThan(0);
+      expect(
+        screen.queryByText("No tests available for this sample type"),
+      ).not.toBeInTheDocument();
+    });
   });
 });

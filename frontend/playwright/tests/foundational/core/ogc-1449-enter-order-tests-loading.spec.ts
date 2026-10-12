@@ -108,9 +108,10 @@ test.describe("Enter Order tests loading (OGC-1449)", () => {
 
     await sampleType.selectOption(first.id);
 
-    await expect(
-      section.getByText("The tests for this sample type could not be loaded."),
-    ).toBeVisible({ timeout: 10_000 });
+    await expect(section.getByRole("alert")).toHaveText(
+      "The tests for this sample type could not be loaded.Retry",
+      { timeout: 10_000 },
+    );
     await expect(section.getByText(/^Loading/)).toHaveCount(0);
     await expect(sampleType).toHaveValue(first.id);
 
