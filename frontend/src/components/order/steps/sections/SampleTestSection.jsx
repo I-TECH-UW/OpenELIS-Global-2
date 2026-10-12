@@ -61,6 +61,7 @@ const SampleTestSection = ({
   const [trapTypesPerSample, setTrapTypesPerSample] = useState({});
   const [isLoading, setIsLoading] = useState(true);
   const [loadingPerSample, setLoadingPerSample] = useState({});
+  const [loadFailedPerSample, setLoadFailedPerSample] = useState({});
 
   const cloneSamples = () =>
     samples.map((sample) => ({
@@ -113,6 +114,7 @@ const SampleTestSection = ({
   }, []);
 
   const fetchedSampleTypesRef = useRef({});
+  const testsRequestRef = useRef({});
 
   useEffect(() => {
     samples.forEach((sample, index) => {
@@ -140,47 +142,98 @@ const SampleTestSection = ({
       setLifecycleStagesPerSample((prev) => ({ ...prev, [sampleIndex]: [] }));
       return;
     }
+    testsRequestRef.current[sampleIndex]?.abort();
+    const request = new AbortController();
+    testsRequestRef.current[sampleIndex] = request;
+    const isCurrent = () =>
+      componentMounted.current &&
+      testsRequestRef.current[sampleIndex] === request;
+    setTestsPerSample((prev) => ({ ...prev, [sampleIndex]: [] }));
+    setPanelsPerSample((prev) => ({ ...prev, [sampleIndex]: [] }));
+    setLoadFailedPerSample((prev) => ({ ...prev, [sampleIndex]: false }));
     setLoadingPerSample((prev) => ({ ...prev, [sampleIndex]: true }));
     getFromOpenElisServer(
       `/rest/sample-type-tests?sampleType=${sampleTypeId}`,
       (response) => {
-        if (componentMounted.current && response) {
-          setPanelsPerSample((prev) => ({
-            ...prev,
-            [sampleIndex]: response.panels || [],
-          }));
-          setTestsPerSample((prev) => ({
-            ...prev,
-            [sampleIndex]: response.tests || [],
-          }));
-          setLoadingPerSample((prev) => ({ ...prev, [sampleIndex]: false }));
+        if (!isCurrent()) {
+          return;
         }
+        setPanelsPerSample((prev) => ({
+          ...prev,
+          [sampleIndex]: response?.panels || [],
+        }));
+        setTestsPerSample((prev) => ({
+          ...prev,
+          [sampleIndex]: response?.tests || [],
+        }));
+        setLoadFailedPerSample((prev) => ({
+          ...prev,
+          [sampleIndex]: !response,
+        }));
+        setLoadingPerSample((prev) => ({ ...prev, [sampleIndex]: false }));
       },
+      request.signal,
     );
     if (workflowType === "vector") {
       getFromOpenElisServer(
         `/rest/admin/vector/trap-types?sampleTypeId=${sampleTypeId}`,
         (response) => {
-          if (componentMounted.current) {
+          if (isCurrent()) {
             setTrapTypesPerSample((prev) => ({
               ...prev,
               [sampleIndex]: Array.isArray(response) ? response : [],
             }));
           }
         },
+        request.signal,
       );
       getFromOpenElisServer(
         `/rest/vector/dictionary/lifecycle-stages?sampleTypeId=${sampleTypeId}`,
         (response) => {
-          if (componentMounted.current) {
+          if (isCurrent()) {
             setLifecycleStagesPerSample((prev) => ({
               ...prev,
               [sampleIndex]: Array.isArray(response) ? response : [],
             }));
           }
         },
+        request.signal,
       );
     }
+  };
+
+  const testsUnavailable = (sampleIndex, emptyMessage, reportsFailure) => {
+    if (loadFailedPerSample[sampleIndex]) {
+      return reportsFailure ? (
+        <div className="no-items-message" role="alert">
+          <FormattedMessage
+            id="sample.testsLoadFailed"
+            defaultMessage="The tests for this sample type could not be loaded."
+          />
+          <Button
+            kind="ghost"
+            size="sm"
+            onClick={() =>
+              fetchTestsForSampleType(
+                sampleIndex,
+                samples[sampleIndex]?.sampleTypeId,
+              )
+            }
+          >
+            <FormattedMessage id="common.retry" defaultMessage="Retry" />
+          </Button>
+        </div>
+      ) : null;
+    }
+    return (
+      <p className="no-items-message">
+        {loadingPerSample[sampleIndex] ? (
+          <FormattedMessage id="label.loading" defaultMessage="Loading..." />
+        ) : (
+          emptyMessage
+        )}
+      </p>
+    );
   };
 
   // Get filtered tests for a sample
@@ -584,20 +637,15 @@ const SampleTestSection = ({
                   )}
                 </div>
               </>
-            ) : loadingPerSample[sampleIndex] ? (
-              <p className="no-items-message">
-                <FormattedMessage
-                  id="label.loading"
-                  defaultMessage="Loading..."
-                />
-              </p>
             ) : (
-              <p className="no-items-message">
+              testsUnavailable(
+                sampleIndex,
                 <FormattedMessage
                   id="sample.noPanels"
                   defaultMessage="No panels available for this sample type"
-                />
-              </p>
+                />,
+                false,
+              )
             )}
           </div>
 
@@ -673,20 +721,15 @@ const SampleTestSection = ({
                   />
                 </span>
               </>
-            ) : loadingPerSample[sampleIndex] ? (
-              <p className="no-items-message">
-                <FormattedMessage
-                  id="label.loading"
-                  defaultMessage="Loading..."
-                />
-              </p>
             ) : (
-              <p className="no-items-message">
+              testsUnavailable(
+                sampleIndex,
                 <FormattedMessage
                   id="sample.noTests"
                   defaultMessage="No tests available for this sample type"
-                />
-              </p>
+                />,
+                true,
+              )
             )}
           </div>
         </div>
@@ -1736,15 +1779,15 @@ const SampleTestSection = ({
                           )}
                         </div>
                       </>
-                    ) : loadingPerSample[sampleIndex] ? (
-                      <p className="no-items-message">Loading panels...</p>
                     ) : (
-                      <p className="no-items-message">
+                      testsUnavailable(
+                        sampleIndex,
                         <FormattedMessage
                           id="sample.noPanels"
                           defaultMessage="No panels available for this sample type"
-                        />
-                      </p>
+                        />,
+                        false,
+                      )
                     )}
                   </div>
                 </Column>
@@ -1825,15 +1868,15 @@ const SampleTestSection = ({
                           />
                         </span>
                       </>
-                    ) : loadingPerSample[sampleIndex] ? (
-                      <p className="no-items-message">Loading tests...</p>
                     ) : (
-                      <p className="no-items-message">
+                      testsUnavailable(
+                        sampleIndex,
                         <FormattedMessage
                           id="sample.noTests"
                           defaultMessage="No tests available for this sample type"
-                        />
-                      </p>
+                        />,
+                        true,
+                      )
                     )}
                   </div>
                 </Column>

@@ -9536,6 +9536,7 @@
   "sample.label": "Sample",
   "sample.noPanels": "No panels available for this sample type",
   "sample.noTests": "No tests available for this sample type",
+  "sample.testsLoadFailed": "The tests for this sample type could not be loaded.",
   "sample.noTestsMatchSearch": "No tests match your search",
   "sample.noPanelsMatchSearch": "No panels match your search",
   "sample.selectType.first": "Select a sample type above to see available panels and tests",
