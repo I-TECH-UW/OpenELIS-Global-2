@@ -26,8 +26,11 @@ import {
   OverflowMenu,
   OverflowMenuItem,
   ActionableNotification,
+  FilterableMultiSelect,
+  Checkbox,
+  Modal,
 } from "@carbon/react";
-import { ArrowUp, ArrowDown, Subtract } from "@carbon/icons-react";
+import { ArrowUp, ArrowDown, Subtract, Add } from "@carbon/icons-react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   InventoryBoardAPI,
@@ -41,6 +44,7 @@ import LotAdjustmentModal from "./LotAdjustmentModal";
 import DisposeLotModal from "./DisposeLotModal";
 import UpdateQCStatusModal from "./UpdateQCStatusModal";
 import InventoryItemForm from "./InventoryItemForm";
+import ManageTagsModal from "./ManageTagsModal";
 import QuickLogUsageModal from "./QuickLogUsageModal";
 import ReorderSuggestionsModal, {
   isSuggested,
@@ -118,6 +122,10 @@ const InventoryItemsBoard = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
+  const [tagFilter, setTagFilter] = useState([]);
+  const [activeTags, setActiveTags] = useState([]);
+  const [manageTagsOpen, setManageTagsOpen] = useState(false);
+  const [showDeactivated, setShowDeactivated] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
   const [sort, setSort] = useState({ key: null, ascending: true });
   const [detailLot, setDetailLot] = useState(null);
@@ -137,14 +145,19 @@ const InventoryItemsBoard = () => {
 
   const refresh = useCallback(
     () =>
-      Promise.all([InventoryBoardAPI.get(), InventoryLotAPI.getAll()])
-        .then(([board, allLots]) => {
+      Promise.all([
+        InventoryBoardAPI.get(showDeactivated),
+        InventoryLotAPI.getAll(),
+        InventoryItemAPI.getTags().catch(() => []),
+      ])
+        .then(([board, allLots, tags]) => {
           setRows(Array.isArray(board) ? board : []);
           setLots(Array.isArray(allLots) ? allLots : []);
+          setActiveTags(Array.isArray(tags) ? tags : []);
           setError(null);
         })
         .catch((err) => setError(err.message)),
-    [],
+    [showDeactivated],
   );
 
   useEffect(() => {
@@ -163,11 +176,46 @@ const InventoryItemsBoard = () => {
     });
   };
 
+  const restoreItem = async (row) => {
+    try {
+      await InventoryItemAPI.activate(row.itemId);
+      refresh();
+      notify({
+        kind: NotificationKinds.success,
+        title: intl.formatMessage({ id: "notification.success" }),
+        message: intl.formatMessage(
+          { id: "inventory.item.reactivated" },
+          { item: row.name },
+        ),
+      });
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
+  const retireItem = async (row) => {
+    try {
+      await InventoryItemAPI.deactivate(row.itemId);
+      setAction(null);
+      refresh();
+      notify({
+        kind: NotificationKinds.success,
+        title: intl.formatMessage({ id: "notification.success" }),
+        message: intl.formatMessage(
+          { id: "inventory.item.deactivated.success" },
+          { item: row.name },
+        ),
+      });
+    } catch (err) {
+      setError(err.message);
+    }
+  };
+
   // A board row carries itemId and only some item fields; the editor needs the full item.
   const openItemEditor = async (row) => {
     try {
       const item = await InventoryItemAPI.getById(row.itemId);
-      setAction({ kind: "editItem", item });
+      setAction({ kind: "editItem", item, row });
     } catch (err) {
       notify({
         kind: NotificationKinds.error,
@@ -197,11 +245,29 @@ const InventoryItemsBoard = () => {
     return [...paths].sort();
   }, [lots]);
 
+  // A retired tag stays on its rows and in search; it only stops being offered here
+  const tagOptions = useMemo(() => {
+    const retired = new Set(activeTags);
+    const names = new Set();
+    rows.forEach((row) =>
+      (row.tags || []).forEach((tag) => {
+        if (retired.size === 0 || retired.has(tag)) names.add(tag);
+      }),
+    );
+    return [...names].sort((a, b) => a.localeCompare(b));
+  }, [rows, activeTags]);
+
   const visibleRows = useMemo(() => {
     const term = search.trim().toLowerCase();
     const matched = rows.filter((row) => {
       const itemLots = lotsByItem.get(row.itemId) || [];
       if (statusFilter && row.status !== statusFilter) return false;
+      if (
+        tagFilter.length > 0 &&
+        !tagFilter.some((tag) => row.tags?.includes(tag))
+      ) {
+        return false;
+      }
       if (
         locationFilter &&
         !itemLots.some(
@@ -214,6 +280,7 @@ const InventoryItemsBoard = () => {
       return (
         row.name?.toLowerCase().includes(term) ||
         row.code?.toLowerCase().includes(term) ||
+        row.tags?.some((tag) => tag.toLowerCase().includes(term)) ||
         itemLots.some(
           (lot) =>
             lot.lotNumber?.toLowerCase().includes(term) ||
@@ -230,7 +297,7 @@ const InventoryItemsBoard = () => {
       if (left == null || right == null) return compare(left, right);
       return sort.ascending ? compare(left, right) : compare(right, left);
     });
-  }, [rows, lotsByItem, search, statusFilter, locationFilter, sort]);
+  }, [rows, lotsByItem, search, statusFilter, locationFilter, tagFilter, sort]);
 
   const toggleSort = (key) =>
     setSort((current) =>
@@ -607,6 +674,8 @@ const InventoryItemsBoard = () => {
           lowContrast
           inline
           hideCloseButton
+          // Carbon's default role="alertdialog" traps focus on the banner.
+          role="status"
           className="board-critical-banner"
           title={intl.formatMessage({ id: "inventory.reorderStatus.now" })}
           subtitle={[
@@ -633,9 +702,11 @@ const InventoryItemsBoard = () => {
         <Search
           id="inventory-board-search"
           size="lg"
-          labelText={intl.formatMessage({ id: "inventory.search.placeholder" })}
+          labelText={intl.formatMessage({
+            id: "inventory.search.placeholder.board",
+          })}
           placeholder={intl.formatMessage({
-            id: "inventory.search.placeholder",
+            id: "inventory.search.placeholder.board",
           })}
           value={search}
           onChange={(event) => setSearch(event.target.value)}
@@ -672,6 +743,35 @@ const InventoryItemsBoard = () => {
             <SelectItem key={path} value={path} text={path} />
           ))}
         </Select>
+        <div className="board-tag-filter">
+          <FilterableMultiSelect
+            id="inventory-board-tag-filter"
+            titleText={<FormattedMessage id="inventory.filter.tags" />}
+            placeholder={intl.formatMessage({ id: "inventory.filter.tags" })}
+            items={tagOptions}
+            itemToString={(item) => item || ""}
+            selectedItems={tagFilter}
+            onChange={({ selectedItems }) => setTagFilter(selectedItems || [])}
+            size="lg"
+          />
+        </div>
+        <Button
+          kind="primary"
+          size="lg"
+          className="board-new-item"
+          renderIcon={Add}
+          onClick={() => setAction({ kind: "newItem" })}
+        >
+          <FormattedMessage id="inventory.item.new" />
+        </Button>
+        <Button
+          kind="tertiary"
+          size="lg"
+          className="board-manage-tags"
+          onClick={() => setManageTagsOpen(true)}
+        >
+          <FormattedMessage id="inventory.tags.manage" />
+        </Button>
         <Button
           kind="tertiary"
           size="lg"
@@ -689,7 +789,41 @@ const InventoryItemsBoard = () => {
           <FormattedMessage id="inventory.reorder.suggestions" />
           {suggestionCount > 0 ? ` (${suggestionCount})` : ""}
         </Button>
+        <Checkbox
+          id="board-show-deactivated"
+          className="board-show-deactivated"
+          labelText={intl.formatMessage({
+            id: "inventory.item.showDeactivated",
+          })}
+          checked={showDeactivated}
+          onChange={(_, { checked }) => setShowDeactivated(checked)}
+        />
       </div>
+
+      {/* Outside the toolbar: as a flex child the chips would wrap into the controls */}
+      {tagFilter.length > 0 && (
+        <div className="board-tag-chips">
+          {tagFilter.map((tag) => (
+            <Tag
+              key={tag}
+              type="cool-gray"
+              filter
+              onClose={() =>
+                setTagFilter(tagFilter.filter((kept) => kept !== tag))
+              }
+              title={intl.formatMessage(
+                { id: "inventory.item.tags.remove" },
+                { tag },
+              )}
+            >
+              {tag}
+            </Tag>
+          ))}
+          <Button kind="ghost" size="sm" onClick={() => setTagFilter([])}>
+            <FormattedMessage id="inventory.filter.tags.clear" />
+          </Button>
+        </div>
+      )}
 
       <TableContainer>
         <Table size="md" useZebraStyles={false}>
@@ -737,11 +871,16 @@ const InventoryItemsBoard = () => {
                   >
                     <TableCell>
                       <div className="board-item-name">{row.name}</div>
-                      <div className="board-subline">
-                        {row.code}
-                        {row.itemType &&
-                          ` · ${labelFor(intl, "inventory.itemType.", row.itemType)}`}
-                      </div>
+                      <div className="board-subline">{row.code}</div>
+                      {row.tags?.length > 0 && (
+                        <div className="board-item-tags">
+                          {row.tags.map((tag) => (
+                            <Tag key={tag} type="cool-gray" size="sm">
+                              {tag}
+                            </Tag>
+                          ))}
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell>
                       {intl.formatNumber(row.onHand)}{" "}
@@ -759,6 +898,11 @@ const InventoryItemsBoard = () => {
                           <FormattedMessage id="inventory.reorder.onOrder" />
                           {row.orderExpectedDate &&
                             ` · ${formatDay(row.orderExpectedDate)}`}
+                        </Tag>
+                      )}
+                      {row.active === false && (
+                        <Tag type="gray">
+                          <FormattedMessage id="inventory.item.deactivated" />
                         </Tag>
                       )}
                     </TableCell>
@@ -788,6 +932,20 @@ const InventoryItemsBoard = () => {
                             id: "inventory.actions.editItem",
                           })}
                           onClick={() => openItemEditor(row)}
+                        />
+                        <OverflowMenuItem
+                          isDelete={row.active !== false}
+                          itemText={intl.formatMessage({
+                            id:
+                              row.active === false
+                                ? "inventory.item.reactivate"
+                                : "inventory.item.deactivate",
+                          })}
+                          onClick={() =>
+                            row.active === false
+                              ? restoreItem(row)
+                              : setAction({ kind: "deactivateItem", row })
+                          }
                         />
                       </OverflowMenu>
                     </TableCell>
@@ -856,6 +1014,11 @@ const InventoryItemsBoard = () => {
         <InventoryItemForm
           open
           item={action.item}
+          observedLeadTime={
+            action.row?.leadTimeTier === "OBSERVED"
+              ? action.row.leadTimeDays
+              : null
+          }
           onClose={closeAction}
           onSave={() => onActionSaved("catalog.item.save.success")}
         />
@@ -867,6 +1030,62 @@ const InventoryItemsBoard = () => {
           initialItemId={action.row?.itemId ?? null}
           onClose={closeAction}
           onSave={() => onActionSaved("usage.record.success")}
+        />
+      )}
+
+      {action?.kind === "newItem" && (
+        <InventoryItemForm
+          open
+          item={null}
+          onClose={closeAction}
+          onSave={() => onActionSaved("inventory.item.created")}
+        />
+      )}
+
+      {action?.kind === "deactivateItem" && (
+        <Modal
+          open
+          danger
+          modalHeading={intl.formatMessage({
+            id: "inventory.item.deactivate.confirm.title",
+          })}
+          primaryButtonText={intl.formatMessage({
+            id: "inventory.item.deactivate",
+          })}
+          secondaryButtonText={intl.formatMessage({ id: "button.cancel" })}
+          onRequestClose={closeAction}
+          onSecondarySubmit={closeAction}
+          onRequestSubmit={() => retireItem(action.row)}
+          size="sm"
+        >
+          <p>
+            <FormattedMessage
+              id="inventory.item.deactivate.confirm"
+              values={{ item: action.row.name }}
+            />
+          </p>
+          <ul className="board-deactivate-implications">
+            <li>
+              <FormattedMessage id="inventory.item.deactivate.implication.hidden" />
+            </li>
+            <li>
+              <FormattedMessage id="inventory.item.deactivate.implication.stock" />
+            </li>
+            <li>
+              <FormattedMessage id="inventory.item.deactivate.implication.reversible" />
+            </li>
+          </ul>
+        </Modal>
+      )}
+
+      {manageTagsOpen && (
+        <ManageTagsModal
+          open
+          onClose={() => setManageTagsOpen(false)}
+          onSave={() => {
+            setTagFilter([]);
+            refresh();
+          }}
         />
       )}
 

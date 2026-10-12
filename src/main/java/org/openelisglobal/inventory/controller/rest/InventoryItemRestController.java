@@ -13,6 +13,7 @@ import org.openelisglobal.common.exception.LocalizedValidationException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.inventory.service.InventoryItemService;
+import org.openelisglobal.inventory.service.InventoryTagService;
 import org.openelisglobal.inventory.valueholder.InventoryEnums.ItemType;
 import org.openelisglobal.inventory.valueholder.InventoryItem;
 import org.openelisglobal.login.valueholder.UserSessionData;
@@ -35,6 +36,20 @@ public class InventoryItemRestController extends BaseRestController {
 
     @Autowired
     private InventoryItemService inventoryItemService;
+
+    @Autowired
+    private InventoryTagService inventoryTagService;
+
+    // Retired tags stop being suggested; items already carrying one keep it
+    @GetMapping(value = "/tags", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getAllTags() {
+        try {
+            return ResponseEntity.ok(inventoryTagService.getActiveTagNames());
+        } catch (Exception e) {
+            LogEvent.logError(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     @GetMapping(value = "/types", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ItemType>> getAllItemTypes() {
@@ -172,17 +187,22 @@ public class InventoryItemRestController extends BaseRestController {
 
             // Update only the fields that can be changed
             existingItem.setName(item.getName());
-            existingItem.setItemType(item.getItemType());
+            existingItem.setTags(item.getTags());
             existingItem.setCategory(item.getCategory());
             existingItem.setManufacturer(item.getManufacturer());
             existingItem.setUnits(item.getUnits());
             existingItem.setLowStockThreshold(item.getLowStockThreshold());
+            existingItem.setLeadTimeDays(item.getLeadTimeDays());
 
             // Type-specific fields
             existingItem.setStabilityAfterOpening(item.getStabilityAfterOpening());
             existingItem.setStorageRequirements(item.getStorageRequirements());
             existingItem.setCompatibleAnalyzers(item.getCompatibleAnalyzers());
             existingItem.setTestsPerKit(item.getTestsPerKit());
+
+            existingItem.setCatalogNumber(item.getCatalogNumber());
+            existingItem.setExpirationAlertDays(item.getExpirationAlertDays());
+            existingItem.setTrackLots(item.getTrackLots());
 
             UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
             String sysUserId = String.valueOf(usd.getSystemUserId());
