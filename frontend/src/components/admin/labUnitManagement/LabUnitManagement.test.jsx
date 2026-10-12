@@ -89,9 +89,9 @@ const mockIntl = {
 // The editor is URL-driven: /MasterListsPage/LabUnitManagement/:labUnitId?/:section?
 // Wrap in a matching Route so useParams() sees the current segment when the
 // user navigates from the list to the editor.
-const renderPage = () =>
+const renderPage = (initialEntry = "/MasterListsPage/LabUnitManagement") =>
   render(
-    <MemoryRouter initialEntries={["/MasterListsPage/LabUnitManagement"]}>
+    <MemoryRouter initialEntries={[initialEntry]}>
       <IntlProvider locale="en" messages={messages}>
         <Route
           path="/MasterListsPage/LabUnitManagement/:labUnitId?/:section?"
@@ -110,6 +110,15 @@ describe("LabUnitManagement", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Add Lab Unit")).toBeInTheDocument();
     expect(screen.getByText("Hematology")).toBeInTheDocument();
+  });
+
+  test("a deep link to a lab unit that does not exist says so, never an endless spinner (OGC-1461)", async () => {
+    renderPage("/MasterListsPage/LabUnitManagement/99999999/basic-info");
+
+    expect(await screen.findByTestId("lab-unit-not-found")).toHaveTextContent(
+      messages["label.labUnit.notFound"],
+    );
+    expect(screen.queryByText(messages["label.labUnit.loading"])).toBeNull();
   });
 
   test("add form renders one name input per active locale", async () => {

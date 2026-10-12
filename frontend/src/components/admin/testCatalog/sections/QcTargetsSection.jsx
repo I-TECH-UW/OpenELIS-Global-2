@@ -202,6 +202,25 @@ const QcTargetsSection = ({ testId }) => {
     return null;
   };
 
+  const isRefusal = (status) => status === 400 || status === 422;
+
+  /**
+   * A refusal's reason as a sentence. The endpoint answers JSON, so a reason
+   * arrives as a JSON string and is unwrapped; a JSON object or an HTML error
+   * page is not shown.
+   */
+  const readableRefusal = (text) => {
+    let trimmed = (text || "").trim();
+    if (trimmed.startsWith('"')) {
+      try {
+        trimmed = String(JSON.parse(trimmed)).trim();
+      } catch (e) {
+        return null;
+      }
+    }
+    return trimmed && !/^[{[<]/.test(trimmed) ? trimmed : null;
+  };
+
   const notify = (kind, message) => {
     setNotificationVisible(true);
     addNotification({
@@ -248,13 +267,14 @@ const QcTargetsSection = ({ testId }) => {
           setExpanded(null);
           setOverrideDraft(null);
           load();
-        } else if (response && response.text) {
+        } else if (response && isRefusal(response.status) && response.text) {
           response
             .text()
             .then((text) =>
               notify(
                 "error",
-                text || intl.formatMessage({ id: "server.error.msg" }),
+                readableRefusal(text) ||
+                  intl.formatMessage({ id: "server.error.msg" }),
               ),
             );
         } else {

@@ -98,6 +98,15 @@ describe("SampleTypeManagement", () => {
     api.put.mockImplementation((_url, _body, callback) => callback(200));
   });
 
+  it("a deep link to a sample type that does not exist says so, never an endless spinner (OGC-1461)", async () => {
+    renderPage("/MasterListsPage/SampleTypeEditor/99999999/basic-info");
+
+    expect(
+      await screen.findByTestId("sample-type-not-found"),
+    ).toHaveTextContent(messages["label.sampleType.notFound"]);
+    expect(screen.queryByText("Loading sample type...")).toBeNull();
+  });
+
   test("renders sample type management page after loading", async () => {
     renderPage();
 
