@@ -6750,6 +6750,7 @@
   "admin.testCatalog.sampleResults.loq.label": "LOQ",
   "admin.testCatalog.sampleResults.lod.helper": "Limit of detection (optional)",
   "admin.testCatalog.sampleResults.loq.helper": "Limit of quantification (optional)",
+  "error.testCatalog.sampleResults.activeNeedsComponent": "Not saved: an active test needs at least one result component. Keep a component, or deactivate the test in Basic Info first.",
   "error.testCatalog.sampleResults.lodGtLoq": "LOD cannot be greater than LOQ.",
   "error.testCatalog.sampleResults.detectionLimitNegative": "Detection limits must be zero or more.",
   "admin.testCatalog.qcTargets.section.label": "QC Targets",

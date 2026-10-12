@@ -660,4 +660,7 @@
   <!-- Analyzer Bridge pairing: OpenELIS's client key pair and the pinned Bridge certificate. -->
   <include relativeToChangelogFile="true" file="131-analyzer-bridge-pairing.xml"/>
 
+
+  <!-- Result component codes are unique among a test's active components (OGC-1458). -->
+  <include relativeToChangelogFile="true" file="136-result-component-active-code-unique.xml"/>
 </databaseChangeLog>
