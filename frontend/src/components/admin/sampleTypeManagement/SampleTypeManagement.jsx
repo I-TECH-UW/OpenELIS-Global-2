@@ -425,7 +425,8 @@ function SampleTypeManagement({ intl }) {
         sampleTypes.some(
           (st) =>
             st.name.toLowerCase() === formData.name.trim().toLowerCase() &&
-            st.id !== formData.id,
+            st.id !== formData.id &&
+            st.domain === (formData.domain || "CLINICAL"),
         )
       ) {
         errors.name = "This sample type name already exists";
