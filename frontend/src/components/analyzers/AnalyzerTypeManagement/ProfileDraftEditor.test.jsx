@@ -320,7 +320,7 @@ it("creates, saves, reopens, recognizes controls and explicitly publishes a new 
     stored = {
       ...stored,
       profile: clone(profile),
-      validationIssues: ["Control recognition is required"],
+      validationIssues: ["Save control recognition before publishing."],
     };
     callback(clone(stored));
   });
@@ -461,8 +461,11 @@ it("creates, saves, reopens, recognizes controls and explicitly publishes a new 
     expect.any(Function),
   );
   expect(
-    await screen.findByText("Control recognition is required"),
+    await screen.findByText("Save control recognition before publishing."),
   ).toBeVisible();
+  expect(
+    screen.getAllByText("Save control recognition before publishing."),
+  ).toHaveLength(1);
   expect(publishAnalyzerTypeDraft).not.toHaveBeenCalled();
   view.unmount();
   render(editor());
@@ -492,10 +495,16 @@ it("creates, saves, reopens, recognizes controls and explicitly publishes a new 
     screen.getByRole("textbox", { name: "Specimen ID prefix" }),
     "QC-",
   );
+  expect(
+    screen.queryByText("Save control recognition before publishing."),
+  ).toBeNull();
   await userEvent.click(
     screen.getByRole("button", { name: "Save control recognition" }),
   );
   expect(stored.profile).toEqual(newFileProfile);
+  expect(
+    screen.queryByText("Save control recognition before publishing."),
+  ).toBeNull();
   const publish = screen.getByRole("button", { name: "Publish Profile" });
   await waitFor(() => expect(publish).toBeEnabled());
   await userEvent.click(publish);

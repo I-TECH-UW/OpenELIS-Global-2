@@ -11,23 +11,19 @@ const mockUrl =
 /** A message Cepheid documents for one assay outcome, as the mock replays it. */
 export type GeneXpertFixture = { assay: string; outcome: string };
 
+/** A message Mindray prints for the BC-5380 (Operator's Manual, appendix C.3.3). */
+export type Bc5380Fixture = "analysis-result" | "xr-qc";
+
 /**
- * Replay a Cepheid-documented message from the provisioned GeneXpert mock to
- * this connection's Bridge listener, for this accession. `instrumentCodes`
- * renames profile codes the way the instrument would send them, and `patient`
- * fills the patient record Cepheid's examples leave empty.
+ * The port of the shared Bridge listener this active connection receives on.
+ * The paired Bridge answers only OpenELIS, so its connection is read and
+ * probed through OpenELIS.
  */
-export async function sendGeneXpertFixture(
+async function activeListenerPort(
   page: Page,
   analyzerId: string,
-  accession: string,
-  fixture: GeneXpertFixture,
   senderId: string,
-  instrumentCodes: Record<string, string> = {},
-  patient?: { id: string; name: string },
-): Promise<string> {
-  // The paired Bridge answers only OpenELIS, so its connection is read and
-  // probed through OpenELIS.
+): Promise<number> {
   const request = page.request;
   const analyzerUrl = `${API}/analyzer/analyzers/${encodeURIComponent(analyzerId)}`;
   const analyzerResponse = await request.get(analyzerUrl);
@@ -63,6 +59,26 @@ export async function sendGeneXpertFixture(
   expect(port, "Effective shared listener port from Bridge").toEqual(
     expect.any(Number),
   );
+  return port as number;
+}
+
+/**
+ * Replay a Cepheid-documented message from the provisioned GeneXpert mock to
+ * this connection's Bridge listener, for this accession. `instrumentCodes`
+ * renames profile codes the way the instrument would send them, and `patient`
+ * fills the patient record Cepheid's examples leave empty.
+ */
+export async function sendGeneXpertFixture(
+  page: Page,
+  analyzerId: string,
+  accession: string,
+  fixture: GeneXpertFixture,
+  senderId: string,
+  instrumentCodes: Record<string, string> = {},
+  patient?: { id: string; name: string },
+): Promise<string> {
+  const request = page.request;
+  const port = await activeListenerPort(page, analyzerId, senderId);
   const networksResponse = await request.get(`${mockUrl}/analyzers`);
   expect(networksResponse.ok()).toBeTruthy();
   const networks = (await networksResponse.json()) as {
@@ -105,6 +121,45 @@ export async function sendGeneXpertFixture(
   };
   expect(result.pushed, JSON.stringify(result)).toBe(1);
   expect(result.results).toHaveLength(1);
+  expect(result.results[0]).toMatchObject({
+    sample_id: accession,
+    pushed: true,
+    error: null,
+  });
+  return destination;
+}
+
+/**
+ * Replay a message Mindray prints for the BC-5380 to the Bridge's shared MLLP
+ * listener, for this accession, under the system name this analyzer was given.
+ * The Bridge tells it apart by that name, so no mock network is needed.
+ */
+export async function sendBc5380Fixture(
+  page: Page,
+  analyzerId: string,
+  accession: string,
+  outcome: Bc5380Fixture,
+  senderId: string,
+): Promise<string> {
+  const port = await activeListenerPort(page, analyzerId, senderId);
+  const destination = `mllp://bridge.openelis.org:${port}`;
+  const response = await page.request.post(
+    `${mockUrl}/simulate/fixture/mindray_bc5380_hl7/cbc/${outcome}`,
+    { data: { destination, sample_id: accession, sender_id: senderId } },
+  );
+  expect(
+    response.ok(),
+    `BC-5380 mock: ${response.status()} ${await response.text()}`,
+  ).toBeTruthy();
+  const result = (await response.json()) as {
+    pushed: number;
+    results: Array<{
+      sample_id: string;
+      pushed: boolean;
+      error: string | null;
+    }>;
+  };
+  expect(result.pushed, JSON.stringify(result)).toBe(1);
   expect(result.results[0]).toMatchObject({
     sample_id: accession,
     pushed: true,

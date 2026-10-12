@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Set;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.configuration.service.CatalogReferenceResolver;
 import org.openelisglobal.configuration.service.DomainConfigurationHandler;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -73,6 +74,9 @@ public class TestResultConfigurationHandler implements DomainConfigurationHandle
 
     @Autowired
     private TestTerminologyMappingService terminologyMappingService;
+
+    @Autowired
+    private CatalogReferenceResolver resolver;
 
     @Override
     public String getDomainName() {
@@ -337,8 +341,8 @@ public class TestResultConfigurationHandler implements DomainConfigurationHandle
         for (Test test : tests) {
             String componentId = null;
             if (!componentCode.isEmpty()) {
-                TestResultComponent component = testResultComponentService.getByTestIdAndCode(test.getId(),
-                        componentCode);
+                TestResultComponent component = resolver.resolveComponent(test.getId(), componentCode,
+                        fileName + " line " + lineNumber);
                 if (component == null) {
                     LogEvent.logError(this.getClass().getSimpleName(), "processCsvLine",
                             "CONFIGURATION ERROR: component '" + componentCode + "' not found for test '" + testName
@@ -412,9 +416,15 @@ public class TestResultConfigurationHandler implements DomainConfigurationHandle
     }
 
     /**
-     * Find all tests matching the given name. This handles both exact matches and
+     * Find all tests matching the given name: the test with that description, as
+     * the tests file names it, then a test displayed under that name, then
      * augmented test names (e.g., "Glucose" matches "Glucose(Serum)",
      * "Glucose(Plasma)", etc.).
+     *
+     * <p>
+     * Description comes first because display names repeat: a legacy
+     * {@code Hémoglobine(Whole Blood)} is shown in English as "Hemoglobin", and the
+     * display-name lookup returns an arbitrary one of the tests sharing it.
      *
      * @param testName the base test name from the CSV
      * @return list of matching tests (may be empty)
@@ -422,22 +432,13 @@ public class TestResultConfigurationHandler implements DomainConfigurationHandle
     private List<Test> findTestsByName(String testName) {
         List<Test> matchingTests = new ArrayList<>();
 
-        // First try exact match by localized name
-        Test test = testService.getTestByLocalizedName(testName);
-        if (test != null) {
-            matchingTests.add(test);
-            return matchingTests;
+        Test test = testService.getTestByDescription(testName);
+        if (test == null) {
+            test = testService.getTestByNormalizedDescription(testName);
         }
-
-        // Try exact match by description
-        test = testService.getTestByDescription(testName);
-        if (test != null) {
-            matchingTests.add(test);
-            return matchingTests;
+        if (test == null) {
+            test = testService.getTestByLocalizedName(testName);
         }
-
-        // Try exact match by name
-        test = testService.getTestByName(testName);
         if (test != null) {
             matchingTests.add(test);
             return matchingTests;
