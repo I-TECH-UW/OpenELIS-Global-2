@@ -18,7 +18,8 @@ vi.mock("../../../layout/Layout", async () => {
   };
 });
 
-vi.mock("../../../utils/Utils", () => ({
+vi.mock("../../../utils/Utils", async (importOriginal) => ({
+  resolveApiErrorMessage: (await importOriginal()).resolveApiErrorMessage,
   getFromOpenElisServer: vi.fn(),
   putToOpenElisServerJsonResponse: vi.fn(),
   postToOpenElisServerJsonResponse: vi.fn(),
@@ -86,7 +87,6 @@ beforeEach(() => {
         domain: "CLINICAL",
         // OGC-1145: an active test must carry ≥1 sample type or Save disables
         sampleTypeIds: ["2"],
-        cultureWorkflowType: "",
         antimicrobialResistance: false,
         active: true,
         orderable: true,
@@ -151,21 +151,62 @@ describe("BasicInfoSection domain-switch modal", () => {
     ).toBe(true);
   });
 
-  it("persists the culture workflow selection", async () => {
+  it("persists case opening independently of the AMR flag", async () => {
     renderSection();
     await screen.findByLabelText("Clinical");
-
-    fireEvent.change(screen.getByLabelText("Culture workflow"), {
-      target: { value: "BACTERIOLOGY" },
+    expect(screen.queryByLabelText("Case role")).not.toBeInTheDocument();
+    fireEvent.click(
+      screen.getByRole("switch", { name: /Opens a Microbiology case/ }),
+    );
+    fireEvent.change(screen.getByLabelText("Case role"), {
+      target: { value: "CULTURE" },
     });
+    fireEvent.click(screen.getByRole("switch", { name: /Collected in sets/ }));
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
-
     await waitFor(() =>
       expect(putToOpenElisServerJsonResponse).toHaveBeenCalled(),
     );
     expect(
       JSON.parse(putToOpenElisServerJsonResponse.mock.calls[0][1]),
-    ).toMatchObject({ cultureWorkflowType: "BACTERIOLOGY" });
+    ).toMatchObject({
+      opensMicrobiologyCase: true,
+      microbiologyCaseRole: "CULTURE",
+      collectedInSets: true,
+      antimicrobialResistance: false,
+    });
+    expect(screen.queryByLabelText("Culture workflow")).not.toBeInTheDocument();
+  });
+
+  it("clears collection in sets when changing a culture to a direct test", async () => {
+    renderSection();
+    await screen.findByLabelText("Clinical");
+    fireEvent.click(
+      screen.getByRole("switch", { name: /Opens a Microbiology case/ }),
+    );
+    fireEvent.change(screen.getByLabelText("Case role"), {
+      target: { value: "CULTURE" },
+    });
+    fireEvent.click(screen.getByRole("switch", { name: /Collected in sets/ }));
+    fireEvent.change(screen.getByLabelText("Case role"), {
+      target: { value: "DIRECT" },
+    });
+    expect(
+      screen.getByRole("switch", { name: /Collected in sets/ }),
+    ).not.toBeChecked();
+    expect(
+      screen.getByRole("switch", { name: /Collected in sets/ }),
+    ).toBeDisabled();
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() =>
+      expect(putToOpenElisServerJsonResponse).toHaveBeenCalled(),
+    );
+    expect(
+      JSON.parse(putToOpenElisServerJsonResponse.mock.calls[0][1]),
+    ).toMatchObject({
+      opensMicrobiologyCase: true,
+      microbiologyCaseRole: "DIRECT",
+      collectedInSets: false,
+    });
   });
 
   it("persists the Active toggle (boolean → Y/N)", async () => {
@@ -221,7 +262,6 @@ describe("BasicInfoSection domain-switch modal", () => {
           code: "GLU",
           description: "",
           domain: "CLINICAL",
-          cultureWorkflowType: "",
           antimicrobialResistance: false,
           active: false,
           orderable: true,
@@ -303,7 +343,6 @@ describe("BasicInfoSection domain-switch modal", () => {
           description: "",
           domain: "CLINICAL",
           sampleTypeIds: ["2"],
-          cultureWorkflowType: "",
           antimicrobialResistance: false,
           active: false,
           orderable: false,
@@ -601,5 +640,193 @@ describe("BasicInfoSection lab unit chooser (OGC-189 M2)", () => {
 
     expect(screen.getByText("Chemistry")).toBeInTheDocument();
     expect(screen.queryByText(/Parasitology/)).not.toBeInTheDocument();
+  });
+});
+
+// OGC-1376: an editor opened before someone else saved the test used to save
+// over that change. The server refuses the stale save; the editor says who and
+// when, offers Refresh, and keeps the version each save returns.
+describe("BasicInfoSection stale saves (OGC-1376)", () => {
+  it("a refused stale save names who changed the test, offers Refresh and disables Save", async () => {
+    putToOpenElisServerJsonResponse.mockImplementation((url, payload, cb) =>
+      cb({
+        status: 409,
+        statusCode: 409,
+        conflict: "stale",
+        testId: "42",
+        messageKey: "error.testCatalog.staleSave",
+        messageArgs: { 0: "ELIS,Open", 1: "29/09/2026 10:57" },
+      }),
+    );
+    renderSection();
+    await screen.findByLabelText("Clinical");
+
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(
+      await screen.findByText(
+        "This test was updated by ELIS,Open at 29/09/2026 10:57. Refresh to see the latest version, then make your change again.",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Refresh" })).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+  });
+
+  it("a save after activating carries the version the activation returned", async () => {
+    const loaded = getFromOpenElisServer.getMockImplementation();
+    getFromOpenElisServer.mockImplementation((url, cb) =>
+      loaded(url, (res) =>
+        cb(
+          url.endsWith("/basic-info")
+            ? { ...res, active: false, lastupdated: "100" }
+            : res,
+        ),
+      ),
+    );
+    postToOpenElisServerJsonResponse.mockImplementation((url, body, cb) =>
+      cb({ testId: "42", active: true, orderable: true, lastupdated: "300" }),
+    );
+    renderSection();
+    await screen.findByLabelText("Clinical");
+
+    fireEvent.click(screen.getByRole("switch", { name: /Active/ }));
+    await waitFor(() =>
+      expect(postToOpenElisServerJsonResponse).toHaveBeenCalledTimes(1),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() =>
+      expect(putToOpenElisServerJsonResponse).toHaveBeenCalledTimes(1),
+    );
+
+    expect(
+      JSON.parse(putToOpenElisServerJsonResponse.mock.calls[0][1]).lastupdated,
+    ).toBe("300");
+  });
+
+  it("the next save carries the version the last save returned", async () => {
+    const loaded = getFromOpenElisServer.getMockImplementation();
+    getFromOpenElisServer.mockImplementation((url, cb) =>
+      loaded(url, (res) =>
+        cb(url.endsWith("/basic-info") ? { ...res, lastupdated: "100" } : res),
+      ),
+    );
+    putToOpenElisServerJsonResponse.mockImplementation((url, payload, cb) =>
+      cb({ testId: "42", lastupdated: "200" }),
+    );
+    renderSection();
+    await screen.findByLabelText("Clinical");
+
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() =>
+      expect(putToOpenElisServerJsonResponse).toHaveBeenCalledTimes(1),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+    await waitFor(() =>
+      expect(putToOpenElisServerJsonResponse).toHaveBeenCalledTimes(2),
+    );
+
+    const sent = putToOpenElisServerJsonResponse.mock.calls.map(
+      ([, payload]) => JSON.parse(payload).lastupdated,
+    );
+    expect(sent).toEqual(["100", "200"]);
+  });
+});
+
+describe("BasicInfoSection holding time, report and QC fields", () => {
+  const savedBody = () =>
+    JSON.parse(putToOpenElisServerJsonResponse.mock.calls[0][1]);
+
+  it("saves the holding time and the in-lab-only and notify toggles", async () => {
+    renderSection();
+    await screen.findByLabelText("Clinical");
+
+    fireEvent.change(screen.getByLabelText("SOP Max Holding Time (minutes)"), {
+      target: { value: "120" },
+    });
+    fireEvent.click(screen.getByRole("switch", { name: /In Lab Only/ }));
+    fireEvent.click(
+      screen.getByRole("switch", { name: /Notify Patient Of Results/ }),
+    );
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() =>
+      expect(putToOpenElisServerJsonResponse).toHaveBeenCalled(),
+    );
+    expect(savedBody()).toMatchObject({
+      timeHolding: "120",
+      inLabOnly: true,
+      notifyResults: true,
+    });
+  });
+
+  it("refuses a holding time that is not whole minutes before saving", async () => {
+    renderSection();
+    await screen.findByLabelText("Clinical");
+
+    fireEvent.change(screen.getByLabelText("SOP Max Holding Time (minutes)"), {
+      target: { value: "1.5" },
+    });
+
+    expect(
+      screen.getByText("Enter a whole number of minutes, or leave blank."),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+  });
+
+  it("hides QC thresholds for a clinical test and shows them for environmental", async () => {
+    renderSection();
+    await screen.findByLabelText("Clinical");
+    expect(
+      screen.queryByTestId("basic-info-qc-thresholds"),
+    ).not.toBeInTheDocument();
+
+    fireEvent.click(screen.getByLabelText("Environmental"));
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+    fireEvent.change(screen.getByLabelText("RPD Threshold (%)"), {
+      target: { value: "20" },
+    });
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() =>
+      expect(putToOpenElisServerJsonResponse).toHaveBeenCalled(),
+    );
+    expect(savedBody()).toMatchObject({
+      domain: "ENVIRONMENTAL",
+      qcRpdThreshold: "20",
+    });
+  });
+
+  it("flags a negative QC threshold and disables Save", async () => {
+    renderSection();
+    await screen.findByLabelText("Clinical");
+    fireEvent.click(screen.getByLabelText("Environmental"));
+    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
+
+    fireEvent.change(screen.getByLabelText("Blank Threshold"), {
+      target: { value: "-1" },
+    });
+
+    expect(
+      screen.getByText(
+        "Enter a number of 0 or more (up to 5 decimal places), or leave blank.",
+      ),
+    ).toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Save" })).toBeDisabled();
+  });
+
+  it("marks the field a refused save names", async () => {
+    putToOpenElisServerJsonResponse.mockImplementation((url, payload, cb) =>
+      cb({ status: 422, invalidField: "timeHolding" }),
+    );
+    renderSection();
+    await screen.findByLabelText("Clinical");
+
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    expect(
+      await screen.findByText(
+        "Enter a whole number of minutes, or leave blank.",
+      ),
+    ).toBeInTheDocument();
   });
 });

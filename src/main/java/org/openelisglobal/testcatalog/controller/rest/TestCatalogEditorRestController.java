@@ -1,6 +1,8 @@
 package org.openelisglobal.testcatalog.controller.rest;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.servlet.http.HttpServletRequest;
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -14,6 +16,7 @@ import org.openelisglobal.analyzer.service.AnalyzerService;
 import org.openelisglobal.analyzer.service.AnalyzerTestCapability;
 import org.openelisglobal.common.domain.Domain;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.StaleSaveGuard;
 import org.openelisglobal.common.util.ControllerUtills;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
@@ -24,6 +27,7 @@ import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panelitem.service.PanelItemService;
 import org.openelisglobal.panelitem.valueholder.PanelItem;
+import org.openelisglobal.qc.valueholder.TestQcThreshold;
 import org.openelisglobal.resultlimit.service.ResultLimitService;
 import org.openelisglobal.resultlimits.valueholder.ResultLimit;
 import org.openelisglobal.spring.util.SpringContext;
@@ -50,6 +54,7 @@ import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
 import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
+import org.openelisglobal.typeoftestresult.service.TypeOfTestResultServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
@@ -119,6 +124,9 @@ public class TestCatalogEditorRestController {
     // Field-injected (optional) so the existing all-args constructor used by the
     // controller's unit tests stays unchanged; only used to label dictionary
     // options.
+    @Autowired
+    private StaleSaveGuard staleSaveGuard;
+
     @Autowired(required = false)
     private DictionaryService dictionaryService;
 
@@ -181,7 +189,6 @@ public class TestCatalogEditorRestController {
         public List<String> sampleTypes = new ArrayList<>();
         public String code;
         public String domain;
-        public String cultureWorkflowType;
         public boolean active;
         public boolean amr;
         public boolean coverageIncomplete;
@@ -211,7 +218,7 @@ public class TestCatalogEditorRestController {
     public TestListPage listTests(@RequestParam(required = false) String domain,
             @RequestParam(required = false, defaultValue = "all") String status,
             @RequestParam(required = false) Boolean amr, @RequestParam(required = false) String sampleType,
-            @RequestParam(required = false) String search,
+            @RequestParam(required = false) String labUnit, @RequestParam(required = false) String search,
             @RequestParam(required = false, defaultValue = "false") boolean issuesOnly,
             @RequestParam(defaultValue = "1") int page, @RequestParam(defaultValue = "25") int pageSize) {
         // FR-61/62 findings are computed once for the whole catalog (cached) and
@@ -252,6 +259,10 @@ public class TestCatalogEditorRestController {
             if (sampleTypeTestIds != null && !sampleTypeTestIds.contains(test.getId())) {
                 continue;
             }
+            if (!isBlank(labUnit)
+                    && (test.getTestSection() == null || !labUnit.equals(test.getTestSection().getId()))) {
+                continue;
+            }
             String name = test.getName();
             if (searchLower != null && !searchLower.isBlank()
                     && (name == null || !name.toLowerCase(Locale.ROOT).contains(searchLower))) {
@@ -266,7 +277,6 @@ public class TestCatalogEditorRestController {
             row.name = name;
             row.code = test.getLocalCode();
             row.domain = test.getDomain();
-            row.cultureWorkflowType = test.getCultureWorkflowType();
             row.active = active;
             row.amr = testAmr;
             row.hasLoinc = !isBlank(test.getLoinc()) || loincMappedTestIds.contains(test.getId());
@@ -575,9 +585,6 @@ public class TestCatalogEditorRestController {
         return new ArrayList<>(resolved);
     }
 
-    private static final List<String> CULTURE_WORKFLOW_TYPES = List.of("BACTERIOLOGY", "MYCOBACTERIOLOGY_TB",
-            "MYCOLOGY");
-
     /** OGC-748 Basic Info — identity + domain + AMR flag + status. */
     public static class BasicInfo {
         public String testId;
@@ -590,14 +597,33 @@ public class TestCatalogEditorRestController {
         // OGC-1145 FR-1/2: all associated sample types (order preserved, primary
         // first). On write this list wins over the legacy scalar when present.
         public List<String> sampleTypeIds;
-        public String cultureWorkflowType;
         public Boolean antimicrobialResistance;
+        public Boolean opensMicrobiologyCase;
+        public String microbiologyCaseRole;
+        public Boolean collectedInSets;
+
         public Boolean active;
         public Boolean orderable;
+        // Minutes a sample stays valid after collection; blank clears it.
+        public String timeHolding;
+        // Kept off the patient report.
+        public Boolean inLabOnly;
+        public Boolean notifyResults;
+        // Environmental QC limits; all three blank removes the test's threshold row.
+        public String qcBlankThreshold;
+        public String qcRpdThreshold;
+        public String qcRecoveryWindowPct;
+        // Set only on a 422 body, naming the field whose value was refused.
+        public String invalidField;
         // Set only on a 409 body, naming what conflicted ("description" or
         // "activation") — this endpoint answers 409 for two unrelated reasons and
         // the client needs to tell them apart (OGC-1180).
         public String conflict;
+        // The test's version when the editor loaded it; a save against a newer one
+        // is refused with conflict "stale" and the message below (OGC-1376).
+        public String lastupdated;
+        public String messageKey;
+        public Map<String, Object> messageArgs;
     }
 
     @GetMapping(value = "/tests/{testId}/basic-info", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -616,11 +642,17 @@ public class TestCatalogEditorRestController {
         if (test == null) {
             return ResponseEntity.notFound().build();
         }
+        if (StaleSaveGuard.isStale(body.lastupdated, test.getLastupdated())) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(staleConflict(test));
+        }
         if (body.domain != null && !DOMAINS.contains(body.domain)) {
             return ResponseEntity.unprocessableEntity().build();
         }
-        if (body.cultureWorkflowType != null && !body.cultureWorkflowType.isBlank()
-                && !CULTURE_WORKFLOW_TYPES.contains(body.cultureWorkflowType)) {
+        String role = body.microbiologyCaseRole == null ? test.getMicrobiologyCaseRole() : body.microbiologyCaseRole;
+        boolean opensCase = body.opensMicrobiologyCase == null ? test.isOpensMicrobiologyCase()
+                : body.opensMicrobiologyCase;
+        boolean sets = body.collectedInSets == null ? test.isCollectedInSets() : body.collectedInSets;
+        if (!List.of("CULTURE", "DIRECT", "CASE").contains(role) || (sets && (!opensCase || !"CULTURE".equals(role)))) {
             return ResponseEntity.unprocessableEntity().build();
         }
         // OGC-1145 FR-1/2/3 — validate the sample-type set up front so a rejected
@@ -648,6 +680,12 @@ public class TestCatalogEditorRestController {
         if (changesImmutableField(body.name, test.getName())) {
             return ResponseEntity.unprocessableEntity().build();
         }
+        String invalidField = firstInvalidField(body);
+        if (invalidField != null) {
+            BasicInfo invalid = new BasicInfo();
+            invalid.invalidField = invalidField;
+            return ResponseEntity.unprocessableEntity().body(invalid);
+        }
         // TEST.description is unique across tests (test_desc_uk). Without this
         // guard a duplicate reached the constraint and surfaced as a bare 500 with
         // an empty body — on exactly the create-then-edit flow the editor steers
@@ -667,14 +705,23 @@ public class TestCatalogEditorRestController {
         if (body.domain != null) {
             test.setDomain(body.domain);
         }
-        if (body.cultureWorkflowType != null) {
-            test.setCultureWorkflowType(body.cultureWorkflowType.isBlank() ? null : body.cultureWorkflowType);
-        }
+        test.setOpensMicrobiologyCase(opensCase);
+        test.setMicrobiologyCaseRole(role);
+        test.setCollectedInSets(sets);
         if (body.antimicrobialResistance != null) {
             test.setAntimicrobialResistance(body.antimicrobialResistance);
         }
         if (body.orderable != null) {
             test.setOrderable(body.orderable);
+        }
+        if (body.timeHolding != null) {
+            test.setTimeHolding(isBlank(body.timeHolding) ? null : body.timeHolding.trim());
+        }
+        if (body.inLabOnly != null) {
+            test.setInLabOnly(body.inLabOnly);
+        }
+        if (body.notifyResults != null) {
+            test.setNotifyResults(body.notifyResults);
         }
         // Lab unit (test section) is editable on modify too (not just create).
         // Assigning an inactive section activates it, mirroring the create flow and
@@ -737,6 +784,11 @@ public class TestCatalogEditorRestController {
                 }
             }
         }
+        if (body.qcBlankThreshold != null || body.qcRpdThreshold != null || body.qcRecoveryWindowPct != null) {
+            testService.saveQcThreshold(testId, parseThreshold(body.qcBlankThreshold),
+                    parseThreshold(body.qcRpdThreshold), parseThreshold(body.qcRecoveryWindowPct),
+                    ControllerUtills.getSysUserId(request));
+        }
         // Reflect active / orderable / lab-unit / sample-type changes in the cached
         // order-picker lists immediately; otherwise the change lags until an
         // unrelated refresh (same stale-cache cause as OGC-1116).
@@ -745,6 +797,47 @@ public class TestCatalogEditorRestController {
         }
         invalidateHealth();
         return ResponseEntity.ok(toBasicInfo(updated));
+    }
+
+    /**
+     * The first new Basic Info field whose value cannot be stored: the holding time
+     * must be a whole, non-negative number of minutes, and each QC threshold a
+     * non-negative number. Blank clears either.
+     */
+    private static String firstInvalidField(BasicInfo body) {
+        if (!isBlank(body.timeHolding) && !body.timeHolding.trim().matches("\\d{1,9}")) {
+            return "timeHolding";
+        }
+        if (!validThreshold(body.qcBlankThreshold)) {
+            return "qcBlankThreshold";
+        }
+        if (!validThreshold(body.qcRpdThreshold)) {
+            return "qcRpdThreshold";
+        }
+        if (!validThreshold(body.qcRecoveryWindowPct)) {
+            return "qcRecoveryWindowPct";
+        }
+        return null;
+    }
+
+    private static boolean validThreshold(String value) {
+        if (isBlank(value)) {
+            return true;
+        }
+        try {
+            BigDecimal parsed = new BigDecimal(value.trim());
+            return parsed.signum() >= 0 && parsed.precision() - parsed.scale() <= 10 && parsed.scale() <= 5;
+        } catch (NumberFormatException e) {
+            return false;
+        }
+    }
+
+    private static BigDecimal parseThreshold(String value) {
+        return isBlank(value) ? null : new BigDecimal(value.trim());
+    }
+
+    private static String thresholdText(BigDecimal value) {
+        return value == null ? "" : value.stripTrailingZeros().toPlainString();
     }
 
     /**
@@ -817,11 +910,34 @@ public class TestCatalogEditorRestController {
             info.sampleTypeIds.add(type.getId());
         }
         info.sampleTypeId = info.sampleTypeIds.isEmpty() ? null : info.sampleTypeIds.get(0);
-        info.cultureWorkflowType = test.getCultureWorkflowType();
         info.antimicrobialResistance = Boolean.TRUE.equals(test.getAntimicrobialResistance());
+        info.opensMicrobiologyCase = test.isOpensMicrobiologyCase();
+        info.microbiologyCaseRole = test.getMicrobiologyCaseRole();
+        info.collectedInSets = test.isCollectedInSets();
         info.active = test.isActive();
         info.orderable = Boolean.TRUE.equals(test.getOrderable());
+        info.timeHolding = test.getTimeHolding() == null ? "" : test.getTimeHolding();
+        info.inLabOnly = test.isInLabOnly();
+        info.notifyResults = Boolean.TRUE.equals(test.isNotifyResults());
+        TestQcThreshold threshold = testService.getQcThreshold(test.getId()).orElse(null);
+        info.qcBlankThreshold = thresholdText(threshold == null ? null : threshold.getBlankThreshold());
+        info.qcRpdThreshold = thresholdText(threshold == null ? null : threshold.getRpdThreshold());
+        info.qcRecoveryWindowPct = thresholdText(threshold == null ? null : threshold.getRecoveryWindowPct());
+        info.lastupdated = StaleSaveGuard.token(test.getLastupdated());
         return info;
+    }
+
+    @SuppressWarnings("unchecked")
+    private BasicInfo staleConflict(Test test) {
+        Map<String, Object> described = staleSaveGuard.conflictBody("error.testCatalog.staleSave", "TEST", test.getId(),
+                test.getLastupdated());
+        BasicInfo conflict = new BasicInfo();
+        conflict.testId = test.getId();
+        conflict.conflict = "stale";
+        conflict.messageKey = (String) described.get("messageKey");
+        conflict.messageArgs = (Map<String, Object>) described.get("messageArgs");
+        conflict.lastupdated = (String) described.get("lastupdated");
+        return conflict;
     }
 
     // ── Sample & Results — Result Components (OGC-749 / OGC-962) ───────────────
@@ -847,6 +963,8 @@ public class TestCatalogEditorRestController {
         public String resultType;
         public Integer sortOrder;
         public Boolean normal;
+        // Choosing this option opens a text box for a qualifying value at result entry.
+        public Boolean qualifiable;
     }
 
     /** A labeled result field of a test (e.g. systolic, diastolic). */
@@ -909,6 +1027,13 @@ public class TestCatalogEditorRestController {
                     || (c.lod != null && c.loq != null && c.lod.compareTo(c.loq) > 0)) {
                 return ResponseEntity.unprocessableEntity().build();
             }
+            // Result entry lists every option row, so a repeated value shows twice.
+            Set<String> optionValues = new HashSet<>();
+            for (OptionDto o : c.options) {
+                if (!isBlank(o.value) && !optionValues.add(o.value.trim())) {
+                    return ResponseEntity.unprocessableEntity().build();
+                }
+            }
         }
         String sysUserId = ControllerUtills.getSysUserId(request);
         List<TestResultComponent> desired = new ArrayList<>();
@@ -959,6 +1084,7 @@ public class TestCatalogEditorRestController {
                 tr.setValue(o.value);
                 tr.setSortOrder(o.sortOrder != null ? String.valueOf(o.sortOrder) : null);
                 tr.setIsNormal(Boolean.TRUE.equals(o.normal));
+                tr.setIsQuantifiable(Boolean.TRUE.equals(o.qualifiable));
                 // Option rows must carry the component's type ('D'/'M'/'C') —
                 // result entry derives the widget from them, so a stale
                 // per-option type would render the wrong control.
@@ -997,10 +1123,31 @@ public class TestCatalogEditorRestController {
         return ResponseEntity.ok(toSampleResults(testId));
     }
 
+    /** The primary component's id: the flagged one, else the first. */
+    private static String primaryComponentId(List<TestResultComponent> components) {
+        for (TestResultComponent component : components) {
+            if (component.getIsPrimary()) {
+                return component.getId();
+            }
+        }
+        return components.isEmpty() ? null : components.get(0).getId();
+    }
+
     private SampleResults toSampleResults(String testId) {
         SampleResults sr = new SampleResults();
         sr.testId = testId;
-        for (TestResultComponent c : componentService.getActiveComponentsByTestId(testId)) {
+        List<TestResultComponent> activeComponents = componentService.getActiveComponentsByTestId(testId);
+        String primaryId = primaryComponentId(activeComponents);
+        Map<String, String> normalValueByComponent = new HashMap<>();
+        for (ResultLimit limit : resultLimitService.getAllResultLimitsForTest(testId)) {
+            String componentId = limit.getComponentId() != null ? limit.getComponentId() : primaryId;
+            if (componentId != null && !isBlank(limit.getDictionaryNormalId())) {
+                normalValueByComponent.putIfAbsent(componentId, limit.getDictionaryNormalId().trim());
+            }
+        }
+        Test test = testService.getTestById(testId);
+        TestResult legacyDefault = test == null ? null : test.getDefaultTestResult();
+        for (TestResultComponent c : activeComponents) {
             ResultComponentDto dto = new ResultComponentDto();
             dto.id = c.getId();
             dto.code = c.getCode();
@@ -1010,6 +1157,10 @@ public class TestCatalogEditorRestController {
             dto.uomId = c.getUomId();
             dto.significantDigits = c.getSignificantDigits();
             dto.defaultResult = c.getDefaultResult();
+            if (isBlank(dto.defaultResult) && c.getId().equals(primaryId) && legacyDefault != null
+                    && TypeOfTestResultServiceImpl.ResultType.isDictionaryVariant(c.getResultType())) {
+                dto.defaultResult = legacyDefault.getValue();
+            }
             dto.allowMultipleReadings = c.getAllowMultipleReadings();
             dto.isPrimary = c.getIsPrimary();
             dto.showOnReport = c.getShowOnReport();
@@ -1032,7 +1183,9 @@ public class TestCatalogEditorRestController {
                 odto.valueName = dictionaryName(o.getValue());
                 odto.resultType = o.getTestResultType();
                 odto.sortOrder = parseIntOrNull(o.getSortOrder());
-                odto.normal = o.getIsNormal();
+                odto.normal = Boolean.TRUE.equals(o.getIsNormal())
+                        || (o.getValue() != null && o.getValue().trim().equals(normalValueByComponent.get(c.getId())));
+                odto.qualifiable = Boolean.TRUE.equals(o.getIsQuantifiable());
                 dto.options.add(odto);
             }
             sr.components.add(dto);
@@ -1117,6 +1270,20 @@ public class TestCatalogEditorRestController {
         public Double highValid;
         public Double lowReporting;
         public Double highReporting;
+        // Whether the request carried the reporting bounds at all; a row that omits
+        // them keeps the stored ones.
+        @JsonIgnore
+        public boolean reportingSent;
+
+        public void setLowReporting(Double lowReporting) {
+            this.lowReporting = lowReporting;
+            reportingSent = true;
+        }
+
+        public void setHighReporting(Double highReporting) {
+            this.highReporting = highReporting;
+            reportingSent = true;
+        }
     }
 
     public static class RangesResponse {
@@ -1164,7 +1331,7 @@ public class TestCatalogEditorRestController {
             }
             double min = r.minAge != null ? r.minAge : 0d;
             double max = r.maxAge != null ? r.maxAge : Double.POSITIVE_INFINITY;
-            if (min < 0d || max <= min) {
+            if (min < 0d || max <= min || reportingRangeInverted(r)) {
                 return ResponseEntity.unprocessableEntity().build();
             }
             if (!isBlank(r.sampleTypeId) && !associatedTypeIds.contains(r.sampleTypeId)) {
@@ -1174,6 +1341,7 @@ public class TestCatalogEditorRestController {
                 return ResponseEntity.unprocessableEntity().build();
             }
         }
+        keepStoredReportingBounds(testId, body.ranges);
         resultLimitService.saveRangesForTest(testId, toResultLimits(body.ranges),
                 ControllerUtills.getSysUserId(request));
         return ResponseEntity.ok(toRanges(testId));
@@ -1198,11 +1366,29 @@ public class TestCatalogEditorRestController {
             limit.setHighCritical(unbox(r.highCritical, Double.POSITIVE_INFINITY));
             limit.setLowValid(unbox(r.lowValid, Double.NEGATIVE_INFINITY));
             limit.setHighValid(unbox(r.highValid, Double.POSITIVE_INFINITY));
-            // Reporting range is per-Method (not edited in this dialog); the service
-            // preserves whatever the existing row already had (see saveRangesForTest).
+            limit.setLowReportingRange(unbox(r.lowReporting, Double.NEGATIVE_INFINITY));
+            limit.setHighReportingRange(unbox(r.highReporting, Double.POSITIVE_INFINITY));
             desired.add(limit);
         }
         return desired;
+    }
+
+    private void keepStoredReportingBounds(String testId, List<RangeDto> ranges) {
+        Map<String, ResultLimit> storedById = new HashMap<>();
+        for (ResultLimit limit : resultLimitService.getNumericRangesForTest(testId)) {
+            storedById.put(limit.getId(), limit);
+        }
+        for (RangeDto r : ranges) {
+            ResultLimit stored = isBlank(r.id) ? null : storedById.get(r.id);
+            if (!r.reportingSent && stored != null) {
+                r.lowReporting = finiteOrNull(stored.getLowReportingRange());
+                r.highReporting = finiteOrNull(stored.getHighReportingRange());
+            }
+        }
+    }
+
+    private static boolean reportingRangeInverted(RangeDto r) {
+        return r.lowReporting != null && r.highReporting != null && r.lowReporting > r.highReporting;
     }
 
     // ── Edit related tests together (OGC-1112 FR-7..14) ───────────────────────
@@ -1298,7 +1484,7 @@ public class TestCatalogEditorRestController {
             }
             double min = r.minAge != null ? r.minAge : 0d;
             double max = r.maxAge != null ? r.maxAge : Double.POSITIVE_INFINITY;
-            if (min < 0d || max <= min) {
+            if (min < 0d || max <= min || reportingRangeInverted(r)) {
                 return ResponseEntity.unprocessableEntity().build();
             }
             if (!isBlank(r.componentId) && componentService.getMatch("id", r.componentId).isEmpty()) {
@@ -1336,6 +1522,8 @@ public class TestCatalogEditorRestController {
                 copy.highCritical = r.highCritical;
                 copy.lowValid = r.lowValid;
                 copy.highValid = r.highValid;
+                copy.lowReporting = r.lowReporting;
+                copy.highReporting = r.highReporting;
                 perTest.add(copy);
             }
             resultLimitService.saveRangesForTest(testId, toResultLimits(perTest), sysUserId);
@@ -2256,7 +2444,6 @@ public class TestCatalogEditorRestController {
             Localization localization = panel.getLocalization();
             if (localization != null) {
                 localization.setEnglish(name);
-                localization.setFrench(name);
                 localization.setSysUserId(sysUserId);
                 localizationService.update(localization);
             }

@@ -115,6 +115,25 @@ export const toLocalIsoDate = (d: Date | string | null | undefined): string =>
       : format(d, DATE_FMT);
 
 /**
+ * Strict parser for a date picker with dateFormat "Y-m-d": a real `yyyy-MM-dd`
+ * becomes that local date; anything else is refused (false). Flatpickr's own
+ * parser turns text in another shape into 1 January, which was then saved.
+ */
+export const parseIsoDate = (text: string | null | undefined): Date | false => {
+  const match = /^(\d{4})-(\d{2})-(\d{2})$/.exec((text || "").trim());
+  if (!match) {
+    return false;
+  }
+  const [year, month, day] = match.slice(1).map(Number);
+  const date = new Date(year, month - 1, day);
+  return date.getFullYear() === year &&
+    date.getMonth() === month - 1 &&
+    date.getDate() === day
+    ? date
+    : false;
+};
+
+/**
  * Turn a date string as CustomDatePicker renders it (`MM/dd/yyyy`, or
  * `dd/MM/yyyy` under the French locale) back into the `yyyy-MM-dd` the server
  * reads. Returns "" for anything that is not a three-part date.
@@ -793,6 +812,11 @@ export const patchToOpenElisServerJsonResponse = <
       callback(undefined, extraParams);
     });
 };
+
+// Drops only a numeric analysis suffix (BASE-N), so IH-2-01 stays whole.
+export const labNumberForSearch = (
+  accessionNumber: string | null | undefined,
+): string => (accessionNumber ?? "").trim().replace(/^([^-]*)-\d+$/, "$1");
 
 export const convertAlphaNumLabNumForDisplay = (
   labNumber: string | null | undefined,

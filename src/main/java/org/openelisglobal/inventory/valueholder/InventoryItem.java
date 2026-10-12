@@ -15,6 +15,8 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Min;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
+import java.sql.Timestamp;
+import java.time.LocalDate;
 import java.util.UUID;
 import lombok.Getter;
 import lombok.Setter;
@@ -79,6 +81,20 @@ public class InventoryItem extends BaseObject<Long> {
     @Column(name = "low_stock_threshold")
     @Min(0)
     private Integer lowStockThreshold;
+
+    /** Order-to-arrival days, set per lab, never shared; null when unset. */
+    @Column(name = "lead_time_days")
+    @Min(value = 0, message = "Lead time cannot be negative")
+    private Integer leadTimeDays;
+
+    @Column(name = "ordered_at")
+    private Timestamp orderedAt;
+
+    @Column(name = "order_note")
+    private String orderNote;
+
+    @Column(name = "order_expected_date")
+    private LocalDate orderExpectedDate;
 
     @Column(name = "expiration_alert_days")
     @Min(1)
