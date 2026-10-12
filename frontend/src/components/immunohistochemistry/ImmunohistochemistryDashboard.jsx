@@ -352,12 +352,10 @@ function ImmunohistochemistryDashboard() {
       <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid fullWidth={true}>
         <Column lg={16}>
-          <Section>
-            <Section>
-              <Heading>
-                <FormattedMessage id="immunohistochemistry.label.title" />
-              </Heading>
-            </Section>
+          <Section level={1}>
+            <Heading className="page-heading-04">
+              <FormattedMessage id="immunohistochemistry.label.title" />
+            </Heading>
           </Section>
         </Column>
       </Grid>

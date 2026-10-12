@@ -73,6 +73,9 @@
 
 .dashboard-tile__value {
   margin: 0.5rem 0 0;
+  font-size: var(--cds-heading-05-font-size, 2rem);
+  font-weight: var(--cds-heading-05-font-weight, 400);
+  line-height: var(--cds-heading-05-line-height, 1.25);
 }
 
 .tile-icon {

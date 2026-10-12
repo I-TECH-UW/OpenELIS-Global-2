@@ -319,12 +319,10 @@ function NoteBookDashBoard() {
 
       <Grid fullWidth={true}>
         <Column lg={16}>
-          <Section>
-            <Section>
-              <Heading>
-                <FormattedMessage id="notebook.page.title" />
-              </Heading>
-            </Section>
+          <Section level={1}>
+            <Heading className="page-heading-04">
+              <FormattedMessage id="notebook.page.title" />
+            </Heading>
           </Section>
         </Column>
       </Grid>

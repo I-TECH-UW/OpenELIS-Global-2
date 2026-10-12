@@ -228,8 +228,8 @@ const SystemAuditEvents = () => {
       <br />
       <Grid fullWidth={true}>
         <Column lg={16}>
-          <Section>
-            <Heading>
+          <Section level={1}>
+            <Heading className="page-heading-05">
               <FormattedMessage id="reports.systemAuditTrail" />
             </Heading>
           </Section>

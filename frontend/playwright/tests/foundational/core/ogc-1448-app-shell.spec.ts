@@ -7,10 +7,14 @@ import { NAV_TIMEOUT } from "../../../helpers/timeouts";
  *   the logout POST lost the port, the app followed it, the request failed
  *   and the page never left. The redirect is now not followed; the app opens
  *   its own login page. The lost port is simulated by rewriting the
- *   redirect's Location to a host that does not answer.
+ *   redirect's Location to a host that does not answer. The login page then
+ *   checked the session with the cookie Logout had ended, was redirected to
+ *   the login page, and took that for an outage: "Can't reach the server"
+ *   showed for a second. It now asks again with the new cookie.
  * - Sortable columns read "Click to sort rows by [object Object] header"
  *   when the header was an element, and "by  header" when it was empty.
- * - The home Dashboard had no h1.
+ * - The home Dashboard had no h1, and neither had the other screens walked
+ *   for the fix: their titles were h2 or h3 elements.
  */
 
 const LOGOUT = "**/api/OpenELIS-Global/Logout";
@@ -61,6 +65,13 @@ test.describe("App shell (OGC-1448)", () => {
       });
 
       await page.getByRole("button", { name: "User", exact: true }).click();
+      const outageNoticeShown = page
+        .getByTestId("server-reconnect")
+        .waitFor({ state: "visible", timeout: 5000 })
+        .then(
+          () => true,
+          () => false,
+        );
       await page
         .locator(".headerPanel")
         .getByText("Logout", { exact: true })
@@ -69,6 +80,7 @@ test.describe("App shell (OGC-1448)", () => {
       await expect(page).toHaveURL(/\/login$/, { timeout: NAV_TIMEOUT });
       await expect(usernameInput).toBeVisible({ timeout: NAV_TIMEOUT });
       await expect(sideNav).toBeHidden();
+      expect(await outageNoticeShown).toBe(false);
       const signedOut = await page.request.get("/api/OpenELIS-Global/session");
       expect((await signedOut.json()).authenticated).toBe(false);
     });
@@ -94,6 +106,30 @@ test.describe("App shell (OGC-1448)", () => {
     ).toBeVisible();
     expectNamedSortColumns(await sortDescriptions(page));
   });
+
+  for (const [path, title] of [
+    ["/MasterListsPage/locations", "Organizations"],
+    ["/MasterListsPage/locations/sites", "Sampling Sites"],
+    ["/PathologyDashboard", "Pathology"],
+    ["/ImmunohistochemistryDashboard", "Immunohistochemistry"],
+    ["/CytologyDashboard", "Cytology"],
+    ["/NoteBookDashboard", "Notebook"],
+    ["/genericProgram", "Order Programs"],
+    ["/inventory", "Inventory Items"],
+    ["/Storage/racks", "Storage Management"],
+    ["/qa/qms/audit-trail?type=system", "System Audit Trail"],
+    ["/qa/qms/audit-trail?type=order", "Audit Trail"],
+    ["/SamplePatientEntry", "Test Request"],
+    ["/order/clinical/enter", "Enter Order"],
+  ]) {
+    test(`${path} has one h1, its title "${title}"`, async ({ page }) => {
+      await page.goto(path, { waitUntil: "domcontentloaded" });
+      await expect(page.getByRole("heading", { level: 1 })).toHaveText(
+        [title],
+        { timeout: NAV_TIMEOUT },
+      );
+    });
+  }
 
   for (const [screen, path] of [
     ["Locations & Organizations", "/MasterListsPage/locations"],

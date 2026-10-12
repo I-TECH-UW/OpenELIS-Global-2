@@ -565,7 +565,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                 <p className="dashboard-tile__subtitle">
                   {tile.subTitle ?? " "}
                 </p>
-                <h2 className="dashboard-tile__value">{tile.value}</h2>
+                <p className="dashboard-tile__value">{tile.value}</p>
 
                 <div className="tile-icon">
                   <div
@@ -620,7 +620,7 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
                         <p className="dashboard-tile__subtitle">
                           {tile.subTitle}
                         </p>
-                        <h2 className="dashboard-tile__value">{tile.value}</h2>
+                        <p className="dashboard-tile__value">{tile.value}</p>
                       </Tile>
                     ))}
                   </div>

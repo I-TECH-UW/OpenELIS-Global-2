@@ -90,12 +90,10 @@ const AuditTrailReport = ({ id }) => {
       <br />
       <Grid fullWidth={true}>
         <Column lg={4} md={4} sm={4}>
-          <Section>
-            <Section>
-              <Heading>
-                <FormattedMessage id={id} />
-              </Heading>
-            </Section>
+          <Section level={1}>
+            <Heading className="page-heading-04">
+              <FormattedMessage id={id} />
+            </Heading>
           </Section>
           <br />
         </Column>

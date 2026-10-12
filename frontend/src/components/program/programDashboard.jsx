@@ -171,8 +171,8 @@ const ProgramDashboard = () => {
       <PageBreadCrumb breadcrumbs={breadcrumbs} />
       <Grid>
         <Column lg={16} md={8} sm={4}>
-          <Section>
-            <Heading>
+          <Section level={1}>
+            <Heading className="page-heading-05">
               <FormattedMessage
                 id="banner.menu.results.order.programmes"
                 defaultMessage="Order Programmes"

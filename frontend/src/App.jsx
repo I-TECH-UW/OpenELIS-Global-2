@@ -356,7 +356,6 @@ export default function App() {
             form.submit();
           } else {
             // No SAML form in response — fall back to a direct redirect
-            getUserSessionDetails();
             window.location.href = config.loginRedirect;
           }
         })
@@ -366,7 +365,6 @@ export default function App() {
     } else {
       endServerSession(config.serverBaseUrl, localStorage.getItem("CSRF")).then(
         () => {
-          getUserSessionDetails();
           window.location.href = config.loginRedirect;
         },
       );
