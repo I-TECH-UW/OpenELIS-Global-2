@@ -7359,6 +7359,7 @@
   "button.testCatalog.removeFromSet": "Remove from this set",
   "label.testCatalog.group.rangesIntro": "Edit the reference ranges once; saving applies them to every selected test. Identity and LOINC stay per test.",
   "label.testCatalog.group.rangesDiffer": "The selected tests' current ranges are not identical. Saving will set all of them to the values below.",
+  "label.testCatalog.group.rangesLoadError": "The current ranges of {tests} could not be loaded, so nothing can be applied yet. Retry to load them again.",
   "label.testCatalog.ranges.table.sex": "Applies to",
   "label.testCatalog.ranges.table.age": "Age range",
   "label.testCatalog.ranges.table.normal": "Normal (low / high)",

@@ -11,6 +11,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.openelisglobal.analyzer.service.AnalyzerService;
 import org.openelisglobal.analyzer.service.AnalyzerTestCapability;
@@ -1474,13 +1475,32 @@ public class TestCatalogEditorRestController {
 
     public static class GroupRangesUpdate {
         public List<String> testIds = new ArrayList<>();
-        public List<RangeDto> ranges = new ArrayList<>();
+        /**
+         * No default: a request that leaves the ranges out is refused (400) rather than
+         * read as "clear every test's ranges"; an explicit empty list still clears
+         * them.
+         */
+        public List<RangeDto> ranges;
     }
 
     @PutMapping(value = "/group/ranges", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Void> saveGroupRanges(@RequestBody GroupRangesUpdate body, HttpServletRequest request) {
         if (body == null || body.testIds == null || body.testIds.isEmpty()) {
             return ResponseEntity.unprocessableEntity().build();
+        }
+        if (body.ranges == null || body.ranges.stream().anyMatch(Objects::isNull)) {
+            return ResponseEntity.badRequest().build();
+        }
+        List<Test> tests = new ArrayList<>();
+        for (String testId : body.testIds) {
+            if (!TestCatalogNumericIdGuard.isNumericId(testId)) {
+                return ResponseEntity.badRequest().build();
+            }
+            Test test = testService.getTestById(testId.trim());
+            if (test == null) {
+                return ResponseEntity.notFound().build();
+            }
+            tests.add(test);
         }
         for (RangeDto r : body.ranges) {
             if (r.gender != null && !r.gender.isBlank() && !RANGE_GENDERS.contains(r.gender)) {
@@ -1495,12 +1515,9 @@ public class TestCatalogEditorRestController {
                 return ResponseEntity.unprocessableEntity().build();
             }
         }
-        String sysUserId = ControllerUtills.getSysUserId(request);
-        for (String testId : body.testIds) {
-            Test test = testService.getTestById(testId);
-            if (test == null) {
-                continue;
-            }
+        Map<String, List<ResultLimit>> desiredByTestId = new LinkedHashMap<>();
+        for (Test test : tests) {
+            String testId = test.getId();
             // New rows per test: the ids in the shared set belong to no single test,
             // so drop them and let each test insert its own (FR-11 per-test write).
             // The component and specimen ids in the shared set belong to the test
@@ -1530,8 +1547,9 @@ public class TestCatalogEditorRestController {
                 copy.highReporting = r.highReporting;
                 perTest.add(copy);
             }
-            resultLimitService.saveRangesForTest(testId, toResultLimits(perTest), sysUserId);
+            desiredByTestId.put(testId, toResultLimits(perTest));
         }
+        resultLimitService.saveRangesForTests(desiredByTestId, ControllerUtills.getSysUserId(request));
         return ResponseEntity.ok().build();
     }
 
@@ -1735,14 +1753,20 @@ public class TestCatalogEditorRestController {
         if (body.fields != null && !STORAGE_FIELDS.keySet().containsAll(body.fields)) {
             return ResponseEntity.unprocessableEntity().build();
         }
+        for (String testId : body.testIds) {
+            if (!TestCatalogNumericIdGuard.isNumericId(testId)) {
+                return ResponseEntity.badRequest().build();
+            }
+            if (testService.getTestById(testId.trim()) == null) {
+                return ResponseEntity.notFound().build();
+            }
+        }
         if (body.fields != null && body.fields.isEmpty()) {
             return ResponseEntity.ok().build();
         }
-        String sysUserId = ControllerUtills.getSysUserId(request);
-        for (String testId : body.testIds) {
-            if (testService.getTestById(testId) == null) {
-                continue;
-            }
+        Map<String, TestSampleHandling> desiredByTestId = new LinkedHashMap<>();
+        for (String rawId : body.testIds) {
+            String testId = rawId.trim();
             StorageDto desired = body.storage;
             if (body.fields != null) {
                 desired = toStorage(testId, handlingService.getByTestId(testId));
@@ -1750,8 +1774,9 @@ public class TestCatalogEditorRestController {
                     STORAGE_FIELDS.get(field).accept(desired, body.storage);
                 }
             }
-            handlingService.saveForTest(testId, toHandling(desired), sysUserId);
+            desiredByTestId.put(testId, toHandling(desired));
         }
+        handlingService.saveForTests(desiredByTestId, ControllerUtills.getSysUserId(request));
         return ResponseEntity.ok().build();
     }
 
