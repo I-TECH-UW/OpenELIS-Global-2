@@ -1475,7 +1475,12 @@ public class TestCatalogEditorRestController {
 
     public static class GroupRangesUpdate {
         public List<String> testIds = new ArrayList<>();
-        public List<RangeDto> ranges = new ArrayList<>();
+        /**
+         * No default: a request that leaves the ranges out is refused (400) rather than
+         * read as "clear every test's ranges"; an explicit empty list still clears
+         * them.
+         */
+        public List<RangeDto> ranges;
     }
 
     @PutMapping(value = "/group/ranges", produces = MediaType.APPLICATION_JSON_VALUE)

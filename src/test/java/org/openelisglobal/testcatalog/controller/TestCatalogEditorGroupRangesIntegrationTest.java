@@ -254,6 +254,16 @@ public class TestCatalogEditorGroupRangesIntegrationTest extends BaseWebContextS
         missing.ranges = null;
         assertEquals(400, controller.saveGroupRanges(missing, authedRequest()).getStatusCode().value());
 
+        GroupRangesUpdate absent;
+        try {
+            absent = new com.fasterxml.jackson.databind.ObjectMapper().readValue(
+                    "{\"testIds\":[\"" + SEED_TEST_ID + "\",\"" + SIBLING_TEST_ID + "\"]}", GroupRangesUpdate.class);
+        } catch (com.fasterxml.jackson.core.JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
+        assertEquals("a body without ranges is refused, not read as clear-all", 400,
+                controller.saveGroupRanges(absent, authedRequest()).getStatusCode().value());
+
         GroupRangesUpdate nullRow = new GroupRangesUpdate();
         nullRow.testIds = seed.testIds;
         nullRow.ranges = new java.util.ArrayList<>();

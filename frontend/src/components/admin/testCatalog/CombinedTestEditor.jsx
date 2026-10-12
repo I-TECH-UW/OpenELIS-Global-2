@@ -145,9 +145,12 @@ const CombinedTestEditor = () => {
                 setDiffers(!allSame);
                 // FR-74 — record which tests differ from the seed for the breakdown.
                 const diffMap = {};
+                const seedLoaded = !failed.has(testIds[0]);
                 testIds.forEach((t) => {
                   diffMap[t] =
-                    !failed.has(t) && rangeSignature(perTest[t]) !== seedSig;
+                    seedLoaded &&
+                    !failed.has(t) &&
+                    rangeSignature(perTest[t]) !== seedSig;
                 });
                 setRangeDiffByTest(diffMap);
                 // Seed the editor from the first test's ranges (the "set all to"

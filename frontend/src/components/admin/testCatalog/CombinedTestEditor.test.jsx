@@ -292,6 +292,29 @@ describe("CombinedTestEditor when a test's ranges fail to load (OGC-1455)", () =
     expect(putToOpenElisServer).not.toHaveBeenCalled();
   });
 
+  it("does not badge the other tests as different when the seed test failed to load", async () => {
+    const base = failFor(["/tests/31/ranges"]);
+    getFromOpenElisServer.mockImplementation((url, cb) => {
+      if (url.endsWith("/tests/31/ranges")) {
+        cb(undefined);
+      } else if (url.endsWith("/tests/32/ranges")) {
+        cb({
+          testId: "32",
+          ranges: [{ ...seedRange, id: "50" }],
+          sampleTypes: [],
+        });
+      } else {
+        base(url, cb);
+      }
+    });
+    renderGroup();
+
+    await screen.findByTestId("group-ranges-load-error");
+    expect(
+      screen.queryByText(messages["state.testCatalog.differsAcrossTests"]),
+    ).toBeNull();
+  });
+
   it("names the test whose ranges did not load", async () => {
     failFor(["/tests/32/ranges"]);
     renderGroup();
