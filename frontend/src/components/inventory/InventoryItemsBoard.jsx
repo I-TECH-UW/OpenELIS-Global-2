@@ -25,6 +25,8 @@ import {
   Button,
   OverflowMenu,
   OverflowMenuItem,
+  ActionableNotification,
+  FilterableMultiSelect,
 } from "@carbon/react";
 import { ArrowUp, ArrowDown, Subtract } from "@carbon/icons-react";
 import { FormattedMessage, useIntl } from "react-intl";
@@ -40,10 +42,16 @@ import LotAdjustmentModal from "./LotAdjustmentModal";
 import DisposeLotModal from "./DisposeLotModal";
 import UpdateQCStatusModal from "./UpdateQCStatusModal";
 import InventoryItemForm from "./InventoryItemForm";
+import ManageTagsModal from "./ManageTagsModal";
 import QuickLogUsageModal from "./QuickLogUsageModal";
+import ReorderSuggestionsModal, {
+  isSuggested,
+} from "./ReorderSuggestionsModal";
 import { NotificationContext } from "../layout/Layout";
 import { AlertDialog, NotificationKinds } from "../common/CustomNotification";
 import "./InventoryItemsBoard.css";
+
+const BANNER_NAMES = 5;
 
 /** Must match WINDOW_DAYS server side. */
 const USAGE_WINDOW_DAYS = 30;
@@ -112,6 +120,9 @@ const InventoryItemsBoard = () => {
   const [search, setSearch] = useState("");
   const [statusFilter, setStatusFilter] = useState("");
   const [locationFilter, setLocationFilter] = useState("");
+  const [tagFilter, setTagFilter] = useState([]);
+  const [activeTags, setActiveTags] = useState([]);
+  const [manageTagsOpen, setManageTagsOpen] = useState(false);
   const [expandedId, setExpandedId] = useState(null);
   const [sort, setSort] = useState({ key: null, ascending: true });
   const [detailLot, setDetailLot] = useState(null);
@@ -131,10 +142,15 @@ const InventoryItemsBoard = () => {
 
   const refresh = useCallback(
     () =>
-      Promise.all([InventoryBoardAPI.get(), InventoryLotAPI.getAll()])
-        .then(([board, allLots]) => {
+      Promise.all([
+        InventoryBoardAPI.get(),
+        InventoryLotAPI.getAll(),
+        InventoryItemAPI.getTags().catch(() => []),
+      ])
+        .then(([board, allLots, tags]) => {
           setRows(Array.isArray(board) ? board : []);
           setLots(Array.isArray(allLots) ? allLots : []);
+          setActiveTags(Array.isArray(tags) ? tags : []);
           setError(null);
         })
         .catch((err) => setError(err.message)),
@@ -161,7 +177,7 @@ const InventoryItemsBoard = () => {
   const openItemEditor = async (row) => {
     try {
       const item = await InventoryItemAPI.getById(row.itemId);
-      setAction({ kind: "editItem", item });
+      setAction({ kind: "editItem", item, row });
     } catch (err) {
       notify({
         kind: NotificationKinds.error,
@@ -191,11 +207,29 @@ const InventoryItemsBoard = () => {
     return [...paths].sort();
   }, [lots]);
 
+  // A retired tag stays on its rows and in search; it only stops being offered here
+  const tagOptions = useMemo(() => {
+    const retired = new Set(activeTags);
+    const names = new Set();
+    rows.forEach((row) =>
+      (row.tags || []).forEach((tag) => {
+        if (retired.size === 0 || retired.has(tag)) names.add(tag);
+      }),
+    );
+    return [...names].sort((a, b) => a.localeCompare(b));
+  }, [rows, activeTags]);
+
   const visibleRows = useMemo(() => {
     const term = search.trim().toLowerCase();
     const matched = rows.filter((row) => {
       const itemLots = lotsByItem.get(row.itemId) || [];
       if (statusFilter && row.status !== statusFilter) return false;
+      if (
+        tagFilter.length > 0 &&
+        !tagFilter.some((tag) => row.tags?.includes(tag))
+      ) {
+        return false;
+      }
       if (
         locationFilter &&
         !itemLots.some(
@@ -208,6 +242,7 @@ const InventoryItemsBoard = () => {
       return (
         row.name?.toLowerCase().includes(term) ||
         row.code?.toLowerCase().includes(term) ||
+        row.tags?.some((tag) => tag.toLowerCase().includes(term)) ||
         itemLots.some(
           (lot) =>
             lot.lotNumber?.toLowerCase().includes(term) ||
@@ -224,7 +259,7 @@ const InventoryItemsBoard = () => {
       if (left == null || right == null) return compare(left, right);
       return sort.ascending ? compare(left, right) : compare(right, left);
     });
-  }, [rows, lotsByItem, search, statusFilter, locationFilter, sort]);
+  }, [rows, lotsByItem, search, statusFilter, locationFilter, tagFilter, sort]);
 
   const toggleSort = (key) =>
     setSort((current) =>
@@ -242,7 +277,7 @@ const InventoryItemsBoard = () => {
       onClick={() => toggleSort(key)}
       {...extraProps}
     >
-      <FormattedMessage id={labelId} />
+      {intl.formatMessage({ id: labelId })}
     </TableHeader>
   );
 
@@ -564,6 +599,12 @@ const InventoryItemsBoard = () => {
     );
   };
 
+  // Items have no criticality flag: "critical" means REORDER_NOW and not yet marked ordered.
+  const unaddressedCritical = rows.filter(
+    (row) => row.status === "REORDER_NOW" && !row.orderedOn,
+  );
+  const suggestionCount = rows.filter(isSuggested).length;
+
   if (loading) {
     return (
       <Loading
@@ -589,13 +630,45 @@ const InventoryItemsBoard = () => {
         />
       )}
 
+      {unaddressedCritical.length > 0 && (
+        <ActionableNotification
+          kind="error"
+          lowContrast
+          inline
+          hideCloseButton
+          // Carbon's default role="alertdialog" traps focus on the banner.
+          role="status"
+          className="board-critical-banner"
+          title={intl.formatMessage({ id: "inventory.reorderStatus.now" })}
+          subtitle={[
+            ...unaddressedCritical
+              .slice(0, BANNER_NAMES)
+              .map((row) => row.name),
+            ...(unaddressedCritical.length > BANNER_NAMES
+              ? [
+                  intl.formatMessage(
+                    { id: "inventory.board.andMore" },
+                    { count: unaddressedCritical.length - BANNER_NAMES },
+                  ),
+                ]
+              : []),
+          ].join(" · ")}
+          actionButtonLabel={intl.formatMessage({
+            id: "inventory.reorder.reviewAndOrder",
+          })}
+          onActionButtonClick={() => setAction({ kind: "suggestions" })}
+        />
+      )}
+
       <div className="board-toolbar">
         <Search
           id="inventory-board-search"
           size="lg"
-          labelText={intl.formatMessage({ id: "inventory.search.placeholder" })}
+          labelText={intl.formatMessage({
+            id: "inventory.search.placeholder.board",
+          })}
           placeholder={intl.formatMessage({
-            id: "inventory.search.placeholder",
+            id: "inventory.search.placeholder.board",
           })}
           value={search}
           onChange={(event) => setSearch(event.target.value)}
@@ -632,6 +705,26 @@ const InventoryItemsBoard = () => {
             <SelectItem key={path} value={path} text={path} />
           ))}
         </Select>
+        <div className="board-tag-filter">
+          <FilterableMultiSelect
+            id="inventory-board-tag-filter"
+            titleText={<FormattedMessage id="inventory.filter.tags" />}
+            placeholder={intl.formatMessage({ id: "inventory.filter.tags" })}
+            items={tagOptions}
+            itemToString={(item) => item || ""}
+            selectedItems={tagFilter}
+            onChange={({ selectedItems }) => setTagFilter(selectedItems || [])}
+            size="lg"
+          />
+        </div>
+        <Button
+          kind="tertiary"
+          size="lg"
+          className="board-manage-tags"
+          onClick={() => setManageTagsOpen(true)}
+        >
+          <FormattedMessage id="inventory.tags.manage" />
+        </Button>
         <Button
           kind="tertiary"
           size="lg"
@@ -640,7 +733,41 @@ const InventoryItemsBoard = () => {
         >
           <FormattedMessage id="inventory.logUsage.button" />
         </Button>
+        <Button
+          kind="tertiary"
+          size="lg"
+          className="board-suggestions-button"
+          onClick={() => setAction({ kind: "suggestions" })}
+        >
+          <FormattedMessage id="inventory.reorder.suggestions" />
+          {suggestionCount > 0 ? ` (${suggestionCount})` : ""}
+        </Button>
       </div>
+
+      {/* Outside the toolbar: as a flex child the chips would wrap into the controls */}
+      {tagFilter.length > 0 && (
+        <div className="board-tag-chips">
+          {tagFilter.map((tag) => (
+            <Tag
+              key={tag}
+              type="cool-gray"
+              filter
+              onClose={() =>
+                setTagFilter(tagFilter.filter((kept) => kept !== tag))
+              }
+              title={intl.formatMessage(
+                { id: "inventory.item.tags.remove" },
+                { tag },
+              )}
+            >
+              {tag}
+            </Tag>
+          ))}
+          <Button kind="ghost" size="sm" onClick={() => setTagFilter([])}>
+            <FormattedMessage id="inventory.filter.tags.clear" />
+          </Button>
+        </div>
+      )}
 
       <TableContainer>
         <Table size="md" useZebraStyles={false}>
@@ -688,11 +815,16 @@ const InventoryItemsBoard = () => {
                   >
                     <TableCell>
                       <div className="board-item-name">{row.name}</div>
-                      <div className="board-subline">
-                        {row.code}
-                        {row.itemType &&
-                          ` · ${labelFor(intl, "inventory.itemType.", row.itemType)}`}
-                      </div>
+                      <div className="board-subline">{row.code}</div>
+                      {row.tags?.length > 0 && (
+                        <div className="board-item-tags">
+                          {row.tags.map((tag) => (
+                            <Tag key={tag} type="cool-gray" size="sm">
+                              {tag}
+                            </Tag>
+                          ))}
+                        </div>
+                      )}
                     </TableCell>
                     <TableCell>
                       {intl.formatNumber(row.onHand)}{" "}
@@ -705,6 +837,13 @@ const InventoryItemsBoard = () => {
                       <Tag type={statusTag.type}>
                         <FormattedMessage id={statusTag.label} />
                       </Tag>
+                      {row.orderedOn && (
+                        <Tag type="teal" title={row.orderNote || undefined}>
+                          <FormattedMessage id="inventory.reorder.onOrder" />
+                          {row.orderExpectedDate &&
+                            ` · ${formatDay(row.orderExpectedDate)}`}
+                        </Tag>
+                      )}
                     </TableCell>
                     <TableCell className="board-actions-cell">
                       <OverflowMenu
@@ -800,6 +939,11 @@ const InventoryItemsBoard = () => {
         <InventoryItemForm
           open
           item={action.item}
+          observedLeadTime={
+            action.row?.leadTimeTier === "OBSERVED"
+              ? action.row.leadTimeDays
+              : null
+          }
           onClose={closeAction}
           onSave={() => onActionSaved("catalog.item.save.success")}
         />
@@ -811,6 +955,42 @@ const InventoryItemsBoard = () => {
           initialItemId={action.row?.itemId ?? null}
           onClose={closeAction}
           onSave={() => onActionSaved("usage.record.success")}
+        />
+      )}
+
+      {manageTagsOpen && (
+        <ManageTagsModal
+          open
+          onClose={() => setManageTagsOpen(false)}
+          onSave={() => {
+            setTagFilter([]);
+            refresh();
+          }}
+        />
+      )}
+
+      {action?.kind === "suggestions" && (
+        <ReorderSuggestionsModal
+          open
+          rows={rows}
+          onClose={closeAction}
+          onMarked={(count, outcome) => {
+            setAction(null);
+            refresh();
+            notify({
+              kind: NotificationKinds.success,
+              title: intl.formatMessage({ id: "notification.success" }),
+              message: intl.formatMessage(
+                {
+                  id:
+                    outcome === "cleared"
+                      ? "inventory.reorder.cleared"
+                      : "inventory.reorder.marked",
+                },
+                { count },
+              ),
+            });
+          }}
         />
       )}
 

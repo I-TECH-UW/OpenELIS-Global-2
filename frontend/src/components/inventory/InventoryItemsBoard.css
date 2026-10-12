@@ -121,3 +121,55 @@
 .board-log-usage {
   flex: 0 0 auto;
 }
+
+.board-critical-banner {
+  max-inline-size: none;
+  margin-bottom: 1rem;
+}
+
+.board-order-fields {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 1rem;
+  margin: 1rem 0;
+}
+
+.board-order-fields > * {
+  flex: 1 1 16rem;
+}
+
+.board-suggestions-help {
+  margin-bottom: 0.5rem;
+}
+
+.board-suggestions-button {
+  flex: 0 0 auto;
+}
+
+.board-item-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.125rem;
+  margin-top: 0.25rem;
+}
+
+/* FilterableMultiSelect skips the .cds--form-item flex sizing. Size this wrapper:
+   a flex-basis on the column-direction control sets its height, not its width. */
+.board-tag-filter {
+  flex: 0 1 16rem;
+  min-width: 0;
+}
+
+.board-tag-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+  margin-bottom: 0.5rem;
+}
+
+@media (max-width: 42rem) {
+  .board-tag-filter {
+    flex: 1 1 100%;
+  }
+}

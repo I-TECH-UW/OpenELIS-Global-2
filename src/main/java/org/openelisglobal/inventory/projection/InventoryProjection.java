@@ -2,6 +2,7 @@ package org.openelisglobal.inventory.projection;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import java.time.LocalDate;
+import java.util.List;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -21,6 +22,7 @@ public class InventoryProjection {
     private String code;
     private String name;
     private String itemType;
+    private List<String> tags;
     private String units;
 
     private Double onHand;
@@ -54,4 +56,12 @@ public class InventoryProjection {
     private Double trendPercent;
 
     private BoardStatus status;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate orderedOn;
+
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd")
+    private LocalDate orderExpectedDate;
+
+    private String orderNote;
 }

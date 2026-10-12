@@ -186,6 +186,7 @@ import {
   VectorIdentificationWorklist,
   VectorDeconvolutionWorklist,
 } from "./components/vectorIdentification";
+import { endServerSession } from "./components/utils/endServerSession";
 
 // QA-context breadcrumb for the TAT report mounted at /qa/qi/tat (OGC-696).
 // Labels are i18n keys resolved by PageBreadCrumb.
@@ -355,7 +356,6 @@ export default function App() {
             form.submit();
           } else {
             // No SAML form in response — fall back to a direct redirect
-            getUserSessionDetails();
             window.location.href = config.loginRedirect;
           }
         })
@@ -363,22 +363,11 @@ export default function App() {
           console.error(error);
         });
     } else {
-      fetch(config.serverBaseUrl + "/Logout", {
-        //includes the browser sessionId in the Header for Authentication on the backend server
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": localStorage.getItem("CSRF"),
-        },
-      })
-        .then((response) => response.status)
-        .then(() => {
-          getUserSessionDetails();
+      endServerSession(config.serverBaseUrl, localStorage.getItem("CSRF")).then(
+        () => {
           window.location.href = config.loginRedirect;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+        },
+      );
     }
   };
 
