@@ -133,6 +133,13 @@ public class AnalyzerResults extends BaseObject<String> implements Cloneable {
     @Column(name = "instrument_flags", length = 255)
     private String instrumentFlags;
 
+    /**
+     * The warnings the instrument raised about this result's sample, by the names
+     * it sent, the same on every result of the sample.
+     */
+    @Column(name = "instrument_sample_flags", length = 1024)
+    private String instrumentSampleFlags;
+
     @Column(name = "assay_name", length = 255)
     private String assayName;
 
@@ -243,6 +250,14 @@ public class AnalyzerResults extends BaseObject<String> implements Cloneable {
 
     public void setInstrumentFlags(String instrumentFlags) {
         this.instrumentFlags = instrumentFlags;
+    }
+
+    public String getInstrumentSampleFlags() {
+        return instrumentSampleFlags;
+    }
+
+    public void setInstrumentSampleFlags(String instrumentSampleFlags) {
+        this.instrumentSampleFlags = instrumentSampleFlags;
     }
 
     public String getAssayName() {

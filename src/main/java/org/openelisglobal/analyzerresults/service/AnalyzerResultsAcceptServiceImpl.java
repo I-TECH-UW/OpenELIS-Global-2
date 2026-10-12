@@ -73,6 +73,7 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
 
     private static final String REJECT_VALUE = "XXXX";
     private static final String RESULT_SUBJECT = "Analyzer Result Note";
+    private static final Set<String> DICTIONARY_OPTION_TYPES = Set.of("D", "M", "Q", "C");
 
     @Autowired
     private AnalyzerResultsService analyzerResultsService;
@@ -151,15 +152,7 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
             return;
         }
 
-        // Remove actionable items from the remaining list so we can detect
-        // childless controls among the leftovers.
-        List<AnalyzerResultItem> remaining = new ArrayList<>(allResults);
-        remaining.removeAll(actionableResults);
-
-        List<AnalyzerResultItem> childlessControls = extractChildlessControls(remaining);
-        retainResolvableResults(childlessControls);
-        List<AnalyzerResults> deletableAnalyzerResults = getRemovableAnalyzerResults(actionableResults,
-                childlessControls);
+        List<AnalyzerResults> deletableAnalyzerResults = getRemovableAnalyzerResults(actionableResults);
 
         List<SampleGrouping> sampleGroupList = new ArrayList<>();
         buildSampleGroupings(actionableResults, sampleGroupList, sysUserId);
@@ -251,6 +244,26 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
     }
 
     /**
+     * The internal notes an accepted result takes: the reviewer's note, and the
+     * warnings the instrument raised about its sample, each as its own note.
+     */
+    private List<Note> notesFor(Analysis analysis, AnalyzerResultItem resultItem, String sysUserId) {
+        List<Note> notes = new ArrayList<>();
+        if (!GenericValidator.isBlankOrNull(resultItem.getNote())) {
+            notes.add(noteService.createSavableNote(analysis, NoteServiceImpl.NoteType.INTERNAL, resultItem.getNote(),
+                    RESULT_SUBJECT, sysUserId));
+        }
+        if (!GenericValidator.isBlankOrNull(resultItem.getInstrumentSampleFlags())) {
+            notes.add(
+                    noteService.createSavableNote(analysis, NoteServiceImpl.NoteType.INTERNAL,
+                            MessageUtil.getMessage("note.analyzer.sampleFlags",
+                                    new String[] { resultItem.getInstrumentSampleFlags() }),
+                            RESULT_SUBJECT, sysUserId));
+        }
+        return notes;
+    }
+
+    /**
      * Everything the review page derives from the staged row is the staged row's:
      * order, test, component, control flag, analyzer, completion time, result type
      * and precision. It is an analyzer result, never a manual analysis. The
@@ -262,6 +275,7 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
         item.setInstrumentSpecimenId(staged.getInstrumentSpecimenId());
         item.setInstrumentPatientId(staged.getInstrumentPatientId());
         item.setInstrumentPatientName(staged.getInstrumentPatientName());
+        item.setInstrumentSampleFlags(staged.getInstrumentSampleFlags());
         item.setTestId(staged.getTestId());
         item.setComponentId(staged.getComponentId());
         item.setIsControl(staged.getIsControl());
@@ -283,7 +297,10 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
                     .map(TestResultComponent::getSignificantDigits).map(String::valueOf).orElse(null);
         }
         List<TestResult> testResults = testResultService.getActiveTestResultsByTest(staged.getTestId());
-        return testResults == null || testResults.isEmpty() ? null : testResults.get(0).getSignificantDigits();
+        if (testResults == null || testResults.isEmpty()) {
+            return null;
+        }
+        return filterTestResultsByComponent(testResults, null).get(0).getSignificantDigits();
     }
 
     /**
@@ -564,9 +581,9 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
 
     /**
      * Applies the reviewer's decisions. Accept, retest and ignore are decided per
-     * test: a test's components follow its decision, and the other tests on the
-     * same specimen keep their own. Every row of a grouping takes its specimen's
-     * accession.
+     * test on each tube: a test's components follow its decision, and the other
+     * tests, and the same test on another tube of the order, keep their own. Every
+     * row of a grouping takes its specimen's accession.
      */
     List<AnalyzerResultItem> extractActionableResult(List<AnalyzerResultItem> resultItemList) {
         List<AnalyzerResultItem> actionableResultList = new ArrayList<>();
@@ -595,61 +612,31 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
         return actionableResultList;
     }
 
-    private record DecisionKey(int grouping, String testId) {
+    /**
+     * One test on one tube. A row staged without a tube id counts as its
+     * accession's tube, as staging and placement count it.
+     */
+    private record DecisionKey(int grouping, String testId, String tube) {
 
         static DecisionKey of(AnalyzerResultItem item) {
-            return new DecisionKey(item.getSampleGroupingNumber(), item.getTestId());
+            String tube = GenericValidator.isBlankOrNull(item.getInstrumentSpecimenId()) ? item.getAccessionNumber()
+                    : item.getInstrumentSpecimenId();
+            return new DecisionKey(item.getSampleGroupingNumber(), item.getTestId(), tube);
         }
     }
 
-    List<AnalyzerResultItem> extractChildlessControls(List<AnalyzerResultItem> resultItemList) {
-        /*
-         * A childless control is a control which is adjacent to another control. It is
-         * the first set of controls which will be removed. For that reason we're going
-         * through the list backwards.
-         */
-        List<AnalyzerResultItem> childLessControlList = new ArrayList<>();
-        int sampleGroupingNumber = 0;
-        boolean lastGroupIsControl = false;
-        boolean inControlGroup = true; // covers the bottom control has no children
-
-        for (int i = resultItemList.size() - 1; i >= 0; i--) {
-            AnalyzerResultItem resultItem = resultItemList.get(i);
-
-            if (sampleGroupingNumber != resultItem.getSampleGroupingNumber()) {
-                lastGroupIsControl = inControlGroup;
-                inControlGroup = resultItem.getIsControl();
-                sampleGroupingNumber = resultItem.getSampleGroupingNumber();
-            }
-
-            if (lastGroupIsControl && resultItem.getIsControl()) {
-                childLessControlList.add(resultItem);
-            }
-        }
-
-        return childLessControlList;
-    }
-
-    List<AnalyzerResults> getRemovableAnalyzerResults(List<AnalyzerResultItem> actionableResults,
-            List<AnalyzerResultItem> childlessControls) {
-
+    /**
+     * The staged rows a save removes: only those the reviewer acted on. A row
+     * nobody acted on, such as a control waiting for the QC module, stays.
+     */
+    List<AnalyzerResults> getRemovableAnalyzerResults(List<AnalyzerResultItem> actionableResults) {
         Set<AnalyzerResults> deletableAnalyzerResults = new HashSet<>();
-
         for (AnalyzerResultItem resultItem : actionableResults) {
             AnalyzerResults result = new AnalyzerResults();
             result.setId(resultItem.getId());
             deletableAnalyzerResults.add(result);
         }
-
-        for (AnalyzerResultItem resultItem : childlessControls) {
-            AnalyzerResults result = new AnalyzerResults();
-            result.setId(resultItem.getId());
-            deletableAnalyzerResults.add(result);
-        }
-
-        List<AnalyzerResults> resultList = new ArrayList<>();
-        resultList.addAll(deletableAnalyzerResults);
-        return resultList;
+        return new ArrayList<>(deletableAnalyzerResults);
     }
 
     // ---------------------------------------------------------------
@@ -761,7 +748,7 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
         List<Analysis> analysisList = new ArrayList<>();
         List<Result> resultList = new ArrayList<>();
         Map<Result, String> resultToUserSelectionMap = new HashMap<>();
-        List<Note> noteList = new ArrayList<>();
+        List<List<Note>> noteList = new ArrayList<>();
 
         Patient patient = sampleHumanService.getPatientForSample(sample);
         createAndAddItems_Analysis_Results(groupedAnalyzerResultItems, analysisList, resultList,
@@ -837,7 +824,7 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
         List<Analysis> analysisList = new ArrayList<>();
         List<Result> resultList = new ArrayList<>();
         Map<Result, String> resultToUserSelectionMap = new HashMap<>();
-        List<Note> noteList = new ArrayList<>();
+        List<List<Note>> noteList = new ArrayList<>();
 
         Patient patient = sampleHumanService.getPatientForSample(sample);
         createAndAddItems_Analysis_Results(groupedAnalyzerResultItems, analysisList, resultList,
@@ -869,7 +856,7 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
         List<Analysis> analysisList = new ArrayList<>();
         List<Result> resultList = new ArrayList<>();
         Map<Result, String> resultToUserSelectionMap = new HashMap<>();
-        List<Note> noteList = new ArrayList<>();
+        List<List<Note>> noteList = new ArrayList<>();
 
         // New analyses are persisted on the grouping's sample item; an existing
         // analysis keeps its own, which serves only when nothing new is added.
@@ -913,13 +900,7 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
 
             resultList.add(result);
 
-            if (GenericValidator.isBlankOrNull(resultItem.getNote())) {
-                noteList.add(null);
-            } else {
-                Note note = noteService.createSavableNote(analysis, NoteServiceImpl.NoteType.INTERNAL,
-                        resultItem.getNote(), RESULT_SUBJECT, sysUserId);
-                noteList.add(note);
-            }
+            noteList.add(notesFor(analysis, resultItem, sysUserId));
         }
         recordResultsOnOrder(sample, resultList, true, sysUserId);
 
@@ -1001,7 +982,7 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
         List<Analysis> analysisList = new ArrayList<>();
         List<Result> resultList = new ArrayList<>();
         Map<Result, String> resultToUserSelectionMap = new HashMap<>();
-        List<Note> noteList = new ArrayList<>();
+        List<List<Note>> noteList = new ArrayList<>();
 
         sample.setAccessionNumber(groupedAnalyzerResultItems.get(0).getAccessionNumber());
         sample.setDomain("H");
@@ -1041,7 +1022,7 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
 
     private void createAndAddItems_Analysis_Results(List<AnalyzerResultItem> groupedAnalyzerResultItems,
             List<Analysis> analysisList, List<Result> resultList, Map<Result, String> resultToUserSelectionMap,
-            List<Note> noteList, List<String> skippedResultIds, Patient patient, String sysUserId) {
+            List<List<Note>> noteList, List<String> skippedResultIds, Patient patient, String sysUserId) {
 
         for (AnalyzerResultItem resultItem : groupedAnalyzerResultItems) {
             Analysis analysis = getExistingAnalysis(resultItem);
@@ -1077,13 +1058,7 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
             Result result = getResult(analysis, patient, resultItem, sysUserId);
             resultList.add(result);
             resultToUserSelectionMap.put(result, resultItem.getReflexSelectionId());
-            if (GenericValidator.isBlankOrNull(resultItem.getNote())) {
-                noteList.add(null);
-            } else {
-                Note note = noteService.createSavableNote(analysis, NoteServiceImpl.NoteType.INTERNAL,
-                        resultItem.getNote(), RESULT_SUBJECT, sysUserId);
-                noteList.add(note);
-            }
+            noteList.add(notesFor(analysis, resultItem, sysUserId));
         }
     }
 
@@ -1140,6 +1115,7 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
                 } else {
                     result.setValue(resultValue);
                 }
+                applySignificantDigits(result, resultItem, "getResult");
                 result.setSysUserId(sysUserId);
 
                 setAnalyte(result);
@@ -1169,19 +1145,28 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
             result.setValue(rawValue);
             result.setResultType(resultItem.getTestResultType());
         }
-        if (!GenericValidator.isBlankOrNull(resultItem.getSignificantDigits())) {
-            if (StringUtil.isInteger(resultItem.getSignificantDigits())) {
-                result.setSignificantDigits(Integer.parseInt(resultItem.getSignificantDigits()));
-            } else {
-                LogEvent.logWarn(AnalyzerResultsAcceptServiceImpl.class.getSimpleName(), "createNewResult",
-                        "Invalid significantDigits value for testId '" + resultItem.getTestId() + "'");
-            }
-        }
+        applySignificantDigits(result, resultItem, "createNewResult");
 
         addMinMaxNormal(result, resultItem, patient);
         result.setSysUserId(sysUserId);
 
         return result;
+    }
+
+    /**
+     * The current configuration's precision. A blank one clears what a replaced
+     * result carried, so it is reported as a new result under the same
+     * configuration would be.
+     */
+    private static void applySignificantDigits(Result result, AnalyzerResultItem resultItem, String caller) {
+        if (GenericValidator.isBlankOrNull(resultItem.getSignificantDigits())) {
+            result.clearSignificantDigits();
+        } else if (StringUtil.isInteger(resultItem.getSignificantDigits())) {
+            result.setSignificantDigits(Integer.parseInt(resultItem.getSignificantDigits()));
+        } else {
+            LogEvent.logWarn(AnalyzerResultsAcceptServiceImpl.class.getSimpleName(), caller,
+                    "Invalid significantDigits value for testId '" + resultItem.getTestId() + "'");
+        }
     }
 
     private void populateAnalysis(AnalyzerResultItem resultItem, Analysis analysis, Test test) {
@@ -1233,15 +1218,15 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
         List<TestResult> candidates = filterTestResultsByComponent(all, resultItem.getComponentId());
         boolean hasDictCandidates = candidates.stream().anyMatch(c -> "D".equals(c.getTestResultType()));
         if (hasDictCandidates) {
-            TestResult testResult = testResultService.getTestResultsByTestAndDictonaryResult(resultItem.getTestId(),
-                    resultItem.getResult());
-            // Only trust the test-scoped dictionary match when it belongs to the target
-            // component; otherwise fall through to the component-filtered candidates.
-            String resolvedTestResultId = testResult == null ? null : testResult.getId();
-            boolean belongsToComponent = candidates.stream()
-                    .anyMatch(candidate -> candidate.getId().equals(resolvedTestResultId));
-            if (testResult != null && !belongsToComponent) {
-                testResult = null;
+            // Another component of the test can offer the same answer, so the answer is
+            // matched among this record's own options, never test-wide.
+            TestResult testResult = null;
+            if (StringUtil.isInteger(resultItem.getResult())) {
+                String answer = resultItem.getResult().trim();
+                testResult = candidates.stream()
+                        .filter(candidate -> DICTIONARY_OPTION_TYPES.contains(candidate.getTestResultType())
+                                && answer.equals(candidate.getValue()))
+                        .findFirst().orElse(null);
             }
             if (testResult == null && !StringUtil.isInteger(resultItem.getResult())) {
                 String desired = resultItem.getResult().trim();
@@ -1265,19 +1250,26 @@ public class AnalyzerResultsAcceptServiceImpl implements AnalyzerResultsAcceptSe
     }
 
     /**
-     * Keep only the test_result rows belonging to the resolved component (null =
-     * PRIMARY / legacy component_id-null rows). Falls back to the full list when no
-     * row matches, so a test whose test_result rows predate components still works.
+     * Keep only the test_result rows belonging to the resolved component. A main
+     * result (null) takes the rows on no component or on the test's primary
+     * component, never another component's: the rows come back in no set order.
+     * Falls back to the full list when no row matches, so a test whose test_result
+     * rows predate components still works.
      */
     private List<TestResult> filterTestResultsByComponent(List<TestResult> candidates, String componentId) {
         List<TestResult> filtered = new ArrayList<>();
         for (TestResult candidate : candidates) {
             String candidateComponentId = candidate.getComponentId();
-            if (componentId == null ? candidateComponentId == null : componentId.equals(candidateComponentId)) {
+            if (componentId == null ? onMainRecord(candidateComponentId) : componentId.equals(candidateComponentId)) {
                 filtered.add(candidate);
             }
         }
         return filtered.isEmpty() ? candidates : filtered;
+    }
+
+    private boolean onMainRecord(String componentId) {
+        return componentId == null || testResultComponentService.getMatch("id", componentId)
+                .map(TestResultComponent::getIsPrimary).orElse(false);
     }
 
     private void addMinMaxNormal(Result result, AnalyzerResultItem resultItem, Patient patient) {

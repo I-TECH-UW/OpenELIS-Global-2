@@ -166,12 +166,48 @@ public class AnalyzerResultsPlacementIntegrationTest extends BaseWebContextSensi
         assertEquals("the right order's analysis took the result", "2", resultOnTube(tube));
         assertEquals("the mistyped ID created no order", Integer.valueOf(0), jdbc.queryForObject(
                 "SELECT count(*) FROM clinlims.sample WHERE accession_number = 'PLACE1B0OO1'", Integer.class));
-        assertEquals("the justification is on the result it explains", Integer.valueOf(1), jdbc.queryForObject(
-                "SELECT count(*) FROM clinlims.note n JOIN clinlims.result r ON r.id = n.reference_id"
-                        + " JOIN clinlims.analysis a ON a.id = r.analysis_id"
+        assertEquals("the justification is on the analysis of the result it explains", Integer.valueOf(1),
+                jdbc.queryForObject("SELECT count(*) FROM clinlims.note n"
+                        + " JOIN clinlims.reference_tables rt ON rt.id = n.reference_table AND rt.name = 'ANALYSIS'"
+                        + " JOIN clinlims.analysis a ON a.id = n.reference_id"
                         + " WHERE a.sampitem_id = ? AND n.note_type = 'I'"
                         + " AND n.text LIKE '%Label misread by the instrument%' AND n.text LIKE '%PLACE1B0OO1%'",
-                Integer.class, tube));
+                        Integer.class, tube));
+    }
+
+    @Test
+    public void thePartsOfAResultOnTheOrdersAnalysisBringItsNoteOnce() {
+        acceptNew("1");
+        long tube = onlyTube();
+        jdbc.update("INSERT INTO clinlims.test_result_component (id, test_id, code, label, is_primary, is_active,"
+                + " lastupdated) VALUES ('p1b-main', ?, 'PRIMARY', 'Main', true, 'Y', NOW()),"
+                + " ('p1b-log', ?, 'LOG', 'Log', false, 'Y', NOW())", TEST, TEST);
+        jdbc.update("INSERT INTO clinlims.test_result (id, test_id, tst_rslt_type, value, is_active, sort_order,"
+                + " component_id, lastupdated) VALUES (97331, ?, 'N', '', true, 1, 'p1b-main', NOW()),"
+                + " (97332, ?, 'N', '', true, 2, 'p1b-log', NOW())", TEST, TEST);
+        List<AnalyzerResultItem> parts = new java.util.ArrayList<>();
+        for (String component : List.of("p1b-main", "p1b-log")) {
+            String stagedId = stage(ACCESSION, ACCESSION, "2");
+            jdbc.update("UPDATE clinlims.analyzer_results SET component_id = ?, instrument_sample_flags = 'Anemia'"
+                    + " WHERE id = ?::numeric", component, stagedId);
+            AnalyzerResultItem part = acceptedItem(stagedId, "2");
+            part.setComponentId(component);
+            parts.add(part);
+        }
+
+        acceptService.acceptAndPersist(parts, "1");
+        entityManager.flush();
+
+        assertEquals("both parts are saved on the order's analysis", Integer.valueOf(2),
+                jdbc.queryForObject(
+                        "SELECT count(*) FROM clinlims.result r JOIN clinlims.analysis a"
+                                + " ON a.id = r.analysis_id WHERE a.sampitem_id = ? AND r.value = '2'",
+                        Integer.class, tube));
+        assertEquals("the analysis carries the flags once", List.of("Analyzer flags on this sample: Anemia"),
+                jdbc.queryForList("SELECT n.text FROM clinlims.note n"
+                        + " JOIN clinlims.reference_tables rt ON rt.id = n.reference_table AND rt.name = 'ANALYSIS'"
+                        + " JOIN clinlims.analysis a ON a.id = n.reference_id"
+                        + " WHERE a.sampitem_id = ? AND n.note_type = 'I'", String.class, tube));
     }
 
     @Test

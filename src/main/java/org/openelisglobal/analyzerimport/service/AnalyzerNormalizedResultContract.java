@@ -16,9 +16,15 @@ import org.hl7.fhir.r4.model.PrimitiveType;
 import org.hl7.fhir.r4.model.Specimen;
 import org.openelisglobal.common.util.BoundedDecimal;
 
-/** Consumer projection of the versioned Bridge normalized-result contract. */
+/**
+ * Consumer projection of the versioned Bridge normalized-result contract.
+ *
+ * @param sampleFlags the warnings the instrument raised about the sample, by
+ *                    the names it sent; they go with the results and are never
+ *                    results themselves
+ */
 public record AnalyzerNormalizedResultContract(String messageId, String bridgeConnectionId, String profileId,
-        int profileRevision, String sourceProtocol, List<Result> results) {
+        int profileRevision, String sourceProtocol, List<Result> results, List<String> sampleFlags) {
 
     private static final String NORMALIZED_PROFILE = "https://openelis-global.org/fhir/StructureDefinition/analyzer-normalized-bundle-v1";
     private static final String MESSAGE_ID_SYSTEM = "https://openelis-global.org/fhir/analyzer-message-id";
@@ -46,8 +52,11 @@ public record AnalyzerNormalizedResultContract(String messageId, String bridgeCo
      */
     private static final Set<String> CALL_CODES = Set.of("POS", "NEG", "DET", "ND", "IND");
 
+    private static final String SAMPLE_FLAG = "SAMPLE_FLAG";
+
     public AnalyzerNormalizedResultContract {
         results = List.copyOf(results);
+        sampleFlags = sampleFlags == null ? List.of() : List.copyOf(sampleFlags);
     }
 
     public static AnalyzerNormalizedResultContract parse(Bundle bundle, FhirContext fhirContext) {
@@ -101,15 +110,31 @@ public record AnalyzerNormalizedResultContract(String messageId, String bridgeCo
         }
 
         String deviceReference = deviceEntries.get(0).getFullUrl();
-        List<Result> results = bundle.getEntry().stream().map(Bundle.BundleEntryComponent::getResource)
-                .filter(Observation.class::isInstance).map(Observation.class::cast)
+        List<Observation> observations = bundle.getEntry().stream().map(Bundle.BundleEntryComponent::getResource)
+                .filter(Observation.class::isInstance).map(Observation.class::cast).toList();
+        List<String> sampleFlags = observations.stream()
+                .filter(observation -> SAMPLE_FLAG.equals(optionalExtensionText(observation, CLASSIFICATION)))
+                .map(AnalyzerNormalizedResultContract::flagName).toList();
+        List<Result> results = observations.stream()
+                .filter(observation -> !SAMPLE_FLAG.equals(optionalExtensionText(observation, CLASSIFICATION)))
                 .map(observation -> parseResult(observation, specimens, patients, deviceReference, fhirContext))
                 .toList();
         if (results.isEmpty()) {
             throw new IllegalArgumentException("Normalized analyzer traffic requires at least one Observation");
         }
         return new AnalyzerNormalizedResultContract(messageId, connectionIds.get(0), profileId, profileRevision,
-                sourceProtocol, results);
+                sourceProtocol, results, sampleFlags);
+    }
+
+    /**
+     * A sample flag by the name the instrument gave it, or its code when it gave
+     * none.
+     */
+    private static String flagName(Observation flag) {
+        return flag.getCode().getCoding().stream().filter(coding -> RAW_CODE_SYSTEM.equals(coding.getSystem()))
+                .map(coding -> coding.hasDisplay() ? coding.getDisplay() : coding.getCode())
+                .filter(name -> name != null && !name.isBlank()).findFirst()
+                .orElseThrow(() -> new IllegalArgumentException("Every sample flag requires the instrument's code"));
     }
 
     static Result parseResult(Observation observation, Map<String, String> specimens,

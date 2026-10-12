@@ -132,6 +132,11 @@ public class AnalyzerResultItem implements Serializable {
 
     private String instrumentNote;
     private String instrumentFlags;
+    /**
+     * The warnings the instrument raised about the sample, read from the staged
+     * row.
+     */
+    private String instrumentSampleFlags;
     private String assayName;
     private String assayVersion;
     private String instrumentOperator;
@@ -634,6 +639,14 @@ public class AnalyzerResultItem implements Serializable {
 
     public void setInstrumentFlags(String instrumentFlags) {
         this.instrumentFlags = instrumentFlags;
+    }
+
+    public String getInstrumentSampleFlags() {
+        return instrumentSampleFlags;
+    }
+
+    public void setInstrumentSampleFlags(String instrumentSampleFlags) {
+        this.instrumentSampleFlags = instrumentSampleFlags;
     }
 
     public String getAssayName() {

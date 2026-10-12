@@ -1,19 +1,21 @@
 import { expect, type Page } from "@playwright/test";
 import { worklistFor, type Analyzer, type WorklistRow } from "./analyzer-api";
 import type { createClinicalOrder } from "./analyzer-clinical-order";
+import type { DemoPresentation } from "./demo-presentation";
 import { API } from "./analyzer-profile-api";
 
 export type Order = Awaited<ReturnType<typeof createClinicalOrder>>;
 
 /**
- * What the lab sees saved for one component of an ordered test, read as the
- * Results screen does. The screen names a component after the test.
+ * What the lab sees saved for one component of an ordered test, or for the
+ * test itself when no component is named, read as the Results screen does.
+ * The screen names a component after the test.
  */
 export async function savedValue(
   page: Page,
   order: Order,
   testId: string,
-  component: string,
+  component?: string,
 ) {
   const response = await page.request.get(
     `${API}/accession-results?accessionNumber=${encodeURIComponent(order.accession)}`,
@@ -34,12 +36,14 @@ export async function savedValue(
   const saved = data.testResult.filter(
     (row) =>
       row.testId === testId &&
-      row.testName.endsWith(` — ${component}`) &&
+      (component
+        ? row.testName.endsWith(` — ${component}`)
+        : !row.testName.includes(" — ")) &&
       row.result?.id,
   );
   expect(
     saved.length,
-    `Saved ${component} for ${order.accession}`,
+    `Saved ${component ?? `test ${testId}`} for ${order.accession}`,
   ).toBeGreaterThan(0);
   // A test's own result and an analyte can share a label; they carry the same call.
   const values = saved.map((row) =>
@@ -58,13 +62,18 @@ export async function savedValue(
  * A held row has no box to accept and stays on the screen. With
  * `onScreen`, the reviewer is already on the analyzer's results screen with
  * placements entered, which a fresh visit would discard. With `note`, every
- * accepted result carries it.
+ * accepted result carries it. With `demo`, a recording dwells on the screen
+ * before and after.
  */
 export async function acceptAll(
   page: Page,
   analyzer: Analyzer,
   accessions: string[],
-  { onScreen = false, note }: { onScreen?: boolean; note?: string } = {},
+  {
+    onScreen = false,
+    note,
+    demo,
+  }: { onScreen?: boolean; note?: string; demo?: DemoPresentation } = {},
 ) {
   type Row = WorklistRow & { componentId?: string | null };
   if (!onScreen) {
@@ -85,14 +94,17 @@ export async function acceptAll(
     accepting.length,
     `Results to accept for ${accessions}`,
   ).toBeGreaterThan(0);
+  for (const row of accepting) await expect(box(row)).toBeAttached();
+  await demo?.pause(2000);
   for (const row of accepting) {
-    await expect(box(row)).toBeAttached();
     if (note) await page.locator(`[id="resultList${row.id}.note"]`).fill(note);
     if (!(await box(row).isChecked())) {
       await page.locator(`label[for="resultList${row.id}.isAccepted"]`).click();
     }
     await expect(box(row)).toBeChecked();
   }
+  await demo?.pause(1000);
   await page.getByRole("button", { name: "Save", exact: true }).click();
   for (const row of accepting) await expect(box(row)).toHaveCount(0);
+  await demo?.pause(1500);
 }
