@@ -7,7 +7,7 @@ import {
   TextInput,
 } from "@carbon/react";
 import { useIntl } from "react-intl";
-import { createMyCycle, fetchMyPrograms } from "./cyclesApi";
+import { createMyCycle, fetchEnrollmentsOpenForCycles } from "./cyclesApi";
 
 const EMPTY_NEW_CYCLE = {
   schemeName: "",
@@ -37,7 +37,7 @@ const NewEqaCycleModal = ({ schemeName = "", onClose, onCreated }) => {
 
   useEffect(() => {
     let mounted = true;
-    fetchMyPrograms((programs) => {
+    fetchEnrollmentsOpenForCycles((programs) => {
       if (mounted) setMyPrograms(programs);
     });
     return () => {
@@ -99,8 +99,8 @@ const NewEqaCycleModal = ({ schemeName = "", onClose, onCreated }) => {
         helperText={
           myPrograms.length === 0
             ? t(
-                "eqa.cycle.new.noPrograms",
-                "Enroll in a scheme under My EQA Schemes first.",
+                "eqa.cycle.new.noUsableEnrollments",
+                "No active enrollment here matches a scheme on this instance. Enrollments are managed under My EQA Schemes, schemes under EQA Management, Schemes.",
               )
             : undefined
         }

@@ -11929,7 +11929,6 @@
   "eqa.cycle.new.create": "Create cycle",
   "eqa.cycle.new.created": "Cycle created. It is listed as Planned; use \"Receive panel\" when the panel arrives.",
   "eqa.cycle.new.error": "Could not create the cycle",
-  "eqa.cycle.new.noPrograms": "Enroll in a scheme under My EQA Schemes first.",
   "eqa.order.receipt.consignment": "Inbound consignment",
   "eqa.order.receipt.consignment.none": "None — received outside the shipment module",
   "eqa.order.receipt.consignment.thisCycle": "this cycle",
@@ -12784,5 +12783,6 @@
   "order.eqa.schemeUnknown": "The chosen EQA scheme is not one of this laboratory's active enrollments.",
   "order.save.requirement.eqaScheme": "the EQA scheme",
   "save.order.success.labNumber": "Order {labNumber} has been saved.",
-  "eqa.entry.validated": "Validated"
+  "eqa.entry.validated": "Validated",
+  "eqa.cycle.new.noUsableEnrollments": "No active enrollment here matches a scheme on this instance. Enrollments are managed under My EQA Schemes, schemes under EQA Management, Schemes."
 }
