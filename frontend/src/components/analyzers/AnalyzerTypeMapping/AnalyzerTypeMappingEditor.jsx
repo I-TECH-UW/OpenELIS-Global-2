@@ -25,6 +25,7 @@ import { ArrowLeft, Copy, Save } from "@carbon/icons-react";
 import { parsePath } from "history";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Link, useHistory, useLocation, useParams } from "react-router-dom";
+import { analyzerResultsPath } from "../../analyserResults/analyzerResultsRoutes.jsx";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import AffectedAnalyzerList from "../AnalyzerTypeManagement/AffectedAnalyzerList";
 import {
@@ -1015,10 +1016,7 @@ const AnalyzerTypeMappingEditor = ({
                 />
               ))}
               {heldHere.length > 0 && (
-                <CarbonLink
-                  as={Link}
-                  to={`/AnalyzerResults?id=${encodeURIComponent(analyzerId)}`}
-                >
+                <CarbonLink as={Link} to={analyzerResultsPath(analyzerId)}>
                   <FormattedMessage id="analyzerType.adoption.blocked.reviewHeld" />
                 </CarbonLink>
               )}

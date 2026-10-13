@@ -98,10 +98,15 @@ const openDetails = (id) =>
     }),
   );
 
-/** Selects every row and decides them together from the batch bar. */
-const decideAll = (name) => {
-  fireEvent.click(screen.getByRole("checkbox", { name: "Select all rows" }));
-  fireEvent.click(screen.getByRole("button", { name }));
+/** The sample's own bulk decision, from the menu in its header. */
+const decideSample = (key, itemText) => {
+  const card = screen.getByTestId(`sample-group-${key}`);
+  fireEvent.click(
+    within(card).getByRole("button", {
+      name: "More decisions for this sample",
+    }),
+  );
+  fireEvent.click(screen.getByText(itemText));
 };
 
 const matched = (id, group, extra = {}) => ({
@@ -126,7 +131,7 @@ describe("AnalyserResults", () => {
     getFromServer.mockReset();
   });
 
-  it("accepts only the groupings whose every result is matched when accepting a selection", () => {
+  it("offers Accept all only on a sample whose every result is matched", () => {
     const unordered = matched("2002", 2, {
       placement: {
         state: "UNORDERED_ONE_FITS",
@@ -139,16 +144,16 @@ describe("AnalyserResults", () => {
     const first = matched("2001", 1);
     renderResults([first, unordered]);
 
-    decideAll("Accept");
+    const acceptAll = screen.getAllByRole("button", { name: "Accept all" });
+    expect(acceptAll).toHaveLength(1);
+    expect(screen.getByTestId("sample-group-1")).toContainElement(acceptAll[0]);
+    fireEvent.click(acceptAll[0]);
 
     expect(decision("2001").checked).toBe(true);
     expect(decision("2002").checked).toBe(false);
-    expect(
-      screen.getByText(/1 selected result was left undecided/),
-    ).toBeInTheDocument();
   });
 
-  it("leaves a grouping undecided when accepting a selection if its patient cannot be checked against the order", () => {
+  it("offers no Accept all on a sample whose patient cannot be checked against the order", () => {
     const first = matched("2101", 1, {
       placement: {
         ...matched("2101", 1).placement,
@@ -163,7 +168,9 @@ describe("AnalyserResults", () => {
     });
     renderResults([first, unverified]);
 
-    decideAll("Accept");
+    const acceptAll = screen.getAllByRole("button", { name: "Accept all" });
+    expect(acceptAll).toHaveLength(1);
+    fireEvent.click(acceptAll[0]);
 
     expect(decision("2101").checked).toBe(true);
     expect(decision("2102").checked).toBe(false);
@@ -290,7 +297,7 @@ describe("AnalyserResults", () => {
       screen.getByRole("link", { name: "Review analyzer mapping" }),
     ).toHaveAttribute(
       "href",
-      "/analyzers/2001/mapping?returnTo=%2FAnalyzerResults%3Fid%3D2001&focusTest=QUAL_RESULT&focusValue=POSITIVE",
+      "/analyzers/2001/mapping?returnTo=%2Fanalyzers%2F2001%2Fresults&focusTest=QUAL_RESULT&focusValue=POSITIVE",
     );
 
     expect(
@@ -604,7 +611,7 @@ describe("AnalyserResults", () => {
 
       expect(
         await screen.findByText("MTB", {
-          selector: "[data-testid=sampleInfo]",
+          selector: "[data-testid=sampleInfo] > span",
         }),
       ).toBeInTheDocument();
       expect(
@@ -625,12 +632,7 @@ describe("AnalyserResults", () => {
       ]);
       expect(decision("7001").checked).toBe(true);
 
-      fireEvent.click(
-        within(screen.getByTestId("result-row-7001")).getByRole("checkbox", {
-          name: "Select row",
-        }),
-      );
-      fireEvent.click(screen.getByRole("button", { name: "Clear decision" }));
+      decideSample("1", "Clear decisions");
       expect(decision("7001").checked).toBe(false);
       fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
@@ -655,7 +657,7 @@ describe("AnalyserResults", () => {
       expect(document.getElementById("resultList7002.result")).toBeNull();
       expect(
         screen.queryAllByText("HIV-1 viral load", {
-          selector: "[data-testid=sampleInfo]",
+          selector: "[data-testid=sampleInfo] > span",
         }),
       ).toHaveLength(1);
     });
@@ -784,6 +786,12 @@ describe("AnalyserResults", () => {
     renderResults([glucose]);
 
     const resultRow = await screen.findByRole("row", { name: /Glucose/ });
+    expect(within(resultRow).getByText("5.6")).toBeInTheDocument();
+    fireEvent.click(
+      within(resultRow).getByRole("button", {
+        name: "Edit the result for Glucose",
+      }),
+    );
     fireEvent.change(within(resultRow).getByDisplayValue("5.6"), {
       target: { value: "25" },
     });

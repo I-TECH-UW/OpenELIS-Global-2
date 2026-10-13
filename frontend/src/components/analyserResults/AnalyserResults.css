@@ -1,5 +1,5 @@
 /* The page's white wrapper clips its overflow, which would pin the sticky
-   footer to the wrapper instead of the window. */
+   footer and sample headers to the wrapper instead of the window. */
 .orderLegendBody.analyzerResults__page {
   overflow: visible;
 }
@@ -7,7 +7,7 @@
 .analyzerResults {
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.5rem;
   margin-top: 1rem;
 }
 
@@ -19,32 +19,63 @@
   overflow-x: auto;
 }
 
-/* The sample's own row above its results. */
-.analyzerResults__sampleRow td {
-  background: var(--cds-layer-accent-01, #e0e0e0);
-  border-top: 1px solid var(--cds-border-subtle-01, #c6c6c6);
-  padding-top: 0.5rem;
-  padding-bottom: 0.5rem;
+.analyzerResults__summary {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  color: var(--cds-text-secondary, #525252);
 }
 
+/* One card per sample: its header, its results, its held rows. */
 .analyzerResults__sample {
+  border: 1px solid var(--cds-border-subtle-01, #c6c6c6);
+  background: var(--cds-layer-01, #f4f4f4);
+}
+
+/* The sample stays named while its rows scroll under the app header. */
+.analyzerResults__sampleHeader {
+  position: sticky;
+  top: 3rem;
+  z-index: 2;
   display: flex;
   flex-wrap: wrap;
   align-items: flex-start;
-  column-gap: 2rem;
-  row-gap: 0.5rem;
+  justify-content: space-between;
+  gap: 0.5rem 1.5rem;
+  padding: 0.75rem 1rem;
+  background: var(--cds-layer-02, #ffffff);
+  border-bottom: 1px solid var(--cds-border-subtle-01, #c6c6c6);
+  border-left: 4px solid var(--cds-interactive, #0f62fe);
+}
+
+.analyzerResults__sampleMain {
+  display: flex;
+  flex: 1 1 24rem;
+  flex-direction: column;
+  gap: 0.25rem;
+  min-width: 0;
 }
 
 .analyzerResults__sampleId {
   display: flex;
   align-items: center;
   flex-wrap: wrap;
-  gap: 0.5rem;
+  gap: 0.25rem 0.5rem;
 }
 
 .analyzerResults__labNumber {
+  font-family: "IBM Plex Mono", ui-monospace, Menlo, monospace;
+  font-size: 1.125rem;
   font-weight: 600;
   white-space: nowrap;
+}
+
+.analyzerResults__counts {
+  color: var(--cds-text-secondary, #525252);
+  font-size: 0.875rem;
+  margin-left: 0.5rem;
 }
 
 .analyzerResults__secondary {
@@ -54,16 +85,26 @@
   white-space: normal;
 }
 
-.analyzerResults__sample .placementNotice {
-  flex: 1 1 24rem;
-  min-width: 0;
+/* The sample's actions, right-aligned; the redirect form drops to its own line. */
+.analyzerResults__sampleActions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 0.25rem;
 }
 
-.analyzerResults__sample .redirectControl {
-  flex: 1 1 20rem;
+.analyzerResults__sampleActions .redirectControl {
+  flex-basis: 100%;
   display: flex;
   flex-direction: column;
   gap: 0.5rem;
+  max-width: 28rem;
+  margin-top: 0.5rem;
+}
+
+.analyzerResults__sampleHeader .placementNotice {
+  min-width: 0;
 }
 
 .placementNotice {
@@ -87,30 +128,41 @@
   margin: 0;
 }
 
+.analyzerResults__sample .cds--data-table-container {
+  padding-top: 0;
+}
+
 .analyzerResults__test {
   display: flex;
   flex-direction: column;
-  gap: 0.5rem;
-  min-width: 12rem;
+  gap: 0.25rem;
+  min-width: 10rem;
 }
 
-.analyzerResults__status {
+.analyzerResults__tags {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
   gap: 0.25rem;
 }
 
-.analyzerResults__status .cds--tag {
+.analyzerResults__tags .cds--tag,
+.analyzerResults .cds--data-table td .cds--tag {
   margin: 0;
 }
 
-.analyzerResults__col--result {
-  width: 14rem;
+.analyzerResults__value {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
-.analyzerResults .cds--data-table td .cds--text-input {
-  min-width: 7rem;
+.analyzerResults__col--result {
+  width: 11rem;
+}
+
+.analyzerResults__col--flag {
+  width: 5rem;
 }
 
 .analyzerResults__col--runDate {
@@ -119,6 +171,10 @@
 
 .analyzerResults__col--decision {
   width: 18rem;
+}
+
+.analyzerResults .cds--data-table td .cds--text-input {
+  min-width: 6rem;
 }
 
 .analyzerResults .cds--radio-button-group {
@@ -192,23 +248,38 @@
   align-self: flex-start;
 }
 
-.analyzerResults__reason {
+/* The sample's held rows, by reason. */
+.analyzerResults__held {
+  padding: 0.75rem 1rem 1rem;
+  border-top: 1px solid var(--cds-border-subtle-01, #c6c6c6);
+}
+
+.analyzerResults__heldTitle {
+  font-size: 0.875rem;
+  font-weight: 600;
+  margin: 0 0 0.5rem;
+}
+
+.analyzerResults__heldGroup {
   display: flex;
   flex-direction: column;
   gap: 0.25rem;
+  margin-top: 0.5rem;
 }
 
-.analyzerResults__reason .cds--tag {
+.analyzerResults__heldGroup > .cds--tag {
   margin: 0;
   align-self: flex-start;
 }
 
-.analyzerResults__held .cds--data-table td {
+.analyzerResults__heldTable td {
   white-space: normal;
 }
 
-.analyzerResults__held .cds--data-table td:first-child {
-  white-space: nowrap;
+.analyzerResults__nextStep {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
 }
 
 .analyzerResults__empty {
@@ -226,7 +297,7 @@
 .analyzerResults__footer {
   position: sticky;
   bottom: 0;
-  z-index: 1;
+  z-index: 3;
   display: flex;
   align-items: center;
   gap: 1rem;
@@ -245,8 +316,8 @@
 }
 
 /* Under Carbon's large breakpoint the three decisions stack and the text
-   columns give up their slack, so the row keeps its result and status readable
-   instead of scrolling sideways. */
+   columns give up their slack, so the row keeps its result readable instead
+   of scrolling sideways. */
 @media (max-width: 1055px) {
   .analyzerResults__col--decision {
     width: 7rem;

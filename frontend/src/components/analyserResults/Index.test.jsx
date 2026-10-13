@@ -44,7 +44,13 @@ const renderPage = (initialEntry) => {
             }}
           >
             <Switch>
-              <Route path="/AnalyzerResults">
+              <Route
+                path={[
+                  "/AnalyzerResults",
+                  "/analyzers/import-issues",
+                  "/analyzers/:analyzerId/results",
+                ]}
+              >
                 <Index />
               </Route>
               <Route path="/analyzers">
@@ -130,7 +136,7 @@ describe("Analyzer results page", () => {
       callback(response),
     );
 
-    renderPage("/AnalyzerResults?id=5");
+    renderPage("/analyzers/5/results");
 
     expect(
       await screen.findByRole("heading", {

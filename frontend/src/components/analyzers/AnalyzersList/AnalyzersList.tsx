@@ -39,6 +39,10 @@ import AnalyzerSetup, {
   type AnalyzerSetupStep,
 } from "../AnalyzerSetup/AnalyzerSetup";
 import BridgePairing from "../BridgePairing/BridgePairing";
+import {
+  analyzerResultsPath,
+  importIssuesPath,
+} from "../../analyserResults/analyzerResultsRoutes.jsx";
 
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import type { Analyzer, AnalyzerStatus } from "../types";
@@ -200,10 +204,7 @@ const AnalyzersList = () => {
       return;
     }
 
-    history.push({
-      pathname: "/AnalyzerResults",
-      search: new URLSearchParams({ id: analyzer.id }).toString(),
-    });
+    history.push(analyzerResultsPath(analyzer.id));
   };
 
   const openLifecycle = (
@@ -534,12 +535,7 @@ const AnalyzersList = () => {
           actionButtonLabel={intl.formatMessage({
             id: "analyzer.deliveryIssues.attention.review",
           })}
-          onActionButtonClick={() =>
-            history.push({
-              pathname: "/AnalyzerResults",
-              search: "?view=import-issues",
-            })
-          }
+          onActionButtonClick={() => history.push(importIssuesPath)}
         />
       )}
 

@@ -661,8 +661,7 @@ describe("AnalyzersList", () => {
       await screen.findByRole("menuitem", { name: "View results" }),
     );
 
-    expect(window.location.pathname).toBe("/AnalyzerResults");
-    expect(new URLSearchParams(window.location.search).get("id")).toBe("42");
+    expect(window.location.pathname).toBe("/analyzers/42/results");
   });
 
   test("renders assigned lab-unit labels from the shared catalog", async () => {
@@ -722,8 +721,7 @@ describe("AnalyzersList", () => {
       screen.getByRole("button", { name: "Review held results" }),
     );
 
-    expect(window.location.pathname).toBe("/AnalyzerResults");
-    expect(new URLSearchParams(window.location.search).get("id")).toBe("1");
+    expect(window.location.pathname).toBe("/analyzers/1/results");
   });
 
   test("surfaces results the Bridge could not deliver and opens them for review", async () => {
@@ -756,10 +754,7 @@ describe("AnalyzersList", () => {
       screen.getByRole("button", { name: "Review undelivered results" }),
     );
 
-    expect(window.location.pathname).toBe("/AnalyzerResults");
-    expect(new URLSearchParams(window.location.search).get("view")).toBe(
-      "import-issues",
-    );
+    expect(window.location.pathname).toBe("/analyzers/import-issues");
   });
 
   test("shows no delivery banner when the Bridge holds nothing or cannot be reached", async () => {

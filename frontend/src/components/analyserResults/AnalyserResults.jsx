@@ -13,14 +13,14 @@ import {
   DataTable,
   InlineNotification,
   Link as CarbonLink,
+  OverflowMenu,
+  OverflowMenuItem,
   Pagination,
   RadioButton,
   RadioButtonGroup,
   Select,
   SelectItem,
   Table,
-  TableBatchAction,
-  TableBatchActions,
   TableBody,
   TableCell,
   TableContainer,
@@ -30,26 +30,17 @@ import {
   TableHead,
   TableHeader,
   TableRow,
-  TableSelectAll,
-  TableSelectRow,
-  TableToolbar,
   Tag,
   TextArea,
   TextInput,
 } from "@carbon/react";
-import {
-  Checkmark,
-  Close,
-  Copy,
-  Renew,
-  Undo,
-  WarningAltFilled,
-} from "@carbon/icons-react";
+import { Copy, Edit, WarningAltFilled } from "@carbon/icons-react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
 import { NotificationKinds } from "../common/CustomNotification";
 import { postToOpenElisServerFullResponse } from "../utils/Utils";
 import {
+  hasServerPages,
   serverPageArrowsProps,
   serverPaginationProps,
 } from "../utils/serverPaging";
@@ -68,6 +59,7 @@ import InstrumentReported from "./InstrumentReported";
 import ResultParts, { decisionKey, groupTestParts } from "./ResultParts";
 import DeliveryBundleModal from "./DeliveryBundleModal";
 import RedirectControl from "./RedirectControl";
+import { analyzerResultsPath } from "./analyzerResultsRoutes.jsx";
 import "./AnalyserResults.css";
 
 // Held for a decision the reviewer can make on the page, not for a mapping fix.
@@ -92,13 +84,9 @@ const DECISION_FIELDS = {
   ignore: "isDeleted",
 };
 
-export const buildAnalyzerResultsRedirectUrl = (analyzerId) => {
-  if (!analyzerId) {
-    return "/AnalyzerResults";
-  }
-
-  return `/AnalyzerResults?id=${encodeURIComponent(analyzerId)}`;
-};
+// HL7 and ASTM flag a result within its reference range as N; only another
+// flag needs the reviewer's eye.
+const NORMAL_FLAGS = ["N", ""];
 
 export const buildHeldResultResolutionUrl = (row, analyzerId) => {
   const mappingIssues = [
@@ -119,7 +107,7 @@ export const buildHeldResultResolutionUrl = (row, analyzerId) => {
   }
 
   const query = new URLSearchParams({
-    returnTo: buildAnalyzerResultsRedirectUrl(analyzerId),
+    returnTo: analyzerResultsPath(analyzerId),
     focusTest: row.rawTestCode,
   });
   if (row.rawResultValue) {
@@ -142,10 +130,11 @@ const reviewPriority = (row) =>
       : 0;
 
 /**
- * The reviewable rows of a page, one group per sample in the order the page
- * lists them. Each group names the row that speaks for the sample (the one
- * the reviewer can act on first) and the placement state its rows share, when
- * they share one.
+ * The rows of a page, one group per sample in the order the page lists them.
+ * Each group splits into the rows the reviewer decides here and the rows held
+ * for a fix made elsewhere, names the row that speaks for the sample (the one
+ * the reviewer can act on first), and the placement state its reviewable rows
+ * share, when they share one.
  */
 export const groupBySample = (rows) => {
   const groups = new Map();
@@ -157,17 +146,33 @@ export const groupBySample = (rows) => {
     groups.get(key).rows.push(row);
   });
   return Array.from(groups.values()).map((group) => {
+    const reviewRows = group.rows.filter((row) => reviewPriority(row) > 0);
+    const heldRows = group.rows.filter((row) => reviewPriority(row) === 0);
     const representative = group.rows.reduce((best, row) =>
       reviewPriority(row) > reviewPriority(best) ? row : best,
     );
-    const states = new Set(group.rows.map((row) => row.placement?.state));
+    const states = new Set(reviewRows.map((row) => row.placement?.state));
     const uniformState =
-      states.size === 1 && !states.has(undefined)
-        ? group.rows[0].placement.state
+      reviewRows.length > 0 && states.size === 1 && !states.has(undefined)
+        ? reviewRows[0].placement.state
         : null;
-    return { ...group, representative, uniformState };
+    return { ...group, reviewRows, heldRows, representative, uniformState };
   });
 };
+
+// "Accept all" on a sample takes only one whose every result has exactly one
+// analysis waiting for it and a patient that matches the order or was not
+// reported; anything else is decided result by result, with its placement
+// in view.
+export const sampleIsMatched = (group) =>
+  group.reviewRows.length > 0 &&
+  group.reviewRows.every(
+    (result) =>
+      result.placement?.state === "RESOLVED" &&
+      ["NOT_REPORTED", "MATCH"].includes(
+        result.placement?.patient?.status ?? "NOT_REPORTED",
+      ),
+  );
 
 const AnalyserResults = (props) => {
   const componentMounted = useRef(false);
@@ -187,7 +192,8 @@ const AnalyserResults = (props) => {
   const [resultAlert, setResultAlert] = useState(null);
   const [bundleReceiptId, setBundleReceiptId] = useState(null);
   const [dismissingRunIds, setDismissingRunIds] = useState([]);
-  const [batchSkipped, setBatchSkipped] = useState(0);
+  // Rows whose value the reviewer opened for editing.
+  const [editingIds, setEditingIds] = useState(() => new Set());
   // The rows are the server's objects, edited in place so one save posts them
   // all; an edit asks for a render so the controls show the row's new state.
   const [, rowsEdited] = useReducer((n) => n + 1, 0);
@@ -200,13 +206,20 @@ const AnalyserResults = (props) => {
   }, []);
 
   // Edits restored after a mapping visit stay unsaved drafts, so the next
-  // visit carries them again.
+  // visit carries them again; a retyped value stays open for editing.
   useEffect(() => {
     draftEdits.current = Object.fromEntries(
       Object.entries(props.restoredEdits ?? {}).map(([id, fields]) => [
         id,
         { ...fields },
       ]),
+    );
+    setEditingIds(
+      new Set(
+        Object.entries(props.restoredEdits ?? {})
+          .filter(([, fields]) => "result" in fields)
+          .map(([id]) => String(id)),
+      ),
     );
   }, [props.results, props.restoredEdits]);
 
@@ -252,10 +265,10 @@ const AnalyserResults = (props) => {
   const { decisionHeadIds, partsByHeadId, partIds } =
     groupTestParts(patientResults);
   const tableRows = patientResults.filter((row) => !partIds.has(row.id));
-  const reviewRows = tableRows.filter((row) => reviewPriority(row) > 0);
-  const heldRows = tableRows.filter((row) => reviewPriority(row) === 0);
-  const decisionRows = reviewRows.filter((row) => decisionHeadIds.has(row.id));
-  const sampleGroups = groupBySample(reviewRows);
+  const sampleGroups = groupBySample(tableRows);
+  const decisionRows = tableRows.filter(
+    (row) => reviewPriority(row) > 0 && decisionHeadIds.has(row.id),
+  );
   const arrows = serverPageArrowsProps({
     paging: props.results?.paging,
     onPageRequest: (pageNumber) => props.loadPage?.(pageNumber),
@@ -263,22 +276,6 @@ const AnalyserResults = (props) => {
   const heldPatientResults = patientResults.filter(
     (result) => result.importIssueReason,
   );
-  const actionablePatientResults = patientResults.filter(
-    (result) => reviewPriority(result) > 0,
-  );
-  // One tick saves a whole grouping, so "accept" on a selection takes only the
-  // groupings whose every result has exactly one analysis waiting for it and a
-  // patient that matches the order or was not reported.
-  const groupIsMatched = (grouping) =>
-    actionablePatientResults
-      .filter((result) => result.sampleGroupingNumber === grouping)
-      .every(
-        (result) =>
-          result.placement?.state === "RESOLVED" &&
-          ["NOT_REPORTED", "MATCH"].includes(
-            result.placement?.patient?.status ?? "NOT_REPORTED",
-          ),
-      );
   const qcResults = allResults.filter((r) => r.isControl);
   const hasQcFailures = qcResults.some(
     (r) =>
@@ -372,6 +369,9 @@ const AnalyserResults = (props) => {
     rowsEdited();
   };
 
+  const startEditing = (rowId) =>
+    setEditingIds((ids) => new Set([...ids, String(rowId)]));
+
   // A test is decided on its head row; its parts and duplicates carry the same
   // decision, so a tick they loaded with cannot outvote it on save. One
   // decision replaces another: a result is accepted, retested or ignored.
@@ -393,20 +393,10 @@ const AnalyserResults = (props) => {
     rowsEdited();
   };
 
-  const decideSelected = (selectedRows, decision, clearSelection) => {
-    let skipped = 0;
-    selectedRows.forEach((selected) => {
-      const row = findRow(selected.id);
-      if (!row) return;
-      if (decision === "accept" && !groupIsMatched(row.sampleGroupingNumber)) {
-        skipped += 1;
-        return;
-      }
-      setDecision(row.id, decision);
-    });
-    setBatchSkipped(skipped);
-    clearSelection();
-  };
+  const decideSample = (group, decision) =>
+    group.reviewRows
+      .filter((row) => decisionHeadIds.has(row.id))
+      .forEach((row) => setDecision(row.id, decision));
 
   // The run produced no result: the reviewer records the failure on the order's
   // waiting test, which stays open for the repeat.
@@ -445,15 +435,10 @@ const AnalyserResults = (props) => {
     );
   };
 
-  const heldReasonLabel = (row) =>
-    HOLD_REASONS.includes(row.importIssueReason)
-      ? intl.formatMessage({
-          id: `analyzer.results.reason.${row.importIssueReason}`,
-        })
-      : intl.formatMessage(
-          { id: "analyzer.results.reason.other" },
-          { reason: row.importIssueReason },
-        );
+  const heldReasonLabel = (reason) =>
+    HOLD_REASONS.includes(reason)
+      ? intl.formatMessage({ id: `analyzer.results.reason.${reason}` })
+      : intl.formatMessage({ id: "analyzer.results.reason.other" }, { reason });
 
   /** What a held row says about itself beyond its reason. */
   const renderHeldExplanation = (row) => (
@@ -554,11 +539,72 @@ const AnalyserResults = (props) => {
           values={{ code: row.rawTestCode || row.testName }}
         />
       </div>
-      <div>{heldReasonLabel(row)}</div>
+      <div>{heldReasonLabel(row.importIssueReason)}</div>
       {renderHeldExplanation(row)}
       {renderHeldAction(row)}
     </div>
   );
+
+  /** The sample's held results, by reason, each with its one next step. */
+  const renderHeldRows = (group) => {
+    const byReason = new Map();
+    group.heldRows.forEach((row) => {
+      const reason = row.importIssueReason;
+      byReason.set(reason, [...(byReason.get(reason) || []), row]);
+    });
+    return (
+      <div
+        className="analyzerResults__held"
+        data-testid={`sample-held-${group.key}`}
+      >
+        <h4 className="analyzerResults__heldTitle">
+          <FormattedMessage
+            id="analyzer.results.held.sectionTitle"
+            values={{ count: group.heldRows.length }}
+          />
+        </h4>
+        {Array.from(byReason.entries()).map(([reason, rows]) => (
+          <div className="analyzerResults__heldGroup" key={reason}>
+            <Tag type="warm-gray" size="sm">
+              {heldReasonLabel(reason)}
+            </Tag>
+            <Table size="sm" className="analyzerResults__heldTable">
+              <TableHead>
+                <TableRow>
+                  <TableHeader>
+                    <FormattedMessage id="analyzer.results.column.code" />
+                  </TableHeader>
+                  <TableHeader>
+                    <FormattedMessage id="analyzer.results.column.reported" />
+                  </TableHeader>
+                  <TableHeader>
+                    <FormattedMessage id="analyzer.results.column.nextStep" />
+                  </TableHeader>
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => (
+                  <TableRow
+                    key={row.id}
+                    data-testid={`held-analyzer-result-${row.id}`}
+                  >
+                    <TableCell>{row.rawTestCode || row.testName}</TableCell>
+                    <TableCell>{row.rawResultValue || row.result}</TableCell>
+                    <TableCell>
+                      <div className="analyzerResults__nextStep">
+                        {renderHeldExplanation(row)}
+                        {renderHeldAction(row)}
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   const renderResultValue = (row) => {
     switch (row.testResultType) {
@@ -577,20 +623,39 @@ const AnalyserResults = (props) => {
         if (row.readOnly) {
           return row.result;
         }
+        if (editingIds.has(String(row.id))) {
+          return (
+            <TextInput
+              id={"resultList" + row.id + ".result"}
+              size="sm"
+              type="text"
+              value={row.result ?? ""}
+              labelText={intl.formatMessage({
+                id: "analyzer.results.column.result",
+              })}
+              hideLabel
+              autoFocus
+              onChange={(e) =>
+                handleFieldChange(row.id, "result", e.target.value)
+              }
+            />
+          );
+        }
         return (
-          <TextInput
-            id={"resultList" + row.id + ".result"}
-            size="md"
-            type="text"
-            value={row.result ?? ""}
-            labelText={intl.formatMessage({
-              id: "analyzer.results.column.result",
-            })}
-            hideLabel
-            onChange={(e) =>
-              handleFieldChange(row.id, "result", e.target.value)
-            }
-          />
+          <span className="analyzerResults__value">
+            <span>{row.result}</span>
+            <Button
+              kind="ghost"
+              size="sm"
+              hasIconOnly
+              renderIcon={Edit}
+              iconDescription={intl.formatMessage(
+                { id: "analyzer.results.edit" },
+                { test: row.testName },
+              )}
+              onClick={() => startEditing(row.id)}
+            />
+          </span>
         );
     }
   };
@@ -602,156 +667,244 @@ const AnalyserResults = (props) => {
     return document.execCommand("copy", true, accessionNumber);
   };
 
-  /** The sample's own row: its lab number, what the instrument said about it, and where its results go. */
-  const renderSampleHeader = (group, columnCount) => {
+  /** The sample's own header: lab number, what the instrument said about it, where its results go, and its actions. */
+  const renderSampleHeader = (group) => {
     const row = group.representative;
+    const decidable = group.reviewRows.filter((r) => decisionHeadIds.has(r.id));
+    const awaitingSpecimen = group.reviewRows.some(
+      (r) => r.sampleTypeOptions && r.sampleTypeOptions.length > 0,
+    );
     return (
-      <TableRow
-        className="analyzerResults__sampleRow"
-        data-testid={`sample-group-${group.key}`}
-      >
-        <TableCell colSpan={columnCount}>
-          <div className="analyzerResults__sample">
-            <div className="analyzerResults__sampleId">
-              <Button
-                onClick={() => copyLabNumber(row.accessionNumber)}
-                kind="ghost"
-                size="sm"
-                iconDescription={intl.formatMessage({
-                  id: "instructions.copy.labnum",
-                })}
-                hasIconOnly
-                renderIcon={Copy}
-              />
-              <div className="analyzerResults__labNumber" data-testid="LabNo">
-                {formatLabNum(row.accessionNumber)}
-                {row.instrumentSpecimenId &&
-                  row.instrumentSpecimenId !== row.accessionNumber && (
-                    <div
-                      className="analyzerResults__secondary"
-                      data-testid="InstrumentSpecimenId"
-                    >
-                      <FormattedMessage
-                        id="analyzer.placement.instrumentSpecimen"
-                        values={{ id: row.instrumentSpecimenId }}
-                      />
-                    </div>
-                  )}
-              </div>
-              {row.nonconforming && (
-                <Tag type="red" size="sm" renderIcon={WarningAltFilled}>
-                  <FormattedMessage id="analyzer.results.nonconforming" />
-                </Tag>
-              )}
-              {row.instrumentSampleFlags && (
-                <div
-                  className="analyzerResults__secondary"
-                  data-testid="InstrumentSampleFlags"
-                >
-                  <FormattedMessage
-                    id="analyzer.results.sampleFlags"
-                    values={{ flags: row.instrumentSampleFlags }}
-                  />
-                </div>
-              )}
-            </div>
-            <PlacementNotice
-              row={row}
-              showChooser={false}
-              showState={Boolean(group.uniformState)}
-              onViewBundle={setBundleReceiptId}
+      <header className="analyzerResults__sampleHeader">
+        <div className="analyzerResults__sampleMain">
+          <div className="analyzerResults__sampleId">
+            <span className="analyzerResults__labNumber" data-testid="LabNo">
+              {formatLabNum(row.accessionNumber)}
+            </span>
+            <Button
+              onClick={() => copyLabNumber(row.accessionNumber)}
+              kind="ghost"
+              size="sm"
+              iconDescription={intl.formatMessage({
+                id: "instructions.copy.labnum",
+              })}
+              hasIconOnly
+              renderIcon={Copy}
             />
-            {row.placement && (
-              <RedirectControl
-                row={row}
-                onChange={(field, value, rowId) =>
-                  handleFieldChange(rowId, field, value)
-                }
-              />
+            {row.nonconforming && (
+              <Tag type="red" size="sm" renderIcon={WarningAltFilled}>
+                <FormattedMessage id="analyzer.results.nonconforming" />
+              </Tag>
             )}
+            <span className="analyzerResults__counts">
+              {decidable.length > 0 && (
+                <FormattedMessage
+                  id="analyzer.results.sample.toDecide"
+                  values={{ count: decidable.length }}
+                />
+              )}
+              {decidable.length > 0 && group.heldRows.length > 0 && " · "}
+              {group.heldRows.length > 0 && (
+                <FormattedMessage
+                  id="analyzer.results.sample.held"
+                  values={{ count: group.heldRows.length }}
+                />
+              )}
+            </span>
           </div>
-        </TableCell>
-      </TableRow>
+          {row.instrumentSpecimenId &&
+            row.instrumentSpecimenId !== row.accessionNumber && (
+              <div
+                className="analyzerResults__secondary"
+                data-testid="InstrumentSpecimenId"
+              >
+                <FormattedMessage
+                  id="analyzer.placement.instrumentSpecimen"
+                  values={{ id: row.instrumentSpecimenId }}
+                />
+              </div>
+            )}
+          {row.instrumentSampleFlags && (
+            <div
+              className="analyzerResults__secondary"
+              data-testid="InstrumentSampleFlags"
+            >
+              <FormattedMessage
+                id="analyzer.results.sampleFlags"
+                values={{ flags: row.instrumentSampleFlags }}
+              />
+            </div>
+          )}
+          <PlacementNotice
+            row={row}
+            showChooser={false}
+            showState={Boolean(group.uniformState)}
+            showBundle={false}
+          />
+          {awaitingSpecimen && (
+            <div className="analyzerResults__secondary">
+              <FormattedMessage id="notice.testCatalog.intake.awaitingSpecimen" />
+            </div>
+          )}
+        </div>
+        <div className="analyzerResults__sampleActions">
+          {row.placement && (
+            <RedirectControl
+              row={row}
+              onChange={(field, value, rowId) =>
+                handleFieldChange(rowId, field, value)
+              }
+            />
+          )}
+          {row.deliveryReceiptId && (
+            <Button
+              kind="ghost"
+              size="sm"
+              onClick={() => setBundleReceiptId(row.deliveryReceiptId)}
+            >
+              <FormattedMessage id="analyzer.placement.viewBundle" />
+            </Button>
+          )}
+          {decidable.length > 0 && sampleIsMatched(group) && (
+            <Button
+              kind="tertiary"
+              size="sm"
+              onClick={() => decideSample(group, "accept")}
+            >
+              <FormattedMessage id="analyzer.results.sample.acceptAll" />
+            </Button>
+          )}
+          {decidable.length > 0 && (
+            <OverflowMenu
+              size="sm"
+              flipped
+              aria-label={intl.formatMessage({
+                id: "analyzer.results.sample.moreDecisions",
+              })}
+              iconDescription={intl.formatMessage({
+                id: "analyzer.results.sample.moreDecisions",
+              })}
+            >
+              <OverflowMenuItem
+                itemText={intl.formatMessage({
+                  id: "analyzer.results.sample.retestAll",
+                })}
+                onClick={() => decideSample(group, "retest")}
+              />
+              <OverflowMenuItem
+                itemText={intl.formatMessage({
+                  id: "analyzer.results.sample.ignoreAll",
+                })}
+                onClick={() => decideSample(group, "ignore")}
+              />
+              <OverflowMenuItem
+                itemText={intl.formatMessage({
+                  id: "analyzer.results.sample.clearAll",
+                })}
+                onClick={() => decideSample(group, "")}
+              />
+            </OverflowMenu>
+          )}
+        </div>
+      </header>
     );
   };
 
-  const renderStatus = (row, group) => {
+  const renderTest = (row, group) => {
     const parts = partsByHeadId.get(row.id) || [];
+    const secondary = [
+      row.rawTestCode && row.rawTestCode !== row.testName
+        ? row.rawTestCode
+        : null,
+      row.units,
+    ].filter(Boolean);
     return (
-      <div className="analyzerResults__status">
-        {row.importIssueReason && (
-          <Tag type="warm-gray" size="sm">
-            <FormattedMessage id="analyzer.results.held.tag" />
-          </Tag>
-        )}
-        {!group.uniformState && row.placement && (
-          <PlacementStateTag placement={row.placement} />
-        )}
-        {row.instrumentFlags && (
-          <Tag type="cool-gray" size="sm">
-            <FormattedMessage
-              id="analyzer.results.instrumentReported.flag"
-              values={{ flag: row.instrumentFlags }}
-            />
-          </Tag>
-        )}
-        {parts.length > 0 && (
+      <div className="analyzerResults__test" data-testid="sampleInfo">
+        <span>{row.testName}</span>
+        {secondary.length > 0 && (
           <span className="analyzerResults__secondary">
-            <FormattedMessage
-              id="analyzer.results.parts.count"
-              values={{ count: parts.length }}
-            />
+            {secondary.join(" · ")}
           </span>
         )}
-        {row.note && (
-          <Tag type="outline" size="sm">
-            <FormattedMessage id="analyzer.results.note.tag" />
-          </Tag>
+        {(row.importIssueReason ||
+          (!group.uniformState && row.placement) ||
+          parts.length > 0) && (
+          <span className="analyzerResults__tags">
+            {row.importIssueReason && (
+              <Tag type="warm-gray" size="sm">
+                <FormattedMessage id="analyzer.results.held.tag" />
+              </Tag>
+            )}
+            {!group.uniformState && row.placement && (
+              <PlacementStateTag placement={row.placement} />
+            )}
+            {parts.length > 0 && (
+              <span className="analyzerResults__secondary">
+                <FormattedMessage
+                  id="analyzer.results.parts.count"
+                  values={{ count: parts.length }}
+                />
+              </span>
+            )}
+          </span>
+        )}
+        {row.placement?.state === "MULTI_TUBE" && (
+          <AnalysisChooser
+            row={row}
+            onChooseAnalysis={(analysisId, rowId) =>
+              handleFieldChange(rowId, "chosenAnalysisId", analysisId)
+            }
+          />
+        )}
+        {/* OGC-1145 FR-8 — specimen-ambiguous row: the reviewer picks the
+            sample type; accepting without a choice keeps the row staged
+            (awaiting specimen) instead of guessing. */}
+        {row.sampleTypeOptions && row.sampleTypeOptions.length > 0 && (
+          <Select
+            id={"resultList" + row.id + ".typeOfSampleId"}
+            size="sm"
+            labelText={intl.formatMessage({
+              id: "label.testCatalog.specimenType",
+            })}
+            aria-label={intl.formatMessage({
+              id: "label.testCatalog.specimenType",
+            })}
+            hideLabel
+            defaultValue={row.typeOfSampleId || ""}
+            onChange={(e) =>
+              handleFieldChange(row.id, "typeOfSampleId", e.target.value)
+            }
+          >
+            <SelectItem
+              value=""
+              text={intl.formatMessage({
+                id: "label.testCatalog.specimenType",
+              })}
+            />
+            {row.sampleTypeOptions.map((option) => (
+              <SelectItem
+                key={option.id}
+                value={option.id}
+                text={option.value}
+              />
+            ))}
+          </Select>
         )}
       </div>
     );
   };
 
-  const renderTest = (row) => (
-    <div className="analyzerResults__test" data-testid="sampleInfo">
-      {row.testName}
-      {row.placement?.state === "MULTI_TUBE" && (
-        <AnalysisChooser
-          row={row}
-          onChooseAnalysis={(analysisId, rowId) =>
-            handleFieldChange(rowId, "chosenAnalysisId", analysisId)
-          }
-        />
-      )}
-      {/* OGC-1145 FR-8 — specimen-ambiguous row: the reviewer picks the
-          sample type; accepting without a choice keeps the row staged
-          (awaiting specimen) instead of guessing. */}
-      {row.sampleTypeOptions && row.sampleTypeOptions.length > 0 && (
-        <Select
-          id={"resultList" + row.id + ".typeOfSampleId"}
-          size="sm"
-          labelText={intl.formatMessage({
-            id: "label.testCatalog.specimenType",
-          })}
-          aria-label={intl.formatMessage({
-            id: "label.testCatalog.specimenType",
-          })}
-          helperText={intl.formatMessage({
-            id: "notice.testCatalog.intake.awaitingSpecimen",
-          })}
-          defaultValue={row.typeOfSampleId || ""}
-          onChange={(e) =>
-            handleFieldChange(row.id, "typeOfSampleId", e.target.value)
-          }
-        >
-          <SelectItem value="" text="--" />
-          {row.sampleTypeOptions.map((option) => (
-            <SelectItem key={option.id} value={option.id} text={option.value} />
-          ))}
-        </Select>
-      )}
-    </div>
-  );
+  const renderFlag = (row) => {
+    const flag = (row.instrumentFlags || "").trim();
+    if (NORMAL_FLAGS.includes(flag)) {
+      return <span className="analyzerResults__secondary">{flag}</span>;
+    }
+    return (
+      <Tag type="magenta" size="sm">
+        {flag}
+      </Tag>
+    );
+  };
 
   const renderDecision = (row) => {
     if (!decisionHeadIds.has(row.id)) {
@@ -820,40 +973,97 @@ const AnalyserResults = (props) => {
     </div>
   );
 
-  // Carbon's table keeps its expanded and selected rows by id across the
-  // rows it is handed on every render.
+  // Carbon's table keeps its expanded rows by id across the rows it is
+  // handed on every render.
   const reviewHeaders = useMemo(
     () =>
-      ["test", "result", "status", "runDate", "decision"].map((key) => ({
+      ["test", "result", "flag", "runDate", "decision"].map((key) => ({
         key,
         header: intl.formatMessage({ id: `analyzer.results.column.${key}` }),
       })),
     [intl],
   );
-  const reviewTableRows = reviewRows.map((row) => ({ id: String(row.id) }));
 
-  const heldHeaders = [
-    {
-      key: "labNumber",
-      header: intl.formatMessage({ id: "analyzer.results.column.labNumber" }),
-    },
-    {
-      key: "code",
-      header: intl.formatMessage({ id: "analyzer.results.column.code" }),
-    },
-    {
-      key: "reported",
-      header: intl.formatMessage({ id: "analyzer.results.column.reported" }),
-    },
-    {
-      key: "reason",
-      header: intl.formatMessage({ id: "analyzer.results.column.reason" }),
-    },
-    {
-      key: "nextStep",
-      header: intl.formatMessage({ id: "analyzer.results.column.nextStep" }),
-    },
-  ];
+  const renderSampleTable = (group) => {
+    const byId = new Map(group.reviewRows.map((row) => [String(row.id), row]));
+    return (
+      <DataTable
+        rows={group.reviewRows.map((row) => ({ id: String(row.id) }))}
+        headers={reviewHeaders}
+      >
+        {({
+          rows,
+          headers,
+          getHeaderProps,
+          getRowProps,
+          getExpandedRowProps,
+          getExpandHeaderProps,
+          getTableProps,
+          getTableContainerProps,
+        }) => (
+          <TableContainer {...getTableContainerProps()}>
+            <Table
+              {...getTableProps()}
+              size="md"
+              data-testid="analyzer-results-table"
+            >
+              <TableHead>
+                <TableRow>
+                  <TableExpandHeader enableToggle {...getExpandHeaderProps()} />
+                  {headers.map((header) => (
+                    <TableHeader
+                      key={header.key}
+                      {...getHeaderProps({ header, isSortable: false })}
+                      className={`analyzerResults__col--${header.key}`}
+                    >
+                      {header.header}
+                    </TableHeader>
+                  ))}
+                </TableRow>
+              </TableHead>
+              <TableBody>
+                {rows.map((row) => {
+                  const data = byId.get(row.id);
+                  if (!data) return null;
+                  return (
+                    <React.Fragment key={row.id}>
+                      <TableExpandRow
+                        {...getRowProps({ row })}
+                        data-testid={`result-row-${data.id}`}
+                      >
+                        <TableCell>{renderTest(data, group)}</TableCell>
+                        <TableCell>
+                          {renderResultValue(data)}
+                          {data.note && (
+                            <div>
+                              <Tag type="outline" size="sm">
+                                <FormattedMessage id="analyzer.results.note.tag" />
+                              </Tag>
+                            </div>
+                          )}
+                        </TableCell>
+                        <TableCell>{renderFlag(data)}</TableCell>
+                        <TableCell>{data.completeDate}</TableCell>
+                        <TableCell>{renderDecision(data)}</TableCell>
+                      </TableExpandRow>
+                      {row.isExpanded && (
+                        <TableExpandedRow
+                          colSpan={headers.length + 1}
+                          {...getExpandedRowProps({ row })}
+                        >
+                          {renderDetails(data, group)}
+                        </TableExpandedRow>
+                      )}
+                    </React.Fragment>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </TableContainer>
+        )}
+      </DataTable>
+    );
+  };
 
   const qcHeaders = [
     {
@@ -911,192 +1121,40 @@ const AnalyserResults = (props) => {
           hideCloseButton
         />
       )}
-      {batchSkipped > 0 && (
-        <InlineNotification
-          kind="info"
-          title={intl.formatMessage(
-            { id: "analyzer.results.batch.skipped" },
-            { count: batchSkipped },
-          )}
-          lowContrast
-          onCloseButtonClick={() => setBatchSkipped(0)}
-        />
-      )}
-      {arrows.show && <ServerPageArrows {...arrows} />}
-      {reviewRows.length > 0 && (
-        <DataTable rows={reviewTableRows} headers={reviewHeaders}>
-          {({
-            rows,
-            headers,
-            getHeaderProps,
-            getRowProps,
-            getExpandedRowProps,
-            getExpandHeaderProps,
-            getSelectionProps,
-            getBatchActionProps,
-            getToolbarProps,
-            getTableProps,
-            getTableContainerProps,
-            selectedRows,
-          }) => {
-            const batch = getBatchActionProps();
-            const columnCount = headers.length + 2;
-            const tableRowById = new Map(rows.map((row) => [row.id, row]));
-            return (
-              <TableContainer
-                title={intl.formatMessage(
-                  { id: "analyzer.results.section.review" },
-                  { count: decisionRows.length },
-                )}
-                description={intl.formatMessage({
-                  id: "analyzer.results.section.reviewDescription",
-                })}
-                {...getTableContainerProps()}
-              >
-                <TableToolbar {...getToolbarProps()} size="sm">
-                  <TableBatchActions {...batch}>
-                    <TableBatchAction
-                      renderIcon={Checkmark}
-                      onClick={() =>
-                        decideSelected(selectedRows, "accept", batch.onCancel)
-                      }
-                    >
-                      <FormattedMessage id="analyzer.results.batch.accept" />
-                    </TableBatchAction>
-                    <TableBatchAction
-                      renderIcon={Renew}
-                      onClick={() =>
-                        decideSelected(selectedRows, "retest", batch.onCancel)
-                      }
-                    >
-                      <FormattedMessage id="analyzer.results.batch.retest" />
-                    </TableBatchAction>
-                    <TableBatchAction
-                      renderIcon={Close}
-                      onClick={() =>
-                        decideSelected(selectedRows, "ignore", batch.onCancel)
-                      }
-                    >
-                      <FormattedMessage id="analyzer.results.batch.ignore" />
-                    </TableBatchAction>
-                    <TableBatchAction
-                      renderIcon={Undo}
-                      onClick={() =>
-                        decideSelected(selectedRows, "", batch.onCancel)
-                      }
-                    >
-                      <FormattedMessage id="analyzer.results.batch.clear" />
-                    </TableBatchAction>
-                  </TableBatchActions>
-                </TableToolbar>
-                <Table
-                  {...getTableProps()}
-                  size="lg"
-                  data-testid="analyzer-results-table"
-                >
-                  <TableHead>
-                    <TableRow>
-                      <TableExpandHeader
-                        enableToggle
-                        {...getExpandHeaderProps()}
-                      />
-                      <TableSelectAll {...getSelectionProps()} />
-                      {headers.map((header) => (
-                        <TableHeader
-                          key={header.key}
-                          {...getHeaderProps({ header, isSortable: false })}
-                          className={`analyzerResults__col--${header.key}`}
-                        >
-                          {header.header}
-                        </TableHeader>
-                      ))}
-                    </TableRow>
-                  </TableHead>
-                  <TableBody>
-                    {sampleGroups.map((group) => (
-                      <React.Fragment key={group.key}>
-                        {renderSampleHeader(group, columnCount)}
-                        {group.rows.map((data) => {
-                          const row = tableRowById.get(String(data.id));
-                          if (!row) return null;
-                          return (
-                            <React.Fragment key={row.id}>
-                              <TableExpandRow
-                                {...getRowProps({ row })}
-                                data-testid={`result-row-${data.id}`}
-                              >
-                                <TableSelectRow
-                                  {...getSelectionProps({ row })}
-                                />
-                                <TableCell>{renderTest(data)}</TableCell>
-                                <TableCell>{renderResultValue(data)}</TableCell>
-                                <TableCell>
-                                  {renderStatus(data, group)}
-                                </TableCell>
-                                <TableCell>{data.completeDate}</TableCell>
-                                <TableCell>{renderDecision(data)}</TableCell>
-                              </TableExpandRow>
-                              {row.isExpanded && (
-                                <TableExpandedRow
-                                  colSpan={columnCount}
-                                  {...getExpandedRowProps({ row })}
-                                >
-                                  {renderDetails(data, group)}
-                                </TableExpandedRow>
-                              )}
-                            </React.Fragment>
-                          );
-                        })}
-                      </React.Fragment>
-                    ))}
-                  </TableBody>
-                </Table>
-              </TableContainer>
-            );
-          }}
-        </DataTable>
-      )}
-      {heldRows.length > 0 && (
-        <TableContainer
-          title={intl.formatMessage(
-            { id: "analyzer.results.section.held" },
-            { count: heldRows.length },
-          )}
-          className="analyzerResults__held"
-        >
-          <Table size="md" data-testid="analyzer-results-held-table">
-            <TableHead>
-              <TableRow>
-                {heldHeaders.map((header) => (
-                  <TableHeader key={header.key}>{header.header}</TableHeader>
-                ))}
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {heldRows.map((row) => (
-                <TableRow
-                  key={row.id}
-                  data-testid={`held-analyzer-result-${row.id}`}
-                >
-                  <TableCell>{formatLabNum(row.accessionNumber)}</TableCell>
-                  <TableCell>{row.rawTestCode || row.testName}</TableCell>
-                  <TableCell>{row.rawResultValue || row.result}</TableCell>
-                  <TableCell>
-                    <div className="analyzerResults__reason">
-                      <Tag type="warm-gray" size="sm">
-                        {heldReasonLabel(row)}
-                      </Tag>
-                      {renderHeldExplanation(row)}
-                    </div>
-                  </TableCell>
-                  <TableCell>{renderHeldAction(row)}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      )}
       {tableRows.length > 0 && (
+        <div className="analyzerResults__summary">
+          <span data-testid="analyzer-results-summary">
+            <FormattedMessage
+              id="analyzer.results.summary.samples"
+              values={{ count: sampleGroups.length }}
+            />
+            {" · "}
+            <FormattedMessage
+              id="analyzer.results.summary.toDecide"
+              values={{ count: decisionRows.length }}
+            />
+            {" · "}
+            <FormattedMessage
+              id="analyzer.results.summary.held"
+              values={{ count: heldPatientResults.length }}
+            />
+          </span>
+          {arrows.show && <ServerPageArrows {...arrows} />}
+        </div>
+      )}
+      {sampleGroups.map((group) => (
+        <section
+          key={group.key}
+          className="analyzerResults__sample"
+          data-testid={`sample-group-${group.key}`}
+          aria-label={formatLabNum(group.representative.accessionNumber)}
+        >
+          {renderSampleHeader(group)}
+          {group.reviewRows.length > 0 && renderSampleTable(group)}
+          {group.heldRows.length > 0 && renderHeldRows(group)}
+        </section>
+      ))}
+      {tableRows.length > 0 && hasServerPages(props.results?.paging) && (
         <Pagination
           {...serverPaginationProps({
             paging: props.results?.paging,
@@ -1105,6 +1163,7 @@ const AnalyserResults = (props) => {
             onPageRequest: (pageNumber) => props.loadPage?.(pageNumber),
             intl,
           })}
+          pageSizeInputDisabled
         />
       )}
       {qcResults.length > 0 && (

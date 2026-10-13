@@ -12,7 +12,14 @@ import {
   Stack,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Redirect, useHistory, useLocation } from "react-router-dom";
+import {
+  Redirect,
+  useHistory,
+  useLocation,
+  useParams,
+  useRouteMatch,
+} from "react-router-dom";
+import { importIssuesPath } from "./analyzerResultsRoutes.jsx";
 import { getFromOpenElisServer } from "../utils/Utils";
 import { hasServerPages, serverPageSizeOf } from "../utils/serverPaging";
 import PageBreadCrumb from "../common/PageBreadCrumb";
@@ -25,7 +32,7 @@ const importIssuesBreadcrumbs = [
   { label: "analyzer.navigation.analyzers", link: "/analyzers" },
   {
     label: "analyzer.importIssues.title",
-    link: "/AnalyzerResults?view=import-issues",
+    link: importIssuesPath,
   },
 ];
 
@@ -73,12 +80,17 @@ const Index = () => {
   const [labNumber, setLabNumber] = useState("");
   const location = useLocation();
   const history = useHistory();
-  const selectedAnalyzerId = new URLSearchParams(location.search).get("id");
+  const params = useParams();
+  const onImportIssues = Boolean(useRouteMatch({ path: importIssuesPath }));
+  const selectedAnalyzerId =
+    params.analyzerId || new URLSearchParams(location.search).get("id");
   const worklistDraft = location.state?.worklistDraft;
   const restoringDraft =
     worklistDraft &&
     String(worklistDraft.analyzerId) === String(selectedAnalyzerId);
-  const view = getAnalyzerResultsView(location.search);
+  const view = onImportIssues
+    ? "import-issues"
+    : getAnalyzerResultsView(location.search);
   const intl = useIntl();
 
   useEffect(() => {
