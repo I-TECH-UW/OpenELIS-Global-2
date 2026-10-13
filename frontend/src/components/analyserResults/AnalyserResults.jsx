@@ -11,6 +11,7 @@ import {
   Button,
   InlineNotification,
   Link as CarbonLink,
+  Modal,
   OverflowMenu,
   OverflowMenuItem,
   Pagination,
@@ -203,6 +204,8 @@ const AnalyserResults = (props) => {
   const [instrumentValues, setInstrumentValues] = useState({});
   const [openDetailIds, setOpenDetailIds] = useState(() => new Set());
   const [selectedSampleKey, setSelectedSampleKey] = useState(null);
+  // The sample whose "Accept all" waits for the reviewer to confirm it.
+  const [confirmAcceptKey, setConfirmAcceptKey] = useState(null);
   // The rows are the server's objects, edited in place so one save posts them
   // all; an edit asks for a render so the controls show the row's new state.
   const [, rowsEdited] = useReducer((n) => n + 1, 0);
@@ -785,11 +788,15 @@ const AnalyserResults = (props) => {
                 <FormattedMessage id="analyzer.placement.viewBundle" />
               </Button>
             )}
-            {total > 0 && sampleIsMatched(group) && (
+            {total > 0 && (
               <Button
                 kind="tertiary"
                 size="sm"
-                onClick={() => decideSample(group, "accept")}
+                onClick={() =>
+                  sampleIsMatched(group)
+                    ? decideSample(group, "accept")
+                    : setConfirmAcceptKey(group.key)
+                }
               >
                 <FormattedMessage id="analyzer.results.sample.acceptAll" />
               </Button>
@@ -860,11 +867,6 @@ const AnalyserResults = (props) => {
           showState={Boolean(group.uniformState)}
           showBundle={false}
         />
-        {total > 0 && !sampleIsMatched(group) && (
-          <p className="analyzerResults__secondary">
-            <FormattedMessage id="analyzer.results.sample.decideEach" />
-          </p>
-        )}
         {awaitingSpecimen && (
           <p className="analyzerResults__secondary">
             <FormattedMessage id="notice.testCatalog.intake.awaitingSpecimen" />
@@ -1235,6 +1237,8 @@ const AnalyserResults = (props) => {
   ];
 
   const decidedCount = decisionRows.filter((row) => decisionOf(row)).length;
+  const confirmGroup =
+    sampleGroups.find((group) => group.key === confirmAcceptKey) || null;
 
   return (
     <div className="analyzerResults">
@@ -1384,6 +1388,41 @@ const AnalyserResults = (props) => {
         receiptId={bundleReceiptId}
         onClose={() => setBundleReceiptId(null)}
       />
+      {confirmGroup && (
+        <Modal
+          open
+          size="sm"
+          modalHeading={intl.formatMessage(
+            { id: "analyzer.results.sample.acceptAll.title" },
+            {
+              count: decidable(confirmGroup).length,
+              labNumber: formatLabNum(
+                confirmGroup.representative.accessionNumber,
+              ),
+            },
+          )}
+          primaryButtonText={intl.formatMessage({
+            id: "analyzer.results.sample.acceptAll",
+          })}
+          secondaryButtonText={intl.formatMessage({
+            id: "label.button.cancel",
+          })}
+          onRequestSubmit={() => {
+            decideSample(confirmGroup, "accept");
+            setConfirmAcceptKey(null);
+          }}
+          onRequestClose={() => setConfirmAcceptKey(null)}
+        >
+          <p className="analyzerResults__confirmBody">
+            <FormattedMessage id="analyzer.results.sample.acceptAll.body" />
+          </p>
+          <PlacementNotice
+            row={confirmGroup.representative}
+            showChooser={false}
+            showBundle={false}
+          />
+        </Modal>
+      )}
     </div>
   );
 };

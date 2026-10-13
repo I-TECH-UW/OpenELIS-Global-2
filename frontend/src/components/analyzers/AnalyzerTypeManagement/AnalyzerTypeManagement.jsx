@@ -26,7 +26,7 @@ import {
 import { Add, Copy } from "@carbon/icons-react";
 import { FormattedMessage, useIntl } from "react-intl";
 import { useHistory, useLocation } from "react-router-dom";
-import PageBreadCrumb from "../../common/PageBreadCrumb";
+import AnalyzerPageHeader from "../AnalyzerPageHeader";
 import { safeInternalPath } from "../../utils/UrlUtils";
 import { getAnalyzerTypeCatalog } from "../../../services/analyzerService";
 import AnalyzerTypeLifecycleModals from "./AnalyzerTypeLifecycleModals";
@@ -336,42 +336,35 @@ const AnalyzerTypeManagement = () => {
 
   return (
     <>
-      <PageBreadCrumb
-        breadcrumbs={[
-          { label: "home.label", link: "/" },
-          { label: "analyzer.page.hierarchy.root", link: "/analyzers" },
-          {
-            label: "analyzerType.page.title",
-            link: "/analyzers/types",
-            isCurrentPage: true,
-          },
-        ]}
-      />
       <Grid fullWidth className="analyzer-type-page">
         <Column lg={16} md={8} sm={4}>
-          <div className="analyzer-type-page__heading">
-            <div>
-              <h1>
-                <FormattedMessage id="analyzerType.page.title" />
-              </h1>
-              <p className="analyzer-type-page__subtitle">
-                <FormattedMessage id="analyzerType.page.subtitle" />
-              </p>
-            </div>
-            <div className="analyzer-type-page__actions">
-              <Button
-                kind="secondary"
-                renderIcon={Copy}
-                onClick={() => openAction("duplicate")}
-              >
-                <FormattedMessage id="analyzerType.button.duplicate" />
-              </Button>
-              <Button renderIcon={Add} onClick={() => openAction("create")}>
-                <FormattedMessage id="analyzerType.button.create" />
-              </Button>
-            </div>
-          </div>
-
+          <AnalyzerPageHeader
+            breadcrumbs={[
+              { label: "home.label", link: "/" },
+              { label: "analyzer.page.hierarchy.root", link: "/analyzers" },
+              {
+                label: "analyzerType.page.title",
+                link: "/analyzers/types",
+                isCurrentPage: true,
+              },
+            ]}
+            title={<FormattedMessage id="analyzerType.page.title" />}
+            subtitle={<FormattedMessage id="analyzerType.page.subtitle" />}
+            actions={
+              <>
+                <Button
+                  kind="secondary"
+                  renderIcon={Copy}
+                  onClick={() => openAction("duplicate")}
+                >
+                  <FormattedMessage id="analyzerType.button.duplicate" />
+                </Button>
+                <Button renderIcon={Add} onClick={() => openAction("create")}>
+                  <FormattedMessage id="analyzerType.button.create" />
+                </Button>
+              </>
+            }
+          />
           <InlineNotification
             className="analyzer-type-page__explainer"
             kind="info"

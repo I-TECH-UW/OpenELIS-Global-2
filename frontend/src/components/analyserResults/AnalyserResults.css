@@ -562,3 +562,7 @@
     margin-bottom: 0.25rem;
   }
 }
+
+.analyzerResults__confirmBody {
+  margin-bottom: 1rem;
+}

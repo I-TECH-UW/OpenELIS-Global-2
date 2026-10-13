@@ -714,7 +714,11 @@ describe("AnalyzersList", () => {
     );
     expect(screen.queryByRole("alertdialog")).not.toBeInTheDocument();
     expect(screen.getByTestId("held-results-tag-1")).toHaveTextContent(
-      "Needs attention",
+      "2 held results",
+    );
+    expect(screen.getByTestId("held-results-tag-1")).toHaveAttribute(
+      "href",
+      "/analyzers/1/results",
     );
 
     await userEvent.click(

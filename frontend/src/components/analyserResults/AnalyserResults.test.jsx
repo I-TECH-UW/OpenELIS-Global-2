@@ -135,7 +135,7 @@ describe("AnalyserResults", () => {
     getFromServer.mockReset();
   });
 
-  it("offers Accept all only on a sample whose every result is matched", () => {
+  it("accepts a matched sample at once, and asks first for a sample that is not", () => {
     const unordered = matched("2002", 2, {
       placement: {
         state: "UNORDERED_ONE_FITS",
@@ -148,23 +148,29 @@ describe("AnalyserResults", () => {
     const first = matched("2001", 1);
     renderResults([first, unordered]);
 
-    // The matched sample is in view first and offers Accept all.
-    const acceptAll = screen.getByRole("button", { name: "Accept all" });
-    expect(screen.getByTestId("sample-detail")).toContainElement(acceptAll);
-    fireEvent.click(acceptAll);
+    // The matched sample is in view first; its Accept all needs no question.
+    fireEvent.click(screen.getByRole("button", { name: "Accept all" }));
+    expect(
+      screen.queryByRole("dialog", { name: /Accept all/ }),
+    ).not.toBeInTheDocument();
     expect(decision("2001").checked).toBe(true);
 
+    // The unordered sample asks first, with its placement in view.
     showSample("2");
+    fireEvent.click(screen.getByRole("button", { name: "Accept all" }));
+    const dialog = screen.getByRole("dialog", {
+      name: "Accept all 1 results for ACC-2?",
+    });
+    expect(dialog).toHaveTextContent("Test not ordered");
     expect(decision("2002").checked).toBe(false);
+    fireEvent.click(within(dialog).getByRole("button", { name: "Accept all" }));
     expect(
-      screen.queryByRole("button", { name: "Accept all" }),
+      screen.queryByRole("dialog", { name: /Accept all/ }),
     ).not.toBeInTheDocument();
-    expect(
-      screen.getByText(/Decide each result on its own/),
-    ).toBeInTheDocument();
+    expect(decision("2002").checked).toBe(true);
   });
 
-  it("offers no Accept all on a sample whose patient cannot be checked against the order", () => {
+  it("asks before accepting a sample whose patient cannot be checked against the order", () => {
     const first = matched("2101", 1, {
       placement: {
         ...matched("2101", 1).placement,
@@ -183,10 +189,11 @@ describe("AnalyserResults", () => {
     expect(decision("2101").checked).toBe(true);
 
     showSample("2");
+    fireEvent.click(screen.getByRole("button", { name: "Accept all" }));
+    const dialog = screen.getByRole("dialog", { name: /Accept all/ });
+    expect(dialog).toHaveTextContent("PAT-77");
+    fireEvent.click(within(dialog).getByRole("button", { name: "Cancel" }));
     expect(decision("2102").checked).toBe(false);
-    expect(
-      screen.queryByRole("button", { name: "Accept all" }),
-    ).not.toBeInTheDocument();
   });
 
   it("lets the reviewer write the note a mismatch held for placement needs", () => {

@@ -22,7 +22,7 @@ import { Link } from "react-router-dom";
 // sample's accession number, a box label) can pass it directly: an id that
 // has no translation falls back to itself instead of raising a react-intl
 // missing-message error.
-const PageBreadCrumb = ({ breadcrumbs }) => {
+const PageBreadCrumb = ({ breadcrumbs, noTrailingSlash = false }) => {
   const intl = useIntl();
   const anyExplicitCurrent = breadcrumbs.some((b) => b.isCurrentPage === true);
   const lastIndex = breadcrumbs.length - 1;
@@ -31,7 +31,7 @@ const PageBreadCrumb = ({ breadcrumbs }) => {
   return (
     <Grid fullWidth={true}>
       <Column lg={16} md={8} sm={4}>
-        <Breadcrumb>
+        <Breadcrumb noTrailingSlash={noTrailingSlash}>
           {breadcrumbs.map((breadcrumb, index) => {
             const label = intl.formatMessage({
               id: breadcrumb.label,

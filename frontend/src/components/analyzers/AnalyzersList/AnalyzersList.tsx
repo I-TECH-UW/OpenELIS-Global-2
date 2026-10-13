@@ -12,7 +12,6 @@ import {
   Search,
   Grid,
   Column,
-  Tile,
   Button,
   Tag,
   OverflowMenu,
@@ -20,7 +19,9 @@ import {
   Dropdown,
   Callout,
 } from "@carbon/react";
-import { Add } from "@carbon/icons-react";
+import { Add, CheckmarkFilled, WarningFilled } from "@carbon/icons-react";
+import { Link as RouterLink } from "react-router-dom";
+import AnalyzerPageHeader from "../AnalyzerPageHeader";
 import { useIntl } from "react-intl";
 import { useHistory, useLocation } from "react-router-dom";
 import {
@@ -44,7 +45,6 @@ import {
   importIssuesPath,
 } from "../../analyserResults/analyzerResultsRoutes.jsx";
 
-import PageBreadCrumb from "../../common/PageBreadCrumb";
 import type { Analyzer, AnalyzerStatus } from "../types";
 import "./AnalyzersList.css";
 
@@ -413,8 +413,8 @@ const AnalyzersList = () => {
   const rows: AnalyzerTableRow[] = filteredAnalyzers.map((analyzer) => {
     const connection = intl.formatMessage({
       id: analyzer.bridgeConnectionId
-        ? "analyzer.connection.reference.configured"
-        : "analyzer.connection.reference.missing",
+        ? "analyzer.connection.state.configured"
+        : "analyzer.connection.state.missing",
     });
 
     const unifiedStatus = analyzer.status || "SETUP";
@@ -453,35 +453,29 @@ const AnalyzersList = () => {
 
   return (
     <div className="analyzers-list" data-testid="analyzers-list">
-      <div
-        className="analyzers-list-header"
-        data-testid="analyzers-list-header"
-      >
-        <div className="analyzers-list-header-title">
-          <PageBreadCrumb
-            breadcrumbs={[
-              { label: "home.label", link: "/" },
-              {
-                label: "analyzer.page.hierarchy.root",
-                link: "/analyzers",
-                isCurrentPage: true,
-              },
-            ]}
-          />
-          <h1>{intl.formatMessage({ id: "analyzer.list.title" })}</h1>
-          <p className="analyzers-list-subtitle">
-            {intl.formatMessage({ id: "analyzer.list.subtitle" })}
-          </p>
-        </div>
-        <Button
-          kind="primary"
-          renderIcon={Add}
-          data-testid="add-analyzer-button"
-          onClick={openSetup}
-        >
-          {intl.formatMessage({ id: "analyzer.action.add" })}
-        </Button>
-      </div>
+      <AnalyzerPageHeader
+        testId="analyzers-list-header"
+        breadcrumbs={[
+          { label: "home.label", link: "/" },
+          {
+            label: "analyzer.page.hierarchy.root",
+            link: "/analyzers",
+            isCurrentPage: true,
+          },
+        ]}
+        title={intl.formatMessage({ id: "analyzer.list.title" })}
+        subtitle={intl.formatMessage({ id: "analyzer.list.subtitle" })}
+        actions={
+          <Button
+            kind="primary"
+            renderIcon={Add}
+            data-testid="add-analyzer-button"
+            onClick={openSetup}
+          >
+            {intl.formatMessage({ id: "analyzer.action.add" })}
+          </Button>
+        }
+      />
 
       {visibleSetupStep && (
         <AnalyzerSetup
@@ -539,42 +533,43 @@ const AnalyzersList = () => {
         />
       )}
 
-      <Grid className="analyzers-list-stats" data-testid="analyzers-list-stats">
-        <Column lg={4} md={2} sm={2}>
-          <Tile data-testid="stat-total">
-            <div className="stat-label">
-              {intl.formatMessage({ id: "analyzer.stat.total" })}
-            </div>
-            <div className="stat-value">{stats.total}</div>
-          </Tile>
-        </Column>
-        <Column lg={4} md={2} sm={2}>
-          <Tile data-testid="stat-active">
-            <div className="stat-label">
-              {intl.formatMessage({ id: "analyzer.stat.active" })}
-            </div>
-            <div className="stat-value">{stats.active}</div>
-          </Tile>
-        </Column>
-        <Column lg={4} md={2} sm={2}>
-          <Tile data-testid="stat-setup">
-            <div className="stat-label">
-              {intl.formatMessage({ id: "analyzer.stat.setup" })}
-            </div>
-            <div className="stat-value">{stats.setup}</div>
-          </Tile>
-        </Column>
-        <Column lg={4} md={2} sm={2}>
-          <Tile data-testid="stat-needs-attention">
-            <div className="stat-label">
-              {intl.formatMessage({ id: "analyzer.stat.needsAttention" })}
-            </div>
-            <div className="stat-value stat-value--warning">
-              {stats.needsAttention}
-            </div>
-          </Tile>
-        </Column>
-      </Grid>
+      <div className="analyzers-list-stats" data-testid="analyzers-list-stats">
+        {[
+          { id: "total", value: stats.total, status: "" },
+          { id: "active", value: stats.active, status: "ACTIVE" },
+          { id: "setup", value: stats.setup, status: "SETUP" },
+          {
+            id: "needs-attention",
+            value: stats.needsAttention,
+            status: "",
+            warning: stats.needsAttention > 0,
+          },
+        ].map((stat) => (
+          <button
+            key={stat.id}
+            type="button"
+            className={`analyzers-list-stat${stat.warning ? " analyzers-list-stat--warning" : ""}${
+              (stat.status || "") === (filters.status || "") &&
+              stat.id !== "needs-attention"
+                ? " analyzers-list-stat--current"
+                : ""
+            }`}
+            data-testid={`stat-${stat.id}`}
+            onClick={() =>
+              stat.id === "needs-attention"
+                ? firstAttentionAnalyzer && openResults(firstAttentionAnalyzer)
+                : handleFilterChange("status", stat.status)
+            }
+          >
+            <span className="stat-value">{stat.value}</span>
+            <span className="stat-label">
+              {intl.formatMessage({
+                id: `analyzer.stat.${stat.id === "needs-attention" ? "needsAttention" : stat.id}`,
+              })}
+            </span>
+          </button>
+        ))}
+      </div>
 
       <div
         className="analyzers-list-filters"
@@ -736,26 +731,39 @@ const AnalyzersList = () => {
 
                               if (headerKey === "name") {
                                 testId = `analyzer-name-${row.id}`;
-                                if (analyzer && hasHeldResults(analyzer)) {
-                                  cellContent = (
-                                    <span>
-                                      {cell.value}{" "}
-                                      <Tag
-                                        type="red"
-                                        size="sm"
-                                        data-testid={`held-results-tag-${row.id}`}
-                                      >
-                                        {intl.formatMessage({
-                                          id: "analyzer.attention.tag",
-                                        })}
-                                      </Tag>
-                                    </span>
-                                  );
-                                }
-                              } else if (headerKey === "type") {
-                                testId = `analyzer-type-${row.id}`;
+                                cellContent = analyzer?.id ? (
+                                  <RouterLink
+                                    className="analyzers-list-name"
+                                    to={analyzerResultsPath(analyzer.id)}
+                                  >
+                                    {cell.value}
+                                  </RouterLink>
+                                ) : (
+                                  cell.value
+                                );
                               } else if (headerKey === "connection") {
                                 testId = `analyzer-connection-${row.id}`;
+                                const configured = Boolean(
+                                  analyzer?.bridgeConnectionId,
+                                );
+                                cellContent = (
+                                  <span className="analyzers-list-indicator">
+                                    {configured ? (
+                                      <CheckmarkFilled
+                                        className="analyzers-list-indicator__icon analyzers-list-indicator__icon--ok"
+                                        aria-hidden="true"
+                                      />
+                                    ) : (
+                                      <WarningFilled
+                                        className="analyzers-list-indicator__icon analyzers-list-indicator__icon--warn"
+                                        aria-hidden="true"
+                                      />
+                                    )}
+                                    {cell.value}
+                                  </span>
+                                );
+                              } else if (headerKey === "type") {
+                                testId = `analyzer-type-${row.id}`;
                               } else if (headerKey === "labUnits") {
                                 testId = `analyzer-lab-units-${row.id}`;
                               } else if (headerKey === "status") {
@@ -779,14 +787,34 @@ const AnalyzersList = () => {
                                     ? "analyzer.status.error_pending"
                                     : `analyzer.status.${unifiedStatus.toLowerCase()}`;
                                 cellContent = (
-                                  <Tag
-                                    type={statusColor}
-                                    data-testid={`status-badge-${row.id}`}
-                                  >
-                                    {intl.formatMessage({
-                                      id: statusKey,
-                                    })}
-                                  </Tag>
+                                  <span className="analyzers-list-status">
+                                    <Tag
+                                      type={statusColor}
+                                      data-testid={`status-badge-${row.id}`}
+                                    >
+                                      {intl.formatMessage({
+                                        id: statusKey,
+                                      })}
+                                    </Tag>
+                                    {analyzer && hasHeldResults(analyzer) && (
+                                      <RouterLink
+                                        className="analyzers-list-held"
+                                        to={analyzerResultsPath(
+                                          analyzer.id || "",
+                                        )}
+                                        data-testid={`held-results-tag-${row.id}`}
+                                      >
+                                        <WarningFilled
+                                          className="analyzers-list-indicator__icon analyzers-list-indicator__icon--warn"
+                                          aria-hidden="true"
+                                        />
+                                        {intl.formatMessage(
+                                          { id: "analyzer.status.held" },
+                                          { count: analyzer.heldResultCount },
+                                        )}
+                                      </RouterLink>
+                                    )}
+                                  </span>
                                 );
                               } else if (headerKey === "actions") {
                                 testId = `analyzer-actions-${row.id}`;

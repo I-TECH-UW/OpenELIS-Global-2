@@ -2,15 +2,7 @@ import React, { useContext, useState, useEffect } from "react";
 import AnalyserResults from "./AnalyserResults";
 import { AlertDialog } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
-import {
-  Heading,
-  Grid,
-  Column,
-  Section,
-  Button,
-  Loading,
-  Stack,
-} from "@carbon/react";
+import { Button, Loading, Stack } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   Redirect,
@@ -22,6 +14,7 @@ import {
 import { importIssuesPath } from "./analyzerResultsRoutes.jsx";
 import { getFromOpenElisServer } from "../utils/Utils";
 import { hasServerPages, serverPageSizeOf } from "../utils/serverPaging";
+import AnalyzerPageHeader from "../analyzers/AnalyzerPageHeader";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import ImportIssuesPanel from "./ImportIssuesPanel";
@@ -269,17 +262,12 @@ const Index = () => {
 
   return (
     <>
-      <Stack gap={5}>
-        <PageBreadCrumb breadcrumbs={breadcrumbs} />
-        <Grid fullWidth={true}>
-          <Column lg={16} md={8} sm={4}>
-            <Section level={1}>
-              <Heading>{pageTitle}</Heading>
-            </Section>
-          </Column>
-        </Grid>
-      </Stack>
       <div className="orderLegendBody analyzerResults__page">
+        <AnalyzerPageHeader
+          breadcrumbs={breadcrumbs}
+          title={pageTitle}
+          subtitle={intl.formatMessage({ id: "analyzer.results.subtitle" })}
+        />
         {notificationVisible === true ? <AlertDialog /> : ""}
         {isLoading && <Loading></Loading>}
         {/* A worklist on several server pages: jump to the page holding a lab number. */}
