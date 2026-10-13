@@ -1,0 +1,278 @@
+/* The page's white wrapper clips its overflow, which would pin the sticky
+   footer to the wrapper instead of the window. */
+.orderLegendBody.analyzerResults__page {
+  overflow: visible;
+}
+
+.analyzerResults {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+.analyzerResults .cds--data-table-container {
+  min-width: 0;
+}
+
+.analyzerResults .cds--data-table-content {
+  overflow-x: auto;
+}
+
+/* The sample's own row above its results. */
+.analyzerResults__sampleRow td {
+  background: var(--cds-layer-accent-01, #e0e0e0);
+  border-top: 1px solid var(--cds-border-subtle-01, #c6c6c6);
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
+
+.analyzerResults__sample {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  column-gap: 2rem;
+  row-gap: 0.5rem;
+}
+
+.analyzerResults__sampleId {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+}
+
+.analyzerResults__labNumber {
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.analyzerResults__secondary {
+  color: var(--cds-text-secondary, #525252);
+  font-size: 0.75rem;
+  font-weight: 400;
+  white-space: normal;
+}
+
+.analyzerResults__sample .placementNotice {
+  flex: 1 1 24rem;
+  min-width: 0;
+}
+
+.analyzerResults__sample .redirectControl {
+  flex: 1 1 20rem;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.placementNotice {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.placementNotice p {
+  margin: 0;
+}
+
+.placementNotice__state {
+  display: flex;
+  align-items: baseline;
+  gap: 0.5rem;
+}
+
+.placementNotice__state .cds--tag {
+  flex-shrink: 0;
+  margin: 0;
+}
+
+.analyzerResults__test {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  min-width: 12rem;
+}
+
+.analyzerResults__status {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+.analyzerResults__status .cds--tag {
+  margin: 0;
+}
+
+.analyzerResults__col--result {
+  width: 14rem;
+}
+
+.analyzerResults .cds--data-table td .cds--text-input {
+  min-width: 7rem;
+}
+
+.analyzerResults__col--runDate {
+  width: 8rem;
+}
+
+.analyzerResults__col--decision {
+  width: 18rem;
+}
+
+.analyzerResults .cds--radio-button-group {
+  flex-wrap: nowrap;
+}
+
+.analyzerResults
+  .cds--radio-button-group
+  .cds--radio-button-wrapper:not(:last-of-type) {
+  margin-right: 1rem;
+}
+
+/* Row details: what the instrument said, the test's components, the note. */
+.analyzerResults__details {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: 1rem 2rem;
+  padding: 0.5rem 0 1rem;
+}
+
+.analyzerResults__note {
+  grid-column: 1 / -1;
+  max-width: 40rem;
+}
+
+.instrumentReported {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.instrumentReported__label {
+  color: var(--cds-text-secondary, #525252);
+  font-size: 0.75rem;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+}
+
+.resultParts {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: 1rem;
+  row-gap: 0.25rem;
+}
+
+.resultParts li {
+  display: contents;
+}
+
+.resultParts__value {
+  display: flex;
+  flex-direction: column;
+  gap: 0.125rem;
+}
+
+.resultParts__label {
+  color: var(--cds-text-secondary, #525252);
+}
+
+.analyzerResults__heldInline {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.analyzerResults__heldInline .cds--tag {
+  margin: 0;
+  align-self: flex-start;
+}
+
+.analyzerResults__reason {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
+.analyzerResults__reason .cds--tag {
+  margin: 0;
+  align-self: flex-start;
+}
+
+.analyzerResults__held .cds--data-table td {
+  white-space: normal;
+}
+
+.analyzerResults__held .cds--data-table td:first-child {
+  white-space: nowrap;
+}
+
+.analyzerResults__empty {
+  padding: 2rem 1rem;
+  text-align: center;
+  color: var(--cds-text-secondary, #525252);
+}
+
+.analyzerResults__empty h4 {
+  color: var(--cds-text-primary, #161616);
+  margin-bottom: 0.5rem;
+}
+
+/* One primary action, kept in view while the reviewer works down the page. */
+.analyzerResults__footer {
+  position: sticky;
+  bottom: 0;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 0.75rem 0;
+  background: var(--cds-layer-01, #ffffff);
+  border-top: 1px solid var(--cds-border-subtle-01, #e0e0e0);
+}
+
+.analyzerResults__decided {
+  color: var(--cds-text-secondary, #525252);
+}
+
+.analyzerResults__labNumberSearch {
+  align-items: flex-end;
+  margin-top: 1rem;
+}
+
+/* Under Carbon's large breakpoint the three decisions stack and the text
+   columns give up their slack, so the row keeps its result and status readable
+   instead of scrolling sideways. */
+@media (max-width: 1055px) {
+  .analyzerResults__col--decision {
+    width: 7rem;
+  }
+
+  .analyzerResults__col--result {
+    width: 9rem;
+  }
+
+  .analyzerResults__test {
+    min-width: 8rem;
+  }
+
+  .analyzerResults .cds--data-table td .cds--text-input {
+    min-width: 5rem;
+  }
+
+  .analyzerResults .cds--radio-button-group {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+
+  .analyzerResults
+    .cds--radio-button-group
+    .cds--radio-button-wrapper:not(:last-of-type) {
+    margin-right: 0;
+    margin-bottom: 0.25rem;
+  }
+}

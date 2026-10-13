@@ -9,6 +9,7 @@ import messages from "../../languages/en.json";
 import { ConfigurationContext, NotificationContext } from "../layout/Layout";
 import AnalyserResults, {
   buildHeldResultResolutionUrl,
+  groupBySample,
 } from "./AnalyserResults";
 
 const { postResults, getFromServer } = vi.hoisted(() => ({
@@ -56,10 +57,7 @@ const mappedQualitativeResult = {
   sampleGroupingNumber: 1,
 };
 
-const renderResults = (
-  resultList = [heldResult],
-  sampleGroup = [resultList[0]],
-) => {
+const renderResults = (resultList = [heldResult]) => {
   const history = createMemoryHistory({
     initialEntries: ["/AnalyzerResults?id=2001"],
   });
@@ -78,7 +76,6 @@ const renderResults = (
           >
             <AnalyserResults
               results={{ resultList: resultList.map((row) => ({ ...row })) }}
-              sampleGroup={sampleGroup}
               analyzerId="2001"
             />
           </NotificationContext.Provider>
@@ -87,6 +84,24 @@ const renderResults = (
     </Router>,
   );
   return { ...view, history, addNotification };
+};
+
+/** The decision radio of a result row, by field. */
+const decision = (id, field = "isAccepted") =>
+  document.getElementById(`resultList${id}.${field}`);
+
+/** Opens the row's details: the instrument's metadata, the components, the note. */
+const openDetails = (id) =>
+  fireEvent.click(
+    within(screen.getByTestId(`result-row-${id}`)).getByRole("button", {
+      name: "Expand current row",
+    }),
+  );
+
+/** Selects every row and decides them together from the batch bar. */
+const decideAll = (name) => {
+  fireEvent.click(screen.getByRole("checkbox", { name: "Select all rows" }));
+  fireEvent.click(screen.getByRole("button", { name }));
 };
 
 const matched = (id, group, extra = {}) => ({
@@ -111,7 +126,7 @@ describe("AnalyserResults", () => {
     getFromServer.mockReset();
   });
 
-  it("ticks only the groupings whose every result is matched when saving all", () => {
+  it("accepts only the groupings whose every result is matched when accepting a selection", () => {
     const unordered = matched("2002", 2, {
       placement: {
         state: "UNORDERED_ONE_FITS",
@@ -122,19 +137,18 @@ describe("AnalyserResults", () => {
       },
     });
     const first = matched("2001", 1);
-    renderResults([first, unordered], [first, unordered]);
+    renderResults([first, unordered]);
 
-    fireEvent.click(screen.getByLabelText("Save All Results"));
+    decideAll("Accept");
 
-    expect(document.getElementById("resultList2001.isAccepted").checked).toBe(
-      true,
-    );
-    expect(document.getElementById("resultList2002.isAccepted").checked).toBe(
-      false,
-    );
+    expect(decision("2001").checked).toBe(true);
+    expect(decision("2002").checked).toBe(false);
+    expect(
+      screen.getByText(/1 selected result was left undecided/),
+    ).toBeInTheDocument();
   });
 
-  it("leaves a grouping unticked when saving all if its patient cannot be checked against the order", () => {
+  it("leaves a grouping undecided when accepting a selection if its patient cannot be checked against the order", () => {
     const first = matched("2101", 1, {
       placement: {
         ...matched("2101", 1).placement,
@@ -147,16 +161,12 @@ describe("AnalyserResults", () => {
         patient: { status: "NO_ORDER_PATIENT", instrumentId: "PAT-77" },
       },
     });
-    renderResults([first, unverified], [first, unverified]);
+    renderResults([first, unverified]);
 
-    fireEvent.click(screen.getByLabelText("Save All Results"));
+    decideAll("Accept");
 
-    expect(document.getElementById("resultList2101.isAccepted").checked).toBe(
-      true,
-    );
-    expect(document.getElementById("resultList2102.isAccepted").checked).toBe(
-      false,
-    );
+    expect(decision("2101").checked).toBe(true);
+    expect(decision("2102").checked).toBe(false);
   });
 
   it("lets the reviewer write the note a mismatch held for placement needs", () => {
@@ -169,6 +179,7 @@ describe("AnalyserResults", () => {
     });
     renderResults([held]);
 
+    openDetails("3101");
     fireEvent.change(document.getElementById("resultList3101.note"), {
       target: { value: "Relabelled tube, checked with the ward" },
     });
@@ -267,9 +278,13 @@ describe("AnalyserResults", () => {
   it("keeps a held qualitative result visible and links it to the analyzer's own mapping", async () => {
     renderResults();
 
-    expect(await screen.findByText("Held")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Result value not in the mapping"),
+    ).toBeInTheDocument();
     expect(screen.getByText("POSITIVE")).toBeInTheDocument();
-    expect(screen.getByText("Analyzer code: QUAL_RESULT")).toBeInTheDocument();
+    expect(
+      screen.getByRole("cell", { name: "QUAL_RESULT" }),
+    ).toBeInTheDocument();
 
     expect(
       screen.getByRole("link", { name: "Review analyzer mapping" }),
@@ -290,10 +305,7 @@ describe("AnalyserResults", () => {
   });
 
   it("accepts a mapped result after a held row in the same group", async () => {
-    renderResults(
-      [heldResult, mappedQualitativeResult],
-      [mappedQualitativeResult],
-    );
+    renderResults([heldResult, mappedQualitativeResult]);
 
     fireEvent.click(document.getElementById("resultList1005.isAccepted"));
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
@@ -304,12 +316,10 @@ describe("AnalyserResults", () => {
   });
 
   it("carries unsaved review choices to mapping and back", () => {
-    const { history } = renderResults(
-      [heldResult, mappedQualitativeResult],
-      [mappedQualitativeResult],
-    );
+    const { history } = renderResults([heldResult, mappedQualitativeResult]);
 
     fireEvent.click(document.getElementById("resultList1005.isAccepted"));
+    openDetails("1005");
     fireEvent.change(document.getElementById("resultList1005.note"), {
       target: { value: "Review before release" },
     });
@@ -480,10 +490,37 @@ describe("AnalyserResults", () => {
   it("offers no failed-run dismissal for a result held for its mapping", async () => {
     renderResults();
 
-    await screen.findByText("Held");
+    await screen.findByText("Result value not in the mapping");
     expect(
       screen.queryByRole("button", { name: "Dismiss as failed run" }),
     ).not.toBeInTheDocument();
+  });
+
+  it("lets a mapped result speak for its sample when a held one comes first", () => {
+    const awaiting = matched("8001", 1, {
+      importIssueReason: "awaiting_placement",
+    });
+    const mapped = matched("8002", 1);
+    const other = matched("8003", 2);
+
+    const groups = groupBySample([awaiting, mapped, other]);
+
+    expect(groups.map((group) => group.representative.id)).toEqual([
+      "8002",
+      "8003",
+    ]);
+    expect(groups[0].uniformState).toBe("RESOLVED");
+  });
+
+  it("states a placement once for the sample only when its results share it", () => {
+    const [group] = groupBySample([
+      matched("8101", 1),
+      matched("8102", 1, {
+        placement: { ...matched("8102", 1).placement, state: "NEW_SAMPLE" },
+      }),
+    ]);
+
+    expect(group.uniformState).toBeNull();
   });
 
   it("links an unknown analyzer test to its mapping and named analyzer", () => {
@@ -518,6 +555,7 @@ describe("AnalyserResults", () => {
       },
     ]);
 
+    openDetails("1005");
     const reported = await screen.findByTestId("instrument-reported-1005");
     expect(reported).toHaveTextContent("Instrument reported");
     expect(reported).toHaveTextContent("Flag: H");
@@ -531,6 +569,7 @@ describe("AnalyserResults", () => {
     renderResults([mappedQualitativeResult]);
 
     expect(await screen.findByText("NOT DETECTED")).toBeInTheDocument();
+    openDetails("1005");
     expect(
       screen.queryByTestId("instrument-reported-1005"),
     ).not.toBeInTheDocument();
@@ -579,14 +618,20 @@ describe("AnalyserResults", () => {
       ).not.toBeNull();
     });
 
-    it("unticking a test's Save leaves its parts unsaved with it", async () => {
+    it("clearing a test's decision leaves its parts undecided with it", async () => {
       renderResults([
         { ...viralLoad, isAccepted: true },
         part("7002", "Log viral load", "3.00", { isAccepted: true }),
       ]);
-      await screen.findByTestId("result-parts-7001");
+      expect(decision("7001").checked).toBe(true);
 
-      fireEvent.click(document.getElementById("resultList7001.isAccepted"));
+      fireEvent.click(
+        within(screen.getByTestId("result-row-7001")).getByRole("checkbox", {
+          name: "Select row",
+        }),
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Clear decision" }));
+      expect(decision("7001").checked).toBe(false);
       fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
       const submitted = JSON.parse(postResults.mock.calls[0][1]);
@@ -598,9 +643,11 @@ describe("AnalyserResults", () => {
       ]);
     });
 
-    it("shows a test's parts beneath its main result, under its decision", async () => {
+    it("shows a test's parts in its row's details, under its decision", async () => {
       renderResults([viralLoad, part("7002", "Log viral load", "3.00")]);
 
+      expect(screen.getByText("1 component")).toBeInTheDocument();
+      openDetails("7001");
       const parts = await screen.findByTestId("result-parts-7001");
       expect(parts).toHaveTextContent("Log viral load");
       expect(parts).toHaveTextContent("3.00");
@@ -622,6 +669,7 @@ describe("AnalyserResults", () => {
         }),
       ]);
 
+      openDetails("7001");
       const parts = await screen.findByTestId("result-parts-7001");
       expect(within(parts).getByText("Call")).toBeInTheDocument();
       expect(within(parts).getByText("Held")).toBeInTheDocument();
@@ -640,6 +688,7 @@ describe("AnalyserResults", () => {
         }),
       ]);
 
+      openDetails("7001");
       const parts = await screen.findByTestId("result-parts-7001");
       expect(
         within(parts).getByRole("link", { name: "Review analyzer mapping" }),
@@ -656,6 +705,7 @@ describe("AnalyserResults", () => {
         }),
       ]);
 
+      openDetails("7001");
       const parts = await screen.findByTestId("result-parts-7001");
       fireEvent.click(
         within(parts).getByRole("button", { name: "Dismiss as failed run" }),
@@ -672,7 +722,7 @@ describe("AnalyserResults", () => {
     const resultRow = await screen.findByRole("row", {
       name: /MTB-RIF NOT DETECTED/,
     });
-    fireEvent.click(within(resultRow).getAllByRole("checkbox")[0]);
+    fireEvent.click(within(resultRow).getByRole("radio", { name: "Accept" }));
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
     expect(postResults).toHaveBeenCalledTimes(1);
@@ -686,7 +736,8 @@ describe("AnalyserResults", () => {
     const resultRow = await screen.findByRole("row", {
       name: /MTB-RIF NOT DETECTED/,
     });
-    fireEvent.click(within(resultRow).getAllByRole("checkbox")[0]);
+    fireEvent.click(within(resultRow).getByRole("radio", { name: "Accept" }));
+    openDetails("1005");
     fireEvent.change(document.getElementById("resultList1005.note"), {
       target: { value: "Instrument keyed a different patient ID" },
     });
@@ -736,7 +787,7 @@ describe("AnalyserResults", () => {
     fireEvent.change(within(resultRow).getByDisplayValue("5.6"), {
       target: { value: "25" },
     });
-    fireEvent.click(within(resultRow).getAllByRole("checkbox")[0]);
+    fireEvent.click(within(resultRow).getByRole("radio", { name: "Accept" }));
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
     expect(

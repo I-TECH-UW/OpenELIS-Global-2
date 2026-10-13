@@ -74,29 +74,6 @@ describe("Analyzer results page", () => {
     expect(getFromOpenElisServer).not.toHaveBeenCalled();
   });
 
-  it("selects a mapped result as the action row when a held result comes first", async () => {
-    getFromOpenElisServer.mockImplementation((_url, callback) =>
-      callback({
-        type: "GeneXpert",
-        resultList: [
-          {
-            id: "held",
-            sampleGroupingNumber: 1,
-            importIssueReason: "unknown_analyzer_result_value",
-          },
-          { id: "mapped", sampleGroupingNumber: 1 },
-        ],
-        paging: { totalPages: 1, currentPage: 1 },
-      }),
-    );
-
-    renderPage("/AnalyzerResults?id=5");
-
-    await waitFor(() =>
-      expect(tableProps.mock.lastCall[0].sampleGroup[0].id).toBe("mapped"),
-    );
-  });
-
   it("restores unsaved choices for current worklist rows after mapping review", async () => {
     getFromOpenElisServer.mockImplementation((_url, callback) =>
       callback({
@@ -139,12 +116,12 @@ describe("Analyzer results page", () => {
     expect(history.location.state).toBeUndefined();
   });
 
-  it("finds an accession on a one-page analyzer worklist", async () => {
+  it("finds the page an accession is on when the worklist spans several", async () => {
     const response = {
       type: "FluoroCycler XT",
       resultList: [{ accessionNumber: "ACC-001", sampleGroupingNumber: 1 }],
       paging: {
-        totalPages: 1,
+        totalPages: 2,
         currentPage: 1,
         searchTermToPage: [{ id: "ACC-001", value: "1" }],
       },

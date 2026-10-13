@@ -2,7 +2,6 @@ import React, { useContext, useState, useEffect } from "react";
 import AnalyserResults from "./AnalyserResults";
 import { AlertDialog } from "../common/CustomNotification";
 import { NotificationContext } from "../layout/Layout";
-import { NotificationKinds } from "../common/CustomNotification";
 import {
   Heading,
   Grid,
@@ -15,7 +14,7 @@ import {
 import { FormattedMessage, useIntl } from "react-intl";
 import { Redirect, useHistory, useLocation } from "react-router-dom";
 import { getFromOpenElisServer } from "../utils/Utils";
-import { serverPageSizeOf } from "../utils/serverPaging";
+import { hasServerPages, serverPageSizeOf } from "../utils/serverPaging";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 import CustomLabNumberInput from "../common/CustomLabNumberInput";
 import ImportIssuesPanel from "./ImportIssuesPanel";
@@ -59,8 +58,7 @@ export const getAnalyzerResultsView = (search) =>
   new URLSearchParams(search).get("view") || "";
 
 const Index = () => {
-  const { notificationVisible, setNotificationVisible, addNotification } =
-    useContext(NotificationContext);
+  const { notificationVisible } = useContext(NotificationContext);
   const [results, setResults] = useState({ resultList: [] });
   const [restoredEdits, setRestoredEdits] = useState({});
   // The analyzer's display name, resolved server-side from the id in the URL.
@@ -68,7 +66,6 @@ const Index = () => {
   const [queryValue, setQueryValue] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [url, setUrl] = useState("");
-  const [sampleGroup, setSampleGroup] = useState([]);
   const [searchTermToPage, setSearchTermToPage] = useState([]);
   // The rows a full server page holds, read off the responses; Carbon's items
   // per page is pinned to it so Carbon's page is the server's page.
@@ -123,23 +120,6 @@ const Index = () => {
         handleResults(data);
       }
     });
-  };
-
-  const extractUniqueGroups = (data) => {
-    const reviewPriority = (item) =>
-      !item.importIssueReason
-        ? 2
-        : reviewableHolds.includes(item.importIssueReason)
-          ? 1
-          : 0;
-    const groups = new Map();
-    data.forEach((item) => {
-      const current = groups.get(item.sampleGroupingNumber);
-      if (!current || reviewPriority(item) > reviewPriority(current)) {
-        groups.set(item.sampleGroupingNumber, item);
-      }
-    });
-    return Array.from(groups.values());
   };
 
   /** One server page, the same request for the arrows, the lab number search and Carbon. */
@@ -247,20 +227,6 @@ const Index = () => {
           ? data.paging.searchTermToPage
           : [],
       );
-
-      if (resultList.length == 0) {
-        setSampleGroup([]);
-        addNotification({
-          kind: NotificationKinds.warning,
-          title: intl.formatMessage({ id: "notification.title" }),
-          message:
-            intl.formatMessage({ id: "validation.search.noresult.analyser" }) +
-            (data.type || analyzerName || queryValue),
-        });
-        setNotificationVisible(true);
-      } else {
-        setSampleGroup(extractUniqueGroups(resultList));
-      }
     }
   };
   if (view === "import-issues") {
@@ -301,48 +267,48 @@ const Index = () => {
           </Column>
         </Grid>
       </Stack>
-      <div className="orderLegendBody">
+      <div className="orderLegendBody analyzerResults__page">
         {notificationVisible === true ? <AlertDialog /> : ""}
         {isLoading && <Loading></Loading>}
-        <>
-          <Grid>
-            <Column lg={8} md={4} sm={4}>
-              <CustomLabNumberInput
-                name="Lab Number"
-                value={labNumber}
-                labelText={intl.formatMessage({
-                  id: "input.placeholder.labNo",
-                  defaultMessage: "input.placeholder.labNo",
-                })}
-                id="Lab Number"
-                onChange={(e, rawVal) => {
-                  setLabNumber(rawVal ? rawVal : e?.target?.value);
-                }}
-              />
-            </Column>
-            <Column lg={2} md={8} sm={4}>
-              <Button
-                style={{ marginTop: "20px" }}
-                onClick={() => {
-                  const pageMapping = searchTermToPage.find(
-                    (item) => item.id === labNumber,
-                  );
-                  if (!pageMapping) {
-                    return;
-                  }
-                  loadResultsPage(pageMapping.value);
-                }}
-              >
-                <FormattedMessage id="referral.search" />{" "}
-              </Button>
-            </Column>
-          </Grid>
-        </>
+        {/* A worklist on several server pages: jump to the page holding a lab number. */}
+        {hasServerPages(results.paging) && (
+          <Stack
+            orientation="horizontal"
+            gap={4}
+            className="analyzerResults__labNumberSearch"
+          >
+            <CustomLabNumberInput
+              name="Lab Number"
+              value={labNumber}
+              labelText={intl.formatMessage({
+                id: "input.placeholder.labNo",
+                defaultMessage: "input.placeholder.labNo",
+              })}
+              id="Lab Number"
+              onChange={(e, rawVal) => {
+                setLabNumber(rawVal ? rawVal : e?.target?.value);
+              }}
+            />
+            <Button
+              kind="tertiary"
+              onClick={() => {
+                const pageMapping = searchTermToPage.find(
+                  (item) => item.id === labNumber,
+                );
+                if (!pageMapping) {
+                  return;
+                }
+                loadResultsPage(pageMapping.value);
+              }}
+            >
+              <FormattedMessage id="referral.search" />
+            </Button>
+          </Stack>
+        )}
         <AnalyserResults
           analyzerId={queryValue}
           results={results}
           restoredEdits={restoredEdits}
-          sampleGroup={sampleGroup}
           refreshResults={refreshResults}
           serverPageSize={serverPageSize}
           loadPage={loadResultsPage}

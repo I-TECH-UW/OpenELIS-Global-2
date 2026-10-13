@@ -75,24 +75,26 @@ const ResultParts = ({ headId, parts, renderHeld }) => {
           <span className="resultParts__label">
             {part.componentLabel || part.testName}
           </span>{" "}
-          {renderHeld &&
-          part.importIssueReason &&
-          !reviewableHolds.includes(part.importIssueReason) ? (
-            renderHeld(part)
-          ) : (
-            <>
-              <strong>{partValue(part)}</strong>
-              {part.importIssueReason && (
-                <>
-                  {" "}
-                  <Tag type="warm-gray" size="sm">
-                    <FormattedMessage id="analyzer.results.held.tag" />
-                  </Tag>
-                </>
-              )}
-            </>
-          )}
-          <InstrumentReported row={part} />
+          <div className="resultParts__value">
+            {renderHeld &&
+            part.importIssueReason &&
+            !reviewableHolds.includes(part.importIssueReason) ? (
+              renderHeld(part)
+            ) : (
+              <>
+                <strong>{partValue(part)}</strong>
+                {part.importIssueReason && (
+                  <>
+                    {" "}
+                    <Tag type="warm-gray" size="sm">
+                      <FormattedMessage id="analyzer.results.held.tag" />
+                    </Tag>
+                  </>
+                )}
+              </>
+            )}
+            <InstrumentReported row={part} />
+          </div>
         </li>
       ))}
     </ul>
