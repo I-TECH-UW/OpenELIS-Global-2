@@ -2,6 +2,7 @@ package org.openelisglobal.microbiology;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import jakarta.persistence.EntityManager;
@@ -166,6 +167,40 @@ public class MicroWhonetPersistenceIntegrationTest extends BaseWebContextSensiti
                 persisted.getPopulationSelection().getSignificance());
         assertTrue(new String(result.getContent(), java.nio.charset.StandardCharsets.UTF_8)
                 .contains(scenario.accessionNumber));
+    }
+
+    @Test
+    public void aReleasedCaseWithNoStoredWorkflowTypeIsSelected() {
+        String performedBy = fixtures.defaultUserId();
+        MicrobiologyUatScenarioRequestForm request = new MicrobiologyUatScenarioRequestForm();
+        request.scenario = "M4";
+        request.scenarioKey = "integration-m4-unstamped-" + UUID.randomUUID();
+        MicrobiologyUatScenarioForm scenario = uatScenarioService.provision(request, performedBy);
+        Timestamp collectionDate = Timestamp.valueOf("2026-07-13 09:00:00");
+        SampleItem sampleItem = sampleItemService.get(scenario.sampleItemId);
+        sampleItem.setCollectionDate(collectionDate);
+        sampleItem.setSysUserId(performedBy);
+        sampleItemService.update(sampleItem);
+        MicroIsolate isolate = isolateService.createIsolate(scenario.caseId, "WHONET-UNSTAMPED", "Gram negative rods",
+                "Lactose fermenting colonies", MicroIsolateSignificance.CLINICALLY_SIGNIFICANT, performedBy);
+        isolateService.updateIdentification(isolate.getId(), scenario.organismId, "Reference organism (unstamped)",
+                MicroIsolateSignificance.CLINICALLY_SIGNIFICANT, MicroIsolateIdentificationStatus.CONFIRMED,
+                "MALDI_TOF", new BigDecimal("99.5"), performedBy);
+        MicroAstRun run = astService.startRun(isolate.getId(), scenario.astPanelId, scenario.activeBreakpointStandardId,
+                performedBy);
+        astService.getPanelAntibiotics(scenario.astPanelId).forEach(ordered -> astService.recordReading(run.getId(),
+                ordered.getAntibioticId(), MicroAstMethod.MIC, new BigDecimal("4"), performedBy));
+        astService.reviewRun(run.getId(), performedBy);
+        MicroCase released = reportReleaseService.releaseFinal(scenario.caseId, performedBy);
+        // The M4 seeder stamps workflow_type; current cases leave it null.
+        entityManager.createQuery("update MicroCase c set c.workflowType = null where c.id = :id")
+                .setParameter("id", released.getId()).executeUpdate();
+        entityManager.flush();
+        entityManager.refresh(released);
+
+        assertNull(released.getWorkflowType());
+        assertEquals(List.of(released), caseDAO.getFinalizedBacteriologyByCollectionDateRange(collectionDate,
+                new Timestamp(collectionDate.getTime() + 1_000)));
     }
 
     @Test
