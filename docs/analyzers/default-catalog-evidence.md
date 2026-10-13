@@ -1,105 +1,62 @@
-# Shipped analyzer clinical defaults
+# The analyzer harness dictionary
 
-Core analyzer tests load the application catalog from
-`src/main/resources/configuration/`, following normal database migrations. They
-do not install a separate test catalog or repair analyzer mappings. Bridge
-profiles define the instrument codes and runtime behavior; OpenELIS resolves
-those codes to its local clinical catalog.
+Bridge profiles define the instrument's codes, values and records, each with
+standard codes. OpenELIS binds a profile's defaults by exact standard-code match
+against its local catalog. The analyzer harness loads its own dictionary,
+`projects/analyzer-harness/dictionary/`, holding only what the analyzer stories
+use, so every shipped baseline profile binds every test, record and value on a
+fresh setup with no operator work. It is test configuration, not the catalog a
+site receives.
 
-## Xpert rifampin-resistance outcomes
+## How it loads
 
-The supplied `Xpert RIF Resistance` test uses `DETECTED`, `NOT DETECTED` and
-`Indeterminate`. The pinned Bridge profile reports the corresponding raw values
-`DETECTED`, `NOT DETECTED` and `INDETERMINATE`; the generic resolver already
-handles capitalization differences.
+The `harness-catalog-init` service copies the dictionary into the writable
+`configuration-data` volume before OpenELIS starts, keeping any file already
+there (a Catalog Import upload, for example). OpenELIS loads it through its
+ordinary configuration loader, domain by domain in load order. A domain the
+dictionary supplies replaces OpenELIS's built-in files for that domain; every
+other domain loads the built-in files, as in any deployment. Nothing else that
+runs on the harness (its fixtures and specs) depends on a row only this
+dictionary adds or changes.
 
-These are molecular resistance-detection outcomes. They must not be translated
-by a global detected-to-resistant or not-detected-to-susceptible rule. The
-[Cepheid instructions, 303-0942 Rev. B, Results](https://web-support.cepheid.com/Package%20Insert%20Files/Xpert%20MTB-RIF/Xpert%20MTB-RIF%20ENGLISH%20IFU%20303-0942%20Rev%20B.pdf)
-describe presence, absence or an indeterminate call for resistance-associated
-mutations.
-[CDC interpretation guidance](https://www.cdc.gov/tb/php/laboratory-information/xpert-mtb-rif-assay.html)
-also distinguishes these calls from growth-based susceptibility testing.
+The dictionary is `analyzer-harness-*.csv` files in the
+`volume/configuration/backend/` shape:
 
-The catalog correction uses new dictionary identities for the detected and
-not-detected choices. It does not rename or delete previously stored
-Resistant/Susceptible choices or historical clinical results. Existing local
-bindings are not silently rewritten. The normal loader installs the new options
-where bundled configuration is in use; site-uploaded overrides remain
-site-owned.
+- The tests the baseline profiles resolve by LOINC: HIV-1 Viral Load (20447-9),
+  SARS-CoV-2 PCR (94500-6), Xpert MTB/RIF (85362-2) and Rifampin Resistance, as
+  in the generic dictionary; Influenza A, Influenza B and RSV PCR (CDC LIVD
+  codes 85477-8, 85478-6, 85479-4 for the Xpert Xpress CoV-2/Flu/RSV plus); an
+  Internal Control DNA test (89578-3, QuantStudio). The Molecular Biology
+  section and the Plasma and Serum sample types come from the base catalog; the
+  dictionary adds Nasopharyngeal Swab and Sputum.
+- A result component for every record a test reports (analyte calls, Ct and
+  EndPt, internal controls, the HIV-1 call and log), and their answers.
+- Answers carry standard codes: Positive LA6576-8, Negative LA6577-6, Invalid
+  LA15841-2, Detected LA11882-0, Not detected LA11883-8, Pass LA10392-1 and Fail
+  LA25389-0 (the answer list of 90101-7 "Internal control result"), with SNOMED
+  and CIEL codes from the answer-terminology file; Indeterminate (SNOMED
+  82334004, CIEL 1138) and Not applicable (SNOMED 385432009) have no LOINC
+  answer code.
+- Rifampin Resistance carries 89372-7 (presence of rifampicin resistance)
+  instead of 46244-0, which identifies a mutation rather than reporting a yes/no
+  result.
+- COVIDPCR(Respiratory Swab) and COVIDPCR(Sputum), seeded by Liquibase in every
+  deployment on 94500-6, are deactivated: they duplicate the generic SARS-CoV-2
+  PCR test, and two usable tests on one code leave a profile's SARS-CoV-2
+  unresolved. COVIDPCR(Fluid) is recoded to 94309-2 (specimen unspecified);
+  94500-6 is for respiratory specimens only.
 
-`AnalyzerCatalogIdentityIntegrationTest` exercises the production catalog
-handlers and default resolver, including repeat loading with stable option IDs.
-The parameterized GeneXpert Playwright workflow sends synthetic native ASTM
-messages and checks exact saved values, patient, order, test and specimen. These
-outcome checks do not establish full assay, hardware or release qualification;
-see the
-[remediation plan](../../specs/roadmaps/analyzer-test-remediation-plan.md).
+Xpert MTB/RIF and Rifampin Resistance are text results: the baseline profile
+declares them without values until a vendor document gives them (roadmap rule
+12). A rifampicin-resistance call reports resistance-associated mutations; it
+must not be translated to resistant or susceptible, which come from growth-based
+testing
+([CDC](https://www.cdc.gov/tb/php/laboratory-information/xpert-mtb-rif-assay.html)).
 
-## COVID answer wording and specimen selection
+## What proves it
 
-The original respiratory COVID test already has `SARS-CoV-2 RNA DETECTED` and
-`SARS-COV-2 RNA NOT DETECTED` choices. Adding another Positive/Negative pair
-would duplicate clinical answers. The shared profile contract instead supplies
-optional `result_value_hints`, keyed by exact reported values. Generic
-resolution uses an exact raw label first, then the explicit equivalent label if
-no exact match exists. Ambiguous matches stay unresolved; the raw value is
-unchanged.
-
-[Bridge draft #69](https://github.com/DIGI-UW/openelis-analyzer-bridge/pull/69)
-supplies these hints and `Respiratory Swab` context in candidate GeneXpert
-revision 7. The specimen context is necessary because the migrated catalog also
-contains COVID tests for other specimens. The real-catalog test exposed this
-additional ambiguity; correcting duplicate creation alone did not resolve it.
-
-The
-[Cepheid instructions, 302-3562 Rev G, section 16](https://www.cepheid.com/Package%20Insert%20Files/Xpress-SARS-CoV-2/Xpert%20Xpress%20SARS-CoV-2%20Assay%20ENGLISH%20Package%20Insert%20302-3562%20Rev.%20G.pdf)
-support positive/negative detection meanings and distinguish INVALID, ERROR and
-NO RESULT. The candidate does not equate ERROR with Invalid or invent an
-INDETERMINATE translation. Complete vocabulary/capture qualification and held
-result recovery remain open. The existing editor can author the hints; an older
-Bridge schema will reject them until the linked contract is deployed.
-
-Focused tests cover unique/ambiguous/exact matching, retained raw values, the
-original respiratory clinical IDs and answers, and editor persistence. This
-checkpoint does not establish native-traffic qualification or authorize a new
-release pin; the candidate must still pass the complete protocol workflows.
-
-## Mixed-component result display checkpoint
-
-The candidate native COVID run exposed a separate display failure after correct
-mapping and delivery. The existing COVID clinical test contains categorical
-answers and numeric Ct components. `AnalyzerResultsController` looked up every
-active result definition as a dictionary entry, including numeric definitions
-with no dictionary value. The resulting exception returned an empty worklist.
-
-The display lookup now uses the existing component option service when a
-component is known and resolves only dictionary-valued definitions. No catalog
-or mapping repair is performed. After rebuilding, both original pending COVID
-observations were visible with their original raw values and correct answer
-choices, without resending or editing them.
-
-Validation on the local candidate: the three existing controller tests and three
-real-catalog tests passed. A recorded native run passed authentication, MTB NOT
-DETECTED, COVID POSITIVE and COVID NEGATIVE. Its clinical readback asserts one
-ordered analysis, one persisted observation in the catalog's primary component,
-the exact answer and empty unreported components. Extra empty Ct fields are not
-duplicate saved results. These scenarios use candidate Bridge #69 revision 7;
-they do not qualify all profile rows or authorize a release pin.
-
-The browser still reports an aborted empty HTTP 200 response for some Save
-requests. Saved-result assertions pass. The exact browser cancellation cause
-remains unverified; this diagnostic alone does not establish a failed save.
-
-Additional follow-ups retained from the same runtime inspection:
-
-- The COVID primary component metadata declares numeric type even though its
-  answer definitions are categorical. Review the normal component/catalog
-  initialization separately; do not rewrite existing results to repair display.
-- In the local harness, connection/profile data uses the image's persistent
-  `/data/openelis-analyzer-bridge` volume, but the delivery outbox and FILE
-  state default to `/tmp/openelis-analyzer-bridge`. Configure persistent
-  database paths before claiming container-replacement/replay acceptance. A
-  simple process restart is not sufficient evidence for that requirement.
-- Two-instrument attribution, HIV numeric traffic, complete FILE/HL7 workflows,
-  recovery, populated upgrades and full profile compatibility remain open.
+`HarnessDictionaryIntegrationTest` loads the dictionary the way OpenELIS does at
+startup and resolves the defaults of each baseline profile the Bridge ships;
+every row binds. It also checks that no two active tests share an analyzer LOINC
+on one specimen, and that the COVID report still finds its test. The harness E2E
+then drives native instrument traffic through the Bridge to these tests.

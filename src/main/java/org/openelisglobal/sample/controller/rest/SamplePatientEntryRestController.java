@@ -43,6 +43,7 @@ import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.action.bean.PatientSearch;
 import org.openelisglobal.patient.service.PatientService;
 import org.openelisglobal.patient.valueholder.Patient;
+import org.openelisglobal.person.valueholder.Person;
 import org.openelisglobal.provider.service.ProviderService;
 import org.openelisglobal.provider.valueholder.Provider;
 import org.openelisglobal.sample.action.util.SamplePatientUpdateData;
@@ -156,7 +157,8 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
             "referralItems*.cocContactName", "referralItems*.cocContactPhone", "referralItems*.cocContactEmail",
             "referralItems*.subcontractNotes",
             //
-            "useReferral", "sampleOrderItems.additionalQuestions", "sampleOrderItems.programId", "orderEntryOnly" };
+            "useReferral", "sampleOrderItems.additionalQuestions", "sampleOrderItems.programId", "orderEntryOnly",
+            "cancelReason" };
 
     @Autowired
     private SamplePatientEntryFormValidator formValidator;
@@ -197,6 +199,12 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 
     @Autowired
     private SampleOrderOverrideService sampleOrderOverrideService;
+
+    @Autowired
+    private org.openelisglobal.microbiology.service.MicroCultureSetWarningService setWarningService;
+
+    @Autowired
+    private org.openelisglobal.dictionary.service.SampleContainerClassificationService containers;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -324,6 +332,7 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 
         PatientManagementInfo patientInfo = form.getPatientProperties();
         resolveRetriedOrder(sampleOrder, patientInfo);
+        reuseOrderPatient(sampleOrder, patientInfo);
 
         boolean trackPayments = ConfigurationProperties.getInstance()
                 .isPropertyValueEqual(Property.TRACK_PATIENT_PAYMENT, "true");
@@ -360,6 +369,7 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
         updateData.setPriority(sampleOrder.getPriority());
         updateData.initProvider(sampleOrder);
         updateData.initRequestorContact(sampleOrder);
+        updateData.setCancelReason(form.getCancelReason());
 
         // initSampleData MUST be called before initProgramQuestions so that the sample
         // object is loaded (for updates) before we try to load the existing
@@ -397,7 +407,49 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
         // They will be added in a later step (Collect Sample)
         boolean requireSampleItems = !form.isOrderEntryOnly();
 
+        validateTestRemovals(form, updateData, result);
         updateData.validateSample(result, requireSampleItems, sampleOrder, workflowType);
+
+        if (!Boolean.TRUE.equals(form.getWarning()) && updateData.getSampleItemsTests() != null) {
+            java.util.List<org.openelisglobal.microbiology.form.MicroCaseSpecimenForm> bottles = new java.util.ArrayList<>();
+            for (org.openelisglobal.common.services.SampleAddService.SampleTestCollection stc : updateData
+                    .getSampleItemsTests()) {
+                org.openelisglobal.sampleitem.valueholder.SampleItem item = stc.item;
+                if (item != null && item.getCultureSetNumber() != null) {
+                    boolean inSets = false;
+                    if (stc.tests != null) {
+                        for (org.openelisglobal.test.valueholder.Test t : stc.tests) {
+                            if (t.isCollectedInSets()) {
+                                inSets = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (inSets) {
+                        var bottle = new org.openelisglobal.microbiology.form.MicroCaseSpecimenForm();
+                        bottle.collectedInSets = true;
+                        bottle.cultureSetNumber = item.getCultureSetNumber();
+                        bottle.containerType = item.getContainer();
+                        bottle.containerPopulation = containers.population(item.getContainer());
+                        bottle.bodySite = item.getBodySite();
+                        bottle.collectionLocationId = item.getCollectionLocationId();
+                        bottle.collectionDate = item.getCollectionDate();
+                        if (item.getTypeOfSample() != null) {
+                            bottle.specimenType = item.getTypeOfSample().getLocalizedName();
+                        }
+                        bottles.add(bottle);
+                    }
+                }
+            }
+            if (!bottles.isEmpty()) {
+                java.util.List<org.openelisglobal.microbiology.form.MicroCultureSetWarningForm> setWarnings = setWarningService
+                        .evaluate(bottles);
+                if (!setWarnings.isEmpty()) {
+                    result.rejectValue("warning", "warnings.unacknowledged",
+                            "There are unacknowledged culture set warnings");
+                }
+            }
+        }
 
         // OGC-356: For environmental/vector workflow, ignore patient-related validation
         // errors
@@ -580,6 +632,74 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
      * after the save. A failure here is logged and never fails a save that already
      * succeeded.
      */
+    private void validateTestRemovals(SamplePatientEntryForm form, SamplePatientUpdateData updateData,
+            BindingResult result) {
+        if (form.getSampleOrderItems() == null
+                || GenericValidator.isBlankOrNull(form.getSampleOrderItems().getSampleId())) {
+            return;
+        }
+
+        Sample existing = sampleService.get(form.getSampleOrderItems().getSampleId());
+        if (existing == null) {
+            return;
+        }
+
+        List<Analysis> existingAnalyses = sampleService.getAnalysis(existing);
+        if (existingAnalyses == null || existingAnalyses.isEmpty()) {
+            return;
+        }
+
+        java.util.Set<String> requestedTestIds = new java.util.HashSet<>();
+        boolean hasRemainingMicro = false;
+
+        if (updateData.getSampleItemsTests() != null) {
+            for (org.openelisglobal.common.services.SampleAddService.SampleTestCollection stc : updateData
+                    .getSampleItemsTests()) {
+                if (stc.tests != null) {
+                    for (org.openelisglobal.test.valueholder.Test t : stc.tests) {
+                        requestedTestIds.add(t.getId());
+                        if (t.isOpensMicrobiologyCase()) {
+                            hasRemainingMicro = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        boolean removedLastMicro = false;
+        boolean removedTestWithResults = false;
+        boolean hadMicro = false;
+
+        String cancelledId = org.openelisglobal.spring.util.SpringContext
+                .getBean(org.openelisglobal.common.services.IStatusService.class)
+                .getStatusID(org.openelisglobal.common.services.StatusService.AnalysisStatus.Canceled);
+        org.openelisglobal.result.service.ResultService resultService = org.openelisglobal.spring.util.SpringContext
+                .getBean(org.openelisglobal.result.service.ResultService.class);
+
+        for (Analysis analysis : existingAnalyses) {
+            if (cancelledId != null && cancelledId.equals(analysis.getStatusId())) {
+                continue;
+            }
+            if (analysis.getTest().isOpensMicrobiologyCase()) {
+                hadMicro = true;
+            }
+            if (!requestedTestIds.contains(analysis.getTest().getId())) {
+                if (!resultService.getResultsByAnalysis(analysis).isEmpty()) {
+                    removedTestWithResults = true;
+                }
+            }
+        }
+
+        if (hadMicro && !hasRemainingMicro) {
+            removedLastMicro = true;
+        }
+
+        if ((removedTestWithResults || removedLastMicro) && GenericValidator.isBlankOrNull(form.getCancelReason())) {
+            result.rejectValue("cancelReason", "order.cancel.reasonRequired",
+                    "A reason is required to cancel this test.");
+        }
+    }
+
     private List<String> rangeNotAppliedTests(Sample sample) {
         try {
             return samplePatientService.getTestNamesWithRangeNotApplied(sample);
@@ -716,6 +836,49 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
                 patientInfo.setPatientUpdateStatus(PatientUpdateStatus.NO_ACTION);
             }
         }
+    }
+
+    /**
+     * A save of an existing order that asks to add its patient again, with no
+     * patient id, keeps the patient the order already has when the two are the same
+     * person: the same national id, or, where neither has one, the same name, date
+     * of birth and sex. A client that lost the id after the first save used to add
+     * one patient per save (OGC-1407). A different person is still added, so an
+     * order can be moved to a patient entered in its place.
+     */
+    void reuseOrderPatient(SampleOrderItem sampleOrder, PatientManagementInfo patientInfo) {
+        if (sampleOrder == null || patientInfo == null || GenericValidator.isBlankOrNull(sampleOrder.getSampleId())
+                || patientInfo.getPatientUpdateStatus() != PatientUpdateStatus.ADD
+                || !GenericValidator.isBlankOrNull(patientInfo.getPatientPK())) {
+            return;
+        }
+        Sample existing = sampleService.get(sampleOrder.getSampleId());
+        if (existing == null) {
+            return;
+        }
+        Patient patient = sampleHumanService.getPatientForSample(existing);
+        if (patient == null || patient.getId() == null || !isSamePerson(patient, patientInfo)) {
+            return;
+        }
+        patientInfo.setPatientPK(patient.getId());
+        patientInfo.setPatientUpdateStatus(PatientUpdateStatus.NO_ACTION);
+    }
+
+    private static boolean isSamePerson(Patient patient, PatientManagementInfo patientInfo) {
+        String heldNationalId = StringUtils.trimToNull(patient.getNationalId());
+        String sentNationalId = StringUtils.trimToNull(patientInfo.getNationalId());
+        if (heldNationalId != null || sentNationalId != null) {
+            return heldNationalId != null && heldNationalId.equalsIgnoreCase(sentNationalId);
+        }
+        Person person = patient.getPerson();
+        return person != null && sameText(person.getLastName(), patientInfo.getLastName())
+                && sameText(person.getFirstName(), patientInfo.getFirstName())
+                && sameText(patient.getBirthDateForDisplay(), patientInfo.getBirthDateForDisplay())
+                && sameText(patient.getGender(), patientInfo.getGender());
+    }
+
+    private static boolean sameText(String held, String sent) {
+        return StringUtils.trimToEmpty(held).equalsIgnoreCase(StringUtils.trimToEmpty(sent));
     }
 
     private void testAndInitializePatientForSaving(HttpServletRequest request, PatientManagementInfo patientInfo,

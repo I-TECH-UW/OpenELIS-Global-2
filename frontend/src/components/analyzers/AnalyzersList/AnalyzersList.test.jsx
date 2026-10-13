@@ -13,13 +13,13 @@
 // ========== MOCKS (BEFORE IMPORTS - Jest hoisting) ==========
 
 vi.mock("../../../services/analyzerService", () => ({
+  activateAnalyzer: vi.fn(),
   createAnalyzer: vi.fn(),
   deactivateAnalyzer: vi.fn(),
   getAnalyzer: vi.fn(),
   getAnalyzers: vi.fn(),
-  getAnalyzerUpgrade: vi.fn((callback) => callback([])),
-  retryAnalyzerUpgrade: vi.fn(),
   getAnalyzerDeliveryIssues: vi.fn(),
+  getBridgePairing: vi.fn(),
   getAnalyzerLabUnits: vi.fn(),
   getAnalyzerTypeCatalog: vi.fn(),
   getAnalyzerTypeMapping: vi.fn(),
@@ -52,11 +52,10 @@ import AnalyzersList from "./AnalyzersList";
 
 // 8. Utilities (import functions, not just for mocking)
 import {
+  activateAnalyzer,
   deactivateAnalyzer,
   getAnalyzer,
   getAnalyzers,
-  getAnalyzerUpgrade,
-  retryAnalyzerUpgrade,
   getAnalyzerDeliveryIssues,
   getAnalyzerLabUnits,
   getAnalyzerTypeCatalog,
@@ -104,7 +103,6 @@ describe("AnalyzersList", () => {
   beforeEach(() => {
     // Reset mocks before each test
     vi.clearAllMocks();
-    getAnalyzerUpgrade.mockImplementation((callback) => callback([]));
     vi.spyOn(Element.prototype, "getBoundingClientRect").mockReturnValue({
       bottom: 40,
       height: 40,
@@ -131,81 +129,6 @@ describe("AnalyzersList", () => {
       }),
     );
     getAnalyzerLabUnits.mockImplementation((callback) => callback([]));
-  });
-
-  test("shows pending transfer and retries through the shared migration action", async () => {
-    getAnalyzers.mockImplementation((_filters, callback) =>
-      callback({ analyzers: [] }),
-    );
-    getAnalyzerUpgrade.mockImplementation((callback) =>
-      callback([
-        {
-          analyzerId: "1",
-          name: "Existing analyzer",
-          status: "PENDING",
-          reason: "analyzer.upgrade.reason.bridgeConnection",
-        },
-      ]),
-    );
-    retryAnalyzerUpgrade.mockImplementation((callback) => {
-      getAnalyzerUpgrade.mockImplementation((read) => read([]));
-      callback([]);
-    });
-    renderWithIntl(<AnalyzersList />);
-    expect(
-      await screen.findByText(
-        `Existing analyzer: ${messages["analyzer.upgrade.reason.bridgeConnection"]}`,
-      ),
-    ).toBeInTheDocument();
-    await userEvent.click(
-      screen.getByRole("button", { name: "Retry configuration transfer" }),
-    );
-    expect(retryAnalyzerUpgrade).toHaveBeenCalledTimes(1);
-    await waitFor(() =>
-      expect(
-        screen.queryByText(
-          `Existing analyzer: ${messages["analyzer.upgrade.reason.bridgeConnection"]}`,
-        ),
-      ).not.toBeInTheDocument(),
-    );
-  });
-
-  test("localizes pending reasons and hides unknown server text", async () => {
-    getAnalyzers.mockImplementation((_filters, callback) =>
-      callback({ analyzers: [] }),
-    );
-    getAnalyzerUpgrade.mockImplementation((callback) =>
-      callback([
-        {
-          analyzerId: "1",
-          name: "GeneXpert",
-          status: "PENDING",
-          reason: "analyzer.upgrade.reason.serialSettings",
-        },
-        {
-          analyzerId: "2",
-          name: "FluoroCycler",
-          status: "PENDING",
-          reason: "Raw backend exception",
-        },
-      ]),
-    );
-    renderWithIntl(
-      <AnalyzersList />,
-      {
-        ...messages,
-        "analyzer.upgrade.reason.serialSettings":
-          "Paramètres série à vérifier.",
-        "analyzer.upgrade.reason.unexpected": "Échec du transfert.",
-      },
-      "fr",
-    );
-    expect(
-      await screen.findByText(
-        "GeneXpert: Paramètres série à vérifier.; FluoroCycler: Échec du transfert.",
-      ),
-    ).toBeInTheDocument();
-    expect(screen.queryByText(/Raw backend exception/)).not.toBeInTheDocument();
   });
 
   afterEach(() => {
@@ -563,6 +486,72 @@ describe("AnalyzersList", () => {
     await userEvent.click(screen.getByTestId("analyzer-row-overflow-42"));
     expect(screen.getByRole("menuitem", { name: "Reactivate" })).toBeVisible();
     expect(screen.getByRole("menuitem", { name: "Deactivate" })).toBeVisible();
+  });
+
+  test("offers Activate, not Deactivate, for an analyzer still being set up", async () => {
+    getAnalyzers.mockImplementation((_filters, callback) => {
+      act(() =>
+        callback({
+          analyzers: [createMockAnalyzer({ id: "43", status: "SETUP" })],
+        }),
+      );
+    });
+
+    renderWithIntl(<AnalyzersList />);
+
+    await userEvent.click(
+      await screen.findByTestId("analyzer-row-overflow-43"),
+    );
+    expect(screen.getByRole("menuitem", { name: "Activate" })).toBeVisible();
+    expect(
+      screen.queryByRole("menuitem", { name: "Deactivate" }),
+    ).not.toBeInTheDocument();
+  });
+
+  test("activates an analyzer from setup and lists what blocks it", async () => {
+    window.history.replaceState(
+      {},
+      "",
+      "/analyzers?lifecycle=activate&lifecycleAnalyzerId=43",
+    );
+    getAnalyzers.mockImplementation((_filters, callback) => {
+      act(() =>
+        callback({
+          analyzers: [
+            createMockAnalyzer({
+              id: "43",
+              name: "GeneXpert Lab 2",
+              status: "SETUP",
+            }),
+          ],
+        }),
+      );
+    });
+    activateAnalyzer.mockImplementation((_id, callback) =>
+      callback({
+        analyzerId: "43",
+        status: "SETUP",
+        ready: false,
+        activated: false,
+        blockers: [{ code: "analyzer.activation.blocker.mappings" }],
+        statusCode: 422,
+      }),
+    );
+
+    renderWithIntl(<AnalyzersList />);
+
+    expect(
+      await screen.findByRole("heading", { name: "Activate analyzer" }),
+    ).toBeVisible();
+    await userEvent.click(
+      screen.getByRole("button", { name: "Activate analyzer" }),
+    );
+
+    expect(activateAnalyzer).toHaveBeenCalledWith("43", expect.any(Function));
+    expect(reactivateAnalyzer).not.toHaveBeenCalled();
+    expect(
+      await screen.findByText("Analyzer mappings must be verified again."),
+    ).toBeVisible();
   });
 
   test("opens an existing analyzer in linkable inline Instrument setup", async () => {

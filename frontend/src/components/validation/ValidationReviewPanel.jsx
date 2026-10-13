@@ -22,6 +22,9 @@ import {
 import ReferenceSection from "../resultPage/unified/ReferenceSection";
 import HistorySection from "../resultPage/unified/HistorySection";
 import CriticalBanner from "../resultPage/unified/CriticalBanner";
+import ResultAlertModal, {
+  acknowledgementRefusal,
+} from "../resultPage/ResultAlertModal";
 import {
   AttachmentsSection,
   OrderInfoSection,
@@ -69,12 +72,17 @@ const QC_TAG_TYPE = { PASS: "green", FAIL: "red" };
  * panel caps its own width to stay readable without scrolling sideways.
  */
 const PANEL_STYLE = { maxWidth: "1200px" };
+
+/**
+ * The server's select-list choices start with an empty ("0", "") entry for the
+ * legacy screens; the Modify list already offers its own empty choice.
+ */
+const isBlankChoice = (entry) =>
+  String(entry.id) === "0" && !String(entry.value ?? "").trim();
 const LABEL_STYLE = { display: "block" };
 
 const resultsEntryLink = (accessionNumber) =>
-  `/result?type=order&doRange=false&accessionNumber=${encodeURIComponent(
-    accessionNumber || "",
-  )}`;
+  `/Results?accessionNumber=${encodeURIComponent(accessionNumber || "")}`;
 
 const Field = ({ labelKey, value, testId }) => (
   <div data-testid={testId}>
@@ -94,6 +102,7 @@ const ValidationReviewPanel = ({
   onActionDone,
   onNoteChange,
   onStale,
+  onQcHold,
 }) => {
   const intl = useIntl();
   const triage =
@@ -162,6 +171,9 @@ const ValidationReviewPanel = ({
   const [newValue, setNewValue] = useState(row.result ?? "");
   const [busy, setBusy] = useState(false);
   const [errorKey, setErrorKey] = useState("");
+  // OGC-1417: a corrected value the server will not store until the validator
+  // acknowledges it as critical, or confirms it outside the valid range
+  const [resultAlert, setResultAlert] = useState(null);
 
   const sectionOpen = (id, autoOpen = false) =>
     isSectionOpen(layout, id, autoOpen);
@@ -176,6 +188,11 @@ const ValidationReviewPanel = ({
       JSON.stringify(payload),
       (response) => {
         setBusy(false);
+        const refusal = acknowledgementRefusal(response);
+        if (refusal) {
+          setResultAlert({ ...refusal, action, payload });
+          return;
+        }
         if (response && response.outcome && !response.error) {
           if (onActionDone) {
             onActionDone(response.outcome, row);
@@ -186,9 +203,30 @@ const ValidationReviewPanel = ({
           onStale(response, row);
           return;
         }
+        if (response?.error === "qcHold" && onQcHold) {
+          onQcHold(response, row);
+          return;
+        }
         setErrorKey(errorMessageKey(response));
       },
     );
+  };
+
+  const confirmResultAlert = () => {
+    const pending = resultAlert;
+    setResultAlert(null);
+    if (!pending) {
+      return;
+    }
+    submit(pending.action, {
+      ...pending.payload,
+      criticalAcknowledged: pending.alerts.some(
+        (alert) => alert.kind === "CRITICAL",
+      ),
+      invalidResultConfirmed: pending.alerts.some(
+        (alert) => alert.kind === "INVALID",
+      ),
+    });
   };
 
   const sendForRetest = () =>
@@ -233,7 +271,10 @@ const ValidationReviewPanel = ({
     );
 
   const qcAckBlocksRelease = Boolean(qcAck?.required && !qcAck?.satisfied);
-  const releaseBlocked = busy || qcAckBlocksRelease;
+  const qcHoldBlocksRelease =
+    row.qcHold === true &&
+    configurationProperties?.QC_FAIL_BLOCKS_VALIDATION === "true";
+  const releaseBlocked = busy || qcAckBlocksRelease || qcHoldBlocksRelease;
   const reasonMissing = notesRequired && !noteText.trim();
   const modificationBlocked =
     busy || !editableHere || !String(newValue ?? "").trim() || reasonMissing;
@@ -448,13 +489,15 @@ const ValidationReviewPanel = ({
                 onChange={(event) => setNewValue(event.target.value)}
               >
                 <SelectItem value="" text="" />
-                {(row.dictionaryResults || []).map((entry) => (
-                  <SelectItem
-                    key={entry.id}
-                    value={String(entry.id)}
-                    text={entry.value}
-                  />
-                ))}
+                {(row.dictionaryResults || [])
+                  .filter((entry) => !isBlankChoice(entry))
+                  .map((entry) => (
+                    <SelectItem
+                      key={entry.id}
+                      value={String(entry.id)}
+                      text={entry.value}
+                    />
+                  ))}
               </Select>
             )}
             {editableHere && row.resultType !== "D" && (
@@ -593,6 +636,14 @@ const ValidationReviewPanel = ({
                 onBeforeSign={qcAck?.beforeSign}
                 onSign={release}
                 disabled={releaseBlocked}
+                ariaDescribedBy={
+                  [
+                    qcAckBlocksRelease && `review-qc-ack-hint-${row.id}`,
+                    qcHoldBlocksRelease && `review-qc-hold-hint-${row.id}`,
+                  ]
+                    .filter(Boolean)
+                    .join(" ") || undefined
+                }
                 size="sm"
               >
                 <FormattedMessage id="label.validation.review.action.release" />
@@ -729,8 +780,21 @@ const ValidationReviewPanel = ({
             <FormattedMessage id="label.validation.review.action.refer" />
           </Button>
           {qcAckBlocksRelease && (
-            <span className="unifiedFieldHint" data-testid="review-qc-ack-hint">
+            <span
+              id={`review-qc-ack-hint-${row.id}`}
+              className="unifiedFieldHint"
+              data-testid="review-qc-ack-hint"
+            >
               <FormattedMessage id="label.validation.review.release.qcAckFirst" />
+            </span>
+          )}
+          {qcHoldBlocksRelease && (
+            <span
+              id={`review-qc-hold-hint-${row.id}`}
+              className="unifiedFieldHint"
+              data-testid="review-qc-hold-hint"
+            >
+              <FormattedMessage id="label.validation.review.error.qcHold" />
             </span>
           )}
         </div>
@@ -842,6 +906,14 @@ const ValidationReviewPanel = ({
           editable={false}
         />
       </div>
+      <ResultAlertModal
+        open={Boolean(resultAlert)}
+        alerts={resultAlert?.alerts || []}
+        mode="save"
+        customCriticalMessage={resultAlert?.customCriticalMessage}
+        onConfirm={confirmResultAlert}
+        onCorrect={() => setResultAlert(null)}
+      />
     </div>
   );
 };

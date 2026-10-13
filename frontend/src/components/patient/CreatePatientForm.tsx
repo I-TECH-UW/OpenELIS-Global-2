@@ -49,6 +49,8 @@ import PatientImageSelector from "./photoManagement/uploadPhoto/PatientImageSele
 import IdentificationDocuments from "./IdentificationDocuments";
 import { getPhoneFormatHint } from "./phoneFormatHint";
 import type { AddressHierarchyLevel, PatientRecord, Nullable } from "./types";
+import { labNow } from "../utils/labClock";
+import { RequiredMarker, requiredProps } from "../common/RequiredMarker";
 
 type ConfigurationItem = {
   id?: string;
@@ -67,8 +69,14 @@ interface CreatePatientFormProps {
   setOrderFormValues?: React.Dispatch<
     React.SetStateAction<Record<string, unknown>>
   >;
+  /** Writes the form into the order without marking it changed (see PatientFormObserver). */
+  hydrateOrderFormValues?: React.Dispatch<
+    React.SetStateAction<Record<string, unknown>>
+  >;
   showActionsButton?: boolean;
   showPatientSearch?: boolean;
+  /** False when the host screen already renders the notification toasts. */
+  renderNotifications?: boolean;
   [key: string]: unknown;
 }
 
@@ -156,8 +164,8 @@ const computeDobFromFormatter = (
   { years, months, days }: { years?: string; months?: string; days?: string },
   dateLocale?: string,
 ) => {
-  const currentDate = new Date();
-  const pastDate = new Date();
+  const currentDate = labNow();
+  const pastDate = labNow();
   pastDate.setFullYear(currentDate.getFullYear() - (Number(years) || 0));
   pastDate.setMonth(currentDate.getMonth() - (Number(months) || 0));
   pastDate.setDate(currentDate.getDate() - (Number(days) || 0));
@@ -190,7 +198,7 @@ const computeAgePartsFromDob = (dob?: string, dateLocale?: string) => {
   if (Number.isNaN(birthDate.getTime())) {
     return { years: "", months: "", days: "" };
   }
-  const now = new Date();
+  const now = labNow();
   if (birthDate > now) return { years: "", months: "", days: "" };
   const years = differenceInYears(now, birthDate);
   const months = differenceInMonths(now, addYears(birthDate, years));
@@ -419,7 +427,7 @@ function CreatePatientForm(props: CreatePatientFormProps) {
         if (componentMounted.current) {
           setAddressHierarchyValues({ 0: values });
           // Also populate healthRegions for backward compatibility
-          setHealthRegions(values);
+          setHealthRegions(Array.isArray(values) ? values : []);
 
           // Check if any level has defaults configured
           const hasDefaults = levels.some((lvl) => lvl.defaultId);
@@ -543,7 +551,7 @@ function CreatePatientForm(props: CreatePatientFormProps) {
   };
 
   function fetchHealthDistrictsCallback(res) {
-    setHealthDistricts(res);
+    setHealthDistricts(Array.isArray(res) ? res : []);
   }
 
   // Edit-flow side effects: fetch health-districts cascade for the patient's
@@ -669,7 +677,7 @@ function CreatePatientForm(props: CreatePatientFormProps) {
 
   const fetchHeathRegions = (regions) => {
     if (componentMounted.current) {
-      setHealthRegions(regions);
+      setHealthRegions(Array.isArray(regions) ? regions : []);
     }
   };
 
@@ -715,18 +723,18 @@ function CreatePatientForm(props: CreatePatientFormProps) {
 
   const fetchMaritalStatuses = (statuses) => {
     if (componentMounted.current) {
-      setMaritalStatuses(statuses);
+      setMaritalStatuses(Array.isArray(statuses) ? statuses : []);
     }
   };
 
   const fetchEducationList = (eductationList) => {
     if (componentMounted.current) {
-      setEducationList(eductationList);
+      setEducationList(Array.isArray(eductationList) ? eductationList : []);
     }
   };
 
   const fetchHeathDistricts = (districts) => {
-    setHealthDistricts(districts);
+    setHealthDistricts(Array.isArray(districts) ? districts : []);
   };
 
   const handleSubmit = (values, formikBag) => {
@@ -807,9 +815,19 @@ function CreatePatientForm(props: CreatePatientFormProps) {
     props.selectedPatient?.mergedIntoNationalId ||
     props.selectedPatient?.mergedIntoPatientId;
 
+  // An order screen shows the shared notifications itself; a second dialog
+  // here showed every message twice.
+  const embeddedInOrder = Boolean(props.orderFormValues);
+
   return (
     <>
-      {notificationVisible === true ? <AlertDialog /> : ""}
+      {notificationVisible === true &&
+      !embeddedInOrder &&
+      props.renderNotifications !== false ? (
+        <AlertDialog />
+      ) : (
+        ""
+      )}
       {props.selectedPatient?.isMerged === true && (
         <InlineNotification
           kind="warning"
@@ -865,6 +883,7 @@ function CreatePatientForm(props: CreatePatientFormProps) {
               <PatientFormObserver
                 orderFormValues={props.orderFormValues}
                 setOrderFormValues={props.setOrderFormValues}
+                hydrateOrderFormValues={props.hydrateOrderFormValues}
                 formAction={formAction}
                 selectedPatient={props.selectedPatient}
               />
@@ -985,11 +1004,10 @@ function CreatePatientForm(props: CreatePatientFormProps) {
                               {intl.formatMessage({
                                 id: "patient.natioanalid",
                               })}
-                              {nationalIdRequired && (
-                                <span className="requiredlabel">*</span>
-                              )}
+                              <RequiredMarker required={nationalIdRequired} />
                             </>
                           }
+                          {...requiredProps(nationalIdRequired)}
                           id={field.name}
                           invalid={
                             props.error
@@ -1156,18 +1174,22 @@ function CreatePatientForm(props: CreatePatientFormProps) {
                           legendText={
                             <>
                               {intl.formatMessage({ id: "patient.gender" })}
-                              {patientSexRequired && (
-                                <>
-                                  {" "}
-                                  <span className="requiredlabel">*</span>
-                                </>
-                              )}
+                              <RequiredMarker
+                                required={patientSexRequired}
+                                announce
+                              />
                             </>
                           }
                           name={field.name}
                           onChange={(value) => setFieldValue("gender", value)}
-                          invalid={errors.gender && touched.gender}
-                          invalidText={errors.gender}
+                          invalid={Boolean(
+                            (errors.gender && touched.gender) ||
+                            props.error?.("patientProperties.gender"),
+                          )}
+                          invalidText={
+                            errors.gender ||
+                            props.error?.("patientProperties.gender")
+                          }
                           id="create_patient_gender"
                         >
                           <RadioButton
@@ -1201,21 +1223,28 @@ function CreatePatientForm(props: CreatePatientFormProps) {
                               {intl.formatMessage({
                                 id: "patient.dob",
                               })}
-                              {patientAgeRequired && (
-                                <span className="requiredlabel">*</span>
-                              )}
+                              <RequiredMarker required={patientAgeRequired} />
                             </>
                           }
+                          {...requiredProps(patientAgeRequired)}
                           autofillDate={true}
                           value={values.birthDateForDisplay || ""}
                           onChange={(date) =>
                             handleDatePickerChange(setFieldValue, date)
                           }
-                          invalid={
-                            errors.birthDateForDisplay &&
-                            touched.birthDateForDisplay
+                          invalid={Boolean(
+                            (errors.birthDateForDisplay &&
+                              touched.birthDateForDisplay) ||
+                            props.error?.(
+                              "patientProperties.birthDateForDisplay",
+                            ),
+                          )}
+                          invalidText={
+                            errors.birthDateForDisplay ||
+                            props.error?.(
+                              "patientProperties.birthDateForDisplay",
+                            )
                           }
-                          invalidText={errors.birthDateForDisplay}
                           name={field.name}
                           disallowFutureDate={true}
                           futureDateText={intl.formatMessage({
