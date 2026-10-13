@@ -59,12 +59,16 @@ describe("parseGs1", () => {
     expect(parseGs1("not a barcode at all").raw).toBe("not a barcode at all");
   });
 
-  it("stops at an identifier it does not know rather than guessing", () => {
-    const result = parseGs1("010890123456789091SOMETHINGELSE");
+  it("reads past identifiers the form does not use", () => {
+    const result = parseGs1(`0108901234567890112401011727123110ABC${GS}21XYZ`);
 
-    expect(result.fields.gtin).toBe("08901234567890");
-    expect(result.unparsed).toContain("91SOMETHINGELSE");
-    expect(result.fields.lotNumber).toBeUndefined();
+    expect(result.fields).toEqual({
+      gtin: "08901234567890",
+      expirationDate: "2027-12-31",
+      lotNumber: "ABC",
+      serial: "XYZ",
+    });
+    expect(result.unparsed).toEqual([]);
   });
 
   it("reports an impossible date as unparsed instead of inventing one", () => {
@@ -72,6 +76,9 @@ describe("parseGs1", () => {
 
     expect(result.fields.expirationDate).toBeUndefined();
     expect(result.unparsed.join("")).toContain("271331");
+    expect(
+      parseGs1("011234567890123417270231").fields.expirationDate,
+    ).toBeUndefined();
   });
 
   it("degrades to nothing recognised rather than throwing", () => {

@@ -26,6 +26,7 @@ const breadcrumbs = [
 
 const InventoryManagement = () => {
   const [selectedTab, setSelectedTab] = useState(0);
+  const [boardVersion, setBoardVersion] = useState(0);
 
   return (
     <>
@@ -56,11 +57,13 @@ const InventoryManagement = () => {
               <TabPanels>
                 {/* Items Tab - Items Board */}
                 <TabPanel>
-                  <InventoryItemsBoard active={selectedTab === 0} />
+                  <InventoryItemsBoard reloadKey={boardVersion} />
                 </TabPanel>
 
                 <TabPanel>
-                  <ReceiveDelivery />
+                  <ReceiveDelivery
+                    onSaved={() => setBoardVersion((version) => version + 1)}
+                  />
                 </TabPanel>
 
                 {/* Reports Tab - Generate Reports */}

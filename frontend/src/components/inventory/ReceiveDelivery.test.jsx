@@ -35,10 +35,10 @@ const GLOVES = {
   trackLots: false,
 };
 
-const renderScreen = async () => {
+const renderScreen = async (onSaved) => {
   const view = render(
     <IntlProvider locale="en" messages={messages}>
-      <ReceiveDelivery />
+      <ReceiveDelivery onSaved={onSaved} />
     </IntlProvider>,
   );
   await screen.findByLabelText(/scan the box/i);
@@ -190,8 +190,22 @@ describe("ReceiveDelivery", () => {
     expect(InventoryManagementAPI.receiveBatch).not.toHaveBeenCalled();
   });
 
-  it("commits every line in one call", async () => {
+  it("narrows the item list to what is typed", async () => {
     await renderScreen();
+
+    fireEvent.change(screen.getByRole("combobox", { name: /item name/i }), {
+      target: { value: "glov" },
+    });
+
+    const options = await screen.findAllByRole("option");
+    expect(options.map((option) => option.textContent)).toEqual([
+      "Examination gloves (box) (GLOVES)",
+    ]);
+  });
+
+  it("commits every line in one call", async () => {
+    const onSaved = vi.fn();
+    await renderScreen(onSaved);
 
     scan("010890123456789017271231101A2B3C");
     await waitFor(() =>
@@ -215,6 +229,8 @@ describe("ReceiveDelivery", () => {
     expect(payload[0].inventoryItem).toEqual({ id: CARTRIDGE.itemId });
     expect(payload[0].lotNumber).toBe("1A2B3C");
     expect(payload[0].id).toBeUndefined();
+    await waitFor(() => expect(onSaved).toHaveBeenCalledTimes(1));
+    expect(InventoryBoardAPI.get).toHaveBeenCalledTimes(1);
   });
 
   it("discards a delivery without writing it", async () => {
@@ -246,13 +262,14 @@ describe("ReceiveDelivery", () => {
     it("keeps the raw scan on a line it could only partly read", async () => {
       await renderScreen();
 
-      scan("010890123456789091UNKNOWNTAIL");
+      scan("0108901234567890" + "17270231");
       await waitFor(() =>
         expect(screen.getByDisplayValue(/GeneXpert/)).toBeInTheDocument(),
       );
       fireEvent.click(screen.getByRole("button", { name: /add to delivery/i }));
 
       expect(lineRows()[0]).toHaveTextContent("Partly scanned");
+      expect(lineRows()[0]).toHaveTextContent("010890123456789017270231");
     });
 
     it("warns about an expired lot without refusing it", async () => {

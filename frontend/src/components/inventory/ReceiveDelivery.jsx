@@ -18,11 +18,12 @@ import { FormattedMessage, useIntl } from "react-intl";
 import { InventoryBoardAPI, InventoryManagementAPI } from "./InventoryService";
 import InventoryItemForm from "./InventoryItemForm";
 import { parseGs1, gtinMatches } from "./gs1";
+import { includesComboBoxText } from "../analyzers/comboBoxSearch";
 import { toLocalIsoDate } from "../utils/Utils";
 import { labNow } from "../utils/labClock";
 import "./InventoryItemsBoard.css";
 
-const ReceiveDelivery = () => {
+const ReceiveDelivery = ({ onSaved = () => {} }) => {
   const intl = useIntl();
   const scanRef = useRef(null);
   const nextLineKey = useRef(0);
@@ -154,7 +155,7 @@ const ReceiveDelivery = () => {
       setDone(lines.length);
       setLines([]);
       clearLine();
-      load();
+      onSaved();
       focusScan();
     } catch (err) {
       setError(err.message);
@@ -251,6 +252,7 @@ const ReceiveDelivery = () => {
             items={options}
             selectedItem={selected}
             itemToString={(option) => (option ? option.text : "")}
+            shouldFilterItem={includesComboBoxText}
             onChange={({ selectedItem }) =>
               setItemId(selectedItem ? selectedItem.id : null)
             }
@@ -323,9 +325,12 @@ const ReceiveDelivery = () => {
                     <TableCell>
                       {line.itemName}
                       {line.unparsed && (
-                        <Tag size="sm" type="warm-gray" title={line.rawScan}>
-                          <FormattedMessage id="inventory.delivery.partialScan" />
-                        </Tag>
+                        <>
+                          <Tag size="sm" type="warm-gray">
+                            <FormattedMessage id="inventory.delivery.partialScan" />
+                          </Tag>
+                          <div className="board-muted">{line.rawScan}</div>
+                        </>
                       )}
                     </TableCell>
                     <TableCell>{line.lotNumber || "—"}</TableCell>
@@ -372,6 +377,7 @@ const ReceiveDelivery = () => {
             setDefiningUpc(null);
             setUnknownUpc(null);
             load();
+            onSaved();
           }}
         />
       )}
