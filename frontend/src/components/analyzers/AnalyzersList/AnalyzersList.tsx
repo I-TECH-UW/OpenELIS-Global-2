@@ -273,7 +273,8 @@ const AnalyzersList = () => {
       analyzerType: listAnalyzerType,
       ...(listSearch ? { search: listSearch } : {}),
     });
-    history.push({ pathname: "/analyzers", search: params.toString() });
+    // Replace, not push: Back from the list must not reopen the setup.
+    history.replace({ pathname: "/analyzers", search: params.toString() });
   };
 
   useEffect(() => {
@@ -451,6 +452,18 @@ const AnalyzersList = () => {
     };
   });
 
+  if (visibleSetupStep) {
+    return (
+      <div className="analyzers-list" data-testid="analyzers-list">
+        <AnalyzerSetup
+          key={setupAnalyzerId || "new-analyzer"}
+          currentStep={visibleSetupStep}
+          onClose={closeSetup}
+        />
+      </div>
+    );
+  }
+
   return (
     <div className="analyzers-list" data-testid="analyzers-list">
       <AnalyzerPageHeader
@@ -476,14 +489,6 @@ const AnalyzersList = () => {
           </Button>
         }
       />
-
-      {visibleSetupStep && (
-        <AnalyzerSetup
-          key={setupAnalyzerId || "new-analyzer"}
-          currentStep={visibleSetupStep}
-          onClose={closeSetup}
-        />
-      )}
 
       <BridgePairing />
 

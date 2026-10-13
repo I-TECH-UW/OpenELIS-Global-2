@@ -18,18 +18,20 @@ const AnalyzerPageHeader = ({
   subtitle,
   actions,
   testId,
+  titleId,
 }: {
   breadcrumbs: AnalyzerBreadcrumb[];
   title: React.ReactNode;
   subtitle?: React.ReactNode;
   actions?: React.ReactNode;
   testId?: string;
+  titleId?: string;
 }) => (
   <header className="analyzer-page-header" data-testid={testId}>
     <PageBreadCrumb breadcrumbs={breadcrumbs} noTrailingSlash />
     <div className="analyzer-page-header__row">
       <div className="analyzer-page-header__title">
-        <h1>{title}</h1>
+        <h1 id={titleId}>{title}</h1>
         {subtitle && (
           <p className="analyzer-page-header__subtitle">{subtitle}</p>
         )}

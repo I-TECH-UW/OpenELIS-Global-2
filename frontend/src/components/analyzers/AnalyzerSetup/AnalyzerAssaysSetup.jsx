@@ -1,5 +1,11 @@
 import React, { useEffect, useMemo, useState } from "react";
-import { Button, Checkbox, InlineNotification, Loading } from "@carbon/react";
+import {
+  Button,
+  Checkbox,
+  InlineNotification,
+  Loading,
+  Search,
+} from "@carbon/react";
 import { ArrowRight } from "@carbon/icons-react";
 import { useIntl } from "react-intl";
 import {
@@ -38,6 +44,7 @@ const AnalyzerAssaysSetup = ({ analyzerId, onContinue }) => {
   const [choices, setChoices] = useState({});
   const [saving, setSaving] = useState(false);
   const [saveFailure, setSaveFailure] = useState(null);
+  const [filter, setFilter] = useState("");
 
   useEffect(() => {
     getAnalyzerMapping(analyzerId, (response) => {
@@ -146,6 +153,23 @@ const AnalyzerAssaysSetup = ({ analyzerId, onContinue }) => {
   const on = assays.filter(
     (assay) => choices[assay.sourceRowKey]?.enabled,
   ).length;
+  const needle = filter.trim().toLowerCase();
+  const shown = needle
+    ? assays.filter((assay) =>
+        [assay.rawCode, assay.testNameHint, assay.selectedTest?.name]
+          .filter(Boolean)
+          .some((text) => text.toLowerCase().includes(needle)),
+      )
+    : assays;
+  const setAll = (enabled) =>
+    setChoices((current) =>
+      Object.fromEntries(
+        Object.entries(current).map(([code, choice]) => [
+          code,
+          { ...choice, enabled },
+        ]),
+      ),
+    );
 
   return (
     <div className="analyzer-setup__assays">
@@ -159,6 +183,28 @@ const AnalyzerAssaysSetup = ({ analyzerId, onContinue }) => {
         />
       ) : (
         <>
+          <div className="analyzer-setup__assays-toolbar">
+            <Search
+              id="analyzer-setup-assays-search"
+              size="md"
+              labelText={intl.formatMessage({
+                id: "analyzer.setup.assays.search",
+              })}
+              placeholder={intl.formatMessage({
+                id: "analyzer.setup.assays.search",
+              })}
+              value={filter}
+              onChange={(event) => setFilter(event.target.value)}
+            />
+            <div className="analyzer-setup__assays-bulk">
+              <Button kind="ghost" size="sm" onClick={() => setAll(true)}>
+                {intl.formatMessage({ id: "analyzer.setup.assays.allOn" })}
+              </Button>
+              <Button kind="ghost" size="sm" onClick={() => setAll(false)}>
+                {intl.formatMessage({ id: "analyzer.setup.assays.allOff" })}
+              </Button>
+            </div>
+          </div>
           <p className="analyzer-setup__assays-count">
             {intl.formatMessage(
               { id: "analyzer.setup.assays.count" },
@@ -166,7 +212,7 @@ const AnalyzerAssaysSetup = ({ analyzerId, onContinue }) => {
             )}
           </p>
           <ul className="analyzer-setup__assay-list">
-            {assays.map((assay) => {
+            {shown.map((assay) => {
               const code = assay.sourceRowKey;
               const choice = choices[code] || {};
               const assayLabel = assay.testNameHint

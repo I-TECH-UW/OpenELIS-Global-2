@@ -387,7 +387,12 @@ const AnalyzerConnectionSetup = ({
       />
 
       <div className="analyzer-setup__connect-actions">
-        <Button type="button" disabled={submitting} onClick={runProbe}>
+        <Button
+          type="button"
+          kind="tertiary"
+          disabled={submitting}
+          onClick={runProbe}
+        >
           {intl.formatMessage({
             id:
               action === "probe"

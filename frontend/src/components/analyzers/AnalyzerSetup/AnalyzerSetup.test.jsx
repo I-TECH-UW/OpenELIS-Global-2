@@ -450,11 +450,10 @@ describe("AnalyzerSetup Instrument step", () => {
     expect(params.get("analyzerId")).toBe("42");
     expect(params.get("profile")).toBe(activeType.profileId);
     expect(params.get("revision")).toBe("3");
+    expect(screen.getByTestId("analyzer-setup-step-assays")).toBeVisible();
     expect(
-      screen.getByRole("heading", { level: 3, name: "Assays" }).closest("li"),
-    ).toHaveAttribute("aria-current", "step");
-    expect(screen.getByText("GX bench 1")).toBeVisible();
-    expect(screen.getByText("Molecular Biology")).toBeVisible();
+      screen.getByRole("heading", { level: 1, name: "Set up GX bench 1" }),
+    ).toBeVisible();
   });
 
   it("reloads a bookmarked Verify step from the persisted analyzer", async () => {
@@ -476,17 +475,19 @@ describe("AnalyzerSetup Instrument step", () => {
 
     renderSetup();
 
-    expect(await screen.findByText("GX bench 1")).toBeVisible();
-    expect(screen.getByText("Molecular Biology")).toBeVisible();
+    expect(
+      await screen.findByRole("heading", {
+        level: 1,
+        name: "Set up GX bench 1",
+      }),
+    ).toBeVisible();
     expect(getAnalyzer).toHaveBeenCalledWith(
       "42",
       expect.any(Function),
       expect.any(AbortSignal),
     );
     expect(createAnalyzer).not.toHaveBeenCalled();
-    expect(
-      screen.getByRole("heading", { level: 3, name: "Verify" }).closest("li"),
-    ).toHaveAttribute("aria-current", "step");
+    expect(screen.getByTestId("analyzer-setup-step-verify")).toBeVisible();
     expect(
       screen.getByRole("region", { name: "Set up GX bench 1" }),
     ).toBeVisible();
@@ -510,9 +511,7 @@ describe("AnalyzerSetup Instrument step", () => {
     expect(params.get("analyzerId")).toBe("42");
     expect(params.get("profile")).toBe(activeType.profileId);
     expect(params.get("revision")).toBe("3");
-    expect(
-      screen.getByRole("heading", { level: 3, name: "Verify" }).closest("li"),
-    ).toHaveAttribute("aria-current", "step");
+    expect(screen.getByTestId("analyzer-setup-step-verify")).toBeVisible();
 
     await userEvent.click(
       screen.getByRole("button", { name: "Edit Instrument" }),
@@ -524,11 +523,7 @@ describe("AnalyzerSetup Instrument step", () => {
     expect(params.get("analyzerId")).toBe("42");
     expect(params.get("profile")).toBe(activeType.profileId);
     expect(params.get("revision")).toBe("3");
-    expect(
-      screen
-        .getByRole("heading", { level: 3, name: "Instrument" })
-        .closest("li"),
-    ).toHaveAttribute("aria-current", "step");
+    expect(screen.getByTestId("analyzer-setup-step-instrument")).toBeVisible();
   });
 
   it("loads verification only for the persisted candidate profile revision", async () => {

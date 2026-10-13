@@ -875,7 +875,7 @@ describe("AnalyzersList", () => {
     );
   });
 
-  test("opens linkable Instrument setup inline while preserving the list", async () => {
+  test("opens linkable Instrument setup as its own page", async () => {
     window.history.replaceState(
       {},
       "",
@@ -918,19 +918,18 @@ describe("AnalyzersList", () => {
     expect(
       new URLSearchParams(window.location.search).get("revision"),
     ).toBeNull();
-    expect(screen.getByTestId("analyzers-list")).toBeVisible();
     expect(
       await screen.findByRole("region", { name: "Set up a new analyzer" }),
     ).toBeVisible();
     expect(
       screen.getByRole("heading", {
-        level: 2,
+        level: 1,
         name: "Set up a new analyzer",
       }),
     ).toBeVisible();
-    expect(
-      screen.getByRole("heading", { level: 3, name: "Instrument" }),
-    ).toBeVisible();
+    expect(screen.getByTestId("analyzer-setup-step-instrument")).toBeVisible();
+    // The list is not on the page beneath the setup.
+    expect(screen.queryByTestId("analyzers-table")).not.toBeInTheDocument();
 
     await userEvent.click(
       screen.getByRole("button", { name: "Close analyzer setup" }),
@@ -994,7 +993,10 @@ describe("AnalyzersList", () => {
     expect(
       await screen.findByRole("textbox", { name: "Analyzer name" }),
     ).toHaveValue("GX bench 1");
-    await userEvent.click(screen.getByTestId("add-analyzer-button"));
+    await userEvent.click(
+      screen.getByRole("button", { name: "Close analyzer setup" }),
+    );
+    await userEvent.click(await screen.findByTestId("add-analyzer-button"));
 
     expect(
       new URLSearchParams(window.location.search).get("analyzerId"),
