@@ -218,9 +218,31 @@
     position: static;
   }
 
+  // Four equal columns above the form; labels wrap inside their column.
   .analyzer-setup__steps.cds--progress--vertical {
-    flex-direction: row;
-    flex-wrap: wrap;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+  }
+
+  .analyzer-setup__steps.cds--progress--vertical .cds--progress-step {
+    min-width: 0;
+  }
+
+  .analyzer-setup__steps.cds--progress--vertical .cds--progress-step-button {
+    inline-size: 100%;
+  }
+
+  .analyzer-setup__steps.cds--progress--vertical .cds--progress-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    padding-inline-end: spacing.$spacing-03;
+  }
+
+  .analyzer-setup__steps.cds--progress--vertical .cds--progress-label,
+  .analyzer-setup__steps.cds--progress--vertical .cds--progress-optional {
+    max-inline-size: none;
+    overflow-wrap: anywhere;
+    white-space: normal;
   }
 
   .analyzer-setup__instrument-actions {
