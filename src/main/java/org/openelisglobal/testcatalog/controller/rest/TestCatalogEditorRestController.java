@@ -2165,6 +2165,10 @@ public class TestCatalogEditorRestController {
         public List<PanelMembership> memberships = new ArrayList<>();
         /** Set only on a 422 body: why the domain guard refused this write. */
         public DomainConflict domainConflict;
+        /** Set only on a 422 body: the rule that refused the write (OGC-1456). */
+        public String refusal;
+        /** With {@code panel.activeNeedsTest}: the active panels left empty. */
+        public List<PanelMembership> refusedPanels = new ArrayList<>();
     }
 
     /** A test within a panel — the read-only preview for the position editor. */
@@ -2186,7 +2190,10 @@ public class TestCatalogEditorRestController {
     }
 
     public static class PanelMembershipUpdate {
-        public List<MembershipItem> memberships = new ArrayList<>();
+        /**
+         * No default: an omitted list is refused, never read as "leave every panel".
+         */
+        public List<MembershipItem> memberships;
     }
 
     @GetMapping(value = "/panels", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -2303,7 +2310,30 @@ public class TestCatalogEditorRestController {
 
     public static class PanelTerminologyResponse {
         public String panelId;
-        public List<PanelTerminologyMappingDto> mappings = new ArrayList<>();
+        /**
+         * No default: on a save an omitted list is refused, never read as "clear every
+         * mapping" (OGC-1456).
+         */
+        public List<PanelTerminologyMappingDto> mappings;
+        /** Set only on a 422 body: the rule that refused the write (OGC-1456). */
+        public String refusal;
+        /** The code the refusal is about. */
+        public String refusedCode;
+    }
+
+    /** panel_terminology_mapping.code is VARCHAR(80). */
+    private static final int PANEL_TERM_CODE_MAX_LENGTH = 80;
+
+    /** A LOINC code is at most 10 characters (panel.loinc routes e-orders). */
+    private static final int LOINC_MAX_LENGTH = 10;
+
+    private static ResponseEntity<PanelTerminologyResponse> refusedTerminology(String panelId, String refusal,
+            String code) {
+        PanelTerminologyResponse body = new PanelTerminologyResponse();
+        body.panelId = panelId;
+        body.refusal = refusal;
+        body.refusedCode = code;
+        return ResponseEntity.unprocessableEntity().body(body);
     }
 
     @GetMapping(value = "/panels/{panelId}/terminology", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -2320,6 +2350,9 @@ public class TestCatalogEditorRestController {
         if (findPanel(panelId) == null) {
             return ResponseEntity.notFound().build();
         }
+        if (body == null || body.mappings == null || body.mappings.stream().anyMatch(Objects::isNull)) {
+            return ResponseEntity.badRequest().build();
+        }
         // (source, code) unique within the request — the DB enforces it per
         // panel, but reject early + cleanly rather than surfacing a raw 500.
         Set<String> seen = new HashSet<>();
@@ -2333,6 +2366,12 @@ public class TestCatalogEditorRestController {
             }
             if (!seen.add(m.source + " " + m.code.trim())) {
                 return ResponseEntity.unprocessableEntity().build();
+            }
+            if (m.code.trim().length() > PANEL_TERM_CODE_MAX_LENGTH) {
+                return refusedTerminology(panelId, "code.tooLong", m.code.trim());
+            }
+            if ("LOINC".equals(m.source) && m.code.trim().length() > LOINC_MAX_LENGTH) {
+                return refusedTerminology(panelId, "loinc.tooLong", m.code.trim());
             }
             org.openelisglobal.panelterminology.valueholder.PanelTerminologyMapping e = new org.openelisglobal.panelterminology.valueholder.PanelTerminologyMapping();
             e.setSource(m.source);
@@ -2349,6 +2388,7 @@ public class TestCatalogEditorRestController {
 
     private PanelTerminologyResponse toPanelTerminology(String panelId) {
         PanelTerminologyResponse resp = new PanelTerminologyResponse();
+        resp.mappings = new ArrayList<>();
         resp.panelId = panelId;
         for (org.openelisglobal.panelterminology.valueholder.PanelTerminologyMapping m : panelTerminologyService
                 .getActiveByPanelId(panelId)) {
@@ -2617,6 +2657,12 @@ public class TestCatalogEditorRestController {
             option.name = existing.getPanelName();
             return ResponseEntity.ok(option);
         }
+        if (name.length() > PANEL_NAME_MAX_LENGTH) {
+            PanelOption refusal = new PanelOption();
+            refusal.name = name;
+            refusal.refusal = "name.tooLong";
+            return ResponseEntity.unprocessableEntity().body(refusal);
+        }
 
         // panel.name_localization_id is NOT NULL — create the name localization
         // first, mirroring the legacy panel-add flow.
@@ -2700,6 +2746,9 @@ public class TestCatalogEditorRestController {
         if (test == null) {
             return ResponseEntity.notFound().build();
         }
+        if (body == null || body.memberships == null || body.memberships.stream().anyMatch(Objects::isNull)) {
+            return ResponseEntity.badRequest().build();
+        }
         // OGC-224: SAMPLETYPE_PANEL must follow every membership write — panels
         // this test leaves need a sync just as much as panels it joins.
         Set<String> affectedPanelIds = new LinkedHashSet<>();
@@ -2733,6 +2782,25 @@ public class TestCatalogEditorRestController {
             }
             fallback++;
         }
+        TestPanelsResponse emptied = new TestPanelsResponse();
+        for (String leftPanelId : affectedPanelIds) {
+            if (positionByPanelId.containsKey(leftPanelId)) {
+                continue;
+            }
+            Panel left = findPanel(leftPanelId);
+            if (left != null && "Y".equals(left.getIsActive())
+                    && panelItemService.getPanelItemsForPanel(leftPanelId).size() <= 1) {
+                PanelMembership refusedPanel = new PanelMembership();
+                refusedPanel.panelId = left.getId();
+                refusedPanel.panelName = left.getPanelName();
+                emptied.refusedPanels.add(refusedPanel);
+            }
+        }
+        if (!emptied.refusedPanels.isEmpty()) {
+            emptied.testId = testId;
+            emptied.refusal = "panel.activeNeedsTest";
+            return ResponseEntity.unprocessableEntity().body(emptied);
+        }
         panelItemService.setMembershipsForTest(test, positionByPanelId, ControllerUtills.getSysUserId(request));
         affectedPanelIds.addAll(positionByPanelId.keySet());
         // null only in hand-constructed unit-style tests (field-injected)
@@ -2754,7 +2822,10 @@ public class TestCatalogEditorRestController {
     }
 
     public static class PanelTestsUpdate {
-        public List<PanelTestItem> tests = new ArrayList<>();
+        /**
+         * No default: an omitted list is refused, never read as "remove every member".
+         */
+        public List<PanelTestItem> tests;
         /**
          * Create-flow only: a newly created panel defaults to Active when its first
          * test is added. Honored only when the panel is inactive and had zero members
@@ -2768,6 +2839,10 @@ public class TestCatalogEditorRestController {
         public List<PanelTestRow> tests = new ArrayList<>();
         /** Set only on a 422 body: why the domain guard refused this write. */
         public DomainConflict domainConflict;
+        /** Set only on a 422 body: the rule that refused the write (OGC-1456). */
+        public String refusal;
+        /** With {@code tests.inactive}: the inactive tests the write tried to add. */
+        public List<ConflictingTest> refusedTests = new ArrayList<>();
     }
 
     @PutMapping(value = "/panels/{panelId}/tests", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -2777,16 +2852,28 @@ public class TestCatalogEditorRestController {
         if (panel == null) {
             return ResponseEntity.notFound().build();
         }
+        if (body == null || body.tests == null || body.tests.stream().anyMatch(Objects::isNull)) {
+            return ResponseEntity.badRequest().build();
+        }
         String sysUserId = ControllerUtills.getSysUserId(request);
         Map<String, Integer> positionByTestId = new LinkedHashMap<>();
         List<Test> outside = new ArrayList<>();
+        List<Test> inactive = new ArrayList<>();
+        List<PanelItem> priorMembers = panelItemService.getPanelItemsForPanel(panel.getId());
+        Set<String> priorMemberIds = new HashSet<>();
+        for (PanelItem member : priorMembers) {
+            if (member.getTest() != null) {
+                priorMemberIds.add(member.getTest().getId());
+            }
+        }
         int fallback = 1;
         for (PanelTestItem item : body.tests) {
-            if (isBlank(item.testId) || positionByTestId.containsKey(item.testId)) {
-                // blank or duplicate member — reject the whole request
+            if (!TestCatalogNumericIdGuard.isNumericId(item.testId)
+                    || positionByTestId.containsKey(item.testId.trim())) {
+                // blank, malformed or duplicate member — reject the whole request
                 return ResponseEntity.unprocessableEntity().build();
             }
-            Test test = testService.getTestById(item.testId);
+            Test test = testService.getTestById(item.testId.trim());
             if (test == null) {
                 return ResponseEntity.unprocessableEntity().build();
             }
@@ -2796,7 +2883,10 @@ public class TestCatalogEditorRestController {
             if (!Domain.normalize(panel.getDomain()).equals(Domain.normalize(test.getDomain()))) {
                 outside.add(test);
             }
-            positionByTestId.put(item.testId, item.position != null ? item.position : fallback);
+            if (!test.isActive() && !priorMemberIds.contains(test.getId())) {
+                inactive.add(test);
+            }
+            positionByTestId.put(test.getId(), item.position != null ? item.position : fallback);
             fallback++;
         }
         if (!outside.isEmpty()) {
@@ -2804,7 +2894,18 @@ public class TestCatalogEditorRestController {
             refused.domainConflict = domainConflict(Domain.normalize(panel.getDomain()), outside);
             return ResponseEntity.unprocessableEntity().body(refused);
         }
-        int priorCount = panelItemService.getPanelItemsForPanel(panel.getId()).size();
+        if (!inactive.isEmpty()) {
+            PanelTestsResponse refused = new PanelTestsResponse();
+            refused.refusal = "tests.inactive";
+            refused.refusedTests = domainConflict(Domain.normalize(panel.getDomain()), inactive).tests;
+            return ResponseEntity.unprocessableEntity().body(refused);
+        }
+        if (positionByTestId.isEmpty() && "Y".equals(panel.getIsActive())) {
+            PanelTestsResponse refused = new PanelTestsResponse();
+            refused.refusal = "tests.activeNeedsTest";
+            return ResponseEntity.unprocessableEntity().body(refused);
+        }
+        int priorCount = priorMembers.size();
         panelItemService.setMembershipsForPanel(panel, positionByTestId, sysUserId);
         // SAMPLETYPE_PANEL follows the membership write (order entry reads it);
         // null only in hand-constructed unit-style tests (field-injected)
