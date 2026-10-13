@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Grid,
   Column,
@@ -28,7 +28,13 @@ import { useIntl } from "react-intl";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import config from "../../../config.json";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
-import { getFromOpenElisServer } from "../../utils/Utils";
+import CustomDatePicker from "../../common/CustomDatePicker";
+import { ConfigurationContext } from "../../layout/Layout";
+import {
+  displayDateToIso,
+  formatDateOnly,
+  getFromOpenElisServer,
+} from "../../utils/Utils";
 import {
   CycleStatusTag,
   hintStyle,
@@ -146,6 +152,8 @@ const MyCyclesPage = () => {
   const history = useHistory();
   const t = (id, defaultMessage, values) =>
     intl.formatMessage({ id, defaultMessage }, values);
+  const { configurationProperties = {} } =
+    useContext(ConfigurationContext) || {};
 
   const [cycles, setCycles] = useState([]);
   const [uncycledOrders, setUncycledOrders] = useState([]);
@@ -208,6 +216,15 @@ const MyCyclesPage = () => {
   const [newCycleError, setNewCycleError] = useState(null);
   const [newCycleNotice, setNewCycleNotice] = useState(null);
   const [savingCycle, setSavingCycle] = useState(false);
+
+  const setNewCycleDate = (field) => (date) =>
+    setNewCycle((prev) => ({
+      ...prev,
+      [field]: displayDateToIso(
+        date,
+        configurationProperties.DEFAULT_DATE_LOCALE,
+      ),
+    }));
 
   const openNewCycle = () => {
     setNewCycleError(null);
@@ -877,7 +894,7 @@ const MyCyclesPage = () => {
                     <TableCell>
                       <CycleStatusTag status={c.status} />
                     </TableCell>
-                    <TableCell>{c.deadline}</TableCell>
+                    <TableCell>{formatDateOnly(c.deadline)}</TableCell>
                     <TableCell>
                       {c.progress.entered} / {c.progress.total}
                     </TableCell>
@@ -949,11 +966,7 @@ const MyCyclesPage = () => {
                       </TableCell>
                       <TableCell>{o.programName || ""}</TableCell>
                       <TableCell>{o.status || ""}</TableCell>
-                      <TableCell>
-                        {o.deadline
-                          ? new Date(o.deadline).toLocaleDateString()
-                          : ""}
-                      </TableCell>
+                      <TableCell>{formatDateOnly(o.deadline)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -1032,26 +1045,23 @@ const MyCyclesPage = () => {
             }
             style={{ marginTop: "1rem" }}
           />
-          <TextInput
-            id="new-cycle-distribution"
-            type="date"
-            labelText={t("eqa.cycle.new.distributionDate", "Distribution date")}
-            value={newCycle.distributionDate}
-            onChange={(e) =>
-              setNewCycle({ ...newCycle, distributionDate: e.target.value })
-            }
-            style={{ marginTop: "1rem" }}
-          />
-          <TextInput
-            id="new-cycle-deadline"
-            type="date"
-            labelText={t("eqa.cycle.new.deadline", "Submission deadline")}
-            value={newCycle.submissionDeadline}
-            onChange={(e) =>
-              setNewCycle({ ...newCycle, submissionDeadline: e.target.value })
-            }
-            style={{ marginTop: "1rem" }}
-          />
+          <div style={{ marginTop: "1rem" }}>
+            <CustomDatePicker
+              id="new-cycle-distribution"
+              labelText={t(
+                "eqa.cycle.new.distributionDate",
+                "Distribution date",
+              )}
+              onChange={setNewCycleDate("distributionDate")}
+            />
+          </div>
+          <div style={{ marginTop: "1rem" }}>
+            <CustomDatePicker
+              id="new-cycle-deadline"
+              labelText={t("eqa.cycle.new.deadline", "Submission deadline")}
+              onChange={setNewCycleDate("submissionDeadline")}
+            />
+          </div>
         </Modal>
       )}
       {scoreImport && (
