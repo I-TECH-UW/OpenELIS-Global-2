@@ -184,7 +184,7 @@ const BasicInfoSection = ({ testId }) => {
   useEffect(() => {
     const controller = new AbortController();
     getFromOpenElisServer(
-      "/rest/test-catalog/lab-units",
+      "/rest/test-catalog/lab-units?includeInactive=true",
       (res) => setLabUnits(Array.isArray(res) ? res : []),
       controller.signal,
     );
@@ -318,6 +318,7 @@ const BasicInfoSection = ({ testId }) => {
     }
     setSaving(true);
     setCodeError(false);
+    setServerInvalidField(null);
     // The create endpoint expects `amr` (not `antimicrobialResistance`); map the
     // form's field names to the request body.
     const payload = {
@@ -376,6 +377,26 @@ const BasicInfoSection = ({ testId }) => {
               } else {
                 setCodeError(true);
               }
+            });
+        } else if (response && response.status === 422) {
+          response
+            .json()
+            .catch(() => null)
+            .then((body) => {
+              if (body && body.invalidField === "labUnitId") {
+                setServerInvalidField("labUnitId");
+                return;
+              }
+              setNotificationVisible(true);
+              addNotification({
+                kind: "error",
+                title: intl.formatMessage({
+                  id: "label.testCatalog.section.basic-info",
+                }),
+                message: intl.formatMessage({
+                  id: "error.testCatalog.create.refused",
+                }),
+              });
             });
         } else {
           setNotificationVisible(true);
@@ -553,9 +574,16 @@ const BasicInfoSection = ({ testId }) => {
           items={labUnitOptionsFor(createForm.labUnitId)}
           itemToString={labUnitItemToString}
           selectedItem={labUnits.find((u) => u.id === createForm.labUnitId)}
-          onChange={({ selectedItem }) =>
-            updateCreate({ labUnitId: selectedItem ? selectedItem.id : "" })
-          }
+          onChange={({ selectedItem }) => {
+            if (serverInvalidField === "labUnitId") {
+              setServerInvalidField(null);
+            }
+            updateCreate({ labUnitId: selectedItem ? selectedItem.id : "" });
+          }}
+          invalid={serverInvalidField === "labUnitId"}
+          invalidText={intl.formatMessage({
+            id: "error.testCatalog.basicInfo.labUnitInactive",
+          })}
         />
         {renderSampleTypesControl(
           "basic-info",
@@ -718,8 +746,22 @@ const BasicInfoSection = ({ testId }) => {
         items={labUnitOptionsFor(form.labUnitId)}
         itemToString={labUnitItemToString}
         selectedItem={labUnits.find((u) => u.id === form.labUnitId) || null}
-        onChange={({ selectedItem }) =>
-          update({ labUnitId: selectedItem ? selectedItem.id : "" })
+        onChange={({ selectedItem }) => {
+          if (serverInvalidField === "labUnitId") {
+            setServerInvalidField(null);
+          }
+          update({ labUnitId: selectedItem ? selectedItem.id : "" });
+        }}
+        invalid={serverInvalidField === "labUnitId"}
+        invalidText={intl.formatMessage({
+          id: "error.testCatalog.basicInfo.labUnitInactive",
+        })}
+        helperText={
+          labUnits.find((u) => u.id === form.labUnitId)?.isActive === false
+            ? intl.formatMessage({
+                id: "label.testCatalog.basicInfo.labUnit.inactiveHelp",
+              })
+            : undefined
         }
       />
       <div id="basic-info-edit-sample-type">

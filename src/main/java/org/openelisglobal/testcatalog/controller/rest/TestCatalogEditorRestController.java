@@ -360,13 +360,27 @@ public class TestCatalogEditorRestController {
         public boolean isActive;
     }
 
+    /**
+     * The lab units to choose from. With {@code includeInactive} the deactivated
+     * ones come too, marked inactive, so the test editor can keep showing a test's
+     * deactivated unit instead of a blank picker (OGC-189 M2, OGC-1459); every
+     * other chooser keeps the active-only list.
+     */
     @GetMapping(value = "/lab-units", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<LabUnitOption> listLabUnits() {
+    public List<LabUnitOption> listLabUnits(@RequestParam(defaultValue = "false") boolean includeInactive) {
         List<LabUnitOption> options = new ArrayList<>();
         if (testSectionService == null) {
             return options;
         }
-        for (TestSection section : testSectionService.getAllActiveTestSections()) {
+        List<TestSection> sections = new ArrayList<>(testSectionService.getAllActiveTestSections());
+        if (includeInactive) {
+            for (TestSection section : testSectionService.getAllInActiveTestSections()) {
+                if (!TestSectionService.USER_SENTINEL_SECTION_NAME.equals(section.getTestSectionName())) {
+                    sections.add(section);
+                }
+            }
+        }
+        for (TestSection section : sections) {
             LabUnitOption option = new LabUnitOption();
             option.id = section.getId();
             option.name = section.getLocalizedName();
@@ -409,6 +423,8 @@ public class TestCatalogEditorRestController {
         // name, unless an explicit description was sent) is already another
         // test's. The code-in-use 409 stays bodyless, as released clients expect.
         public String conflict;
+        /** Set only on a 422 body: the field whose value was refused. */
+        public String invalidField;
     }
 
     @PostMapping(value = "/tests", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -429,6 +445,11 @@ public class TestCatalogEditorRestController {
             if (type == null || !sampleTypeDomainCompatible(body.domain, type)) {
                 return ResponseEntity.unprocessableEntity().build();
             }
+        }
+        if (labUnitIsInactive(body.labUnitId)) {
+            CreatedTest refused = new CreatedTest();
+            refused.invalidField = "labUnitId";
+            return ResponseEntity.unprocessableEntity().body(refused);
         }
         // Code uniqueness (FR-4) → 409 so the UI can flag the field.
         if (testCatalogCreationService.codeInUse(body.code)) {
@@ -472,6 +493,18 @@ public class TestCatalogEditorRestController {
         CreatedTest created = new CreatedTest();
         created.testId = newId;
         return ResponseEntity.status(201).body(created);
+    }
+
+    /**
+     * A new test may not go into a deactivated unit: creating it there used to
+     * switch the unit back on (OGC-1459), which only reactivating the unit may do.
+     */
+    private boolean labUnitIsInactive(String labUnitId) {
+        if (isBlank(labUnitId) || testSectionService == null || !TestCatalogNumericIdGuard.isNumericId(labUnitId)) {
+            return false;
+        }
+        TestSection unit = testSectionService.getTestSectionById(labUnitId.trim());
+        return unit != null && "N".equals(unit.getIsActive());
     }
 
     @GetMapping(value = "/tests/{testId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -686,6 +719,9 @@ public class TestCatalogEditorRestController {
             return ResponseEntity.unprocessableEntity().build();
         }
         String invalidField = firstInvalidField(body);
+        if (invalidField == null && labUnitRefused(test, body.labUnitId)) {
+            invalidField = "labUnitId";
+        }
         if (invalidField != null) {
             BasicInfo invalid = new BasicInfo();
             invalid.invalidField = invalidField;
@@ -728,17 +764,13 @@ public class TestCatalogEditorRestController {
         if (body.notifyResults != null) {
             test.setNotifyResults(body.notifyResults);
         }
-        // Lab unit (test section) is editable on modify too (not just create).
-        // Assigning an inactive section activates it, mirroring the create flow and
-        // the legacy Test Section assignment, so the test surfaces on Add Order.
+        // Lab unit (test section) is editable on modify too (not just create). A
+        // save never changes the unit's status (OGC-1459): keeping a test in its
+        // deactivated unit leaves the unit off, and moving it into an inactive one
+        // was refused above.
         if (!isBlank(body.labUnitId) && testSectionService != null) {
-            TestSection section = testSectionService.get(body.labUnitId);
+            TestSection section = testSectionService.getTestSectionById(body.labUnitId.trim());
             if (section != null) {
-                if ("N".equals(section.getIsActive())) {
-                    section.setIsActive("Y");
-                    section.setSysUserId(ControllerUtills.getSysUserId(request));
-                    testSectionService.update(section);
-                }
                 test.setTestSection(section);
             }
         }
@@ -823,6 +855,26 @@ public class TestCatalogEditorRestController {
             return "qcRecoveryWindowPct";
         }
         return null;
+    }
+
+    /**
+     * True when the save names a lab unit it cannot use: one that does not exist
+     * (or is not an id), or a different, inactive one.
+     */
+    private boolean labUnitRefused(Test test, String labUnitId) {
+        if (isBlank(labUnitId) || testSectionService == null) {
+            return false;
+        }
+        if (!TestCatalogNumericIdGuard.isNumericId(labUnitId)) {
+            return true;
+        }
+        TestSection target = testSectionService.getTestSectionById(labUnitId.trim());
+        if (target == null) {
+            return true;
+        }
+        TestSection current = test.getTestSection();
+        boolean sameUnit = current != null && target.getId().equals(current.getId());
+        return !sameUnit && "N".equals(target.getIsActive());
     }
 
     private static boolean validThreshold(String value) {

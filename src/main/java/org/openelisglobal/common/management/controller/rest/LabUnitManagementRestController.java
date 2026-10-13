@@ -205,11 +205,24 @@ public class LabUnitManagementRestController extends BaseRestController {
         private boolean success;
         private String message;
         private T data;
+        @com.fasterxml.jackson.annotation.JsonInclude(com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL)
+        private String refusal;
 
         public ApiResponse(boolean success, String message, T data) {
             this.success = success;
             this.message = message;
             this.data = data;
+        }
+
+        /** A refusal the screen can name in the user's language (OGC-1459). */
+        static <T> ApiResponse<T> refused(String refusal, String message) {
+            ApiResponse<T> response = new ApiResponse<>(false, message, null);
+            response.refusal = refusal;
+            return response;
+        }
+
+        public String getRefusal() {
+            return refusal;
         }
 
         public boolean isSuccess() {
@@ -544,6 +557,14 @@ public class LabUnitManagementRestController extends BaseRestController {
         return ResponseEntity.ok(candidates);
     }
 
+    /**
+     * OGC-1459: deactivating a unit cannot hand its tests to an inactive one, which
+     * used to be switched back on without anyone deciding to. (A bulk reassign may
+     * still move tests into an inactive unit, decision D4; it no longer reactivates
+     * it.)
+     */
+    private static final String INACTIVE_DESTINATION_MESSAGE = "the destination lab unit is inactive; reactivate it first";
+
     /** Body for the bulk assign/reassign actions. */
     public static class BulkTestAssignmentRequest {
         public List<String> testIds;
@@ -715,6 +736,10 @@ public class LabUnitManagementRestController extends BaseRestController {
             if (labUnitId.equals(body.destinationLabUnitId)) {
                 return ResponseEntity.unprocessableEntity()
                         .body(new ApiResponse<>(false, "destination must differ from the source lab unit", null));
+            }
+            if ("N".equals(getManagedSection(body.destinationLabUnitId).getIsActive())) {
+                return ResponseEntity.unprocessableEntity()
+                        .body(ApiResponse.refused("destination.inactive", INACTIVE_DESTINATION_MESSAGE));
             }
         }
 
