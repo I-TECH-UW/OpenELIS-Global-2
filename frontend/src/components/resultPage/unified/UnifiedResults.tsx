@@ -91,6 +91,7 @@ import Avatar from "./Avatar";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+import EQABadge from "../../eqa/EQABadge";
 import config from "../../../config.json";
 import SearchPatientForm from "../../patient/SearchPatientForm";
 import { PatientRecord } from "../../patient/types";
@@ -1311,7 +1312,12 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
           <Avatar name={row.patientName} id={row.patientId as string} />
         )}
         <div>
-          <div className="unifiedAccession">{accession}</div>
+          <div className="unifiedAccession">
+            {accession}
+            {row.eqaSample && !row.eqaInHouse && (
+              <EQABadge priority={row.eqaPriority} />
+            )}
+          </div>
           {subline && <div className="unifiedSubjectSub">{subline}</div>}
           {/* the old Results page's non-conformity indicator, reproduced
               under the sample/patient identity — analysis-level, shared by

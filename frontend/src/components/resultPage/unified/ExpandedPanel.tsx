@@ -40,6 +40,7 @@ import InlineNceForm from "../../nonconform/common/InlineNceForm";
 import { FlagChip, accentClass } from "./flags";
 import { resultFlagFor } from "./resultFlagFor";
 import SampleKindTag from "../SampleKindTag";
+import EQABadge from "../../eqa/EQABadge";
 import { getFromOpenElisServer } from "../../utils/Utils";
 import { AnalysisNote, noteVisibleOnRow } from "./noteScope";
 import { NceDisposition } from "./nceDisposition";
@@ -285,6 +286,8 @@ const ExpandedPanel: React.FC<ExpandedPanelProps> = ({
     };
   }, [eqaSchemeId]);
   const eqaAnalystId = (row.eqaAnalystId as string | undefined) || "";
+  // In-house orders are blinded, so they are not marked as EQA.
+  const showsEqa = Boolean(row.eqaSample) && !row.eqaInHouse;
 
   // one order-record fetch per accession feeds Order info + Programme
   const orderContext = useOrderContext(row.accessionNumber);
@@ -326,7 +329,11 @@ const ExpandedPanel: React.FC<ExpandedPanelProps> = ({
           data-testid={`sample-kind-${rowKey}`}
         >
           <FormattedMessage id="column.name.sampleKind" />
-          <SampleKindTag qcType={row.qcType} />
+          {showsEqa ? (
+            <EQABadge priority={row.eqaPriority} />
+          ) : (
+            <SampleKindTag qcType={row.qcType} />
+          )}
         </span>
         {row.referredOut && (
           <Tag type="cyan" size="sm">
@@ -907,7 +914,7 @@ const ExpandedPanel: React.FC<ExpandedPanelProps> = ({
           open={isSectionOpen(sectionLayout, "program", false)}
           onToggle={(open) => toggleSection("program", open)}
           order={orderContext}
-          eqaSample={Boolean(row.eqaSample)}
+          eqaSample={showsEqa}
           eqaPriority={row.eqaPriority as string | undefined}
         />
 
