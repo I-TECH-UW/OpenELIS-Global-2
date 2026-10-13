@@ -970,6 +970,10 @@ public class TestCatalogEditorRestController {
         public Boolean normal;
         // Choosing this option opens a text box for a qualifying value at result entry.
         public Boolean qualifiable;
+        // A value the admin typed rather than picked from the dictionary. It is
+        // stored as a dictionary entry with that text, even when the text is a
+        // number that happens to be another entry's id (OGC-1458).
+        public Boolean freeText;
     }
 
     /** A labeled result field of a test (e.g. systolic, diastolic). */
@@ -999,6 +1003,45 @@ public class TestCatalogEditorRestController {
     public static class SampleResults {
         public String testId;
         public List<ResultComponentDto> components = new ArrayList<>();
+        /** Set only on a 422 body: the rule that refused the save (OGC-1458). */
+        public String refusal;
+        /** The component the refusal is about, when there is one. */
+        public String refusedComponent;
+    }
+
+    private static ResponseEntity<SampleResults> refusedSampleResults(String testId, String refusal, String component) {
+        SampleResults body = new SampleResults();
+        body.testId = testId;
+        body.refusal = refusal;
+        body.refusedComponent = component;
+        return ResponseEntity.unprocessableEntity().body(body);
+    }
+
+    private static boolean knownResultType(String type) {
+        if (isBlank(type)) {
+            return false;
+        }
+        for (TypeOfTestResultServiceImpl.ResultType resultType : TypeOfTestResultServiceImpl.ResultType.values()) {
+            if (resultType.getCharacterValue().equals(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * True when an option holds text the admin typed: flagged as such, or a new
+     * option whose shown name is not the name of the dictionary entry its value
+     * would resolve to. A bare dictionary id with no name stays a dictionary pick.
+     */
+    private boolean isFreeTextOption(OptionDto option) {
+        if (Boolean.TRUE.equals(option.freeText)) {
+            return true;
+        }
+        if (!isBlank(option.id) || isBlank(option.valueName) || isBlank(option.value)) {
+            return false;
+        }
+        return !option.valueName.trim().equals(dictionaryName(option.value.trim()));
     }
 
     @GetMapping(value = "/tests/{testId}/sample-results", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -1017,12 +1060,18 @@ public class TestCatalogEditorRestController {
         if (test == null) {
             return ResponseEntity.notFound().build();
         }
+        if (body.components.isEmpty() && test.isActive()) {
+            return refusedSampleResults(testId, "components.activeNeedsComponent", null);
+        }
         // Each component needs a code + label, and codes must be unique within the
         // request (the DB enforces (test_id, code) too, but reject early + cleanly).
         Set<String> codes = new HashSet<>();
         for (ResultComponentDto c : body.components) {
             if (isBlank(c.code) || isBlank(c.label)) {
                 return ResponseEntity.unprocessableEntity().build();
+            }
+            if (!knownResultType(c.resultType)) {
+                return refusedSampleResults(testId, "resultType.unknown", c.label);
             }
             if (!codes.add(c.code)) {
                 return ResponseEntity.unprocessableEntity().build();
@@ -1087,6 +1136,7 @@ public class TestCatalogEditorRestController {
                     tr.setId(o.id);
                 }
                 tr.setValue(o.value);
+                tr.setFreeText(isFreeTextOption(o));
                 tr.setSortOrder(o.sortOrder != null ? String.valueOf(o.sortOrder) : null);
                 tr.setIsNormal(Boolean.TRUE.equals(o.normal));
                 tr.setIsQuantifiable(Boolean.TRUE.equals(o.qualifiable));
@@ -1115,17 +1165,6 @@ public class TestCatalogEditorRestController {
         if (catalogHealthService != null) {
             catalogHealthService.invalidate();
         }
-    }
-
-    @PostMapping(value = "/tests/{testId}/sample-results/copy-from/{sourceId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SampleResults> copySampleResults(@PathVariable String testId, @PathVariable String sourceId,
-            HttpServletRequest request) {
-        Test test = testService.getTestById(testId);
-        if (test == null || testService.getTestById(sourceId) == null) {
-            return ResponseEntity.notFound().build();
-        }
-        componentService.copyComponentsFromTest(sourceId, testId, ControllerUtills.getSysUserId(request));
-        return ResponseEntity.ok(toSampleResults(testId));
     }
 
     /** The primary component's id: the flagged one, else the first. */
