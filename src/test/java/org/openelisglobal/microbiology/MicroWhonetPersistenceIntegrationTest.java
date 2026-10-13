@@ -117,6 +117,9 @@ public class MicroWhonetPersistenceIntegrationTest extends BaseWebContextSensiti
                 ordered.getAntibioticId(), MicroAstMethod.MIC, new BigDecimal("4"), performedBy));
         astService.reviewRun(run.getId(), performedBy);
         MicroCase released = reportReleaseService.releaseFinal(scenario.caseId, performedBy);
+        // The M4 seeder stamps BACTERIOLOGY; current cases leave it null.
+        entityManager.createQuery("update MicroCase c set c.workflowType = null where c.id = :id")
+                .setParameter("id", released.getId()).executeUpdate();
 
         assertTrue(released.getClosedAt().after(new Timestamp(collectionDate.getTime() + 1_000)));
         assertEquals(List.of(released), caseDAO.getFinalizedBacteriologyByCollectionDateRange(collectionDate,
