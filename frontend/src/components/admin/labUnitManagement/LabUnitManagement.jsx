@@ -194,6 +194,8 @@ function LabUnitManagement({ intl }) {
   const [deactivationDestination, setDeactivationDestination] = useState("");
   const [deactivationConfirmText, setDeactivationConfirmText] = useState("");
   const [deactivationBusy, setDeactivationBusy] = useState(false);
+  // The server's reason when it refuses the deactivation (OGC-1459).
+  const [deactivationError, setDeactivationError] = useState(null);
 
   const refreshLabUnits = useCallback(async () => {
     return await new Promise((resolve, reject) => {
@@ -620,6 +622,7 @@ function LabUnitManagement({ intl }) {
     setDeactivationOption("");
     setDeactivationDestination("");
     setDeactivationConfirmText("");
+    setDeactivationError(null);
     setDeactivationOpen(true);
     getFromOpenElisServer(
       `/rest/lab-units-management/${labUnitId}/deactivation-impact`,
@@ -635,6 +638,7 @@ function LabUnitManagement({ intl }) {
 
   const confirmDeactivation = useCallback(() => {
     setDeactivationBusy(true);
+    setDeactivationError(null);
     postToOpenElisServerJsonResponse(
       `/rest/lab-units-management/${labUnitId}/deactivate`,
       JSON.stringify({
@@ -648,6 +652,15 @@ function LabUnitManagement({ intl }) {
           setDeactivationOpen(false);
           setEditingUnit((prev) => ({ ...prev, active: false }));
           setShowSuccess(true);
+        } else {
+          setDeactivationError(
+            response?.refusal === "destination.inactive"
+              ? intl.formatMessage({
+                  id: "error.labUnit.deactivate.destinationInactive",
+                })
+              : response?.message ||
+                  intl.formatMessage({ id: "error.labUnit.deactivate.failed" }),
+          );
         }
       },
     );
@@ -656,6 +669,7 @@ function LabUnitManagement({ intl }) {
     deactivationOption,
     deactivationDestination,
     deactivationConfirmText,
+    intl,
   ]);
 
   // ─── LIST VIEW ────────────────────────────────────────────────
@@ -1100,7 +1114,21 @@ function LabUnitManagement({ intl }) {
                 Toggle) would mount with undefined and not reflect the saved
                 status. */}
             {view === "editor" &&
-            !(editingUnit && String(editingUnit.id) === String(labUnitId)) ? (
+            !isLoading &&
+            !labUnits.some((item) => String(item.id) === String(labUnitId)) ? (
+              <InlineNotification
+                kind="error"
+                lowContrast
+                hideCloseButton
+                data-testid="lab-unit-not-found"
+                title={intl.formatMessage({
+                  id: loadError
+                    ? "label.labUnit.editorLoadError"
+                    : "label.labUnit.notFound",
+                })}
+              />
+            ) : view === "editor" &&
+              !(editingUnit && String(editingUnit.id) === String(labUnitId)) ? (
               <div
                 style={{
                   display: "flex",
@@ -1447,6 +1475,15 @@ function LabUnitManagement({ intl }) {
                       onRequestSubmit={confirmDeactivation}
                     >
                       <Stack gap={5}>
+                        {deactivationError && (
+                          <InlineNotification
+                            kind="error"
+                            lowContrast
+                            hideCloseButton
+                            title={intl.formatMessage({ id: "error.title" })}
+                            subtitle={deactivationError}
+                          />
+                        )}
                         {!deactivationImpact ? (
                           <p>
                             <FormattedMessage id="label.labUnit.deactivate.loading" />
@@ -1567,7 +1604,8 @@ function LabUnitManagement({ intl }) {
                                 {labUnits
                                   .filter(
                                     (unit) =>
-                                      String(unit.id) !== String(labUnitId),
+                                      String(unit.id) !== String(labUnitId) &&
+                                      unit.active !== false,
                                   )
                                   .map((unit) => (
                                     <SelectItem

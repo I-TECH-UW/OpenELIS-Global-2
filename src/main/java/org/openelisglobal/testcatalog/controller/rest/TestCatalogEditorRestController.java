@@ -360,13 +360,27 @@ public class TestCatalogEditorRestController {
         public boolean isActive;
     }
 
+    /**
+     * The lab units to choose from. With {@code includeInactive} the deactivated
+     * ones come too, marked inactive, so the test editor can keep showing a test's
+     * deactivated unit instead of a blank picker (OGC-189 M2, OGC-1459); every
+     * other chooser keeps the active-only list.
+     */
     @GetMapping(value = "/lab-units", produces = MediaType.APPLICATION_JSON_VALUE)
-    public List<LabUnitOption> listLabUnits() {
+    public List<LabUnitOption> listLabUnits(@RequestParam(defaultValue = "false") boolean includeInactive) {
         List<LabUnitOption> options = new ArrayList<>();
         if (testSectionService == null) {
             return options;
         }
-        for (TestSection section : testSectionService.getAllActiveTestSections()) {
+        List<TestSection> sections = new ArrayList<>(testSectionService.getAllActiveTestSections());
+        if (includeInactive) {
+            for (TestSection section : testSectionService.getAllInActiveTestSections()) {
+                if (!TestSectionService.USER_SENTINEL_SECTION_NAME.equals(section.getTestSectionName())) {
+                    sections.add(section);
+                }
+            }
+        }
+        for (TestSection section : sections) {
             LabUnitOption option = new LabUnitOption();
             option.id = section.getId();
             option.name = section.getLocalizedName();
@@ -409,6 +423,8 @@ public class TestCatalogEditorRestController {
         // name, unless an explicit description was sent) is already another
         // test's. The code-in-use 409 stays bodyless, as released clients expect.
         public String conflict;
+        /** Set only on a 422 body: the field whose value was refused. */
+        public String invalidField;
     }
 
     @PostMapping(value = "/tests", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -429,6 +445,11 @@ public class TestCatalogEditorRestController {
             if (type == null || !sampleTypeDomainCompatible(body.domain, type)) {
                 return ResponseEntity.unprocessableEntity().build();
             }
+        }
+        if (labUnitIsInactive(body.labUnitId)) {
+            CreatedTest refused = new CreatedTest();
+            refused.invalidField = "labUnitId";
+            return ResponseEntity.unprocessableEntity().body(refused);
         }
         // Code uniqueness (FR-4) → 409 so the UI can flag the field.
         if (testCatalogCreationService.codeInUse(body.code)) {
@@ -472,6 +493,18 @@ public class TestCatalogEditorRestController {
         CreatedTest created = new CreatedTest();
         created.testId = newId;
         return ResponseEntity.status(201).body(created);
+    }
+
+    /**
+     * A new test may not go into a deactivated unit: creating it there used to
+     * switch the unit back on (OGC-1459), which only reactivating the unit may do.
+     */
+    private boolean labUnitIsInactive(String labUnitId) {
+        if (isBlank(labUnitId) || testSectionService == null || !TestCatalogNumericIdGuard.isNumericId(labUnitId)) {
+            return false;
+        }
+        TestSection unit = testSectionService.getTestSectionById(labUnitId.trim());
+        return unit != null && "N".equals(unit.getIsActive());
     }
 
     @GetMapping(value = "/tests/{testId}", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -686,6 +719,9 @@ public class TestCatalogEditorRestController {
             return ResponseEntity.unprocessableEntity().build();
         }
         String invalidField = firstInvalidField(body);
+        if (invalidField == null && labUnitRefused(test, body.labUnitId)) {
+            invalidField = "labUnitId";
+        }
         if (invalidField != null) {
             BasicInfo invalid = new BasicInfo();
             invalid.invalidField = invalidField;
@@ -728,17 +764,13 @@ public class TestCatalogEditorRestController {
         if (body.notifyResults != null) {
             test.setNotifyResults(body.notifyResults);
         }
-        // Lab unit (test section) is editable on modify too (not just create).
-        // Assigning an inactive section activates it, mirroring the create flow and
-        // the legacy Test Section assignment, so the test surfaces on Add Order.
+        // Lab unit (test section) is editable on modify too (not just create). A
+        // save never changes the unit's status (OGC-1459): keeping a test in its
+        // deactivated unit leaves the unit off, and moving it into an inactive one
+        // was refused above.
         if (!isBlank(body.labUnitId) && testSectionService != null) {
-            TestSection section = testSectionService.get(body.labUnitId);
+            TestSection section = testSectionService.getTestSectionById(body.labUnitId.trim());
             if (section != null) {
-                if ("N".equals(section.getIsActive())) {
-                    section.setIsActive("Y");
-                    section.setSysUserId(ControllerUtills.getSysUserId(request));
-                    testSectionService.update(section);
-                }
                 test.setTestSection(section);
             }
         }
@@ -823,6 +855,26 @@ public class TestCatalogEditorRestController {
             return "qcRecoveryWindowPct";
         }
         return null;
+    }
+
+    /**
+     * True when the save names a lab unit it cannot use: one that does not exist
+     * (or is not an id), or a different, inactive one.
+     */
+    private boolean labUnitRefused(Test test, String labUnitId) {
+        if (isBlank(labUnitId) || testSectionService == null) {
+            return false;
+        }
+        if (!TestCatalogNumericIdGuard.isNumericId(labUnitId)) {
+            return true;
+        }
+        TestSection target = testSectionService.getTestSectionById(labUnitId.trim());
+        if (target == null) {
+            return true;
+        }
+        TestSection current = test.getTestSection();
+        boolean sameUnit = current != null && target.getId().equals(current.getId());
+        return !sameUnit && "N".equals(target.getIsActive());
     }
 
     private static boolean validThreshold(String value) {
@@ -970,6 +1022,10 @@ public class TestCatalogEditorRestController {
         public Boolean normal;
         // Choosing this option opens a text box for a qualifying value at result entry.
         public Boolean qualifiable;
+        // A value the admin typed rather than picked from the dictionary. It is
+        // stored as a dictionary entry with that text, even when the text is a
+        // number that happens to be another entry's id (OGC-1458).
+        public Boolean freeText;
     }
 
     /** A labeled result field of a test (e.g. systolic, diastolic). */
@@ -999,6 +1055,45 @@ public class TestCatalogEditorRestController {
     public static class SampleResults {
         public String testId;
         public List<ResultComponentDto> components = new ArrayList<>();
+        /** Set only on a 422 body: the rule that refused the save (OGC-1458). */
+        public String refusal;
+        /** The component the refusal is about, when there is one. */
+        public String refusedComponent;
+    }
+
+    private static ResponseEntity<SampleResults> refusedSampleResults(String testId, String refusal, String component) {
+        SampleResults body = new SampleResults();
+        body.testId = testId;
+        body.refusal = refusal;
+        body.refusedComponent = component;
+        return ResponseEntity.unprocessableEntity().body(body);
+    }
+
+    private static boolean knownResultType(String type) {
+        if (isBlank(type)) {
+            return false;
+        }
+        for (TypeOfTestResultServiceImpl.ResultType resultType : TypeOfTestResultServiceImpl.ResultType.values()) {
+            if (resultType.getCharacterValue().equals(type)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
+     * True when an option holds text the admin typed: flagged as such, or a new
+     * option whose shown name is not the name of the dictionary entry its value
+     * would resolve to. A bare dictionary id with no name stays a dictionary pick.
+     */
+    private boolean isFreeTextOption(OptionDto option) {
+        if (Boolean.TRUE.equals(option.freeText)) {
+            return true;
+        }
+        if (!isBlank(option.id) || isBlank(option.valueName) || isBlank(option.value)) {
+            return false;
+        }
+        return !option.valueName.trim().equals(dictionaryName(option.value.trim()));
     }
 
     @GetMapping(value = "/tests/{testId}/sample-results", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -1017,12 +1112,18 @@ public class TestCatalogEditorRestController {
         if (test == null) {
             return ResponseEntity.notFound().build();
         }
+        if (body.components.isEmpty() && test.isActive()) {
+            return refusedSampleResults(testId, "components.activeNeedsComponent", null);
+        }
         // Each component needs a code + label, and codes must be unique within the
         // request (the DB enforces (test_id, code) too, but reject early + cleanly).
         Set<String> codes = new HashSet<>();
         for (ResultComponentDto c : body.components) {
             if (isBlank(c.code) || isBlank(c.label)) {
                 return ResponseEntity.unprocessableEntity().build();
+            }
+            if (!knownResultType(c.resultType)) {
+                return refusedSampleResults(testId, "resultType.unknown", c.label);
             }
             if (!codes.add(c.code)) {
                 return ResponseEntity.unprocessableEntity().build();
@@ -1087,6 +1188,7 @@ public class TestCatalogEditorRestController {
                     tr.setId(o.id);
                 }
                 tr.setValue(o.value);
+                tr.setFreeText(isFreeTextOption(o));
                 tr.setSortOrder(o.sortOrder != null ? String.valueOf(o.sortOrder) : null);
                 tr.setIsNormal(Boolean.TRUE.equals(o.normal));
                 tr.setIsQuantifiable(Boolean.TRUE.equals(o.qualifiable));
@@ -1115,17 +1217,6 @@ public class TestCatalogEditorRestController {
         if (catalogHealthService != null) {
             catalogHealthService.invalidate();
         }
-    }
-
-    @PostMapping(value = "/tests/{testId}/sample-results/copy-from/{sourceId}", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<SampleResults> copySampleResults(@PathVariable String testId, @PathVariable String sourceId,
-            HttpServletRequest request) {
-        Test test = testService.getTestById(testId);
-        if (test == null || testService.getTestById(sourceId) == null) {
-            return ResponseEntity.notFound().build();
-        }
-        componentService.copyComponentsFromTest(sourceId, testId, ControllerUtills.getSysUserId(request));
-        return ResponseEntity.ok(toSampleResults(testId));
     }
 
     /** The primary component's id: the flagged one, else the first. */

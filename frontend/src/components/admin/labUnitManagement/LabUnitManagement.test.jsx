@@ -89,9 +89,9 @@ const mockIntl = {
 // The editor is URL-driven: /MasterListsPage/LabUnitManagement/:labUnitId?/:section?
 // Wrap in a matching Route so useParams() sees the current segment when the
 // user navigates from the list to the editor.
-const renderPage = () =>
+const renderPage = (initialEntry = "/MasterListsPage/LabUnitManagement") =>
   render(
-    <MemoryRouter initialEntries={["/MasterListsPage/LabUnitManagement"]}>
+    <MemoryRouter initialEntries={[initialEntry]}>
       <IntlProvider locale="en" messages={messages}>
         <Route
           path="/MasterListsPage/LabUnitManagement/:labUnitId?/:section?"
@@ -110,6 +110,15 @@ describe("LabUnitManagement", () => {
     ).toBeInTheDocument();
     expect(screen.getByText("Add Lab Unit")).toBeInTheDocument();
     expect(screen.getByText("Hematology")).toBeInTheDocument();
+  });
+
+  test("a deep link to a lab unit that does not exist says so, never an endless spinner (OGC-1461)", async () => {
+    renderPage("/MasterListsPage/LabUnitManagement/99999999/basic-info");
+
+    expect(await screen.findByTestId("lab-unit-not-found")).toHaveTextContent(
+      messages["label.labUnit.notFound"],
+    );
+    expect(screen.queryByText(messages["label.labUnit.loading"])).toBeNull();
   });
 
   test("add form renders one name input per active locale", async () => {
@@ -297,5 +306,132 @@ describe("LabUnitManagement deactivation flow (OGC-189 M3)", () => {
         "This lab unit stays on the worklists until its 2 pending analyses are completed.",
       ),
     ).toBeInTheDocument();
+  });
+});
+
+describe("LabUnitManagement deactivation into another unit (OGC-1459)", () => {
+  let base;
+  beforeEach(() => {
+    base = getFromOpenElisServer.getMockImplementation();
+    getFromOpenElisServer.mockImplementation((endpoint, callback) => {
+      if (endpoint === "/rest/lab-units-management") {
+        callback({
+          success: true,
+          data: [
+            {
+              id: "10",
+              name: "Hematology",
+              names: { en: "Hematology" },
+              domain: "CLINICAL",
+              isActive: true,
+              sortOrder: 1,
+              testCount: 4,
+            },
+            {
+              id: "11",
+              name: "Chemistry",
+              names: { en: "Chemistry" },
+              domain: "CLINICAL",
+              isActive: true,
+              sortOrder: 2,
+              testCount: 0,
+            },
+            {
+              id: "12",
+              name: "Parasitology",
+              names: { en: "Parasitology" },
+              domain: "CLINICAL",
+              isActive: false,
+              sortOrder: 3,
+              testCount: 0,
+            },
+          ],
+        });
+      } else {
+        base(endpoint, callback);
+      }
+    });
+  });
+  afterEach(() => {
+    getFromOpenElisServer.mockImplementation(base);
+  });
+
+  const openReassign = async () => {
+    renderPage();
+    fireEvent.click((await screen.findAllByText("Edit"))[0]);
+    fireEvent.click(await screen.findByRole("switch"));
+    await screen.findByText("This lab unit currently holds:");
+    fireEvent.click(screen.getByLabelText(/Reassign the tests/));
+  };
+
+  test("offers only active units to take the tests", async () => {
+    await openReassign();
+
+    const destinations = Array.from(
+      document.querySelectorAll("#lu-deactivate-destination option"),
+    ).map((o) => o.textContent);
+    expect(destinations).toContain("Chemistry");
+    expect(destinations).not.toContain("Parasitology");
+  });
+
+  test("says why when the server refuses the deactivation", async () => {
+    postToOpenElisServerJsonResponse.mockImplementation((url, body, cb) =>
+      cb({
+        success: false,
+        message: "the destination lab unit is inactive; reactivate it first",
+      }),
+    );
+    await openReassign();
+    fireEvent.change(document.querySelector("#lu-deactivate-destination"), {
+      target: { value: "11" },
+    });
+    fireEvent.change(screen.getByLabelText("Type DEACTIVATE to confirm"), {
+      target: { value: "DEACTIVATE" },
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: /Deactivate lab unit$/ }),
+    );
+
+    expect(
+      await screen.findByText(
+        "the destination lab unit is inactive; reactivate it first",
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText("This lab unit currently holds:"),
+    ).toBeInTheDocument();
+  });
+
+  // OGC-1459 review: the inactive-destination refusal reads in the user's
+  // language, not the server's English text.
+  test("an inactive destination refusal is shown as the translated message", async () => {
+    postToOpenElisServerJsonResponse.mockImplementation((url, body, cb) =>
+      cb({
+        success: false,
+        refusal: "destination.inactive",
+        message: "the destination lab unit is inactive; reactivate it first",
+      }),
+    );
+    await openReassign();
+    fireEvent.change(document.querySelector("#lu-deactivate-destination"), {
+      target: { value: "11" },
+    });
+    fireEvent.change(screen.getByLabelText("Type DEACTIVATE to confirm"), {
+      target: { value: "DEACTIVATE" },
+    });
+    fireEvent.click(
+      screen.getByRole("button", { name: /Deactivate lab unit$/ }),
+    );
+
+    expect(
+      await screen.findByText(
+        messages["error.labUnit.deactivate.destinationInactive"],
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        "the destination lab unit is inactive; reactivate it first",
+      ),
+    ).toBeNull();
   });
 });

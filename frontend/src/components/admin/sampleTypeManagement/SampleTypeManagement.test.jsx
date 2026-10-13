@@ -98,6 +98,15 @@ describe("SampleTypeManagement", () => {
     api.put.mockImplementation((_url, _body, callback) => callback(200));
   });
 
+  it("a deep link to a sample type that does not exist says so, never an endless spinner (OGC-1461)", async () => {
+    renderPage("/MasterListsPage/SampleTypeEditor/99999999/basic-info");
+
+    expect(
+      await screen.findByTestId("sample-type-not-found"),
+    ).toHaveTextContent(messages["label.sampleType.notFound"]);
+    expect(screen.queryByText("Loading sample type...")).toBeNull();
+  });
+
   test("renders sample type management page after loading", async () => {
     renderPage();
 
@@ -227,6 +236,43 @@ describe("SampleTypeManagement", () => {
       abbreviation: "BldCult",
       sortOrder: 7,
     });
+  });
+
+  // OGC-1460 review: the shipped catalog has a Vector "Serum" next to the
+  // Clinical one; a sample type's name is unique within its domain only.
+  test("a name another domain also uses still saves", async () => {
+    const vector = {
+      ...sampleType,
+      id: "sample-type-85",
+      domain: "VECTOR",
+      description: "Vector blood culture",
+    };
+    api.get.mockImplementation((url, callback) => {
+      if (url === "/rest/sample-types") {
+        callback({ success: true, data: [sampleType, vector] });
+      } else if (url === "/rest/sample-types/sample-type-2") {
+        callback({ success: true, data: sampleType });
+      } else if (url.startsWith("/rest/AllTestsForSampleTypeProvider")) {
+        callback({ tests: [] });
+      } else {
+        callback({});
+      }
+    });
+    api.put.mockImplementation((_url, _body, callback) =>
+      callback({ ok: true, status: 200 }),
+    );
+    renderPage("/MasterListsPage/SampleTypeEditor/sample-type-2/basic-info");
+    const description = await screen.findByDisplayValue(
+      "Blood culture specimen",
+    );
+    await userEvent.clear(description);
+    await userEvent.type(description, "Blood culture bottle");
+    await userEvent.click(screen.getByRole("button", { name: /Save/ }));
+
+    await waitFor(() => expect(api.put).toHaveBeenCalledTimes(1));
+    expect(
+      screen.queryByText("This sample type name already exists"),
+    ).toBeNull();
   });
 
   // OGC-1234: a create refused by bean validation (400) must not read as a

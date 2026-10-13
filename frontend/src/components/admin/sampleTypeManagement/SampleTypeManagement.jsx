@@ -425,7 +425,8 @@ function SampleTypeManagement({ intl }) {
         sampleTypes.some(
           (st) =>
             st.name.toLowerCase() === formData.name.trim().toLowerCase() &&
-            st.id !== formData.id,
+            st.id !== formData.id &&
+            st.domain === (formData.domain || "CLINICAL"),
         )
       ) {
         errors.name = "This sample type name already exists";
@@ -1191,9 +1192,25 @@ function SampleTypeManagement({ intl }) {
                 reflect the saved status, mirroring the Test Catalog editor's
                 load-then-render pattern. */}
             {view === "editor" &&
-            !(
-              editingType && String(editingType.id) === String(sampleTypeId)
+            !isLoading &&
+            !sampleTypes.some(
+              (item) => String(item.id) === String(sampleTypeId),
             ) ? (
+              <InlineNotification
+                kind="error"
+                lowContrast
+                hideCloseButton
+                data-testid="sample-type-not-found"
+                title={intl.formatMessage({
+                  id: loadError
+                    ? "label.sampleType.editorLoadError"
+                    : "label.sampleType.notFound",
+                })}
+              />
+            ) : view === "editor" &&
+              !(
+                editingType && String(editingType.id) === String(sampleTypeId)
+              ) ? (
               <div
                 style={{
                   display: "flex",
