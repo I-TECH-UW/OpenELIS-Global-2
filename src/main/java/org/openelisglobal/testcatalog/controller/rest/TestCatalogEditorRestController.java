@@ -432,6 +432,12 @@ public class TestCatalogEditorRestController {
         if (testCatalogCreationService == null) {
             return ResponseEntity.status(503).build();
         }
+        if (body != null) {
+            body.name = trimToNull(body.name);
+            body.reportingName = trimToNull(body.reportingName);
+            body.code = trimToNull(body.code);
+            body.description = trimToNull(body.description);
+        }
         List<String> desiredSampleTypes = body == null ? List.of()
                 : resolveSampleTypeIds(body.sampleTypeIds, body.sampleTypeId);
         if (body == null || isBlank(body.name) || isBlank(body.reportingName) || isBlank(body.code)
@@ -475,7 +481,12 @@ public class TestCatalogEditorRestController {
         params.orderable = body.orderable;
         params.description = body.description;
         String sysUserId = ControllerUtills.getSysUserId(request);
-        String newId = testCatalogCreationService.createInactiveTest(params, sysUserId);
+        String newId;
+        try {
+            newId = testCatalogCreationService.createInactiveTest(params, sysUserId);
+        } catch (TestCatalogCreationService.CodeInUseException e) {
+            return ResponseEntity.status(409).build();
+        }
         // Copy the source's result components (incl. options/interpretations).
         // The variant-group link that used to accompany this is retired
         // (OGC-1145 Phase 3): the m:n sample-type model replaced variants.
@@ -731,12 +742,21 @@ public class TestCatalogEditorRestController {
         // guard a duplicate reached the constraint and surfaced as a bare 500 with
         // an empty body — on exactly the create-then-edit flow the editor steers
         // users into (OGC-1180). Same-test no-op saves stay 200.
+        if (body.description != null) {
+            body.description = body.description.trim();
+        }
         if (body.description != null && !body.description.equals(test.getDescription())
                 && descriptionInUse(body.description, testId)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(descriptionConflict());
         }
+        if (changesCode(body.code, test.getLocalCode()) && testCatalogCreationService != null
+                && testCatalogCreationService.codeInUse(body.code, testId)) {
+            BasicInfo conflict = new BasicInfo();
+            conflict.conflict = "code";
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(conflict);
+        }
         if (body.code != null && !body.code.isBlank()) {
-            test.setLocalCode(body.code);
+            test.setLocalCode(body.code.trim());
         }
         if (body.description != null) {
             test.setDescription(body.description);
@@ -903,16 +923,37 @@ public class TestCatalogEditorRestController {
      * comparison is exact-match — mirroring what the database will enforce — and
      * {@code excludeTestId} lets a test keep its own description on save.
      */
+    /**
+     * Compared trimmed (OGC-1464) and case-sensitive, like the test_desc_uk index
+     * it fronts (OGC-1180).
+     */
     private boolean descriptionInUse(String description, String excludeTestId) {
         if (isBlank(description)) {
             return false;
         }
+        String wanted = description.trim();
         for (Test other : testService.getAllTests(false)) {
-            if (description.equals(other.getDescription()) && !other.getId().equals(excludeTestId)) {
+            if (other.getDescription() != null && wanted.equals(other.getDescription().trim())
+                    && !other.getId().equals(excludeTestId)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static String trimToNull(String value) {
+        return value == null || value.trim().isEmpty() ? null : value.trim();
+    }
+
+    /**
+     * True when a Basic Info save changes the test's code. A legacy code another
+     * test shares stays saveable as long as it is not changed (OGC-1464).
+     */
+    private static boolean changesCode(String requested, String stored) {
+        if (isBlank(requested)) {
+            return false;
+        }
+        return stored == null || !requested.trim().equalsIgnoreCase(stored.trim());
     }
 
     private static BasicInfo descriptionConflict() {

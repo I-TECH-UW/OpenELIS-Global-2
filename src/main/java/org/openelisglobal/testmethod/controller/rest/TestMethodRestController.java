@@ -137,13 +137,17 @@ public class TestMethodRestController extends BaseController {
         try {
             dto = testMethodService.createAndLinkMethod(testId, data);
         } catch (RuntimeException e) {
-            // A duplicate method code is reported by the service's app-level check
-            // (LIMSDuplicateRecordException), not the DB layer; a duplicate link
-            // surfaces as a Hibernate ConstraintViolationException. Either is a
-            // 409 — anything else is a real server error, not masked as a conflict.
-            if (hasCause(e, org.openelisglobal.common.exception.LIMSDuplicateRecordException.class)
-                    || hasCause(e, org.hibernate.exception.ConstraintViolationException.class)) {
-                return ResponseEntity.status(HttpStatus.CONFLICT).body("Method code already exists");
+            // The service's app-level check (LIMSDuplicateRecordException) is the
+            // method NAME check; a taken code reaches the database's unique index
+            // (ConstraintViolationException). Each 409 names its field (OGC-1464);
+            // anything else is a real server error, not masked as a conflict.
+            if (hasCause(e, org.openelisglobal.common.exception.LIMSDuplicateRecordException.class)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(java.util.Map.of("field", "name", "message", "A method with this name already exists"));
+            }
+            if (hasCause(e, org.hibernate.exception.ConstraintViolationException.class)) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(java.util.Map.of("field", "code", "message", "Method code already exists"));
             }
             LogEvent.logError(e);
             throw e;

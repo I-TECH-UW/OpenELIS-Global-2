@@ -625,6 +625,27 @@ describe("BasicInfoSection duplicate-description conflict (OGC-1180)", () => {
     );
   });
 
+  /** OGC-1464: a code another test holds is refused on the code field. */
+  it("a 409 naming the code marks the code field", async () => {
+    putToOpenElisServerJsonResponse.mockImplementation((url, payload, cb) =>
+      cb({ status: 409, conflict: "code" }),
+    );
+    const addNotification = vi.fn();
+    renderWithNotificationSpy(addNotification);
+    await screen.findByLabelText("Clinical");
+
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(addNotification).toHaveBeenCalled());
+    expect(addNotification.mock.calls[0][0].message).toBe(
+      messages["error.testCatalog.codeExists"],
+    );
+    expect(document.getElementById("basic-info-code")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
+  });
+
   it("any other failure keeps the generic error message", async () => {
     putToOpenElisServerJsonResponse.mockImplementation((url, payload, cb) =>
       cb({ status: 500, error: "Internal Server Error" }),
