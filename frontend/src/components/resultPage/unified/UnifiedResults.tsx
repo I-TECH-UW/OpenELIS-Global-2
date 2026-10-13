@@ -672,7 +672,7 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
   const handleFieldChange = useCallback(
     (
       target: WorklistRow,
-      field: "testMethod" | "analyzerId",
+      field: "testMethod" | "analyzerId" | "eqaAnalystId",
       value: string,
     ) => {
       const key = worklistRowKey(target);
@@ -1206,6 +1206,24 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
   const beforeSign = useCallback(
     (row: WorklistRow) =>
       new Promise<void>((resolve, reject) => {
+        if (
+          row.eqaPerAnalyst &&
+          !row.eqaAnalystId &&
+          (row.resultValue || row.multiSelectResultValues)
+        ) {
+          addNotification({
+            title: intl.formatMessage({ id: "notification.title" }),
+            message: intl.formatMessage({
+              id: row.eqaInHouse
+                ? "label.results.analystRequired"
+                : "eqa.result.analystRequired",
+            }),
+            kind: NotificationKinds.error,
+          });
+          setNotificationVisible(true);
+          reject();
+          return;
+        }
         const key = worklistRowKey(row);
         const alerts = owedAlerts(row).filter(
           (alert) => !isConfirmed(key, alert),
@@ -1223,7 +1241,13 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
           customCriticalMessage: configurationProperties?.customCriticalMessage,
         });
       }),
-    [owedAlerts, configurationProperties],
+    [
+      owedAlerts,
+      configurationProperties,
+      addNotification,
+      intl,
+      setNotificationVisible,
+    ],
   );
 
   const handleSave = useCallback(
