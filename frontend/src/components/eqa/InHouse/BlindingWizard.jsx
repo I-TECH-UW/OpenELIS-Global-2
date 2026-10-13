@@ -27,6 +27,7 @@ import { useHistory } from "react-router-dom";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import { formatDateOnly } from "../../utils/Utils";
 import { createCycle, createPanel, fetchTests } from "../eqaApi";
+import { SchemeTestsNotice } from "../eqaCommon";
 import { requestFailed } from "../../utils/requestOutcome";
 import {
   downloadLabelSheet,
@@ -82,6 +83,7 @@ const BlindingWizard = () => {
 
   const [schemes, setSchemes] = useState([]);
   const [tests, setTests] = useState([]);
+  const [testsStatus, setTestsStatus] = useState("loading");
   const [roster, setRoster] = useState([]);
   const [labUsers, setLabUsers] = useState([]);
 
@@ -116,6 +118,7 @@ const BlindingWizard = () => {
   useEffect(() => {
     setRoster([]);
     setTests([]);
+    setTestsStatus("loading");
     if (!cycle.schemeId) {
       return;
     }
@@ -125,6 +128,11 @@ const BlindingWizard = () => {
       if (!current) {
         return;
       }
+      if (schemeTests === null) {
+        setTestsStatus("failed");
+        return;
+      }
+      setTestsStatus("ready");
       const offered = new Set(schemeTests.map((test) => String(test.id)));
       setTests(schemeTests);
       setSamples((rows) =>
@@ -455,17 +463,7 @@ const BlindingWizard = () => {
                 { count: samples.length },
               )}
             </p>
-            {tests.length === 0 && (
-              <InlineNotification
-                kind="warning"
-                lowContrast
-                hideCloseButton
-                title={intl.formatMessage({
-                  id: "eqa.wizard.noSchemeTests",
-                  defaultMessage: "This scheme has no tests a panel can use.",
-                })}
-              />
-            )}
+            <SchemeTestsNotice status={testsStatus} count={tests.length} />
             <Table size="sm">
               <TableHead>
                 <TableRow>
