@@ -20,6 +20,7 @@ import { FLUOROCYCLER } from "../../../helpers/shipped-profiles";
 import { withAuthedPage } from "../../../helpers/api-session";
 import {
   acceptAll,
+  showSample,
   savedValue,
   type Order,
 } from "../../../helpers/analyzer-review";
@@ -35,9 +36,9 @@ async function ownRow(page: Page, analyzer: Analyzer, specimenId: string) {
   );
 }
 
-/** The review page's card for one sample: its header, its results, its held rows. */
+/** The review page's view of one sample: its header, its results, its held rows. */
 const sampleCard = (page: Page, accession: string) =>
-  page.locator("[data-testid^='sample-group-']", { hasText: accession });
+  showSample(page, accession);
 
 /** How many lines the lab number takes in a sample's header; it reads on one. */
 const labNumberLines = (row: Locator) =>
@@ -120,7 +121,7 @@ test.describe("Where an instrument's result is placed", () => {
       await page.goto(`/AnalyzerResults?id=${analyzer.id}`, {
         waitUntil: "domcontentloaded",
       });
-      const row = sampleCard(page, placed.accession);
+      const row = await sampleCard(page, placed.accession);
       await expect(row.first()).toContainText(
         `One analysis on ${tube} is waiting for this result.`,
       );
@@ -160,7 +161,7 @@ test.describe("Where an instrument's result is placed", () => {
       await page.goto(`/AnalyzerResults?id=${analyzer.id}`, {
         waitUntil: "domcontentloaded",
       });
-      const row = sampleCard(page, typo);
+      const row = await sampleCard(page, typo);
       await expect(row.first()).toContainText(
         "No order or tube carries this ID. Saving creates a new sample for it.",
       );
@@ -211,7 +212,7 @@ test.describe("Where an instrument's result is placed", () => {
       await page.goto(`/AnalyzerResults?id=${analyzer.id}`, {
         waitUntil: "domcontentloaded",
       });
-      const row = sampleCard(page, placed.accession);
+      const row = await sampleCard(page, placed.accession);
       await expect(row.first()).toContainText("Patient mismatch");
       await expect(row.first()).toContainText(
         "Add a note saying why before saving.",
@@ -265,7 +266,7 @@ test.describe("Where an instrument's result is placed", () => {
       await page.goto(`/AnalyzerResults?id=${analyzer.id}`, {
         waitUntil: "domcontentloaded",
       });
-      const rerun = sampleCard(page, placed.accession).first();
+      const rerun = await sampleCard(page, placed.accession);
       await expect(rerun).toContainText(
         "already holds a result. Saving replaces it and marks it corrected.",
       );
@@ -332,7 +333,7 @@ test.describe("Where a results file's sample is placed", () => {
       await page.goto(`/AnalyzerResults?id=${analyzer.id}`, {
         waitUntil: "domcontentloaded",
       });
-      const row = sampleCard(page, typo);
+      const row = await sampleCard(page, typo);
       await demo.caption(
         "The first sample is placed on its order. The mistyped one matches no order.",
       );

@@ -26,6 +26,7 @@ import { API } from "../../../helpers/analyzer-profile-api";
 import {
   acceptAll,
   savedValue,
+  showSample,
   type Order,
 } from "../../../helpers/analyzer-review";
 import { createDemoPresentation } from "../../../helpers/demo-presentation";
@@ -526,6 +527,7 @@ test.describe("A catalog test deactivated after setup", () => {
       await page.goto(`/AnalyzerResults?id=${analyzer.id}`, {
         waitUntil: "domcontentloaded",
       });
+      await showSample(page, order.accession);
       const held = page.getByTestId(`held-analyzer-result-${fluBRow.id}`);
       await expect(held).toBeVisible();
       await demo.caption("The held Influenza B result stays on the screen.");
@@ -773,6 +775,7 @@ test.describe("A Mindray BC-5380 reports a microscope exam the lab does not do",
           `${MICROSCOPE_EXAM.length} analyzer results need attention`,
         ),
       ).toBeVisible();
+      await showSample(page, order.accession);
       const firstHeld = page.getByTestId(`held-analyzer-result-${held[0].id}`);
       await demo.caption(
         `The CBC's ${REPORTED.length} values wait for review. The ${MICROSCOPE_EXAM.length} microscope-exam records are held: the profile declares them, but this lab's mapping has no decision for them yet, since no catalog test carries their codes.`,
@@ -912,6 +915,7 @@ test.describe("A Mindray BC-5380 from setup to a released CBC", () => {
       await page.goto(`/AnalyzerResults?id=${analyzer.id}`, {
         waitUntil: "domcontentloaded",
       });
+      await showSample(page, order.accession);
       const alarms = page.getByTestId("InstrumentSampleFlags");
       await expect(alarms).toHaveCount(1);
       await expect(alarms).toHaveText("Analyzer flags: Anemia, Hypochromia");

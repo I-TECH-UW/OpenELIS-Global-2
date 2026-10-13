@@ -62,9 +62,16 @@ const partValue = (part) =>
 /**
  * A test's parts beneath its main result, read-only. A part held for a fix made
  * elsewhere shows through {@code renderHeld}, with the same actions as a held
- * row of its own.
+ * row of its own. What the instrument reported about a part is left out when
+ * it is what it reported about the test ({@code sameAs}).
  */
-const ResultParts = ({ headId, parts, renderHeld }) => {
+const sameInstrument = (part, head) =>
+  Boolean(head) &&
+  ["instrumentFlags", "assayName", "assayVersion", "instrumentOperator"].every(
+    (field) => (part[field] || "") === (head[field] || ""),
+  );
+
+const ResultParts = ({ headId, parts, renderHeld, sameAs }) => {
   if (parts.length === 0) {
     return null;
   }
@@ -93,7 +100,7 @@ const ResultParts = ({ headId, parts, renderHeld }) => {
                 )}
               </>
             )}
-            <InstrumentReported row={part} />
+            {!sameInstrument(part, sameAs) && <InstrumentReported row={part} />}
           </div>
         </li>
       ))}

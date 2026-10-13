@@ -94,15 +94,19 @@ const decision = (id, field = "isAccepted") =>
 const openDetails = (id) =>
   fireEvent.click(
     within(screen.getByTestId(`result-row-${id}`)).getByRole("button", {
-      name: "Expand current row",
+      name: "Details",
     }),
   );
 
-/** The sample's own bulk decision, from the menu in its header. */
-const decideSample = (key, itemText) => {
-  const card = screen.getByTestId(`sample-group-${key}`);
+/** Brings a sample into view from the rail. */
+const showSample = (key) =>
+  fireEvent.click(screen.getByTestId(`sample-tab-${key}`));
+
+/** The sample in view's own bulk decision, from the menu in its header. */
+const decideSample = (itemText) => {
+  const detail = screen.getByTestId("sample-detail");
   fireEvent.click(
-    within(card).getByRole("button", {
+    within(detail).getByRole("button", {
       name: "More decisions for this sample",
     }),
   );
@@ -144,13 +148,20 @@ describe("AnalyserResults", () => {
     const first = matched("2001", 1);
     renderResults([first, unordered]);
 
-    const acceptAll = screen.getAllByRole("button", { name: "Accept all" });
-    expect(acceptAll).toHaveLength(1);
-    expect(screen.getByTestId("sample-group-1")).toContainElement(acceptAll[0]);
-    fireEvent.click(acceptAll[0]);
-
+    // The matched sample is in view first and offers Accept all.
+    const acceptAll = screen.getByRole("button", { name: "Accept all" });
+    expect(screen.getByTestId("sample-detail")).toContainElement(acceptAll);
+    fireEvent.click(acceptAll);
     expect(decision("2001").checked).toBe(true);
+
+    showSample("2");
     expect(decision("2002").checked).toBe(false);
+    expect(
+      screen.queryByRole("button", { name: "Accept all" }),
+    ).not.toBeInTheDocument();
+    expect(
+      screen.getByText(/Decide each result on its own/),
+    ).toBeInTheDocument();
   });
 
   it("offers no Accept all on a sample whose patient cannot be checked against the order", () => {
@@ -168,12 +179,14 @@ describe("AnalyserResults", () => {
     });
     renderResults([first, unverified]);
 
-    const acceptAll = screen.getAllByRole("button", { name: "Accept all" });
-    expect(acceptAll).toHaveLength(1);
-    fireEvent.click(acceptAll[0]);
-
+    fireEvent.click(screen.getByRole("button", { name: "Accept all" }));
     expect(decision("2101").checked).toBe(true);
+
+    showSample("2");
     expect(decision("2102").checked).toBe(false);
+    expect(
+      screen.queryByRole("button", { name: "Accept all" }),
+    ).not.toBeInTheDocument();
   });
 
   it("lets the reviewer write the note a mismatch held for placement needs", () => {
@@ -289,9 +302,7 @@ describe("AnalyserResults", () => {
       await screen.findByText("Result value not in the mapping"),
     ).toBeInTheDocument();
     expect(screen.getByText("POSITIVE")).toBeInTheDocument();
-    expect(
-      screen.getByRole("cell", { name: "QUAL_RESULT" }),
-    ).toBeInTheDocument();
+    expect(screen.getByText("QUAL_RESULT")).toBeInTheDocument();
 
     expect(
       screen.getByRole("link", { name: "Review analyzer mapping" }),
@@ -632,7 +643,7 @@ describe("AnalyserResults", () => {
       ]);
       expect(decision("7001").checked).toBe(true);
 
-      decideSample("1", "Clear decisions");
+      decideSample("Clear decisions");
       expect(decision("7001").checked).toBe(false);
       fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
@@ -648,7 +659,10 @@ describe("AnalyserResults", () => {
     it("shows a test's parts in its row's details, under its decision", async () => {
       renderResults([viralLoad, part("7002", "Log viral load", "3.00")]);
 
-      expect(screen.getByText("1 component")).toBeInTheDocument();
+      // The component reads on the row itself; the details hold it in full.
+      const row = screen.getByTestId("result-row-7001");
+      expect(within(row).getByText("Log viral load")).toBeInTheDocument();
+      expect(within(row).getByText("3.00")).toBeInTheDocument();
       openDetails("7001");
       const parts = await screen.findByTestId("result-parts-7001");
       expect(parts).toHaveTextContent("Log viral load");
@@ -721,9 +735,9 @@ describe("AnalyserResults", () => {
   it("submits the result selected for acceptance", async () => {
     renderResults([mappedQualitativeResult]);
 
-    const resultRow = await screen.findByRole("row", {
-      name: /MTB-RIF NOT DETECTED/,
-    });
+    const resultRow = await screen.findByTestId("result-row-1005");
+    expect(resultRow).toHaveTextContent("MTB-RIF");
+    expect(resultRow).toHaveTextContent("NOT DETECTED");
     fireEvent.click(within(resultRow).getByRole("radio", { name: "Accept" }));
     fireEvent.click(screen.getByRole("button", { name: "Save" }));
 
@@ -735,9 +749,7 @@ describe("AnalyserResults", () => {
   it("submits the note typed on a result that carried none", async () => {
     renderResults([mappedQualitativeResult]);
 
-    const resultRow = await screen.findByRole("row", {
-      name: /MTB-RIF NOT DETECTED/,
-    });
+    const resultRow = await screen.findByTestId("result-row-1005");
     fireEvent.click(within(resultRow).getByRole("radio", { name: "Accept" }));
     openDetails("1005");
     fireEvent.change(document.getElementById("resultList1005.note"), {
@@ -785,7 +797,8 @@ describe("AnalyserResults", () => {
     );
     renderResults([glucose]);
 
-    const resultRow = await screen.findByRole("row", { name: /Glucose/ });
+    const resultRow = await screen.findByTestId("result-row-1001");
+    expect(resultRow).toHaveTextContent("Glucose");
     expect(within(resultRow).getByText("5.6")).toBeInTheDocument();
     fireEvent.click(
       within(resultRow).getByRole("button", {
