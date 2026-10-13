@@ -12755,5 +12755,8 @@
   "reports.empty.stockOnHandAsOf": "No stock movements are recorded on or before this date, so stock as it stood then cannot be reconstructed. This is not the same as having held nothing.",
   "reports.asOfDate.basis": "Reconstructed from recorded stock movements up to this date, not from a physical count.",
   "eqa.entry.validated": "Validated",
-  "eqa.cycle.new.noUsableEnrollments": "No active enrollment here matches a scheme on this instance. Enrollments are managed under My EQA Schemes, schemes under EQA Management, Schemes."
+  "eqa.cycle.new.noUsableEnrollments": "No active enrollment here matches a scheme on this instance. Enrollments are managed under My EQA Schemes, schemes under EQA Management, Schemes.",
+  "eqa.cycle.autoSubmit.noChannel": "This site has no automatic channel to the provider, so submit by hand.",
+  "eqa.cycle.autoSubmit.waiting": "Sends automatically at {time} unless you submit by hand now.",
+  "eqa.cycle.autoSubmit.due": "Sends automatically within a few minutes unless you submit by hand now."
 }
