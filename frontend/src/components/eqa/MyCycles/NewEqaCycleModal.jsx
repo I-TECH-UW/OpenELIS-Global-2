@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useContext, useEffect, useState } from "react";
 import {
   InlineNotification,
   Modal,
@@ -7,6 +7,9 @@ import {
   TextInput,
 } from "@carbon/react";
 import { useIntl } from "react-intl";
+import CustomDatePicker from "../../common/CustomDatePicker";
+import { ConfigurationContext } from "../../layout/Layout";
+import { displayDateToIso } from "../../utils/Utils";
 import { createMyCycle, fetchEnrollmentsOpenForCycles } from "./cyclesApi";
 
 const EMPTY_NEW_CYCLE = {
@@ -34,6 +37,17 @@ const NewEqaCycleModal = ({ schemeName = "", onClose, onCreated }) => {
   const [myPrograms, setMyPrograms] = useState([]);
   const [error, setError] = useState(null);
   const [saving, setSaving] = useState(false);
+  const { configurationProperties = {} } =
+    useContext(ConfigurationContext) || {};
+
+  const setNewCycleDate = (field) => (date) =>
+    setNewCycle((prev) => ({
+      ...prev,
+      [field]: displayDateToIso(
+        date,
+        configurationProperties.DEFAULT_DATE_LOCALE,
+      ),
+    }));
 
   useEffect(() => {
     let mounted = true;
@@ -132,26 +146,20 @@ const NewEqaCycleModal = ({ schemeName = "", onClose, onCreated }) => {
         }
         style={{ marginTop: "1rem" }}
       />
-      <TextInput
-        id="new-cycle-distribution"
-        type="date"
-        labelText={t("eqa.cycle.new.distributionDate", "Distribution date")}
-        value={newCycle.distributionDate}
-        onChange={(e) =>
-          setNewCycle({ ...newCycle, distributionDate: e.target.value })
-        }
-        style={{ marginTop: "1rem" }}
-      />
-      <TextInput
-        id="new-cycle-deadline"
-        type="date"
-        labelText={t("eqa.cycle.new.deadline", "Submission deadline")}
-        value={newCycle.submissionDeadline}
-        onChange={(e) =>
-          setNewCycle({ ...newCycle, submissionDeadline: e.target.value })
-        }
-        style={{ marginTop: "1rem" }}
-      />
+      <div style={{ marginTop: "1rem" }}>
+        <CustomDatePicker
+          id="new-cycle-distribution"
+          labelText={t("eqa.cycle.new.distributionDate", "Distribution date")}
+          onChange={setNewCycleDate("distributionDate")}
+        />
+      </div>
+      <div style={{ marginTop: "1rem" }}>
+        <CustomDatePicker
+          id="new-cycle-deadline"
+          labelText={t("eqa.cycle.new.deadline", "Submission deadline")}
+          onChange={setNewCycleDate("submissionDeadline")}
+        />
+      </div>
     </Modal>
   );
 };
