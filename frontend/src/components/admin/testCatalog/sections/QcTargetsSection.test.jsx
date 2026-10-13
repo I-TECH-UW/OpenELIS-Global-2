@@ -8,6 +8,8 @@
  */
 import { vi } from "vitest";
 
+const notifications = vi.hoisted(() => ({ add: vi.fn() }));
+
 vi.mock("../../../utils/Utils", () => ({
   getFromOpenElisServer: vi.fn(),
   putToOpenElisServerFullResponse: vi.fn(),
@@ -17,7 +19,7 @@ vi.mock("../../../layout/Layout", async () => {
   const React = await import("react");
   return {
     NotificationContext: React.createContext({
-      addNotification: () => {},
+      addNotification: (n) => notifications.add(n),
       setNotificationVisible: () => {},
     }),
   };
@@ -148,6 +150,56 @@ describe("QcTargetsSection", () => {
     });
     fireEvent.click(screen.getByTestId("qc-targets-save"));
     expect(putToOpenElisServerFullResponse).not.toHaveBeenCalled();
+  });
+
+  /** OGC-1461: a server error is put in words; a refusal's reason is shown. */
+  it("shows a readable message for a failed save, never the server JSON", async () => {
+    const respond = (status, text) =>
+      putToOpenElisServerFullResponse.mockImplementationOnce((url, body, cb) =>
+        cb({ status, text: () => Promise.resolve(text) }),
+      );
+    renderSection();
+    fireEvent.click(await screen.findByTestId("qc-target-add-LOW"));
+    fireEvent.change(screen.getByTestId("qc-target-LOW-expected"), {
+      target: { value: "5" },
+    });
+    fireEvent.change(screen.getByTestId("qc-target-LOW-uncertainty"), {
+      target: { value: "1" },
+    });
+
+    respond(500, '{"timestamp":"2026-10-13","status":500,"error":"Boom"}');
+    fireEvent.click(screen.getByTestId("qc-targets-save"));
+    await waitFor(() =>
+      expect(notifications.add).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          kind: "error",
+          message: messages["server.error.msg"],
+        }),
+      ),
+    );
+    expect(screen.getByTestId("qc-target-LOW-expected")).toHaveValue(5);
+
+    respond(422, "Only one active target per control level and lot");
+    fireEvent.click(screen.getByTestId("qc-targets-save"));
+    await waitFor(() =>
+      expect(notifications.add).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          kind: "error",
+          message: "Only one active target per control level and lot",
+        }),
+      ),
+    );
+
+    respond(422, '"An active target already exists for that control level"');
+    fireEvent.click(screen.getByTestId("qc-targets-save"));
+    await waitFor(() =>
+      expect(notifications.add).toHaveBeenLastCalledWith(
+        expect.objectContaining({
+          kind: "error",
+          message: "An active target already exists for that control level",
+        }),
+      ),
+    );
   });
 
   it("links an existing lot as an override and keeps the level default", async () => {

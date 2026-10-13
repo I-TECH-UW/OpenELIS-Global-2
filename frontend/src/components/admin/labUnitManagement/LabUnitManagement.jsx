@@ -1114,7 +1114,21 @@ function LabUnitManagement({ intl }) {
                 Toggle) would mount with undefined and not reflect the saved
                 status. */}
             {view === "editor" &&
-            !(editingUnit && String(editingUnit.id) === String(labUnitId)) ? (
+            !isLoading &&
+            !labUnits.some((item) => String(item.id) === String(labUnitId)) ? (
+              <InlineNotification
+                kind="error"
+                lowContrast
+                hideCloseButton
+                data-testid="lab-unit-not-found"
+                title={intl.formatMessage({
+                  id: loadError
+                    ? "label.labUnit.editorLoadError"
+                    : "label.labUnit.notFound",
+                })}
+              />
+            ) : view === "editor" &&
+              !(editingUnit && String(editingUnit.id) === String(labUnitId)) ? (
               <div
                 style={{
                   display: "flex",
