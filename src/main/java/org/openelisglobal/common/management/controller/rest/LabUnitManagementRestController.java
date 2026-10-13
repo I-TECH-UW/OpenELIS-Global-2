@@ -436,6 +436,11 @@ public class LabUnitManagementRestController extends BaseRestController {
             // localization_value rows carry every language, so creating a fresh
             // Localization would orphan them. Locales absent from the map are
             // left untouched; a blank value clears that translation.
+            String takenName = nameUsedByAnotherUnit(names, section);
+            if (takenName != null) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body(new ApiResponse<>(false, "A lab unit with this name already exists: " + takenName, null));
+            }
             if (names != null && !names.isEmpty()) {
                 Localization localization = section.getLocalization();
                 boolean isNew = localization == null;
@@ -715,6 +720,35 @@ public class LabUnitManagementRestController extends BaseRestController {
         // keeps all three options available regardless of the default.
         dto.recommendedOption = dto.testCount == 0 ? "keep" : "deactivate_all";
         return ResponseEntity.ok(new ApiResponse<>(true, "Deactivation impact", dto));
+    }
+
+    /**
+     * A changed name, in any language, that another lab unit already has (compared
+     * trimmed and without case), or null. Create refused duplicates; a rename did
+     * not (OGC-1465). A name the unit already holds is not a change.
+     */
+    private String nameUsedByAnotherUnit(Map<String, String> names, TestSection section) {
+        if (names == null || names.isEmpty()) {
+            return null;
+        }
+        Map<String, String> current = section.getLocalization() == null ? Map.of()
+                : section.getLocalization().getValuesAsMap();
+        for (TestSection other : testSectionService.getAllTestSections()) {
+            if (other.getId().equals(section.getId()) || other.getLocalization() == null) {
+                continue;
+            }
+            Map<String, String> otherNames = other.getLocalization().getValuesAsMap();
+            for (Map.Entry<String, String> entry : names.entrySet()) {
+                String wanted = entry.getValue() == null ? "" : entry.getValue().trim();
+                String theirs = otherNames.get(entry.getKey());
+                String mine = current.get(entry.getKey());
+                if (!wanted.isEmpty() && !(mine != null && wanted.equalsIgnoreCase(mine.trim())) && theirs != null
+                        && wanted.equalsIgnoreCase(theirs.trim())) {
+                    return wanted;
+                }
+            }
+        }
+        return null;
     }
 
     /** Body for the guarded deactivation. */

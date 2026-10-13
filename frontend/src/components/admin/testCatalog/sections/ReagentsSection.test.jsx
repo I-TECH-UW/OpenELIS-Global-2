@@ -140,6 +140,25 @@ describe("ReagentsSection", () => {
     ).toBeInTheDocument();
   });
 
+  // OGC-1465 review: a unit longer than its column is marked and not sent.
+  it("marks a unit over 50 characters and does not send it", async () => {
+    getFromOpenElisServer.mockImplementation((url, cb) => cb(TWO_REAGENTS));
+    renderSection();
+    const unit = await screen.findByDisplayValue("mL");
+
+    fireEvent.change(unit, { target: { value: "u".repeat(51) } });
+    fireEvent.click(screen.getByTestId("reagents-save"));
+
+    expect(
+      (
+        await screen.findAllByText(
+          messages["label.testCatalog.reagents.unitTooLong"],
+        )
+      ).length,
+    ).toBeGreaterThan(0);
+    expect(putToOpenElisServer).not.toHaveBeenCalled();
+  });
+
   it("keeps the typed quantity when the save fails, so a retry can send it (OGC-1461)", async () => {
     getFromOpenElisServer.mockImplementation((url, cb) => cb(TWO_REAGENTS));
     putToOpenElisServer.mockImplementation((url, body, cb) => cb(500));

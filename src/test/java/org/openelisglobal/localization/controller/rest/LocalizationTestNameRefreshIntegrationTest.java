@@ -113,4 +113,23 @@ public class LocalizationTestNameRefreshIntegrationTest extends BaseWebContextSe
 
         assertEquals("RefreshIT old " + NAME_LOCALIZATION_ID, cachedName());
     }
+
+    /** OGC-1465: the English name every screen falls back to cannot be blanked. */
+    @Test
+    public void blankingTheFallbackNameIsRefused() throws Exception {
+        UserSessionData usd = new UserSessionData();
+        usd.setSytemUserId(1);
+        mockMvc.perform(put("/rest/localizations/" + NAME_LOCALIZATION_ID + "/translations")
+                .sessionAttr(IActionConstants.USER_SESSION_DATA, usd).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"en\":\"  \"}")).andExpect(status().isBadRequest());
+        mockMvc.perform(org.springframework.test.web.servlet.request.MockMvcRequestBuilders
+                .post("/rest/localizations/" + NAME_LOCALIZATION_ID + "/translations/en")
+                .sessionAttr(IActionConstants.USER_SESSION_DATA, usd).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"value\":\"\"}")).andExpect(status().isBadRequest());
+
+        assertEquals("RefreshIT old " + NAME_LOCALIZATION_ID, cachedName());
+        assertEquals("RefreshIT old " + NAME_LOCALIZATION_ID, jdbc.queryForObject(
+                "SELECT value FROM clinlims.localization_value WHERE localization_id = ?" + " AND locale = 'en'",
+                String.class, NAME_LOCALIZATION_ID));
+    }
 }
