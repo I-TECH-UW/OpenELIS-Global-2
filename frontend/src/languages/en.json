@@ -12784,5 +12784,8 @@
   "order.save.requirement.eqaScheme": "the EQA scheme",
   "save.order.success.labNumber": "Order {labNumber} has been saved.",
   "eqa.entry.validated": "Validated",
-  "eqa.cycle.new.noUsableEnrollments": "No active enrollment here matches a scheme on this instance. Enrollments are managed under My EQA Schemes, schemes under EQA Management, Schemes."
+  "eqa.cycle.new.noUsableEnrollments": "No active enrollment here matches a scheme on this instance. Enrollments are managed under My EQA Schemes, schemes under EQA Management, Schemes.",
+  "eqa.cycle.autoSubmit.noChannel": "This site has no automatic channel to the provider, so submit by hand.",
+  "eqa.cycle.autoSubmit.waiting": "Sends automatically at {time} unless you submit by hand now.",
+  "eqa.cycle.autoSubmit.due": "Sends automatically within a few minutes unless you submit by hand now."
 }
