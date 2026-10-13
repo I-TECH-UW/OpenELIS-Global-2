@@ -12783,5 +12783,6 @@
   "order.eqa.schemeRequired": "Choose the EQA scheme this sample belongs to.",
   "order.eqa.schemeUnknown": "The chosen EQA scheme is not one of this laboratory's active enrollments.",
   "order.save.requirement.eqaScheme": "the EQA scheme",
-  "save.order.success.labNumber": "Order {labNumber} has been saved."
+  "save.order.success.labNumber": "Order {labNumber} has been saved.",
+  "eqa.entry.validated": "Validated"
 }
