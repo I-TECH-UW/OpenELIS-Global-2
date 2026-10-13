@@ -479,7 +479,7 @@ test("switching to a report without optional filters cannot retain a hidden test
   await page
     .getByRole("button", { name: "Next: Set Filters", exact: true })
     .click();
-  for (const name of [/^Lab sections/, /^Tests/, /^Result statuses/])
+  for (const name of [/^Lab units/, /^Tests/, /^Result statuses/])
     await expect(page.getByRole("combobox", { name })).toHaveCount(0);
   await expect(
     page.getByText(
@@ -1685,7 +1685,7 @@ test("Non-Conformance preserves event dates, recorded fallbacks and independent 
   const available = page.getByRole("region", { name: "Available fields" });
   await expect(
     available.getByRole("button", {
-      name: "Non-Conformance / Rejections",
+      name: "Nonconformity / Rejections",
       exact: true,
     }),
   ).toHaveAttribute("aria-expanded", "false");

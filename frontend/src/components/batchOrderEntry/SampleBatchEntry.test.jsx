@@ -225,7 +225,7 @@ describe("SampleBatchEntry saving", () => {
     expect(savedLabNos()).toEqual(["DEV01260000000000200"]);
     expect(
       within(
-        screen.getByText("Previously used Accession Number").closest("li"),
+        screen.getByText("Previously used Lab Number").closest("li"),
       ).getByText("DEV01260000000000200"),
     ).toBeInTheDocument();
   });

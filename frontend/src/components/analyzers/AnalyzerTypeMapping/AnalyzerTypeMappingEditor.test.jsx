@@ -975,7 +975,7 @@ describe("AnalyzerTypeMappingEditor", () => {
     expect(within(sourceRows[1]).getByText("RAW-B")).toBeVisible();
     expect(screen.getAllByText("Shared normalized identity")).toHaveLength(2);
     expect(screen.getByText("Alias: RAW A")).toBeVisible();
-    expect(screen.getByText("Specimen ID starts with CPOS")).toBeVisible();
+    expect(screen.getByText("Sample ID starts with CPOS")).toBeVisible();
     expect(
       screen.queryByText("SERVER DESCRIPTION MUST NOT RENDER"),
     ).not.toBeInTheDocument();

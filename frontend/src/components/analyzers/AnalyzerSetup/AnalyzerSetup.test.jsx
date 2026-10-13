@@ -353,7 +353,7 @@ describe("AnalyzerSetup Instrument step", () => {
     expect(screen.queryByText("Inactive site type")).not.toBeInTheDocument();
 
     const notListed = screen.getByRole("link", {
-      name: "Instrument not listed?",
+      name: "Analyzer not listed?",
     });
     const notListedUrl = new URL(notListed.href);
     expect(notListedUrl.pathname).toBe("/analyzers/types");
@@ -363,7 +363,7 @@ describe("AnalyzerSetup Instrument step", () => {
     );
     expect(
       screen.getByText(
-        "Choose the listed type for your instrument, even if it will only send results. Whether it sends results only or also receives orders is set later, in Connect.",
+        "Choose the listed type for your analyzer, even if it will only send results. Whether it sends results only or also receives orders is set later, in Connect.",
       ),
     ).toBeVisible();
 
@@ -515,7 +515,7 @@ describe("AnalyzerSetup Instrument step", () => {
     ).toHaveAttribute("aria-current", "step");
 
     await userEvent.click(
-      screen.getByRole("button", { name: "Edit Instrument" }),
+      screen.getByRole("button", { name: "Edit Analyzer" }),
     );
 
     params = new URLSearchParams(history.location.search);
@@ -525,9 +525,7 @@ describe("AnalyzerSetup Instrument step", () => {
     expect(params.get("profile")).toBe(activeType.profileId);
     expect(params.get("revision")).toBe("3");
     expect(
-      screen
-        .getByRole("heading", { level: 3, name: "Instrument" })
-        .closest("li"),
+      screen.getByRole("heading", { level: 3, name: "Analyzer" }).closest("li"),
     ).toHaveAttribute("aria-current", "step");
   });
 
@@ -581,7 +579,7 @@ describe("AnalyzerSetup Instrument step", () => {
     expect(
       screen.getAllByText("Rule-based control recognition")[0],
     ).toBeVisible();
-    expect(screen.getByText("Specimen ID starts with QC")).toBeVisible();
+    expect(screen.getByText("Sample ID starts with QC")).toBeVisible();
     expect(screen.getByText(/Casey Iiams-Hauser/)).toBeVisible();
     expect(getAnalyzerMapping).toHaveBeenCalledWith("42", expect.any(Function));
 
@@ -666,7 +664,7 @@ describe("AnalyzerSetup Instrument step", () => {
 
     expect(
       await screen.findByText(
-        "1 record or value of the assays that are on still need mapping. Map them below, or turn the assay off in Assays if this instrument does not run it.",
+        "1 record or value of the assays that are on still need mapping. Map them below, or turn the assay off in Assays if this analyzer does not run it.",
       ),
     ).toBeVisible();
     expect(
@@ -784,7 +782,7 @@ describe("AnalyzerSetup Instrument step", () => {
 
     expect(
       await screen.findByText(
-        "1 record or value of the assays that are on still need mapping. Map them below, or turn the assay off in Assays if this instrument does not run it.",
+        "1 record or value of the assays that are on still need mapping. Map them below, or turn the assay off in Assays if this analyzer does not run it.",
       ),
     ).toBeVisible();
     expect(

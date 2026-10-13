@@ -39,7 +39,7 @@ const renderReport = () =>
 
 const viewReport = (labNo) => {
   if (labNo) {
-    fireEvent.change(screen.getByLabelText("Lab No"), {
+    fireEvent.change(screen.getByLabelText("Lab Number"), {
       target: { value: labNo },
     });
   }
@@ -57,7 +57,7 @@ describe("AuditTrailReport", () => {
 
     viewReport();
 
-    expect(screen.getByText("Lab No is required!")).toBeInTheDocument();
+    expect(screen.getByText("Lab Number is required!")).toBeInTheDocument();
     expect(getFromOpenElisServer).not.toHaveBeenCalled();
     expect(intlErrors).toEqual([]);
   });
@@ -98,7 +98,7 @@ describe("AuditTrailReport", () => {
 
     viewReport("DEV99");
 
-    expect(screen.getByText("Invalid Accession Number")).toBeInTheDocument();
+    expect(screen.getByText("Invalid Lab Number")).toBeInTheDocument();
     expect(intlErrors).toEqual([]);
   });
 });

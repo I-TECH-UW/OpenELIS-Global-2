@@ -422,7 +422,7 @@ describe("ModifyOrder — a lab number with no order (OGC-1192 walk)", () => {
     });
 
     expect(
-      screen.getByText("No sample found for the provided accession number."),
+      screen.getByText("No sample found for the provided lab number."),
     ).toBeInTheDocument();
     expect(screen.queryByRole("button", { name: /next/i })).toBeNull();
   });

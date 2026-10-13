@@ -241,7 +241,7 @@ describe("RejectionReport", () => {
     // heatmap: location columns (unknown bucket labeled), config-toned cells,
     // config-quoting legend
     expect(
-      screen.getByText("Heatmap: ordering location × test section"),
+      screen.getByText("Heatmap: ordering location × lab unit"),
     ).toBeInTheDocument();
     expect(screen.getByText("Unknown location")).toBeInTheDocument();
     expect(screen.getByText("2.5%")).toHaveClass("qi-heatmap__cell--amber");

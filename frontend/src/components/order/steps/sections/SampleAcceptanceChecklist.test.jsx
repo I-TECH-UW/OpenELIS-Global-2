@@ -282,9 +282,12 @@ describe("SampleAcceptanceChecklist", () => {
     await screen.findByText("Container intact");
 
     expect(
-      screen.getByText("This sample was rejected and resampled.", {
-        exact: false,
-      }),
+      screen.getByText(
+        "This sample was rejected and resampled. Replacement order:",
+        {
+          exact: false,
+        },
+      ),
     ).toHaveTextContent("Replacement order: ENV-2026-00231-R1.");
     expect(screen.queryByText(/#99/)).not.toBeInTheDocument();
   });

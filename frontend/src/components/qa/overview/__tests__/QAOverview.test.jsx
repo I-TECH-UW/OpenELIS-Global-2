@@ -417,7 +417,7 @@ describe("QAOverview", () => {
     });
 
     const qcChip = within(pillars)
-      .getByText("4 of 6 instruments in control")
+      .getByText("4 of 6 analyzers in control")
       .closest(".qa-pillar-chip");
     expect(qcChip).toHaveClass("qa-pillar-red");
     expect(within(qcChip).getByText("Statistical QC")).toBeInTheDocument();
@@ -472,7 +472,7 @@ describe("QAOverview", () => {
     });
     expect(within(inspector).getAllByText("Coming soon")).toHaveLength(1);
     expect(
-      within(inspector).getByText("4 of 6 instruments in control (30d)"),
+      within(inspector).getByText("4 of 6 analyzers in control (30d)"),
     ).toBeInTheDocument();
     expect(
       within(inspector).getByText("Avg TAT 33h 20m vs prior 30d"),

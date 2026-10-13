@@ -95,7 +95,7 @@ describe("SampleCollectionCard handling (OGC-1424, FR-C9, FR-C9a)", () => {
   it("drops specimen origin, collection conditions, free-text temperature and lab performed sampling from the clinical row", () => {
     renderCard();
 
-    expect(screen.queryByLabelText("Specimen Origin")).toBeNull();
+    expect(screen.queryByLabelText("Sample Origin")).toBeNull();
     expect(screen.queryByLabelText("Collection Conditions")).toBeNull();
     expect(screen.queryByLabelText("Sample Temperature")).toBeNull();
     expect(screen.queryByLabelText("Lab performed sampling")).toBeNull();
@@ -220,7 +220,7 @@ describe("SampleCollectionCard handling (OGC-1424, FR-C9, FR-C9a)", () => {
     expect(
       within(legacy).getByText("Recorded before this version"),
     ).toBeInTheDocument();
-    expect(legacy).toHaveTextContent("Specimen Origin: Referred in");
+    expect(legacy).toHaveTextContent("Sample Origin: Referred in");
     expect(legacy).toHaveTextContent("Collection Conditions: Fasting");
     expect(legacy).toHaveTextContent("Sample Temperature: 4 C");
     expect(within(legacy).queryByRole("textbox")).toBeNull();

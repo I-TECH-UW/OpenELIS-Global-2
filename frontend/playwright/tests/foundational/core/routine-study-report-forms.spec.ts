@@ -107,7 +107,7 @@ const ROUTINE_REPORTS: ReportForm[] = [
   {
     menu: "Activity report by unit",
     path: [...ACTIVITY, "menu_activity_report_bench"],
-    heading: "Activity report By Test Section",
+    heading: "Activity report By Lab Unit",
     report: "activityReportByTestSection",
     kind: "dateRangeAndValue",
   },
@@ -243,7 +243,7 @@ const STUDY_REPORTS: ReportForm[] = [
   {
     menu: "Non-conformity by date (study)",
     path: [...STUDY_NC, "menu_reports_nonconformity_date.study"],
-    heading: "Non-conformity Report By Date",
+    heading: "Nonconformity Report By Date",
     report: "retroCINonConformityByDate",
     kind: "dateRange",
   },
@@ -265,7 +265,7 @@ const STUDY_REPORTS: ReportForm[] = [
   {
     menu: "Non-conformity notification (study)",
     path: [...STUDY_NC, "menu_reports_nonconformity_notification.study"],
-    heading: "Non-conformity notification",
+    heading: "Nonconformity notification",
     report: "retroCInonConformityNotification",
     kind: "labNumberAndSite",
   },

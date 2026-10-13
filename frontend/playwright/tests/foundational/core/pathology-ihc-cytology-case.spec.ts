@@ -235,7 +235,7 @@ async function findOnDashboard(
     await expect(stageFilter).toHaveValue("All", { timeout: 1000 });
   }).toPass({ timeout: NAV_TIMEOUT });
   await page
-    .getByRole("searchbox", { name: "Search by LabNo or Family Name" })
+    .getByRole("searchbox", { name: "Search by Lab Number or Family Name" })
     .fill(labNo);
   const row = page.getByRole("row").filter({ hasText: labNo });
   await expect(row).toHaveCount(1, { timeout: LONG_TIMEOUT });

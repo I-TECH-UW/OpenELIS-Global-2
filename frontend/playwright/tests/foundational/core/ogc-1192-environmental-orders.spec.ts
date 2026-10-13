@@ -52,7 +52,7 @@ test.describe("OGC-1192 environmental orders", () => {
     });
 
     await expect(
-      page.getByText("No sample found for the provided accession number."),
+      page.getByText("No sample found for the provided lab number."),
     ).toBeVisible({ timeout: NAV_TIMEOUT });
     await expect(
       page.getByText("No Patient Information Available"),

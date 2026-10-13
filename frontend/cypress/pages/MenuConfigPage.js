@@ -3,7 +3,7 @@ class MenuConfigPage {
     this.selectors = {
       menuButton: "[data-cy='menuButton']",
       nonConformMenu: "#menu_nonconformity",
-      nonConformCheck: "Non-Conformity Menu Active",
+      nonConformCheck: "Nonconformity Menu Active",
       nonConformReport: "#menu_non_conforming_report",
       nonConformView: "#menu_non_conforming_view",
       correctiveAction: "#menu_non_conforming_corrective_actions",

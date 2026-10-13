@@ -134,9 +134,7 @@ test.describe("Print Bar Code Labels", () => {
         }),
       ).toBeVisible({ timeout: NAV_TIMEOUT });
       await expect(page.getByTestId("order-labels")).toHaveCount(0);
-      await page
-        .getByRole("textbox", { name: "Enter Accession Number" })
-        .fill(labNo);
+      await page.getByRole("textbox", { name: "Enter Lab Number" }).fill(labNo);
       await page.getByRole("button", { name: "Submit", exact: true }).click();
     });
 
@@ -167,7 +165,7 @@ test.describe("Print Bar Code Labels", () => {
         '[data-testid^="label-row-specimen-"]',
       );
       await expect(specimenRows).toHaveCount(1);
-      await expect(specimenRows).toContainText("Specimen label");
+      await expect(specimenRows).toContainText("Sample label");
       await expect(specimenRows).toContainText(labNo);
       await expect(specimenRows).toContainText(SAMPLE_TYPE);
       await expect(specimenRows.getByRole("spinbutton")).toBeVisible();
@@ -241,9 +239,7 @@ test.describe("Print Bar Code Labels", () => {
 
     await test.step("Print Bar Code Labels lists the saved presets", async () => {
       await page.goto("/PrintBarcode", { waitUntil: "domcontentloaded" });
-      await page
-        .getByRole("textbox", { name: "Enter Accession Number" })
-        .fill(labNo);
+      await page.getByRole("textbox", { name: "Enter Lab Number" }).fill(labNo);
       await page.getByRole("button", { name: "Submit", exact: true }).click();
       const labels = page.getByTestId("order-labels");
       await expect(labels).toBeVisible({ timeout: LONG_TIMEOUT });
@@ -304,7 +300,7 @@ test.describe("Print Bar Code Labels", () => {
       page.getByRole("heading", { name: "Print Barcodes for Existing Orders" }),
     ).toBeVisible({ timeout: NAV_TIMEOUT });
     await page
-      .getByRole("textbox", { name: "Enter Accession Number" })
+      .getByRole("textbox", { name: "Enter Lab Number" })
       .fill(`NOPE${Date.now()}`);
     await page.getByRole("button", { name: "Submit", exact: true }).click();
 

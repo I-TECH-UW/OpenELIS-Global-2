@@ -133,7 +133,7 @@ export class AnalyzerSetupPage {
 
   async fillSenderId(senderId: string) {
     await this.page
-      .getByRole("textbox", { name: "Instrument system name", exact: true })
+      .getByRole("textbox", { name: "Analyzer system name", exact: true })
       .fill(senderId);
   }
 
