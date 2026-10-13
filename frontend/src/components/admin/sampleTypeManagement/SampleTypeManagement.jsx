@@ -89,6 +89,9 @@ let breadcrumbs = [
 // the tag color palette is presentational and assigned by list position.
 const DOMAIN_TAG_COLORS = ["green", "purple", "teal", "cyan", "magenta"];
 
+/** type_of_sample.description is varchar(40); a new type's name becomes its key. */
+const SAMPLE_TYPE_DESCRIPTION_MAX = 40;
+
 // ─── Main Component ───────────────────────────────────────────────
 
 function SampleTypeManagement({ intl }) {
@@ -478,9 +481,27 @@ function SampleTypeManagement({ intl }) {
         errors.abbreviation = "Abbreviation must be 10 characters or less";
       }
 
+      if (
+        !errors.name &&
+        view === "add" &&
+        formData.name.trim().length > SAMPLE_TYPE_DESCRIPTION_MAX
+      ) {
+        errors.name = intl.formatMessage({
+          id: "error.sampleType.nameTooLong",
+        });
+      }
+      if (
+        !errors.description &&
+        formData.description.trim().length > SAMPLE_TYPE_DESCRIPTION_MAX
+      ) {
+        errors.description = intl.formatMessage({
+          id: "error.sampleType.update.description.400",
+        });
+      }
+
       return errors;
     },
-    [sampleTypes],
+    [sampleTypes, view, intl],
   );
 
   const refreshSampleTypes = useCallback(async () => {
@@ -563,6 +584,19 @@ function SampleTypeManagement({ intl }) {
                   : { name: duplicate.message };
                 reject(duplicate);
               } else if (result && result.status === 400) {
+                const descriptionRefused = (result.fieldErrors || []).some(
+                  (fe) => fe.field === "description",
+                );
+                if (descriptionRefused) {
+                  const refusal = new Error(
+                    intl.formatMessage({
+                      id: "error.sampleType.update.description.400",
+                    }),
+                  );
+                  refusal.fieldErrors = { description: refusal.message };
+                  reject(refusal);
+                  return;
+                }
                 const nameRefused = (result.fieldErrors || []).some(
                   (fe) =>
                     fe.field === "sampleTypeEnglishName" ||

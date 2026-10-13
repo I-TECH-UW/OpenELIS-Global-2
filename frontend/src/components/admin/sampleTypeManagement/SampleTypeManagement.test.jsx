@@ -543,6 +543,57 @@ describe("SampleTypeManagement", () => {
     expect(name).not.toHaveAttribute("aria-invalid", "true");
   });
 
+  // OGC-1467: type_of_sample.description holds 40 characters, and a new type's
+  // name becomes its key; longer values are refused before the request.
+  test("a name or description over 40 characters is marked and not sent", async () => {
+    renderPage("/MasterListsPage/SampleTypeEditor/new/basic-info");
+    const name = await screen.findByRole("textbox", { name: /Name/ });
+    await userEvent.type(name, "n".repeat(41));
+    await userEvent.type(
+      document.getElementById("st-description"),
+      "d".repeat(41),
+    );
+    await userEvent.click(
+      screen.getByRole("button", { name: "Create Sample Type" }),
+    );
+
+    expect(
+      await screen.findByText(messages["error.sampleType.nameTooLong"]),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByText(messages["error.sampleType.update.description.400"]),
+    ).toBeInTheDocument();
+    expect(name).toHaveAttribute("aria-invalid", "true");
+    expect(api.post).not.toHaveBeenCalled();
+  });
+
+  test("a create the server refuses on the description marks the description", async () => {
+    api.post.mockImplementation((_url, _body, callback) =>
+      callback({
+        error: "validation",
+        status: 400,
+        fieldErrors: [{ field: "description", defaultMessage: "size" }],
+      }),
+    );
+    renderPage("/MasterListsPage/SampleTypeEditor/new/basic-info");
+    const name = await screen.findByRole("textbox", { name: /Name/ });
+    await userEvent.type(name, "Blood culture new");
+    await userEvent.type(document.getElementById("st-description"), "probe");
+    await userEvent.click(
+      screen.getByRole("button", { name: "Create Sample Type" }),
+    );
+
+    const refusal = messages["error.sampleType.update.description.400"];
+    expect(
+      await screen.findByText(`Failed to create sample type: ${refusal}`),
+    ).toBeInTheDocument();
+    expect(document.getElementById("st-description")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
+    expect(name).not.toHaveAttribute("aria-invalid", "true");
+  });
+
   test("a listed sample type without a description shows none, not its name or a placeholder", async () => {
     api.get.mockImplementation((url, callback) => {
       if (url === "/rest/sample-types") {

@@ -177,6 +177,18 @@ const SAVE_REFUSALS = {
   "components.activeNeedsComponent":
     "error.testCatalog.sampleResults.activeNeedsComponent",
   "resultType.unknown": "label.testCatalog.sampleResults.resultTypeRequired",
+  "value.tooLong": "error.testCatalog.sampleResults.valueTooLong",
+  "unit.unknown": "error.testCatalog.sampleResults.unitUnknown",
+};
+
+/** Column widths the server enforces (OGC-1467); the inputs stop there. */
+const COLUMN_MAX = {
+  code: 50,
+  label: 255,
+  defaultResult: 80,
+  optionValue: 80,
+  valueMatch: 80,
+  interpretationText: 255,
 };
 
 const SampleResultsSection = ({ testId }) => {
@@ -890,7 +902,7 @@ const SampleResultsSection = ({ testId }) => {
   // One component → flat; several → accordion panels (FR-34).
 
   return (
-    <Stack gap={6}>
+    <Stack gap={6} style={{ overflowWrap: "anywhere", minWidth: 0 }}>
       <p>
         <FormattedMessage id="label.testCatalog.sampleResults.purpose" />
       </p>
@@ -960,6 +972,7 @@ const SampleResultsSection = ({ testId }) => {
                 />
                 <TextInput
                   id={`comp-code-${ci}`}
+                  maxLength={COLUMN_MAX.code}
                   labelText={intl.formatMessage({
                     id: "label.testCatalog.sampleResults.code",
                   })}
@@ -969,6 +982,7 @@ const SampleResultsSection = ({ testId }) => {
                 />
                 <TextInput
                   id={`comp-label-${ci}`}
+                  maxLength={COLUMN_MAX.label}
                   labelText={intl.formatMessage({
                     id: "label.testCatalog.sampleResults.label",
                   })}
@@ -1204,6 +1218,7 @@ const SampleResultsSection = ({ testId }) => {
                 ) : (
                   <TextInput
                     id={`comp-default-${ci}`}
+                    maxLength={COLUMN_MAX.defaultResult}
                     labelText={intl.formatMessage({
                       id: "label.testCatalog.sampleResults.defaultResult",
                     })}
@@ -1301,6 +1316,7 @@ const SampleResultsSection = ({ testId }) => {
                                 ) : (
                                   <TextInput
                                     id={`opt-value-${ci}-${oi}`}
+                                    maxLength={COLUMN_MAX.optionValue}
                                     labelText=""
                                     value={o.value || ""}
                                     onChange={(e) =>
@@ -1478,6 +1494,7 @@ const SampleResultsSection = ({ testId }) => {
                                 ) : (
                                   <TextInput
                                     id={`int-match-${ci}-${ii}`}
+                                    maxLength={COLUMN_MAX.valueMatch}
                                     labelText=""
                                     placeholder={intl.formatMessage({
                                       id: "label.testCatalog.sampleResults.interp.numericHint",
@@ -1494,6 +1511,7 @@ const SampleResultsSection = ({ testId }) => {
                               <TableCell>
                                 <TextInput
                                   id={`int-text-${ci}-${ii}`}
+                                  maxLength={COLUMN_MAX.interpretationText}
                                   labelText=""
                                   value={it.text || ""}
                                   onChange={(e) =>

@@ -186,9 +186,23 @@ public class LocalizationRestController extends BaseController {
     public ResponseEntity<?> updateTranslations(@PathVariable String id,
             @RequestBody Map<String, String> translations) {
         try {
-            Localization localization = localizationService.get(id);
+            Localization localization;
+            try {
+                localization = localizationService.get(id);
+            } catch (RuntimeException notFound) {
+                localization = null;
+            }
             if (localization == null) {
                 return ResponseEntity.notFound().build();
+            }
+            for (Map.Entry<String, String> entry : translations.entrySet()) {
+                if (entry.getKey() == null || entry.getKey().isBlank() || entry.getKey().length() > 10) {
+                    return ResponseEntity.badRequest().body(new ErrorResponse("Unknown locale: " + entry.getKey()));
+                }
+                if (entry.getValue() == null) {
+                    return ResponseEntity.badRequest().body(
+                            new ErrorResponse("The " + entry.getKey() + " value is missing; send \"\" to clear it"));
+                }
             }
             String fallbackLocale = supportedLocaleService.getFallbackLocaleCode();
             if (fallbackLocale != null && translations.containsKey(fallbackLocale)
