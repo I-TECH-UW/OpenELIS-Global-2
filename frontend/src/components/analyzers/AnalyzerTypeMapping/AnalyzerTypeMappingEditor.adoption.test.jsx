@@ -203,9 +203,7 @@ describe("AnalyzerTypeMappingEditor adopting a newer revision", () => {
       expect.any(Function),
     );
     const record = (bucket, code) =>
-      within(section(bucket)).getByRole("button", {
-        name: new RegExp(`^${code}\\b`),
-      });
+      within(section(bucket)).getByText(code, { selector: "strong" });
     expect(record("Changed", "GLU")).toBeInTheDocument();
     expect(record("Needs mapping", "K")).toBeInTheDocument();
     expect(record("Unchanged", "NA")).toBeInTheDocument();
@@ -214,7 +212,7 @@ describe("AnalyzerTypeMappingEditor adopting a newer revision", () => {
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("button", {
-        name: "Apply mappings and retry held results",
+        name: "Apply and retry held results",
       }),
     ).not.toBeInTheDocument();
   });

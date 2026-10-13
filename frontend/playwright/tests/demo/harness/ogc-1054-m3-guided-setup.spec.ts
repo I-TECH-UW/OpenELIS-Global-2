@@ -141,7 +141,7 @@ test.describe.serial("OGC-1054 M3 guided analyzer setup", () => {
           );
           await demo.highlight(notConfirmed);
           const confirm = page.getByRole("button", {
-            name: "Confirm mappings and control recognition",
+            name: "Confirm mapping",
           });
           await expect(confirm).toBeEnabled();
           await confirm.click();

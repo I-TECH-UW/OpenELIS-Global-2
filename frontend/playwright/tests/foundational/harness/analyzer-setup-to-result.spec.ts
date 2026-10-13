@@ -545,7 +545,7 @@ test.describe("A catalog test deactivated after setup", () => {
       deactivated = null;
       await held.getByRole("link", { name: "Review analyzer mapping" }).click();
       const apply = page.getByRole("button", {
-        name: "Apply mappings and retry held results",
+        name: "Apply and retry held results",
       });
       await expect(apply).toBeEnabled();
       await apply.click();

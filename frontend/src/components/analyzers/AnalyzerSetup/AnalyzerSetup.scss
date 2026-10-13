@@ -125,13 +125,6 @@
   color: var(--cds-text-secondary);
 }
 
-.analyzer-setup__verify-actions {
-  align-items: center;
-  display: flex;
-  gap: spacing.$spacing-05;
-  justify-content: flex-end;
-}
-
 .analyzer-setup__connect {
   display: grid;
   gap: spacing.$spacing-05;
@@ -260,10 +253,5 @@
 
   .analyzer-setup__assay-list li {
     grid-template-columns: minmax(0, 1fr);
-  }
-
-  .analyzer-setup__verify-actions {
-    align-items: flex-start;
-    flex-direction: column;
   }
 }

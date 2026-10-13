@@ -592,28 +592,35 @@ const AnalyzerSetup = ({ currentStep = "instrument", onClose }) => {
             <div className="analyzer-setup__verify">
               {candidate ? (
                 <>
-                  {mapping && !verification.complete && (
-                    <InlineNotification
-                      kind="warning"
-                      lowContrast
-                      hideCloseButton
-                      title={intl.formatMessage(
-                        {
-                          id:
-                            verification.assaysOn === 0
-                              ? "analyzer.setup.verify.noAssays"
-                              : verification.unresolved > 0
-                                ? "analyzer.setup.verify.unresolved"
-                                : "analyzer.setup.verify.confirm",
-                        },
-                        { count: verification.unresolved },
-                      )}
-                    />
-                  )}
                   <AnalyzerTypeMappingEditor
                     analyzerId={String(candidate.id)}
                     embedded
                     onMappingChange={reportVerifyMapping}
+                    statusText={
+                      mapping && !verification.complete
+                        ? intl.formatMessage(
+                            {
+                              id:
+                                verification.assaysOn === 0
+                                  ? "analyzer.setup.verify.noAssays"
+                                  : verification.unresolved > 0
+                                    ? "analyzer.setup.verify.unresolved"
+                                    : "analyzer.setup.verify.confirm",
+                            },
+                            { count: verification.unresolved },
+                          )
+                        : null
+                    }
+                    nextAction={{
+                      label: intl.formatMessage({
+                        id: selectingBinding
+                          ? "analyzer.setup.verify.selecting"
+                          : "analyzer.setup.verify.continue",
+                      }),
+                      icon: ArrowRight,
+                      disabled: !verification.complete || selectingBinding,
+                      onClick: continueToConnect,
+                    }}
                   />
                   {bindingSelectionError && (
                     <InlineNotification
@@ -640,21 +647,6 @@ const AnalyzerSetup = ({ currentStep = "instrument", onClose }) => {
                   })}
                 />
               )}
-
-              <div className="analyzer-setup__verify-actions">
-                <Button
-                  type="button"
-                  renderIcon={ArrowRight}
-                  disabled={!verification.complete || selectingBinding}
-                  onClick={continueToConnect}
-                >
-                  {intl.formatMessage({
-                    id: selectingBinding
-                      ? "analyzer.setup.verify.selecting"
-                      : "analyzer.setup.verify.continue",
-                  })}
-                </Button>
-              </div>
             </div>
           )}
 
