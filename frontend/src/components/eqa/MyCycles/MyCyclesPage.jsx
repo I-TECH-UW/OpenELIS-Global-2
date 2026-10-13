@@ -37,8 +37,8 @@ import {
 } from "../eqaCommon";
 import {
   createMyCycle,
+  fetchEnrollmentsOpenForCycles,
   fetchMyCycles,
-  fetchMyPrograms,
   importScoresCsv,
   submitCycle,
   submitCycleManually,
@@ -212,7 +212,7 @@ const MyCyclesPage = () => {
   const openNewCycle = () => {
     setNewCycleError(null);
     setNewCycle(EMPTY_NEW_CYCLE);
-    fetchMyPrograms(setMyPrograms);
+    fetchEnrollmentsOpenForCycles(setMyPrograms);
     setNewCycleOpen(true);
   };
 
@@ -1004,8 +1004,8 @@ const MyCyclesPage = () => {
             helperText={
               myPrograms.length === 0
                 ? t(
-                    "eqa.cycle.new.noPrograms",
-                    "Enroll in a scheme under My EQA Schemes first.",
+                    "eqa.cycle.new.noUsableEnrollments",
+                    "No active enrollment here matches a scheme on this instance. Enrollments are managed under My EQA Schemes, schemes under EQA Management, Schemes.",
                   )
                 : undefined
             }
