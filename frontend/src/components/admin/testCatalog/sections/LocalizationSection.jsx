@@ -82,13 +82,18 @@ const LocalizationSection = ({
     refsUrl || `/rest/test-catalog/tests/${id}/localization`;
   // Only the strings that name the thing being translated differ between
   // entities; everything else here reads the same for all three.
-  const copy = (suffix) =>
-    intl.formatMessage({
-      id: `label.${entity}.localization.${suffix}`,
-      defaultMessage: intl.formatMessage({
-        id: `label.testCatalog.localization.${suffix}`,
-      }),
+  // A test's strings are the testCatalog ones, so it has no keys of its own.
+  const copy = (suffix) => {
+    const testCopy = intl.formatMessage({
+      id: `label.testCatalog.localization.${suffix}`,
     });
+    return entity === "test"
+      ? testCopy
+      : intl.formatMessage({
+          id: `label.${entity}.localization.${suffix}`,
+          defaultMessage: testCopy,
+        });
+  };
   const intl = useIntl();
 
   const [locales, setLocales] = useState([]);
@@ -350,19 +355,15 @@ const LocalizationSection = ({
               <div
                 style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}
               >
-                <span className="cds--label">
-                  {intl.formatMessage({
-                    id: `label.${entity}.localization.field.${entry.field}`,
-                    defaultMessage: intl.formatMessage({
-                      id: `label.testCatalog.localization.field.${entry.field}`,
-                    }),
-                  })}
+                <span className="cds--label" aria-hidden="true">
+                  {copy(`field.${entry.field}`)}
                 </span>
                 {fallbackTag(entry)}
               </div>
               <TextInput
                 id={`localization-input-${entry.field}`}
-                labelText=""
+                labelText={copy(`field.${entry.field}`)}
+                hideLabel
                 placeholder={entry.translations[FALLBACK_LOCALE] || ""}
                 value={valueFor(entry)}
                 onChange={(e) => {

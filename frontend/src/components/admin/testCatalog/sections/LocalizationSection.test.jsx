@@ -92,6 +92,24 @@ describe("LocalizationSection", () => {
     ).toBe("Glucose FR");
   });
 
+  // OGC-1457 review: each translation input is named by its field, so a screen
+  // reader announces "Test Name", not a bare text box.
+  it("names each translation input after its field", async () => {
+    mockHappyPath();
+    renderSection("fr");
+
+    expect(
+      await screen.findByRole("textbox", {
+        name: messages["label.testCatalog.localization.field.name"],
+      }),
+    ).toHaveAttribute("id", "localization-input-name");
+    expect(
+      screen.getByRole("textbox", {
+        name: messages["label.testCatalog.localization.field.reportingName"],
+      }),
+    ).toHaveAttribute("id", "localization-input-reportingName");
+  });
+
   // The two localization records resolve independently, so the render order must
   // come from the server's field list rather than whichever request landed first.
   it("renders the fields in the order the server declared them", async () => {
@@ -298,5 +316,29 @@ describe("LocalizationSection", () => {
         messages["label.testCatalog.localization.loadError"],
       ),
     ).toBeInTheDocument();
+  });
+});
+
+describe("LocalizationSection message lookup (OGC-1238)", () => {
+  it("renders a test's copy without looking up keys that do not exist", async () => {
+    mockHappyPath();
+    const onError = vi.fn();
+    render(
+      <IntlProvider locale="en-US" messages={messages} onError={onError}>
+        <LocalizationSection testId="42" />
+      </IntlProvider>,
+    );
+
+    expect(
+      await screen.findByText(messages["label.testCatalog.localization.intro"]),
+    ).toBeInTheDocument();
+    expect(
+      (
+        await screen.findAllByText(
+          messages["label.testCatalog.localization.field.name"],
+        )
+      ).length,
+    ).toBeGreaterThan(0);
+    expect(onError).not.toHaveBeenCalled();
   });
 });
