@@ -9,24 +9,24 @@ It installs OpenELIS on a single Ubuntu Server LTS machine with Docker Compose,
 and is written for the person who sets up and looks after the lab's server. It
 covers:
 
-1. [Prepare the server](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1711996945):
+1. [Prepare the server](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1711472648):
    Ubuntu Server and Docker.
 2. Get OpenELIS, one of:
-   - [Online install](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1712095237):
+   - [Online install](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1712160806):
      the server downloads the current development build.
-   - [Offline install](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1712062477):
+   - [Offline install](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1711636518):
      build a bundle of the latest release on another computer and copy it to
      the server.
-3. [Configure and start OpenELIS](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1712521228):
+3. [Configure and start OpenELIS](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1711407126):
    passwords, time zone, network ports, first start and first login.
-4. [Set up an HTTPS certificate](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1711538183)
+4. [Set up an HTTPS certificate](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1712029723)
    (optional): your own certificate, or a free one from Let's Encrypt.
 
 To look after a running server:
 
-- [Back up and restore OpenELIS Global](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1711833094)
-- [Upgrade or remove OpenELIS Global](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1711603740)
-- [Troubleshoot an OpenELIS Global install](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1712291845)
+- [Back up and restore OpenELIS Global](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1711669276)
+- [Upgrade or remove OpenELIS Global](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1711931398)
+- [Troubleshoot an OpenELIS Global install](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1712128011)
 
 A French translation is at
 [Installer OpenELIS Global](https://uwdigi.atlassian.net/wiki/spaces/oeg/pages/1701281856/Installer+OpenELIS+Global).
