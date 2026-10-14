@@ -12754,5 +12754,6 @@
   "reports.running": "Running...",
   "reports.empty": "Nothing matched these filters.",
   "reports.empty.stockOnHandAsOf": "No stock movements are recorded on or before this date, so stock as it stood then cannot be reconstructed. This is not the same as having held nothing.",
-  "reports.asOfDate.basis": "Reconstructed from recorded stock movements up to this date, not from a physical count."
+  "reports.asOfDate.basis": "Reconstructed from recorded stock movements up to this date, not from a physical count.",
+  "eqa.wizard.schemeTestsFailed": "The scheme's tests could not be loaded. Reload the page to try again."
 }
