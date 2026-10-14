@@ -134,13 +134,13 @@ describe("RequesterSection", () => {
     renderSection({ workflowType: "clinical" });
 
     expect(screen.getByText("Provider Search")).toBeInTheDocument();
-    expect(screen.queryByText("Requestor Search")).not.toBeInTheDocument();
+    expect(screen.queryByText("Requester Search")).not.toBeInTheDocument();
   });
 
   it("shows Requestor search for environmental/vector orders and hides Provider search", () => {
     renderSection({ workflowType: "environmental" });
 
-    expect(screen.getByText("Requestor Search")).toBeInTheDocument();
+    expect(screen.getByText("Requester Search")).toBeInTheDocument();
     expect(screen.queryByText("Provider Search")).not.toBeInTheDocument();
   });
 
@@ -197,7 +197,7 @@ describe("RequesterSection", () => {
     const setOrderData = vi.fn();
     renderSection({ workflowType: "environmental", setOrderData });
 
-    fireEvent.change(screen.getByLabelText("Requestor Name"), {
+    fireEvent.change(screen.getByLabelText("Requester Name"), {
       target: { value: "Jane" },
     });
 
@@ -424,20 +424,20 @@ describe("RequesterSection", () => {
     const setOrderData = vi.fn();
     renderSection({ workflowType: "environmental", setOrderData });
 
-    fireEvent.change(screen.getByLabelText("Requestor Name"), {
+    fireEvent.change(screen.getByLabelText("Requester Name"), {
       target: { value: "Jane Doe" },
     });
 
     await waitFor(() =>
       expect(
-        screen.getByText('+ Add new requestor "Jane Doe"'),
+        screen.getByText('+ Add new requester "Jane Doe"'),
       ).toBeInTheDocument(),
     );
     expect(
-      screen.getByText("No matching requestor found."),
+      screen.getByText("No matching requester found."),
     ).toBeInTheDocument();
 
-    fireEvent.click(screen.getByText('+ Add new requestor "Jane Doe"'));
+    fireEvent.click(screen.getByText('+ Add new requester "Jane Doe"'));
 
     const updater =
       setOrderData.mock.calls[setOrderData.mock.calls.length - 1][0];
@@ -456,16 +456,16 @@ describe("RequesterSection", () => {
 
     renderSection({ workflowType: "environmental" });
 
-    fireEvent.change(screen.getByLabelText("Requestor Name"), {
+    fireEvent.change(screen.getByLabelText("Requester Name"), {
       target: { value: "Jane Doe" },
     });
 
     await waitFor(() =>
       expect(
-        screen.getByText('+ Add new requestor "Jane Doe"'),
+        screen.getByText('+ Add new requester "Jane Doe"'),
       ).toBeInTheDocument(),
     );
-    fireEvent.click(screen.getByText('+ Add new requestor "Jane Doe"'));
+    fireEvent.click(screen.getByText('+ Add new requester "Jane Doe"'));
 
     expect(screen.getByLabelText("First Name")).not.toBeDisabled();
     expect(screen.queryByText("Edit details")).not.toBeInTheDocument();
@@ -484,16 +484,16 @@ describe("RequesterSection", () => {
       configurationProperties: { restrictFreeTextRequestorEntry: "true" },
     });
 
-    fireEvent.change(screen.getByLabelText("Requestor Name"), {
+    fireEvent.change(screen.getByLabelText("Requester Name"), {
       target: { value: "Jane Doe" },
     });
 
     await waitFor(() =>
-      expect(screen.getByText('+ Add new requestor "Jane Doe"')).toBeDisabled(),
+      expect(screen.getByText('+ Add new requester "Jane Doe"')).toBeDisabled(),
     );
     expect(
       screen.getByText(
-        "Adding a new requestor has been disabled by your administrator.",
+        "Adding a new requester has been disabled by your administrator.",
       ),
     ).toBeInTheDocument();
   });
@@ -637,7 +637,7 @@ describe("RequesterSection", () => {
       expect(screen.getByLabelText("First Name")).toBeDisabled();
       expect(
         screen.getByText(
-          "Adding a new requestor has been disabled by your administrator. Search for an existing requestor above.",
+          "Adding a new requester has been disabled by your administrator. Search for an existing requester above.",
         ),
       ).toBeInTheDocument();
 
@@ -978,7 +978,7 @@ describe("RequesterSection", () => {
 
       renderSection({ workflowType: "environmental" });
 
-      fireEvent.change(screen.getByLabelText("Requestor Name"), {
+      fireEvent.change(screen.getByLabelText("Requester Name"), {
         target: { value: "Jane" },
       });
 
@@ -1005,7 +1005,7 @@ describe("RequesterSection", () => {
 
       renderSection({ workflowType: "environmental" });
 
-      fireEvent.change(screen.getByLabelText("Requestor Name"), {
+      fireEvent.change(screen.getByLabelText("Requester Name"), {
         target: { value: "Jane" },
       });
 

@@ -130,7 +130,7 @@ describe("ControlRecognitionDraftEditor", () => {
     ).toBeVisible();
     expect(screen.getByText("Order field 12 equals Q")).toBeVisible();
     expect(
-      screen.getByText("Specimen ID matches a configured pattern"),
+      screen.getByText("Sample ID matches a configured pattern"),
     ).toBeVisible();
     expect(document.body).not.toHaveTextContent(
       "SERVER SUMMARY MUST NOT RENDER",
@@ -216,7 +216,7 @@ describe("ControlRecognitionDraftEditor", () => {
     });
     await userEvent.type(
       within(conditionGroup).getByRole("textbox", {
-        name: "Specimen ID prefix",
+        name: "Sample ID prefix",
       }),
       "QC-",
     );

@@ -260,7 +260,7 @@ describe("AnalystCompetencyPage", () => {
 
     const history = await screen.findByTestId("history-12");
     expect(history).toHaveTextContent("CD4 count");
-    expect(history).toHaveTextContent("Escalated to non-conformity");
+    expect(history).toHaveTextContent("Escalated to nonconformity");
     // The equipment dismissal is evidence, but it is not held against them.
     expect(history).toHaveTextContent("Dismissed — equipment");
     expect(history).toHaveTextContent("Excused");
@@ -306,9 +306,9 @@ describe("AnalystCompetencyPage", () => {
     const brian = [...container.querySelectorAll("tbody tr")].find((tr) =>
       tr.textContent.includes("Brian Okello"),
     );
-    expect(brian).toHaveTextContent("Open non-conformity · CD4 count");
+    expect(brian).toHaveTextContent("Open nonconformity · CD4 count");
     expect(brian).toHaveTextContent(
-      "Close the non-conformity to clear the band",
+      "Close the nonconformity to clear the band",
     );
   });
 

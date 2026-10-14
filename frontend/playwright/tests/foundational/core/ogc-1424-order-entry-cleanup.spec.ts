@@ -224,7 +224,7 @@ test.describe("Order entry clean-up (OGC-1424)", () => {
 
       await test.step("the clinical row has no retired fields", async () => {
         for (const label of [
-          "Specimen Origin",
+          "Sample Origin",
           "Collection Conditions",
           "Sample Temperature",
           "Lab performed sampling",

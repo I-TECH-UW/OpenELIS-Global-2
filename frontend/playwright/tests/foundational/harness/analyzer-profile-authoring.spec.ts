@@ -112,7 +112,7 @@ for (const protocol of ["FILE", "ASTM", "HL7"] as const) {
             `A ${protocol} profile says how the instrument names itself in messages and how the connection is made.`,
           );
           await text("Manufacturer", "Synthetic manufacturer");
-          await text("Instrument name in messages", "SYNTHETIC");
+          await text("Analyzer name in messages", "SYNTHETIC");
           await text("Analyzer identifier pattern", "^SYNTHETIC$");
           await text(
             "Protocol version",
@@ -219,7 +219,7 @@ for (const protocol of ["FILE", "ASTM", "HL7"] as const) {
           .getByRole("button", { name: "Add condition", exact: true })
           .click();
         await dialog
-          .getByRole("textbox", { name: "Specimen ID prefix", exact: true })
+          .getByRole("textbox", { name: "Sample ID prefix", exact: true })
           .fill("QC-");
         await dialog
           .getByRole("button", {

@@ -47,7 +47,7 @@ describe("ControlLotSetup — bench control lots (OGC-1147)", () => {
     ).toBeInTheDocument();
     expect(
       screen.getByText(
-        'Optional. Choose "Bench / no analyzer" for a manual method run at the bench without an instrument.',
+        'Optional. Choose "Bench / no analyzer" for a manual method run at the bench without an analyzer.',
       ),
     ).toBeInTheDocument();
   });

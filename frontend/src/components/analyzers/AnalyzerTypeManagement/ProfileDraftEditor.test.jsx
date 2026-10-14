@@ -257,7 +257,7 @@ it("reloads saved recognition before a subsequent full-profile edit", async () =
       callback(recognition());
     },
   );
-  await replace("Specimen ID prefix", "CONTROL-");
+  await replace("Sample ID prefix", "CONTROL-");
   expect(
     screen.getByRole("textbox", { name: "Filename pattern" }),
   ).toBeDisabled();
@@ -491,10 +491,7 @@ it("creates, saves, reopens, recognizes controls and explicitly publishes a new 
       name: messages["analyzerType.recognition.condition.add"],
     }),
   );
-  changeText(
-    screen.getByRole("textbox", { name: "Specimen ID prefix" }),
-    "QC-",
-  );
+  changeText(screen.getByRole("textbox", { name: "Sample ID prefix" }), "QC-");
   expect(
     screen.queryByText("Save control recognition before publishing."),
   ).toBeNull();
@@ -773,7 +770,7 @@ it.each(["ASTM", "HL7"])(
     await choose("Sends orders to the analyzer", "false");
     await choose("Supports a connection test", "true");
     await replace("Manufacturer", "Synthetic manufacturer");
-    await replace("Instrument name in messages", "SYNTHETIC");
+    await replace("Analyzer name in messages", "SYNTHETIC");
     await replace("Analyzer identifier pattern", "^SYNTHETIC$");
     await replace(
       "Protocol version",

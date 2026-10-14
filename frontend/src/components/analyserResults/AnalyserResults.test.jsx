@@ -235,7 +235,7 @@ describe("AnalyserResults", () => {
   it("shows the specimen ID the instrument sent when it differs from the accession", () => {
     renderResults([matched("4001", 1, { instrumentSpecimenId: "ACC-1-2" })]);
     expect(screen.getByTestId("InstrumentSpecimenId")).toHaveTextContent(
-      "Instrument sent: ACC-1-2",
+      "Analyzer sent: ACC-1-2",
     );
   });
 
@@ -519,7 +519,7 @@ describe("AnalyserResults", () => {
     ]);
 
     const reported = await screen.findByTestId("instrument-reported-1005");
-    expect(reported).toHaveTextContent("Instrument reported");
+    expect(reported).toHaveTextContent("Analyzer reported");
     expect(reported).toHaveTextContent("Flag: H");
     expect(reported).toHaveTextContent(
       "Assay: Xpert HIV-1 Viral Load, version 4",

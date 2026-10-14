@@ -930,7 +930,7 @@ describe("AnalyzersList", () => {
       }),
     ).toBeVisible();
     expect(
-      screen.getByRole("heading", { level: 3, name: "Instrument" }),
+      screen.getByRole("heading", { level: 3, name: "Analyzer" }),
     ).toBeVisible();
 
     await userEvent.click(

@@ -118,7 +118,7 @@ const renderPage = () =>
   );
 
 const search = async () => {
-  fireEvent.change(screen.getByRole("textbox", { name: /Accession/i }), {
+  fireEvent.change(screen.getByRole("textbox", { name: /Lab Number/i }), {
     target: { value: LAB },
   });
   fireEvent.click(
@@ -145,7 +145,7 @@ describe("ExistingOrder labels (OGC-1169)", () => {
     expect(within(order).getByText("Order label")).toBeInTheDocument();
     expect(within(order).getByText(LAB)).toBeInTheDocument();
     const specimen = screen.getByTestId("label-row-specimen-10109");
-    expect(within(specimen).getByText("Specimen label")).toBeInTheDocument();
+    expect(within(specimen).getByText("Sample label")).toBeInTheDocument();
     expect(within(specimen).getByText("Serum")).toBeInTheDocument();
     expect(screen.queryByText(/^order$/)).toBeNull();
     expect(screen.queryByText("specimen-1")).toBeNull();
@@ -158,7 +158,7 @@ describe("ExistingOrder labels (OGC-1169)", () => {
     expect(specimenQty).toHaveAttribute("max", "3");
     expect(screen.getAllByRole("button", { name: /^Print/ })).toHaveLength(3);
     expect(
-      screen.getByText("Prints 2 order labels and 1 label per specimen."),
+      screen.getByText("Prints 2 order labels and 1 label per sample."),
     ).toBeInTheDocument();
   });
 

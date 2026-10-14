@@ -132,7 +132,7 @@ test.describe("Label preset content fields (OGC-1218)", () => {
           fields.getByTestId("label-field-row-SPECIMEN_TYPE"),
         ).toContainText("Position 3");
         await fields
-          .getByRole("button", { name: "Move Specimen Type up" })
+          .getByRole("button", { name: "Move Sample Type up" })
           .click();
         await expect(
           fields.getByTestId("label-field-row-SPECIMEN_TYPE"),
@@ -183,7 +183,7 @@ test.describe("Label preset content fields (OGC-1218)", () => {
         const fields = dialog.getByTestId("label-preset-fields");
         await expect(
           fields.getByTestId("label-field-row-SPECIMEN_TYPE"),
-        ).toContainText("Specimen Type");
+        ).toContainText("Sample Type");
         await expect(
           fields.getByTestId("label-field-row-SPECIMEN_TYPE"),
         ).toContainText("Position 2");

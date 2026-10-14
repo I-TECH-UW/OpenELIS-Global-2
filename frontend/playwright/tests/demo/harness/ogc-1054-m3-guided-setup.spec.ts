@@ -211,7 +211,7 @@ test.describe.serial("OGC-1054 M3 guided analyzer setup", () => {
         if ("senderId" in connection) {
           await expect(
             setup.surface.getByRole("textbox", {
-              name: "Instrument system name",
+              name: "Analyzer system name",
               exact: true,
             }),
           ).toHaveValue(connection.senderId);

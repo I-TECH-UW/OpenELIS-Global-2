@@ -447,7 +447,7 @@ test.each([
   async (dateAnchor, dateMeaning) => {
     const nc = dateAnchor === "eventOrRecordedDate";
     const typeLabel = nc ? "Non-Conformance" : "Referrals";
-    const groupLabel = nc ? "Non-Conformance / Rejections" : "Referrals";
+    const groupLabel = nc ? "Nonconformity / Rejections" : "Referrals";
     const fieldId = nc ? "ncOccurrenceId" : "referralId";
     const fieldLabel = nc ? "Occurrence ID" : "Referral ID";
     alternateCatalog = {
@@ -966,7 +966,7 @@ test("configured filters exclude unsupported restored choices from review, save,
   open();
   await useSaved();
   await period();
-  expect(screen.getByRole("combobox", { name: /^Lab sections/ })).toBeVisible();
+  expect(screen.getByRole("combobox", { name: /^Lab units/ })).toBeVisible();
   expect(
     screen.queryByRole("combobox", { name: /^Tests/ }),
   ).not.toBeInTheDocument();

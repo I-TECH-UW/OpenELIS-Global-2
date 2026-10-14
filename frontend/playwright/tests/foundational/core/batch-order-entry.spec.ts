@@ -348,7 +348,7 @@ test.describe("Batch order entry", () => {
         page.getByRole("button", { name: "Next Label" }),
       ).toBeDisabled();
       await page
-        .getByRole("button", { name: "Previously used Accession Number" })
+        .getByRole("button", { name: "Previously used Lab Number" })
         .click();
       await expect(
         main(page).getByRole("heading", { name: labNumber }),
@@ -396,7 +396,7 @@ test.describe("Batch order entry", () => {
         .getByRole("button", { name: "Save", exact: true })
         .click();
       await page
-        .getByRole("button", { name: "Previously used Accession Number" })
+        .getByRole("button", { name: "Previously used Lab Number" })
         .click();
       await expect(
         main(page).getByRole("heading", { name: labNumber }),

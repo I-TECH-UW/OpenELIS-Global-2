@@ -137,7 +137,7 @@ describe("PlacementNotice", () => {
     );
     expect(
       screen.getByText(
-        "Instrument patient PAT-77 (Doe, Jane) matches the order's patient.",
+        "Analyzer patient PAT-77 (Doe, Jane) matches the order's patient.",
       ),
     ).toBeInTheDocument();
     expect(screen.queryByText("Patient mismatch")).not.toBeInTheDocument();
@@ -159,7 +159,7 @@ describe("PlacementNotice", () => {
     expect(screen.getByText("Patient mismatch")).toBeInTheDocument();
     expect(
       screen.getByText(
-        "The instrument reported patient OTHER-9 (Roe, Rick), but the order's patient is Doe, Jane. Add a note saying why before saving.",
+        "The analyzer reported patient OTHER-9 (Roe, Rick), but the order's patient is Doe, Jane. Add a note saying why before saving.",
       ),
     ).toBeInTheDocument();
   });
@@ -174,7 +174,7 @@ describe("PlacementNotice", () => {
     );
     expect(
       screen.getByText(
-        "The instrument reported patient PAT-77. The order has no patient identifier to compare it with.",
+        "The analyzer reported patient PAT-77. The order has no patient identifier to compare it with.",
       ),
     ).toBeInTheDocument();
   });
@@ -187,9 +187,9 @@ describe("PlacementNotice", () => {
         patient: { status: "NOT_REPORTED" },
       }),
     );
-    expect(screen.queryByText(/Instrument patient/)).not.toBeInTheDocument();
+    expect(screen.queryByText(/Analyzer patient/)).not.toBeInTheDocument();
     expect(
-      screen.queryByText(/The instrument reported patient/),
+      screen.queryByText(/The analyzer reported patient/),
     ).not.toBeInTheDocument();
   });
 
