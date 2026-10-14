@@ -92,9 +92,15 @@ scripts/dev-stack up
 scripts/dev-stack url
 ```
 
+Install the [development prerequisites](docs/dev_setup.md#work-on-source),
+including mkcert, first. On the first start on a machine, `up` sets up trusted
+local HTTPS and may request administrator authentication. Later starts reuse
+that trust. Use the printed localhost URL; no manual certificate generation,
+browser warning bypass, domain setup or port selection is needed.
+
 The launcher builds the backend, frontend, Analyzer Bridge and mock from the
-checkout and pinned submodules. Its containers, images, ports and data belong to
-this worktree. Frontend edits hot reload; re-run `up` after backend or
+checkout and checked-out submodules. Its containers, images, ports and data
+belong to this worktree. Frontend edits hot reload; re-run `up` after backend or
 dependency changes. Native builds, focused tests, domain setup and
 published-image deployment are described in
 [the development guide](docs/dev_setup.md).
