@@ -316,6 +316,9 @@
   <!-- OGC-438: the manufacturer's product barcode (UPC or GTIN) on the item -->
   <include relativeToChangelogFile="true" file="106-inventory-item-upc.xml"/>
 
+  <!-- OGC-438: a UPC is unique ignoring leading zeros; must follow 106 -->
+  <include relativeToChangelogFile="true" file="139-inventory-item-upc-digits.xml"/>
+
   <!-- OGC-438: Items, Receive and Reports each get a menu row under Inventory -->
   <include relativeToChangelogFile="true" file="111-inventory-sidenav-routes.xml"/>
 

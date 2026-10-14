@@ -129,7 +129,9 @@ public class InventoryItemDAOImpl extends BaseDAOImpl<InventoryItem, Long> imple
             CriteriaQuery<InventoryItem> cq = cb.createQuery(InventoryItem.class);
             Root<InventoryItem> root = cq.from(InventoryItem.class);
 
-            cq.select(root).where(cb.equal(root.get("upc"), upc));
+            // Same rule as uq_inventory_item_upc_digits and gtinMatches() in gs1.js
+            cq.select(root).where(cb.equal(cb.trim(CriteriaBuilder.Trimspec.LEADING, '0', root.<String>get("upc")),
+                    upc.replaceFirst("^0+", "")));
 
             List<InventoryItem> results = entityManager.createQuery(cq).setMaxResults(1).getResultList();
             return results.isEmpty() ? null : results.get(0);

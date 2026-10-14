@@ -156,7 +156,7 @@ public class InventoryImportServiceImpl implements InventoryImportService {
 
         // A blank UPC stays null: the unique index on upc is partial on "not null".
         String upc = row.get(UPC).trim();
-        String key = upc.isEmpty() ? "name:" + name.toLowerCase() : "upc:" + upc;
+        String key = upc.isEmpty() ? "name:" + name.toLowerCase() : "upc:" + upc.replaceFirst("^0+", "");
         if (!seenKeys.add(key)) {
             return new RowPlan(row.lineNumber(), name, Outcome.SKIP, "The file already has a row for this item");
         }

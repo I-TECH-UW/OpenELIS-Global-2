@@ -4,6 +4,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThrows;
 import static org.junit.Assert.assertTrue;
 
 import java.util.List;
@@ -17,6 +18,7 @@ import org.openelisglobal.inventory.imports.InventoryImportPlan.RowPlan;
 import org.openelisglobal.inventory.service.InventoryItemService;
 import org.openelisglobal.inventory.valueholder.InventoryItem;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
 public class InventoryImportIntegrationTest extends BaseWebContextSensitiveTest {
@@ -140,6 +142,37 @@ public class InventoryImportIntegrationTest extends BaseWebContextSensitiveTest 
         assertEquals(1, second.updated());
         assertNotNull(named(PREFIX + "A_RENAMED"));
         assertNull(named(PREFIX + "A"));
+    }
+
+    @Test
+    public void aGtin14MatchesTheItemStoredUnderItsShorterUpc() {
+        apply(HEADER + row("A", "012345678905", "25"));
+
+        InventoryImportPlan second = apply(HEADER + row("A", "00012345678905", "80"));
+
+        assertEquals(1, itemCount());
+        assertEquals(1, second.updated());
+        assertEquals(Integer.valueOf(80), named(PREFIX + "A").getLowStockThreshold());
+    }
+
+    @Test
+    public void aFileSpellingOneUpcTwoWaysTakesTheFirst() {
+        InventoryImportPlan plan = apply(HEADER + row("A", "012345678905", "25") + row("B", "00012345678905", "30"));
+
+        assertEquals(1, plan.created());
+        assertEquals(1, itemCount());
+        assertNotNull(named(PREFIX + "A"));
+    }
+
+    @Test
+    public void theDatabaseRefusesASecondItemWhoseUpcDiffersOnlyByLeadingZeros() {
+        apply(HEADER + row("A", "012345678905", "25") + row("B", "4006381333931", "30"));
+
+        DuplicateKeyException refused = assertThrows(DuplicateKeyException.class, () -> jdbc
+                .update("UPDATE clinlims.inventory_item SET upc = '00012345678905' WHERE name = ?", PREFIX + "B"));
+
+        assertTrue(refused.getMessage(), refused.getMessage().contains("uq_inventory_item_upc_digits"));
+        assertEquals("4006381333931", named(PREFIX + "B").getUpc());
     }
 
     @Test
