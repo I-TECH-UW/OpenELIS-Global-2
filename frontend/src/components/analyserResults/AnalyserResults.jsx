@@ -92,6 +92,7 @@ const NORMAL_FLAGS = ["N", ""];
 
 export const buildHeldResultResolutionUrl = (row, analyzerId) => {
   const mappingIssues = [
+    "assay_not_enabled",
     "unknown_analyzer_test",
     "test_mapping_not_ready",
     "unknown_analyzer_result_value",
@@ -540,6 +541,27 @@ const AnalyserResults = (props) => {
   /** The one thing the reviewer can do about a held row, if anything. */
   const renderHeldAction = (row) => {
     const resolutionUrl = buildHeldResultResolutionUrl(row, props.analyzerId);
+    if (row.importIssueReason === "assay_not_enabled" && props.analyzerId) {
+      return (
+        <span className="analyzerResults__heldActions">
+          <CarbonLink
+            as={RouterLink}
+            to={`/analyzers?setup=assays&analyzerId=${encodeURIComponent(props.analyzerId)}`}
+          >
+            <FormattedMessage id="analyzer.results.held.enableAssay" />
+          </CarbonLink>
+          {resolutionUrl && (
+            <CarbonLink
+              as={RouterLink}
+              to={resolutionUrl}
+              onClick={(event) => openMappingWithDraft(event, resolutionUrl)}
+            >
+              <FormattedMessage id="analyzer.results.held.reviewMapping" />
+            </CarbonLink>
+          )}
+        </span>
+      );
+    }
     if (resolutionUrl) {
       return (
         <CarbonLink
@@ -561,16 +583,6 @@ const AnalyserResults = (props) => {
         >
           <FormattedMessage id="analyzer.results.failedRun.dismiss" />
         </Button>
-      );
-    }
-    if (row.importIssueReason === "assay_not_enabled" && props.analyzerId) {
-      return (
-        <CarbonLink
-          as={RouterLink}
-          to={`/analyzers?setup=assays&analyzerId=${encodeURIComponent(props.analyzerId)}`}
-        >
-          <FormattedMessage id="analyzer.results.held.enableAssay" />
-        </CarbonLink>
       );
     }
     if (row.importIssueReason === "qc_target_missing" && row.testId) {

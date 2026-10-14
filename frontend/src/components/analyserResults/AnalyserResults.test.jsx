@@ -410,7 +410,7 @@ describe("AnalyserResults", () => {
     ).not.toBeInTheDocument();
   });
 
-  it("explains a result for an assay this instrument's setup has off and links to turn it on", async () => {
+  it("explains a result for an assay this instrument's setup has off and links to turn it on or not receive it", async () => {
     renderResults([
       {
         ...heldResult,
@@ -426,6 +426,12 @@ describe("AnalyserResults", () => {
     expect(
       screen.getByRole("link", { name: "Turn the assay on" }),
     ).toHaveAttribute("href", expect.stringContaining("setup=assays"));
+    expect(
+      screen.getByRole("link", { name: "Review analyzer mapping" }),
+    ).toHaveAttribute(
+      "href",
+      expect.stringContaining(`focusTest=${heldResult.rawTestCode}`),
+    );
   });
 
   it("explains a result sent under another profile revision and asks for a rerun", async () => {

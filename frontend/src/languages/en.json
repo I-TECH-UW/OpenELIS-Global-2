@@ -1228,7 +1228,7 @@
   "analyzer.qc.placeholder.message": "Quality Control features are coming soon.",
   "analyzer.qc.placeholder.title": "Quality Control",
   "analyzer.action.viewResults": "View results",
-  "analyzer.results.held.assayNotEnabled": "This assay is off in the analyzer's setup, so its result was held. Turn it on in the setup's Assays step if this instrument runs it; the result is retried when the mapping is applied.",
+  "analyzer.results.held.assayNotEnabled": "This assay is off in the analyzer's setup, so its result was held. Turn the assay on if the lab takes this result from the analyzer, or mark its code Do not receive on the mapping page if it does not; the result is retried when the mapping is applied.",
   "analyzer.results.held.code": "Analyzer code: {code}",
   "analyzer.results.held.enableAssay": "Turn the assay on",
   "analyzer.results.held.instrumentNote": "Instrument note: {note}",

@@ -422,6 +422,12 @@
   gap: 0.25rem;
 }
 
+.analyzerResults__heldActions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem 1rem;
+}
+
 .analyzerResults__heldInline .cds--tag {
   margin: 0;
   align-self: flex-start;
