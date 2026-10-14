@@ -166,11 +166,14 @@ export default function MethodsSection({ testId }) {
       }),
       (res) => {
         if (requestFailed(res)) {
+          const nameTaken = res && res.status === 409 && res.field === "name";
           const messageKey = failureMessageKey(
             res,
-            "admin.testCatalog.methods.error.duplicateCode",
+            nameTaken
+              ? "admin.testCatalog.methods.error.duplicateName"
+              : "admin.testCatalog.methods.error.duplicateCode",
           );
-          if (res && res.status === 409) {
+          if (res && res.status === 409 && !nameTaken) {
             setCodeError(intl.formatMessage({ id: messageKey }));
           }
           notify("error", messageKey);

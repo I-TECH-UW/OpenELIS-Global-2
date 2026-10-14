@@ -147,6 +147,21 @@ public class TestMethodRestControllerIntegrationTest extends BaseWebContextSensi
         ResponseEntity<?> dup = controller.inlineCreateAndLink(String.valueOf(OTHER_TEST_ID),
                 inlineReq("Second Method", "SAMECODE"), authedRequest());
         assertEquals(409, dup.getStatusCode().value());
+        assertEquals("code", ((java.util.Map<?, ?>) dup.getBody()).get("field"));
+    }
+
+    /** OGC-1464: a taken method name is reported as the name, not as the code. */
+    @org.junit.Test
+    public void inlineCreateDuplicateName_returns409NamingTheName() {
+        assertEquals(201, controller
+                .inlineCreateAndLink(String.valueOf(TEST_ID), inlineReq("Same Name", "SAMECODE"), authedRequest())
+                .getStatusCode().value());
+
+        ResponseEntity<?> dup = controller.inlineCreateAndLink(String.valueOf(OTHER_TEST_ID),
+                inlineReq("Same Name", "NEWCODE1"), authedRequest());
+
+        assertEquals(409, dup.getStatusCode().value());
+        assertEquals("name", ((java.util.Map<?, ?>) dup.getBody()).get("field"));
     }
 
     /**
@@ -279,7 +294,7 @@ public class TestMethodRestControllerIntegrationTest extends BaseWebContextSensi
             jdbc.update("DELETE FROM clinlims.test_method WHERE test_id IN (?, ?)", TEST_ID, OTHER_TEST_ID);
             jdbc.update("DELETE FROM clinlims.test WHERE id IN (?, ?)", TEST_ID, OTHER_TEST_ID);
             jdbc.update("DELETE FROM clinlims.method WHERE id IN (8001, 8002, 8003, 8004, 8005)");
-            jdbc.update("DELETE FROM clinlims.method WHERE code = 'SAMECODE'");
+            jdbc.update("DELETE FROM clinlims.method WHERE code IN ('SAMECODE', 'NEWCODE1')");
         } catch (Exception ignored) {
             // best-effort
         }
