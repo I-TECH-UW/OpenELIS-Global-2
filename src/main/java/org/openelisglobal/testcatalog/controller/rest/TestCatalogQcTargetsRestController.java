@@ -231,6 +231,14 @@ public class TestCatalogQcTargetsRestController {
         if (dto.uncertainty != null && dto.uncertainty.signum() < 0) {
             return "uncertainty must be a non-negative number";
         }
+        if (tooLarge(dto.expectedValue) || tooLarge(dto.uncertainty)) {
+            return "expectedValue and uncertainty hold at most 10 digits before the decimal point";
+        }
+        if (!GenericValidator.isBlankOrNull(dto.expectedDictResultId)
+                && (!TestCatalogNumericIdGuard.isNumericId(dto.expectedDictResultId)
+                        || dictionaryService.getDictionaryById(dto.expectedDictResultId.trim()) == null)) {
+            return "expectedDictResultId is not a dictionary answer";
+        }
         if (!dto.active) {
             return null;
         }
@@ -251,6 +259,11 @@ public class TestCatalogQcTargetsRestController {
     private static boolean isUnsavedBlankInactive(QcTargetDto dto) {
         return dto != null && !dto.active && GenericValidator.isBlankOrNull(dto.id) && dto.expectedValue == null
                 && dto.uncertainty == null && GenericValidator.isBlankOrNull(dto.expectedDictResultId);
+    }
+
+    /** The columns are numeric(15,5): 10 digits before the point (OGC-1467). */
+    private static boolean tooLarge(BigDecimal value) {
+        return value != null && value.abs().compareTo(BigDecimal.TEN.pow(10)) >= 0;
     }
 
     private static String key(String componentId, String level, String lotId) {

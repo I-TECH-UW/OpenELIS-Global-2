@@ -405,7 +405,7 @@ public class SampleTypeManagementRestController extends BaseRestController {
         } catch (Exception e) {
             LogEvent.logError("SampleTypeManagementRestController", "updateSampleType", e.getMessage());
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR)
-                    .body(new ApiResponse<>(false, "Error updating sample type: " + e.getMessage(), null));
+                    .body(new ApiResponse<>(false, "The sample type could not be saved.", null));
         }
     }
 
@@ -428,6 +428,10 @@ public class SampleTypeManagementRestController extends BaseRestController {
         if (abbreviation != null && abbreviation.length() > 10) {
             return ResponseEntity.badRequest()
                     .body(ApiResponse.refusedOn("abbreviation", "The abbreviation has at most 10 characters."));
+        }
+        if (requested.getDescription() != null && requested.getDescription().trim().length() > 40) {
+            return ResponseEntity.badRequest()
+                    .body(ApiResponse.refusedOn("description", "The description has at most 40 characters."));
         }
         if (requested.getWhonetCode() != null && requested.getWhonetCode().trim().length() > 5) {
             return ResponseEntity.badRequest()
