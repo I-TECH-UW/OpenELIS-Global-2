@@ -346,6 +346,7 @@ class DevStackContractTest(unittest.TestCase):
         command = run.call_args.args[0]
         self.assertNotIn("--insecure", command)
         self.assertNotIn("-k", command)
+        self.assertNotIn("--retry-all-errors", command)
         self.assertEqual("https://localhost:12345/", command[-1])
 
     def test_local_ca_refuses_public_domain(self):

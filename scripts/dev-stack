@@ -440,6 +440,8 @@ def verify_tls(context: StackContext, environment: dict[str, str]) -> None:
                 [
                     "curl", "--silent", "--show-error", "--output", os.devnull,
                     "--connect-timeout", "10", "--max-time", "30",
+                    "--retry", "5", "--retry-delay", "1",
+                    "--retry-connrefused", "--retry-max-time", "10",
                     endpoint_environment(context, environment)["BASE_URL"] + "/",
                 ],
                 cwd=context.repo_root,

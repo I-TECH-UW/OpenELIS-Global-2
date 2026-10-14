@@ -112,13 +112,10 @@ published-image deployment are described in
 | Legacy UI    | `<scripts/dev-stack url>/api/OpenELIS-Global/` |            admin: adminADMIN! |
 | New React UI |       output of `scripts/dev-stack url`        |            admin: adminADMIN! |
 
-**Note:** If your browser indicates that the website is not secure after
-accessing any of these links, simply follow these steps:
-
-1. Scroll down on the warning page.
-2. Click on the "Advanced" button.
-3. Finally, click on "Proceed to https://localhost" to access the development
-   environment.
+If you see a certificate warning, confirm you are using the URL printed by
+`scripts/dev-stack url` and that `scripts/dev-stack up` completed its trust
+setup. Restart the browser to refresh its trust settings. If the warning
+persists, follow [the development guide](docs/dev_setup.md); do not bypass it.
 
 #### Formating the Source code after making changes
 
