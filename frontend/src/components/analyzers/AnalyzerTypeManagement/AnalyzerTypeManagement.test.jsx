@@ -514,7 +514,7 @@ describe("AnalyzerTypeManagement", () => {
     );
   });
 
-  it("starts a Bridge-owned site profile draft without fabricating a profile document", async () => {
+  it("names a new type in a dialog and opens its draft on its own page", async () => {
     renderPage();
     await screen.findByText("Cepheid GeneXpert MTB/RIF");
 
@@ -525,21 +525,17 @@ describe("AnalyzerTypeManagement", () => {
     );
     const dialog = screen.getByRole("dialog", { name: "Create type" });
     await userEvent.type(
-      within(dialog).getByRole("textbox", { name: "Profile name" }),
+      within(dialog).getByRole("textbox", { name: "Type name" }),
       "Sysmex XN Series",
     );
-    expect(
-      within(dialog).queryByRole("textbox", { name: "Manufacturer" }),
-    ).not.toBeInTheDocument();
+    // The dialog only names the type; the settings are on the draft's page.
     expect(
       within(dialog).queryByRole("combobox", { name: "Protocol" }),
     ).not.toBeInTheDocument();
 
-    const create = within(dialog).getByRole("button", {
-      name: "Create type",
-    });
-    expect(create).toBeEnabled();
-    await userEvent.click(create);
+    await userEvent.click(
+      within(dialog).getByRole("button", { name: "Create type" }),
+    );
 
     expect(createAnalyzerTypeDraft).toHaveBeenCalledWith(
       "Sysmex XN Series",
@@ -547,24 +543,17 @@ describe("AnalyzerTypeManagement", () => {
     );
     expect(postToOpenElisServerJsonResponse).not.toHaveBeenCalled();
     await waitFor(() =>
-      expect(window.location.search).toContain("draft=draft-create"),
+      expect(window.location.pathname).toBe(
+        "/analyzers/types/drafts/draft-create",
+      ),
     );
-    expect(screen.getByText("Profile draft created")).toBeVisible();
-    expect(
-      within(screen.getByRole("dialog", { name: "Create type" })).getByRole(
-        "combobox",
-        { name: "Protocol" },
-      ),
-    ).toBeVisible();
-    expect(
-      within(screen.getByRole("dialog", { name: "Create type" })).getByRole(
-        "button",
-        { name: "Publish type" },
-      ),
-    ).toBeDisabled();
+    expect(new URLSearchParams(window.location.search).get("returnTo")).toBe(
+      "/analyzers/types",
+    );
   });
 
-  it("duplicates and explicitly publishes an active profile without choosing its identity", async () => {
+  it("duplicates an active type and opens the copy's draft on its own page", async () => {
+    window.history.replaceState({}, "", "/analyzers/types?protocol=ASTM");
     renderPage();
     await screen.findByText("Cepheid GeneXpert MTB/RIF");
 
@@ -580,7 +569,7 @@ describe("AnalyzerTypeManagement", () => {
     );
 
     expect(
-      within(dialog).getByRole("textbox", { name: "New profile name" }),
+      within(dialog).getByRole("textbox", { name: "Name of the new type" }),
     ).toHaveValue("Cepheid GeneXpert MTB/RIF -1");
     await userEvent.click(
       within(dialog).getByRole("button", { name: "Duplicate type" }),
@@ -592,25 +581,18 @@ describe("AnalyzerTypeManagement", () => {
       "Cepheid GeneXpert MTB/RIF -1",
       expect.any(Function),
     );
-    expect(postToOpenElisServerJsonResponse).not.toHaveBeenCalled();
     await waitFor(() =>
-      expect(window.location.search).toContain("draft=draft-duplicate"),
+      expect(window.location.pathname).toBe(
+        "/analyzers/types/drafts/draft-duplicate",
+      ),
     );
-    expect(within(dialog).getByText("Ready to publish")).toBeVisible();
-
-    await userEvent.click(
-      within(dialog).getByRole("button", { name: "Publish type" }),
-    );
-    expect(publishAnalyzerTypeDraft).toHaveBeenCalledWith(
-      "draft-duplicate",
-      expect.any(Function),
-    );
-    await waitFor(() =>
-      expect(window.location.search).not.toContain("action=duplicate"),
+    // Finishing later returns to the list as it was filtered.
+    expect(new URLSearchParams(window.location.search).get("returnTo")).toBe(
+      "/analyzers/types?protocol=ASTM",
     );
   });
 
-  it("restores the exact duplicate draft from a bookmarked URL after reload", async () => {
+  it("opens a draft's page from an address saved when drafts were edited in a dialog", async () => {
     window.history.replaceState(
       {},
       "",
@@ -619,54 +601,14 @@ describe("AnalyzerTypeManagement", () => {
 
     renderPage();
 
-    const dialog = await screen.findByRole("dialog", {
-      name: "Duplicate type",
-    });
-    expect(getAnalyzerTypeDraft).toHaveBeenCalledWith(
-      "draft-duplicate",
-      expect.any(Function),
+    await waitFor(() =>
+      expect(window.location.pathname).toBe(
+        "/analyzers/types/drafts/draft-duplicate",
+      ),
     );
-    expect(within(dialog).getByText("Ready to publish")).toBeVisible();
-    expect(
-      within(dialog).getByRole("button", { name: "Publish type" }),
-    ).toBeEnabled();
-  });
-
-  it("blocks duplicate publication until recognition changes are saved", async () => {
-    window.history.replaceState(
-      {},
-      "",
-      "/analyzers/types?action=duplicate&profile=shipped.genexpert&draft=draft-duplicate",
+    expect(new URLSearchParams(window.location.search).get("returnTo")).toBe(
+      "/analyzers/types",
     );
-
-    renderPage();
-
-    const dialog = await screen.findByRole("dialog", {
-      name: "Duplicate type",
-    });
-    expect(
-      await within(dialog).findByRole("heading", {
-        name: "Control result recognition",
-      }),
-    ).toBeVisible();
-    const publish = within(dialog).getByRole("button", {
-      name: "Publish type",
-    });
-    await waitFor(() => expect(publish).toBeEnabled());
-
-    const value = within(dialog).getByRole("textbox", {
-      name: "Order field 12 value",
-    });
-    await userEvent.clear(value);
-    await userEvent.type(value, "CONTROL");
-    expect(publish).toBeDisabled();
-
-    await userEvent.click(
-      within(dialog).getByRole("button", {
-        name: "Save control recognition",
-      }),
-    );
-    await waitFor(() => expect(publish).toBeEnabled());
   });
 
   it("duplicates the exact bookmarked profile revision instead of the latest revision", async () => {
@@ -818,7 +760,7 @@ describe("AnalyzerTypeManagement", () => {
     expect(screen.queryByRole("menuitem", { name: /delete/i })).toBeNull();
   });
 
-  it("starts an immutable shared-profile update from the exact revision and preserves URL state", async () => {
+  it("starts a new revision of a shared type from its exact revision and opens its draft", async () => {
     renderPage();
     await screen.findByText("Mindray BC-5380");
 
@@ -832,11 +774,11 @@ describe("AnalyzerTypeManagement", () => {
     );
 
     const dialog = screen.getByRole("dialog", {
-      name: "Update Mindray BC-5380",
+      name: "New revision of Mindray BC-5380",
     });
     expect(within(dialog).getByText(/2 analyzers/)).toBeVisible();
     await userEvent.click(
-      within(dialog).getByRole("button", { name: "Start update" }),
+      within(dialog).getByRole("button", { name: "Start the revision" }),
     );
 
     expect(updateSharedAnalyzerType).toHaveBeenCalledWith(
@@ -845,9 +787,10 @@ describe("AnalyzerTypeManagement", () => {
       expect.any(Function),
     );
     await waitFor(() =>
-      expect(window.location.search).toContain("draft=draft-update"),
+      expect(window.location.pathname).toBe(
+        "/analyzers/types/drafts/draft-update",
+      ),
     );
-    expect(screen.getByText("Profile update draft created")).toBeVisible();
   });
 
   it("names every affected analyzer before starting a shared-profile update", async () => {
@@ -864,7 +807,7 @@ describe("AnalyzerTypeManagement", () => {
     );
 
     const dialog = screen.getByRole("dialog", {
-      name: "Update Mindray BC-5380",
+      name: "New revision of Mindray BC-5380",
     });
     expect(within(dialog).getByText("Mindray - Main Lab")).toBeVisible();
     expect(within(dialog).getByText("Mindray - Night Bench")).toBeVisible();
@@ -873,56 +816,16 @@ describe("AnalyzerTypeManagement", () => {
     ).toBeVisible();
   });
 
-  it("restores the exact shared-profile update draft from a bookmarked URL", async () => {
+  it("says what a published draft did when its page returns here", async () => {
     window.history.replaceState(
-      {},
+      { state: { analyzerTypeNotice: "update" }, key: "published" },
       "",
-      "/analyzers/types?action=update&profile=site.mindray&draft=draft-update",
+      "/analyzers/types",
     );
 
     renderPage();
 
-    const dialog = await screen.findByRole("dialog", {
-      name: "Update Mindray BC-5380",
-    });
-    expect(getAnalyzerTypeDraft).toHaveBeenCalledWith(
-      "draft-update",
-      expect.any(Function),
-    );
-    expect(
-      within(dialog).getByText("Profile update draft created"),
-    ).toBeVisible();
-    expect(updateSharedAnalyzerType).not.toHaveBeenCalled();
-  });
-
-  it("publishes a shared-profile update through the same recognition editor", async () => {
-    window.history.replaceState(
-      {},
-      "",
-      "/analyzers/types?action=update&profile=site.mindray&draft=draft-update",
-    );
-
-    renderPage();
-
-    const dialog = await screen.findByRole("dialog", {
-      name: "Update Mindray BC-5380",
-    });
-    expect(
-      await within(dialog).findByRole("heading", {
-        name: "Control result recognition",
-      }),
-    ).toBeVisible();
-    expect(
-      within(dialog).getByText(/Existing analyzers remain pinned/),
-    ).toBeVisible();
-
-    await userEvent.click(
-      within(dialog).getByRole("button", { name: "Publish type" }),
-    );
-    expect(publishAnalyzerTypeDraft).toHaveBeenCalledWith(
-      "draft-update",
-      expect.any(Function),
-    );
+    expect(await screen.findByText("Type updated")).toBeVisible();
   });
 
   it("loads revision history through the profile history action", async () => {

@@ -195,7 +195,12 @@ describe("AnalyzerTypeMappingEditor adopting a newer revision", () => {
         name: "Adopt revision 2 of Chemistry analyzer",
       }),
     ).toBeInTheDocument();
-    expect(screen.getByText("Adopting revision 2")).toBeInTheDocument();
+    // The page says what adopting does, under its title.
+    expect(
+      screen.getByText(
+        /Adopting revision 2: this analyzer keeps receiving on revision 1/,
+      ),
+    ).toBeInTheDocument();
     expect(screen.queryByText("Confirmation")).not.toBeInTheDocument();
     expect(getAnalyzerAdoption).toHaveBeenCalledWith(
       "501",

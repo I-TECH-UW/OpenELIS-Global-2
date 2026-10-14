@@ -61,6 +61,9 @@ const AnalyzersPage = lazyWithRetry(() => import("./pages/AnalyzersPage"));
 const AnalyzerTypesPage = lazyWithRetry(
   () => import("./pages/AnalyzerTypesPage"),
 );
+const AnalyzerTypeDraftPage = lazyWithRetry(
+  () => import("./pages/AnalyzerTypeDraftPage"),
+);
 const AnalyzerTypeMappingPage = lazyWithRetry(
   () => import("./pages/AnalyzerTypeMappingPage"),
 );
@@ -1448,6 +1451,18 @@ export default function App() {
                     <RouteErrorBoundary {...routeErrorAnalyzers}>
                       <Suspense fallback={null}>
                         <AnalyzerTypesPage />
+                      </Suspense>
+                    </RouteErrorBoundary>
+                  )}
+                  role={ANALYZER_SETUP_ROLES}
+                />
+                <SecureRoute
+                  path="/analyzers/types/drafts/:draftId"
+                  exact
+                  render={() => (
+                    <RouteErrorBoundary {...routeErrorAnalyzers}>
+                      <Suspense fallback={null}>
+                        <AnalyzerTypeDraftPage />
                       </Suspense>
                     </RouteErrorBoundary>
                   )}

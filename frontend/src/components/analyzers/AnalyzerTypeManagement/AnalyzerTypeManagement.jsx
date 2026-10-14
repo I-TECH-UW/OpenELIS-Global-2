@@ -29,7 +29,7 @@ import {
   WarningAltFilled,
 } from "@carbon/icons-react";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Link, useHistory, useLocation } from "react-router-dom";
+import { Link, Redirect, useHistory, useLocation } from "react-router-dom";
 import AnalyzerCountChips from "../AnalyzerCountChips";
 import AnalyzerPageHeader from "../AnalyzerPageHeader";
 import { safeInternalPath } from "../../utils/UrlUtils";
@@ -95,7 +95,16 @@ const AnalyzerTypeManagement = () => {
   const [catalog, setCatalog] = useState(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState(false);
-  const [notification, setNotification] = useState(null);
+  // A draft published on its own page comes back here with what it did.
+  const [notification, setNotification] = useState(() =>
+    location.state?.analyzerTypeNotice
+      ? {
+          kind: "success",
+          titleId: `analyzerType.notification.${location.state.analyzerTypeNotice}.success`,
+          detail: "",
+        }
+      : null,
+  );
   const actionState = useMemo(() => {
     const params = new URLSearchParams(location.search);
     const requestedRevision = Number(params.get("revision"));
@@ -150,16 +159,28 @@ const AnalyzerTypeManagement = () => {
     });
   }, [history, location.pathname, location.search]);
 
-  const handleDraftCreated = useCallback(
+  // A draft is edited on its own page, which returns to where the action began.
+  const draftLocation = useCallback(
     (draftId) => {
       const params = new URLSearchParams(location.search);
-      params.set("draft", draftId);
-      history.push({
-        pathname: location.pathname,
-        search: `?${params.toString()}`,
-      });
+      const returnTo = safeInternalPath(params.get("returnTo"));
+      ["action", "profile", "draft", "revision", "returnTo"].forEach((key) =>
+        params.delete(key),
+      );
+      const list = params.toString()
+        ? `/analyzers/types?${params.toString()}`
+        : "/analyzers/types";
+      return {
+        pathname: `/analyzers/types/drafts/${encodeURIComponent(draftId)}`,
+        search: `?${new URLSearchParams({ returnTo: returnTo || list }).toString()}`,
+      };
     },
-    [history, location.pathname, location.search],
+    [location.search],
+  );
+
+  const handleDraftCreated = useCallback(
+    (draftId) => history.push(draftLocation(draftId)),
+    [draftLocation, history],
   );
 
   const handleActionSuccess = useCallback(
@@ -338,6 +359,11 @@ const AnalyzerTypeManagement = () => {
     protocol === "FILE"
       ? intl.formatMessage({ id: "analyzerType.protocol.file" })
       : protocol;
+
+  // An address saved while drafts were edited in a dialog opens the draft's page.
+  if (actionState.draftId) {
+    return <Redirect to={draftLocation(actionState.draftId)} />;
+  }
 
   return (
     <>
@@ -722,7 +748,6 @@ const AnalyzerTypeManagement = () => {
           key={`${actionState.action}:${actionState.profileId || ""}:${actionState.revision || ""}`}
           action={actionState.action}
           profileId={actionState.profileId}
-          draftId={actionState.draftId}
           revision={actionState.revision}
           types={catalog.types}
           onClose={closeAction}

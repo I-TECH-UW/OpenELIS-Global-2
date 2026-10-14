@@ -1736,10 +1736,28 @@ const AnalyzerTypeMappingEditor = ({
                 ]
           }
           title={heading}
-          subtitle={intl.formatMessage(
-            { id: "analyzerType.mappingEditor.subtitle" },
-            { protocol: mapping.protocol, revision: mapping.profileRevision },
-          )}
+          subtitle={
+            <>
+              {intl.formatMessage(
+                { id: "analyzerType.mappingEditor.subtitle" },
+                {
+                  protocol: mapping.protocol,
+                  revision: mapping.profileRevision,
+                },
+              )}
+              <br />
+              {intl.formatMessage(
+                {
+                  id: readOnly
+                    ? "analyzerType.mappingEditor.mode.defaults"
+                    : adopting
+                      ? "analyzerType.mappingEditor.mode.adoption"
+                      : "analyzerType.mappingEditor.mode.own",
+                },
+                { from: adoption?.fromRevision, revision },
+              )}
+            </>
+          }
           actions={
             <>
               <Button
@@ -1765,34 +1783,6 @@ const AnalyzerTypeMappingEditor = ({
         />
       )}
 
-      {!embedded && (
-        <InlineNotification
-          kind="info"
-          lowContrast
-          hideCloseButton
-          className="analyzer-type-mapping__notice"
-          title={intl.formatMessage(
-            {
-              id: readOnly
-                ? "analyzerType.mappingEditor.defaults.title"
-                : adopting
-                  ? "analyzerType.adoption.notice.title"
-                  : "analyzerType.mappingEditor.own.title",
-            },
-            { revision },
-          )}
-          subtitle={intl.formatMessage(
-            {
-              id: readOnly
-                ? "analyzerType.mappingEditor.defaults.subtitle"
-                : adopting
-                  ? "analyzerType.adoption.notice.subtitle"
-                  : "analyzerType.mappingEditor.own.subtitle",
-            },
-            { from: adoption?.fromRevision, revision },
-          )}
-        />
-      )}
       {!embedded && !adopting && location.state?.adoptedRevision && (
         <InlineNotification
           kind="success"

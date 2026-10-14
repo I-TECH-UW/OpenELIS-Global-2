@@ -1033,7 +1033,11 @@ describe("AnalyzerTypeMappingEditor", () => {
       expect.any(Function),
     );
     expect(getAnalyzerTypeRevision).not.toHaveBeenCalled();
-    expect(screen.getByText("This analyzer's own mapping")).toBeVisible();
+    expect(
+      screen.getByText(
+        /This analyzer's own mapping\. Changes apply only to it/,
+      ),
+    ).toBeVisible();
 
     const breadcrumb = screen.getByRole("navigation", { name: "Breadcrumb" });
     expect(
@@ -1584,7 +1588,9 @@ describe("AnalyzerTypeMappingEditor", () => {
   it("shows a type's defaults read-only, with no way to save, confirm or apply them", async () => {
     renderDefaults();
 
-    expect(await screen.findByText("Defaults for new analyzers")).toBeVisible();
+    expect(
+      await screen.findByText(/Defaults for new analyzers of this type/),
+    ).toBeVisible();
     expect(getAnalyzerTypeDefaults).toHaveBeenCalledWith(
       "shipped.genexpert",
       2,

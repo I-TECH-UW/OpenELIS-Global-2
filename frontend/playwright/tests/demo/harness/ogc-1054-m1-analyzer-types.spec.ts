@@ -172,19 +172,24 @@ test.describe("OGC-1054 M1 Analyzer Types", () => {
 
     const dialog = page.getByRole("dialog", { name: "Create type" });
     await expect(dialog).toBeVisible();
-    await dialog.getByRole("textbox", { name: "Profile name" }).fill(draftName);
+    await dialog.getByRole("textbox", { name: "Type name" }).fill(draftName);
     await dialog
       .getByRole("button", { name: "Create type", exact: true })
       .click();
 
-    await expect(dialog.getByText("Profile draft created")).toBeVisible();
-    await expect(dialog).toContainText("saved in Analyzer Bridge");
+    // The draft opens on its own page; Finish later leaves it saved.
     await expect(page).toHaveURL(
-      /\/analyzers\/types\?action=create&draft=[^&]+$/,
+      /\/analyzers\/types\/drafts\/[^?]+\?returnTo=%2Fanalyzers%2Ftypes$/,
     );
-
-    await page.keyboard.press("Escape");
-    await expect(dialog).not.toBeVisible();
+    const draft = page.getByTestId("analyzer-type-draft-page");
+    await expect(
+      draft.getByRole("heading", { level: 1, name: `New type: ${draftName}` }),
+    ).toBeVisible();
+    await expect(draft).toContainText("saved in Analyzer Bridge");
+    await draft
+      .getByRole("button", { name: "Finish later", exact: true })
+      .click();
+    await expect(page).toHaveURL(/\/analyzers\/types$/);
 
     const list = new AnalyzerListPage(page);
     const setup = new AnalyzerSetupPage(page);
@@ -222,26 +227,26 @@ test.describe("OGC-1054 M1 Analyzer Types", () => {
     await page
       .getByRole("button", { name: "Duplicate type", exact: true })
       .click();
-    let dialog = page.getByRole("dialog", { name: "Duplicate type" });
+    const dialog = page.getByRole("dialog", { name: "Duplicate type" });
     await dialog
       .getByRole("combobox", { name: "Source analyzer type" })
       .selectOption({ label: `${SOURCE_PROFILE} · ASTM` });
     await expect(
-      dialog.getByText("New profile with preserved lineage"),
+      dialog.getByText("The new type keeps its lineage"),
     ).toBeVisible();
     await dialog
-      .getByRole("textbox", { name: "New profile name" })
+      .getByRole("textbox", { name: "Name of the new type" })
       .fill(duplicateName);
     await dialog
       .getByRole("button", { name: "Duplicate type", exact: true })
       .click();
 
-    dialog = page.getByRole("dialog", { name: "Duplicate type" });
-    await expect(dialog.getByText("Ready to publish")).toBeVisible();
     await expect(page).toHaveURL(
-      /\/analyzers\/types\?action=duplicate&draft=[^&]+$/,
+      /\/analyzers\/types\/drafts\/[^?]+\?returnTo=/,
     );
-    await dialog
+    const bar = page.getByTestId("analyzer-type-draft-actions");
+    await expect(bar.getByText("Ready to publish")).toBeVisible();
+    await bar
       .getByRole("button", { name: "Publish type", exact: true })
       .click();
 
