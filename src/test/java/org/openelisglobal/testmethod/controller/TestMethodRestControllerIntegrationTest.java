@@ -150,6 +150,27 @@ public class TestMethodRestControllerIntegrationTest extends BaseWebContextSensi
         assertEquals("code", ((java.util.Map<?, ?>) dup.getBody()).get("field"));
     }
 
+    /**
+     * OGC-1465: making a removed link the default (from an old page) is refused and
+     * leaves the real default alone.
+     */
+    @org.junit.Test
+    public void aRemovedLinkCannotBecomeTheDefault() {
+        String kept = link(TEST_ID, "8001", true);
+        String removed = link(TEST_ID, "8002", false);
+        assertEquals(204,
+                controller.removeLink(String.valueOf(TEST_ID), removed, authedRequest()).getStatusCode().value());
+
+        UpdateLinkRequest makeDefault = new UpdateLinkRequest();
+        makeDefault.isDefault = true;
+        assertEquals(404, controller.updateLink(String.valueOf(TEST_ID), removed, makeDefault, authedRequest())
+                .getStatusCode().value());
+        assertEquals(404,
+                controller.removeLink(String.valueOf(TEST_ID), removed, authedRequest()).getStatusCode().value());
+        assertEquals(Boolean.TRUE,
+                jdbc.queryForObject("SELECT is_default FROM clinlims.test_method WHERE id = ?", Boolean.class, kept));
+    }
+
     /** OGC-1464: a taken method name is reported as the name, not as the code. */
     @org.junit.Test
     public void inlineCreateDuplicateName_returns409NamingTheName() {

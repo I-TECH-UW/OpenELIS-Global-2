@@ -550,7 +550,11 @@ function LabUnitManagement({ intl }) {
               const body = response
                 ? await response.json().catch(() => null)
                 : null;
-              const refusal = new Error(`Update failed (HTTP ${status})`);
+              const refusal = new Error(
+                status === 409 && !isStaleConflict(status, body)
+                  ? intl.formatMessage({ id: "error.labUnit.name.duplicate" })
+                  : `Update failed (HTTP ${status})`,
+              );
               refusal.stale = isStaleConflict(status, body);
               reject(refusal);
             },
@@ -594,6 +598,7 @@ function LabUnitManagement({ intl }) {
     listUrl,
     labUnits,
     refreshLabUnits,
+    intl,
   ]);
 
   // Domain radio handler: in the editor an actual change is staged behind the

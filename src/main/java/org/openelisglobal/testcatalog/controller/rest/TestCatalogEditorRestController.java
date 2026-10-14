@@ -1851,6 +1851,54 @@ public class TestCatalogEditorRestController {
         public String disposalUnit;
         public String specialInstructions;
         public Boolean overrideRestricted;
+        /** Set only on a 422 body: the field whose value was refused (OGC-1465). */
+        public String invalidField;
+    }
+
+    /** The condition codes the Storage form offers (FR-86). */
+    static final Set<String> STORAGE_CONDITIONS = Set.of("AMBIENT", "CONTROLLED_ROOM_TEMPERATURE", "COOL_ROOM",
+            "COLD_ROOM", "REFRIGERATED", "FROZEN", "DEEP_FROZEN", "ULTRA_LOW_FREEZER", "WARM_INCUBATOR");
+
+    /**
+     * The field a storage save would store wrongly: a condition code the form does
+     * not offer, text longer than its column, or a negative duration (OGC-1465). A
+     * condition the test already holds (an imported code) stays saveable.
+     */
+    static String invalidStorageField(StorageDto body, String storedCondition) {
+        if (!isBlank(body.storageCondition) && !STORAGE_CONDITIONS.contains(body.storageCondition)
+                && !body.storageCondition.equals(storedCondition)) {
+            return "storageCondition";
+        }
+        if (longerThan(body.storageConditionCustom, 200)) {
+            return "storageConditionCustom";
+        }
+        if (body.storageDuration != null && body.storageDuration < 0) {
+            return "storageDuration";
+        }
+        if (longerThan(body.storageDurationUnit, 20)) {
+            return "storageDurationUnit";
+        }
+        if (longerThan(body.disposalMethod, 100)) {
+            return "disposalMethod";
+        }
+        if (body.disposalTimeframe != null && body.disposalTimeframe < 0) {
+            return "disposalTimeframe";
+        }
+        if (longerThan(body.disposalUnit, 20)) {
+            return "disposalUnit";
+        }
+        return null;
+    }
+
+    /** Measures the value as it is stored: the save does not trim it. */
+    private static boolean longerThan(String value, int max) {
+        return value != null && value.length() > max;
+    }
+
+    private static ResponseEntity<StorageDto> invalidStorage(String field) {
+        StorageDto refused = new StorageDto();
+        refused.invalidField = field;
+        return ResponseEntity.unprocessableEntity().body(refused);
     }
 
     @GetMapping(value = "/tests/{testId}/storage", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -1869,6 +1917,12 @@ public class TestCatalogEditorRestController {
         Test test = testService.getTestById(testId);
         if (test == null) {
             return ResponseEntity.notFound().build();
+        }
+        TestSampleHandling stored = handlingService.getByTestId(testId);
+        String invalidField = body == null ? "storage"
+                : invalidStorageField(body, stored == null ? null : stored.getStorageCondition());
+        if (invalidField != null) {
+            return invalidStorage(invalidField);
         }
         TestSampleHandling saved = handlingService.saveForTest(testId, toHandling(body),
                 ControllerUtills.getSysUserId(request));
@@ -1922,6 +1976,9 @@ public class TestCatalogEditorRestController {
             return ResponseEntity.unprocessableEntity().build();
         }
         if (body.fields != null && !STORAGE_FIELDS.keySet().containsAll(body.fields)) {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+        if (invalidStorageField(body.storage, null) != null) {
             return ResponseEntity.unprocessableEntity().build();
         }
         for (String testId : body.testIds) {
@@ -2235,7 +2292,7 @@ public class TestCatalogEditorRestController {
             // DB enforces it per test/scope, but reject early + cleanly rather than
             // surfacing a raw 500.
             if (!seen.add((componentId == null ? "" : componentId) + " " + (sampleTypeId == null ? "" : sampleTypeId)
-                    + " " + m.source + " " + m.code)) {
+                    + " " + m.source + " " + m.code.trim())) {
                 return ResponseEntity.unprocessableEntity().build();
             }
             TestTerminologyMapping e = new TestTerminologyMapping();

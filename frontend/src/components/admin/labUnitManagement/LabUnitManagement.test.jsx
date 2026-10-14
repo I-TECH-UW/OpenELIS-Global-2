@@ -511,4 +511,33 @@ describe("LabUnitManagement deactivation into another unit (OGC-1459)", () => {
       JSON.parse(putToOpenElisServerFullResponse.mock.calls[0][1]).lastupdated,
     ).toBe("1791800000000");
   });
+
+  /** OGC-1465: a rename onto another unit's name says so. */
+  test("a rename onto another unit's name names the problem", async () => {
+    putToOpenElisServerFullResponse.mockImplementation((url, body, cb) =>
+      cb({
+        status: 409,
+        json: () =>
+          Promise.resolve({
+            success: false,
+            message: "A lab unit with this name already exists",
+          }),
+      }),
+    );
+    renderPage("/MasterListsPage/LabUnitManagement/10/basic-info");
+    const description = await waitFor(() => {
+      const el = document.getElementById("lu-description");
+      expect(el).not.toBeNull();
+      return el;
+    });
+    fireEvent.change(description, { target: { value: "Changed here" } });
+    fireEvent.click(screen.getByText("Save"));
+
+    expect(
+      await screen.findByText(
+        new RegExp(messages["error.labUnit.name.duplicate"]),
+      ),
+    ).toBeInTheDocument();
+    expect(screen.queryByTestId("lab-unit-stale-save")).toBeNull();
+  });
 });

@@ -160,6 +160,15 @@ public class TestMethodRestController extends BaseController {
         return ResponseEntity.status(HttpStatus.CREATED).body(dto);
     }
 
+    /**
+     * A removed link is gone for its test: making it the default from an old page
+     * used to clear the real default (OGC-1465).
+     */
+    private static boolean isActiveLinkOf(TestMethod link, String testId) {
+        return link != null && link.getTestId().equals(testId)
+                && org.openelisglobal.common.action.IActionConstants.YES.equals(link.getIsActive());
+    }
+
     private static boolean hasCause(Throwable t, Class<? extends Throwable> type) {
         for (Throwable c = t; c != null; c = c.getCause()) {
             if (type.isInstance(c)) {
@@ -173,7 +182,7 @@ public class TestMethodRestController extends BaseController {
     public ResponseEntity<?> updateLink(@PathVariable String testId, @PathVariable String id,
             @RequestBody UpdateLinkRequest req, HttpServletRequest request) {
         TestMethod existing = testMethodService.findLinkById(id);
-        if (existing == null || !existing.getTestId().equals(testId)) {
+        if (!isActiveLinkOf(existing, testId)) {
             return ResponseEntity.notFound().build();
         }
         java.sql.Date effectiveDate = existing.getEffectiveDate();
@@ -202,7 +211,7 @@ public class TestMethodRestController extends BaseController {
     public ResponseEntity<?> removeLink(@PathVariable String testId, @PathVariable String id,
             HttpServletRequest request) {
         TestMethod tm = testMethodService.findLinkById(id);
-        if (tm == null || !tm.getTestId().equals(testId)) {
+        if (!isActiveLinkOf(tm, testId)) {
             return ResponseEntity.notFound().build();
         }
         testMethodService.removeLink(id, getSysUserId(request));
