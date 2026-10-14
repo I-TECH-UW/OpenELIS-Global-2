@@ -432,6 +432,12 @@ public class TestCatalogEditorRestController {
         if (testCatalogCreationService == null) {
             return ResponseEntity.status(503).build();
         }
+        if (body != null) {
+            body.name = trimToNull(body.name);
+            body.reportingName = trimToNull(body.reportingName);
+            body.code = trimToNull(body.code);
+            body.description = trimToNull(body.description);
+        }
         List<String> desiredSampleTypes = body == null ? List.of()
                 : resolveSampleTypeIds(body.sampleTypeIds, body.sampleTypeId);
         if (body == null || isBlank(body.name) || isBlank(body.reportingName) || isBlank(body.code)
@@ -475,7 +481,12 @@ public class TestCatalogEditorRestController {
         params.orderable = body.orderable;
         params.description = body.description;
         String sysUserId = ControllerUtills.getSysUserId(request);
-        String newId = testCatalogCreationService.createInactiveTest(params, sysUserId);
+        String newId;
+        try {
+            newId = testCatalogCreationService.createInactiveTest(params, sysUserId);
+        } catch (TestCatalogCreationService.CodeInUseException e) {
+            return ResponseEntity.status(409).build();
+        }
         // Copy the source's result components (incl. options/interpretations).
         // The variant-group link that used to accompany this is retired
         // (OGC-1145 Phase 3): the m:n sample-type model replaced variants.
@@ -731,12 +742,21 @@ public class TestCatalogEditorRestController {
         // guard a duplicate reached the constraint and surfaced as a bare 500 with
         // an empty body — on exactly the create-then-edit flow the editor steers
         // users into (OGC-1180). Same-test no-op saves stay 200.
+        if (body.description != null) {
+            body.description = body.description.trim();
+        }
         if (body.description != null && !body.description.equals(test.getDescription())
                 && descriptionInUse(body.description, testId)) {
             return ResponseEntity.status(HttpStatus.CONFLICT).body(descriptionConflict());
         }
+        if (changesCode(body.code, test.getLocalCode()) && testCatalogCreationService != null
+                && testCatalogCreationService.codeInUse(body.code, testId)) {
+            BasicInfo conflict = new BasicInfo();
+            conflict.conflict = "code";
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(conflict);
+        }
         if (body.code != null && !body.code.isBlank()) {
-            test.setLocalCode(body.code);
+            test.setLocalCode(body.code.trim());
         }
         if (body.description != null) {
             test.setDescription(body.description);
@@ -903,16 +923,37 @@ public class TestCatalogEditorRestController {
      * comparison is exact-match — mirroring what the database will enforce — and
      * {@code excludeTestId} lets a test keep its own description on save.
      */
+    /**
+     * Compared trimmed (OGC-1464) and case-sensitive, like the test_desc_uk index
+     * it fronts (OGC-1180).
+     */
     private boolean descriptionInUse(String description, String excludeTestId) {
         if (isBlank(description)) {
             return false;
         }
+        String wanted = description.trim();
         for (Test other : testService.getAllTests(false)) {
-            if (description.equals(other.getDescription()) && !other.getId().equals(excludeTestId)) {
+            if (other.getDescription() != null && wanted.equals(other.getDescription().trim())
+                    && !other.getId().equals(excludeTestId)) {
                 return true;
             }
         }
         return false;
+    }
+
+    private static String trimToNull(String value) {
+        return value == null || value.trim().isEmpty() ? null : value.trim();
+    }
+
+    /**
+     * True when a Basic Info save changes the test's code. A legacy code another
+     * test shares stays saveable as long as it is not changed (OGC-1464).
+     */
+    private static boolean changesCode(String requested, String stored) {
+        if (isBlank(requested)) {
+            return false;
+        }
+        return stored == null || !requested.trim().equalsIgnoreCase(stored.trim());
     }
 
     private static BasicInfo descriptionConflict() {
@@ -1059,6 +1100,39 @@ public class TestCatalogEditorRestController {
         public String refusal;
         /** The component the refusal is about, when there is one. */
         public String refusedComponent;
+        /**
+         * The version of the components the editor loaded; a save against a newer one
+         * is refused with conflict "stale" (OGC-1463).
+         */
+        public String version;
+        /** Set only on a 409 body: "stale". */
+        public String conflict;
+        public String messageKey;
+    }
+
+    private static final String STALE_SECTION = "error.staleSave.section";
+
+    private static SampleResults staleSampleResults(SampleResults current) {
+        SampleResults body = new SampleResults();
+        body.testId = current.testId;
+        body.version = current.version;
+        body.conflict = "stale";
+        body.messageKey = STALE_SECTION;
+        return body;
+    }
+
+    /**
+     * True when the save names a component of this test that was removed: only a
+     * page loaded before the removal still holds it (OGC-1463).
+     */
+    private boolean namesRemovedComponent(String testId, List<ResultComponentDto> components) {
+        Set<String> removed = new HashSet<>();
+        for (TestResultComponent component : componentService.getComponentsByTestId(testId)) {
+            if (!"Y".equals(component.getIsActive())) {
+                removed.add(component.getId());
+            }
+        }
+        return components.stream().anyMatch(c -> !isBlank(c.id) && removed.contains(c.id));
     }
 
     private static ResponseEntity<SampleResults> refusedSampleResults(String testId, String refusal, String component) {
@@ -1111,6 +1185,11 @@ public class TestCatalogEditorRestController {
         Test test = testService.getTestById(testId);
         if (test == null) {
             return ResponseEntity.notFound().build();
+        }
+        SampleResults current = toSampleResults(testId);
+        if (StaleSaveGuard.isStaleVersion(body.version, current.version)
+                || namesRemovedComponent(testId, body.components)) {
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(staleSampleResults(current));
         }
         if (body.components.isEmpty() && test.isActive()) {
             return refusedSampleResults(testId, "components.activeNeedsComponent", null);
@@ -1286,6 +1365,7 @@ public class TestCatalogEditorRestController {
             }
             sr.components.add(dto);
         }
+        sr.version = StaleSaveGuard.versionOf(sr.components);
         return sr;
     }
 
@@ -1771,6 +1851,54 @@ public class TestCatalogEditorRestController {
         public String disposalUnit;
         public String specialInstructions;
         public Boolean overrideRestricted;
+        /** Set only on a 422 body: the field whose value was refused (OGC-1465). */
+        public String invalidField;
+    }
+
+    /** The condition codes the Storage form offers (FR-86). */
+    static final Set<String> STORAGE_CONDITIONS = Set.of("AMBIENT", "CONTROLLED_ROOM_TEMPERATURE", "COOL_ROOM",
+            "COLD_ROOM", "REFRIGERATED", "FROZEN", "DEEP_FROZEN", "ULTRA_LOW_FREEZER", "WARM_INCUBATOR");
+
+    /**
+     * The field a storage save would store wrongly: a condition code the form does
+     * not offer, text longer than its column, or a negative duration (OGC-1465). A
+     * condition the test already holds (an imported code) stays saveable.
+     */
+    static String invalidStorageField(StorageDto body, String storedCondition) {
+        if (!isBlank(body.storageCondition) && !STORAGE_CONDITIONS.contains(body.storageCondition)
+                && !body.storageCondition.equals(storedCondition)) {
+            return "storageCondition";
+        }
+        if (longerThan(body.storageConditionCustom, 200)) {
+            return "storageConditionCustom";
+        }
+        if (body.storageDuration != null && body.storageDuration < 0) {
+            return "storageDuration";
+        }
+        if (longerThan(body.storageDurationUnit, 20)) {
+            return "storageDurationUnit";
+        }
+        if (longerThan(body.disposalMethod, 100)) {
+            return "disposalMethod";
+        }
+        if (body.disposalTimeframe != null && body.disposalTimeframe < 0) {
+            return "disposalTimeframe";
+        }
+        if (longerThan(body.disposalUnit, 20)) {
+            return "disposalUnit";
+        }
+        return null;
+    }
+
+    /** Measures the value as it is stored: the save does not trim it. */
+    private static boolean longerThan(String value, int max) {
+        return value != null && value.length() > max;
+    }
+
+    private static ResponseEntity<StorageDto> invalidStorage(String field) {
+        StorageDto refused = new StorageDto();
+        refused.invalidField = field;
+        return ResponseEntity.unprocessableEntity().body(refused);
     }
 
     @GetMapping(value = "/tests/{testId}/storage", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -1789,6 +1917,12 @@ public class TestCatalogEditorRestController {
         Test test = testService.getTestById(testId);
         if (test == null) {
             return ResponseEntity.notFound().build();
+        }
+        TestSampleHandling stored = handlingService.getByTestId(testId);
+        String invalidField = body == null ? "storage"
+                : invalidStorageField(body, stored == null ? null : stored.getStorageCondition());
+        if (invalidField != null) {
+            return invalidStorage(invalidField);
         }
         TestSampleHandling saved = handlingService.saveForTest(testId, toHandling(body),
                 ControllerUtills.getSysUserId(request));
@@ -1842,6 +1976,9 @@ public class TestCatalogEditorRestController {
             return ResponseEntity.unprocessableEntity().build();
         }
         if (body.fields != null && !STORAGE_FIELDS.keySet().containsAll(body.fields)) {
+            return ResponseEntity.unprocessableEntity().build();
+        }
+        if (invalidStorageField(body.storage, null) != null) {
             return ResponseEntity.unprocessableEntity().build();
         }
         for (String testId : body.testIds) {
@@ -2084,6 +2221,14 @@ public class TestCatalogEditorRestController {
         // OGC-1145 FR-13: the test's associated sample types, so the editor can
         // offer the per-specimen override picker without a second request.
         public List<SampleTypeOption> sampleTypes = new ArrayList<>();
+        /**
+         * The version of the mappings the editor loaded; a save against a newer one is
+         * refused with conflict "stale" (OGC-1463).
+         */
+        public String version;
+        /** Set only on a 409 body: "stale". */
+        public String conflict;
+        public String messageKey;
     }
 
     @GetMapping(value = "/tests/{testId}/terminology", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -2114,6 +2259,15 @@ public class TestCatalogEditorRestController {
         for (TypeOfSample type : testService.getTypeOfSamples(test)) {
             associatedTypeIds.add(type.getId());
         }
+        TerminologyResponse current = toTerminology(testId);
+        if (StaleSaveGuard.isStaleVersion(body.version, current.version)) {
+            TerminologyResponse stale = new TerminologyResponse();
+            stale.testId = testId;
+            stale.version = current.version;
+            stale.conflict = "stale";
+            stale.messageKey = STALE_SECTION;
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(stale);
+        }
         Set<String> seen = new HashSet<>();
         List<TestTerminologyMapping> desired = new ArrayList<>();
         for (MappingDto m : body.mappings) {
@@ -2138,7 +2292,7 @@ public class TestCatalogEditorRestController {
             // DB enforces it per test/scope, but reject early + cleanly rather than
             // surfacing a raw 500.
             if (!seen.add((componentId == null ? "" : componentId) + " " + (sampleTypeId == null ? "" : sampleTypeId)
-                    + " " + m.source + " " + m.code)) {
+                    + " " + m.source + " " + m.code.trim())) {
                 return ResponseEntity.unprocessableEntity().build();
             }
             TestTerminologyMapping e = new TestTerminologyMapping();
@@ -2183,6 +2337,7 @@ public class TestCatalogEditorRestController {
             option.domain = Domain.normalize(type.getDomain());
             resp.sampleTypes.add(option);
         }
+        resp.version = StaleSaveGuard.versionOf(resp.mappings);
         return resp;
     }
 
@@ -2273,6 +2428,11 @@ public class TestCatalogEditorRestController {
     public static class PanelTestOrderResponse {
         public String panelId;
         public List<PanelTestRow> tests = new ArrayList<>();
+        /**
+         * The version of the member list the editor loaded; a member save sent with a
+         * newer one is refused as stale (OGC-1463).
+         */
+        public String version;
     }
 
     public static class MembershipItem {
@@ -2807,6 +2967,10 @@ public class TestCatalogEditorRestController {
         if (panelService.getPanelById(panelId) == null) {
             return ResponseEntity.notFound().build();
         }
+        return ResponseEntity.ok(panelTestOrder(panelId));
+    }
+
+    private PanelTestOrderResponse panelTestOrder(String panelId) {
         PanelTestOrderResponse resp = new PanelTestOrderResponse();
         resp.panelId = panelId;
         for (PanelItem pi : panelItemService.getPanelItemsForPanel(panelId)) {
@@ -2827,7 +2991,9 @@ public class TestCatalogEditorRestController {
             String bn = b.testName == null ? "" : b.testName;
             return an.compareToIgnoreCase(bn);
         });
-        return ResponseEntity.ok(resp);
+        resp.version = StaleSaveGuard
+                .versionOf(resp.tests.stream().map(row -> row.testId + "@" + row.position).toList());
+        return resp;
     }
 
     @PutMapping(value = "/tests/{testId}/panels", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -2923,6 +3089,8 @@ public class TestCatalogEditorRestController {
          * before this write — editing never auto-flips.
          */
         public Boolean autoActivate;
+        /** The member-list version the editor loaded (OGC-1463). */
+        public String version;
     }
 
     public static class PanelTestsResponse {
@@ -2934,6 +3102,11 @@ public class TestCatalogEditorRestController {
         public String refusal;
         /** With {@code tests.inactive}: the inactive tests the write tried to add. */
         public List<ConflictingTest> refusedTests = new ArrayList<>();
+        /** The member-list version after the write, or the current one on a 409. */
+        public String version;
+        /** Set only on a 409 body: "stale". */
+        public String conflict;
+        public String messageKey;
     }
 
     @PutMapping(value = "/panels/{panelId}/tests", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -2945,6 +3118,14 @@ public class TestCatalogEditorRestController {
         }
         if (body == null || body.tests == null || body.tests.stream().anyMatch(Objects::isNull)) {
             return ResponseEntity.badRequest().build();
+        }
+        String currentVersion = panelTestOrder(panelId).version;
+        if (StaleSaveGuard.isStaleVersion(body.version, currentVersion)) {
+            PanelTestsResponse stale = new PanelTestsResponse();
+            stale.version = currentVersion;
+            stale.conflict = "stale";
+            stale.messageKey = STALE_SECTION;
+            return ResponseEntity.status(HttpStatus.CONFLICT).body(stale);
         }
         String sysUserId = ControllerUtills.getSysUserId(request);
         Map<String, Integer> positionByTestId = new LinkedHashMap<>();
@@ -3015,7 +3196,9 @@ public class TestCatalogEditorRestController {
         refreshPanelDisplayLists();
         PanelTestsResponse resp = new PanelTestsResponse();
         resp.panel = toPanelOption(panelService.getPanelById(panel.getId()));
-        resp.tests = getPanelTestOrder(panel.getId()).getBody().tests;
+        PanelTestOrderResponse saved = panelTestOrder(panel.getId());
+        resp.tests = saved.tests;
+        resp.version = saved.version;
         return ResponseEntity.ok(resp);
     }
 

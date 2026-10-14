@@ -190,6 +190,12 @@ public class LocalizationRestController extends BaseController {
             if (localization == null) {
                 return ResponseEntity.notFound().build();
             }
+            String fallbackLocale = supportedLocaleService.getFallbackLocaleCode();
+            if (fallbackLocale != null && translations.containsKey(fallbackLocale)
+                    && (translations.get(fallbackLocale) == null || translations.get(fallbackLocale).isBlank())) {
+                return ResponseEntity.badRequest().body(new ErrorResponse(
+                        "The " + fallbackLocale + " value is what every screen falls back to and cannot be blank"));
+            }
 
             String sysUserId = getSysUserId(request);
 
@@ -230,6 +236,11 @@ public class LocalizationRestController extends BaseController {
             Localization localization = localizationService.get(id);
             if (localization == null) {
                 return ResponseEntity.notFound().build();
+            }
+            String fallbackLocale = supportedLocaleService.getFallbackLocaleCode();
+            if (locale.equals(fallbackLocale) && (request.getValue() == null || request.getValue().isBlank())) {
+                return ResponseEntity.badRequest().body(new ErrorResponse(
+                        "The " + fallbackLocale + " value is what every screen falls back to and cannot be blank"));
             }
 
             localizationValueService.setTranslation(id, locale, request.getValue(), getSysUserId(this.request));

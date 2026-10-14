@@ -12,6 +12,7 @@ import org.openelisglobal.common.domain.Domain;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.StaleSaveGuard;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.sampletypeterminology.service.SampleTypeTerminologyMappingService;
 import org.openelisglobal.sampletypeterminology.valueholder.SampleTypeTerminologyMapping;
@@ -91,6 +92,7 @@ public class SampleTypeManagementRestController extends BaseRestController {
             this.disposalInstructions = typeOfSample.getDisposalInstructions();
             this.isActive = typeOfSample.getIsActive();
             this.sortOrder = typeOfSample.getSortOrder();
+            this.lastUpdated = StaleSaveGuard.token(typeOfSample.getLastupdated());
         }
 
         // Getters and Setters
@@ -295,6 +297,11 @@ public class SampleTypeManagementRestController extends BaseRestController {
         return ResponseEntity.ok(new ApiResponse<>(true, "Display order updated successfully", dtos));
     }
 
+    /**
+     * Saves a sample type's Basic Info. The position in lists is not part of it: it
+     * belongs to the display-order endpoint, so a page loaded before a move cannot
+     * undo the move (OGC-1465).
+     */
     @PutMapping(value = "/sample-types/{sampleTypeId}")
     public ResponseEntity<ApiResponse<SampleTypeManagementDTO>> updateSampleType(HttpServletRequest request,
             @PathVariable String sampleTypeId, @RequestBody @Valid SampleTypeManagementDTO sampleTypeDTO,
@@ -310,6 +317,14 @@ public class SampleTypeManagementRestController extends BaseRestController {
                 return ResponseEntity.notFound().build();
             }
 
+            if (sampleTypeDTO.getDomain() != null && Domain.fromRaw(sampleTypeDTO.getDomain()) == null) {
+                return ResponseEntity.unprocessableEntity()
+                        .body(ApiResponse.refusedOn("domain", "The domain must be CLINICAL, ENVIRONMENTAL or VECTOR."));
+            }
+            if (StaleSaveGuard.isStale(sampleTypeDTO.getLastUpdated(), existingTypeOfSample.getLastupdated())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                        ApiResponse.refusedOn("stale", "Someone else changed this sample type after it was opened."));
+            }
             ResponseEntity<ApiResponse<SampleTypeManagementDTO>> refusal = refuseUpdate(existingTypeOfSample,
                     sampleTypeDTO);
             if (refusal != null) {
@@ -346,10 +361,6 @@ public class SampleTypeManagementRestController extends BaseRestController {
             if (sampleTypeDTO.getDisposalInstructions() != null) {
                 String disposal = sampleTypeDTO.getDisposalInstructions().trim();
                 existingTypeOfSample.setDisposalInstructions(disposal.isEmpty() ? null : disposal);
-            }
-
-            if (sampleTypeDTO.getSortOrder() > 0) {
-                existingTypeOfSample.setSortOrder(sampleTypeDTO.getSortOrder());
             }
 
             // Null means "not sent" — section saves (e.g. Disposal) must not
@@ -533,7 +544,7 @@ public class SampleTypeManagementRestController extends BaseRestController {
             if ((!TERM_SOURCES.contains(m.source) || !isValidRelationship(m.relationship)) && !unchangedLegacyWhonet) {
                 return ResponseEntity.unprocessableEntity().build();
             }
-            if (!seen.add(m.source + " " + m.code)) {
+            if (!seen.add(m.source + " " + m.code.trim())) {
                 return ResponseEntity.unprocessableEntity().build();
             }
             SampleTypeTerminologyMapping e = new SampleTypeTerminologyMapping();
@@ -660,8 +671,16 @@ public class SampleTypeManagementRestController extends BaseRestController {
     @PutMapping(value = "/sample-types/{sampleTypeId}/tests/{testId}", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<ApiResponse<Void>> addTestToSampleType(HttpServletRequest request,
             @PathVariable String sampleTypeId, @PathVariable String testId) {
-        if (typeOfSampleService.getTypeOfSampleById(sampleTypeId) == null || testService.getTestById(testId) == null) {
+        TypeOfSample type = typeOfSampleService.getTypeOfSampleById(sampleTypeId);
+        org.openelisglobal.test.valueholder.Test test = testService.getTestById(testId);
+        if (type == null || test == null) {
             return ResponseEntity.notFound().build();
+        }
+        Domain typeDomain = Domain.fromRaw(type.getDomain());
+        Domain testDomain = Domain.fromRaw(test.getDomain());
+        if (typeDomain != null && testDomain != null && typeDomain != testDomain) {
+            return ResponseEntity.unprocessableEntity().body(new ApiResponse<>(false,
+                    "a " + testDomain.name() + " test cannot use a " + typeDomain.name() + " sample type", null));
         }
         boolean alreadyLinked = typeOfSampleTestService.getTypeOfSampleTestsForSampleType(sampleTypeId).stream()
                 .anyMatch(link -> testId.equals(link.getTestId()));

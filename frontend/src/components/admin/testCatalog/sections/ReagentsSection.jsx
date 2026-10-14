@@ -46,6 +46,11 @@ const seedOf = (r) => ({
   quantityUnit: r.quantityUnit || "",
 });
 
+/** quantity_unit holds 50 characters, stored as typed (OGC-1465). */
+const UNIT_MAX_LENGTH = 50;
+
+const unitTooLong = (unit) => (unit || "").length > UNIT_MAX_LENGTH;
+
 const ReagentsSection = ({ testId }) => {
   const intl = useIntl();
 
@@ -213,6 +218,15 @@ const ReagentsSection = ({ testId }) => {
   // leaves the edits in place to retry rather than reporting success.
   const handleSave = () => {
     if (dirtyRowIds.length === 0 || saving) {
+      return;
+    }
+    if (dirtyRowIds.some((id) => unitTooLong(edits[id]?.quantityUnit))) {
+      setNotification({
+        kind: "error",
+        text: intl.formatMessage({
+          id: "label.testCatalog.reagents.unitTooLong",
+        }),
+      });
       return;
     }
     setSaving(true);
@@ -466,6 +480,10 @@ const ReagentsSection = ({ testId }) => {
                               })}
                               items={UNIT_OPTIONS}
                               selectedItem={e.quantityUnit || null}
+                              invalid={unitTooLong(e.quantityUnit)}
+                              invalidText={intl.formatMessage({
+                                id: "label.testCatalog.reagents.unitTooLong",
+                              })}
                               onChange={({ selectedItem }) =>
                                 setEdit(
                                   link.id,
