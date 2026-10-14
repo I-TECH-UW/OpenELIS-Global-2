@@ -26,6 +26,8 @@ on:
 
 jobs:
   build-and-push:
+    # Pushes to develop build only upstream; a fork can still test it by dispatching it by hand.
+    if: github.repository == 'DIGI-UW/OpenELIS-Global-2' || github.event_name == 'workflow_dispatch'
     runs-on: ubuntu-latest
     permissions:
       contents: read
@@ -48,7 +50,7 @@ jobs:
         id: prep
         run: |
           branch="${{ github.ref_name }}"
-          tag="${branch//\//-}"
+          tag="$(echo "$branch" | sed 's/[^a-zA-Z0-9._-]/-/g')"
           if [ "${{ github.repository }}" = "DIGI-UW/OpenELIS-Global-2" ]; then
             echo "registry=docker.io" >> "$GITHUB_OUTPUT"
             image="${{ vars.DOCKERHUB_USERNAME }}/openelis-global-2-${{ matrix.name }}-dev"
