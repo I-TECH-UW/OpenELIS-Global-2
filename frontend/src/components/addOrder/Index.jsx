@@ -11,7 +11,7 @@ import {
 } from "@carbon/react";
 import PatientInfo from "./PatientInfo";
 import AddSample from "./AddSample";
-import { newSampleKey } from "./sampleTypeUpdate";
+import { newSampleKey, rejectedWithoutReason } from "./sampleTypeUpdate";
 import { samplesMissingTests, samplesWithTests } from "./orderSamples";
 import AddOrder from "./AddOrder";
 import "./add-order.scss";
@@ -1091,7 +1091,8 @@ const Index = () => {
                           (item) => item.status === false,
                         ) ||
                         errors?.errors?.length > 0 ||
-                        missingTestSamples.length > 0
+                        missingTestSamples.length > 0 ||
+                        rejectedWithoutReason(samples)
                       }
                       onClick={handleSubmitOrderForm}
                     >
