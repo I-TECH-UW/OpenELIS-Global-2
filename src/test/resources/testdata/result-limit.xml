@@ -61,41 +61,4 @@
         low_normal="2.0" high_normal="8.0" low_valid="1.0" high_valid="10.0"
         low_reporting_range="1.0" high_reporting_range="10.0"
         lastupdated="2025-06-03 09:15:00" always_validate="true" />
-
-    <!-- site_information_domain for result age ranges (id=16, mirrors production
-        seed) -->
-    <site_information_domain id="16"
-        name="resultAgeRange" description="The maximum age range in months" />
-
-    <!-- Predefined age-range entries consumed by ResultLimitServiceImpl.getPredefinedAgeRanges() -->
-    <site_information id="87" name="new born"
-        description="max age of a new born" value="1" encrypted="false"
-        domain_id="16" value_type="text"
-        instruction_key="instrution.result.age"
-        name_key="site.info.result.age.newborn"
-        lastupdated="2023-01-01 00:00:00" />
-    <site_information id="88" name="infant"
-        description="max age of an infant" value="12" encrypted="false"
-        domain_id="16" value_type="text"
-        instruction_key="instrution.result.age"
-        name_key="site.info.result.age.infant"
-        lastupdated="2023-01-01 00:00:00" />
-    <site_information id="89" name="young child"
-        description="max age of a young child" value="60" encrypted="false"
-        domain_id="16" value_type="text"
-        instruction_key="instrution.result.age"
-        name_key="site.info.result.age.youngchild"
-        lastupdated="2023-01-01 00:00:00" />
-    <site_information id="90" name="child"
-        description="max age of a child" value="168" encrypted="false"
-        domain_id="16" value_type="text"
-        instruction_key="instrution.result.age"
-        name_key="site.info.result.age.child"
-        lastupdated="2023-01-01 00:00:00" />
-    <site_information id="91" name="adult"
-        description="max age of an adult" value="Infinity" encrypted="false"
-        domain_id="16" value_type="text"
-        instruction_key="instrution.result.age"
-        name_key="site.info.result.age.adult"
-        lastupdated="2023-01-01 00:00:00" />
 </dataset>
