@@ -449,9 +449,7 @@ it("creates, saves, reopens, recognizes controls and explicitly publishes a new 
     testRow.getByRole("combobox", { name: "Reported value type" }),
     "quantitative",
   );
-  expect(
-    screen.getByRole("button", { name: "Publish Profile" }),
-  ).toBeDisabled();
+  expect(screen.getByRole("button", { name: "Publish type" })).toBeDisabled();
   await save();
   const settings = clone(newFileProfile);
   delete settings.controlResultRecognition;
@@ -505,7 +503,7 @@ it("creates, saves, reopens, recognizes controls and explicitly publishes a new 
   expect(
     screen.queryByText("Save control recognition before publishing."),
   ).toBeNull();
-  const publish = screen.getByRole("button", { name: "Publish Profile" });
+  const publish = screen.getByRole("button", { name: "Publish type" });
   await waitFor(() => expect(publish).toBeEnabled());
   await userEvent.click(publish);
   expect(publishAnalyzerTypeDraft).toHaveBeenCalledExactlyOnceWith(

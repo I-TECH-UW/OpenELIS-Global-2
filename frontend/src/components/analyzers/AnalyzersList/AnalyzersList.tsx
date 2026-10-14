@@ -22,6 +22,7 @@ import {
 import { Add, CheckmarkFilled, WarningFilled } from "@carbon/icons-react";
 import { Link as RouterLink } from "react-router-dom";
 import AnalyzerPageHeader from "../AnalyzerPageHeader";
+import AnalyzerCountChips from "../AnalyzerCountChips";
 import { useIntl } from "react-intl";
 import { useHistory, useLocation } from "react-router-dom";
 import {
@@ -538,43 +539,32 @@ const AnalyzersList = () => {
         />
       )}
 
-      <div className="analyzers-list-stats" data-testid="analyzers-list-stats">
-        {[
+      <AnalyzerCountChips
+        testId="analyzers-list-stats"
+        label={intl.formatMessage({ id: "analyzer.stat.label" })}
+        chips={[
           { id: "total", value: stats.total, status: "" },
           { id: "active", value: stats.active, status: "ACTIVE" },
           { id: "setup", value: stats.setup, status: "SETUP" },
-          {
+        ]
+          .map((stat) => ({
+            id: stat.id,
+            value: stat.value,
+            label: intl.formatMessage({ id: `analyzer.stat.${stat.id}` }),
+            current: stat.status === (filters.status || ""),
+            testId: `stat-${stat.id}`,
+            onSelect: () => handleFilterChange("status", stat.status),
+          }))
+          .concat({
             id: "needs-attention",
             value: stats.needsAttention,
-            status: "",
+            label: intl.formatMessage({ id: "analyzer.stat.needsAttention" }),
             warning: stats.needsAttention > 0,
-          },
-        ].map((stat) => (
-          <button
-            key={stat.id}
-            type="button"
-            className={`analyzers-list-stat${stat.warning ? " analyzers-list-stat--warning" : ""}${
-              (stat.status || "") === (filters.status || "") &&
-              stat.id !== "needs-attention"
-                ? " analyzers-list-stat--current"
-                : ""
-            }`}
-            data-testid={`stat-${stat.id}`}
-            onClick={() =>
-              stat.id === "needs-attention"
-                ? firstAttentionAnalyzer && openResults(firstAttentionAnalyzer)
-                : handleFilterChange("status", stat.status)
-            }
-          >
-            <span className="stat-value">{stat.value}</span>
-            <span className="stat-label">
-              {intl.formatMessage({
-                id: `analyzer.stat.${stat.id === "needs-attention" ? "needsAttention" : stat.id}`,
-              })}
-            </span>
-          </button>
-        ))}
-      </div>
+            testId: "stat-needs-attention",
+            onSelect: () =>
+              firstAttentionAnalyzer && openResults(firstAttentionAnalyzer),
+          })}
+      />
 
       <div
         className="analyzers-list-filters"

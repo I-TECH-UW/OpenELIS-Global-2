@@ -335,41 +335,38 @@ describe("AnalyzerTypeManagement", () => {
       "/analyzers",
     );
 
-    const summary = screen.getByRole("region", {
-      name: "Analyzer type summary",
-    });
-    expect(summary).toHaveTextContent("Analyzer Types3");
-    expect(summary).toHaveTextContent("In Use2");
-    expect(summary).toHaveTextContent("Needs Attention1");
-    expect(summary).toHaveTextContent("Deactivated1");
+    // Counts of the catalog by state, each the view it names; active types first.
+    const view = (name) => screen.getByTestId(`analyzer-type-view-${name}`);
+    expect(view("all")).toHaveTextContent("2Active");
+    expect(view("all")).toHaveAttribute("aria-pressed", "true");
+    expect(view("inUse")).toHaveTextContent("2In use");
+    expect(view("needsMapping")).toHaveTextContent("1Needs mapping");
+    expect(view("deactivated")).toHaveTextContent("1Deactivated");
 
     expect(
       screen.getByRole("columnheader", { name: "Analyzer type" }),
     ).toBeInTheDocument();
-    expect(
-      screen.getByRole("columnheader", { name: "Protocol" }),
-    ).toBeVisible();
-    expect(
-      screen.getByRole("columnheader", { name: "Tests mapped" }),
-    ).toBeVisible();
-    expect(
-      screen.getByRole("columnheader", { name: "Results mapped" }),
-    ).toBeVisible();
+    expect(screen.getByRole("columnheader", { name: "Mapping" })).toBeVisible();
     expect(screen.getByRole("columnheader", { name: "Used by" })).toBeVisible();
-    expect(screen.getByText("Cepheid GeneXpert MTB/RIF")).toBeVisible();
-    expect(screen.getByText("Mindray BC-5380")).toBeVisible();
     expect(
-      screen.getByText("3 / 4 · 75% · 1 marked Do not receive"),
-    ).toBeVisible();
+      screen.getByRole("link", { name: "Cepheid GeneXpert MTB/RIF" }),
+    ).toHaveAttribute(
+      "href",
+      expect.stringContaining("/analyzers/types/shipped.genexpert/mapping"),
+    );
+    expect(screen.getByText("Mindray BC-5380")).toBeVisible();
+    expect(screen.getByText("3 of 4 tests · 1 not received")).toBeVisible();
+    expect(screen.getByText("5 of 6 values")).toBeVisible();
+    // A type whose tests report no coded results has no values line.
+    expect(screen.getByText("13 of 13 tests")).toBeVisible();
+    expect(screen.queryByText(/of 0 values/)).not.toBeInTheDocument();
     expect(screen.queryByText("Tecan Infinite F50")).not.toBeInTheDocument();
 
     expect(screen.queryByText("Plugin class")).not.toBeInTheDocument();
     expect(screen.queryByText("Identifier pattern")).not.toBeInTheDocument();
+    expect(screen.getByRole("button", { name: "Create type" })).toBeVisible();
     expect(
-      screen.getByRole("button", { name: "Create Profile" }),
-    ).toBeVisible();
-    expect(
-      screen.getByRole("button", { name: "Duplicate Profile" }),
+      screen.getByRole("button", { name: "Duplicate type" }),
     ).toBeVisible();
   });
 
@@ -434,7 +431,7 @@ describe("AnalyzerTypeManagement", () => {
 
     expect(await screen.findByText("Cepheid GeneXpert MTB/RIF")).toBeVisible();
     expect(
-      screen.getByText("Some analyzer profiles could not be loaded"),
+      screen.getByText("Some analyzer types could not be loaded"),
     ).toBeVisible();
     expect(
       screen.getByText(/file \[\/app\/analyzer-profiles\/broken\.json\]/),
@@ -446,7 +443,7 @@ describe("AnalyzerTypeManagement", () => {
     window.history.replaceState(
       {},
       "",
-      "/analyzers/types?q=tecan&source=SHIPPED&protocol=FILE&mapping=INCOMPLETE&showDeactivated=true",
+      "/analyzers/types?q=tecan&source=SHIPPED&protocol=FILE&view=deactivated",
     );
     renderPage();
 
@@ -457,18 +454,15 @@ describe("AnalyzerTypeManagement", () => {
     expect(
       screen.getByRole("searchbox", { name: "Search analyzer types" }),
     ).toHaveValue("tecan");
-    expect(screen.getByRole("combobox", { name: "Created" })).toHaveValue(
+    expect(screen.getByRole("combobox", { name: "Source" })).toHaveValue(
       "SHIPPED",
     );
     expect(screen.getByRole("combobox", { name: "Protocol" })).toHaveValue(
       "FILE",
     );
     expect(
-      screen.getByRole("combobox", { name: "Mapping status" }),
-    ).toHaveValue("INCOMPLETE");
-    expect(
-      screen.getByRole("checkbox", { name: "Show deactivated" }),
-    ).toBeChecked();
+      screen.getByTestId("analyzer-type-view-deactivated"),
+    ).toHaveAttribute("aria-pressed", "true");
 
     await userEvent.selectOptions(
       screen.getByRole("combobox", { name: "Protocol" }),
@@ -495,7 +489,7 @@ describe("AnalyzerTypeManagement", () => {
     window.history.replaceState(
       {},
       "",
-      "/analyzers/types?source=SHIPPED&mapping=INCOMPLETE",
+      "/analyzers/types?source=SHIPPED&view=needsMapping",
     );
     renderPage();
     await screen.findByText("Cepheid GeneXpert MTB/RIF");
@@ -506,7 +500,7 @@ describe("AnalyzerTypeManagement", () => {
       }),
     );
     await userEvent.click(
-      screen.getByRole("menuitem", { name: "View default mappings" }),
+      screen.getByRole("menuitem", { name: "Default mappings" }),
     );
 
     await waitFor(() =>
@@ -516,7 +510,7 @@ describe("AnalyzerTypeManagement", () => {
     );
     expect(window.location.search).toContain("revision=2");
     expect(new URLSearchParams(window.location.search).get("returnTo")).toBe(
-      "/analyzers/types?source=SHIPPED&mapping=INCOMPLETE",
+      "/analyzers/types?source=SHIPPED&view=needsMapping",
     );
   });
 
@@ -524,14 +518,12 @@ describe("AnalyzerTypeManagement", () => {
     renderPage();
     await screen.findByText("Cepheid GeneXpert MTB/RIF");
 
-    await userEvent.click(
-      screen.getByRole("button", { name: "Create Profile" }),
-    );
+    await userEvent.click(screen.getByRole("button", { name: "Create type" }));
 
     await waitFor(() =>
       expect(window.location.search).toContain("action=create"),
     );
-    const dialog = screen.getByRole("dialog", { name: "Create Profile" });
+    const dialog = screen.getByRole("dialog", { name: "Create type" });
     await userEvent.type(
       within(dialog).getByRole("textbox", { name: "Profile name" }),
       "Sysmex XN Series",
@@ -544,7 +536,7 @@ describe("AnalyzerTypeManagement", () => {
     ).not.toBeInTheDocument();
 
     const create = within(dialog).getByRole("button", {
-      name: "Create Profile",
+      name: "Create type",
     });
     expect(create).toBeEnabled();
     await userEvent.click(create);
@@ -559,15 +551,15 @@ describe("AnalyzerTypeManagement", () => {
     );
     expect(screen.getByText("Profile draft created")).toBeVisible();
     expect(
-      within(screen.getByRole("dialog", { name: "Create Profile" })).getByRole(
+      within(screen.getByRole("dialog", { name: "Create type" })).getByRole(
         "combobox",
         { name: "Protocol" },
       ),
     ).toBeVisible();
     expect(
-      within(screen.getByRole("dialog", { name: "Create Profile" })).getByRole(
+      within(screen.getByRole("dialog", { name: "Create type" })).getByRole(
         "button",
-        { name: "Publish Profile" },
+        { name: "Publish type" },
       ),
     ).toBeDisabled();
   });
@@ -577,9 +569,9 @@ describe("AnalyzerTypeManagement", () => {
     await screen.findByText("Cepheid GeneXpert MTB/RIF");
 
     await userEvent.click(
-      screen.getByRole("button", { name: "Duplicate Profile" }),
+      screen.getByRole("button", { name: "Duplicate type" }),
     );
-    const dialog = screen.getByRole("dialog", { name: "Duplicate Profile" });
+    const dialog = screen.getByRole("dialog", { name: "Duplicate type" });
     await userEvent.selectOptions(
       within(dialog).getByRole("combobox", {
         name: "Source analyzer type",
@@ -591,7 +583,7 @@ describe("AnalyzerTypeManagement", () => {
       within(dialog).getByRole("textbox", { name: "New profile name" }),
     ).toHaveValue("Cepheid GeneXpert MTB/RIF -1");
     await userEvent.click(
-      within(dialog).getByRole("button", { name: "Duplicate Profile" }),
+      within(dialog).getByRole("button", { name: "Duplicate type" }),
     );
 
     expect(duplicateAnalyzerType).toHaveBeenCalledWith(
@@ -607,7 +599,7 @@ describe("AnalyzerTypeManagement", () => {
     expect(within(dialog).getByText("Ready to publish")).toBeVisible();
 
     await userEvent.click(
-      within(dialog).getByRole("button", { name: "Publish Profile" }),
+      within(dialog).getByRole("button", { name: "Publish type" }),
     );
     expect(publishAnalyzerTypeDraft).toHaveBeenCalledWith(
       "draft-duplicate",
@@ -628,7 +620,7 @@ describe("AnalyzerTypeManagement", () => {
     renderPage();
 
     const dialog = await screen.findByRole("dialog", {
-      name: "Duplicate Profile",
+      name: "Duplicate type",
     });
     expect(getAnalyzerTypeDraft).toHaveBeenCalledWith(
       "draft-duplicate",
@@ -636,7 +628,7 @@ describe("AnalyzerTypeManagement", () => {
     );
     expect(within(dialog).getByText("Ready to publish")).toBeVisible();
     expect(
-      within(dialog).getByRole("button", { name: "Publish Profile" }),
+      within(dialog).getByRole("button", { name: "Publish type" }),
     ).toBeEnabled();
   });
 
@@ -650,7 +642,7 @@ describe("AnalyzerTypeManagement", () => {
     renderPage();
 
     const dialog = await screen.findByRole("dialog", {
-      name: "Duplicate Profile",
+      name: "Duplicate type",
     });
     expect(
       await within(dialog).findByRole("heading", {
@@ -658,7 +650,7 @@ describe("AnalyzerTypeManagement", () => {
       }),
     ).toBeVisible();
     const publish = within(dialog).getByRole("button", {
-      name: "Publish Profile",
+      name: "Publish type",
     });
     await waitFor(() => expect(publish).toBeEnabled());
 
@@ -687,7 +679,7 @@ describe("AnalyzerTypeManagement", () => {
     renderPage();
 
     const dialog = await screen.findByRole("dialog", {
-      name: "Duplicate Profile",
+      name: "Duplicate type",
     });
     await waitFor(() =>
       expect(getAnalyzerTypeRevision).toHaveBeenCalledWith(
@@ -699,7 +691,7 @@ describe("AnalyzerTypeManagement", () => {
     expect(within(dialog).getByText(/revision 1/)).toBeVisible();
 
     await userEvent.click(
-      within(dialog).getByRole("button", { name: "Duplicate Profile" }),
+      within(dialog).getByRole("button", { name: "Duplicate type" }),
     );
 
     expect(duplicateAnalyzerType).toHaveBeenCalledWith(
@@ -726,10 +718,10 @@ describe("AnalyzerTypeManagement", () => {
     renderPage();
 
     const dialog = await screen.findByRole("dialog", {
-      name: "Duplicate Profile",
+      name: "Duplicate type",
     });
     const duplicate = within(dialog).getByRole("button", {
-      name: "Duplicate Profile",
+      name: "Duplicate type",
     });
     expect(duplicate).toBeDisabled();
 
@@ -761,7 +753,7 @@ describe("AnalyzerTypeManagement", () => {
     renderPage();
 
     const dialog = await screen.findByRole("dialog", {
-      name: "Duplicate Profile",
+      name: "Duplicate type",
     });
     await userEvent.click(
       within(dialog).getByRole("button", { name: "Cancel" }),
@@ -784,7 +776,7 @@ describe("AnalyzerTypeManagement", () => {
     renderPage();
 
     const dialog = await screen.findByRole("dialog", {
-      name: "Duplicate Profile",
+      name: "Duplicate type",
     });
     await userEvent.click(
       within(dialog).getByRole("button", { name: "Cancel" }),
@@ -836,7 +828,7 @@ describe("AnalyzerTypeManagement", () => {
       }),
     );
     await userEvent.click(
-      screen.getByRole("menuitem", { name: "Update shared" }),
+      screen.getByRole("menuitem", { name: "New revision" }),
     );
 
     const dialog = screen.getByRole("dialog", {
@@ -868,7 +860,7 @@ describe("AnalyzerTypeManagement", () => {
       }),
     );
     await userEvent.click(
-      screen.getByRole("menuitem", { name: "Update shared" }),
+      screen.getByRole("menuitem", { name: "New revision" }),
     );
 
     const dialog = screen.getByRole("dialog", {
@@ -925,7 +917,7 @@ describe("AnalyzerTypeManagement", () => {
     ).toBeVisible();
 
     await userEvent.click(
-      within(dialog).getByRole("button", { name: "Publish Profile" }),
+      within(dialog).getByRole("button", { name: "Publish type" }),
     );
     expect(publishAnalyzerTypeDraft).toHaveBeenCalledWith(
       "draft-update",
@@ -961,9 +953,7 @@ describe("AnalyzerTypeManagement", () => {
         name: "Actions for Mindray BC-5380",
       }),
     );
-    await userEvent.click(
-      screen.getByRole("menuitem", { name: "View history" }),
-    );
+    await userEvent.click(screen.getByRole("menuitem", { name: "History" }));
 
     const dialog = await screen.findByRole("dialog", {
       name: "Mindray BC-5380 history",
