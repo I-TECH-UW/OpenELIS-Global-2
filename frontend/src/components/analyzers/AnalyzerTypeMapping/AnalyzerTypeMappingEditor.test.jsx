@@ -14,6 +14,7 @@ import {
   getAnalyzerMappingComponents,
   getAnalyzerMappingResultOptions,
   getAnalyzerMappingTests,
+  getAnalyzerTypeCatalog,
   getAnalyzerTypeDefaults,
   getAnalyzerTypeRevision,
   saveAnalyzerMapping,
@@ -27,6 +28,7 @@ vi.mock("../../../services/analyzerService", () => ({
   getAnalyzerMappingComponents: vi.fn(),
   getAnalyzerMappingResultOptions: vi.fn(),
   getAnalyzerMappingTests: vi.fn(),
+  getAnalyzerTypeCatalog: vi.fn(),
   getAnalyzerTypeDefaults: vi.fn(),
   getAnalyzerTypeRevision: vi.fn(),
   saveAnalyzerMapping: vi.fn(),
@@ -1583,6 +1585,47 @@ describe("AnalyzerTypeMappingEditor", () => {
     });
 
     expect(screen.getAllByText("Edited")).toHaveLength(1);
+  });
+
+  it("opens a type's defaults on its current revision when the address names none", async () => {
+    getAnalyzerTypeCatalog.mockImplementation((callback) =>
+      callback({ types: [{ profileId: "shipped.genexpert", revision: 2 }] }),
+    );
+    renderDefaults("/analyzers/types/shipped.genexpert/mapping");
+
+    await waitFor(() =>
+      expect(screen.getByTestId("location")).toHaveTextContent("revision=2"),
+    );
+    expect(getAnalyzerTypeDefaults).toHaveBeenCalledWith(
+      "shipped.genexpert",
+      2,
+      expect.any(Function),
+    );
+    expect(
+      await screen.findByText(/Defaults for new analyzers of this type/),
+    ).toBeVisible();
+  });
+
+  it("says an adoption address names no revision instead of loading forever", async () => {
+    render(
+      <MemoryRouter initialEntries={["/analyzers/501/adoption"]}>
+        <IntlProvider locale="en" messages={messages}>
+          <Route path="/analyzers/:analyzerId/adoption">
+            <AnalyzerTypeMappingEditor />
+            <LocationProbe />
+          </Route>
+          <Route path="/analyzers" exact>
+            <LocationProbe />
+          </Route>
+        </IntlProvider>
+      </MemoryRouter>,
+    );
+
+    expect(
+      screen.getByText(/This address names no revision of the analyzer type/),
+    ).toBeVisible();
+    await userEvent.click(screen.getByRole("button", { name: "Back" }));
+    expect(screen.getByTestId("location")).toHaveTextContent(/^\/analyzers$/);
   });
 
   it("shows a type's defaults read-only, with no way to save, confirm or apply them", async () => {

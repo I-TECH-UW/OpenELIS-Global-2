@@ -154,7 +154,7 @@ describe("AnalyzerTypeDraftPage", () => {
     ).toBeDisabled();
     expect(
       within(bar).getByText(
-        "Save the settings and control recognition, then publish.",
+        "Complete the settings and control recognition before publishing.",
       ),
     ).toBeVisible();
   });
@@ -196,6 +196,12 @@ describe("AnalyzerTypeDraftPage", () => {
     await userEvent.clear(value);
     await userEvent.type(value, "CONTROL");
     expect(publish).toBeDisabled();
+    // The bar's one save follows what is unsaved.
+    const bar = screen.getByTestId("analyzer-type-draft-actions");
+    expect(within(bar).getByText("Unsaved control recognition")).toBeVisible();
+    expect(
+      within(bar).queryByRole("button", { name: "Save and validate settings" }),
+    ).not.toBeInTheDocument();
 
     await userEvent.click(
       screen.getByRole("button", { name: "Save control recognition" }),

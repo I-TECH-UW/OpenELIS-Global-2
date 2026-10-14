@@ -51,6 +51,7 @@ import {
   getAnalyzerMappingComponents,
   getAnalyzerMappingResultOptions,
   getAnalyzerMappingTests,
+  getAnalyzerTypeCatalog,
   getAnalyzerTypeDefaults,
   getAnalyzerTypeRevision,
   saveAnalyzerMapping,
@@ -313,9 +314,42 @@ const AnalyzerTypeMappingEditor = ({
         Number.isInteger(revision) &&
         revision >= 1
       : true;
-  const routeError = routeIsValid
-    ? null
-    : intl.formatMessage({ id: "analyzerType.mappingEditor.error.route" });
+  // A type's defaults named without a revision open on its current one.
+  const resolvingRevision = readOnly && Boolean(profileId) && !routeIsValid;
+  const [revisionUnknown, setRevisionUnknown] = useState(false);
+  const routeError =
+    routeIsValid || (resolvingRevision && !revisionUnknown)
+      ? null
+      : intl.formatMessage({ id: "analyzerType.mappingEditor.error.route" });
+
+  useEffect(() => {
+    if (!resolvingRevision) {
+      return;
+    }
+    getAnalyzerTypeCatalog((catalog) => {
+      const type = (catalog?.types || []).find(
+        (candidate) => candidate.profileId === profileId,
+      );
+      if (!type) {
+        setRevisionUnknown(true);
+        return;
+      }
+      const params = new URLSearchParams(location.search);
+      params.set("revision", String(type.revision));
+      history.replace({
+        pathname: location.pathname,
+        search: `?${params.toString()}`,
+        state: location.state,
+      });
+    });
+  }, [
+    history,
+    location.pathname,
+    location.search,
+    location.state,
+    profileId,
+    resolvingRevision,
+  ]);
 
   const applyMapping = useCallback((nextMapping) => {
     setMapping(nextMapping);
@@ -882,7 +916,10 @@ const AnalyzerTypeMappingEditor = ({
       ? typeSummary
       : null;
 
-  if (loading || (!routeError && !loadError && !mappingMatchesRoute)) {
+  if (
+    !routeError &&
+    (loading || resolvingRevision || (!loadError && !mappingMatchesRoute))
+  ) {
     return (
       <div className="analyzer-type-mapping__loading">
         <Loading
@@ -908,9 +945,13 @@ const AnalyzerTypeMappingEditor = ({
             })}
             subtitle={routeError || loadError?.cause || ""}
             actionButtonLabel={intl.formatMessage({
-              id: "common.retry",
+              id: routeError
+                ? "analyzerType.mappingEditor.return"
+                : "common.retry",
             })}
-            onActionButtonClick={retry}
+            onActionButtonClick={
+              routeError ? () => history.push(returnDestination) : retry
+            }
           />
         </Column>
       </Grid>

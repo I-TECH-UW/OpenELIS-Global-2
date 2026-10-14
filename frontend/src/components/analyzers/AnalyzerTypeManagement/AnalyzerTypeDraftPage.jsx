@@ -150,17 +150,21 @@ const AnalyzerTypeDraftPage = () => {
             />
           </div>
         ) : (
-          <>
-            <ProfileDraftEditor
-              key={draft.draftId}
-              draft={draft}
-              onStateChange={setEditorState}
-            />
-            <div
-              className="analyzer-type-draft-page__bar"
-              data-testid="analyzer-type-draft-actions"
-            >
-              {publishError && (
+          <ProfileDraftEditor
+            key={draft.draftId}
+            draft={draft}
+            onStateChange={setEditorState}
+            closeAction={{
+              label: intl.formatMessage({ id: "analyzerType.draftPage.close" }),
+              onClick: () => history.push(returnTo),
+            }}
+            publishAction={{
+              label: intl.formatMessage({ id: "analyzerType.button.publish" }),
+              onClick: publish,
+              busy: publishing,
+            }}
+            notice={
+              publishError && (
                 <InlineNotification
                   kind="error"
                   lowContrast
@@ -171,32 +175,9 @@ const AnalyzerTypeDraftPage = () => {
                   subtitle={publishError}
                   onCloseButtonClick={() => setPublishError(null)}
                 />
-              )}
-              <div className="analyzer-type-draft-page__bar-row">
-                <p className="analyzer-type-draft-page__bar-status">
-                  {intl.formatMessage({
-                    id: editorState.publishable
-                      ? "analyzerType.draft.publish.ready.title"
-                      : "analyzerType.draft.publish.review.title",
-                  })}
-                </p>
-                <div className="analyzer-type-draft-page__bar-buttons">
-                  <Button
-                    kind="secondary"
-                    onClick={() => history.push(returnTo)}
-                  >
-                    {intl.formatMessage({ id: "analyzerType.draftPage.close" })}
-                  </Button>
-                  <Button
-                    disabled={!editorState.publishable || publishing}
-                    onClick={publish}
-                  >
-                    {intl.formatMessage({ id: "analyzerType.button.publish" })}
-                  </Button>
-                </div>
-              </div>
-            </div>
-          </>
+              )
+            }
+          />
         )}
       </Column>
     </Grid>
