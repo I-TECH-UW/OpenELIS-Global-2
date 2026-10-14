@@ -33,7 +33,7 @@ import org.springframework.web.server.ResponseStatusException;
  * OGC-949 / OGC-987 — Test↔Reagent linkage REST endpoints, round-tripped
  * against a real DB. Covers the happy path (link + list with inventory stock),
  * the 409 duplicate guard, the 404 guards (unknown test / reagent / link), and
- * the 400 validation guards (bad usage type, non-reagent inventory item).
+ * the 400 validation guard on the usage type.
  *
  * <p>
  * The class is gated by {@code @PreAuthorize("hasRole('ADMIN')")}; non-admins
@@ -167,10 +167,12 @@ public class TestReagentLinkRestControllerIntegrationTest extends BaseWebContext
     }
 
     @Test
-    public void link_nonReagentInventoryItem_throwsBadRequest() {
-        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
-                () -> controller.link(testId(), req(nonReagentId, "PRIMARY", "1", "mL"), authedRequest()));
-        assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+    public void link_anyInventoryItem_succeedsWhateverItsLegacyType() {
+        ReagentLinkResponse r = controller.link(testId(), req(nonReagentId, "PRIMARY", "1", "mL"), authedRequest())
+                .getBody();
+
+        assertNotNull(r);
+        assertEquals(nonReagentId, r.reagentId);
     }
 
     @Test
@@ -209,5 +211,25 @@ public class TestReagentLinkRestControllerIntegrationTest extends BaseWebContext
         ResponseStatusException ex = assertThrows(ResponseStatusException.class,
                 () -> controller.unlink(testId(), reagentId, authedRequest()));
         assertEquals(HttpStatus.NOT_FOUND, ex.getStatusCode());
+    }
+
+    /**
+     * OGC-1465: a quantity or unit the column cannot hold is refused, never stored.
+     */
+    @Test
+    public void link_negativeHugeOrLongValuesAreRefused() {
+        for (String[] c : new String[][] { { "-1", "mL" }, { "10000000000", "mL" }, { "1", "u".repeat(51) },
+                { "1", " " + "u".repeat(50) + " " } }) {
+            ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                    () -> controller.link(testId(), req(reagentId, "PRIMARY", c[0], c[1]), authedRequest()));
+            assertEquals(c[0] + " " + c[1].length(), HttpStatus.UNPROCESSABLE_ENTITY, ex.getStatusCode());
+        }
+        assertTrue(controller.list(testId()).isEmpty());
+
+        controller.link(testId(), req(reagentId, "PRIMARY", "2", "mL"), authedRequest());
+        ResponseStatusException edit = assertThrows(ResponseStatusException.class,
+                () -> controller.update(testId(), reagentId, req(reagentId, "PRIMARY", "-0.5", "mL"), authedRequest()));
+        assertEquals(HttpStatus.UNPROCESSABLE_ENTITY, edit.getStatusCode());
+        assertEquals(0, new BigDecimal("2").compareTo(controller.list(testId()).get(0).quantityPerTest));
     }
 }

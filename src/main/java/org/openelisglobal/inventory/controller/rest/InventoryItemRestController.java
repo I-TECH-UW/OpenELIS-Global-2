@@ -2,12 +2,18 @@ package org.openelisglobal.inventory.controller.rest;
 
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
+import java.time.LocalDate;
+import java.time.format.DateTimeParseException;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import lombok.Getter;
 import lombok.Setter;
+import org.openelisglobal.common.exception.LocalizedValidationException;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.inventory.service.InventoryItemService;
+import org.openelisglobal.inventory.service.InventoryTagService;
 import org.openelisglobal.inventory.valueholder.InventoryEnums.ItemType;
 import org.openelisglobal.inventory.valueholder.InventoryItem;
 import org.openelisglobal.login.valueholder.UserSessionData;
@@ -30,6 +36,20 @@ public class InventoryItemRestController extends BaseRestController {
 
     @Autowired
     private InventoryItemService inventoryItemService;
+
+    @Autowired
+    private InventoryTagService inventoryTagService;
+
+    // Retired tags stop being suggested; items already carrying one keep it
+    @GetMapping(value = "/tags", produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<List<String>> getAllTags() {
+        try {
+            return ResponseEntity.ok(inventoryTagService.getActiveTagNames());
+        } catch (Exception e) {
+            LogEvent.logError(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
 
     @GetMapping(value = "/types", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<List<ItemType>> getAllItemTypes() {
@@ -135,7 +155,7 @@ public class InventoryItemRestController extends BaseRestController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<InventoryItem> create(@Valid @RequestBody InventoryItem item, HttpServletRequest request) {
+    public ResponseEntity<?> create(@Valid @RequestBody InventoryItem item, HttpServletRequest request) {
         try {
             UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
             String sysUserId = String.valueOf(usd.getSystemUserId());
@@ -148,6 +168,8 @@ public class InventoryItemRestController extends BaseRestController {
 
             InventoryItem savedItem = inventoryItemService.save(item);
             return ResponseEntity.status(HttpStatus.CREATED).body(savedItem);
+        } catch (LocalizedValidationException e) {
+            return ResponseEntity.badRequest().body(InventoryErrorBody.localized(e));
         } catch (Exception e) {
             LogEvent.logError(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -165,17 +187,23 @@ public class InventoryItemRestController extends BaseRestController {
 
             // Update only the fields that can be changed
             existingItem.setName(item.getName());
-            existingItem.setItemType(item.getItemType());
+            existingItem.setTags(item.getTags());
             existingItem.setCategory(item.getCategory());
             existingItem.setManufacturer(item.getManufacturer());
             existingItem.setUnits(item.getUnits());
             existingItem.setLowStockThreshold(item.getLowStockThreshold());
+            existingItem.setLeadTimeDays(item.getLeadTimeDays());
 
             // Type-specific fields
             existingItem.setStabilityAfterOpening(item.getStabilityAfterOpening());
             existingItem.setStorageRequirements(item.getStorageRequirements());
             existingItem.setCompatibleAnalyzers(item.getCompatibleAnalyzers());
             existingItem.setTestsPerKit(item.getTestsPerKit());
+
+            existingItem.setCatalogNumber(item.getCatalogNumber());
+            existingItem.setUpc(item.getUpc());
+            existingItem.setExpirationAlertDays(item.getExpirationAlertDays());
+            existingItem.setTrackLots(item.getTrackLots());
 
             UserSessionData usd = (UserSessionData) request.getSession().getAttribute(USER_SESSION_DATA);
             String sysUserId = String.valueOf(usd.getSystemUserId());
@@ -228,6 +256,59 @@ public class InventoryItemRestController extends BaseRestController {
             this.inStock = inStock;
         }
 
+    }
+
+    @PostMapping(value = "/mark-ordered", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> markOrdered(@RequestBody OrderMarkRequest request, HttpServletRequest httpRequest) {
+        try {
+            UserSessionData usd = (UserSessionData) httpRequest.getSession().getAttribute(USER_SESSION_DATA);
+            String sysUserId = String.valueOf(usd.getSystemUserId());
+            LocalDate expected = request.getExpectedDate() == null || request.getExpectedDate().isEmpty() ? null
+                    : LocalDate.parse(request.getExpectedDate());
+            int changed = inventoryItemService.markOrdered(request.getItemIds(), request.getNote(), expected,
+                    sysUserId);
+            return ResponseEntity.ok(new OrderMarkResponse(changed));
+        } catch (DateTimeParseException e) {
+            LogEvent.logError(e);
+            Map<String, Object> body = new HashMap<>();
+            body.put("message", "expectedDate must be an ISO date, yyyy-MM-dd");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        } catch (Exception e) {
+            LogEvent.logError(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @PostMapping(value = "/clear-ordered", consumes = MediaType.APPLICATION_JSON_VALUE, produces = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<?> clearOrdered(@RequestBody OrderMarkRequest request, HttpServletRequest httpRequest) {
+        try {
+            UserSessionData usd = (UserSessionData) httpRequest.getSession().getAttribute(USER_SESSION_DATA);
+            String sysUserId = String.valueOf(usd.getSystemUserId());
+            return ResponseEntity
+                    .ok(new OrderMarkResponse(inventoryItemService.clearOrdered(request.getItemIds(), sysUserId)));
+        } catch (Exception e) {
+            LogEvent.logError(e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Setter
+    @Getter
+    public static class OrderMarkRequest {
+        private List<Long> itemIds;
+        private String note;
+        /** ISO yyyy-MM-dd, or absent. */
+        private String expectedDate;
+    }
+
+    @Setter
+    @Getter
+    public static class OrderMarkResponse {
+        private int changed;
+
+        public OrderMarkResponse(int changed) {
+            this.changed = changed;
+        }
     }
 
 }
