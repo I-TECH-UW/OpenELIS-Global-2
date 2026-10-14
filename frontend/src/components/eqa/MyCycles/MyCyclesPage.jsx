@@ -1,4 +1,4 @@
-import React, { useEffect, useRef, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Grid,
   Column,
@@ -28,7 +28,13 @@ import { useIntl } from "react-intl";
 import { Link as RouterLink, useHistory } from "react-router-dom";
 import config from "../../../config.json";
 import PageBreadCrumb from "../../common/PageBreadCrumb";
-import { getFromOpenElisServer } from "../../utils/Utils";
+import CustomDatePicker from "../../common/CustomDatePicker";
+import { ConfigurationContext } from "../../layout/Layout";
+import {
+  displayDateToIso,
+  formatDateOnly,
+  getFromOpenElisServer,
+} from "../../utils/Utils";
 import {
   CycleStatusTag,
   hintStyle,
@@ -37,13 +43,14 @@ import {
 } from "../eqaCommon";
 import {
   createMyCycle,
+  fetchEnrollmentsOpenForCycles,
   fetchMyCycles,
-  fetchMyPrograms,
   importScoresCsv,
   submitCycle,
   submitCycleManually,
 } from "./cyclesApi";
 import { asList } from "../eqaApi";
+import { fetchLabPerformance } from "../Performance/performanceApi";
 
 const breadcrumbs = [
   { label: "home.label", link: "/" },
@@ -80,7 +87,8 @@ const SCHEME_TYPES = [
 ];
 
 const ENTRY_TAG = {
-  entered: "green",
+  validated: "green",
+  entered: "teal",
   in_progress: "blue",
   empty: "gray",
 };
@@ -93,13 +101,11 @@ const resultEntryUrl = (labNo) =>
 const reviewGateOpen = (cycle) =>
   cycle.requiresCycleReview && cycle.status === "ready_to_submit";
 
-// The automatic channel gives up after five attempts and never tries again, so
-// from here on the only way out is a submission recorded by hand. The alert the
-// sweep raises says exactly that; this is where it can now be acted on.
-const MAX_SUBMISSION_ATTEMPTS = 5;
-const retriesSpent = (cycle) =>
-  cycle.status === "ready_to_submit" &&
-  (cycle.submissionAttempts || 0) >= MAX_SUBMISSION_ATTEMPTS;
+const retriesSpent = (cycle) => cycle.autoSubmitReason === "RETRIES_SPENT";
+
+// Server time as "yyyy-MM-dd HH:mm:ss.f", the lab's own clock.
+const formatDueAt = (value) =>
+  `${formatDateOnly(value.substring(0, 10))} ${value.substring(11, 16)}`;
 
 // A validation is a real instant, so it renders in the viewer's timezone —
 // unlike deadlines, which are end-of-day values read as UTC (formatDateOnly).
@@ -145,9 +151,12 @@ const MyCyclesPage = () => {
   const history = useHistory();
   const t = (id, defaultMessage, values) =>
     intl.formatMessage({ id, defaultMessage }, values);
+  const { configurationProperties = {} } =
+    useContext(ConfigurationContext) || {};
 
   const [cycles, setCycles] = useState([]);
   const [uncycledOrders, setUncycledOrders] = useState([]);
+  const [openNce, setOpenNce] = useState(0);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(null);
   const [bucket, setBucket] = useState("active");
@@ -208,10 +217,19 @@ const MyCyclesPage = () => {
   const [newCycleNotice, setNewCycleNotice] = useState(null);
   const [savingCycle, setSavingCycle] = useState(false);
 
+  const setNewCycleDate = (field) => (date) =>
+    setNewCycle((prev) => ({
+      ...prev,
+      [field]: displayDateToIso(
+        date,
+        configurationProperties.DEFAULT_DATE_LOCALE,
+      ),
+    }));
+
   const openNewCycle = () => {
     setNewCycleError(null);
     setNewCycle(EMPTY_NEW_CYCLE);
-    fetchMyPrograms(setMyPrograms);
+    fetchEnrollmentsOpenForCycles(setMyPrograms);
     setNewCycleOpen(true);
   };
 
@@ -249,6 +267,7 @@ const MyCyclesPage = () => {
       // EQA order is uncycled by definition.
       setUncycledOrders(asList(data).filter((o) => !o.cycleId));
     });
+    fetchLabPerformance((data) => setOpenNce(data.kpis.eqaNceOpenCount ?? 0));
   }, []);
 
   const schemeTypeLabel = (type) =>
@@ -339,7 +358,6 @@ const MyCyclesPage = () => {
     (c) => c.status === "ready_to_submit",
   ).length;
   const awaitingCount = cycles.filter((c) => c.status === "submitted").length;
-  const openNce = cycles.filter((c) => c.hasNce).length;
 
   const filteredCycles = cycles.filter((c) => {
     if (!BUCKETS[bucket].includes(c.status)) return false;
@@ -362,6 +380,31 @@ const MyCyclesPage = () => {
     setBucket("active");
     setTypeFilter("all");
     setSearch("");
+  };
+
+  const autoSubmitLine = (cycle) => {
+    switch (cycle.autoSubmitReason) {
+      case "NO_CHANNEL":
+        return t(
+          "eqa.cycle.autoSubmit.noChannel",
+          "This site has no automatic channel to the provider, so submit by hand.",
+        );
+      case "WAITING":
+        return cycle.autoSubmitDueAt
+          ? t(
+              "eqa.cycle.autoSubmit.waiting",
+              "Sends automatically at {time} unless you submit by hand now.",
+              { time: formatDueAt(cycle.autoSubmitDueAt) },
+            )
+          : null;
+      case "DUE":
+        return t(
+          "eqa.cycle.autoSubmit.due",
+          "Sends automatically within a few minutes unless you submit by hand now.",
+        );
+      default:
+        return null;
+    }
   };
 
   const renderExpanded = (cycle) => (
@@ -398,6 +441,14 @@ const MyCyclesPage = () => {
           {t("eqa.report.download", "Download performance report")}
         </Button>
       </div>
+      {autoSubmitLine(cycle) && (
+        <p
+          data-testid={`auto-submit-${cycle.id}`}
+          style={{ ...hintStyle, textAlign: "right", margin: "0.25rem 0" }}
+        >
+          {autoSubmitLine(cycle)}
+        </p>
+      )}
       {retriesSpent(cycle) && (
         <ActionableNotification
           kind="error"
@@ -876,7 +927,7 @@ const MyCyclesPage = () => {
                     <TableCell>
                       <CycleStatusTag status={c.status} />
                     </TableCell>
-                    <TableCell>{c.deadline}</TableCell>
+                    <TableCell>{formatDateOnly(c.deadline)}</TableCell>
                     <TableCell>
                       {c.progress.entered} / {c.progress.total}
                     </TableCell>
@@ -948,11 +999,7 @@ const MyCyclesPage = () => {
                       </TableCell>
                       <TableCell>{o.programName || ""}</TableCell>
                       <TableCell>{o.status || ""}</TableCell>
-                      <TableCell>
-                        {o.deadline
-                          ? new Date(o.deadline).toLocaleDateString()
-                          : ""}
-                      </TableCell>
+                      <TableCell>{formatDateOnly(o.deadline)}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
@@ -1003,8 +1050,8 @@ const MyCyclesPage = () => {
             helperText={
               myPrograms.length === 0
                 ? t(
-                    "eqa.cycle.new.noPrograms",
-                    "Enroll in a scheme under My EQA Schemes first.",
+                    "eqa.cycle.new.noUsableEnrollments",
+                    "No active enrollment here matches a scheme on this instance. Enrollments are managed under My EQA Schemes, schemes under EQA Management, Schemes.",
                   )
                 : undefined
             }
@@ -1031,26 +1078,23 @@ const MyCyclesPage = () => {
             }
             style={{ marginTop: "1rem" }}
           />
-          <TextInput
-            id="new-cycle-distribution"
-            type="date"
-            labelText={t("eqa.cycle.new.distributionDate", "Distribution date")}
-            value={newCycle.distributionDate}
-            onChange={(e) =>
-              setNewCycle({ ...newCycle, distributionDate: e.target.value })
-            }
-            style={{ marginTop: "1rem" }}
-          />
-          <TextInput
-            id="new-cycle-deadline"
-            type="date"
-            labelText={t("eqa.cycle.new.deadline", "Submission deadline")}
-            value={newCycle.submissionDeadline}
-            onChange={(e) =>
-              setNewCycle({ ...newCycle, submissionDeadline: e.target.value })
-            }
-            style={{ marginTop: "1rem" }}
-          />
+          <div style={{ marginTop: "1rem" }}>
+            <CustomDatePicker
+              id="new-cycle-distribution"
+              labelText={t(
+                "eqa.cycle.new.distributionDate",
+                "Distribution date",
+              )}
+              onChange={setNewCycleDate("distributionDate")}
+            />
+          </div>
+          <div style={{ marginTop: "1rem" }}>
+            <CustomDatePicker
+              id="new-cycle-deadline"
+              labelText={t("eqa.cycle.new.deadline", "Submission deadline")}
+              onChange={setNewCycleDate("submissionDeadline")}
+            />
+          </div>
         </Modal>
       )}
       {scoreImport && (

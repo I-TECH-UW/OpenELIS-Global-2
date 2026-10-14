@@ -11916,7 +11916,6 @@
   "eqa.cycle.new.create": "Create cycle",
   "eqa.cycle.new.created": "Cycle created. It is listed as Planned; use \"Receive panel\" when the panel arrives.",
   "eqa.cycle.new.error": "Could not create the cycle",
-  "eqa.cycle.new.noPrograms": "Enroll in a scheme under My EQA Schemes first.",
   "eqa.order.receipt.consignment": "Inbound consignment",
   "eqa.order.receipt.consignment.none": "None — received outside the shipment module",
   "eqa.order.receipt.consignment.thisCycle": "this cycle",
@@ -12754,5 +12753,10 @@
   "reports.running": "Running...",
   "reports.empty": "Nothing matched these filters.",
   "reports.empty.stockOnHandAsOf": "No stock movements are recorded on or before this date, so stock as it stood then cannot be reconstructed. This is not the same as having held nothing.",
-  "reports.asOfDate.basis": "Reconstructed from recorded stock movements up to this date, not from a physical count."
+  "reports.asOfDate.basis": "Reconstructed from recorded stock movements up to this date, not from a physical count.",
+  "eqa.entry.validated": "Validated",
+  "eqa.cycle.new.noUsableEnrollments": "No active enrollment here matches a scheme on this instance. Enrollments are managed under My EQA Schemes, schemes under EQA Management, Schemes.",
+  "eqa.cycle.autoSubmit.noChannel": "This site has no automatic channel to the provider, so submit by hand.",
+  "eqa.cycle.autoSubmit.waiting": "Sends automatically at {time} unless you submit by hand now.",
+  "eqa.cycle.autoSubmit.due": "Sends automatically within a few minutes unless you submit by hand now."
 }
