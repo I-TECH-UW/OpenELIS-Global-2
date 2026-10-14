@@ -216,6 +216,14 @@ public class EQAPerformanceReportIntegrationTest extends EQASpineTestBase {
     }
 
     @Test
+    public void theLaboratorysOwnCopyNamesItsLaboratoryAndNoParticipant() throws IOException {
+        String text = reportText();
+
+        assertTrue(text.contains("Laboratory"));
+        assertFalse(text.contains("Participant"));
+    }
+
+    @Test
     public void programmeSummaryCountsEveryStatusAndRatesOnlyScoredResults() throws IOException {
         // 5 rows, 4 scored (one SUBMITTED row is not scored); 2 acceptable,
         // 1 questionable, 1 unacceptable, so 2/4 = 50.0% of scored results.
