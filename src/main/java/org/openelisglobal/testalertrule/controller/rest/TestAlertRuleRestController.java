@@ -278,6 +278,25 @@ public class TestAlertRuleRestController extends BaseRestController {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
                     "triggerValue is required when triggerType is SPECIFIC_VALUE");
         }
+        refuseLongerThan("name", body.name, 100);
+        refuseLongerThan("triggerValue", body.triggerValue, 100);
+        refuseLongerThan("notifyCustomPhone", body.notifyCustomPhone, 20);
+        refuseLongerThan("notifyCustomEmail", body.notifyCustomEmail, 100);
+        if (body.notifyRoleId != null && !body.notifyRoleId.isBlank() && roleService.getAllActiveRoles().stream()
+                .noneMatch(r -> !r.getGroupingRole() && body.notifyRoleId.trim().equals(r.getId()))) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "notifyRoleId is not a role that can be notified: " + body.notifyRoleId);
+        }
+    }
+
+    private static boolean longerThan(String value, int max) {
+        return value != null && value.length() > max;
+    }
+
+    private static void refuseLongerThan(String field, String value, int max) {
+        if (longerThan(value, max)) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, field + " holds at most " + max + " characters");
+        }
     }
 
     /**
@@ -318,7 +337,8 @@ public class TestAlertRuleRestController extends BaseRestController {
         rule.setNotifyReferringFacility(Boolean.TRUE.equals(body.notifyReferringFacility));
         rule.setNotifyCustomPhone(body.notifyCustomPhone);
         rule.setNotifyCustomEmail(body.notifyCustomEmail);
-        rule.setNotifyRoleId(body.notifyRoleId);
+        rule.setNotifyRoleId(
+                body.notifyRoleId == null || body.notifyRoleId.isBlank() ? null : body.notifyRoleId.trim());
         rule.setAcknowledgmentRequired(Boolean.TRUE.equals(body.acknowledgmentRequired));
     }
 }

@@ -1335,4 +1335,47 @@ describe("SampleResultsSection typed options and refusals (OGC-1458)", () => {
       ),
     );
   });
+
+  it("stops each text field at its column width (OGC-1467)", async () => {
+    await renderWithNotifications(vi.fn());
+    await screen.findByDisplayValue("SYS");
+
+    expect(document.getElementById("comp-label-0")).toHaveAttribute(
+      "maxLength",
+      "255",
+    );
+  });
+
+  it.each([
+    ["value.tooLong", "longer than"],
+    ["unit.unknown", "unit of measure"],
+  ])(
+    "explains the %s refusal on the named component (OGC-1467)",
+    async (refusal, wording) => {
+      const addNotification = vi.fn();
+      putToOpenElisServerFullResponse.mockImplementation((url, body, cb) =>
+        cb({
+          ok: false,
+          status: 422,
+          json: () =>
+            Promise.resolve({ refusal, refusedComponent: "Systolic" }),
+        }),
+      );
+      await renderWithNotifications(addNotification);
+      await screen.findByDisplayValue("SYS");
+
+      fireEvent.click(saveButton());
+
+      await vi.waitFor(() =>
+        expect(addNotification).toHaveBeenCalledWith(
+          expect.objectContaining({
+            kind: "error",
+            message: expect.stringMatching(
+              new RegExp(`Systolic[\\s\\S]*${wording}`, "i"),
+            ),
+          }),
+        ),
+      );
+    },
+  );
 });

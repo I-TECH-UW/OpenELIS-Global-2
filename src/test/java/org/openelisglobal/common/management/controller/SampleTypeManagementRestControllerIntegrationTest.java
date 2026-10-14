@@ -150,6 +150,24 @@ public class SampleTypeManagementRestControllerIntegrationTest extends BaseWebCo
                 .andExpect(jsonPath("$.data.sortOrder").value(901));
     }
 
+    /**
+     * OGC-1467: a description over the column's 40 characters is a field error, and
+     * the answer carries no database message.
+     */
+    @Test
+    public void update_aDescriptionOver40Characters_is400OnTheField() throws Exception {
+        String body = mockMvc
+                .perform(put("/rest/sample-types/95601").contentType(MediaType.APPLICATION_JSON)
+                        .content("{\"id\":\"95601\",\"name\":\"STMgmtIT Alpha\",\"description\":\"" + "d".repeat(41)
+                                + "\",\"domain\":\"CLINICAL\",\"isActive\":true}")
+                        .session(session))
+                .andExpect(status().isBadRequest()).andExpect(jsonPath("$.field").value("description")).andReturn()
+                .getResponse().getContentAsString();
+        org.junit.Assert.assertFalse(body, body.matches("(?is).*(value too long|varying|SQL).*"));
+        org.junit.Assert.assertEquals("STMgmtIT Alpha",
+                jdbc.queryForObject("SELECT description FROM clinlims.type_of_sample WHERE id = 95601", String.class));
+    }
+
     /** OGC-1465: an unknown domain is refused instead of becoming CLINICAL. */
     @Test
     public void update_anUnknownDomainIsRefused() throws Exception {

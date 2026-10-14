@@ -132,4 +132,27 @@ public class LocalizationTestNameRefreshIntegrationTest extends BaseWebContextSe
                 "SELECT value FROM clinlims.localization_value WHERE localization_id = ?" + " AND locale = 'en'",
                 String.class, NAME_LOCALIZATION_ID));
     }
+
+    /**
+     * OGC-1467: a locale the column cannot hold, a missing value and an unknown
+     * localization are refused instead of answering 500.
+     */
+    @Test
+    public void malformedTranslationSaves_areRefused() throws Exception {
+        UserSessionData usd = new UserSessionData();
+        usd.setSytemUserId(1);
+        for (String body : new String[] { "{\"abcdefghijk\":\"x\"}", "{\"fr\":null}", "{\" \":\"x\"}" }) {
+            mockMvc.perform(put("/rest/localizations/" + OTHER_LOCALIZATION_ID + "/translations")
+                    .sessionAttr(IActionConstants.USER_SESSION_DATA, usd).contentType(MediaType.APPLICATION_JSON)
+                    .content(body)).andExpect(status().isBadRequest());
+        }
+        mockMvc.perform(
+                put("/rest/localizations/99999999/translations").sessionAttr(IActionConstants.USER_SESSION_DATA, usd)
+                        .contentType(MediaType.APPLICATION_JSON).content("{\"en\":\"x\"}"))
+                .andExpect(status().isNotFound());
+        assertEquals(Integer.valueOf(0),
+                jdbc.queryForObject(
+                        "SELECT count(*) FROM clinlims.localization_value WHERE localization_id = ? AND locale <> 'en'",
+                        Integer.class, OTHER_LOCALIZATION_ID));
+    }
 }

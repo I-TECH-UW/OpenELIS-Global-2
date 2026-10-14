@@ -180,6 +180,39 @@ public class TestAlertRuleRestControllerIntegrationTest extends BaseWebContextSe
         assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
     }
 
+    /**
+     * OGC-1467: values the columns cannot hold, and a role nobody can be notified
+     * through, are refused instead of failing the insert with a 500.
+     */
+    @Test
+    public void create_anOverLongValue_isRefusedNamingItsField() {
+        AlertRuleRequest body = req("Bounds", "ALL", null);
+        body.notifyCustomPhone = "1".repeat(21);
+        ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                () -> controller.create(testId(), body, authedRequest()));
+        assertEquals("notifyCustomPhone holds at most 20 characters", ex.getReason());
+    }
+
+    @Test
+    public void create_valuesTheColumnsCannotHold_orAnUnknownRole_areRefused() {
+        List<java.util.function.Consumer<AlertRuleRequest>> refused = List.of(b -> b.name = "n".repeat(101),
+                b -> b.notifyCustomPhone = "1".repeat(21), b -> b.notifyCustomEmail = "e".repeat(95) + "@x.org",
+                b -> b.notifyRoleId = "abc", b -> b.notifyRoleId = "999999");
+        for (java.util.function.Consumer<AlertRuleRequest> change : refused) {
+            AlertRuleRequest body = req("Bounds", "ALL", null);
+            change.accept(body);
+            ResponseStatusException ex = assertThrows(ResponseStatusException.class,
+                    () -> controller.create(testId(), body, authedRequest()));
+            assertEquals(HttpStatus.BAD_REQUEST, ex.getStatusCode());
+        }
+        assertTrue(controller.list(testId()).isEmpty());
+
+        AlertRuleRequest fits = req("n".repeat(100), "ALL", null);
+        fits.notifyCustomPhone = "1".repeat(20);
+        fits.notifyRoleId = controller.roles(testId()).get(0).getId();
+        assertEquals(fits.notifyRoleId, controller.create(testId(), fits, authedRequest()).getBody().notifyRoleId);
+    }
+
     @Test
     public void create_unknownTest_throwsNotFound() {
         ResponseStatusException ex = assertThrows(ResponseStatusException.class,

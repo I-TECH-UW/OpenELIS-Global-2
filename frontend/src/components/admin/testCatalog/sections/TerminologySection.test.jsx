@@ -28,6 +28,7 @@ import { waitFor } from "@testing-library/dom";
 import "@testing-library/jest-dom";
 import { IntlProvider } from "react-intl";
 import TerminologySection from "./TerminologySection";
+import { NotificationContext } from "../../../layout/Layout";
 import {
   getFromOpenElisServer,
   putToOpenElisServerFullResponse,
@@ -348,5 +349,56 @@ describe("TerminologySection", () => {
       screen.getByRole("button", { name: messages["label.results.refresh"] }),
     );
     expect(screen.queryByTestId("terminology-stale-save")).toBeNull();
+  });
+
+  /** OGC-1467: an over-long code is refused as such, not as a duplicate. */
+  it("stops the inputs at their columns and names a length refusal", async () => {
+    getFromOpenElisServer.mockImplementation((url, cb) =>
+      cb({
+        testId: "42",
+        version: "v1",
+        mappings: [
+          { id: "a", source: "LOINC", code: "2345-7", relationship: "SAME_AS" },
+        ],
+        sampleTypes: [],
+      }),
+    );
+    putToOpenElisServerFullResponse.mockImplementation((url, payload, cb) =>
+      cb({
+        status: 422,
+        json: () =>
+          Promise.resolve({
+            messageKey: "error.testCatalog.terminology.tooLong",
+          }),
+      }),
+    );
+    const addNotification = vi.fn();
+    const { container } = render(
+      <IntlProvider locale="en" messages={messages}>
+        <NotificationContext.Provider
+          value={{ addNotification, setNotificationVisible: () => {} }}
+        >
+          <TerminologySection testId="42" />
+        </NotificationContext.Provider>
+      </IntlProvider>,
+    );
+    await screen.findByTestId("mapping-row-a");
+    expect(container.querySelector("#terminology-code")).toHaveAttribute(
+      "maxlength",
+      "80",
+    );
+    expect(
+      container.querySelector("#terminology-display-name"),
+    ).toHaveAttribute("maxlength", "255");
+
+    fireEvent.click(screen.getByRole("button", { name: /^save$/i }));
+
+    await waitFor(() =>
+      expect(addNotification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          message: messages["error.testCatalog.terminology.tooLong"],
+        }),
+      ),
+    );
   });
 });
