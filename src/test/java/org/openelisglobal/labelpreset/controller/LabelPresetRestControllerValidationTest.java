@@ -255,12 +255,33 @@ public class LabelPresetRestControllerValidationTest extends BaseWebContextSensi
                 .perform(post(BASE_URL).contentType(MediaType.APPLICATION_JSON).content(JSON.writeValueAsString(form)))
                 .andExpect(status().isCreated()).andReturn();
         LabelPreset source = JSON.readValue(postResult.getResponse().getContentAsString(), LabelPreset.class);
+        assertNotNull("Source should have an id", source.getId());
 
         String dupBody = "{\"name\": \"" + TEST_PREFIX + "dup_copy\"}";
-        mockMvc.perform(post(BASE_URL + "/" + source.getId() + "/duplicate").contentType(MediaType.APPLICATION_JSON)
-                .content(dupBody)).andExpect(status().isCreated())
+        MvcResult dupResult = mockMvc
+                .perform(post(BASE_URL + "/" + source.getId() + "/duplicate").contentType(MediaType.APPLICATION_JSON)
+                        .content(dupBody))
+                .andExpect(status().isCreated())
+                .andExpect(jsonPath("$.id").value(org.hamcrest.CoreMatchers.notNullValue()))
                 .andExpect(jsonPath("$.name").value(TEST_PREFIX + "dup_copy"))
-                .andExpect(jsonPath("$.isSystem").value(false)).andExpect(jsonPath("$.isActive").value(true));
+                .andExpect(jsonPath("$.isSystem").value(false)).andExpect(jsonPath("$.isActive").value(true))
+                .andReturn();
+
+        LabelPreset copy = JSON.readValue(dupResult.getResponse().getContentAsString(), LabelPreset.class);
+        assertNotNull("Copy should have an id", copy.getId());
+        assertTrue("Copy id should differ from source", !copy.getId().equals(source.getId()));
+
+        MvcResult getSourceResult = mockMvc.perform(get(BASE_URL + "/" + source.getId())).andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(source.getId()))
+                .andExpect(jsonPath("$.name").value(TEST_PREFIX + "dup_source"))
+                .andExpect(jsonPath("$.isSystem").value(false)).andExpect(jsonPath("$.isActive").value(true))
+                .andReturn();
+        LabelPreset reReadSource = JSON.readValue(getSourceResult.getResponse().getContentAsString(),
+                LabelPreset.class);
+        assertEquals("Source id must remain unchanged", source.getId(), reReadSource.getId());
+        assertEquals("Source name must remain unchanged", TEST_PREFIX + "dup_source", reReadSource.getName());
+        assertEquals("Source isSystem must remain unchanged", Boolean.FALSE, reReadSource.getIsSystem());
+        assertEquals("Source isActive must remain unchanged", Boolean.TRUE, reReadSource.getIsActive());
     }
 
     // ── PUT update ────────────────────────────────────────────────────────────
