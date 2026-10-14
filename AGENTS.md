@@ -646,7 +646,7 @@ exists in one of them.
 
 Use `scripts/dev-stack` from the root of every clone or worktree. It is the only
 supported interactive development launcher and starts the complete core
-OpenELIS + analyzer harness with worktree-scoped containers, images, networks,
+OpenELIS + analyzer harness with checkout-scoped containers, images, networks,
 ports, and volumes.
 
 ```bash

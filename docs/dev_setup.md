@@ -3,6 +3,9 @@
 For everyday development, use `scripts/dev-stack`. Run commands from the
 repository root of the clone or worktree you are editing.
 
+A normal clone is fully supported. Separate checkout directories get separate
+containers, ports and data; creating a Git worktree is not required.
+
 | Purpose                              | Entry point                                   | What runs                                                                |
 | ------------------------------------ | --------------------------------------------- | ------------------------------------------------------------------------ |
 | Edit and try the application locally | `scripts/dev-stack up`                        | Current source, frontend hot reload, persistent worktree data            |
@@ -79,9 +82,9 @@ reads the operating-system trust store; separate browser-specific certificate
 stores are not configured by the launcher.
 
 `up` generates a certificate covering `localhost`, `127.0.0.1`, and `::1`,
-stores its leaf key under ignored `.worktrees/dev-stack-tls/`, and installs only
-that leaf certificate/key in this worktree's proxy. It verifies HTTPS without
-ignoring certificate errors. The trust setup announces its scope and delegates
+stores its leaf key under ignored `.dev-stack/tls/`, and installs only that leaf
+certificate/key in this worktree's proxy. It verifies HTTPS without ignoring
+certificate errors. The trust setup announces its scope and delegates
 administrator authentication to mkcert. For an unattended first start, prepare
 trust interactively with `TRUST_STORES=system mkcert -install` first.
 `DEV_STACK_TLS=self-signed` remains an explicit option for headless fixtures; it

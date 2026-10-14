@@ -336,7 +336,7 @@ class DevStackContractTest(unittest.TestCase):
             self.assertEqual("proxy:/etc/nginx/keys/apache-selfsigned.key", copies[1][-1])
             self.assertTrue(all(context.project in command for command in copies))
             self.assertFalse(any("rootCA" in part for command in commands for part in command))
-            self.assertEqual(0o600, (context.repo_root / ".worktrees/dev-stack-tls/localhost-key.pem").stat().st_mode & 0o777)
+            self.assertEqual(0o600, (context.repo_root / ".dev-stack/tls/localhost-key.pem").stat().st_mode & 0o777)
 
     def test_trusted_tls_fails_closed_on_certificate_errors(self):
         context = self.dev_stack.make_context(REPO_ROOT)

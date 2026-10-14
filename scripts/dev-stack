@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Worktree-isolated OpenELIS development stack interface."""
+"""Checkout-isolated OpenELIS development stack interface."""
 
 from __future__ import annotations
 
@@ -370,7 +370,7 @@ def ensure_local_tls_trust(context: StackContext, environment: dict[str, str]) -
 def configure_local_tls(context: StackContext, environment: dict[str, str]) -> None:
     if not is_local_domain(environment["LETSENCRYPT_DOMAIN"]):
         raise ValueError("DEV_STACK_TLS=local-ca is only supported for loopback hosts")
-    directory = context.repo_root / ".worktrees" / "dev-stack-tls"
+    directory = context.repo_root / ".dev-stack" / "tls"
     directory.mkdir(parents=True, exist_ok=True, mode=0o700)
     certificate, key = directory / "localhost.pem", directory / "localhost-key.pem"
     run(
@@ -553,7 +553,7 @@ def doctor(context: StackContext, environment: dict[str, str]) -> None:
 def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     parser = argparse.ArgumentParser(
         prog="dev-stack",
-        description="Run the full worktree-isolated OpenELIS + analyzer development stack.",
+        description="Run the full checkout-isolated OpenELIS + analyzer development stack.",
     )
     subparsers = parser.add_subparsers(dest="command", required=True)
     up = subparsers.add_parser("up")
