@@ -92,6 +92,26 @@ describe("LocalizationSection", () => {
     ).toBe("Glucose FR");
   });
 
+  // OGC-1465 review: the English value every screen falls back to cannot be
+  // blanked; the section says so instead of a generic save error.
+  it("refuses to blank the English name and says why", async () => {
+    mockHappyPath();
+    renderSection("en");
+    const name = await screen.findByRole("textbox", {
+      name: messages["label.testCatalog.localization.field.name"],
+    });
+
+    fireEvent.change(name, { target: { value: "   " } });
+    fireEvent.click(screen.getByRole("button", { name: /save/i }));
+
+    expect(
+      await screen.findByText(
+        messages["label.testCatalog.localization.fallbackRequired"],
+      ),
+    ).toBeInTheDocument();
+    expect(putToOpenElisServerFullResponse).not.toHaveBeenCalled();
+  });
+
   // OGC-1457 review: each translation input is named by its field, so a screen
   // reader announces "Test Name", not a bare text box.
   it("names each translation input after its field", async () => {

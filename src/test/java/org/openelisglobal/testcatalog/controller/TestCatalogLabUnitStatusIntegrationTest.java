@@ -109,6 +109,7 @@ public class TestCatalogLabUnitStatusIntegrationTest extends BaseWebContextSensi
         jdbc.update("DELETE FROM clinlims.localization WHERE id = ?", SAMPLE_TYPE);
         for (long id : new long[] { INACTIVE_A, INACTIVE_B, ACTIVE_C }) {
             jdbc.update("DELETE FROM clinlims.test_section WHERE id = ?", id);
+            jdbc.update("DELETE FROM clinlims.localization_value WHERE localization_id = ?", id);
             jdbc.update("DELETE FROM clinlims.localization WHERE id = ?", id);
         }
     }
@@ -264,5 +265,30 @@ public class TestCatalogLabUnitStatusIntegrationTest extends BaseWebContextSensi
 
         assertEquals("a second deactivation from the same old page is stale too", 409,
                 labUnits.deactivateLabUnit(request(), String.valueOf(ACTIVE_C), deactivation).getStatusCode().value());
+    }
+
+    /**
+     * OGC-1465: a rename onto another unit's name is refused, as a create is; a
+     * name the unit already holds is not a rename.
+     */
+    @org.junit.Test
+    public void aRenameOntoAnotherUnitsNameIsRefused() throws Exception {
+        long valueId = 95499L;
+        for (long id : new long[] { INACTIVE_A, ACTIVE_C }) {
+            jdbc.update(
+                    "INSERT INTO clinlims.localization_value (id, localization_id, locale, value, last_updated)"
+                            + " VALUES (?, ?, 'en', ?, NOW())",
+                    valueId--, id, id == ACTIVE_C ? "LabUnitStatusIT C" : "LabUnitStatusIT A");
+        }
+        LabUnitManagementDTO unitC = labUnits.getLabUnit(String.valueOf(ACTIVE_C)).getBody().getData();
+
+        unitC.setNames(java.util.Map.of("en", " labunitstatusit a "));
+        assertEquals(409, labUnits.updateLabUnit(request(), String.valueOf(ACTIVE_C), unitC).getStatusCode().value());
+
+        LabUnitManagementDTO unchanged = labUnits.getLabUnit(String.valueOf(ACTIVE_C)).getBody().getData();
+        unchanged.setNames(java.util.Map.of("en", "LabUnitStatusIT C"));
+        unchanged.setDescription("only the description changes");
+        assertEquals(200,
+                labUnits.updateLabUnit(request(), String.valueOf(ACTIVE_C), unchanged).getStatusCode().value());
     }
 }
