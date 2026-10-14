@@ -12,11 +12,10 @@ set -euo pipefail
 #   analyzers are all set up by the stories that run on it (the evidence recording).
 # A newly created analyzer is set up as an operator would in the setup screens:
 # its shipped defaults confirmed, applied and activated. An analyzer whose
-# defaults leave a row unresolved stays in Setup, except the BC-5380: its
-# profile declares a microscope exam no catalog test carries, so it activates
-# with those rows undecided, as Finish and activate allows, and its mapping
-# page holds them until the lab maps them or marks them Do not receive. This
-# seed runs on dev, demo and testing stacks only, never at a lab.
+# defaults leave a row of an assay that is on unresolved stays in Setup; an
+# assay that starts off (no local test carries its code, as for the BC-5380's
+# manual differential) is not mapped, as in Verify. This seed runs on dev, demo
+# and testing stacks only, never at a lab.
 ENSURE_CONNECTIONS=false
 MOCK_NETWORK=true
 NETWORKS_ONLY=false
@@ -153,7 +152,6 @@ reconcile_profile_analyzer() {
   local connection_values="{}"
   [ "$#" -ge 4 ] && connection_values="$4"
   local lab_unit_id="${5:-$LAB_UNIT_ID}"
-  local activate_undecided="${6:-false}"
 
   local payload
   payload="$(
@@ -201,7 +199,7 @@ PY
   fi
   echo "  $action_label: $name ($profile_id@$profile_revision)"
   if [ "$action" = "create" ]; then
-    set_up_like_an_operator "$(find_analyzer_id "$name")" "$name" "$activate_undecided"
+    set_up_like_an_operator "$(find_analyzer_id "$name")" "$name"
   fi
 }
 
@@ -214,12 +212,11 @@ api_send() {
 }
 
 # Confirm every resolved row of the analyzer's own mapping, apply it and activate, as Verify,
-# Apply and "Finish and activate" do. Unresolved rows leave the analyzer in Setup, unless the
-# third argument is true: then they stay undecided on its mapping page, as the screens allow.
+# Apply and "Finish and activate" do. An unresolved row of an assay that is on leaves the
+# analyzer in Setup; assays that are off are not mapped.
 set_up_like_an_operator() {
   local analyzer_id="$1"
   local name="$2"
-  local activate_undecided="${3:-false}"
   local request
   local status
   local undecided
@@ -231,14 +228,17 @@ import sys
 with open(sys.argv[1], encoding="utf-8") as handle:
     mapping = json.load(handle)
 codes = set()
+off = {t["sourceRowKey"] for t in mapping.get("tests", []) if not t.get("subIdentity") and t.get("enabled") is False}
 for test in mapping.get("tests", []):
+    if test["sourceRowKey"] in off:
+        continue
     states = [test.get("mappingState")] + [r.get("mappingState") for r in test.get("results", [])]
     if any(state not in ("BOUND", "EXCLUDED") for state in states):
         codes.add(test["sourceRowKey"])
 print(" ".join(sorted(codes)))
 PY
 )"
-  if [ -n "$undecided" ] && [ "$activate_undecided" != true ]; then
+  if [ -n "$undecided" ]; then
     echo "  Left in Setup: $name has unresolved mapping rows to review in OpenELIS ($undecided)"
     return 0
   fi
@@ -274,11 +274,7 @@ PY
   [ "$status" = "200" ] || { echo "ERROR: Could not apply $name's mapping (HTTP $status)" >&2; sed 's/^/  /' "$RESPONSE_FILE" >&2; return 1; }
   status="$(api_send POST "$ANALYZER_API/$analyzer_id/activate" '{}')"
   [ "$status" = "200" ] || { echo "ERROR: Could not activate $name (HTTP $status)" >&2; sed 's/^/  /' "$RESPONSE_FILE" >&2; return 1; }
-  if [ -n "$undecided" ]; then
-    echo "  Confirmed, applied and activated: $name; its mapping page holds $undecided"
-  else
-    echo "  Confirmed, applied and activated: $name"
-  fi
+  echo "  Confirmed, applied and activated: $name"
 }
 
 lookup_mock_network_ip() {
@@ -409,7 +405,7 @@ reconcile_profile_analyzer "Cepheid GeneXpert (ASTM Mode)" "$GENEXPERT_PROFILE_I
 reconcile_profile_analyzer "QuantStudio 5" "$QUANTSTUDIO_PROFILE_ID" "$QUANTSTUDIO_REVISION" '{"directory":"/data/analyzer-imports/quantstudio-5/incoming"}'
 reconcile_profile_analyzer "QuantStudio 7" "$QUANTSTUDIO_PROFILE_ID" "$QUANTSTUDIO_REVISION" '{"directory":"/data/analyzer-imports/quantstudio-7/incoming"}'
 reconcile_profile_analyzer "FluoroCycler XT" "$FLUOROCYCLER_PROFILE_ID" "$FLUOROCYCLER_REVISION" '{"directory":"/data/analyzer-imports/fluorocycler-xt/incoming"}'
-reconcile_profile_analyzer "Mindray BC-5380" "$BC5380_PROFILE_ID" "$BC5380_REVISION" '{"senderId":"OE2-TEST-BC5380"}' "$BC5380_LAB_UNIT_ID" true
+reconcile_profile_analyzer "Mindray BC-5380" "$BC5380_PROFILE_ID" "$BC5380_REVISION" '{"senderId":"OE2-TEST-BC5380"}' "$BC5380_LAB_UNIT_ID"
 
 if [ "$ENSURE_CONNECTIONS" = true ]; then
   echo "Done. Missing harness connections created; existing configuration and review data preserved."
