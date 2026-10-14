@@ -59,7 +59,7 @@ describe("parseGs1", () => {
     expect(parseGs1("not a barcode at all").raw).toBe("not a barcode at all");
   });
 
-  it("reads past identifiers the form does not use", () => {
+  it("skips a fixed-length identifier the form does not use", () => {
     const result = parseGs1(`0108901234567890112401011727123110ABC${GS}21XYZ`);
 
     expect(result.fields).toEqual({
@@ -69,6 +69,14 @@ describe("parseGs1", () => {
       serial: "XYZ",
     });
     expect(result.unparsed).toEqual([]);
+  });
+
+  it("stops at an identifier it does not know rather than guessing", () => {
+    const result = parseGs1("010890123456789091SOMETHINGELSE");
+
+    expect(result.fields.gtin).toBe("08901234567890");
+    expect(result.unparsed).toContain("91SOMETHINGELSE");
+    expect(result.fields.lotNumber).toBeUndefined();
   });
 
   it("reports an impossible date as unparsed instead of inventing one", () => {
