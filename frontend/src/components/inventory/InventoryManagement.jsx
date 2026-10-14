@@ -11,7 +11,7 @@ import {
 import { FormattedMessage } from "react-intl";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 import InventoryItemsBoard from "./InventoryItemsBoard";
-import InventoryCatalog from "./InventoryCatalog";
+import ReceiveDelivery from "./ReceiveDelivery";
 import InventoryReports from "./InventoryReports";
 import "./InventoryList.css";
 
@@ -26,6 +26,7 @@ const breadcrumbs = [
 
 const InventoryManagement = () => {
   const [selectedTab, setSelectedTab] = useState(0);
+  const [boardVersion, setBoardVersion] = useState(0);
 
   return (
     <>
@@ -33,9 +34,9 @@ const InventoryManagement = () => {
       <Grid fullWidth={true}>
         <Column lg={16} md={8} sm={4}>
           <div className="orderLegendBody">
-            <h2>
+            <h1 className="page-heading-05">
               <FormattedMessage id="inventory.list.title" />
-            </h2>
+            </h1>
 
             <Tabs
               selectedIndex={selectedTab}
@@ -46,7 +47,7 @@ const InventoryManagement = () => {
                   <FormattedMessage id="inventory.board.title" />
                 </Tab>
                 <Tab>
-                  <FormattedMessage id="inventory.tab.catalog" />
+                  <FormattedMessage id="inventory.tab.receive" />
                 </Tab>
                 <Tab>
                   <FormattedMessage id="inventory.tab.reports" />
@@ -56,12 +57,13 @@ const InventoryManagement = () => {
               <TabPanels>
                 {/* Items Tab - Items Board */}
                 <TabPanel>
-                  <InventoryItemsBoard />
+                  <InventoryItemsBoard reloadKey={boardVersion} />
                 </TabPanel>
 
-                {/* Catalog Tab - Manage Inventory Items */}
                 <TabPanel>
-                  <InventoryCatalog />
+                  <ReceiveDelivery
+                    onSaved={() => setBoardVersion((version) => version + 1)}
+                  />
                 </TabPanel>
 
                 {/* Reports Tab - Generate Reports */}
