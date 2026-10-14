@@ -2,6 +2,7 @@ import React, { useCallback, useEffect, useMemo, useState } from "react";
 import {
   Button,
   ComboBox,
+  DismissibleTag,
   FilterableMultiSelect,
   InlineNotification,
   Link as CarbonLink,
@@ -51,10 +52,16 @@ const AnalyzerSetup = ({ currentStep = "instrument", onClose }) => {
   const history = useHistory();
   const location = useLocation();
   const currentIndex = Math.max(SETUP_STEPS.indexOf(currentStep), 0);
-  const [analyzerName, setAnalyzerName] = useState("");
+  const [analyzerName, setAnalyzerName] = useState(
+    () => new URLSearchParams(location.search).get("name") || "",
+  );
   const [profileCatalog, setProfileCatalog] = useState(null);
   const [labUnits, setLabUnits] = useState([]);
-  const [selectedLabUnitIds, setSelectedLabUnitIds] = useState([]);
+  const [selectedLabUnitIds, setSelectedLabUnitIds] = useState(() =>
+    (new URLSearchParams(location.search).get("labUnits") || "")
+      .split(",")
+      .filter(Boolean),
+  );
   const [candidate, setCandidate] = useState(null);
   // What the mapping editor embedded in Verify last reported.
   const [verifyState, setVerifyState] = useState({
@@ -310,6 +317,16 @@ const AnalyzerSetup = ({ currentStep = "instrument", onClose }) => {
   const returnParams = new URLSearchParams(location.search);
   returnParams.delete("profile");
   returnParams.delete("revision");
+  if (!candidate?.id) {
+    returnParams.delete("name");
+    returnParams.delete("labUnits");
+    if (analyzerName.trim()) {
+      returnParams.set("name", analyzerName.trim());
+    }
+    if (selectedLabUnitIds.length > 0) {
+      returnParams.set("labUnits", selectedLabUnitIds.join(","));
+    }
+  }
   const returnTo = `${location.pathname}?${returnParams.toString()}`;
   const createTypeTarget = `/analyzers/types?action=create&returnTo=${encodeURIComponent(
     returnTo,
@@ -419,7 +436,7 @@ const AnalyzerSetup = ({ currentStep = "instrument", onClose }) => {
           <Button
             kind="ghost"
             renderIcon={Close}
-            onClick={onClose}
+            onClick={() => onClose()}
             data-testid="analyzer-setup-close"
           >
             {intl.formatMessage({ id: "analyzer.setup.close" })}
@@ -550,6 +567,34 @@ const AnalyzerSetup = ({ currentStep = "instrument", onClose }) => {
                   id: "analyzer.setup.instrument.labUnits.required",
                 })}
               />
+              {selectedLabUnits.length > 0 && (
+                <div
+                  className="analyzer-setup__lab-unit-tags"
+                  data-testid="analyzer-setup-lab-unit-tags"
+                >
+                  {selectedLabUnits.map((unit) => {
+                    const remove = intl.formatMessage(
+                      { id: "analyzer.setup.instrument.labUnits.remove" },
+                      { name: unit.name },
+                    );
+                    return (
+                      <DismissibleTag
+                        key={unit.id}
+                        type="gray"
+                        size="sm"
+                        text={unit.name}
+                        title={remove}
+                        dismissTooltipLabel={remove}
+                        onClose={() =>
+                          setSelectedLabUnitIds((ids) =>
+                            ids.filter((id) => id !== String(unit.id)),
+                          )
+                        }
+                      />
+                    );
+                  })}
+                </div>
+              )}
               <div className="analyzer-setup__instrument-actions">
                 <CarbonLink as={RouterLink} to={createTypeTarget}>
                   {intl.formatMessage({

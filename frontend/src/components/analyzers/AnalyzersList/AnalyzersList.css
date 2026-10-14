@@ -115,3 +115,11 @@
   width: 100%;
   margin-bottom: 1rem;
 }
+
+.analyzers-list__notice {
+  margin-bottom: 1rem;
+}
+
+.analyzers-list__notice .cds--inline-notification {
+  max-width: none;
+}

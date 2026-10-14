@@ -161,6 +161,18 @@ const AnalyzerAssaysSetup = ({ analyzerId, onContinue }) => {
           .some((text) => text.toLowerCase().includes(needle)),
       )
     : assays;
+  // Assays the catalog already matched first; the rest need a test chosen in
+  // Verify if they are on.
+  const groups = [
+    {
+      key: "matched",
+      assays: shown.filter((assay) => assay.mappingState === "BOUND"),
+    },
+    {
+      key: "unmatched",
+      assays: shown.filter((assay) => assay.mappingState !== "BOUND"),
+    },
+  ];
   const setAll = (enabled) =>
     setChoices((current) =>
       Object.fromEntries(
@@ -211,34 +223,52 @@ const AnalyzerAssaysSetup = ({ analyzerId, onContinue }) => {
               { on, total: assays.length },
             )}
           </p>
-          <ul className="analyzer-setup__assay-list">
-            {shown.map((assay) => {
-              const code = assay.sourceRowKey;
-              const choice = choices[code] || {};
-              const assayLabel = assay.testNameHint
-                ? `${assay.rawCode} · ${assay.testNameHint}`
-                : assay.rawCode;
-              return (
-                <li key={code} data-testid={`analyzer-assay-${code}`}>
-                  <Checkbox
-                    id={`analyzer-assay-enabled-${code}`}
-                    aria-label={assayLabel}
-                    labelText={assayLabel}
-                    checked={Boolean(choice.enabled)}
-                    onChange={(_, { checked }) =>
-                      choose(code, { enabled: checked })
-                    }
-                  />
-                  <span className="analyzer-setup__assay-match">
+          {groups.map(
+            (group) =>
+              group.assays.length > 0 && (
+                <section
+                  key={group.key}
+                  className="analyzer-setup__assay-group"
+                  aria-labelledby={`analyzer-assay-group-${group.key}`}
+                  data-testid={`analyzer-assays-group-${group.key}`}
+                >
+                  <h5 id={`analyzer-assay-group-${group.key}`}>
                     {intl.formatMessage(
-                      { id: matchMessage(assay) },
-                      { name: assay.selectedTest?.name },
+                      { id: `analyzer.setup.assays.group.${group.key}` },
+                      { count: group.assays.length },
                     )}
-                  </span>
-                </li>
-              );
-            })}
-          </ul>
+                  </h5>
+                  <ul className="analyzer-setup__assay-list">
+                    {group.assays.map((assay) => {
+                      const code = assay.sourceRowKey;
+                      const choice = choices[code] || {};
+                      const assayLabel = assay.testNameHint
+                        ? `${assay.rawCode} · ${assay.testNameHint}`
+                        : assay.rawCode;
+                      return (
+                        <li key={code} data-testid={`analyzer-assay-${code}`}>
+                          <Checkbox
+                            id={`analyzer-assay-enabled-${code}`}
+                            aria-label={assayLabel}
+                            labelText={assayLabel}
+                            checked={Boolean(choice.enabled)}
+                            onChange={(_, { checked }) =>
+                              choose(code, { enabled: checked })
+                            }
+                          />
+                          <span className="analyzer-setup__assay-match">
+                            {intl.formatMessage(
+                              { id: matchMessage(assay) },
+                              { name: assay.selectedTest?.name },
+                            )}
+                          </span>
+                        </li>
+                      );
+                    })}
+                  </ul>
+                </section>
+              ),
+          )}
         </>
       )}
       {saveFailure && (
@@ -250,7 +280,7 @@ const AnalyzerAssaysSetup = ({ analyzerId, onContinue }) => {
           subtitle={analyzerErrorText(intl, saveFailure, null)}
         />
       )}
-      <div className="analyzer-setup__verify-actions">
+      <div className="analyzer-setup__assays-actions">
         <Button
           type="button"
           renderIcon={ArrowRight}

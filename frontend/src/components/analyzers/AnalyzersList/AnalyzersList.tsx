@@ -18,6 +18,7 @@ import {
   OverflowMenuItem,
   Dropdown,
   Callout,
+  InlineNotification,
 } from "@carbon/react";
 import { Add, CheckmarkFilled, WarningFilled } from "@carbon/icons-react";
 import { Link as RouterLink } from "react-router-dom";
@@ -34,9 +35,7 @@ import {
   type AnalyzersResponse,
   type AnalyzerTypeCatalog,
 } from "../../../services/analyzerService";
-import AnalyzerLifecycleModal, {
-  type AnalyzerLifecycleAction,
-} from "../AnalyzerLifecycleModal/AnalyzerLifecycleModal";
+import AnalyzerLifecycleModal from "../AnalyzerLifecycleModal/AnalyzerLifecycleModal";
 import AnalyzerSetup, {
   type AnalyzerSetupStep,
 } from "../AnalyzerSetup/AnalyzerSetup";
@@ -81,10 +80,25 @@ const isAnalyzerSetupStep = (
   value === "verify" ||
   value === "connect";
 
-const isAnalyzerLifecycleAction = (
-  value: string | null,
-): value is AnalyzerLifecycleAction =>
-  value === "activate" || value === "deactivate" || value === "reactivate";
+// Setup's own address; the rest of the list's address survives it.
+const SETUP_PARAMS = [
+  "setup",
+  "analyzerId",
+  "profile",
+  "revision",
+  "name",
+  "labUnits",
+];
+
+// What setup's Connect step did, said on the list it returns to.
+interface AnalyzerSetupNotice {
+  kind: "activated" | "saved" | "updated";
+  name: string;
+}
+
+// Deactivate is confirmed in a dialog; Activate and Reactivate open setup's
+// Connect step, the one place an analyzer is activated.
+type AnalyzerLifecycleAction = "activate" | "deactivate" | "reactivate";
 
 const lifecycleActionsFor = (
   status: AnalyzerStatus,
@@ -115,6 +129,15 @@ const AnalyzersList = () => {
   > | null>(null);
   const [labUnitNames, setLabUnitNames] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
+  const [setupNotice, setSetupNotice] = useState<AnalyzerSetupNotice | null>(
+    null,
+  );
+  // The list comes back at setup's scroll position; its notice is at the top.
+  useEffect(() => {
+    if (setupNotice && document.scrollingElement) {
+      document.scrollingElement.scrollTop = 0;
+    }
+  }, [setupNotice]);
   const [searchTerm, setSearchTerm] = useState("");
   const [filters, setFilters] = useState<AnalyzerFilters>({
     status: "",
@@ -132,9 +155,8 @@ const AnalyzersList = () => {
   const visibleSetupStep = isAnalyzerSetupStep(setupStep) ? setupStep : null;
   const setupAnalyzerId = queryParams.get("analyzerId");
   const lifecycleActionParam = queryParams.get("lifecycle");
-  const lifecycleAction = isAnalyzerLifecycleAction(lifecycleActionParam)
-    ? lifecycleActionParam
-    : null;
+  const lifecycleAction =
+    lifecycleActionParam === "deactivate" ? lifecycleActionParam : null;
   const lifecycleAnalyzerId = queryParams.get("lifecycleAnalyzerId");
   const lifecycleAnalyzer = lifecycleAnalyzerId
     ? analyzers.find((analyzer) => analyzer.id === lifecycleAnalyzerId) || null
@@ -158,7 +180,7 @@ const AnalyzersList = () => {
 
   const openSetup = () => {
     const params = new URLSearchParams(location.search);
-    ["analyzerId", "profile", "revision"].forEach((key) => params.delete(key));
+    SETUP_PARAMS.forEach((key) => params.delete(key));
     params.set("setup", "instrument");
     history.push({ pathname: "/analyzers", search: params.toString() });
   };
@@ -215,6 +237,10 @@ const AnalyzersList = () => {
     if (!analyzer.id) {
       return;
     }
+    if (action !== "deactivate") {
+      openExistingSetup(analyzer, "connect");
+      return;
+    }
 
     const params = new URLSearchParams(location.search);
     params.set("lifecycle", action);
@@ -263,11 +289,10 @@ const AnalyzersList = () => {
     [],
   );
 
-  const closeSetup = () => {
+  const closeSetup = (notice?: AnalyzerSetupNotice) => {
+    setSetupNotice(notice ?? null);
     const params = new URLSearchParams(location.search);
-    ["setup", "analyzerId", "profile", "revision"].forEach((key) =>
-      params.delete(key),
-    );
+    SETUP_PARAMS.forEach((key) => params.delete(key));
     loadAnalyzers({
       status: listStatus,
       testUnit: listTestUnit,
@@ -490,6 +515,28 @@ const AnalyzersList = () => {
           </Button>
         }
       />
+
+      {setupNotice && (
+        <div className="analyzers-list__notice">
+          <InlineNotification
+            kind="success"
+            lowContrast
+            data-testid="analyzer-setup-notice"
+            title={intl.formatMessage(
+              { id: `analyzer.list.notice.${setupNotice.kind}` },
+              { name: setupNotice.name },
+            )}
+            subtitle={
+              setupNotice.kind === "saved"
+                ? intl.formatMessage({
+                    id: "analyzer.list.notice.saved.detail",
+                  })
+                : undefined
+            }
+            onCloseButtonClick={() => setSetupNotice(null)}
+          />
+        </div>
+      )}
 
       <BridgePairing />
 
@@ -909,7 +956,6 @@ const AnalyzersList = () => {
       {lifecycleAction && lifecycleAnalyzer && (
         <AnalyzerLifecycleModal
           key={`${lifecycleAction}-${lifecycleAnalyzer.id}`}
-          action={lifecycleAction}
           analyzer={lifecycleAnalyzer}
           open
           onClose={closeLifecycle}

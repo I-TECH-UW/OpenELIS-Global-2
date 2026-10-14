@@ -104,6 +104,9 @@ const renderDraft = (draftId, returnTo = "/analyzers/types?view=inUse") =>
         <Route path="/analyzers/types" exact>
           <Destination />
         </Route>
+        <Route path="/analyzers" exact>
+          <Destination />
+        </Route>
       </IntlProvider>
     </MemoryRouter>,
   );
@@ -178,6 +181,30 @@ describe("AnalyzerTypeDraftPage", () => {
     );
     expect(await screen.findByTestId("destination")).toHaveTextContent(
       "/analyzers/types duplicate",
+    );
+  });
+
+  it("goes back to analyzer setup with the published type selected", async () => {
+    publishAnalyzerTypeDraft.mockImplementation((_draftId, callback) =>
+      callback({
+        profile: {
+          profileMeta: { id: "site.genexpert-copy" },
+          catalog: { revision: 1 },
+        },
+      }),
+    );
+    renderDraft(
+      "draft-duplicate",
+      "/analyzers?setup=instrument&name=GX%20bench&labUnits=7",
+    );
+
+    const bar = await screen.findByTestId("analyzer-type-draft-actions");
+    const publish = within(bar).getByRole("button", { name: "Publish type" });
+    await waitFor(() => expect(publish).toBeEnabled());
+    await userEvent.click(publish);
+
+    expect(await screen.findByTestId("destination")).toHaveTextContent(
+      "/analyzers?setup=instrument&name=GX+bench&labUnits=7&profile=site.genexpert-copy&revision=1",
     );
   });
 

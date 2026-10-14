@@ -32,6 +32,7 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   margin: 0;
+  min-inline-size: 0;
   padding: spacing.$spacing-06;
   row-gap: spacing.$spacing-05;
 
@@ -107,6 +108,7 @@
   fieldset {
     border: 0;
     margin: 0;
+    min-inline-size: 0;
     padding: 0;
 
     > legend {
@@ -119,6 +121,7 @@
 @container (max-width: 40rem) {
   .analyzer-type-draft-page .analyzer-type-profile-editor > fieldset {
     grid-template-columns: minmax(0, 1fr);
+    padding: spacing.$spacing-05;
   }
 }
 
@@ -154,5 +157,18 @@
 
 .analyzer-type-draft-page__bar-buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 1px;
+}
+
+// On a phone the buttons fill the bar, one row each when they do not fit.
+@media (max-width: 42rem) {
+  .analyzer-type-draft-page__bar-buttons {
+    width: 100%;
+
+    .cds--btn {
+      flex: 1 1 auto;
+      max-inline-size: none;
+    }
+  }
 }

@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import {
   ActionableNotification,
-  Button,
   Column,
   Grid,
   InlineNotification,
@@ -34,6 +33,20 @@ const failed = (response) => !response || Boolean(response.error);
  * talks, its tests, its connection fields and control recognition, then one
  * bar to publish it or leave it saved for later.
  */
+// A type started from analyzer setup goes back to setup with it selected.
+const setupReturn = (returnTo, published) => {
+  const [pathname, search = ""] = returnTo.split("?");
+  const params = new URLSearchParams(search);
+  const profileId = published?.profile?.profileMeta?.id;
+  const revision = published?.profile?.catalog?.revision;
+  if (!params.get("setup") || !profileId || !revision) {
+    return null;
+  }
+  params.set("profile", profileId);
+  params.set("revision", String(revision));
+  return { pathname, search: `?${params.toString()}` };
+};
+
 const AnalyzerTypeDraftPage = () => {
   const intl = useIntl();
   const history = useHistory();
@@ -81,10 +94,12 @@ const AnalyzerTypeDraftPage = () => {
         );
         return;
       }
-      history.push({
-        pathname: "/analyzers/types",
-        state: { analyzerTypeNotice: PUBLISHED[draft.kind] || "create" },
-      });
+      history.push(
+        setupReturn(returnTo, response) || {
+          pathname: "/analyzers/types",
+          state: { analyzerTypeNotice: PUBLISHED[draft.kind] || "create" },
+        },
+      );
     });
   };
 

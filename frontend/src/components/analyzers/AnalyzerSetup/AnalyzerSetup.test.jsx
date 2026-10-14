@@ -1,5 +1,5 @@
 import React from "react";
-import { act, render, screen } from "@testing-library/react";
+import { act, render, screen, within } from "@testing-library/react";
 import { waitFor } from "@testing-library/dom";
 import userEvent from "@testing-library/user-event";
 import { createMemoryHistory } from "history";
@@ -373,6 +373,45 @@ describe("AnalyzerSetup Instrument step", () => {
     ).not.toBeInTheDocument();
     expect(screen.queryByLabelText("IP Address")).not.toBeInTheDocument();
     expect(screen.queryByLabelText("Port Number")).not.toBeInTheDocument();
+  });
+
+  it("keeps the name and lab units entered when the instrument is not listed", async () => {
+    const history = renderSetupWithHistory(
+      "/analyzers?setup=instrument&name=GX%20bench%201&labUnits=7",
+    );
+
+    expect(
+      await screen.findByRole("textbox", { name: "Analyzer name" }),
+    ).toHaveValue("GX bench 1");
+    const tags = screen.getByTestId("analyzer-setup-lab-unit-tags");
+    expect(within(tags).getByText("Molecular Biology")).toBeVisible();
+
+    await userEvent.click(screen.getByRole("combobox", { name: /^Lab units/ }));
+    await userEvent.click(
+      await screen.findByRole("option", { name: "Hematology" }),
+    );
+    await userEvent.keyboard("{Escape}");
+    const returnTo = () =>
+      new URL(
+        screen.getByRole("link", { name: "Instrument not listed?" }).href,
+      ).searchParams.get("returnTo");
+    expect(new URLSearchParams(returnTo().split("?")[1]).get("labUnits")).toBe(
+      "7,8",
+    );
+    expect(new URLSearchParams(returnTo().split("?")[1]).get("name")).toBe(
+      "GX bench 1",
+    );
+
+    await userEvent.click(
+      within(tags).getByRole("button", { name: "Remove Molecular Biology" }),
+    );
+    expect(
+      within(tags).queryByText("Molecular Biology"),
+    ).not.toBeInTheDocument();
+    expect(new URLSearchParams(returnTo().split("?")[1]).get("labUnits")).toBe(
+      "8",
+    );
+    expect(history.location.pathname).toBe("/analyzers");
   });
 
   it("requires a type, name, and lab unit before creating a candidate", async () => {
@@ -973,7 +1012,10 @@ describe("AnalyzerSetup Instrument step", () => {
     );
     expect(activateAnalyzer).toHaveBeenCalledWith("42", expect.any(Function));
     expect(testConnection).not.toHaveBeenCalled();
-    expect(onClose).toHaveBeenCalledTimes(1);
+    expect(onClose).toHaveBeenCalledWith({
+      kind: "activated",
+      name: "GX bench 1",
+    });
   });
 
   it("saves setup for later without activating or testing the connection", async () => {

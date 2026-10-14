@@ -23,7 +23,6 @@ vi.mock("../../../services/analyzerService", () => ({
   getAnalyzerLabUnits: vi.fn(),
   getAnalyzerTypeCatalog: vi.fn(),
   getAnalyzerTypeMapping: vi.fn(),
-  reactivateAnalyzer: vi.fn(),
   updateAnalyzer: vi.fn(),
 }));
 
@@ -59,7 +58,6 @@ import {
   getAnalyzerDeliveryIssues,
   getAnalyzerLabUnits,
   getAnalyzerTypeCatalog,
-  reactivateAnalyzer,
 } from "../../../services/analyzerService";
 
 // 9. Messages/translations
@@ -408,59 +406,57 @@ describe("AnalyzersList", () => {
     ).not.toBeInTheDocument();
   });
 
-  test("reactivates an inactive analyzer through the exact activation boundary", async () => {
+  test("reactivates an inactive analyzer in setup's Connect step", async () => {
+    getAnalyzers.mockImplementation((_filters, callback) => {
+      act(() =>
+        callback({
+          analyzers: [
+            createMockAnalyzer({
+              id: "42",
+              status: "INACTIVE",
+              profileId: "shipped.genexpert-astm",
+              profileRevision: 3,
+            }),
+          ],
+        }),
+      );
+    });
+
+    renderWithIntl(<AnalyzersList />);
+    await userEvent.click(
+      await screen.findByTestId("analyzer-row-overflow-42"),
+    );
+    await userEvent.click(screen.getByRole("menuitem", { name: "Reactivate" }));
+
+    const params = new URLSearchParams(window.location.search);
+    expect(params.get("setup")).toBe("connect");
+    expect(params.get("analyzerId")).toBe("42");
+    expect(params.get("lifecycle")).toBeNull();
+    expect(
+      screen.queryByTestId("analyzer-lifecycle-modal"),
+    ).not.toBeInTheDocument();
+  });
+
+  test("opens no dialog for an activation address", async () => {
     window.history.replaceState(
       {},
       "",
-      "/analyzers?search=gene&lifecycle=reactivate&lifecycleAnalyzerId=42",
+      "/analyzers?lifecycle=reactivate&lifecycleAnalyzerId=42",
     );
-    const analyzer = createMockAnalyzer({
-      id: "42",
-      name: "GeneXpert Lab 1",
-      status: "INACTIVE",
-    });
     getAnalyzers.mockImplementation((_filters, callback) => {
-      act(() => callback({ analyzers: [analyzer] }));
+      act(() =>
+        callback({
+          analyzers: [createMockAnalyzer({ id: "42", status: "INACTIVE" })],
+        }),
+      );
     });
-    reactivateAnalyzer.mockImplementation((_id, callback) =>
-      callback({
-        analyzerId: "42",
-        status: "INACTIVE",
-        ready: false,
-        activated: false,
-        blockers: [{ code: "analyzer.activation.blocker.mappings" }],
-        statusCode: 422,
-      }),
-    );
 
     renderWithIntl(<AnalyzersList />);
 
+    expect(await screen.findByTestId("analyzer-row-overflow-42")).toBeVisible();
     expect(
-      await screen.findByRole("heading", { name: "Reactivate analyzer" }),
-    ).toBeVisible();
-    expect(
-      screen.getByText(/setup will be checked again before it can be used/i),
-    ).toBeVisible();
-
-    await userEvent.click(
-      screen.getByRole("button", { name: "Reactivate analyzer" }),
-    );
-
-    expect(reactivateAnalyzer).toHaveBeenCalledWith("42", expect.any(Function));
-    expect(
-      await screen.findByText("Analyzer mappings must be verified again."),
-    ).toBeVisible();
-    expect(getAnalyzers).toHaveBeenCalledTimes(1);
-    expect(new URLSearchParams(window.location.search).get("lifecycle")).toBe(
-      "reactivate",
-    );
-
-    await userEvent.click(
-      screen.getByRole("button", { name: "Cancel reactivation" }),
-    );
-    expect(
-      new URLSearchParams(window.location.search).get("lifecycle"),
-    ).toBeNull();
+      screen.queryByTestId("analyzer-lifecycle-modal"),
+    ).not.toBeInTheDocument();
   });
 
   test("offers reactivation from error and offline states", async () => {
@@ -508,50 +504,25 @@ describe("AnalyzersList", () => {
     ).not.toBeInTheDocument();
   });
 
-  test("activates an analyzer from setup and lists what blocks it", async () => {
-    window.history.replaceState(
-      {},
-      "",
-      "/analyzers?lifecycle=activate&lifecycleAnalyzerId=43",
-    );
+  test("activates an analyzer in setup's Connect step", async () => {
     getAnalyzers.mockImplementation((_filters, callback) => {
       act(() =>
         callback({
-          analyzers: [
-            createMockAnalyzer({
-              id: "43",
-              name: "GeneXpert Lab 2",
-              status: "SETUP",
-            }),
-          ],
+          analyzers: [createMockAnalyzer({ id: "43", status: "SETUP" })],
         }),
       );
     });
-    activateAnalyzer.mockImplementation((_id, callback) =>
-      callback({
-        analyzerId: "43",
-        status: "SETUP",
-        ready: false,
-        activated: false,
-        blockers: [{ code: "analyzer.activation.blocker.mappings" }],
-        statusCode: 422,
-      }),
-    );
 
     renderWithIntl(<AnalyzersList />);
-
-    expect(
-      await screen.findByRole("heading", { name: "Activate analyzer" }),
-    ).toBeVisible();
     await userEvent.click(
-      screen.getByRole("button", { name: "Activate analyzer" }),
+      await screen.findByTestId("analyzer-row-overflow-43"),
     );
+    await userEvent.click(screen.getByRole("menuitem", { name: "Activate" }));
 
-    expect(activateAnalyzer).toHaveBeenCalledWith("43", expect.any(Function));
-    expect(reactivateAnalyzer).not.toHaveBeenCalled();
-    expect(
-      await screen.findByText("Analyzer mappings must be verified again."),
-    ).toBeVisible();
+    const params = new URLSearchParams(window.location.search);
+    expect(params.get("setup")).toBe("connect");
+    expect(params.get("analyzerId")).toBe("43");
+    expect(activateAnalyzer).not.toHaveBeenCalled();
   });
 
   test("opens an existing analyzer in linkable inline Instrument setup", async () => {

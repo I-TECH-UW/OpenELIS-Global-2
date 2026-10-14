@@ -68,6 +68,13 @@
   max-width: 36rem;
 }
 
+.analyzer-setup__lab-unit-tags {
+  display: flex;
+  flex-wrap: wrap;
+  gap: spacing.$spacing-02;
+  margin-top: calc(-1 * #{spacing.$spacing-03});
+}
+
 .analyzer-setup__instrument-actions {
   align-items: center;
   display: flex;
@@ -105,6 +112,17 @@
   color: var(--cds-text-secondary);
 }
 
+.analyzer-setup__assay-group {
+  display: grid;
+  gap: spacing.$spacing-03;
+
+  h5 {
+    @include type.type-style("heading-compact-01");
+    color: var(--cds-text-primary);
+    margin: 0;
+  }
+}
+
 .analyzer-setup__assay-list {
   display: grid;
   gap: 1px;
@@ -115,9 +133,14 @@
     background: var(--cds-layer-02);
     display: grid;
     gap: spacing.$spacing-04;
-    grid-template-columns: minmax(0, 2fr) minmax(0, 2fr) minmax(0, 1.5fr);
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
     padding: spacing.$spacing-03 spacing.$spacing-04;
   }
+}
+
+.analyzer-setup__assays-actions {
+  display: flex;
+  justify-content: flex-end;
 }
 
 .analyzer-setup__assay-match {
@@ -152,6 +175,41 @@
     @include type.type-style("heading-compact-01");
     color: var(--cds-text-primary);
     margin: 0;
+  }
+}
+
+.analyzer-setup__readiness-list {
+  display: grid;
+  gap: spacing.$spacing-03;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.analyzer-setup__readiness-item {
+  @include type.type-style("body-compact-01");
+  align-items: flex-start;
+  color: var(--cds-text-primary);
+  display: flex;
+  gap: spacing.$spacing-03;
+
+  svg {
+    flex: none;
+    margin-top: 1px;
+  }
+}
+
+.analyzer-setup__readiness-item--ready svg {
+  fill: var(--cds-support-success);
+}
+
+.analyzer-setup__readiness-item--blocked svg {
+  fill: var(--cds-support-warning);
+
+  // The warning glyph's inner mark stays dark on the yellow fill.
+  [data-icon-path="inner-path"] {
+    fill: var(--cds-icon-primary, #161616);
+    opacity: 1;
   }
 }
 
