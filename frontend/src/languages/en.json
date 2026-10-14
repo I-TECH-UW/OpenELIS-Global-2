@@ -12767,5 +12767,21 @@
   "reports.running": "Running...",
   "reports.empty": "Nothing matched these filters.",
   "reports.empty.stockOnHandAsOf": "No stock movements are recorded on or before this date, so stock as it stood then cannot be reconstructed. This is not the same as having held nothing.",
-  "reports.asOfDate.basis": "Reconstructed from recorded stock movements up to this date, not from a physical count."
+  "reports.asOfDate.basis": "Reconstructed from recorded stock movements up to this date, not from a physical count.",
+  "order.continue.item.eqaScheme": "Choose the EQA scheme",
+  "order.eqa.cycle": "Cycle",
+  "order.eqa.cycle.none": "No cycle",
+  "order.eqa.cycleNotInScheme": "The chosen cycle is not an open cycle of this EQA scheme.",
+  "order.eqa.newCycle": "New cycle",
+  "order.eqa.noCycle.warning": "This sample is not linked to a cycle, so it will not be submitted or scored from OpenELIS.",
+  "order.eqa.noEnrollments.link": "Enroll under My EQA Schemes",
+  "order.eqa.noEnrollments.title": "This laboratory is not enrolled in any active EQA scheme.",
+  "order.eqa.providerSampleId.codes": "Panel codes for this cycle: {codes}",
+  "order.eqa.providerSampleId.noMatch": "This code matches none of the cycle's panel codes ({codes}).",
+  "order.eqa.scheme": "EQA scheme",
+  "order.eqa.scheme.choose": "Choose a scheme",
+  "order.eqa.schemeRequired": "Choose the EQA scheme this sample belongs to.",
+  "order.eqa.schemeUnknown": "The chosen EQA scheme is not one of this laboratory's active enrollments.",
+  "order.save.requirement.eqaScheme": "the EQA scheme",
+  "save.order.success.labNumber": "Order {labNumber} has been saved."
 }

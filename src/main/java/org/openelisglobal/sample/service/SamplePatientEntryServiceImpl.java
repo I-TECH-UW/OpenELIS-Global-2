@@ -745,8 +745,13 @@ public class SamplePatientEntryServiceImpl implements SamplePatientEntryService 
     }
 
     // Package-private so the EQA order/receipt wiring can be exercised directly
-    // (same reason as persistOrderSpecimenBarcodeCounts below).
+    // (same reason as persistOrderSpecimenBarcodeCounts below). Every later step
+    // re-saves the order with its EQA flag, so an order that already has its EQA
+    // record keeps it (OGC-1483).
     void persistSampleEQAData(SamplePatientUpdateData updateData) {
+        if (sampleEQAService.findBySampleId(Long.parseLong(updateData.getSample().getId())).isPresent()) {
+            return;
+        }
         SampleEQA sampleEQA = new SampleEQA();
         sampleEQA.setSampleId(Long.parseLong(updateData.getSample().getId()));
         sampleEQA.setIsEqaSample(true);

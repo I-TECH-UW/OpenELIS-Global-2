@@ -28,7 +28,10 @@ import OrderEntryAdditionalQuestions from "./OrderEntryAdditionalQuestions";
 import OrderSuccessMessage from "./OrderSuccessMessage";
 import OrderEntryMissingFieldsNotice from "./OrderEntryMissingFieldsNotice";
 import EQASampleEntry from "../eqa/EQASampleEntry";
-import EQAOrderForm, { eqaReceiptNoteMissing } from "../eqa/EQAOrderForm";
+import EQAOrderForm, {
+  eqaReceiptNoteMissing,
+  eqaSchemeMissing,
+} from "../eqa/EQAOrderForm";
 import EQAEnrollmentCoverageNotice from "../eqa/EQAEnrollmentCoverageNotice";
 import { FormattedMessage, useIntl } from "react-intl";
 import { createOrderEntryValidationSchema } from "../formModel/validationSchema/OrderEntryValidationSchema";
@@ -1073,7 +1076,8 @@ const Index = () => {
                       className="forwardButton"
                       disabled={
                         currentStep === STEP_PROGRAM &&
-                        eqaReceiptNoteMissing(orderFormValues)
+                        (eqaReceiptNoteMissing(orderFormValues) ||
+                          eqaSchemeMissing(orderFormValues))
                       }
                       onClick={navigateForward}
                     >
