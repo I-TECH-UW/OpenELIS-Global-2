@@ -12,6 +12,7 @@ import org.openelisglobal.common.domain.Domain;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.services.StaleSaveGuard;
 import org.openelisglobal.localization.valueholder.Localization;
 import org.openelisglobal.sampletypeterminology.service.SampleTypeTerminologyMappingService;
 import org.openelisglobal.sampletypeterminology.valueholder.SampleTypeTerminologyMapping;
@@ -91,6 +92,7 @@ public class SampleTypeManagementRestController extends BaseRestController {
             this.disposalInstructions = typeOfSample.getDisposalInstructions();
             this.isActive = typeOfSample.getIsActive();
             this.sortOrder = typeOfSample.getSortOrder();
+            this.lastUpdated = StaleSaveGuard.token(typeOfSample.getLastupdated());
         }
 
         // Getters and Setters
@@ -310,6 +312,10 @@ public class SampleTypeManagementRestController extends BaseRestController {
                 return ResponseEntity.notFound().build();
             }
 
+            if (StaleSaveGuard.isStale(sampleTypeDTO.getLastUpdated(), existingTypeOfSample.getLastupdated())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT).body(
+                        ApiResponse.refusedOn("stale", "Someone else changed this sample type after it was opened."));
+            }
             ResponseEntity<ApiResponse<SampleTypeManagementDTO>> refusal = refuseUpdate(existingTypeOfSample,
                     sampleTypeDTO);
             if (refusal != null) {

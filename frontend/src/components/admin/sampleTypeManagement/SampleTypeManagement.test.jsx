@@ -437,6 +437,40 @@ describe("SampleTypeManagement", () => {
     expect(screen.queryByText(/Update failed \(HTTP/)).toBeNull();
   });
 
+  /** OGC-1463: a save from a page older than another admin's change is refused. */
+  test("sends the loaded version and shows a stale save instead of a field error", async () => {
+    const loaded = { ...sampleType, lastUpdated: "1791800000000" };
+    api.get.mockImplementation((url, callback) => {
+      if (url === "/rest/sample-types") {
+        callback({ success: true, data: [loaded] });
+      } else if (url === "/rest/sample-types/sample-type-2") {
+        callback({ success: true, data: loaded });
+      } else if (url.startsWith("/rest/AllTestsForSampleTypeProvider")) {
+        callback({ tests: [] });
+      } else {
+        callback({});
+      }
+    });
+    api.put.mockImplementation((_url, _body, callback) =>
+      callback(409, { success: false, field: "stale", message: "stale" }),
+    );
+    renderPage("/MasterListsPage/SampleTypeEditor/sample-type-2/basic-info");
+    const description = await screen.findByDisplayValue(
+      "Blood culture specimen",
+    );
+    await userEvent.clear(description);
+    await userEvent.type(description, "Serum specimen");
+    await userEvent.click(screen.getByRole("button", { name: /Save/ }));
+
+    expect(
+      await screen.findByTestId("sample-type-stale-save"),
+    ).toHaveTextContent(messages["error.staleSave.section"]);
+    expect(JSON.parse(api.put.mock.calls[0][1]).lastUpdated).toBe(
+      "1791800000000",
+    );
+    expect(screen.queryByText(/Failed to update sample type/)).toBeNull();
+  });
+
   test("a create whose name is taken (409) marks the name, not a server error", async () => {
     api.post.mockImplementation((_url, _body, callback) =>
       callback({
