@@ -268,11 +268,16 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
                 .format(DateUtil.convertStringDateToTruncatedTimestamp(requested.getValue()));
     }
 
-    /** The sample an aliquot came from; a primary sample is its own. */
+    /**
+     * The sample an aliquot came from; a primary sample is its own. Each parent is
+     * loaded by id: the parent reference is a lazy proxy, and a primary sample with
+     * no test of its own is not otherwise loaded.
+     */
     private static SampleItem primarySampleItem(SampleItem item) {
+        SampleItemService sampleItemService = SpringContext.getBean(SampleItemService.class);
         SampleItem primary = item;
         while (primary.getParentSampleItem() != null) {
-            primary = primary.getParentSampleItem();
+            primary = sampleItemService.get(primary.getParentSampleItem().getId());
         }
         return primary;
     }

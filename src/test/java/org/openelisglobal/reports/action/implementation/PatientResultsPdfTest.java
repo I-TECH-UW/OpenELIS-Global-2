@@ -189,6 +189,24 @@ public class PatientResultsPdfTest extends BaseWebContextSensitiveTest {
         assertEquals("the note does not repeat the lab: " + text, 1, text.split("Kokopo", -1).length - 1);
     }
 
+    /**
+     * "million/mm3" is wider than the Units column at the report's size and broke
+     * inside the word, printing "million/m" over "m3".
+     */
+    @Test
+    public void aUnitOrRangeWiderThanItsColumnShrinksInsteadOfBreakingInsideAWord() throws Exception {
+        ClinicalPatientData rbc = row(ORDER, "Hematology", "Red Blood Cells", "5.00", null);
+        rbc.setUom("million/mm3");
+        rbc.setTestRefRange("1000000.00-2000000.00");
+        ClinicalPatientData panel = row(ORDER, "Hematology", "Blood count", "", null);
+        panel.setComponents(List.of(new ReportComponentLine("Red cells", "5.00", "", "4.80-5.50", "million/mm3")));
+
+        List<String> lines = lines(PdfText.of(render(List.of(rbc, panel), Map.of(ORDER, order()))));
+
+        assertContains(lines, "Red Blood Cells (Serum) 1 5.00 1000000.00-2000000.00 million/mm3");
+        assertContains(lines, "Red cells 5.00 4.80-5.50 million/mm3");
+    }
+
     @Test
     public void multiComponentTestPrintsOneAlignedLinePerComponent() throws Exception {
         ClinicalPatientData lipids = row(ORDER, "Chemistry", "Lipid panel", "Total: 6.1\nHDL: 0.8", null);

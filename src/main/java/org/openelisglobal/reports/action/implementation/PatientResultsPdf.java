@@ -73,6 +73,8 @@ final class PatientResultsPdf {
     private static final float ACCREDITATION_LOGO = 32;
     private static final float[] RESULT_WIDTHS = { 152, 22, 76, 70, 38, 76, 42, 62 };
     private static final int COLUMNS = RESULT_WIDTHS.length;
+    private static final int RANGE_COLUMN = 5;
+    private static final int UNITS_COLUMN = 6;
     private static final float INDENT = 10;
 
     private static final String UP = "↑";
@@ -462,10 +464,8 @@ final class PatientResultsPdf {
             cells(block, fill, flagCell(flagCode, row.isReferralPending(), row.isConfirmationSample()));
         }
         boolean showRange = row.getComponents().isEmpty();
-        cells(block, fill, text(showRange ? PdfReportText.plain(row.getTestRefRange()) : "", fonts.regular(8, GRAY),
-                Element.ALIGN_LEFT));
-        cells(block, fill,
-                text(showRange ? PdfReportText.plain(row.getUom()) : "", fonts.regular(8, GRAY), Element.ALIGN_LEFT));
+        cells(block, fill, fitted(showRange ? PdfReportText.plain(row.getTestRefRange()) : "", RANGE_COLUMN));
+        cells(block, fill, fitted(showRange ? PdfReportText.plain(row.getUom()) : "", UNITS_COLUMN));
         cells(block, fill, text(row.isReleased() && !row.isSampleRejected() ? row.getCompletedTime() : "",
                 fonts.regular(7, Color.BLACK), Element.ALIGN_LEFT));
     }
@@ -517,8 +517,8 @@ final class PatientResultsPdf {
                 : flagCode != null ? fonts.bold(9, Color.BLACK) : fonts.regular(9, Color.BLACK);
         cells(block, fill, text(PdfReportText.plain(component.value()), font, Element.ALIGN_RIGHT));
         cells(block, fill, flagCell(flagCode, false, false));
-        cells(block, fill, text(component.range(), fonts.regular(8, GRAY), Element.ALIGN_LEFT));
-        cells(block, fill, text(component.unit(), fonts.regular(8, GRAY), Element.ALIGN_LEFT));
+        cells(block, fill, fitted(component.range(), RANGE_COLUMN));
+        cells(block, fill, fitted(component.unit(), UNITS_COLUMN));
         cells(block, fill, blank());
     }
 
@@ -586,13 +586,27 @@ final class PatientResultsPdf {
      * fits its column, so a longer language wraps between words, never inside one.
      */
     private float wordFittingSize(String label, float width, float size) {
+        return wordFittingSize(label, width, size, true);
+    }
+
+    private float wordFittingSize(String label, float width, float size, boolean bold) {
         float fitted = size;
         for (String word : label.split("\\s+")) {
-            while (fitted > 4.5f && fonts.base(true).getWidthPoint(word, fitted) > width) {
+            while (fitted > 4.5f && fonts.base(bold).getWidthPoint(word, fitted) > width) {
                 fitted -= 0.25f;
             }
         }
         return fitted;
+    }
+
+    /**
+     * A reference range or unit in its column, in a smaller size when one of its
+     * words is wider than the column, so it never breaks inside a word.
+     */
+    private PdfPCell fitted(String value, int column) {
+        String text = nonNull(value);
+        return text(text, fonts.regular(wordFittingSize(text, RESULT_WIDTHS[column] - 3, 8, false), GRAY),
+                Element.ALIGN_LEFT);
     }
 
     private String callbackLine(ReportCallbackLine callback) {

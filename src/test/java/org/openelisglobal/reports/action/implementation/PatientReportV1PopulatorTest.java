@@ -139,6 +139,23 @@ public class PatientReportV1PopulatorTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
+    public void anAliquotWhosePrimarySampleHasNoTestOfItsOwnPrintsThatSamplesNumber() throws Exception {
+        jdbcTemplate.update("INSERT INTO clinlims.sample_item (id, samp_id, sort_order, status_id, typeosamp_id,"
+                + " collection_date, lastupdated) VALUES (99306, 9301, 6, 20, 9301, '2026-10-01 08:20:00', now())");
+        jdbcTemplate.update("UPDATE clinlims.sample_item SET parent_sample_item_id = 99306 WHERE id = 9305");
+        try {
+            PatientCILNSPClinical_vreduit report = run();
+
+            assertEquals("6", row(report, "9305").getSampleSortOrder());
+            assertTrue(report.getReportOrders().get(ORDER).getSamples().stream()
+                    .anyMatch(sample -> "6".equals(sample.number())));
+        } finally {
+            jdbcTemplate.update("UPDATE clinlims.sample_item SET parent_sample_item_id = 9301 WHERE id = 9305");
+            jdbcTemplate.update("DELETE FROM clinlims.sample_item WHERE id = 99306");
+        }
+    }
+
+    @Test
     public void anOrderIsPartialOnlyWhileAResultAwaitsRelease() throws Exception {
         PatientReportOrder pending = run().getReportOrders().get(ORDER);
         assertFalse(pending.isComplete());
@@ -332,6 +349,28 @@ public class PatientReportV1PopulatorTest extends BaseWebContextSensitiveTest {
         } finally {
             ConfigurationProperties.getInstance().setPropertyValue(Property.CLOCK_24, clock);
         }
+    }
+
+    /**
+     * A partial report masks a result that awaits release, so changing that result
+     * afterwards corrected nothing the patient was given; the report then claimed
+     * to replace the partial one.
+     */
+    @Test
+    public void onlyAResultReleasedBeforeTheLastReportCountsAsReported() throws Exception {
+        issue("2026-10-01 10:00:00");
+        assertFalse("released at 10:15, after the report",
+                analysisService.releasedResultHasBeenReported(analysisService.get("9301")));
+        assertFalse("never released", analysisService.releasedResultHasBeenReported(analysisService.get("9302")));
+
+        issue("2026-10-01 12:00:00");
+        assertTrue("released at 10:15, before the report",
+                analysisService.releasedResultHasBeenReported(analysisService.get("9301")));
+        assertFalse("still never released", analysisService.releasedResultHasBeenReported(analysisService.get("9302")));
+
+        jdbcTemplate.update("UPDATE clinlims.analysis SET corrected = true WHERE id = 9302");
+        assertTrue("a recorded correction stays one",
+                analysisService.releasedResultHasBeenReported(analysisService.get("9302")));
     }
 
     @Test
