@@ -17,6 +17,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.common.action.IActionConstants;
+import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.eqa.controller.rest.EQACycleRestController;
 import org.openelisglobal.eqa.dao.EQAPanelSampleDAO;
 import org.openelisglobal.eqa.service.EQACycleService;
@@ -217,10 +219,17 @@ public class EQAPerformanceReportIntegrationTest extends EQASpineTestBase {
 
     @Test
     public void theLaboratorysOwnCopyNamesItsLaboratoryAndNoParticipant() throws IOException {
-        String text = reportText();
+        ConfigurationProperties config = ConfigurationProperties.getInstance();
+        String originalSite = config.getPropertyValue(Property.SiteName);
+        try {
+            config.setPropertyValue(Property.SiteName, "EQA Report Test Site");
+            String text = reportText();
 
-        assertTrue(text.contains("Laboratory"));
-        assertFalse(text.contains("Participant"));
+            assertTrue(rowIn(text, "Laboratory", "EQA Report Test Site"));
+            assertFalse(text.contains("Participant"));
+        } finally {
+            config.setPropertyValue(Property.SiteName, originalSite);
+        }
     }
 
     @Test
