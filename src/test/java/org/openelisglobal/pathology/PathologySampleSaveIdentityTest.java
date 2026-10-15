@@ -11,6 +11,7 @@ import static org.junit.Assert.assertTrue;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -118,6 +119,36 @@ public class PathologySampleSaveIdentityTest extends BaseWebContextSensitiveTest
         assertEquals("the block keeps the id its label was printed from", Integer.valueOf(LEGACY_BLOCK_ID),
                 blocks.get(0).get("id"));
         assertEquals("the location posted last is the one stored", "Bench B", blocks.get(0).get("location"));
+    }
+
+    @Test
+    public void movingABlockOrSlide_isRecordedInTheCaseAuditTrail() {
+        saveBlocks(postedBlock(LEGACY_BLOCK_ID, "Bench A"));
+        clearCaseAudit();
+
+        saveBlocks(postedBlock(LEGACY_BLOCK_ID, "Archive"));
+
+        List<History> afterMove = caseAudit();
+        assertEquals("moving a block changes the case, so the save leaves one audit entry", 1, afterMove.size());
+        assertTrue("which keeps where the block was before the move",
+                changesOf(afterMove.get(0)).contains("Location: Bench A"));
+
+        saveBlocks(postedBlock(null, "Bench A"));
+        int blockId = idOfBlockDesignated("A1");
+        saveSlides(postedSlide(blockId));
+        Map<String, Object> slide = slidesCutFrom(blockId).get(0);
+        clearCaseAudit();
+
+        PathologySlideForm movedSlide = new PathologySlideForm();
+        movedSlide.setId(((Number) slide.get("id")).intValue());
+        movedSlide.setBlockId(blockId);
+        movedSlide.setLocation("Slide Archive");
+        saveSlides(movedSlide);
+
+        List<History> afterSlideMove = caseAudit();
+        assertEquals("moving a slide is audited the same way", 1, afterSlideMove.size());
+        assertTrue("with the slide's location before the move",
+                changesOf(afterSlideMove.get(0)).contains("Location: Slide Storage 1"));
     }
 
     @Test
@@ -460,6 +491,20 @@ public class PathologySampleSaveIdentityTest extends BaseWebContextSensitiveTest
         Map<String, Object> block = blockDesignated(designation);
         assertNotNull("no block on the case is designated " + designation, block);
         return ((Number) block.get("id")).intValue();
+    }
+
+    private List<History> caseAudit() {
+        return historyService.getHistoryByRefIdAndRefTableId(String.valueOf(CASE_ID),
+                referenceTableId("PATHOLOGY_SAMPLE"));
+    }
+
+    private void clearCaseAudit() {
+        jdbcTemplate.update("DELETE FROM clinlims.history WHERE reference_table = ? AND reference_id = ?",
+                Integer.parseInt(referenceTableId("PATHOLOGY_SAMPLE")), CASE_ID);
+    }
+
+    private String changesOf(History history) {
+        return new String(history.getChanges(), StandardCharsets.UTF_8);
     }
 
     private void clearPathologyAudit() {

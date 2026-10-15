@@ -5450,7 +5450,7 @@
   "pathology.banner.transitionsLater": "Stage transitions arrive in a later release. Set the stage here for now.",
   "pathology.empty.noReports": "No reports yet. Complete the findings and conclusion to generate one.",
   "pathology.empty.stageNotRecorded": "OpenELIS does not record work at this stage yet. The case can still be moved through it.",
-  "pathology.error.designationConflict": "Another save named a cassette or slide on this case at the same moment. Reload the case and try again.",
+  "pathology.error.designationConflict": "Another save changed this case at the same moment. Reload the case and try again.",
   "pathology.label.addslide": "Add Slide(s)",
   "pathology.label.block": "Block",
   "pathology.label.block.number": "Block number",

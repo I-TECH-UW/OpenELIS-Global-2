@@ -210,11 +210,57 @@ public class PathologySampleServiceImpl extends AuditableBaseObjectServiceImpl<P
         return pathologySample;
     }
 
+    /**
+     * The case as stored, for the audit trail to compare a save against. A save
+     * edits the stored cassettes and slides in place, so they are copied row by row
+     * here; comparing against the rows themselves would find a moved cassette
+     * unchanged.
+     */
+    private PathologySample auditedStateOf(PathologySample storedCase) {
+        PathologySample storedState = copyPathologySample(storedCase);
+        storedState.setBlocks(storedCase.getBlocks().stream().map(PathologySampleServiceImpl::copyOfBlock)
+                .collect(Collectors.toList()));
+        storedState.setSlides(storedCase.getSlides().stream().map(PathologySampleServiceImpl::copyOfSlide)
+                .collect(Collectors.toList()));
+        return storedState;
+    }
+
+    private static PathologyBlock copyOfBlock(PathologyBlock stored) {
+        PathologyBlock block = new PathologyBlock();
+        block.setId(stored.getId());
+        block.setBlockNumber(stored.getBlockNumber());
+        block.setDesignation(stored.getDesignation());
+        block.setBarcode(stored.getBarcode());
+        block.setCassetteState(stored.getCassetteState());
+        block.setTissueTypeId(stored.getTissueTypeId());
+        block.setPartDesignation(stored.getPartDesignation());
+        block.setActive(stored.isActive());
+        block.setLocation(stored.getLocation());
+        block.setLastupdated(stored.getLastupdated());
+        return block;
+    }
+
+    private static PathologySlide copyOfSlide(PathologySlide stored) {
+        PathologySlide slide = new PathologySlide();
+        slide.setId(stored.getId());
+        slide.setSlideNumber(stored.getSlideNumber());
+        slide.setBlockId(stored.getBlockId());
+        slide.setDesignation(stored.getDesignation());
+        slide.setBarcode(stored.getBarcode());
+        slide.setActive(stored.isActive());
+        slide.setLocation(stored.getLocation());
+        slide.setFileType(stored.getFileType());
+        slide.setLastupdated(stored.getLastupdated());
+        return slide;
+    }
+
     @Transactional
     @Override
     public void updateWithFormValues(Integer pathologySampleId, PathologySampleForm form) {
         // copying is so we get an object that is detached from hibernate
-        PathologySample pathologySample = copyPathologySample(get(pathologySampleId));
+        PathologySample storedCase = get(pathologySampleId);
+        PathologySample pathologySample = copyPathologySample(storedCase);
+        PathologySample storedState = auditedStateOf(storedCase);
         pathologySample.setSysUserId(form.getSystemUserId());
         if (!GenericValidator.isBlankOrNull(form.getAssignedPathologistId())) {
             pathologySample.setPathologist(systemUserService.get(form.getAssignedPathologistId()));
@@ -257,7 +303,8 @@ public class PathologySampleServiceImpl extends AuditableBaseObjectServiceImpl<P
             referToImmunoHistoChemistry(pathologySample, form);
         }
         try {
-            update(pathologySample);
+            baseObjectDAO.evict(storedCase);
+            updateAgainst(pathologySample, storedState);
             persistPathologyBarcodeCountsIfSupplied(pathologySample, form);
             populatePathologyWorkflowPrintModels(pathologySample, form);
         } catch (RuntimeException e) {
