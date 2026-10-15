@@ -293,14 +293,19 @@ const TerminologySection = ({ testId }) => {
           loadLoincIntegrity();
         } else if (status === 422) {
           // Server-side validation (duplicate mapping, unknown source/relationship,
-          // stale component scope) — name the cause instead of a generic failure.
+          // stale component scope, over-long code or name) — name the cause instead
+          // of a generic failure.
+          const refused = await response.json().catch(() => null);
           addNotification({
             kind: "error",
             title: intl.formatMessage({
               id: "label.testCatalog.section.terminology",
             }),
             message: intl.formatMessage({
-              id: "error.testCatalog.terminology.invalid",
+              id:
+                refused?.messageKey && intl.messages[refused.messageKey]
+                  ? refused.messageKey
+                  : "error.testCatalog.terminology.invalid",
             }),
           });
         } else {
@@ -444,6 +449,7 @@ const TerminologySection = ({ testId }) => {
                         id={`mapping-code-${i}`}
                         labelText=""
                         value={m.code || ""}
+                        maxLength={80}
                         onChange={(e) =>
                           updateMapping(i, { code: e.target.value })
                         }
@@ -458,6 +464,7 @@ const TerminologySection = ({ testId }) => {
                         id={`mapping-display-${i}`}
                         labelText=""
                         value={m.displayName || ""}
+                        maxLength={255}
                         placeholder={intl.formatMessage({
                           id: "label.testCatalog.terminology.displayName.placeholder",
                         })}
@@ -613,6 +620,7 @@ const TerminologySection = ({ testId }) => {
             id: "label.testCatalog.terminology.code",
           })}
           value={draft.code}
+          maxLength={80}
           onChange={(e) => setDraft({ ...draft, code: e.target.value })}
         />
         <TextInput
@@ -621,6 +629,7 @@ const TerminologySection = ({ testId }) => {
             id: "label.testCatalog.terminology.col.displayName",
           })}
           value={draft.displayName}
+          maxLength={255}
           onChange={(e) => setDraft({ ...draft, displayName: e.target.value })}
         />
         <Select

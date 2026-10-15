@@ -118,6 +118,7 @@ public class TestCatalogEditorTerminologyIntegrationTest extends BaseWebContextS
 
     private TerminologyResponse put(MappingDto... mappings) {
         TerminologyResponse body = new TerminologyResponse();
+        body.mappings = new java.util.ArrayList<>();
         for (MappingDto m : mappings) {
             body.mappings.add(m);
         }
@@ -155,6 +156,7 @@ public class TestCatalogEditorTerminologyIntegrationTest extends BaseWebContextS
 
     private TerminologyResponse dup() {
         TerminologyResponse body = new TerminologyResponse();
+        body.mappings = new java.util.ArrayList<>();
         body.mappings.add(mapping("LOINC", "1558-6", "SAME_AS"));
         body.mappings.add(mapping("LOINC", "1558-6", "BROADER_THAN"));
         return body;
@@ -163,6 +165,7 @@ public class TestCatalogEditorTerminologyIntegrationTest extends BaseWebContextS
     @org.junit.Test
     public void save_invalidSourceReturns422() {
         TerminologyResponse body = new TerminologyResponse();
+        body.mappings = new java.util.ArrayList<>();
         body.mappings.add(mapping("BOGUS", "X", null));
         assertEquals(422, controller.saveTerminology(testId(), body, authedRequest()).getStatusCode().value());
     }
@@ -360,6 +363,8 @@ public class TestCatalogEditorTerminologyIntegrationTest extends BaseWebContextS
         assertEquals(Long.valueOf(1), rowCount("LOINC", "2345-7"));
 
         TerminologyResponse twins = new TerminologyResponse();
+
+        twins.mappings = new java.util.ArrayList<>();
         twins.mappings.add(mapping("LOINC", "3333-3", "SAME_AS"));
         twins.mappings.add(mapping("LOINC", " 3333-3", "SAME_AS"));
         assertEquals(422, controller.saveTerminology(testId(), twins, authedRequest()).getStatusCode().value());

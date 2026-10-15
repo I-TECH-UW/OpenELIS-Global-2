@@ -125,7 +125,12 @@ const AlertRuleModal = ({ open, onClose, testId, rule, onSaved }) => {
         onClose();
       } else {
         setError(
-          intl.formatMessage({ id: "label.testCatalog.alerts.saveError" }),
+          intl.formatMessage({
+            id:
+              status === 400
+                ? "label.testCatalog.alerts.saveRefused"
+                : "label.testCatalog.alerts.saveError",
+          }),
         );
       }
     };
@@ -193,6 +198,7 @@ const AlertRuleModal = ({ open, onClose, testId, rule, onSaved }) => {
             id: "label.testCatalog.alerts.field.name",
           })}
           value={form.name}
+          maxLength={100}
           onChange={(e) => set("name", e.target.value)}
           invalid={!!error && !form.name.trim()}
         />
@@ -295,6 +301,7 @@ const AlertRuleModal = ({ open, onClose, testId, rule, onSaved }) => {
               id: "label.testCatalog.alerts.field.specificValue",
             })}
             value={form.triggerValue || ""}
+            maxLength={100}
             onChange={(e) => set("triggerValue", e.target.value)}
             invalid={!!error && !form.triggerValue}
           />
@@ -364,6 +371,7 @@ const AlertRuleModal = ({ open, onClose, testId, rule, onSaved }) => {
               id: "label.testCatalog.alerts.recipient.customPhone",
             })}
             value={form.notifyCustomPhone || ""}
+            maxLength={20}
             onChange={(e) => set("notifyCustomPhone", e.target.value)}
           />
           <TextInput
@@ -372,6 +380,7 @@ const AlertRuleModal = ({ open, onClose, testId, rule, onSaved }) => {
               id: "label.testCatalog.alerts.recipient.customEmail",
             })}
             value={form.notifyCustomEmail || ""}
+            maxLength={100}
             onChange={(e) => set("notifyCustomEmail", e.target.value)}
           />
           <Dropdown
