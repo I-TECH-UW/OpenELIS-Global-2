@@ -166,4 +166,5 @@
   <include file="liquibase/qa/048-eqa-followup-response-notes.xml" />
   <!-- OGC-897: management dashboard. After qa/, so its grants can follow qa.eqa.provider -->
   <include file="liquibase/dashboards/001-management-dashboard-access.xml" />
+  <include file="liquibase/dashboards/005-analyzer-activity-indexes.xml" />
 </databaseChangeLog>
