@@ -1215,9 +1215,7 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
           addNotification({
             title: intl.formatMessage({ id: "notification.title" }),
             message: intl.formatMessage({
-              id: row.eqaInHouse
-                ? "label.results.analystRequired"
-                : "eqa.result.analystRequired",
+              id: "eqa.result.analystRequired",
             }),
             kind: NotificationKinds.error,
           });
@@ -1314,9 +1312,7 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
         <div>
           <div className="unifiedAccession">
             {accession}
-            {row.eqaSample && !row.eqaInHouse && (
-              <EQABadge priority={row.eqaPriority} />
-            )}
+            {Boolean(row.eqaSample) && <EQABadge priority={row.eqaPriority} />}
           </div>
           {subline && <div className="unifiedSubjectSub">{subline}</div>}
           {/* the old Results page's non-conformity indicator, reproduced
