@@ -91,6 +91,18 @@ export function parentBlockOf(slide, blocks) {
 }
 
 /**
+ * A slide's name on a screen that lists slides without their blocks: under its
+ * block when one is recorded, since a slide designation repeats under every
+ * block, and on its own otherwise.
+ */
+export function slideOnBlockName(slide, blocks) {
+  const parent = parentBlockOf(slide, blocks);
+  return parent
+    ? blockIdentifier(parent) + "." + slideIdentifier(slide)
+    : slideIdentifier(slide);
+}
+
+/**
  * A block has been embedded, so it is a verified object; a cassette is still
  * waiting for embedding.
  */

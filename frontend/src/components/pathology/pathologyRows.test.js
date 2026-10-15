@@ -16,6 +16,7 @@ import {
   rowListEditors,
   rowObjectName,
   slideIdentifier,
+  slideOnBlockName,
   stripClientKeys,
   unsavedPosition,
   withClientKey,
@@ -120,6 +121,25 @@ describe("parentBlockOf", () => {
     expect(parentBlockOf({ blockId: null }, blocks)).toBeUndefined();
     expect(parentBlockOf({ blockId: "9" }, blocks)).toBeUndefined();
     expect(parentBlockOf({ blockId: "1" }, undefined)).toBeUndefined();
+  });
+});
+
+describe("slideOnBlockName", () => {
+  const blocks = [{ id: 1, designation: "A1" }];
+
+  it("names a slide under the block it was cut from, since its own designation repeats under every block", () => {
+    expect(slideOnBlockName({ blockId: 1, designation: "1" }, blocks)).toBe(
+      "A1.1",
+    );
+  });
+
+  it("names a legacy slide with no recorded parent by itself alone", () => {
+    expect(
+      slideOnBlockName({ id: 7, blockId: null, slideNumber: 2 }, blocks),
+    ).toBe("2");
+    expect(
+      slideOnBlockName({ id: 7, blockId: 9, designation: "3" }, blocks),
+    ).toBe("3");
   });
 });
 
