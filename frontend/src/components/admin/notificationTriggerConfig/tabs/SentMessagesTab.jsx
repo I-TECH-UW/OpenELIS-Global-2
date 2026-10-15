@@ -246,7 +246,6 @@ export default function SentMessagesTab() {
 
   useEffect(() => {
     fetchPage(page, pageSize, eventCodeFilter, statusFilter);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [page, pageSize, eventCodeFilter, statusFilter]);
 
   const onChangeEventCode = (value) => {
