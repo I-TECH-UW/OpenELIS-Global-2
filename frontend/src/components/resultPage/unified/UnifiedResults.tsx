@@ -91,6 +91,7 @@ import Avatar from "./Avatar";
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 // @ts-ignore
 import PageBreadCrumb from "../../common/PageBreadCrumb";
+import EQABadge from "../../eqa/EQABadge";
 import config from "../../../config.json";
 import SearchPatientForm from "../../patient/SearchPatientForm";
 import { PatientRecord } from "../../patient/types";
@@ -672,7 +673,7 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
   const handleFieldChange = useCallback(
     (
       target: WorklistRow,
-      field: "testMethod" | "analyzerId",
+      field: "testMethod" | "analyzerId" | "eqaAnalystId",
       value: string,
     ) => {
       const key = worklistRowKey(target);
@@ -1206,6 +1207,22 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
   const beforeSign = useCallback(
     (row: WorklistRow) =>
       new Promise<void>((resolve, reject) => {
+        if (
+          row.eqaPerAnalyst &&
+          !row.eqaAnalystId &&
+          (row.resultValue || row.multiSelectResultValues)
+        ) {
+          addNotification({
+            title: intl.formatMessage({ id: "notification.title" }),
+            message: intl.formatMessage({
+              id: "eqa.result.analystRequired",
+            }),
+            kind: NotificationKinds.error,
+          });
+          setNotificationVisible(true);
+          reject();
+          return;
+        }
         const key = worklistRowKey(row);
         const alerts = owedAlerts(row).filter(
           (alert) => !isConfirmed(key, alert),
@@ -1223,7 +1240,13 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
           customCriticalMessage: configurationProperties?.customCriticalMessage,
         });
       }),
-    [owedAlerts, configurationProperties],
+    [
+      owedAlerts,
+      configurationProperties,
+      addNotification,
+      intl,
+      setNotificationVisible,
+    ],
   );
 
   const handleSave = useCallback(
@@ -1287,7 +1310,10 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
           <Avatar name={row.patientName} id={row.patientId as string} />
         )}
         <div>
-          <div className="unifiedAccession">{accession}</div>
+          <div className="unifiedAccession">
+            {accession}
+            {Boolean(row.eqaSample) && <EQABadge priority={row.eqaPriority} />}
+          </div>
           {subline && <div className="unifiedSubjectSub">{subline}</div>}
           {/* the old Results page's non-conformity indicator, reproduced
               under the sample/patient identity — analysis-level, shared by
