@@ -67,6 +67,7 @@ function TATTrendsTab({ filters, buildQueryString }) {
               id: INTERVALS.find((i) => i.id === interval)?.labelKey,
             }),
           }}
+          itemToString={(item) => item?.text ?? ""}
           onChange={({ selectedItem }) => setInterval(selectedItem.id)}
           size="sm"
         />
@@ -83,6 +84,7 @@ function TATTrendsTab({ filters, buildQueryString }) {
               id: COMPARE_OPTIONS.find((o) => o.id === compareBy)?.labelKey || "reports.tat.compareNone",
             }),
           }}
+          itemToString={(item) => item?.text ?? ""}
           onChange={({ selectedItem }) => setCompareBy(selectedItem.id)}
           size="sm"
         />
