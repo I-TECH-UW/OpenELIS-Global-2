@@ -52,6 +52,7 @@ vi.mock("../../esignature/ESignatureButton", () => ({
 
 vi.mock("../../common/PageBreadCrumb", () => ({ default: () => <div /> }));
 
+import { ConfigurationContext } from "../../layout/Layout";
 import UnifiedResults from "./UnifiedResults";
 
 const renderPage = () => {
@@ -104,6 +105,29 @@ describe("Test date filter on the unified worklist", () => {
     pickTestDate("10/15/2026");
 
     expect(sentCollectionDate()).toBe("10/15/2026");
+  });
+
+  it("reads a typed date in the site's order once the settings arrive after the first render", () => {
+    utilsMock.getFromOpenElisServer.mockImplementation(
+      (endPoint: string, callback: any) => {
+        if (endPoint.startsWith("/rest/LogbookResults"))
+          return callback({ testResult: [] });
+        return callback([]);
+      },
+    );
+    const page = (configurationProperties: Record<string, string>) => (
+      <ConfigurationContext.Provider value={{ configurationProperties }}>
+        <IntlProvider locale="en" messages={messages}>
+          <UnifiedResults />
+        </IntlProvider>
+      </ConfigurationContext.Provider>
+    );
+    const { rerender } = render(page({}));
+    rerender(page({ DEFAULT_DATE_LOCALE: "fr-FR" }));
+
+    pickTestDate("15/10/2026");
+
+    expect(sentCollectionDate()).toBe("15/10/2026");
   });
 
   it("asks for and sends the date day first on a day-first site", () => {

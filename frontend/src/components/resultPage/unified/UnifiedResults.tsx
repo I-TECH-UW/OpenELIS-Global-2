@@ -1427,6 +1427,7 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
               className="unifiedResultsToolbarColumn"
             >
               <DatePicker
+                key={dayFirst ? "day-first" : "month-first"}
                 datePickerType="single"
                 dateFormat={dayFirst ? "d/m/Y" : "m/d/Y"}
                 parseDate={parseFilterDate}
