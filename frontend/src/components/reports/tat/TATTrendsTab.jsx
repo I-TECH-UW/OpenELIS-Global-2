@@ -70,6 +70,7 @@ function TATTrendsTab({ filters, buildQueryString }) {
           itemToString={(item) => item?.text ?? ""}
           onChange={({ selectedItem }) => setInterval(selectedItem.id)}
           size="sm"
+          style={{ minWidth: "12rem" }}
         />
         <Dropdown
           id="trend-compare"
@@ -87,6 +88,7 @@ function TATTrendsTab({ filters, buildQueryString }) {
           itemToString={(item) => item?.text ?? ""}
           onChange={({ selectedItem }) => setCompareBy(selectedItem.id)}
           size="sm"
+          style={{ minWidth: "12rem" }}
         />
         <div>
           <label style={{ fontSize: "12px", fontWeight: 600, display: "block" }}>{intl.formatMessage({ id: "reports.tat.metrics" })}</label>
