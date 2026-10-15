@@ -4,6 +4,7 @@ import {
   Modal,
   Select,
   SelectItem,
+  Stack,
   TextInput,
 } from "@carbon/react";
 import { useIntl } from "react-intl";
@@ -107,59 +108,56 @@ const NewEqaCycleModal = ({ schemeName = "", onClose, onCreated }) => {
           style={{ marginBottom: "1rem" }}
         />
       )}
-      <Select
-        id="new-cycle-scheme"
-        labelText={t("eqa.cycle.new.scheme", "Scheme (from My EQA Schemes)")}
-        helperText={
-          myPrograms.length === 0
-            ? t(
-                "eqa.cycle.new.noUsableEnrollments",
-                "No active enrollment here matches a scheme on this instance. Enrollments are managed under My EQA Schemes, schemes under EQA Management, Schemes.",
-              )
-            : undefined
-        }
-        value={newCycle.schemeName}
-        disabled={Boolean(schemeName)}
-        onChange={(e) =>
-          setNewCycle({ ...newCycle, schemeName: e.target.value })
-        }
-      >
-        <SelectItem value="" text="" />
-        {schemeName &&
-          !myPrograms.some((prog) => prog.programName === schemeName) && (
-            <SelectItem value={schemeName} text={schemeName} />
-          )}
-        {myPrograms.map((prog) => (
-          <SelectItem
-            key={prog.id}
-            value={prog.programName}
-            text={prog.programName}
-          />
-        ))}
-      </Select>
-      <TextInput
-        id="new-cycle-name"
-        labelText={t("eqa.cycle.new.name", "Cycle name")}
-        value={newCycle.cycleName}
-        onChange={(e) =>
-          setNewCycle({ ...newCycle, cycleName: e.target.value })
-        }
-        style={{ marginTop: "1rem" }}
-      />
-      <div style={{ marginTop: "1rem" }}>
+      <Stack gap={5}>
+        <Select
+          id="new-cycle-scheme"
+          labelText={t("eqa.cycle.new.scheme", "Scheme (from My EQA Schemes)")}
+          helperText={
+            myPrograms.length === 0
+              ? t(
+                  "eqa.cycle.new.noUsableEnrollments",
+                  "No active enrollment here matches a scheme on this instance. Enrollments are managed under My EQA Schemes, schemes under EQA Management, Schemes.",
+                )
+              : undefined
+          }
+          value={newCycle.schemeName}
+          disabled={Boolean(schemeName)}
+          onChange={(e) =>
+            setNewCycle({ ...newCycle, schemeName: e.target.value })
+          }
+        >
+          <SelectItem value="" text="" />
+          {schemeName &&
+            !myPrograms.some((prog) => prog.programName === schemeName) && (
+              <SelectItem value={schemeName} text={schemeName} />
+            )}
+          {myPrograms.map((prog) => (
+            <SelectItem
+              key={prog.id}
+              value={prog.programName}
+              text={prog.programName}
+            />
+          ))}
+        </Select>
+        <TextInput
+          id="new-cycle-name"
+          labelText={t("eqa.cycle.new.name", "Cycle name")}
+          value={newCycle.cycleName}
+          onChange={(e) =>
+            setNewCycle({ ...newCycle, cycleName: e.target.value })
+          }
+        />
         <CustomDatePicker
           id="new-cycle-distribution"
           labelText={t("eqa.cycle.new.distributionDate", "Distribution date")}
           onChange={setNewCycleDate("distributionDate")}
         />
-      </div>
-      <div style={{ marginTop: "1rem" }}>
         <CustomDatePicker
           id="new-cycle-deadline"
           labelText={t("eqa.cycle.new.deadline", "Submission deadline")}
           onChange={setNewCycleDate("submissionDeadline")}
         />
-      </div>
+      </Stack>
     </Modal>
   );
 };
