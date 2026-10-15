@@ -215,9 +215,8 @@ public class InventoryLotServiceImpl extends AuditableBaseObjectServiceImpl<Inve
         lot.setStatus(LotStatus.IN_USE);
         lot.setDateOpened(openedDate);
 
-        // Calculate expiry after opening for reagents
         InventoryItem item = lot.getInventoryItem();
-        if (item != null && item.isReagent() && item.getStabilityAfterOpening() != null) {
+        if (item != null && item.getStabilityAfterOpening() != null) {
             Calendar cal = Calendar.getInstance();
             cal.setTime(openedDate);
             cal.add(Calendar.DAY_OF_MONTH, item.getStabilityAfterOpening());
@@ -273,6 +272,19 @@ public class InventoryLotServiceImpl extends AuditableBaseObjectServiceImpl<Inve
         update(lot);
 
         return lot;
+    }
+
+    @Override
+    @Transactional
+    public InventoryLot editLot(InventoryLot lot, String sysUserId) {
+        Double stored = get(lot.getId()).getCurrentQuantity();
+        InventoryLot saved = update(lot);
+        Double edited = saved.getCurrentQuantity();
+        if (edited != null && !edited.equals(stored)) {
+            transactionService.recordTransaction(saved.getId(), TransactionType.ADJUSTMENT,
+                    edited - (stored == null ? 0d : stored), edited, null, null, "Edited on the lot form", sysUserId);
+        }
+        return saved;
     }
 
     @Override
