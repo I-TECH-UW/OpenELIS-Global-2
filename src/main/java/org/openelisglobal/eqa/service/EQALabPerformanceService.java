@@ -21,4 +21,7 @@ public interface EQALabPerformanceService {
      *         together.
      */
     Map<String, Object> getLabPerformance();
+
+    /** Open EQA-triggered non-conformities, however long ago they were raised. */
+    int countOpenEqaNces();
 }
