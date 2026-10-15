@@ -241,18 +241,18 @@
         collection_date="2026-10-01 08:10:00" rejected="false" voided="false"
         lastupdated="2026-10-01 09:00:00" />
 
-    <analysis id="9301" sampitem_id="9301" test_id="9301"
-        status_id="6" method_id="9301" analysis_type="MANUAL"
+    <analysis id="9301" test_sect_id="9301" sampitem_id="9301"
+        test_id="9301" status_id="6" method_id="9301" analysis_type="MANUAL"
         is_reportable="Y" released_date="2026-10-01 10:15:00"
         lastupdated="2026-10-01 10:15:00" />
-    <analysis id="9302" sampitem_id="9302" test_id="9302"
-        status_id="15" analysis_type="MANUAL" is_reportable="Y"
+    <analysis id="9302" test_sect_id="9301" sampitem_id="9302"
+        test_id="9302" status_id="15" analysis_type="MANUAL" is_reportable="Y"
         lastupdated="2026-10-01 10:00:00" />
-    <analysis id="9303" sampitem_id="9303" test_id="9303"
-        status_id="25" analysis_type="MANUAL" is_reportable="Y"
+    <analysis id="9303" test_sect_id="9301" sampitem_id="9303"
+        test_id="9303" status_id="25" analysis_type="MANUAL" is_reportable="Y"
         lastupdated="2026-10-01 09:00:00" />
-    <analysis id="9305" sampitem_id="9305" test_id="9304"
-        status_id="6" analysis_type="MANUAL" is_reportable="Y"
+    <analysis id="9305" test_sect_id="9301" sampitem_id="9305"
+        test_id="9304" status_id="6" analysis_type="MANUAL" is_reportable="Y"
         released_date="2026-10-01 11:40:00" lastupdated="2026-10-01 11:40:00" />
 
     <result id="9301" analysis_id="9301" value="6.3" result_type="N"

@@ -66,6 +66,35 @@ public final class PdfText {
         }
     }
 
+    /**
+     * The baseline of the first line on a page that starts with the given text,
+     * measured down from the top of the page, in points; -1 when absent.
+     */
+    public static float baselineOf(byte[] pdf, int page, String lineStart) throws IOException {
+        try (PDDocument document = Loader.loadPDF(pdf)) {
+            float[] baseline = { -1 };
+            StringBuilder line = new StringBuilder();
+            float[] lineY = { Float.NaN };
+            PDFTextStripper stripper = new PDFTextStripper() {
+                @Override
+                protected void processTextPosition(TextPosition text) {
+                    if (lineY[0] != text.getYDirAdj()) {
+                        line.setLength(0);
+                        lineY[0] = text.getYDirAdj();
+                    }
+                    line.append(text.getUnicode());
+                    if (baseline[0] < 0 && line.toString().replace(" ", "").startsWith(lineStart.replace(" ", ""))) {
+                        baseline[0] = text.getYDirAdj();
+                    }
+                }
+            };
+            stripper.setStartPage(page);
+            stripper.setEndPage(page);
+            stripper.getText(document);
+            return baseline[0];
+        }
+    }
+
     /** The page's raw content stream, for checks on how something is drawn. */
     public static String content(byte[] pdf, int page) throws IOException {
         try (PDDocument document = Loader.loadPDF(pdf);

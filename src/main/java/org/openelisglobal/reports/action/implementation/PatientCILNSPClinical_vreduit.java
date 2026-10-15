@@ -53,6 +53,9 @@ import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.note.valueholder.Note;
+import org.openelisglobal.observationhistory.service.ObservationHistoryService;
+import org.openelisglobal.observationhistory.service.ObservationHistoryServiceImpl.ObservationType;
+import org.openelisglobal.observationhistory.valueholder.ObservationHistory;
 import org.openelisglobal.qaevent.criticalcallback.service.CriticalCallbackService;
 import org.openelisglobal.qaevent.criticalcallback.valueholder.CriticalCallback;
 import org.openelisglobal.referral.valueholder.Referral;
@@ -251,6 +254,20 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
         }
     }
 
+    /**
+     * The order date as the report prints it. A requested date is a calendar day
+     * and prints without a time; an order without one falls back to its receipt.
+     */
+    private String orderDate(Timestamp received) {
+        ObservationHistory requested = SpringContext.getBean(ObservationHistoryService.class)
+                .getObservationForSample(ObservationType.REQUEST_DATE, sampleService.getId(currentSample));
+        if (requested == null || GenericValidator.isBlankOrNull(requested.getValue())) {
+            return reportTime(received);
+        }
+        return new SimpleDateFormat(DateUtil.getDateFormat().replace("yyyy", "yy"))
+                .format(DateUtil.convertStringDateToTruncatedTimestamp(requested.getValue()));
+    }
+
     /** The sample an aliquot came from; a primary sample is its own. */
     private static SampleItem primarySampleItem(SampleItem item) {
         SampleItem primary = item;
@@ -284,6 +301,7 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
                 || !(printedItemIds.contains(item.getId()) || item.isRejected()));
         items.sort(Comparator.comparingInt(item -> sortNumber(item.getSortOrder())));
         Timestamp orderReceived = currentSample.getReceivedTimestamp();
+        order.setOrderDate(orderDate(orderReceived));
         List<ReportSampleLine> lines = new ArrayList<>();
         Timestamp earliest = null;
         Set<Timestamp> collectionTimes = new HashSet<>();
@@ -497,7 +515,6 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
 
                 data.setResult(reportReferralResultValue);
                 data.setNote(note);
-                data.setPerformingLabName(performingLab);
                 data.setSampleType(parentData.getSampleType());
                 data.setSampleId(parentData.getSampleId());
                 data.setSampleSortOrder(parentData.getSampleSortOrder());
@@ -527,13 +544,20 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
                     work.pending = true;
                     data.setReferralPending(true);
                     data.setAnalysisStatus(messages.get("dashboard.in.progress.label"));
+                } else if (!parentData.isReleased()) {
+                    data.setResult(null);
+                    data.setPerformingLabName(performingLab);
+                    data.setAnalysisStatus(parentData.getAnalysisStatus());
                 } else {
                     data.setResult(reportReferralResultValue);
+                    data.setPerformingLabName(performingLab);
                     data.setReleased(true);
                     data.setCompletedTime(parentData.getCompletedTime());
                 }
 
-                data.setAlerts(getResultFlag(referralResult.getResult(), null, data));
+                if (data.isReleased() || data.isReferralPending()) {
+                    data.setAlerts(getResultFlag(referralResult.getResult(), null, data));
+                }
                 data.setHasRangeAndUOM(
                         referralResult.getResult() != null && "N".equals(referralResult.getResult().getResultType()));
 
@@ -761,14 +785,16 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
 
     /**
      * A date and time as the report prints it: the lab's date and clock format with
-     * a two-digit year, which keeps the Completed column to one line.
+     * a two-digit year and, on a 12-hour clock, the compact "1:05PM", which keeps
+     * the Completed and Samples columns to one line.
      */
     static String reportTime(Timestamp time) {
         if (time == null) {
             return null;
         }
         boolean clock24 = ConfigurationProperties.getInstance().isPropertyValueEqual(Property.CLOCK_24, "true");
-        String pattern = clock24 ? DateUtil.getDateTimeFormat() : DateUtil.getDateTime12HourFormat();
+        String pattern = clock24 ? DateUtil.getDateTimeFormat()
+                : DateUtil.getDateTime12HourFormat().replace("KK:mm a", "h:mma");
         return new SimpleDateFormat(pattern.replace("yyyy", "yy")).format(time);
     }
 

@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Locale;
@@ -19,15 +20,18 @@ import org.openelisglobal.accreditation.service.AccreditingBodyService;
 import org.openelisglobal.accreditation.service.TestAccreditationService;
 import org.openelisglobal.accreditation.valueholder.AccreditingBody;
 import org.openelisglobal.accreditation.valueholder.LogoVisibilityMode;
+import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.service.AnalysisServiceImpl;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.IReportTrackingService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.image.service.ImageService;
 import org.openelisglobal.image.valueholder.Image;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.internationalization.UiMessages;
 import org.openelisglobal.reports.action.implementation.reportBeans.ClinicalPatientData;
 import org.openelisglobal.reports.action.implementation.reportBeans.PatientReportOrder;
 import org.openelisglobal.reports.action.implementation.reportBeans.ReportSampleLine;
@@ -59,6 +63,9 @@ public class PatientReportV1PopulatorTest extends BaseWebContextSensitiveTest {
 
     @Autowired
     private DictionaryService dictionaryService;
+
+    @Autowired
+    private AnalysisService analysisService;
 
     @Autowired
     private IReportTrackingService reportTrackingService;
@@ -224,6 +231,134 @@ public class PatientReportV1PopulatorTest extends BaseWebContextSensitiveTest {
         assertEquals(List.of("ISO 15189"), order.getAccreditingBodies());
         assertTrue(row(marked, "9301").isInAccreditedScope());
         assertFalse(row(marked, "9305").isInAccreditedScope());
+    }
+
+    @Test
+    public void aReferredTestNamesThePerformingLabOnlyOnceItsResultIsBack() throws Exception {
+        jdbcTemplate
+                .update("INSERT INTO clinlims.organization (id, name, mls_sentinel_lab_flag, is_active, lastupdated)"
+                        + " VALUES (99301, 'Kokopo Reference Lab', 'N', 'Y', now())");
+        jdbcTemplate.update("UPDATE clinlims.analysis SET referred_out = true WHERE id = 9302");
+        jdbcTemplate.update("INSERT INTO clinlims.referral (id, analysis_id, organization_id, referral_type_id,"
+                + " canceled, lost_status, lastupdated) VALUES (99301, 9302, 99301,"
+                + " (SELECT MIN(id) FROM clinlims.referral_type), false, false, now())");
+        jdbcTemplate.update("INSERT INTO clinlims.result (id, analysis_id, value, result_type, is_reportable,"
+                + " lastupdated) VALUES (99301, 9302, '', 'N', 'Y', now())");
+        jdbcTemplate.update("INSERT INTO clinlims.referral_result (id, referral_id, test_id, result_id, lastupdated)"
+                + " VALUES (99301, 99301, 9302, 99301, now())");
+
+        ClinicalPatientData pending = referredRow(run());
+        assertTrue(pending.isReferralPending());
+        assertNull("still out at the reference lab", pending.getPerformingLabName());
+
+        jdbcTemplate.update("UPDATE clinlims.result SET value = '7.4' WHERE id = 99301");
+        ClinicalPatientData back = referredRow(run());
+
+        assertFalse(back.isReferralPending());
+        assertEquals("Kokopo Reference Lab", back.getPerformingLabName());
+    }
+
+    /**
+     * A result typed in for a referred test goes back to validation like any other,
+     * and the report printed the value while it waited there.
+     */
+    @Test
+    public void aReturnedReferralResultPrintsOnlyOnceItIsReleased() throws Exception {
+        jdbcTemplate
+                .update("INSERT INTO clinlims.organization (id, name, mls_sentinel_lab_flag, is_active, lastupdated)"
+                        + " VALUES (99301, 'Kokopo Reference Lab', 'N', 'Y', now())");
+        jdbcTemplate.update("UPDATE clinlims.analysis SET referred_out = true WHERE id = 9302");
+        jdbcTemplate.update("INSERT INTO clinlims.referral (id, analysis_id, organization_id, referral_type_id,"
+                + " canceled, lost_status, lastupdated) VALUES (99301, 9302, 99301,"
+                + " (SELECT MIN(id) FROM clinlims.referral_type), false, false, now())");
+        jdbcTemplate.update("INSERT INTO clinlims.result (id, analysis_id, value, result_type, is_reportable,"
+                + " lastupdated) VALUES (99301, 9302, '7.4', 'N', 'Y', now())");
+        jdbcTemplate.update("INSERT INTO clinlims.referral_result (id, referral_id, test_id, result_id, lastupdated)"
+                + " VALUES (99301, 99301, 9302, 99301, now())");
+
+        PatientCILNSPClinical_vreduit awaiting = run();
+        ClinicalPatientData unreleased = referredRow(awaiting);
+
+        assertNull("an unvalidated value never prints", unreleased.getResult());
+        assertFalse(unreleased.isReleased());
+        assertEquals(UiMessages.current().get("report.patient.awaitingValidation"), unreleased.getAnalysisStatus());
+        assertFalse(awaiting.getReportOrders().get(ORDER).isComplete());
+
+        jdbcTemplate.update("UPDATE clinlims.analysis SET status_id = 6, released_date = ? WHERE id = 9302",
+                Timestamp.valueOf("2026-10-01 12:00:00"));
+        ClinicalPatientData released = referredRow(run());
+
+        assertEquals("7.4", released.getResult());
+        assertTrue(released.isReleased());
+    }
+
+    private static ClinicalPatientData referredRow(PatientCILNSPClinical_vreduit report) {
+        return report.reportItems.stream().filter(item -> "9302".equals(item.getTestId()))
+                .filter(item -> item.isReferralPending() || item.getPerformingLabName() != null).findFirst()
+                .orElseThrow(() -> new AssertionError("no referred row for Urea: " + report.reportItems.size()));
+    }
+
+    @Test
+    public void aReportBySiteAndResultDateIncludesResultsFromTheLastDayOfTheRange() throws Exception {
+        jdbcTemplate
+                .update("INSERT INTO clinlims.organization (id, name, mls_sentinel_lab_flag, is_active, lastupdated)"
+                        + " VALUES (99302, 'Kokopo Clinic', 'N', 'Y', now())");
+        jdbcTemplate.update("INSERT INTO clinlims.sample_requester (id, sample_id, requester_id, requester_type_id,"
+                + " lastupdated) VALUES (99302, 9301, 99302, (SELECT id FROM clinlims.requester_type"
+                + " WHERE requester_type = 'organization'), now())");
+        jdbcTemplate.update("INSERT INTO clinlims.sample_organization (id, samp_id, org_id, lastupdated)"
+                + " VALUES (99302, 9301, 99302, now())");
+        jdbcTemplate.update("UPDATE clinlims.analysis SET entry_date = '2026-10-01 10:00:00' WHERE id = 9301");
+        LocalDate day = LocalDate.of(2026, 10, 1);
+
+        assertTrue(analysisService.getAnalysisForSiteBetweenResultDates("99302", day, day).stream()
+                .anyMatch(analysis -> "9301".equals(analysis.getId())));
+        assertTrue(analysisService.getStudyAnalysisForSiteBetweenResultDates("99302", day, day).stream()
+                .anyMatch(analysis -> "9301".equals(analysis.getId())));
+        assertFalse(analysisService.getAnalysisForSiteBetweenResultDates("99302", day.plusDays(1), day.plusDays(1))
+                .stream().anyMatch(analysis -> "9301".equals(analysis.getId())));
+    }
+
+    @Test
+    public void onATwelveHourClockTimesStayShortEnoughForOneLine() throws Exception {
+        String clock = ConfigurationProperties.getInstance().getPropertyValue(Property.CLOCK_24);
+        try {
+            ConfigurationProperties.getInstance().setPropertyValue(Property.CLOCK_24, "false");
+            String afternoon = PatientCILNSPClinical_vreduit.reportTime(Timestamp.valueOf("2026-10-01 13:05:00"));
+            String noon = PatientCILNSPClinical_vreduit.reportTime(Timestamp.valueOf("2026-10-01 12:00:00"));
+
+            assertTrue(afternoon, afternoon.endsWith(" 1:05PM") && afternoon.length() <= 15);
+            assertTrue(noon, noon.endsWith(" 12:00PM"));
+        } finally {
+            ConfigurationProperties.getInstance().setPropertyValue(Property.CLOCK_24, clock);
+        }
+    }
+
+    @Test
+    public void aRequestedOrderDatePrintsAsADayAndAnOrderWithoutOneShowsItsReceipt() throws Exception {
+        assertEquals(time("2026-10-01 09:00:00"), run().getReportOrders().get(ORDER).getOrderDate());
+
+        List<String> typeIds = jdbcTemplate.queryForList(
+                "SELECT id FROM clinlims.observation_history_type WHERE type_name = 'requestDate'", String.class);
+        String typeId = typeIds.isEmpty() ? "99301" : typeIds.get(0);
+        if (typeIds.isEmpty()) {
+            jdbcTemplate.update("INSERT INTO clinlims.observation_history_type (id, type_name, description,"
+                    + " lastupdated) VALUES (99301, 'requestDate', 'requestDate', now())");
+        }
+        jdbcTemplate.update(
+                "INSERT INTO clinlims.observation_history (id, sample_id, observation_history_type_id,"
+                        + " value_type, value, lastupdated) VALUES (99301, 9301, ?, 'L', ?, now())",
+                Integer.valueOf(typeId),
+                new SimpleDateFormat(DateUtil.getDateFormat()).format(Timestamp.valueOf("2026-09-30 00:00:00")));
+        try {
+            String requested = run().getReportOrders().get(ORDER).getOrderDate();
+
+            assertEquals(new SimpleDateFormat(DateUtil.getDateFormat().replace("yyyy", "yy"))
+                    .format(Timestamp.valueOf("2026-09-30 00:00:00")), requested);
+        } finally {
+            jdbcTemplate.update("DELETE FROM clinlims.observation_history WHERE id = 99301");
+            jdbcTemplate.update("DELETE FROM clinlims.observation_history_type WHERE id = 99301");
+        }
     }
 
     @Test

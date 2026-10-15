@@ -20,6 +20,7 @@ public final class PatientReportOrder {
     private String replacedIssueTime;
     private String earliestCollection;
     private boolean collectionsDiffer = false;
+    private String orderDate;
 
     /** Every non-cancelled, non-rejected result on the order is released. */
     public boolean isComplete() {
@@ -108,5 +109,14 @@ public final class PatientReportOrder {
 
     public void setCollectionsDiffer(boolean collectionsDiffer) {
         this.collectionsDiffer = collectionsDiffer;
+    }
+
+    /** The requested day of the order, or its receipt time when none was given. */
+    public String getOrderDate() {
+        return orderDate;
+    }
+
+    public void setOrderDate(String orderDate) {
+        this.orderDate = orderDate;
     }
 }

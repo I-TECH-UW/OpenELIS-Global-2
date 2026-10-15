@@ -32,8 +32,26 @@ public final class PdfImages {
         }
     }
 
+    /**
+     * The top edge of each image drawn on a page, measured down from the top of the
+     * page, in points.
+     */
+    public static List<Float> drawnTops(byte[] pdf, int page) throws IOException {
+        try (PDDocument document = Loader.loadPDF(pdf)) {
+            Sizes sizes = new Sizes();
+            sizes.processPage(document.getPage(page - 1));
+            float height = document.getPage(page - 1).getMediaBox().getHeight();
+            List<Float> tops = new ArrayList<>();
+            for (float top : sizes.tops) {
+                tops.add(height - top);
+            }
+            return tops;
+        }
+    }
+
     private static final class Sizes extends PDFStreamEngine {
         private final List<String> sizes = new ArrayList<>();
+        private final List<Float> tops = new ArrayList<>();
 
         Sizes() {
             addOperator(new Concatenate(this));
@@ -49,6 +67,7 @@ public final class PdfImages {
                 if (object instanceof PDImageXObject) {
                     Matrix matrix = getGraphicsState().getCurrentTransformationMatrix();
                     sizes.add(Math.round(matrix.getScalingFactorX()) + "x" + Math.round(matrix.getScalingFactorY()));
+                    tops.add(matrix.getTranslateY() + matrix.getScalingFactorY());
                 }
             }
             super.processOperator(operator, operands);

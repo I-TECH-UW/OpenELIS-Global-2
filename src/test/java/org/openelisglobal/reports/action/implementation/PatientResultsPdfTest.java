@@ -304,6 +304,21 @@ public class PatientResultsPdfTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
+    public void theDirectorsSignatureStartsBelowTheValidators() throws Exception {
+        PatientReportOrder order = order();
+        order.setValidators(List.of("Sarah Chen, 01/10/26 10:15"));
+        PatientResultsPdf.Settings settings = new PatientResultsPdf.Settings("Central Public Health Laboratory", null,
+                null, null, true, "URAP Number", false, false, logo(600, 200), "Dr Jane Kila", null);
+
+        byte[] pdf = PatientResultsPdf.render(settings, ENGLISH, rows(ORDER), Map.of(ORDER, order));
+
+        float validator = PdfText.baselineOf(pdf, 1, "Sarah Chen");
+        assertTrue("validator line found", validator > 0);
+        assertTrue(PdfImages.drawnTops(pdf, 1).toString(),
+                PdfImages.drawnTops(pdf, 1).stream().anyMatch(top -> top > validator && top < validator + 20));
+    }
+
+    @Test
     public void aTypicalOrderFitsOnOnePageOnLetterAndA4() throws Exception {
         for (String size : List.of("Letter", "A4")) {
             ConfigurationProperties.getInstance().setPropertyValue(Property.REPORT_PAPER_SIZE, size);

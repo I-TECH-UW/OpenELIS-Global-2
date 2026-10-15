@@ -267,7 +267,8 @@ final class PatientResultsPdf {
                 false);
 
         PdfPTable dates = block(messages.get("report.patient.block.dates"));
-        field(dates, messages.get("sample.label.orderdate"), row.getOrderDate(), false);
+        field(dates, messages.get("sample.label.orderdate"),
+                order.getOrderDate() == null ? row.getOrderDate() : order.getOrderDate(), false);
         field(dates, messages.get("report.patient.completed"),
                 order.getCompletedTime() == null ? messages.get("report.patient.completed.pending")
                         : order.getCompletedTime(),
@@ -661,16 +662,19 @@ final class PatientResultsPdf {
         released.addElement(new Phrase(messages.get("report.patient.releasedBy").toUpperCase(messages.getLocale()),
                 fonts.bold(6.5f, GRAY)));
         for (String validator : order.getValidators()) {
-            released.addElement(new Phrase(validator, fonts.regular(8, Color.BLACK)));
+            released.addElement(new Paragraph(10, validator, fonts.regular(8, Color.BLACK)));
         }
         Image signature = image(settings.labDirectorSignature());
         if (signature != null) {
             signature.scaleToFit(120, 30);
+            signature.setSpacingBefore(4);
             released.addElement(signature);
         }
         String director = directorLine();
         if (director != null) {
-            released.addElement(new Phrase(director, fonts.regular(7.5f, GRAY)));
+            Paragraph directorParagraph = new Paragraph(9, director, fonts.regular(7.5f, GRAY));
+            directorParagraph.setSpacingBefore(2);
+            released.addElement(directorParagraph);
         }
         signOff.addCell(released);
 
