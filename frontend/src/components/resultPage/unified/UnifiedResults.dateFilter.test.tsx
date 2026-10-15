@@ -25,7 +25,10 @@ const { utilsMock, config } = vi.hoisted(() => ({
   },
 }));
 
-vi.mock("../../utils/Utils", () => utilsMock);
+vi.mock("../../utils/Utils", async (importOriginal) => ({
+  ...((await importOriginal()) as object),
+  ...utilsMock,
+}));
 
 vi.mock("../../layout/Layout", () => ({
   NotificationContext: React.createContext({

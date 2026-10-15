@@ -31,7 +31,9 @@ import {
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
 import {
+  displayDateToIso,
   getFromOpenElisServer,
+  parseIsoDate,
   postToOpenElisServerJsonResponse,
 } from "../../utils/Utils";
 import { requestFailed, serverMessage } from "../../utils/requestOutcome";
@@ -259,6 +261,21 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
     configurationProperties?: Record<string, string>;
   };
   const dayFirst = configurationProperties?.DEFAULT_DATE_LOCALE === "fr-FR";
+  const parseFilterDate = (text: string): Date | false =>
+    parseIsoDate(displayDateToIso(text.trim(), dayFirst ? "fr-FR" : "en-US"));
+  const commitFilterDate = (date: Date | false) => {
+    if (!date) {
+      setCollectionDate("");
+      return;
+    }
+    const dd = String(date.getDate()).padStart(2, "0");
+    const mm = String(date.getMonth() + 1).padStart(2, "0");
+    setCollectionDate(
+      dayFirst
+        ? `${dd}/${mm}/${date.getFullYear()}`
+        : `${mm}/${dd}/${date.getFullYear()}`,
+    );
+  };
   const allowResultRejection =
     configurationProperties?.allowResultRejection === "true";
   const alertInvalidResults =
@@ -1412,20 +1429,10 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
               <DatePicker
                 datePickerType="single"
                 dateFormat={dayFirst ? "d/m/Y" : "m/d/Y"}
-                onChange={(dates: Date[]) => {
-                  if (dates && dates.length) {
-                    const d = dates[0];
-                    const dd = String(d.getDate()).padStart(2, "0");
-                    const mm = String(d.getMonth() + 1).padStart(2, "0");
-                    setCollectionDate(
-                      dayFirst
-                        ? `${dd}/${mm}/${d.getFullYear()}`
-                        : `${mm}/${dd}/${d.getFullYear()}`,
-                    );
-                  } else {
-                    setCollectionDate("");
-                  }
-                }}
+                parseDate={parseFilterDate}
+                onChange={(dates: Date[]) =>
+                  commitFilterDate(dates && dates.length ? dates[0] : false)
+                }
               >
                 <DatePickerInput
                   id="unifiedResultsDate"
@@ -1436,6 +1443,10 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
                     ),
                   })}
                   disabled={Boolean(selectedPatient)}
+                  onBlur={(event: React.FocusEvent<HTMLInputElement>) => {
+                    const typed = event.target.value.trim();
+                    commitFilterDate(typed ? parseFilterDate(typed) : false);
+                  }}
                 />
               </DatePicker>
             </Column>
