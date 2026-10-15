@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect } from "react";
 import {
   Modal,
   TextInput,
@@ -23,6 +23,7 @@ import {
   getDeepestLocationSelection,
   positionToCoordinate,
 } from "../storage/LocationPicker/locationSelectionMapper";
+import { useIsMounted } from "./useIsMounted";
 import { labNow } from "../utils/labClock";
 import { RequiredMarker } from "../common/RequiredMarker";
 
@@ -48,16 +49,7 @@ const LotEntryModal = ({ open, onClose, onSave, lot = null, item = null }) => {
   const intl = useIntl();
   const isEdit = !!lot;
 
-  // Guards setState after awaits — fetches and saves can resolve after the
-  // parent has unmounted this modal (e.g. onSave() closes it before the
-  // finally block runs).
-  const isMountedRef = useRef(true);
-  useEffect(() => {
-    isMountedRef.current = true;
-    return () => {
-      isMountedRef.current = false;
-    };
-  }, []);
+  const isMounted = useIsMounted();
 
   const [formData, setFormData] = useState({
     inventoryItem: null,
@@ -130,7 +122,7 @@ const LotEntryModal = ({ open, onClose, onSave, lot = null, item = null }) => {
   const fetchItems = async () => {
     try {
       const allItems = await InventoryItemAPI.getAll({ isActive: true });
-      if (!isMountedRef.current) return;
+      if (!isMounted()) return;
       const validItems = Array.isArray(allItems) ? allItems : [];
       setItems(
         validItems.map((item) => ({
@@ -141,14 +133,14 @@ const LotEntryModal = ({ open, onClose, onSave, lot = null, item = null }) => {
       );
     } catch (err) {
       console.error("Error fetching items:", err);
-      if (isMountedRef.current) setItems([]);
+      if (isMounted()) setItems([]);
     }
   };
 
   const fetchCurrentLocation = async (lotId) => {
     try {
       const location = await InventoryLotStorageAPI.getLocation(lotId);
-      if (!isMountedRef.current) return;
+      if (!isMounted()) return;
       if (location && location.hierarchicalPath) {
         setCurrentLocation({
           selection: {},
@@ -162,7 +154,7 @@ const LotEntryModal = ({ open, onClose, onSave, lot = null, item = null }) => {
       }
     } catch (err) {
       console.error("Error fetching lot location:", err);
-      if (isMountedRef.current) setCurrentLocation(null);
+      if (isMounted()) setCurrentLocation(null);
     }
   };
 
@@ -277,7 +269,7 @@ const LotEntryModal = ({ open, onClose, onSave, lot = null, item = null }) => {
       onSave();
     } catch (err) {
       console.error("Error saving lot:", err);
-      if (!isMountedRef.current) return;
+      if (!isMounted()) return;
       // errorCode is an en.json id; message is the raw backend string.
       setError(
         err.errorCode
@@ -286,7 +278,7 @@ const LotEntryModal = ({ open, onClose, onSave, lot = null, item = null }) => {
       );
     } finally {
       // onSave() above may have unmounted this modal already.
-      if (isMountedRef.current) setSaving(false);
+      if (isMounted()) setSaving(false);
     }
   };
 
@@ -340,10 +332,10 @@ const LotEntryModal = ({ open, onClose, onSave, lot = null, item = null }) => {
         await InventoryLotStorageAPI.assignLocation(payload);
       }
       await fetchCurrentLocation(lot.id);
-      if (isMountedRef.current) setLocationPickerOpen(false);
+      if (isMounted()) setLocationPickerOpen(false);
     } catch (err) {
       console.error("Error assigning lot location:", err);
-      if (isMountedRef.current)
+      if (isMounted())
         setLocationError(err.message || "Error assigning storage location");
     }
   };
