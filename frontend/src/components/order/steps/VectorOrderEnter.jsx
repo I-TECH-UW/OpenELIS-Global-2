@@ -33,6 +33,7 @@ import RequesterSection from "./sections/RequesterSection";
 import ProgramSection from "./sections/ProgramSection";
 import SampleTestSection from "./sections/SampleTestSection";
 import "../order-workflow.scss";
+import { orderSavedMessage } from "../orderSavedMessage";
 
 const WORKFLOW_TYPE = "vector";
 const WORKFLOW_PREFIX = "/order/vector";
@@ -156,7 +157,10 @@ const VectorOrderEnter = () => {
       addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "save.order.success.msg" }),
+        message: orderSavedMessage(
+          intl,
+          labNumber || orderData?.sampleOrderItems?.labNo,
+        ),
       });
       setNotificationVisible(true);
     } catch (error) {
@@ -175,9 +179,11 @@ const VectorOrderEnter = () => {
     try {
       await saveOrderEntry();
       markStepComplete("enter");
+      const savedLabNumber =
+        labNumber || orderData?.sampleOrderItems?.labNo || "";
       history.push(
-        labNumber
-          ? `/order/vector/label?order=${encodeURIComponent(labNumber)}`
+        savedLabNumber
+          ? `/order/vector/label?order=${encodeURIComponent(savedLabNumber)}`
           : "/order/vector/label",
       );
     } catch (error) {

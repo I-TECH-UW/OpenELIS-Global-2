@@ -32,6 +32,7 @@ import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.dataexchange.order.valueholder.ElectronicOrder;
 import org.openelisglobal.dataexchange.service.order.ElectronicOrderService;
+import org.openelisglobal.eqa.service.EQAOrderEntryValidator;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.notifications.dao.NotificationDAO;
 import org.openelisglobal.notifications.entity.Notification;
@@ -68,11 +69,13 @@ import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.BindingResult;
+import org.springframework.validation.Errors;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -157,7 +160,8 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
             "referralItems*.cocContactName", "referralItems*.cocContactPhone", "referralItems*.cocContactEmail",
             "referralItems*.subcontractNotes",
             //
-            "useReferral", "sampleOrderItems.additionalQuestions", "sampleOrderItems.programId", "orderEntryOnly" };
+            "useReferral", "sampleOrderItems.additionalQuestions", "sampleOrderItems.programId", "orderEntryOnly",
+            "cancelReason" };
 
     @Autowired
     private SamplePatientEntryFormValidator formValidator;
@@ -198,6 +202,16 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 
     @Autowired
     private SampleOrderOverrideService sampleOrderOverrideService;
+
+    @Autowired
+    private org.openelisglobal.microbiology.service.MicroCultureSetWarningService setWarningService;
+
+    @Autowired
+    private org.openelisglobal.dictionary.service.SampleContainerClassificationService containers;
+
+    @Autowired
+    @Lazy
+    private EQAOrderEntryValidator eqaOrderEntryValidator;
 
     @InitBinder
     public void initBinder(WebDataBinder binder) {
@@ -318,7 +332,8 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
             if (hasNonPatientErrors) {
                 saveErrors(result);
                 logger.warn("SamplePatientEntry 400 (formValidator): {}", result.getAllErrors());
-                return ResponseEntity.badRequest().body(buildErrorBody(result, "Validation failed", workflowType));
+                return ResponseEntity.badRequest()
+                        .body(buildErrorBody(result, "Validation failed", workflowType, ordersWithoutPatient));
             }
         }
         SamplePatientUpdateData updateData = new SamplePatientUpdateData(getSysUserId(request));
@@ -362,6 +377,7 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
         updateData.setPriority(sampleOrder.getPriority());
         updateData.initProvider(sampleOrder);
         updateData.initRequestorContact(sampleOrder);
+        updateData.setCancelReason(form.getCancelReason());
 
         // initSampleData MUST be called before initProgramQuestions so that the sample
         // object is loaded (for updates) before we try to load the existing
@@ -399,7 +415,50 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
         // They will be added in a later step (Collect Sample)
         boolean requireSampleItems = !form.isOrderEntryOnly();
 
+        validateTestRemovals(form, updateData, result);
+        validateEqa(sampleOrder, result);
         updateData.validateSample(result, requireSampleItems, sampleOrder, workflowType);
+
+        if (!Boolean.TRUE.equals(form.getWarning()) && updateData.getSampleItemsTests() != null) {
+            java.util.List<org.openelisglobal.microbiology.form.MicroCaseSpecimenForm> bottles = new java.util.ArrayList<>();
+            for (org.openelisglobal.common.services.SampleAddService.SampleTestCollection stc : updateData
+                    .getSampleItemsTests()) {
+                org.openelisglobal.sampleitem.valueholder.SampleItem item = stc.item;
+                if (item != null && item.getCultureSetNumber() != null) {
+                    boolean inSets = false;
+                    if (stc.tests != null) {
+                        for (org.openelisglobal.test.valueholder.Test t : stc.tests) {
+                            if (t.isCollectedInSets()) {
+                                inSets = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (inSets) {
+                        var bottle = new org.openelisglobal.microbiology.form.MicroCaseSpecimenForm();
+                        bottle.collectedInSets = true;
+                        bottle.cultureSetNumber = item.getCultureSetNumber();
+                        bottle.containerType = item.getContainer();
+                        bottle.containerPopulation = containers.population(item.getContainer());
+                        bottle.bodySite = item.getBodySite();
+                        bottle.collectionLocationId = item.getCollectionLocationId();
+                        bottle.collectionDate = item.getCollectionDate();
+                        if (item.getTypeOfSample() != null) {
+                            bottle.specimenType = item.getTypeOfSample().getLocalizedName();
+                        }
+                        bottles.add(bottle);
+                    }
+                }
+            }
+            if (!bottles.isEmpty()) {
+                java.util.List<org.openelisglobal.microbiology.form.MicroCultureSetWarningForm> setWarnings = setWarningService
+                        .evaluate(bottles);
+                if (!setWarnings.isEmpty()) {
+                    result.rejectValue("warning", "warnings.unacknowledged",
+                            "There are unacknowledged culture set warnings");
+                }
+            }
+        }
 
         // OGC-356: For environmental/vector workflow, ignore patient-related validation
         // errors
@@ -415,7 +474,8 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
         if (hasNonPatientErrors) {
             saveErrors(result);
             logger.warn("SamplePatientEntry 400 (validateSample): {}", result.getAllErrors());
-            return ResponseEntity.badRequest().body(buildErrorBody(result, "Validation failed", workflowType));
+            return ResponseEntity.badRequest()
+                    .body(buildErrorBody(result, "Validation failed", workflowType, ordersWithoutPatient));
         }
 
         // OGC-584: track persistence failure so we can return a proper HTTP
@@ -543,7 +603,8 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
                     && !persistErrorMessage.startsWith("Transaction silently rolled back")) {
                 return ResponseEntity.status(status).body(Map.of("error", persistErrorMessage));
             }
-            return ResponseEntity.status(status).body(buildErrorBody(result, "Failed to save order", workflowType));
+            return ResponseEntity.status(status)
+                    .body(buildErrorBody(result, "Failed to save order", workflowType, ordersWithoutPatient));
         }
 
         // OGC-1201 AL/AB: record the decision alongside the order it belongs
@@ -582,6 +643,83 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
      * after the save. A failure here is logged and never fails a save that already
      * succeeded.
      */
+    /** An EQA order names its enrollment and, optionally, a cycle of it. */
+    private void validateEqa(SampleOrderItem sampleOrder, Errors errors) {
+        if (sampleOrder == null || !sampleOrder.getIsEQASample()) {
+            return;
+        }
+        eqaOrderEntryValidator.check(sampleOrder.getLabNo(), sampleOrder.getEqaProgramId(), sampleOrder.getEqaCycleId())
+                .ifPresent(refusal -> errors.rejectValue(refusal.field(), refusal.code(), refusal.code()));
+    }
+
+    private void validateTestRemovals(SamplePatientEntryForm form, SamplePatientUpdateData updateData,
+            BindingResult result) {
+        if (form.getSampleOrderItems() == null
+                || GenericValidator.isBlankOrNull(form.getSampleOrderItems().getSampleId())) {
+            return;
+        }
+
+        Sample existing = sampleService.get(form.getSampleOrderItems().getSampleId());
+        if (existing == null) {
+            return;
+        }
+
+        List<Analysis> existingAnalyses = sampleService.getAnalysis(existing);
+        if (existingAnalyses == null || existingAnalyses.isEmpty()) {
+            return;
+        }
+
+        java.util.Set<String> requestedTestIds = new java.util.HashSet<>();
+        boolean hasRemainingMicro = false;
+
+        if (updateData.getSampleItemsTests() != null) {
+            for (org.openelisglobal.common.services.SampleAddService.SampleTestCollection stc : updateData
+                    .getSampleItemsTests()) {
+                if (stc.tests != null) {
+                    for (org.openelisglobal.test.valueholder.Test t : stc.tests) {
+                        requestedTestIds.add(t.getId());
+                        if (t.isOpensMicrobiologyCase()) {
+                            hasRemainingMicro = true;
+                        }
+                    }
+                }
+            }
+        }
+
+        boolean removedLastMicro = false;
+        boolean removedTestWithResults = false;
+        boolean hadMicro = false;
+
+        String cancelledId = org.openelisglobal.spring.util.SpringContext
+                .getBean(org.openelisglobal.common.services.IStatusService.class)
+                .getStatusID(org.openelisglobal.common.services.StatusService.AnalysisStatus.Canceled);
+        org.openelisglobal.result.service.ResultService resultService = org.openelisglobal.spring.util.SpringContext
+                .getBean(org.openelisglobal.result.service.ResultService.class);
+
+        for (Analysis analysis : existingAnalyses) {
+            if (cancelledId != null && cancelledId.equals(analysis.getStatusId())) {
+                continue;
+            }
+            if (analysis.getTest().isOpensMicrobiologyCase()) {
+                hadMicro = true;
+            }
+            if (!requestedTestIds.contains(analysis.getTest().getId())) {
+                if (!resultService.getResultsByAnalysis(analysis).isEmpty()) {
+                    removedTestWithResults = true;
+                }
+            }
+        }
+
+        if (hadMicro && !hasRemainingMicro) {
+            removedLastMicro = true;
+        }
+
+        if ((removedTestWithResults || removedLastMicro) && GenericValidator.isBlankOrNull(form.getCancelReason())) {
+            result.rejectValue("cancelReason", "order.cancel.reasonRequired",
+                    "A reason is required to cancel this test.");
+        }
+    }
+
     private List<String> rangeNotAppliedTests(Sample sample) {
         try {
             return samplePatientService.getTestNamesWithRangeNotApplied(sample);
@@ -858,7 +996,18 @@ public class SamplePatientEntryRestController extends BaseSampleEntryController 
 
     private static Map<String, Object> buildErrorBody(BindingResult result, String fallbackMessage,
             String workflowType) {
-        boolean dropPatientErrors = "environmental".equals(workflowType) || "vector".equals(workflowType);
+        return buildErrorBody(result, fallbackMessage, workflowType, false);
+    }
+
+    /**
+     * An order without a patient (environmental, vector, EQA or a declared
+     * no-patient order) reports only the errors that refused it, not the empty
+     * patient form it never had (OGC-1483).
+     */
+    static Map<String, Object> buildErrorBody(BindingResult result, String fallbackMessage, String workflowType,
+            boolean withoutPatient) {
+        boolean dropPatientErrors = withoutPatient || "environmental".equals(workflowType)
+                || "vector".equals(workflowType);
         // The field errors actually surfaced to the client. For environmental/vector
         // drop patient-form errors so the reported message reflects the real cause
         // (e.g. missing requester) rather than a spurious "patientProperties.*" that
