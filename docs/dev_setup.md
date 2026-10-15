@@ -48,14 +48,14 @@ the operating-system trust store. Later starts and other worktrees reuse that
 trust. If authentication is canceled or unavailable, startup stops before the
 build and explains how to retry.
 
-`up` never builds container images unless asked. It builds the OpenELIS WAR
-from the checkout and runs it, together with the frontend `src` and `public`
+`up` never builds container images unless asked. It builds the OpenELIS WAR from
+the checkout and runs it, together with the frontend `src` and `public`
 directories, in the published development images named in
 `projects/analyzer-harness/docker-compose.dev.yml` and
-`docker-compose.worktree.yml` (`itechuw/openelis-global-2-dev`,
-`-frontend-dev`, `-analyzer-bridge` and `-analyzer-mock`, tag `develop`), which
-it pulls on each start. `DEV_STACK_IMAGE_NAMESPACE` and `DEV_STACK_IMAGE_TAG`
-select other published images.
+`docker-compose.worktree.yml` (`itechuw/openelis-global-2-dev`, `-frontend-dev`,
+`-analyzer-bridge` and `-analyzer-mock`, tag `develop`), which it pulls on each
+start. `DEV_STACK_IMAGE_NAMESPACE` and `DEV_STACK_IMAGE_TAG` select other
+published images.
 
 Run `up --build` to build those images from the checkout instead. That is only
 needed when a change lives inside an image rather than in the mounted WAR or
