@@ -270,6 +270,49 @@ public class ResultEntryRestControllerTest extends BaseWebContextSensitiveTest {
         assertEquals("nothing was written", valueBefore, resultService.get("3").getValue());
     }
 
+    /**
+     * A change counts as a correction only when a patient report showed the
+     * released result: a report printed before the release masked it.
+     */
+    @Test
+    public void save_marksACorrectionOnlyWhenAReportShowedTheReleasedResult() throws Exception {
+        patientReportFor("1", "2025-07-07 12:00:00");
+
+        mockMvc.perform(post("/rest/results-entry/analysis/1/result").contentType(MediaType.APPLICATION_JSON)
+                .content(saveBody("1", "3", "1", "16.0", currentToken("1"))).session(session))
+                .andExpect(status().isOk());
+        assertEquals("reported before the 13:00 release", 0, correctedNotes("1"));
+
+        patientReportFor("1", "2025-07-07 14:00:00");
+        mockMvc.perform(post("/rest/results-entry/analysis/1/result").contentType(MediaType.APPLICATION_JSON)
+                .content(saveBody("1", "3", "1", "17.0", currentToken("1"))).session(session))
+                .andExpect(status().isOk());
+        assertEquals("reported after the release", 1, correctedNotes("1"));
+    }
+
+    private void patientReportFor(String sampleId, String at) {
+        Object tracking = org.springframework.test.util.AopTestUtils
+                .getTargetObject(org.openelisglobal.spring.util.SpringContext
+                        .getBean(org.openelisglobal.common.services.IReportTrackingService.class));
+        String typeId = (String) org.springframework.test.util.ReflectionTestUtils.getField(tracking,
+                "PATIENT_DOCUMENT_TYPE_ID");
+        jdbc.update(
+                "INSERT INTO clinlims.document_type (id, name, description, lastupdated)"
+                        + " SELECT ?, 'patientReport', 'Patient report', now() WHERE NOT EXISTS"
+                        + " (SELECT 1 FROM clinlims.document_type WHERE id = ?)",
+                Integer.valueOf(typeId), Integer.valueOf(typeId));
+        jdbc.update(
+                "INSERT INTO clinlims.document_track (id, table_id, row_id, document_type_id, report_generation_time,"
+                        + " name) VALUES (nextval('clinlims.document_track_seq'), ?, ?, ?, ?, 'patientCILNSP_vreduit')",
+                Integer.valueOf(ensureReferenceTable("SAMPLE")), Integer.valueOf(sampleId), Integer.valueOf(typeId),
+                Timestamp.valueOf(at));
+    }
+
+    private int correctedNotes(String analysisId) {
+        return jdbc.queryForObject("SELECT count(*) FROM clinlims.note WHERE reference_id = ? AND text = ?",
+                Integer.class, Integer.valueOf(analysisId), MessageUtil.getMessage("note.corrected.result"));
+    }
+
     private static String referral(String sentDate) {
         return "\"note\":\"\",\"refer\":true,\"referralItem\":{\"referredInstituteId\":\"1\","
                 + "\"referralReasonId\":\"1\",\"referredSendDate\":\"" + sentDate + "\"}";
