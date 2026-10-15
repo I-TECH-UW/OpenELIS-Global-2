@@ -63,9 +63,11 @@ frontend source: `Dockerfile.dev`, the frontend `Dockerfile`, frontend
 dependencies (`package.json`, `package-lock.json`) or build configuration
 (`vite.config.ts`, `index.html`, `tsconfig.json`), or Bridge and mock changes in
 `tools/<submodule>`. Without `--build`, `up` prints a warning when the frontend
-files or a Bridge or mock checkout differ from the published images, and keeps
-running the published images. Application containers, networks, ports, and data
-volumes belong to this worktree. Docker and Maven caches are reused.
+files, a Bridge or mock checkout, or `Dockerfile.dev`, `install/` or
+`tomcat/client-certificates` differ from what the published images were built
+from, and keeps running the published images. Application containers, networks,
+ports, and data volumes belong to this worktree. Docker and Maven caches are
+reused.
 
 `up` initializes an empty submodule at the commit the parent repository records.
 It never moves, resets or refuses a populated one. For each submodule at another
@@ -78,7 +80,7 @@ commits instead.
 Frontend edits hot reload. Re-run `up` after changing backend source. Re-run
 `up --build` after changing frontend dependencies, image build configuration or
 Bridge and mock source. `--skip-build` reuses this checkout's WAR and the images
-already on this machine; it neither pulls nor builds.
+the last `up` ran (published or built); it neither pulls nor builds.
 
 ```bash
 scripts/dev-stack status

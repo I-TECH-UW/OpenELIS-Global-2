@@ -27,7 +27,7 @@ must not silently target a shared server.
 Supported options:
 
 - `--skip-build`: pass to `dev-stack up` to reuse this checkout's already-built
-  WAR and the application images already on the machine. Missing artifacts must
+  WAR and the application images the last `up` ran. Missing artifacts must
   fail.
 - `--build`: only when the user asks for it or the change needs it (frontend
   dependencies, Dockerfiles, Bridge or mock source), pass to `dev-stack up` to

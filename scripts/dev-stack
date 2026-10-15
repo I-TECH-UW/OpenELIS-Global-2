@@ -39,6 +39,8 @@ SUBMODULE_SERVICES = {
     "tools/analyzer-mock-server": "astm-simulator",
     "tools/openelis-analyzer-bridge": "openelis-analyzer-bridge",
 }
+# Checkout paths baked into the backend development image; the WAR is mounted.
+BACKEND_IMAGE_INPUTS = ("Dockerfile.dev", "install", "tomcat/client-certificates")
 # Frontend files baked into the development image; src and public are mounted.
 FRONTEND_IMAGE_INPUTS = ("package.json", "package-lock.json", "vite.config.ts", "index.html", "tsconfig.json")
 
@@ -247,7 +249,7 @@ def initialize_submodule(
 
 
 def ensure_submodules(context: StackContext, environment: dict[str, str]) -> tuple[str, ...]:
-    """Initialize empty submodules; build populated ones exactly as checked out.
+    """Initialize empty submodules and leave populated ones exactly as checked out.
 
     Returns the submodules whose checkout differs from the recorded pin.
     """
@@ -381,6 +383,58 @@ def pull_image(context: StackContext, environment: dict[str, str], image: str) -
     print(f"Warning: could not pull {image}; using the copy already on this machine", file=sys.stderr)
 
 
+def backend_image_differences(
+    context: StackContext, environment: dict[str, str], image: str
+) -> list[str]:
+    """Name the backend image inputs that differ from the commit the image was built from."""
+    try:
+        revision = output(
+            ["docker", "image", "inspect", "--format",
+             '{{index .Config.Labels "org.opencontainers.image.revision"}}', image],
+            cwd=context.repo_root,
+            environment=environment,
+        )
+        if not revision or revision == "<no value>":
+            return []
+        changed = output(
+            ["git", "diff", "--name-only", revision, "--", *BACKEND_IMAGE_INPUTS],
+            cwd=context.repo_root,
+            environment=environment,
+        ).splitlines()
+    except subprocess.CalledProcessError:
+        return []
+    return [
+        path
+        for path in BACKEND_IMAGE_INPUTS
+        if any(line == path or line.startswith(path + "/") for line in changed)
+    ]
+
+
+def image_record(context: StackContext) -> Path:
+    return context.repo_root / ".dev-stack" / "images.json"
+
+
+def record_images(context: StackContext, environment: dict[str, str]) -> None:
+    """Remember which images this stack runs, for later `up --skip-build` restarts."""
+    record = image_record(context)
+    record.parent.mkdir(parents=True, exist_ok=True)
+    record.write_text(
+        json.dumps({variable: environment[variable] for _, variable, _, _ in APPLICATION_IMAGES}, indent=2) + "\n",
+        encoding="utf-8",
+    )
+
+
+def reuse_recorded_images(context: StackContext, environment: dict[str, str]) -> None:
+    """Select the images the last `up` ran, unless a variable was set explicitly."""
+    record = image_record(context)
+    if not record.is_file():
+        return
+    recorded = json.loads(record.read_text(encoding="utf-8"))
+    for _, variable, _, _ in APPLICATION_IMAGES:
+        if variable in recorded and variable not in os.environ:
+            environment[variable] = recorded[variable]
+
+
 def pull_images(
     context: StackContext, environment: dict[str, str], changed_submodules: Sequence[str]
 ) -> None:
@@ -401,6 +455,14 @@ def pull_images(
         print(
             f"Warning: {changed} differ from {images['frontend.openelis.org']}. "
             "Rerun with --build if the frontend needs them.",
+            file=sys.stderr,
+        )
+    backend = images["oe.openelis.org"]
+    differences = backend_image_differences(context, environment, backend)
+    if differences:
+        print(
+            f"Warning: {', '.join(differences)} differ from the commit {backend} was built from. "
+            "Rerun with --build if the backend runtime needs them.",
             file=sys.stderr,
         )
 
@@ -660,7 +722,7 @@ def parse_args(argv: Sequence[str]) -> argparse.Namespace:
     images.add_argument(
         "--skip-build",
         action="store_true",
-        help="Reuse this checkout's WAR and the images already on this machine; build and pull nothing.",
+        help="Reuse this checkout's WAR and the images the last up ran; build and pull nothing.",
     )
     images.add_argument(
         "--build",
@@ -719,9 +781,11 @@ def main(argv: Sequence[str] | None = None) -> int:
                 build_images(context, environment)
             else:
                 pull_images(context, environment, changed_submodules)
+            record_images(context, environment)
         elif not (context.repo_root / "target" / "OpenELIS-Global.war").is_file():
             raise RuntimeError("--skip-build requires target/OpenELIS-Global.war")
         else:
+            reuse_recorded_images(context, environment)
             images = [environment[variable] for _, variable, _, _ in APPLICATION_IMAGES]
             run(["docker", "image", "inspect", *images], cwd=context.repo_root, environment=environment, capture=True)
         start_services(

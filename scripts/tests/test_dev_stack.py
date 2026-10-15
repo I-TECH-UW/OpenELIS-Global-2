@@ -709,11 +709,12 @@ class DevStackPublishedImagesTest(unittest.TestCase):
         self.context = self.dev_stack.make_context(REPO_ROOT)
         self.environment = self.dev_stack.build_environment(self.context)
 
-    def pull(self, changed_submodules=(), run=None, differences=()):
+    def pull(self, changed_submodules=(), run=None, differences=(), backend_differences=()):
         printed = io.StringIO()
         with (
             patch.object(self.dev_stack, "run", side_effect=run) as mocked_run,
             patch.object(self.dev_stack, "frontend_image_differences", return_value=list(differences)),
+            patch.object(self.dev_stack, "backend_image_differences", return_value=list(backend_differences)),
             contextlib.redirect_stdout(printed),
             contextlib.redirect_stderr(printed),
         ):
@@ -823,6 +824,7 @@ class DevStackPublishedImagesTest(unittest.TestCase):
             patch.object(self.dev_stack, "build_application") as build_application,
             patch.object(self.dev_stack, "build_images") as build_images,
             patch.object(self.dev_stack, "pull_images") as pull_images,
+            patch.object(self.dev_stack, "record_images") as record_images,
             patch.object(self.dev_stack, "start_services"),
             patch.object(self.dev_stack, "reload_proxy"),
             patch.object(self.dev_stack, "configure_tls"),
@@ -830,6 +832,7 @@ class DevStackPublishedImagesTest(unittest.TestCase):
             patch.object(self.dev_stack, "print_endpoints"),
         ):
             self.dev_stack.main(["up", "--no-wait", "--no-scenarios", *arguments])
+        record_images.assert_called_once()
         return build_application, build_images, pull_images
 
     def test_up_builds_the_war_and_pulls_the_published_images_by_default(self):
@@ -845,6 +848,72 @@ class DevStackPublishedImagesTest(unittest.TestCase):
         build_application.assert_called_once()
         build_images.assert_called_once()
         pull_images.assert_not_called()
+
+    def test_backend_image_inputs_that_differ_are_reported_but_never_built(self):
+        commands, printed = self.pull(backend_differences=["install"])
+
+        self.assertFalse([command for command in commands if "build" in command])
+        self.assertIn("install differ from the commit itechuw/openelis-global-2-dev:develop was built from", printed)
+        self.assertIn("Rerun with --build", printed)
+
+    def test_backend_differences_compare_the_checkout_with_the_image_revision(self):
+        def run(command, **_):
+            if command[:3] == ["docker", "image", "inspect"]:
+                return subprocess.CompletedProcess(command, 0, stdout="abc123\n")
+            return subprocess.CompletedProcess(
+                command, 0, stdout="install/docker-entrypoint.sh\nDockerfile.dev\n"
+            )
+
+        with patch.object(self.dev_stack, "run", side_effect=run) as mocked:
+            differences = self.dev_stack.backend_image_differences(self.context, self.environment, "image:tag")
+
+        self.assertEqual(differences, ["Dockerfile.dev", "install"])
+        self.assertEqual(
+            mocked.call_args.args[0],
+            ["git", "diff", "--name-only", "abc123", "--", *self.dev_stack.BACKEND_IMAGE_INPUTS],
+        )
+
+    def test_backend_differences_are_silent_without_a_known_revision(self):
+        for revision, git_fails in (("<no value>", False), ("", False), ("abc123", True)):
+            def run(command, **_):
+                if command[0] == "git" and git_fails:
+                    raise subprocess.CalledProcessError(128, command)
+                return subprocess.CompletedProcess(command, 0, stdout=revision if command[0] == "docker" else "install/x")
+
+            with self.subTest(revision=revision, git_fails=git_fails), patch.object(self.dev_stack, "run", side_effect=run):
+                self.assertEqual(
+                    self.dev_stack.backend_image_differences(self.context, self.environment, "image:tag"), []
+                )
+
+    def test_skip_build_reuses_the_images_the_last_up_ran(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        context = self.context._replace(repo_root=pathlib.Path(directory.name))
+        built = dict(self.environment)
+        for _, variable, _, name in self.dev_stack.APPLICATION_IMAGES:
+            built[variable] = f"{context.project}-{name}:dev"
+        self.dev_stack.record_images(context, built)
+
+        restarted = dict(self.environment)
+        with patch.dict(os.environ, {}, clear=False):
+            for _, variable, _, _ in self.dev_stack.APPLICATION_IMAGES:
+                os.environ.pop(variable, None)
+            self.dev_stack.reuse_recorded_images(context, restarted)
+
+        self.assertEqual(restarted["DEV_STACK_BACKEND_IMAGE"], f"{context.project}-backend:dev")
+        self.assertEqual(restarted["DEV_STACK_BRIDGE_IMAGE"], f"{context.project}-analyzer-bridge:dev")
+
+    def test_explicit_image_variable_wins_over_the_recorded_image(self):
+        directory = tempfile.TemporaryDirectory()
+        self.addCleanup(directory.cleanup)
+        context = self.context._replace(repo_root=pathlib.Path(directory.name))
+        self.dev_stack.record_images(context, {**self.environment, "DEV_STACK_BACKEND_IMAGE": "recorded:dev"})
+        environment = {**self.environment, "DEV_STACK_BACKEND_IMAGE": "explicit:tag"}
+
+        with patch.dict(os.environ, {"DEV_STACK_BACKEND_IMAGE": "explicit:tag"}):
+            self.dev_stack.reuse_recorded_images(context, environment)
+
+        self.assertEqual(environment["DEV_STACK_BACKEND_IMAGE"], "explicit:tag")
 
     def test_skip_build_and_build_cannot_be_combined(self):
         self.assertTrue(self.dev_stack.parse_args(["up", "--build"]).build)
