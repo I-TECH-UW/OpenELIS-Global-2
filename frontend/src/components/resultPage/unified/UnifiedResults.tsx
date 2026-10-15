@@ -82,7 +82,7 @@ import ExpandedPanel, {
   PanelRow,
   RejectDraft,
 } from "./ExpandedPanel";
-import { ReferralDraft } from "./ReferralAction";
+import { ReferralDraft, datePlaceholderId } from "./ReferralAction";
 import { NceDisposition, dispositionRequests } from "./nceDisposition";
 import { SectionLayout, loadSectionLayout } from "./sectionLayout";
 import { FlagChip, accentClass } from "./flags";
@@ -258,6 +258,7 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
   const { configurationProperties } = useContext(ConfigurationContext) as {
     configurationProperties?: Record<string, string>;
   };
+  const dayFirst = configurationProperties?.DEFAULT_DATE_LOCALE === "fr-FR";
   const allowResultRejection =
     configurationProperties?.allowResultRejection === "true";
   const alertInvalidResults =
@@ -1410,14 +1411,16 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
             >
               <DatePicker
                 datePickerType="single"
-                dateFormat="d/m/Y"
+                dateFormat={dayFirst ? "d/m/Y" : "m/d/Y"}
                 onChange={(dates: Date[]) => {
                   if (dates && dates.length) {
                     const d = dates[0];
+                    const dd = String(d.getDate()).padStart(2, "0");
+                    const mm = String(d.getMonth() + 1).padStart(2, "0");
                     setCollectionDate(
-                      `${String(d.getDate()).padStart(2, "0")}/${String(
-                        d.getMonth() + 1,
-                      ).padStart(2, "0")}/${d.getFullYear()}`,
+                      dayFirst
+                        ? `${dd}/${mm}/${d.getFullYear()}`
+                        : `${mm}/${dd}/${d.getFullYear()}`,
                     );
                   } else {
                     setCollectionDate("");
@@ -1427,7 +1430,11 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
                 <DatePickerInput
                   id="unifiedResultsDate"
                   labelText={intl.formatMessage({ id: "label.results.date" })}
-                  placeholder="dd/mm/yyyy"
+                  placeholder={intl.formatMessage({
+                    id: datePlaceholderId(
+                      configurationProperties?.DEFAULT_DATE_LOCALE,
+                    ),
+                  })}
                   disabled={Boolean(selectedPatient)}
                 />
               </DatePicker>

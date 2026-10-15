@@ -27,6 +27,7 @@ import org.openelisglobal.common.services.DisplayListService;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
+import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.login.valueholder.UserSessionData;
@@ -224,6 +225,54 @@ public class ResultEntryRestControllerTest extends BaseWebContextSensitiveTest {
     public void save_whosePayloadNamesAnotherAnalysis_isRejected400() throws Exception {
         mockMvc.perform(post("/rest/results-entry/analysis/1/result").contentType(MediaType.APPLICATION_JSON)
                 .content(saveBody("2", "4", "2", "15.0", null)).session(session)).andExpect(status().isBadRequest());
+    }
+
+    /**
+     * The referral date is free text read in the lab's date format, and a day and
+     * month typed the other way round was read leniently: 15/10/2026 on a
+     * month-first site became 10 March 2027, and the referral showed -145 days
+     * outstanding.
+     */
+    @Test
+    public void save_ofAReferralWhoseDateIsNotADateInTheLabsFormat_isRefused400() throws Exception {
+        String swapped = DateUtil.getDateFormat().startsWith("MM") ? "15/10/2026" : "10/15/2026";
+
+        mockMvc.perform(post("/rest/results-entry/analysis/1/result").contentType(MediaType.APPLICATION_JSON)
+                .content(saveBodyWithExtras("1", "3", "1", "15.0", currentToken("1"), referral(swapped)))
+                .session(session)).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(MessageUtil.getMessage("errors.date", new String[] { swapped })));
+
+        assertEquals(0, (int) jdbc.queryForObject("SELECT count(*) FROM clinlims.referral WHERE analysis_id = 1",
+                Integer.class));
+    }
+
+    @Test
+    public void save_ofAReferralSentTomorrow_isRefused400() throws Exception {
+        String tomorrow = DateUtil.formatDateAsText(new java.util.Date(System.currentTimeMillis() + 86_400_000L));
+
+        mockMvc.perform(post("/rest/results-entry/analysis/1/result").contentType(MediaType.APPLICATION_JSON)
+                .content(saveBodyWithExtras("1", "3", "1", "15.0", currentToken("1"), referral(tomorrow)))
+                .session(session)).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(MessageUtil.getMessage("error.date.inFuture")));
+    }
+
+    @Test
+    public void save_ofAReferenceLabReportDateNotInTheLabsFormat_isRefused400() throws Exception {
+        String swapped = DateUtil.getDateFormat().startsWith("MM") ? "18/09/2026" : "09/18/2026";
+        String valueBefore = resultService.get("3").getValue();
+
+        mockMvc.perform(post("/rest/results-entry/analysis/1/result").contentType(MediaType.APPLICATION_JSON)
+                .content(saveBodyWithExtras("1", "3", "1", "15.0", currentToken("1"),
+                        "\"note\":\"\",\"referralItem\":{\"referredReportDate\":\"" + swapped + "\"}"))
+                .session(session)).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.error").value(MessageUtil.getMessage("errors.date", new String[] { swapped })));
+
+        assertEquals("nothing was written", valueBefore, resultService.get("3").getValue());
+    }
+
+    private static String referral(String sentDate) {
+        return "\"note\":\"\",\"refer\":true,\"referralItem\":{\"referredInstituteId\":\"1\","
+                + "\"referralReasonId\":\"1\",\"referredSendDate\":\"" + sentDate + "\"}";
     }
 
     /**

@@ -4234,7 +4234,6 @@
   "label.results.referral.reason": "Referral reason",
   "label.results.referral.date": "Referral date",
   "label.results.referral.reportDate": "Reference lab report date",
-  "label.results.referral.reportDate.placeholder": "dd/mm/yyyy",
   "label.results.referral.hint": "The referral is recorded when you Save this row and hands off to the Referrals dashboard.",
   "label.results.referral.cancel": "Discard",
   "label.results.section.aliquots": "Aliquots",
