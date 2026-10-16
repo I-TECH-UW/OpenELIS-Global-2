@@ -18,7 +18,7 @@ import org.springframework.stereotype.Component;
 @Component
 public class DeliveryWorker {
 
-    private static final int BATCH = 20;
+    private static final int BATCH = 5;
 
     private final String worker = UUID.randomUUID().toString();
 

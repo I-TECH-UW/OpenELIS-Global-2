@@ -8,6 +8,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.util.Base64;
 import org.apache.commons.validator.GenericValidator;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.CloseableHttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.StringEntity;
@@ -36,7 +37,8 @@ public class WhatsAppDeliverySender implements DeliverySender {
 
     // The JVM default trust store: Twilio is a public API and the application
     // client carries only the internal mTLS trust store.
-    private CloseableHttpClient httpClient = HttpClients.createDefault();
+    private CloseableHttpClient httpClient = HttpClients.custom().setDefaultRequestConfig(RequestConfig.custom()
+            .setConnectTimeout(10_000).setSocketTimeout(30_000).setConnectionRequestTimeout(10_000).build()).build();
 
     @Override
     public NotificationChannel channel() {

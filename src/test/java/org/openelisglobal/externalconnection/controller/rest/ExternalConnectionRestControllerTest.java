@@ -1,6 +1,7 @@
 package org.openelisglobal.externalconnection.controller.rest;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 
@@ -50,7 +51,11 @@ public class ExternalConnectionRestControllerTest extends BaseWebContextSensitiv
         // row no longer offers their types.
         @SuppressWarnings("unchecked")
         List<String> programmedConnections = (List<String>) response.get("programmedConnections");
-        assertEquals(List.of("INFO_HIGHWAY"), programmedConnections);
+        assertTrue(programmedConnections.contains("INFO_HIGHWAY"));
+        assertTrue("SMS gateways keep their connection rows until their own story",
+                programmedConnections.contains("SMPP_SERVER") && programmedConnections.contains("BMP_SMS_SERVER"));
+        assertFalse(programmedConnections.contains("SMTP_SERVER"));
+        assertFalse(programmedConnections.contains("WHATSAPP_SERVER"));
     }
 
     @Test

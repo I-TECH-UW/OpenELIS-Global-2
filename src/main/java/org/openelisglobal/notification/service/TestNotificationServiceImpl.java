@@ -219,8 +219,7 @@ public class TestNotificationServiceImpl implements TestNotificationService {
             ClientResultsViewBean resultsViewInfo, Person testPerson) {
         NotificationPayloadTemplate template = findTemplate(option);
         return new PatientResultsViewNotificationPayload(resultsViewInfo.getPassword(), "",
-                resultsViewInfo.getResult().getAnalysis().getTest().getName(), resultForDisplay,
-                testPerson.getFirstName(), testPerson.getLastName().substring(0, 1), template);
+                resultsViewInfo.getResult().getAnalysis().getTest().getName(), resultForDisplay, "", "", template);
     }
 
     /**

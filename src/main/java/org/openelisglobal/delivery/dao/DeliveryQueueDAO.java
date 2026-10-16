@@ -16,6 +16,12 @@ import org.openelisglobal.notification.valueholder.NotificationLogChannel.Channe
 public interface DeliveryQueueDAO {
 
     /** One claimed channel row of a message. */
+    /**
+     * Renews this worker's lease on one row right before the send; false when the
+     * lease has lapsed and another worker may hold the row, so no send happens.
+     */
+    boolean extendLease(Long logId, NotificationChannel channel, String worker, int leaseSeconds);
+
     record Claim(Long logId, NotificationChannel channel, int attempts) {
     }
 

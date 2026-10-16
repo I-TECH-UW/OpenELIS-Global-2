@@ -138,8 +138,12 @@ public class DeliveryOutboxServiceImpl implements DeliveryOutboxService {
                 .setTemplateExternalId(source.getTemplateExternalId())
                 .setTemplateVariables(parseVariables(source.getTemplateVariables())).setSentByUserId(sysUserId)
                 .setResentFromId(source.getId());
+        boolean anyFailed = source.getChannels().stream()
+                .anyMatch(channel -> channel.getStatus() != ChannelStatus.SUCCESS);
         for (NotificationLogChannel channel : source.getChannels()) {
-            request.addChannel(channel.getChannel());
+            if (!anyFailed || channel.getStatus() != ChannelStatus.SUCCESS) {
+                request.addChannel(channel.getChannel());
+            }
         }
         return enqueue(request);
     }
@@ -174,11 +178,20 @@ public class DeliveryOutboxServiceImpl implements DeliveryOutboxService {
 
     // ----- the worker side
 
+    /** A claim covers the batch; each send renews its own row for this long. */
+    static final int CLAIM_LEASE_SECONDS = 120;
+    static final int ATTEMPT_LEASE_SECONDS = 180;
+
     @Override
     public List<Claim> claim(String worker, int limit) {
-        return queueDAO.claimDue(worker, limit, 120);
+        return queueDAO.claimDue(worker, limit, CLAIM_LEASE_SECONDS);
     }
 
+    /**
+     * The lease is renewed for this row alone before the send, so a row whose batch
+     * lease lapsed while earlier sends ran slowly is never sent twice: the worker
+     * that lost it steps back and the one that claimed it again sends.
+     */
     @Override
     public void attempt(Claim claim, String worker) {
         Optional<NotificationLog> found = notificationLogDAO.get(claim.logId());
@@ -188,6 +201,9 @@ public class DeliveryOutboxServiceImpl implements DeliveryOutboxService {
         }
         NotificationLog log = found.get();
         NotificationChannel channel = claim.channel();
+        if (!queueDAO.extendLease(log.getId(), channel, worker, ATTEMPT_LEASE_SECONDS)) {
+            return;
+        }
         int attempts = claim.attempts() + 1;
         DeliverySender sender = senders().get(channel);
         DeliveryChannel config = channelDAO.findByChannel(DeliveryChannel.Channel.valueOf(channel.name())).orElse(null);

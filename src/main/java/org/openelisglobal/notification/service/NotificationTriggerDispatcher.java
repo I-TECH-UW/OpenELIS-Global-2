@@ -1,5 +1,6 @@
 package org.openelisglobal.notification.service;
 
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Optional;
 import org.apache.commons.validator.GenericValidator;
@@ -89,7 +90,7 @@ public class NotificationTriggerDispatcher {
             }
             if (template != null && !GenericValidator.isBlankOrNull(template.getTemplateExternalId())) {
                 request.setTemplateExternalId(template.getTemplateExternalId());
-                request.setTemplateVariables(context.getVariables());
+                request.setTemplateVariables(withoutIdentifyingTokens(context.getVariables()));
             }
             try {
                 outbox.enqueue(request);
@@ -105,6 +106,23 @@ public class NotificationTriggerDispatcher {
         String subject = template == null ? "" : substitute(template.getSubjectTemplate(), context.getVariables());
         String message = template == null ? "" : substitute(template.getMessageTemplate(), context.getVariables());
         return NotificationPayload.of(subject, message);
+    }
+
+    /**
+     * The gateway template gets every event variable except the ones that name the
+     * patient (FR-D1): those never leave the laboratory, not even as template
+     * parameters, and are not stored with the message either.
+     */
+    static Map<String, String> withoutIdentifyingTokens(Map<String, String> variables) {
+        Map<String, String> safe = new LinkedHashMap<>();
+        if (variables != null) {
+            for (Map.Entry<String, String> entry : variables.entrySet()) {
+                if (!EventVariableRegistry.IDENTIFYING_TOKENS.contains(entry.getKey())) {
+                    safe.put(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+        return safe;
     }
 
     private String substitute(String raw, Map<String, String> variables) {

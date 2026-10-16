@@ -1746,7 +1746,7 @@ export default function App() {
                   path="/SentMessages"
                   exact
                   render={() => <SentMessages />}
-                  role={Roles.REPORTS}
+                  role={[Roles.REPORTS, Roles.GLOBAL_ADMIN]}
                 />
                 <SecureRoute
                   path="/VectorManualEntry"

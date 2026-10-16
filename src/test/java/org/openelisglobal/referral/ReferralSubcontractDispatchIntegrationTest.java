@@ -268,6 +268,9 @@ public class ReferralSubcontractDispatchIntegrationTest extends BaseWebContextSe
         assertEquals(OverallStatus.SENT, sent.getOverallStatus());
         assertEquals(ChannelStatus.SUCCESS, sent.getChannels().iterator().next().getStatus());
         assertEquals("SMtest", sent.getChannels().iterator().next().getGatewayMessageId());
+        org.junit.Assert.assertFalse("the patient's name is neither stored nor sent as a template variable",
+                String.valueOf(sent.getTemplateVariables()).contains("patientFirstName")
+                        || body.contains("patientFirstName") || body.contains("patientLastName"));
     }
 
     private void enableSubcontractDispatchedTrigger() {

@@ -67,9 +67,15 @@ vi.mock("../../../../utils/Utils", () => ({
       callback(null);
     }
   }),
-  putToOpenElisServer: vi.fn((url, body, callback) => {
+  putToOpenElisServerJsonResponse: vi.fn((url, body, callback) => {
     calls.push(`PUT ${url} ${body}`);
-    callback(200);
+    if (url === "/rest/delivery/settings") {
+      callback(SETTINGS);
+    } else if (JSON.parse(body).senderAddress === "not-an-address") {
+      callback({ field: "senderAddress", status: 400 });
+    } else {
+      callback({ ...CHANNELS[0], ...JSON.parse(body), status: "READY" });
+    }
   }),
   postToOpenElisServerJsonResponse: vi.fn((url, body, callback) => {
     calls.push(`POST ${url} ${body}`);
@@ -171,6 +177,49 @@ describe("ChannelsTab", () => {
     expect(body.senderAddress).toBe("lab@example.org");
     expect(body.secret).toBe("");
     expect(addNotification.mock.calls[0][0].message).toBe("Channel saved.");
+  });
+
+  it("names the field the server refused and marks it", async () => {
+    wrap(<ChannelsTab />);
+    await waitFor(() =>
+      expect(screen.getByTestId("channel-edit-EMAIL")).toBeInTheDocument(),
+    );
+    fireEvent.click(screen.getByTestId("channel-edit-EMAIL"));
+    fireEvent.change(screen.getByLabelText("SMTP host"), {
+      target: { value: "smtp.example.org" },
+    });
+    fireEvent.change(screen.getByLabelText("Sender address"), {
+      target: { value: "not-an-address" },
+    });
+    fireEvent.click(screen.getByTestId("channel-save-EMAIL"));
+
+    await waitFor(() => expect(addNotification).toHaveBeenCalled());
+    expect(addNotification.mock.calls[0][0].kind).toBe("error");
+    expect(addNotification.mock.calls[0][0].message).toContain(
+      "Sender address",
+    );
+    expect(screen.getByLabelText("Sender address")).toHaveAttribute(
+      "aria-invalid",
+      "true",
+    );
+  });
+
+  it("refuses a port that is not a number before saving", async () => {
+    wrap(<ChannelsTab />);
+    await waitFor(() =>
+      expect(screen.getByTestId("channel-edit-EMAIL")).toBeInTheDocument(),
+    );
+    fireEvent.click(screen.getByTestId("channel-edit-EMAIL"));
+    fireEvent.change(screen.getByLabelText("Port"), {
+      target: { value: "abc" },
+    });
+    fireEvent.click(screen.getByTestId("channel-save-EMAIL"));
+
+    await waitFor(() => expect(addNotification).toHaveBeenCalled());
+    expect(addNotification.mock.calls[0][0].message).toContain("Port");
+    expect(
+      calls.some((call) => call.startsWith("PUT /rest/delivery/channels")),
+    ).toBe(false);
   });
 
   it("sends a test message and shows the server's plain-language outcome", async () => {

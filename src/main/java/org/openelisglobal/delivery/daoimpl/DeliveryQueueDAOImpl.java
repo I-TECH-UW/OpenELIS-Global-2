@@ -60,6 +60,23 @@ public class DeliveryQueueDAOImpl implements DeliveryQueueDAO {
     }
 
     @Override
+    public boolean extendLease(Long logId, NotificationChannel channel, String worker, int leaseSeconds) {
+        try {
+            int renewed = entityManager
+                    .createNativeQuery("UPDATE clinlims.notification_log_channel"
+                            + " SET locked_until = now() + make_interval(secs => :lease)"
+                            + " WHERE notification_log_id = :logId AND channel = :channel AND status = 'QUEUED'"
+                            + " AND locked_by = :worker AND locked_until > now()")
+                    .setParameter("lease", leaseSeconds).setParameter("logId", logId)
+                    .setParameter("channel", channel.name()).setParameter("worker", worker).executeUpdate();
+            return renewed == 1;
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in DeliveryQueue extendLease()", e);
+        }
+    }
+
+    @Override
     public void release(Long logId, NotificationChannel channel, String worker) {
         try {
             entityManager
@@ -80,15 +97,14 @@ public class DeliveryQueueDAOImpl implements DeliveryQueueDAO {
         try {
             // A null parameter is sent as bytea, which no cast repairs, so each
             // optional value is either bound or written as NULL in the statement.
-            String sql = "UPDATE clinlims.notification_log_channel SET status = :status, attempts = :attempts,"
+            String sql = "UPDATE clinlims.notification_log_channel SET status = :status, attempts = attempts + 1,"
                     + " error_message = " + (error == null ? "NULL" : ":error") + ", last_attempted_at = now(),"
                     + " next_attempt_at = " + (nextAttemptAt == null ? "NULL" : ":next") + ", gateway_message_id = "
                     + (gatewayMessageId == null ? "gateway_message_id" : ":gatewayId")
                     + ", locked_by = NULL, locked_until = NULL"
                     + " WHERE notification_log_id = :logId AND channel = :channel";
             Query query = entityManager.createNativeQuery(sql).setParameter("status", status.name())
-                    .setParameter("attempts", attempts).setParameter("logId", logId)
-                    .setParameter("channel", channel.name());
+                    .setParameter("logId", logId).setParameter("channel", channel.name());
             if (error != null) {
                 query.setParameter("error", error.substring(0, Math.min(error.length(), 2000)));
             }

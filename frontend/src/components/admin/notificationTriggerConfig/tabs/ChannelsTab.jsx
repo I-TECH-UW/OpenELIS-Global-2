@@ -19,7 +19,7 @@ import { FormattedMessage, useIntl } from "react-intl";
 import {
   getFromOpenElisServer,
   postToOpenElisServerJsonResponse,
-  putToOpenElisServer,
+  putToOpenElisServerJsonResponse,
 } from "../../../utils/Utils";
 import { NotificationContext } from "../../../layout/Layout";
 import { NotificationKinds } from "../../../common/CustomNotification";
@@ -140,16 +140,44 @@ function ChannelForm({ channel, onSaved }) {
     invalid: badField === key,
   });
 
+  const refuse = (field) => {
+    setBadField(field || null);
+    addNotification({
+      kind: NotificationKinds.error,
+      title: intl.formatMessage({ id: "notification.title" }),
+      message: intl.formatMessage(
+        { id: "delivery.channel.saveFailed" },
+        {
+          field: field
+            ? intl.formatMessage({
+                id: `delivery.channel.${field}`,
+                defaultMessage: field,
+              })
+            : "",
+        },
+      ),
+    });
+    setNotificationVisible(true);
+  };
+
   const save = () => {
-    setSaving(true);
     setBadField(null);
+    if (form.port && !/^\d+$/.test(String(form.port).trim())) {
+      refuse("port");
+      return;
+    }
+    setSaving(true);
     const body = { ...form, port: form.port ? Number(form.port) : null };
-    putToOpenElisServer(
+    putToOpenElisServerJsonResponse(
       `/rest/delivery/channels/${channel.channel.toLowerCase()}`,
       JSON.stringify(body),
-      (status) => {
+      (saved) => {
         setSaving(false);
-        if (status === 200) {
+        if (
+          saved &&
+          saved.channel &&
+          !saved.status?.toString().match(/^\d+$/)
+        ) {
           addNotification({
             kind: NotificationKinds.success,
             title: intl.formatMessage({ id: "notification.title" }),
@@ -159,15 +187,7 @@ function ChannelForm({ channel, onSaved }) {
           setForm({ ...form, secret: "" });
           onSaved();
         } else {
-          addNotification({
-            kind: NotificationKinds.error,
-            title: intl.formatMessage({ id: "notification.title" }),
-            message: intl.formatMessage(
-              { id: "delivery.channel.saveFailed" },
-              { field: "" },
-            ),
-          });
-          setNotificationVisible(true);
+          refuse(saved && saved.field);
         }
       },
     );

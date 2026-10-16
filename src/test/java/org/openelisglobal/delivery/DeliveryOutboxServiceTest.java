@@ -11,6 +11,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import org.junit.After;
 import org.junit.Before;
@@ -397,5 +398,56 @@ public class DeliveryOutboxServiceTest extends BaseWebContextSensitiveTest {
             jdbcTemplate
                     .update("UPDATE clinlims.site_information SET value = 'LOCAL' WHERE name = 'delivery.location'");
         }
+    }
+
+    /**
+     * The batch lease lapsed while earlier sends ran and the other worker claimed
+     * the row: the first worker finds its lease gone and does not send, so the
+     * message goes out once.
+     */
+    @Test
+    public void aRowWhoseLeaseWasTakenOverIsNotSentTwice() {
+        NotificationLog queued = outbox.enqueue(emailTo("clinic@example.org", "ACC-LEASE"));
+        List<Claim> claims = outbox.claim("worker-a", 10);
+        assertEquals(1, claims.size());
+        jdbcTemplate.update("UPDATE clinlims.notification_log_channel SET locked_by = 'worker-b',"
+                + " locked_until = now() + interval '2 minutes' WHERE notification_log_id = ?", queued.getId());
+
+        outbox.attempt(claims.get(0), "worker-a");
+
+        assertTrue("the worker that lost the lease sends nothing", email.sent.isEmpty());
+        Map<String, Object> row = jdbcTemplate.queryForMap(
+                "SELECT status, attempts, locked_by FROM clinlims.notification_log_channel WHERE notification_log_id = ?",
+                queued.getId());
+        assertEquals("QUEUED", row.get("status"));
+        assertEquals(0, ((Number) row.get("attempts")).intValue());
+        assertEquals("worker-b", row.get("locked_by"));
+    }
+
+    /**
+     * Resend retries the channels that did not get through; a message every channel
+     * delivered is sent again on all of them.
+     */
+    @Test
+    public void resendQueuesOnlyTheChannelsThatDidNotGetThrough() {
+        DeliveryRequest both = emailTo("clinic@example.org", "ACC-RESEND").setRecipientPhone("+67570000001")
+                .addChannel(NotificationChannel.WHATSAPP);
+        NotificationLog source = outbox.enqueue(both);
+        jdbcTemplate.update("UPDATE clinlims.notification_log_channel SET status = 'SUCCESS', locked_by = NULL"
+                + " WHERE notification_log_id = ? AND channel = 'EMAIL'", source.getId());
+        jdbcTemplate.update("UPDATE clinlims.notification_log SET overall_status = 'FAILED' WHERE id = ?",
+                source.getId());
+
+        NotificationLog again = outbox.resend(source.getId(), ADMIN);
+
+        assertEquals(1, again.getChannels().size());
+        assertEquals(NotificationChannel.WHATSAPP, again.getChannels().iterator().next().getChannel());
+
+        jdbcTemplate.update("UPDATE clinlims.notification_log_channel SET status = 'SUCCESS', locked_by = NULL"
+                + " WHERE notification_log_id = ?", source.getId());
+        jdbcTemplate.update("UPDATE clinlims.notification_log SET overall_status = 'SENT' WHERE id = ?",
+                source.getId());
+        NotificationLog everything = outbox.resend(source.getId(), ADMIN);
+        assertEquals(2, everything.getChannels().size());
     }
 }

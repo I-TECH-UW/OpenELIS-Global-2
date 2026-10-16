@@ -13,7 +13,7 @@ import {
 import { FormattedMessage, useIntl } from "react-intl";
 import {
   getFromOpenElisServer,
-  putToOpenElisServer,
+  putToOpenElisServerJsonResponse,
 } from "../../../utils/Utils";
 import { NotificationContext } from "../../../layout/Layout";
 import { NotificationKinds } from "../../../common/CustomNotification";
@@ -84,12 +84,12 @@ export default function DeliverySettingsTab() {
       linkDays: Number(form.linkDays),
       countryCode: form.countryCode || "",
     };
-    putToOpenElisServer(
+    putToOpenElisServerJsonResponse(
       "/rest/delivery/settings",
       JSON.stringify(body),
-      (status) => {
+      (saved) => {
         setSaving(false);
-        if (status === 200) {
+        if (saved && Array.isArray(saved.retryDelays)) {
           addNotification({
             kind: NotificationKinds.success,
             title: intl.formatMessage({ id: "notification.title" }),
@@ -98,12 +98,21 @@ export default function DeliverySettingsTab() {
           setNotificationVisible(true);
           load();
         } else {
+          const field = saved && saved.field ? saved.field : null;
+          setBadField(field);
           addNotification({
             kind: NotificationKinds.error,
             title: intl.formatMessage({ id: "notification.title" }),
             message: intl.formatMessage(
               { id: "delivery.settings.invalid" },
-              { field: "" },
+              {
+                field: field
+                  ? intl.formatMessage({
+                      id: `delivery.settings.${field}`,
+                      defaultMessage: field,
+                    })
+                  : "",
+              },
             ),
           });
           setNotificationVisible(true);

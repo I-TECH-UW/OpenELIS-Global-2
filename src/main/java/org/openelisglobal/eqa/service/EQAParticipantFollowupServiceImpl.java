@@ -33,6 +33,7 @@ import org.openelisglobal.eqa.valueholder.EQAProgram;
 import org.openelisglobal.eqa.valueholder.EQAProgramEnrollment;
 import org.openelisglobal.eqa.valueholder.EQASchemeType;
 import org.openelisglobal.notification.valueholder.NotificationChannel;
+import org.openelisglobal.notification.valueholder.NotificationLog;
 import org.openelisglobal.notification.valueholder.NotificationLog.Product;
 import org.openelisglobal.notification.valueholder.NotificationRecipientType;
 import org.openelisglobal.organization.service.OrganizationContactService;
@@ -394,11 +395,12 @@ public class EQAParticipantFollowupServiceImpl extends BaseObjectServiceImpl<EQA
         boolean emailed = false;
         if (!GenericValidator.isBlankOrNull(recipient)) {
             try {
-                deliveryOutboxService.enqueue(new DeliveryRequest().setProduct(Product.TRIGGER)
+                NotificationLog queued = deliveryOutboxService.enqueue(new DeliveryRequest().setProduct(Product.TRIGGER)
                         .setEventCode("EQA_FOLLOWUP").setRecipientType(NotificationRecipientType.FACILITY)
                         .setRecipientDisplayName(recipient).setRecipientEmail(recipient).setSubject(subject)
                         .setMessage(message).setSentByUserId(sysUserId).addChannel(NotificationChannel.EMAIL));
-                emailed = true;
+                emailed = queued.getOverallStatus() != NotificationLog.OverallStatus.FAILED
+                        && queued.getOverallStatus() != NotificationLog.OverallStatus.SKIPPED;
             } catch (RuntimeException e) {
                 // A queue that cannot be written must not roll back the notification
                 // itself: the reviewer falls back to the CSV instead.

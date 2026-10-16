@@ -63,6 +63,8 @@
       UPDATE clinlims.delivery_channel d
       SET host = COALESCE(NULLIF(substring(e.uri from '://([^:/]+)'), ''), NULLIF(split_part(e.uri, ':', 1), '')),
           port = CAST(NULLIF(substring(e.uri from ':([0-9]+)/?$'), '') AS INTEGER),
+          security = CASE CAST(NULLIF(substring(e.uri from ':([0-9]+)/?$'), '') AS INTEGER)
+                     WHEN 465 THEN 'SSL_TLS' WHEN 587 THEN 'STARTTLS' ELSE 'NONE' END,
           username = b.username,
           secret = b.password,
           last_updated = now()
@@ -169,12 +171,18 @@
     </rollback>
   </changeSet>
 
-  <!-- Lab-wide delivery settings (FR-A16), read by name. -->
+  <!-- Lab-wide delivery settings (FR-A16), read by name, in a domain of their
+       own: the Result Reporting Configuration page lists every row of its
+       domain by group and breaks on rows it does not know. -->
   <changeSet id="018-delivery-settings" author="openelisglobal">
     <sql>
+      INSERT INTO clinlims.site_information_domain (id, name, description)
+      SELECT nextval('clinlims.site_information_domain_seq'), 'delivery', 'Result delivery settings'
+      WHERE NOT EXISTS (SELECT 1 FROM clinlims.site_information_domain WHERE name = 'delivery');
+
       INSERT INTO clinlims.site_information (id, name, description, value, value_type, domain_id, lastupdated)
       SELECT nextval('clinlims.site_information_seq'), s.name, s.description, s.value, 'text',
-             (SELECT id FROM clinlims.site_information_domain WHERE name = 'resultReporting'), now()
+             (SELECT id FROM clinlims.site_information_domain WHERE name = 'delivery'), now()
       FROM (VALUES
         ('delivery.retryDelays', 'Minutes between delivery attempts after a failure, in order', '1,5,15'),
         ('delivery.defaultFormat', 'Report format for recipients with no delivery password', 'MASKED'),

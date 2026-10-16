@@ -2,6 +2,7 @@ package org.openelisglobal.notification.service;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 import java.util.Optional;
@@ -126,8 +127,19 @@ public class TestNotificationServiceImplTest extends BaseWebContextSensitiveTest
         email.setSecurity("STARTTLS");
         email.setSenderAddress("lab@example.org");
         channelService.save(Channel.EMAIL, email, ADMIN);
-
-        notifyReleased();
+        String template = jdbcTemplate.queryForObject(
+                "SELECT message_template FROM clinlims.notification_payload_template WHERE type = 'TEST_RESULT'",
+                String.class);
+        jdbcTemplate.update(
+                "UPDATE clinlims.notification_payload_template SET message_template = ?"
+                        + " WHERE type = 'TEST_RESULT'",
+                "Dear [patientFirstName] [patientLastNameInitial], [testName] is ready.");
+        try {
+            notifyReleased();
+        } finally {
+            jdbcTemplate.update("UPDATE clinlims.notification_payload_template SET message_template = ?"
+                    + " WHERE type = 'TEST_RESULT'", template);
+        }
 
         assertEquals(1, noticeRows());
         Map<String, Object> row = jdbcTemplate.queryForMap("SELECT recipient_type, recipient_email,"
@@ -137,7 +149,10 @@ public class TestNotificationServiceImplTest extends BaseWebContextSensitiveTest
         assertEquals(PATIENT_EMAIL, row.get("recipient_email"));
         assertEquals("V1RPT0000009301", row.get("reference_accession"));
         assertEquals("QUEUED", row.get("overall_status"));
-        assertFalse("the notice never names the patient", String.valueOf(row.get("rendered_message")).contains("Kila"));
+        String message = String.valueOf(row.get("rendered_message"));
+        assertFalse("a template that names the patient renders without the name: " + message,
+                message.contains("Mary") || message.contains("Kila") || message.contains("K,"));
+        assertTrue(message, message.contains("is ready."));
     }
 
     @Test

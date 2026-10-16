@@ -104,7 +104,6 @@ public class ExternalConnectionRestController extends BaseController {
     }
 
     static final Set<ProgrammedConnection> CHANNEL_TYPES = EnumSet.of(ProgrammedConnection.SMTP_SERVER,
-            ProgrammedConnection.SMPP_SERVER, ProgrammedConnection.BMP_SMS_SERVER,
             ProgrammedConnection.WHATSAPP_SERVER);
 
     /**

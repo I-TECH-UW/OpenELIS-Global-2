@@ -227,8 +227,8 @@ test("External Connections no longer offers the channel types for a new row", as
     .programmedConnections;
   expect(offered).not.toContain("SMTP_SERVER");
   expect(offered).not.toContain("WHATSAPP_SERVER");
-  expect(offered).not.toContain("SMPP_SERVER");
-  expect(offered).not.toContain("BMP_SMS_SERVER");
+  expect(offered).toContain("SMPP_SERVER");
+  expect(offered).toContain("BMP_SMS_SERVER");
   const refused = await page.request.post(
     `${API_PREFIX}/rest/ExternalConnection`,
     {

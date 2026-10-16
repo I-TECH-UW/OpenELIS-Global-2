@@ -8366,8 +8366,6 @@
   "testnotification.bcc": "BCC",
   "testnotification.instructionis.variables.body": "[testName] : Name of the test this is for",
   "testnotification.instructionis.variables.body.0": "[testResult] : Result of the test",
-  "testnotification.instructionis.variables.body.1": "[patientFirstName] : Patient's first name ",
-  "testnotification.instructionis.variables.body.2": "[patientLastNameInitial] : Patient's last name's initial",
   "testnotification.instructionis.variables.header": "List of variables:",
   "testnotification.instructions.body": "When a notification is created, it will first check if a message template is defined for the recipient/message type.",
   "testnotification.instructions.body.0": "If none exists, it will use the test default message.",
