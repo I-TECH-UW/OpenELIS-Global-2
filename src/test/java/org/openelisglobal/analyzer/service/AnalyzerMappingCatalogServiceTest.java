@@ -12,11 +12,19 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.dictionaryterminology.service.DictionaryTerminologyMappingService;
+import org.openelisglobal.dictionaryterminology.valueholder.DictionaryTerminologyMapping;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
+import org.openelisglobal.testresultcomponent.service.TestResultComponentService;
+import org.openelisglobal.testresultcomponent.valueholder.TestResultComponent;
 import org.openelisglobal.testterminology.service.TestTerminologyMappingService;
 import org.openelisglobal.testterminology.valueholder.TestTerminologyMapping;
+import org.openelisglobal.typeofsample.service.TypeOfSampleService;
+import org.openelisglobal.typeofsample.service.TypeOfSampleTestService;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSample;
+import org.openelisglobal.typeofsample.valueholder.TypeOfSampleTest;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnalyzerMappingCatalogServiceTest {
@@ -30,12 +38,33 @@ public class AnalyzerMappingCatalogServiceTest {
     @Mock
     private DictionaryService dictionaryService;
 
+    @Mock
+    private TypeOfSampleService sampleTypes;
+    @Mock
+    private TypeOfSampleTestService sampleTypeTests;
+    @Mock
+    private TestResultComponentService componentService;
+    @Mock
+    private DictionaryTerminologyMappingService answerTerminology;
+
     private AnalyzerMappingCatalogService service;
 
     @Before
     public void setUp() {
         service = new AnalyzerMappingCatalogServiceImpl(testService, testResultService, terminologyService,
-                dictionaryService);
+                dictionaryService, sampleTypes, sampleTypeTests, componentService, answerTerminology);
+    }
+
+    @Test
+    public void componentOptionsCarryEachComponentsCodeAndLabel() {
+        TestResultComponent log = new TestResultComponent();
+        log.setId("c1");
+        log.setCode("LOG");
+        log.setLabel("Log viral load");
+        when(componentService.getActiveComponentsByTestId("1")).thenReturn(List.of(log));
+
+        assertEquals(List.of(new AnalyzerMappingCatalogService.ComponentOption("c1", "LOG", "Log viral load")),
+                service.getActiveComponents("1"));
     }
 
     @Test
@@ -47,6 +76,18 @@ public class AnalyzerMappingCatalogServiceTest {
         when(terminologyService.getActiveBySource("LOINC"))
                 .thenReturn(List.of(loinc("2", "6690-2"), loinc("3", "1111-1")));
 
+        TypeOfSample plasma = new TypeOfSample();
+        plasma.setId("10");
+        plasma.setDescription("Plasma");
+        plasma.setIsActive(true);
+        TypeOfSampleTest link = new TypeOfSampleTest();
+        link.setTestId("1");
+        link.setTypeOfSampleId("10");
+        when(sampleTypes.getAllTypeOfSamples()).thenReturn(List.of(plasma));
+        when(sampleTypeTests.getAllTypeOfSampleTests()).thenReturn(List.of(link));
+
+        assertEquals(List.of("Plasma"), service.searchActiveTests("HIVVL").get(0).specimenTypes());
+        assertEquals(List.of(), service.searchActiveTests("WBC").get(0).specimenTypes());
         assertEquals(List.of("1", "2"), ids(service.searchActiveTests(null)));
         assertEquals(List.of("1"), ids(service.searchActiveTests("viral")));
         assertEquals(List.of("2"), ids(service.searchActiveTests("wbc")));
@@ -83,6 +124,35 @@ public class AnalyzerMappingCatalogServiceTest {
         assertEquals("Detected", options.get(0).label());
         assertEquals("Not detected", options.get(1).value());
         assertEquals("Not detected", options.get(1).label());
+    }
+
+    @Test
+    public void anAnswerCarriesEachOfItsMappedCodesInItsSystem() {
+        org.openelisglobal.test.valueholder.Test mapped = test("1", "HIV", "HIV", null, true);
+        Dictionary positive = new Dictionary();
+        positive.setId("501");
+        positive.setDictEntry("Positive");
+        when(testService.get("1")).thenReturn(mapped);
+        when(testResultService.getActiveTestResultsByTest("1")).thenReturn(List.of(option("11", mapped, "501", true)));
+        when(dictionaryService.getDictionaryById("501")).thenReturn(positive);
+        when(answerTerminology.getActiveByDictionaryId("501")).thenReturn(List.of(answerCode("LOINC", "LA6576-8"),
+                answerCode("SNOMED", "10828004"), answerCode("CIEL", "703"), answerCode("WHONET", "POS")));
+
+        List<AnalyzerMappingCatalogService.AnswerCoding> codings = service.getActiveResultOptions("1").get(0).codings();
+
+        assertEquals(List.of(new AnalyzerMappingCatalogService.AnswerCoding("http://loinc.org", "LA6576-8"),
+                new AnalyzerMappingCatalogService.AnswerCoding("http://snomed.info/sct", "10828004"),
+                new AnalyzerMappingCatalogService.AnswerCoding("https://openconceptlab.org/orgs/CIEL/sources/CIEL",
+                        "703")),
+                codings);
+    }
+
+    private static DictionaryTerminologyMapping answerCode(String source, String code) {
+        DictionaryTerminologyMapping mapping = new DictionaryTerminologyMapping();
+        mapping.setDictionaryId("501");
+        mapping.setSource(source);
+        mapping.setCode(code);
+        return mapping;
     }
 
     @Test

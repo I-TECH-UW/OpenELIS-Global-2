@@ -68,6 +68,30 @@ describe("CollectTestPickerSection", () => {
     expect(updated[1].tests).toEqual([]);
   });
 
+  // OGC-1449: a failed catalogue request offered nothing to add, with no
+  // message and no way to load it again.
+  it("says the catalogue could not be loaded and loads it on Retry", async () => {
+    getFromOpenElisServer.mockImplementationOnce((url, callback) =>
+      callback(undefined),
+    );
+    renderPicker([
+      { sampleTypeId: "5", sampleTypeName: "Blood", tests: [], panels: [] },
+    ]);
+
+    expect(screen.getByRole("alert")).toHaveTextContent(
+      "The tests for this sample type could not be loaded.",
+    );
+    expect(screen.queryByText("Malaria RDT")).not.toBeInTheDocument();
+
+    await userEvent
+      .setup()
+      .click(screen.getByRole("button", { name: "Retry" }));
+
+    expect(getFromOpenElisServer).toHaveBeenCalledTimes(2);
+    expect(screen.getByText("Malaria RDT")).toBeInTheDocument();
+    expect(screen.queryByRole("alert")).not.toBeInTheDocument();
+  });
+
   it("stays out of the way when nothing is collectable yet", () => {
     const { container } = renderPicker([{ sampleTypeId: "" }]);
     expect(container).toBeEmptyDOMElement();
@@ -78,5 +102,29 @@ describe("CollectTestPickerSection", () => {
       { sampleTypeId: "5", sampleRejected: true },
     ]);
     expect(container).toBeEmptyDOMElement();
+  });
+
+  // The tags used to pass dismissTooltipLabel alone, so every close button was
+  // named Carbon's English "Dismiss"; see removeLabel in the component for why
+  // both props are needed.
+  it("names each selected test and panel's close button after what it removes", () => {
+    renderPicker([
+      {
+        sampleTypeId: "5",
+        sampleTypeName: "Blood",
+        tests: [{ id: "9", name: "Malaria RDT" }],
+        panels: [{ id: "4", name: "Renal Panel" }],
+      },
+    ]);
+
+    expect(
+      screen.getByRole("button", { name: "Remove Malaria RDT" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("button", { name: "Remove Renal Panel" }),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByRole("button", { name: "Dismiss" }),
+    ).not.toBeInTheDocument();
   });
 });

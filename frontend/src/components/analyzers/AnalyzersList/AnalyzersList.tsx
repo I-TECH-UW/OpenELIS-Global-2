@@ -24,6 +24,7 @@ import { Add } from "@carbon/icons-react";
 import { useIntl } from "react-intl";
 import { useHistory, useLocation } from "react-router-dom";
 import {
+  getAnalyzerDeliveryIssues,
   getAnalyzers,
   getAnalyzerLabUnits,
   getAnalyzerTypeCatalog,
@@ -37,6 +38,7 @@ import AnalyzerLifecycleModal, {
 import AnalyzerSetup, {
   type AnalyzerSetupStep,
 } from "../AnalyzerSetup/AnalyzerSetup";
+import BridgePairing from "../BridgePairing/BridgePairing";
 
 import PageBreadCrumb from "../../common/PageBreadCrumb";
 import type { Analyzer, AnalyzerStatus } from "../types";
@@ -69,16 +71,22 @@ const hasHeldResults = (analyzer: Analyzer) =>
 const isAnalyzerSetupStep = (
   value: string | null,
 ): value is AnalyzerSetupStep =>
-  value === "instrument" || value === "verify" || value === "connect";
+  value === "instrument" ||
+  value === "assays" ||
+  value === "verify" ||
+  value === "connect";
 
 const isAnalyzerLifecycleAction = (
   value: string | null,
 ): value is AnalyzerLifecycleAction =>
-  value === "deactivate" || value === "reactivate";
+  value === "activate" || value === "deactivate" || value === "reactivate";
 
 const lifecycleActionsFor = (
   status: AnalyzerStatus,
 ): AnalyzerLifecycleAction[] => {
+  if (status === "SETUP") {
+    return ["activate"];
+  }
   if (status === "INACTIVE") {
     return ["reactivate"];
   }
@@ -131,6 +139,17 @@ const AnalyzersList = () => {
   const listTestUnit = queryParams.get("testUnit") || "";
   const listAnalyzerType = queryParams.get("analyzerType") || "";
   const firstAttentionAnalyzer = analyzers.find(hasHeldResults);
+  const [undeliveredCount, setUndeliveredCount] = useState(0);
+
+  useEffect(() => {
+    const controller = new AbortController();
+    getAnalyzerDeliveryIssues((response) => {
+      setUndeliveredCount(
+        response?.status === "success" ? response.data?.count || 0 : 0,
+      );
+    }, controller.signal);
+    return () => controller.abort();
+  }, []);
 
   const openSetup = () => {
     const params = new URLSearchParams(location.search);
@@ -331,14 +350,15 @@ const AnalyzersList = () => {
     }
 
     searchTimeoutRef.current = setTimeout(() => {
-      const params = new URLSearchParams(location.search);
+      const currentLocation = history.location;
+      const params = new URLSearchParams(currentLocation.search);
       if (value.trim()) {
         params.set("search", value.trim());
       } else {
         params.delete("search");
       }
       history.replace({
-        pathname: location.pathname,
+        pathname: currentLocation.pathname,
         search: params.toString(),
       });
     }, 300);
@@ -470,6 +490,8 @@ const AnalyzersList = () => {
         />
       )}
 
+      <BridgePairing />
+
       {firstAttentionAnalyzer && (
         <Callout
           kind="warning"
@@ -494,6 +516,30 @@ const AnalyzersList = () => {
             id: "analyzer.attention.review",
           })}
           onActionButtonClick={() => openResults(firstAttentionAnalyzer)}
+        />
+      )}
+
+      {undeliveredCount > 0 && (
+        <Callout
+          kind="warning"
+          lowContrast
+          data-testid="delivery-issues-attention"
+          title={intl.formatMessage(
+            { id: "analyzer.deliveryIssues.attention.title" },
+            { count: undeliveredCount },
+          )}
+          subtitle={intl.formatMessage({
+            id: "analyzer.deliveryIssues.attention.subtitle",
+          })}
+          actionButtonLabel={intl.formatMessage({
+            id: "analyzer.deliveryIssues.attention.review",
+          })}
+          onActionButtonClick={() =>
+            history.push({
+              pathname: "/AnalyzerResults",
+              search: "?view=import-issues",
+            })
+          }
         />
       )}
 

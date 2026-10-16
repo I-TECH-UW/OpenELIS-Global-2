@@ -73,8 +73,8 @@ public class AnalyzerResultsServiceImpl extends AuditableBaseObjectServiceImpl<A
 
     @Override
     @Transactional(readOnly = true)
-    public List<AnalyzerResults> findHeldResultValuesByProfile(String profileId, int profileRevision) {
-        return getBaseObjectDAO().findHeldResultValuesByProfile(profileId, profileRevision);
+    public List<AnalyzerResults> findHeldMappingResultsByAnalyzer(String analyzerId) {
+        return getBaseObjectDAO().findHeldMappingResultsByAnalyzer(analyzerId);
     }
 
     @Override
@@ -168,6 +168,7 @@ public class AnalyzerResultsServiceImpl extends AuditableBaseObjectServiceImpl<A
                         && sameText(previous.getSourceProfileId(), incoming.getSourceProfileId())
                         && Objects.equals(previous.getSourceProfileRevision(), incoming.getSourceProfileRevision())
                         && sameText(previous.getRawTestCode(), incoming.getRawTestCode())
+                        && Objects.equals(previous.getRawSubIdentity(), incoming.getRawSubIdentity())
                         && sameText(previous.getRawResultValue(), incoming.getRawResultValue()))
                 .findFirst().orElse(null);
     }
@@ -254,11 +255,13 @@ public class AnalyzerResultsServiceImpl extends AuditableBaseObjectServiceImpl<A
                     resultService.update(result);
                 }
 
-                Note note = grouping.noteList.get(i);
-
-                if (note != null) {
-                    note.setReferenceId(result.getId());
-                    noteService.insert(note);
+                // The note was made for the analysis (its reference table), which has an id
+                // only now.
+                for (Note note : grouping.noteList.get(i)) {
+                    note.setReferenceId(analysis.getId());
+                    if (!alreadyOnAnalysis(note)) {
+                        noteService.insert(note);
+                    }
                 }
             }
         }
@@ -267,6 +270,22 @@ public class AnalyzerResultsServiceImpl extends AuditableBaseObjectServiceImpl<A
         testReflexUtil.addNewTestsToDBForReflexTests(convertGroupListToTestReflexBeans(sampleGroupList), sysUserId);
 
         return true;
+    }
+
+    /**
+     * An analysis carries a note once: each part of a result, and a rerun, may
+     * bring the same one. Compared as the note service's duplicate rule compares
+     * them.
+     */
+    private boolean alreadyOnAnalysis(Note note) {
+        return noteService.getNotesByNoteTypeRefIdRefTable(note).stream()
+                .anyMatch(existing -> sameNoteText(existing.getText(), note.getText())
+                        && sameNoteText(existing.getSubject(), note.getSubject()));
+    }
+
+    private static boolean sameNoteText(String one, String other) {
+        return Objects.equals(one == null ? null : one.trim().toLowerCase(),
+                other == null ? null : other.trim().toLowerCase());
     }
 
     private List<TestReflexBean> convertGroupListToTestReflexBeans(List<SampleGrouping> sampleGroupList) {

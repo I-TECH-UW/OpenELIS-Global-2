@@ -18,6 +18,7 @@ package org.openelisglobal.analysis.dao;
 import java.sql.Date;
 import java.sql.Timestamp;
 import java.time.LocalDate;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import org.openelisglobal.analysis.valueholder.Analysis;
@@ -76,6 +77,32 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
 
     List<Analysis> getAllAnalysisByTestSectionAndStatus(String testSectionId, List<String> statusIdList,
             boolean sortedByDateAndAccession) throws LIMSRuntimeException;
+
+    /**
+     * OGC-189 (M2): the test section ids that still hold at least one analysis
+     * whose status is NOT in {@code excludedStatusIdList} — i.e. in-flight work.
+     *
+     * <p>
+     * Drives the "isActive OR hasContent" rule for viewer controls: a deactivated
+     * lab unit stays visible on worklists exactly as long as it still has work to
+     * finish, then drops out on its own. One query for every section rather than
+     * one per section, because it populates a dropdown.
+     */
+    List<String> getTestSectionIdsWithAnalysesNotInStatus(List<String> excludedStatusIdList)
+            throws LIMSRuntimeException;
+
+    /**
+     * OGC-189 (M3): how many analyses this lab unit holds, split by whether they
+     * are still in flight. Index 0 = pending (status NOT in
+     * {@code terminalStatusIdList}), index 1 = the rest, i.e. history.
+     *
+     * <p>
+     * Counted in the database rather than by loading the analyses, because the
+     * deactivation impact summary only needs the numbers and a busy unit can hold a
+     * great many rows.
+     */
+    long[] countAnalysesByTestSectionSplitByStatus(String testSectionId, List<String> terminalStatusIdList)
+            throws LIMSRuntimeException;
 
     List<Analysis> getAllAnalysisByTestSectionAndExcludedStatus(String testSectionId, List<String> statusIdList)
             throws LIMSRuntimeException;
@@ -277,6 +304,19 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
     List<Analysis> getPageAnalysisByStatusFromAccession(List<String> analysisStatusList, List<String> sampleStatusList,
             String accessionNumber, String upperRangeAccessionNumber, boolean doRange, boolean finished);
 
+    /**
+     * Pending analyses for the batch workplan, with every exclusion applied in the
+     * query so {@code maxResults} caps rows the caller will actually show. Capping
+     * first and filtering afterwards can return nothing while eligible rows exist.
+     *
+     * @param testIdList          tests the caller may see; empty means none
+     * @param excludedAnalysisIds analyses already held by an open batch
+     */
+    List<Analysis> getPendingAnalysesForWorkplan(List<String> statusIdList, List<String> testIdList,
+            Collection<String> excludedAnalysisIds, int maxResults) throws LIMSRuntimeException;
+
+    List<Analysis> getAnalysesByIdsWithDetails(List<String> analysisIds) throws LIMSRuntimeException;
+
     List<Analysis> getAnalysisForSiteBetweenResultDates(String referringSiteId, LocalDate lowerDate,
             LocalDate upperDate);
 
@@ -295,6 +335,13 @@ public interface AnalysisDAO extends BaseDAO<Analysis, String> {
     int getCountOfAnalysesForStatusIdsExcludingQc(List<String> statusIdList);
 
     int getCountOfCollectedAnalysesForStatusIdsExcludingQc(List<String> statusIdList);
+
+    /**
+     * Test-section-scoped counterpart of
+     * {@link #getCountOfCollectedAnalysesForStatusIdsExcludingQc(List)}.
+     */
+    int getCountOfCollectedAnalysesForStatusIdsAndTestSectionsExcludingQc(List<String> statusIdList,
+            List<String> testSectionIds);
 
     int getCountOfAnalysisCompletedOnByStatusId(Date completedDate, List<String> statusIds);
 

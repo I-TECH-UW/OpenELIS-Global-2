@@ -62,8 +62,8 @@ import {
   getWhonetExportUrlFromWorklist,
 } from "./WhonetRoutes";
 import "./MicrobiologyWorklist.css";
+import { labNow } from "../utils/labClock";
 
-const WORKFLOW_OPTIONS = ["BACTERIOLOGY", "MYCOBACTERIOLOGY_TB", "MYCOLOGY"];
 const STAGE_OPTIONS = [
   "RECEIVED",
   "SETUP_RECORDED",
@@ -233,7 +233,7 @@ const MicrobiologyWorklist = ({ service = MicrobiologyService, now }) => {
   const history = useHistory();
   const location = useLocation();
   const { userSessionDetails } = useContext(UserSessionDetailsContext);
-  const referenceNow = useMemo(() => now || new Date(), [now]);
+  const referenceNow = useMemo(() => now || labNow(), [now]);
   const filters = parseMicrobiologyWorklistSearch(
     location.search,
     referenceNow,
@@ -394,7 +394,6 @@ const MicrobiologyWorklist = ({ service = MicrobiologyService, now }) => {
 
   const hasFilters = Boolean(
     filters.status ||
-    filters.workflow ||
     filters.stage ||
     filters.urgency ||
     filters.due ||
@@ -928,30 +927,6 @@ const MicrobiologyWorklist = ({ service = MicrobiologyService, now }) => {
             </Button>
           </div>
           <div className="microbiology-worklist__filter-grid">
-            <Select
-              id="microbiology-worklist-workflow-filter"
-              labelText={intl.formatMessage({
-                id: "microbiology.worklist.filter.workflow",
-              })}
-              value={filters.workflow}
-              onChange={(event) =>
-                updateFilters({ workflow: event.target.value })
-              }
-            >
-              <SelectItem
-                value=""
-                text={intl.formatMessage({
-                  id: "microbiology.worklist.filter.allWorkflows",
-                })}
-              />
-              {WORKFLOW_OPTIONS.map((workflow) => (
-                <SelectItem
-                  key={workflow}
-                  value={workflow}
-                  text={formatMicrobiologyEnum(workflow, intl)}
-                />
-              ))}
-            </Select>
             {!isAstGrain && (
               <Select
                 id="microbiology-worklist-stage-filter"
@@ -1072,12 +1047,6 @@ const MicrobiologyWorklist = ({ service = MicrobiologyService, now }) => {
                 value="newest"
                 text={intl.formatMessage({
                   id: "microbiology.worklist.sort.newest",
-                })}
-              />
-              <SelectItem
-                value="workflow"
-                text={intl.formatMessage({
-                  id: "microbiology.worklist.sort.workflow",
                 })}
               />
             </Select>
@@ -1254,27 +1223,6 @@ const MicrobiologyWorklist = ({ service = MicrobiologyService, now }) => {
                                             >
                                               {cell.value}
                                             </Link>
-                                            <Tag type="outline">
-                                              {formatMicrobiologyEnum(
-                                                row.workflowType,
-                                                intl,
-                                              )}
-                                            </Tag>
-                                            {row.siblingWorkflows?.length >
-                                              0 && (
-                                              <span data-testid="microbiology-worklist-siblings">
-                                                {intl.formatMessage(
-                                                  {
-                                                    id: "microbiology.worklist.linkedWorkflows",
-                                                  },
-                                                  {
-                                                    count:
-                                                      row.siblingWorkflows
-                                                        .length + 1,
-                                                  },
-                                                )}
-                                              </span>
-                                            )}
                                           </div>
                                         </TableCell>
                                       );

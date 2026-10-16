@@ -13,6 +13,7 @@ import {
   Pagination,
   Select,
   SelectItem,
+  Stack,
   Tag,
   TextArea,
   TextInput,
@@ -20,15 +21,31 @@ import {
 import { Copy } from "@carbon/icons-react";
 import DataTable from "react-data-table-component";
 import { FormattedMessage, useIntl } from "react-intl";
-import { Link as RouterLink } from "react-router-dom";
+import { Link as RouterLink, useHistory, useLocation } from "react-router-dom";
 import ValidationSearchFormValues from "../formModel/innitialValues/ValidationSearchFormValues";
 import { NotificationKinds } from "../common/CustomNotification";
 import { postToOpenElisServerFullResponse } from "../utils/Utils";
+import {
+  serverPageArrowsProps,
+  serverPaginationProps,
+} from "../utils/serverPaging";
+import ServerPageArrows from "../common/ServerPageArrows";
 import { NotificationContext } from "../layout/Layout";
 import { ConfigurationContext } from "../layout/Layout";
 import { convertAlphaNumLabNumForDisplay } from "../utils/Utils";
 import { jpSet } from "../utils/JsonPath";
 import config from "../../config.json";
+import ResultAlertModal, {
+  acknowledgementRefusal,
+} from "../resultPage/ResultAlertModal";
+import PlacementNotice from "./PlacementNotice";
+import InstrumentReported from "./InstrumentReported";
+import ResultParts, { decisionKey, groupTestParts } from "./ResultParts";
+import DeliveryBundleModal from "./DeliveryBundleModal";
+import RedirectControl from "./RedirectControl";
+
+// Held for a decision the reviewer can make on the page, not for a mapping fix.
+const REVIEWABLE_HOLDS = ["awaiting_specimen", "awaiting_placement"];
 
 export const buildAnalyzerResultsRedirectUrl = (analyzerId) => {
   if (!analyzerId) {
@@ -39,27 +56,37 @@ export const buildAnalyzerResultsRedirectUrl = (analyzerId) => {
 };
 
 export const buildHeldResultResolutionUrl = (row, analyzerId) => {
+  const mappingIssues = [
+    "unknown_analyzer_test",
+    "test_mapping_not_ready",
+    "unknown_analyzer_result_value",
+    "result_mapping_not_ready",
+    "invalid_result_mapping",
+  ];
   if (
-    row.importIssueReason !== "unknown_analyzer_result_value" ||
+    !mappingIssues.includes(row.importIssueReason) ||
     !row.sourceProfileId ||
     !row.sourceProfileRevision ||
     !row.rawTestCode ||
-    !row.rawResultValue ||
     !analyzerId
   ) {
     return null;
   }
 
   const query = new URLSearchParams({
-    revision: String(row.sourceProfileRevision),
     returnTo: buildAnalyzerResultsRedirectUrl(analyzerId),
     focusTest: row.rawTestCode,
-    focusValue: row.rawResultValue,
   });
-  return `/analyzers/types/${encodeURIComponent(row.sourceProfileId)}/mapping?${query.toString()}`;
+  if (row.rawResultValue) {
+    query.set("focusValue", row.rawResultValue);
+  }
+  return `/analyzers/${encodeURIComponent(analyzerId)}/mapping?${query.toString()}`;
 };
 const AnalyserResults = (props) => {
   const componentMounted = useRef(false);
+  const draftEdits = useRef({});
+  const history = useHistory();
+  const location = useLocation();
 
   const { setNotificationVisible, addNotification } =
     useContext(NotificationContext);
@@ -67,9 +94,12 @@ const AnalyserResults = (props) => {
 
   const intl = useIntl();
 
-  const [page, setPage] = useState(1);
-  const [pageSize, setPageSize] = useState(100);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  // OGC-1417: retyped values the server will not accept until the reviewer
+  // acknowledges them as critical, or confirms them outside the valid range
+  const [resultAlert, setResultAlert] = useState(null);
+  const [bundleReceiptId, setBundleReceiptId] = useState(null);
+  const [dismissingRunIds, setDismissingRunIds] = useState([]);
 
   useEffect(() => {
     componentMounted.current = true;
@@ -78,14 +108,84 @@ const AnalyserResults = (props) => {
     };
   }, []);
 
+  // Edits restored after a mapping visit stay unsaved drafts, so the next
+  // visit carries them again.
+  useEffect(() => {
+    draftEdits.current = Object.fromEntries(
+      Object.entries(props.restoredEdits ?? {}).map(([id, fields]) => [
+        id,
+        { ...fields },
+      ]),
+    );
+  }, [props.results, props.restoredEdits]);
+
+  const rememberEdit = (rowId, field, value) => {
+    const id = String(rowId);
+    draftEdits.current[id] = { ...draftEdits.current[id], [field]: value };
+  };
+
+  const openMappingWithDraft = (event, resolutionUrl) => {
+    if (
+      event.button !== 0 ||
+      event.metaKey ||
+      event.ctrlKey ||
+      event.shiftKey ||
+      event.altKey
+    ) {
+      return;
+    }
+    event.preventDefault();
+    const edits = Object.fromEntries(
+      Object.entries(draftEdits.current).map(([id, fields]) => [
+        id,
+        { ...fields },
+      ]),
+    );
+    const worklistDraft = {
+      analyzerId: String(props.analyzerId),
+      page: Number(props.results?.paging?.currentPage) || 1,
+      edits,
+    };
+    history.replace({
+      pathname: location.pathname,
+      search: location.search,
+      state: { ...location.state, worklistDraft },
+    });
+    history.push(resolutionUrl, { worklistDraft });
+  };
+
   const allResults = props.results?.resultList ?? [];
   const patientResults = allResults.filter((r) => !r.isControl);
+  // Accept, retest and ignore are decided per test: its first row carries the
+  // decision, and the rows on its components show beneath its main result.
+  const { decisionHeadIds, partsByHeadId, partIds } =
+    groupTestParts(patientResults);
+  const tableRows = patientResults.filter((row) => !partIds.has(row.id));
+  const arrows = serverPageArrowsProps({
+    paging: props.results?.paging,
+    onPageRequest: (pageNumber) => props.loadPage?.(pageNumber),
+  });
   const heldPatientResults = patientResults.filter(
     (result) => result.importIssueReason,
   );
   const actionablePatientResults = patientResults.filter(
-    (result) => !result.importIssueReason,
+    (result) =>
+      !result.importIssueReason ||
+      REVIEWABLE_HOLDS.includes(result.importIssueReason),
   );
+  // One tick saves a whole grouping, so "accept all" ticks only the groupings
+  // whose every result has exactly one analysis waiting for it and a patient
+  // that matches the order or was not reported.
+  const groupIsMatched = (grouping) =>
+    actionablePatientResults
+      .filter((result) => result.sampleGroupingNumber === grouping)
+      .every(
+        (result) =>
+          result.placement?.state === "RESOLVED" &&
+          ["NOT_REPORTED", "MATCH"].includes(
+            result.placement?.patient?.status ?? "NOT_REPORTED",
+          ),
+      );
   const qcResults = allResults.filter((r) => r.isControl);
   const hasQcFailures = qcResults.some(
     (r) =>
@@ -177,13 +277,20 @@ const AnalyserResults = (props) => {
     let message = intl.formatMessage({ id: "validation.save.error" });
     let kind = NotificationKinds.error;
     setIsSubmitting(false);
+    if (response.status == 422) {
+      const body = await response.json().catch(() => null);
+      const refusal = acknowledgementRefusal(
+        body ? { ...body, status: 422 } : null,
+      );
+      if (refusal) {
+        setResultAlert(refusal);
+        return;
+      }
+    }
     if (response.status == 200) {
       message = intl.formatMessage({ id: "validation.save.success" });
       kind = NotificationKinds.success;
-      // The accepted rows leave the worklist, so the page it was showing may
-      // no longer exist.
-      setPage(1);
-      props.refreshResults?.();
+      props.refreshResults?.(Number(props.results?.paging?.currentPage) || 1);
     } else {
       const detail = await response.text().catch(() => "");
       if (detail) {
@@ -198,19 +305,44 @@ const AnalyserResults = (props) => {
     setNotificationVisible(true);
   };
 
-  const handlePageChange = (pageInfo) => {
-    if (page != pageInfo.page) {
-      setPage(pageInfo.page);
+  const confirmResultAlert = () => {
+    const pending = resultAlert;
+    setResultAlert(null);
+    if (!pending) {
+      return;
     }
-    if (pageSize != pageInfo.pageSize) {
-      setPageSize(pageInfo.pageSize);
-    }
+    const rows = props.results?.resultList || [];
+    pending.alerts.forEach((alert) => {
+      const row = rows.find(
+        (candidate) => String(candidate.id) === String(alert.rowId),
+      );
+      if (!row) {
+        return;
+      }
+      if (alert.kind === "CRITICAL") {
+        row.criticalAcknowledged = true;
+      } else {
+        row.invalidResultConfirmed = true;
+      }
+    });
+    handleSave();
   };
 
   const handleChange = (e, rowId) => {
     const { name, id, value } = e.target;
     let form = props.results;
     jpSet(form, name, value);
+    const field = name.match(/\.(result|note)$/)?.[1];
+    if (field) rememberEdit(rowId, field, value);
+    const row = (form.resultList || []).find(
+      (candidate) => String(candidate.id) === String(rowId),
+    );
+    // A row without a note has no note property for the path above to set.
+    if (field === "note" && row) row.note = value;
+    if (field === "result" && row) {
+      row.criticalAcknowledged = false;
+      row.invalidResultConfirmed = false;
+    }
   };
 
   const handleDatePickerChange = (date, rowId) => {
@@ -219,12 +351,18 @@ const AnalyserResults = (props) => {
     var form = props.results;
     jpSet(form, "resultList[" + rowId + "].sentDate_", d);
   };
+  // A test is decided on its head row; its parts and duplicates carry the same
+  // decision, so a tick they loaded with cannot outvote it on save.
   const handleCheckBox = (e, rowId, fieldName) => {
-    const row = (props.results.resultList || []).find(
-      (result) => String(result.id) === String(rowId),
-    );
+    const rows = props.results.resultList || [];
+    const row = rows.find((result) => String(result.id) === String(rowId));
     if (row) {
-      row[fieldName] = e.target.checked;
+      rows
+        .filter((other) => decisionKey(other) === decisionKey(row))
+        .forEach((other) => {
+          other[fieldName] = e.target.checked;
+          rememberEdit(other.id, fieldName, e.target.checked);
+        });
     }
   };
 
@@ -235,6 +373,27 @@ const AnalyserResults = (props) => {
     const row = (props.results.resultList || []).find((r) => r.id === rowId);
     if (row) {
       row.typeOfSampleId = e.target.value;
+      rememberEdit(rowId, "typeOfSampleId", e.target.value);
+    }
+  };
+
+  const handleAnalysisChoice = (analysisId, rowId) => {
+    const row = (props.results.resultList || []).find(
+      (r) => String(r.id) === String(rowId),
+    );
+    if (row) {
+      row.chosenAnalysisId = analysisId;
+      rememberEdit(rowId, "chosenAnalysisId", analysisId);
+    }
+  };
+
+  const handleRedirect = (field, value, rowId) => {
+    const row = (props.results.resultList || []).find(
+      (r) => String(r.id) === String(rowId),
+    );
+    if (row) {
+      row[field] = value;
+      rememberEdit(rowId, field, value);
     }
   };
 
@@ -244,6 +403,7 @@ const AnalyserResults = (props) => {
     );
     if (row) {
       row[fieldName] = checked;
+      rememberEdit(rowId, fieldName, checked);
     }
   };
   const validateResults = (e, rowId) => {
@@ -254,62 +414,207 @@ const AnalyserResults = (props) => {
     return props.sampleGroup.some((item) => item.id === id);
   };
 
+  // The run produced no result: the reviewer records the failure on the order's
+  // waiting test, which stays open for the repeat.
+  const dismissFailedRun = (row) => {
+    setDismissingRunIds((ids) => [...ids, row.id]);
+    postToOpenElisServerFullResponse(
+      `/rest/analyzer/results/${encodeURIComponent(row.id)}/failed-run`,
+      JSON.stringify({}),
+      // The response is undefined when the request never reached the server.
+      async (response) => {
+        setDismissingRunIds((ids) => ids.filter((id) => id !== row.id));
+        const succeeded = response?.status == 200;
+        let message = intl.formatMessage({
+          id: succeeded
+            ? "analyzer.results.failedRun.dismissed"
+            : "analyzer.results.failedRun.error",
+        });
+        if (!succeeded) {
+          const body = await response?.json?.().catch(() => null);
+          if (body?.error) {
+            message = message + ": " + body.error;
+          }
+        }
+        addNotification({
+          kind: succeeded ? NotificationKinds.success : NotificationKinds.error,
+          title: intl.formatMessage({ id: "notification.title" }),
+          message,
+        });
+        setNotificationVisible(true);
+        if (succeeded) {
+          props.refreshResults?.(
+            Number(props.results?.paging?.currentPage) || 1,
+          );
+        }
+      },
+    );
+  };
+
+  const renderHeldResult = (row) => {
+    const resolutionUrl = buildHeldResultResolutionUrl(row, props.analyzerId);
+    return (
+      <div data-testid={`held-analyzer-result-${row.id}`}>
+        <Tag type="warm-gray" size="sm">
+          <FormattedMessage id="analyzer.results.held.tag" />
+        </Tag>
+        <div>
+          <strong>{row.rawResultValue || row.result}</strong>
+        </div>
+        <div>
+          <FormattedMessage
+            id="analyzer.results.held.code"
+            values={{ code: row.rawTestCode || row.testName }}
+          />
+        </div>
+        {resolutionUrl && (
+          <CarbonLink
+            as={RouterLink}
+            to={resolutionUrl}
+            onClick={(event) => openMappingWithDraft(event, resolutionUrl)}
+          >
+            <FormattedMessage id="analyzer.results.held.reviewMapping" />
+          </CarbonLink>
+        )}
+        {row.instrumentNote && (
+          <div data-testid={`instrument-note-${row.id}`}>
+            <FormattedMessage
+              id="analyzer.results.held.instrumentNote"
+              values={{ note: row.instrumentNote }}
+            />
+          </div>
+        )}
+        {row.importIssueReason === "run_failed" && !row.isControl && (
+          <Button
+            kind="tertiary"
+            size="sm"
+            disabled={dismissingRunIds.includes(row.id)}
+            onClick={() => dismissFailedRun(row)}
+          >
+            <FormattedMessage id="analyzer.results.failedRun.dismiss" />
+          </Button>
+        )}
+        {row.importIssueReason === "assay_not_enabled" && (
+          <>
+            <div>
+              <FormattedMessage id="analyzer.results.held.assayNotEnabled" />
+            </div>
+            {props.analyzerId && (
+              <CarbonLink
+                as={RouterLink}
+                to={`/analyzers?setup=assays&analyzerId=${encodeURIComponent(props.analyzerId)}`}
+              >
+                <FormattedMessage id="analyzer.results.held.enableAssay" />
+              </CarbonLink>
+            )}
+          </>
+        )}
+        {row.importIssueReason === "arrived_under_other_revision" && (
+          <div>
+            <FormattedMessage
+              id="analyzer.results.held.otherRevision"
+              values={{ revision: row.sourceProfileRevision }}
+            />
+          </div>
+        )}
+        {row.importIssueReason === "qc_target_missing" && (
+          <>
+            <div>
+              <FormattedMessage id="analyzer.results.held.qcTargetMissing" />
+            </div>
+            {row.testId && (
+              <CarbonLink
+                as={RouterLink}
+                to={`/MasterListsPage/TestCatalogEditor/${encodeURIComponent(row.testId)}/qc-targets`}
+              >
+                <FormattedMessage id="analyzer.results.held.setQcTarget" />
+              </CarbonLink>
+            )}
+          </>
+        )}
+      </div>
+    );
+  };
+
   const renderCell = (row, index, column, id) => {
     let formatLabNum = configurationProperties.AccessionFormat === "ALPHANUM";
     const held = Boolean(row.importIssueReason);
+    const awaitingReview = REVIEWABLE_HOLDS.includes(row.importIssueReason);
     switch (column.id) {
       case "sampleInfo":
-        return (
-          <>
-            {sampleGroupHasId(row.id) && (
-              <>
-                <Button
-                  onClick={async () => {
-                    if ("clipboard" in navigator) {
-                      return await navigator.clipboard.writeText(
-                        row.accessionNumber,
-                      );
-                    } else {
-                      return document.execCommand(
-                        "copy",
-                        true,
-                        row.accessionNumber,
-                      );
-                    }
-                  }}
-                  kind="ghost"
-                  iconDescription={intl.formatMessage({
-                    id: "instructions.copy.labnum",
-                  })}
-                  hasIconOnly
-                  renderIcon={Copy}
+        // The table's cells break words anywhere, so the lab number gets a row
+        // to itself: beside the redirect control it shrinks to one character a line.
+        return sampleGroupHasId(row.id) ? (
+          <Stack gap={3}>
+            <Stack orientation="horizontal" gap={2}>
+              <Button
+                onClick={async () => {
+                  if ("clipboard" in navigator) {
+                    return await navigator.clipboard.writeText(
+                      row.accessionNumber,
+                    );
+                  } else {
+                    return document.execCommand(
+                      "copy",
+                      true,
+                      row.accessionNumber,
+                    );
+                  }
+                }}
+                kind="ghost"
+                iconDescription={intl.formatMessage({
+                  id: "instructions.copy.labnum",
+                })}
+                hasIconOnly
+                renderIcon={Copy}
+              />
+              <div className="sampleInfo" data-testid="LabNo">
+                {formatLabNum
+                  ? convertAlphaNumLabNumForDisplay(row.accessionNumber)
+                  : row.accessionNumber}
+                {row.instrumentSpecimenId &&
+                  row.instrumentSpecimenId !== row.accessionNumber && (
+                    <div data-testid="InstrumentSpecimenId">
+                      <FormattedMessage
+                        id="analyzer.placement.instrumentSpecimen"
+                        values={{ id: row.instrumentSpecimenId }}
+                      />
+                    </div>
+                  )}
+              </div>
+              {row.nonconforming && (
+                <picture>
+                  <img
+                    src={config.serverBaseUrl + "/images/nonconforming.gif"}
+                    alt="nonconforming"
+                    width="20"
+                    height="15"
+                  />
+                </picture>
+              )}
+            </Stack>
+            {row.instrumentSampleFlags && (
+              <div data-testid="InstrumentSampleFlags">
+                <FormattedMessage
+                  id="analyzer.results.sampleFlags"
+                  values={{ flags: row.instrumentSampleFlags }}
                 />
-                <div className="sampleInfo" data-testid="LabNo">
-                  <br></br>
-                  {formatLabNum
-                    ? convertAlphaNumLabNumForDisplay(row.accessionNumber)
-                    : row.accessionNumber}
-                  <br></br>
-                  <br></br>
-                </div>
-                {row.nonconforming && (
-                  <picture>
-                    <img
-                      src={config.serverBaseUrl + "/images/nonconforming.gif"}
-                      alt="nonconforming"
-                      width="20"
-                      height="15"
-                    />
-                  </picture>
-                )}
-              </>
+              </div>
             )}
-          </>
-        );
+            {row.placement && (
+              <RedirectControl row={row} onChange={handleRedirect} />
+            )}
+          </Stack>
+        ) : null;
       case "testName":
         return (
           <div className="sampleInfo" data-testid="sampleInfo">
             {row.testName}
+            <PlacementNotice
+              row={row}
+              onChooseAnalysis={handleAnalysisChoice}
+              onViewBundle={setBundleReceiptId}
+            />
             {/* OGC-1145 FR-8 — specimen-ambiguous row: the reviewer picks the
                 sample type; accepting without a choice keeps the row staged
                 (awaiting specimen) instead of guessing. */}
@@ -318,6 +623,9 @@ const AnalyserResults = (props) => {
                 id={"resultList" + row.id + ".typeOfSampleId"}
                 name={"resultList[?(@.id == " + row.id + ")].typeOfSampleId"}
                 labelText={intl.formatMessage({
+                  id: "label.testCatalog.specimenType",
+                })}
+                aria-label={intl.formatMessage({
                   id: "label.testCatalog.specimenType",
                 })}
                 helperText={intl.formatMessage({
@@ -340,13 +648,13 @@ const AnalyserResults = (props) => {
         );
 
       case "save":
-        if (held) {
+        if (held && !awaitingReview) {
           return null;
         }
         return (
           <>
             <div>
-              {sampleGroupHasId(row.id) && (
+              {decisionHeadIds.has(row.id) && (
                 <Field name="isAccepted">
                   {({ field }) => (
                     <Checkbox
@@ -354,6 +662,7 @@ const AnalyserResults = (props) => {
                       name={"resultList[?(@.id == " + row.id + ")].isAccepted"}
                       labelText=""
                       value={true}
+                      defaultChecked={Boolean(row.isAccepted)}
                       onChange={(e) => handleCheckBox(e, row.id, "isAccepted")}
                     />
                   )}
@@ -369,7 +678,7 @@ const AnalyserResults = (props) => {
         }
         return (
           <>
-            {sampleGroupHasId(row.id) && (
+            {decisionHeadIds.has(row.id) && (
               <Field name="isRejected">
                 {({ field }) => (
                   <Checkbox
@@ -377,6 +686,7 @@ const AnalyserResults = (props) => {
                     name={"resultList[?(@.id == " + row.id + ")].isRejected"}
                     labelText=""
                     value={true}
+                    defaultChecked={Boolean(row.isRejected)}
                     onChange={(e) => handleCheckBox(e, row.id, "isRejected")}
                   />
                 )}
@@ -391,7 +701,7 @@ const AnalyserResults = (props) => {
         }
         return (
           <>
-            {sampleGroupHasId(row.id) && (
+            {decisionHeadIds.has(row.id) && (
               <Field name="isDeleted">
                 {({ field }) => (
                   <Checkbox
@@ -399,6 +709,7 @@ const AnalyserResults = (props) => {
                     name={"resultList[?(@.id == " + row.id + ")].isDeleted"}
                     labelText=""
                     value={true}
+                    defaultChecked={Boolean(row.isDeleted)}
                     onChange={(e) => handleCheckBox(e, row.id, "isDeleted")}
                   />
                 )}
@@ -408,7 +719,7 @@ const AnalyserResults = (props) => {
         );
 
       case "notes":
-        if (held) {
+        if (held && !awaitingReview) {
           return null;
         }
         return (
@@ -421,6 +732,7 @@ const AnalyserResults = (props) => {
                 type="text"
                 labelText=""
                 rows={2}
+                defaultValue={row.note || ""}
                 onChange={(e) => handleChange(e, row.id)}
               ></TextArea>
             </div>
@@ -428,72 +740,61 @@ const AnalyserResults = (props) => {
         );
 
       case "result":
-        if (held) {
-          const resolutionUrl = buildHeldResultResolutionUrl(
-            row,
-            props.analyzerId,
-          );
-          return (
-            <div data-testid={`held-analyzer-result-${row.id}`}>
-              <Tag type="warm-gray" size="sm">
-                <FormattedMessage id="analyzer.results.held.tag" />
-              </Tag>
-              <div>
-                <strong>{row.rawResultValue || row.result}</strong>
-              </div>
-              <div>
-                <FormattedMessage
-                  id="analyzer.results.held.code"
-                  values={{ code: row.rawTestCode || row.testName }}
-                />
-              </div>
-              {resolutionUrl && (
-                <CarbonLink as={RouterLink} to={resolutionUrl}>
-                  <FormattedMessage id="analyzer.results.held.reviewMapping" />
-                </CarbonLink>
-              )}
-            </div>
-          );
-        }
-        switch (row.testResultType) {
-          case "M":
-          case "C":
-          case "D":
-            return (
-              <>
-                {
-                  row.dictionaryResultList.find(
-                    (result) => result.id == row.result,
-                  )?.displayValue
-                }
-              </>
-            );
-          default:
-            if (row.readOnly) {
-              return row.result;
-            } else {
-              return (
-                <>
-                  <div className="result">
-                    <TextInput
-                      id={"resultList" + row.id + ".result"}
-                      name={"resultList[?(@.id == " + row.id + ")].result"}
-                      disabled={false}
-                      type="text"
-                      value={row.result}
-                      labelText=""
-                      size="lg"
-                      onChange={(e) => handleChange(e, row.id)}
-                    ></TextInput>
-                  </div>
-                </>
-              );
-            }
-        }
+        return (
+          <>
+            {renderResultValue(row, held && !awaitingReview)}
+            <InstrumentReported row={row} />
+            <ResultParts
+              headId={row.id}
+              parts={partsByHeadId.get(row.id) || []}
+              renderHeld={renderHeldResult}
+            />
+          </>
+        );
 
       default:
     }
     return row.result;
+  };
+
+  const renderResultValue = (row, heldForMapping) => {
+    if (heldForMapping) {
+      return renderHeldResult(row);
+    }
+    switch (row.testResultType) {
+      case "M":
+      case "C":
+      case "D":
+        return (
+          <>
+            {
+              row.dictionaryResultList.find((result) => result.id == row.result)
+                ?.displayValue
+            }
+          </>
+        );
+      default:
+        if (row.readOnly) {
+          return row.result;
+        } else {
+          return (
+            <>
+              <div className="result">
+                <TextInput
+                  id={"resultList" + row.id + ".result"}
+                  name={"resultList[?(@.id == " + row.id + ")].result"}
+                  disabled={false}
+                  type="text"
+                  value={row.result}
+                  labelText=""
+                  size="lg"
+                  onChange={(e) => handleChange(e, row.id)}
+                ></TextInput>
+              </div>
+            </>
+          );
+        }
+    }
   };
 
   return (
@@ -575,6 +876,12 @@ const AnalyserResults = (props) => {
                     "resultList" + result.id + ".isAccepted",
                   );
                   if (!checkbox) return;
+                  if (
+                    e.target.checked &&
+                    !groupIsMatched(result.sampleGroupingNumber)
+                  ) {
+                    return;
+                  }
                   checkbox.checked = e.target.checked;
                   handleAutomatedCheck(
                     e.target.checked,
@@ -637,52 +944,20 @@ const AnalyserResults = (props) => {
       >
         {({ values, errors, touched, handleChange }) => (
           <Form onChange={handleChange}>
+            {arrows.show && <ServerPageArrows {...arrows} />}
             <DataTable
-              data={patientResults.slice(
-                (page - 1) * pageSize,
-                page * pageSize,
-              )}
+              data={tableRows}
               columns={columns}
               isSortable
             ></DataTable>
             <Pagination
-              onChange={handlePageChange}
-              page={page}
-              pageSize={pageSize}
-              pageSizes={[10, 20, 30, 50, 100]}
-              totalItems={patientResults.length}
-              forwardText={intl.formatMessage({ id: "pagination.forward" })}
-              backwardText={intl.formatMessage({ id: "pagination.backward" })}
-              itemRangeText={(min, max, total) =>
-                intl.formatMessage(
-                  { id: "pagination.item-range" },
-                  { min: min, max: max, total: total },
-                )
-              }
-              itemsPerPageText={intl.formatMessage({
-                id: "pagination.items-per-page",
+              {...serverPaginationProps({
+                paging: props.results?.paging,
+                rowsOnPage: patientResults.length,
+                pageSize: props.serverPageSize,
+                onPageRequest: (pageNumber) => props.loadPage?.(pageNumber),
+                intl,
               })}
-              itemText={(min, max) =>
-                intl.formatMessage(
-                  { id: "pagination.item" },
-                  { min: min, max: max },
-                )
-              }
-              pageNumberText={intl.formatMessage({
-                id: "pagination.page-number",
-              })}
-              pageRangeText={(_current, total) =>
-                intl.formatMessage(
-                  { id: "pagination.page-range" },
-                  { total: total },
-                )
-              }
-              pageText={(page, pagesUnknown) =>
-                intl.formatMessage(
-                  { id: "pagination.page" },
-                  { page: pagesUnknown ? "" : page },
-                )
-              }
             />
 
             {actionablePatientResults.length > 0 && (
@@ -735,6 +1010,8 @@ const AnalyserResults = (props) => {
                   id: "result",
                   name: intl.formatMessage({ id: "column.name.result" }),
                   selector: (row) => row.result,
+                  cell: (row) =>
+                    row.importIssueReason ? renderHeldResult(row) : row.result,
                   width: "20rem",
                 },
               ]}
@@ -742,6 +1019,18 @@ const AnalyserResults = (props) => {
           </AccordionItem>
         </Accordion>
       )}
+      <ResultAlertModal
+        open={Boolean(resultAlert)}
+        alerts={resultAlert?.alerts || []}
+        mode="save"
+        customCriticalMessage={resultAlert?.customCriticalMessage}
+        onConfirm={confirmResultAlert}
+        onCorrect={() => setResultAlert(null)}
+      />
+      <DeliveryBundleModal
+        receiptId={bundleReceiptId}
+        onClose={() => setBundleReceiptId(null)}
+      />
     </>
   );
 };

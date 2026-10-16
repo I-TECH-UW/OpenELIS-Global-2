@@ -5,6 +5,7 @@ import { useIntl } from "react-intl";
 import {
   activateAnalyzer,
   getAnalyzerActivationReadiness,
+  resetAnalyzerProfile,
   testConnection,
   updateAnalyzer,
 } from "../../../services/analyzerService";
@@ -53,6 +54,61 @@ const formatCheckMessage = (intl, check) => {
   });
 };
 
+const PORT_SOURCE_MESSAGES = new Map([
+  ["Connection override", "analyzer.setup.connect.portSource.override"],
+  ["Profile default", "analyzer.setup.connect.portSource.profile"],
+  ["Bridge default", "analyzer.setup.connect.portSource.bridge"],
+]);
+
+// Render only endpoint evidence from the probe, never settings inferred by OE2
+// or arbitrary detail fields returned by a newer Bridge.
+const ProbeEndpointDetails = ({ check }) => {
+  const intl = useIntl();
+  const kind = normalizedCheckKey(check.key);
+  const { host, port, portSource } = check.details || {};
+  const hasHost = typeof host === "string" && host.trim().length > 0;
+  const hasPort = Number.isInteger(port) && port > 0 && port <= 65535;
+  const sourceId = PORT_SOURCE_MESSAGES.get(portSource);
+  if (kind === "listener") {
+    return hasPort ? (
+      <p>
+        {intl.formatMessage(
+          { id: "analyzer.setup.connect.listenerPort" },
+          { port: String(port) },
+        )}
+      </p>
+    ) : null;
+  }
+  if (kind !== "remote_protocol") return null;
+  return (
+    <>
+      {hasHost && hasPort && (
+        <p>
+          {intl.formatMessage(
+            { id: "analyzer.setup.connect.destination" },
+            { host, port: String(port) },
+          )}
+        </p>
+      )}
+      {sourceId && (
+        <p>
+          {intl.formatMessage(
+            { id: "analyzer.setup.connect.portSource" },
+            { source: intl.formatMessage({ id: sourceId }) },
+          )}
+        </p>
+      )}
+      {check.status !== "PASSED" && (
+        <p>
+          {intl.formatMessage({
+            id: "analyzer.setup.connect.destinationRemediation",
+          })}
+        </p>
+      )}
+    </>
+  );
+};
+
 const probeOutcomeMessage = (status) => {
   switch (status) {
     case "SUCCEEDED":
@@ -97,10 +153,16 @@ const MAPPING_BLOCKERS = new Set([
   "analyzer.activation.blocker.recognition",
 ]);
 
-const needsMappingVerification = (readiness) =>
+export const needsMappingVerification = (readiness) =>
   Boolean(
     readiness?.blockers?.some((blocker) => MAPPING_BLOCKERS.has(blocker.code)),
   );
+
+// What the Bridge set aside on this connection; its own detail text is not shown.
+const BRIDGE_DEGRADED_BLOCKERS = new Set([
+  "analyzer.connection.readiness.profileUnavailable",
+  "analyzer.connection.readiness.restoreFailed",
+]);
 
 const formatActivationBlocker = (intl, blocker) => {
   const id = blocker?.code;
@@ -120,6 +182,8 @@ const AnalyzerConnectionSetup = ({
   onCandidateChange,
   onClose,
   onVerifyMappings,
+  onReadinessChange,
+  onProfileReset,
 }) => {
   const intl = useIntl();
   const fields = candidate?.connection?.fields || EMPTY_FIELDS;
@@ -136,10 +200,21 @@ const AnalyzerConnectionSetup = ({
     Boolean(candidate?.id),
   );
   const [activationError, setActivationError] = useState(false);
+  const [resetting, setResetting] = useState(false);
+  const [resetRefusal, setResetRefusal] = useState(null);
 
   const submitting = action !== null;
+  // A connection the Bridge could not restart is not running, so an analyzer
+  // still marked active is offered activation again, not only a save.
+  const restoreFailed = Boolean(
+    candidate?.connection?.readiness?.blockers?.some(
+      (blocker) =>
+        blocker.messageKey === "analyzer.connection.readiness.restoreFailed",
+    ),
+  );
   const alreadyActive =
-    candidate?.status === "ACTIVE" || readiness?.activated === true;
+    !restoreFailed &&
+    (candidate?.status === "ACTIVE" || readiness?.activated === true);
 
   useEffect(() => {
     const controller = new AbortController();
@@ -161,6 +236,10 @@ const AnalyzerConnectionSetup = ({
     return () => controller.abort();
   }, [candidate?.id]);
 
+  useEffect(() => {
+    onReadinessChange?.(readiness);
+  }, [onReadinessChange, readiness]);
+
   const refreshReadiness = (analyzerId = candidate.id) => {
     setReadinessLoading(true);
     setActivationError(false);
@@ -172,6 +251,21 @@ const AnalyzerConnectionSetup = ({
         return;
       }
       setReadiness(result);
+    });
+  };
+
+  const resetProfile = () => {
+    setResetting(true);
+    setResetRefusal(null);
+    resetAnalyzerProfile(candidate.id, (result) => {
+      setResetting(false);
+      if (result?.ok) {
+        onProfileReset?.();
+        return;
+      }
+      setResetRefusal(
+        result?.messageKey || "analyzer.setup.connect.reset.failed",
+      );
     });
   };
 
@@ -332,7 +426,10 @@ const AnalyzerConnectionSetup = ({
             {probe.checks.map((check) => (
               <div key={check.key}>
                 <dt>{formatCheckKind(intl, check)}</dt>
-                <dd>{formatCheckMessage(intl, check)}</dd>
+                <dd>
+                  {formatCheckMessage(intl, check)}
+                  <ProbeEndpointDetails check={check} />
+                </dd>
               </div>
             ))}
           </dl>
@@ -379,15 +476,58 @@ const AnalyzerConnectionSetup = ({
             })}
           />
         )}
-        {readiness?.blockers.map((blocker, index) => (
+        {(candidate?.connection?.readiness?.blockers || [])
+          .filter((blocker) => BRIDGE_DEGRADED_BLOCKERS.has(blocker.messageKey))
+          .map((blocker) => (
+            <InlineNotification
+              key={blocker.key}
+              kind="warning"
+              lowContrast
+              hideCloseButton
+              title={intl.formatMessage(
+                { id: blocker.messageKey },
+                {
+                  profileId: candidate.connection.profileRef?.profileId,
+                  revision: candidate.connection.profileRef?.revision,
+                },
+              )}
+            />
+          ))}
+        {onProfileReset &&
+          (candidate?.connection?.readiness?.blockers || []).some(
+            (blocker) =>
+              blocker.messageKey ===
+              "analyzer.connection.readiness.profileUnavailable",
+          ) && (
+            <Button
+              type="button"
+              kind="tertiary"
+              size="sm"
+              disabled={submitting || resetting}
+              onClick={resetProfile}
+            >
+              {intl.formatMessage({ id: "analyzer.setup.connect.reset" })}
+            </Button>
+          )}
+        {resetRefusal && (
           <InlineNotification
-            key={`${blocker.code}-${index}`}
-            kind="warning"
+            kind="error"
             lowContrast
             hideCloseButton
-            title={formatActivationBlocker(intl, blocker)}
+            title={intl.formatMessage({ id: resetRefusal })}
           />
-        ))}
+        )}
+        {readiness?.blockers
+          .filter((blocker) => !BRIDGE_DEGRADED_BLOCKERS.has(blocker.code))
+          .map((blocker, index) => (
+            <InlineNotification
+              key={`${blocker.code}-${index}`}
+              kind="warning"
+              lowContrast
+              hideCloseButton
+              title={formatActivationBlocker(intl, blocker)}
+            />
+          ))}
         {onVerifyMappings && needsMappingVerification(readiness) && (
           <Button
             type="button"
