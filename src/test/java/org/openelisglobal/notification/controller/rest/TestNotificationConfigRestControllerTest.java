@@ -40,8 +40,10 @@ public class TestNotificationConfigRestControllerTest extends BaseWebContextSens
         UserSessionData admin = new UserSessionData();
         admin.setSytemUserId(1);
 
-        mockMvc.perform(post("/rest/TestNotificationConfig").contentType(MediaType.APPLICATION_JSON).content(
-                "{\"config\":{\"testId\":\"13\",\"patientEmail\":{\"notificationNature\":\"RESULT_VALIDATION\","
+        // No testId: the form's setter loads that Test row, and a sibling fixture
+        // may have replaced the catalogue; the service is mocked anyway.
+        mockMvc.perform(post("/rest/TestNotificationConfig").contentType(MediaType.APPLICATION_JSON)
+                .content("{\"config\":{\"patientEmail\":{\"notificationNature\":\"RESULT_VALIDATION\","
                         + "\"notificationPersonType\":\"PATIENT\",\"notificationMethod\":\"EMAIL\",\"active\":true,"
                         + "\"payloadTemplate\":{\"subjectTemplate\":\"Ready\",\"messageTemplate\":"
                         + "\"Dear [patientFirstName] [patientLastNameInitial]\"}}},"
