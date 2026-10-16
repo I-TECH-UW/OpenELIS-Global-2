@@ -301,6 +301,10 @@
               "childMenus": []
             },
             {
+              "elementId": "menu_reports_printqueue",
+              "childMenus": []
+            },
+            {
               "elementId": "menu_reports_aggregate",
               "childMenus": [
                 {

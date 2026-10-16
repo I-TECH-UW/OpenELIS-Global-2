@@ -215,10 +215,16 @@ final class PatientResultsPdf {
 
     private PdfPTable correctedBanner(PatientReportOrder order) {
         String issued = order.getReplacedIssueTime() == null ? "" : order.getReplacedIssueTime();
+        String change = GenericValidator.isBlankOrNull(order.getChangeSummary())
+                ? messages.get("report.patient.corrected.seeReplaced")
+                : order.getChangeSummary();
+        String line = messages.format("report.patient.corrected.line", issued, change);
+        if (order.getVersion() != null) {
+            line = messages.format("report.patient.version", order.getVersion()) + " " + line;
+        }
         PdfPTable banner = table(new float[] { 1 });
         banner.setSpacingBefore(6);
-        PdfPCell cell = new PdfPCell(new Phrase(messages.format("report.patient.corrected.line", issued,
-                messages.get("report.patient.corrected.seeReplaced")), fonts.bold(8, Color.BLACK)));
+        PdfPCell cell = new PdfPCell(new Phrase(line, fonts.bold(8, Color.BLACK)));
         cell.setBorderWidth(1.5f);
         cell.setPadding(3);
         cell.setPaddingLeft(6);
