@@ -147,6 +147,7 @@ import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntry
 import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index";
 import LaporanHasilReport from "./components/reports/compliance/LaporanHasilReport";
 import ReportPrintQueue from "./components/reports/printQueue/ReportPrintQueue";
+import SentMessages from "./components/reports/sentMessages/SentMessages";
 import ManualEntryHelper from "./components/reports/vectorSurveillance/ManualEntryHelper";
 import { Roles } from "./components/utils/Utils";
 import NoteBookInstanceEntryForm from "./components/notebook/NoteBookInstanceEntryForm";
@@ -1739,6 +1740,12 @@ export default function App() {
                   path="/ReportPrintQueue"
                   exact
                   render={() => <ReportPrintQueue />}
+                  role={Roles.REPORTS}
+                />
+                <SecureRoute
+                  path="/SentMessages"
+                  exact
+                  render={() => <SentMessages />}
                   role={Roles.REPORTS}
                 />
                 <SecureRoute

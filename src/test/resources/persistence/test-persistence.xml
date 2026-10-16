@@ -132,6 +132,8 @@
         <class>org.openelisglobal.notification.valueholder.NotificationPayloadTemplate</class>
         <class>org.openelisglobal.notification.valueholder.NotificationTriggerConfig</class>
         <class>org.openelisglobal.notification.valueholder.NotificationLog</class>
+        <class>org.openelisglobal.notification.valueholder.NotificationLogAttempt</class>
+        <class>org.openelisglobal.delivery.valueholder.DeliveryChannel</class>
         <class>org.openelisglobal.notifications.entity.Notification</class>
 
         <!-- Dictionary entities (required by NoteBook.type relationship) -->

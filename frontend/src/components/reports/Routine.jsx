@@ -29,6 +29,10 @@ export const RoutineReportsMenu = {
           link: "/ReportPrintQueue",
           label: <FormattedMessage id="sidenav.label.reports.printQueue" />,
         },
+        {
+          link: "/SentMessages",
+          label: <FormattedMessage id="sidenav.label.reports.sentMessages" />,
+        },
       ],
     },
     {

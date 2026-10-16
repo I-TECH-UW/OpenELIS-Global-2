@@ -29,5 +29,7 @@
   <include relativeToChangelogFile="true" file="016-microbiology-environmental-site-routing.xml"/>
   <!-- OGC-431: Report Print Queue V1, versions, archive, print events, per-user preferences, access and menu -->
   <include relativeToChangelogFile="true" file="017-report-print-queue.xml"/>
+  <!-- OGC-439: Result Delivery foundation: channels, outbox on the notification log, delivery settings, Sent Messages -->
+  <include relativeToChangelogFile="true" file="018-result-delivery-foundation.xml"/>
 
 </databaseChangeLog>
