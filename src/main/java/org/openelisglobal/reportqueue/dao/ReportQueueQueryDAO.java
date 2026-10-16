@@ -31,4 +31,16 @@ public interface ReportQueueQueryDAO {
      * printed result changed.
      */
     boolean isPrinted(Long sampleId, String finalizedStatusId, List<String> excludedStatusIds);
+
+    /**
+     * The facility, ward and requester of one order whether or not anything is
+     * released on it, for the row of an order the queue itself does not list.
+     */
+    Optional<ReportQueueRowRecord> findParties(Long sampleId, ReportQueueCriteria criteria);
+
+    /**
+     * Serialises prints of one order within the calling transaction, so two prints
+     * at once cannot both issue the same version number.
+     */
+    void lockForPrint(Long sampleId);
 }

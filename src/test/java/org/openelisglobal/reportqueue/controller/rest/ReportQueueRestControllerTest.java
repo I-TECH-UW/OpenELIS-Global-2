@@ -149,6 +149,15 @@ public class ReportQueueRestControllerTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
+    public void aPatientIdThatIsNotANumberIsRefused() throws Exception {
+        mockMvc.perform(get("/rest/reportQueue").param("patientId", "abc")
+                .sessionAttr(IActionConstants.USER_SESSION_DATA, admin)).andExpect(status().isBadRequest())
+                .andExpect(jsonPath("$.message").value("patientId must be a number"));
+        mockMvc.perform(get("/rest/reportQueue").param("patientId", "9301")
+                .sessionAttr(IActionConstants.USER_SESSION_DATA, admin)).andExpect(status().isOk());
+    }
+
+    @Test
     public void preferencesRoundTrip() throws Exception {
         mockMvc.perform(put("/rest/reportQueue/preferences").contentType(MediaType.APPLICATION_JSON)
                 .content("{\"timeWindow\":\"30d\",\"pageSize\":50}")

@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.openelisglobal.common.util.ControllerUtills;
-import org.openelisglobal.reportqueue.dto.ReportQueuePageDTO;
 import org.openelisglobal.reportqueue.dto.ReportQueuePreferenceDTO;
 import org.openelisglobal.reportqueue.dto.ReportQueueRequest;
 import org.openelisglobal.reportqueue.dto.ReportQueueRowDetailDTO;
@@ -52,7 +51,7 @@ public class ReportQueueRestController {
     }
 
     @GetMapping
-    public ReportQueuePageDTO list(HttpServletRequest request, @RequestParam(required = false) String labNo,
+    public ResponseEntity<?> list(HttpServletRequest request, @RequestParam(required = false) String labNo,
             @RequestParam(required = false) String labNoTo, @RequestParam(required = false) String patientId,
             @RequestParam(required = false) List<String> states, @RequestParam(required = false) String printStatus,
             @RequestParam(required = false) String window, @RequestParam(required = false) String from,
@@ -61,6 +60,9 @@ public class ReportQueueRestController {
             @RequestParam(required = false) String sort, @RequestParam(required = false) String sortDir,
             @RequestParam(required = false, defaultValue = "1") int page,
             @RequestParam(required = false) Integer pageSize) {
+        if (patientId != null && !patientId.isBlank() && !patientId.trim().matches("\\d+")) {
+            return ResponseEntity.badRequest().body(Map.of("message", "patientId must be a number"));
+        }
         ReportQueueRequest queueRequest = new ReportQueueRequest();
         queueRequest.setLabNo(labNo);
         queueRequest.setLabNoTo(labNoTo);
@@ -77,7 +79,7 @@ public class ReportQueueRestController {
         queueRequest.setSortDir(sortDir);
         queueRequest.setPage(page);
         queueRequest.setPageSize(pageSize);
-        return reportQueueService.list(queueRequest, ControllerUtills.getSysUserId(request));
+        return ResponseEntity.ok(reportQueueService.list(queueRequest, ControllerUtills.getSysUserId(request)));
     }
 
     @GetMapping("/orders/{sampleId}")

@@ -97,6 +97,7 @@ const MOCK_DETAIL = {
 };
 
 const requests = [];
+const failures = { page: false };
 
 vi.mock("../../../utils/Utils", async (importOriginal) => ({
   toLocalIsoDate: (await importOriginal()).toLocalIsoDate,
@@ -108,7 +109,7 @@ vi.mock("../../../utils/Utils", async (importOriginal) => ({
     } else if (url === "/rest/reportQueue/preferences") {
       callback({ timeWindow: "7d", pageSize: 20 });
     } else if (url.startsWith("/rest/reportQueue?")) {
-      callback(MOCK_PAGE);
+      callback(failures.page ? null : MOCK_PAGE);
     } else {
       callback([]);
     }
@@ -171,7 +172,7 @@ const renderPage = (path = "/ReportPrintQueue") =>
 describe("ReportPrintQueue", () => {
   beforeEach(() => {
     requests.length = 0;
-    window.open = vi.fn();
+    window.open = vi.fn(() => ({}));
     URL.createObjectURL = vi.fn(() => "blob:report");
     URL.revokeObjectURL = vi.fn();
   });
@@ -270,5 +271,29 @@ describe("ReportPrintQueue", () => {
       expect(requests.some((url) => url.includes("labNo=V1RPT0000009301"))).toBe(true),
     );
     expect(screen.getByTestId("active-search")).toHaveTextContent("Lab No: V1RPT0000009301");
+  });
+
+  it("offers Retry when the queue fails to load and loads it on click", async () => {
+    failures.page = true;
+    try {
+      renderPage();
+      await waitFor(() => expect(screen.getByTestId("queue-retry")).toBeInTheDocument());
+      expect(screen.queryByTestId("queue-row-V1RPT0000009301")).not.toBeInTheDocument();
+      failures.page = false;
+      fireEvent.click(screen.getByTestId("queue-retry"));
+      await waitFor(() => expect(screen.getByTestId("queue-row-V1RPT0000009301")).toBeInTheDocument());
+    } finally {
+      failures.page = false;
+    }
+  });
+
+  it("offers a link to the report when the browser blocks the window", async () => {
+    window.open = vi.fn(() => null);
+    renderPage();
+    await waitFor(() => expect(screen.getByTestId("print-V1RPT0000009301")).toBeInTheDocument());
+    fireEvent.click(screen.getByTestId("print-V1RPT0000009301"));
+    await waitFor(() => expect(screen.getByTestId("open-report")).toBeInTheDocument());
+    expect(screen.getByTestId("open-report")).toHaveAttribute("href", "blob:report");
+    expect(screen.getByText("Printed version 1 of V1RPT0000009301")).toBeInTheDocument();
   });
 });

@@ -12933,6 +12933,8 @@
   "reportQueue.print.failed": "Could not prepare {count, plural, one {# report} other {# reports}}: {labNumbers}",
   "reportQueue.print.reprinted": "Reprinted version {n} of {labNumber}",
   "reportQueue.print.issued": "Printed version {n} of {labNumber}",
+  "reportQueue.print.popupBlocked": "The browser blocked the report window for {labNumber}",
+  "reportQueue.print.open": "Open the report",
   "reportQueue.filter.labNo.placeholder": "Scan or type lab number",
   "reportQueue.filter.labNo.helper": "Scanning a barcode applies the filter instantly",
   "reportQueue.filter.labNo.range": "Range",

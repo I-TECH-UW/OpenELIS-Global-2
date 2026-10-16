@@ -8,9 +8,15 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.sql.Timestamp;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -297,6 +303,93 @@ public class ReportQueueServiceTest extends BaseWebContextSensitiveTest {
         } catch (ReportQueueService.NothingReleasedException expected) {
             assertEquals(LAB_NO, expected.getMessage());
         }
+    }
+
+    /**
+     * The only released result goes back for correction after version 1 was
+     * printed: the order leaves the queue, but its lookup row and its detail keep
+     * the version that is on file instead of claiming nothing was ever printed.
+     */
+    @Test
+    public void aPrintedOrderWhoseResultsGoBackKeepsItsVersionInTheLookupAndTheDetail() {
+        jdbcTemplate.update("INSERT INTO clinlims.person (id, first_name, last_name, lastupdated)"
+                + " VALUES (99301, 'Ruth', 'Nambi', now())");
+        jdbcTemplate.update("INSERT INTO clinlims.sample_requester (id, sample_id, requester_id, requester_type_id,"
+                + " lastupdated) VALUES (99301, 9301, 99301, (SELECT id FROM clinlims.requester_type"
+                + " WHERE requester_type = 'provider'), now())");
+        reportQueueService.print(SAMPLE, ADMIN).orElseThrow();
+        String technicalAcceptance = statusService.getStatusID(AnalysisStatus.TechnicalAcceptance);
+        jdbcTemplate.update("UPDATE clinlims.analysis SET status_id = CAST(? AS numeric) WHERE id IN (9301, 9305)",
+                technicalAcceptance);
+
+        ReportQueueRequest request = new ReportQueueRequest();
+        request.setLabNo(LAB_NO);
+        ReportQueueRowDTO row = reportQueueService.list(request, ADMIN).getRows().get(0);
+        assertTrue(row.isNothingReleased());
+        assertEquals(Integer.valueOf(1), row.getVersion());
+        assertEquals("PRINTED", row.getPrintStatus());
+        assertEquals("Nambi, Ruth", row.getRequester());
+
+        ReportQueueRowDetailDTO detail = reportQueueService.detail(SAMPLE, ADMIN).orElseThrow();
+        assertEquals(1, detail.getVersions().size());
+        assertEquals(1, detail.getVersions().get(0).getVersion());
+        assertEquals("Nambi, Ruth", detail.getRequester());
+    }
+
+    /**
+     * A batch print (the Patient Status Report range) gives an order with nothing
+     * released its preliminary page instead of dropping it, and archives nothing.
+     */
+    @Test
+    public void aBatchPrintsThePreliminaryReportForAnOrderWithNothingReleased() {
+        String technicalAcceptance = statusService.getStatusID(AnalysisStatus.TechnicalAcceptance);
+        jdbcTemplate.update("UPDATE clinlims.analysis SET status_id = CAST(? AS numeric) WHERE id IN (9301, 9305)",
+                technicalAcceptance);
+
+        byte[] pdf = reportQueueService.printPatientReports(List.of(String.valueOf(SAMPLE)), ADMIN);
+
+        assertEquals("%PDF-", new String(pdf, 0, 5));
+        assertEquals(Integer.valueOf(0), jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM clinlims.report_version WHERE sample_id = ?", Integer.class, SAMPLE));
+    }
+
+    /**
+     * Two clerks print the same changed order at the same moment: one issues the
+     * new version and the other reprints it, nobody gets an error.
+     */
+    @Test
+    public void twoPrintsAtOnceIssueOneVersionAndOneReprint() throws Exception {
+        reportQueueService.print(SAMPLE, ADMIN).orElseThrow();
+        jdbcTemplate.update("UPDATE clinlims.result SET value = '7.1', lastupdated = now() WHERE id = 9301");
+
+        ExecutorService clerks = Executors.newFixedThreadPool(2);
+        CountDownLatch ready = new CountDownLatch(2);
+        CountDownLatch go = new CountDownLatch(1);
+        List<Future<PrintOutcome>> prints = new ArrayList<>();
+        for (int i = 0; i < 2; i++) {
+            prints.add(clerks.submit(() -> {
+                ready.countDown();
+                go.await();
+                return reportQueueService.print(SAMPLE, ADMIN).orElseThrow();
+            }));
+        }
+        ready.await();
+        go.countDown();
+        List<PrintOutcome> outcomes = new ArrayList<>();
+        for (Future<PrintOutcome> print : prints) {
+            outcomes.add(print.get(60, TimeUnit.SECONDS));
+        }
+        clerks.shutdown();
+
+        assertEquals(2, outcomes.stream().filter(outcome -> outcome.getVersion() == 2).count());
+        assertEquals(1, outcomes.stream().filter(PrintOutcome::isReprint).count());
+        assertEquals(Integer.valueOf(2), jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM clinlims.report_version WHERE sample_id = ?", Integer.class, SAMPLE));
+        assertEquals(Integer.valueOf(2),
+                jdbcTemplate.queryForObject(
+                        "SELECT count(*) FROM clinlims.report_print_event e JOIN clinlims.report_version v"
+                                + " ON v.id = e.report_version_id WHERE v.sample_id = ? AND v.version = 2",
+                        Integer.class, SAMPLE));
     }
 
     @Test

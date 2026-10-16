@@ -228,17 +228,26 @@ public class ReportQueueServiceImpl implements ReportQueueService {
                 && GenericValidator.isBlankOrNull(request.getLabNoTo())) {
             Sample sample = sampleService.getSampleByAccessionNumber(request.getLabNo().trim());
             if (sample != null && sample.getId() != null) {
+                Long sampleId = Long.valueOf(sample.getId());
                 ReportQueueRowDTO row = new ReportQueueRowDTO();
-                row.setSampleId(Long.valueOf(sample.getId()));
+                row.setSampleId(sampleId);
                 row.setLabNumber(sample.getAccessionNumber());
                 row.setNothingReleased(true);
                 row.setState("PARTIAL");
-                row.setPrintStatus("UNPRINTED");
+                Optional<ReportVersion> printed = versionDAO.findLatest(sampleId, ReportVersion.TYPE_PATIENT);
+                row.setPrintStatus(printed.isPresent() ? "PRINTED" : "UNPRINTED");
+                row.setVersion(printed.map(ReportVersion::getVersion).orElse(null));
+                row.setLegacy(printed.map(ReportVersion::isLegacy).orElse(false));
                 Patient patient = sampleHumanService.getPatientForSample(sample);
                 if (patient != null) {
                     row.setPatientName(patientName(patient));
                     row.setPatientCode(patientCode(patient));
                 }
+                queryDAO.findParties(sampleId, criteria).ifPresent(parties -> {
+                    row.setFacility(parties.getFacilityName());
+                    row.setWard(parties.getWardName());
+                    row.setRequester(parties.getRequesterName());
+                });
                 page.getRows().add(row);
                 page.setTotal(page.getRows().size());
             }
@@ -421,7 +430,8 @@ public class ReportQueueServiceImpl implements ReportQueueService {
         detail.setReceived(iso(sample.getReceivedTimestamp()));
         OffsetDateTime installDate = installDate();
         detail.setInstallDate(installDate == null ? null : installDate.toString());
-        queryDAO.findRow(sampleId, baseCriteria(sysUserId)).ifPresent(record -> {
+        ReportQueueCriteria criteria = baseCriteria(sysUserId);
+        queryDAO.findRow(sampleId, criteria).or(() -> queryDAO.findParties(sampleId, criteria)).ifPresent(record -> {
             detail.setFacility(record.getFacilityName());
             detail.setWard(record.getWardName());
             detail.setRequester(record.getRequesterName());
@@ -526,6 +536,10 @@ public class ReportQueueServiceImpl implements ReportQueueService {
         return Optional.of(printOrder(sample, sysUserId));
     }
 
+    /**
+     * An order with nothing released still gets its page: the plain preliminary
+     * report, archived as nothing, the same as a single-order print of it.
+     */
     @Override
     public byte[] printPatientReports(List<String> sampleIds, String sysUserId) {
         List<byte[]> pdfs = new ArrayList<>();
@@ -538,7 +552,8 @@ public class ReportQueueServiceImpl implements ReportQueueService {
                 pdfs.add(printOrder(sample, sysUserId).getPdf());
             } catch (NothingReleasedException e) {
                 LogEvent.logInfo(getClass().getSimpleName(), "printPatientReports",
-                        "nothing released on " + e.getMessage() + ", left out of the batch");
+                        "nothing released on " + e.getMessage() + ", printed the preliminary report");
+                pdfs.add(render(sample, sysUserId, null));
             }
         }
         if (pdfs.isEmpty()) {
@@ -551,8 +566,14 @@ public class ReportQueueServiceImpl implements ReportQueueService {
         }
     }
 
+    /**
+     * One print of an order at a time: the lock holds until the transaction ends,
+     * so a second print of the same order reads the version the first one issued
+     * and reprints it instead of colliding on the version number.
+     */
     private PrintOutcome printOrder(Sample sample, String sysUserId) {
         Long sampleId = Long.valueOf(sample.getId());
+        queryDAO.lockForPrint(sampleId);
         Snapshot current = snapshot(sample);
         List<SnapshotItem> released = current.released();
         if (released.isEmpty()) {

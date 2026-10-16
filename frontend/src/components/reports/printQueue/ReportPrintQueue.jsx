@@ -281,6 +281,15 @@ export default function ReportPrintQueue() {
     }
   };
 
+  const changeFacilities = (next) => {
+    setPage(1);
+    setFacilities(next);
+    if (next.length === 0) {
+      setWardOptions([]);
+      setWards([]);
+    }
+  };
+
   const clearFilters = () => {
     setStates([]);
     setPrintStatus("ALL");
@@ -347,18 +356,28 @@ export default function ReportPrintQueue() {
       JSON.stringify({ sampleId: row.sampleId }),
       (blob, response) => {
         const url = URL.createObjectURL(blob);
-        window.open(url, "_blank");
-        setTimeout(() => URL.revokeObjectURL(url), 60000);
+        const opened = window.open(url, "_blank");
+        setTimeout(() => URL.revokeObjectURL(url), opened ? 60000 : 600000);
         const version = response?.headers?.get("X-Report-Version");
         const reprint = response?.headers?.get("X-Report-Reprint") === "true";
-        setNotice({
-          kind: "success",
-          title: intl.formatMessage({ id: "reportQueue.print.success" }, { count: 1 }),
-          subtitle: intl.formatMessage(
-            { id: reprint ? "reportQueue.print.reprinted" : "reportQueue.print.issued" },
-            { n: version, labNumber: row.labNumber },
-          ),
-        });
+        const issued = intl.formatMessage(
+          { id: reprint ? "reportQueue.print.reprinted" : "reportQueue.print.issued" },
+          { n: version, labNumber: row.labNumber },
+        );
+        setNotice(
+          opened
+            ? {
+                kind: "success",
+                title: intl.formatMessage({ id: "reportQueue.print.success" }, { count: 1 }),
+                subtitle: issued,
+              }
+            : {
+                kind: "warning",
+                title: intl.formatMessage({ id: "reportQueue.print.popupBlocked" }, { labNumber: row.labNumber }),
+                subtitle: issued,
+                link: url,
+              },
+        );
         setPrinting(null);
         if (details[row.sampleId]) {
           loadDetail(row.sampleId);
@@ -732,14 +751,7 @@ export default function ReportPrintQueue() {
               selectedItems={facilities}
               disabled={lookupActive}
               onInputValueChange={searchFacilities}
-              onChange={({ selectedItems }) => {
-                setPage(1);
-                setFacilities(selectedItems);
-                if (selectedItems.length === 0) {
-                  setWardOptions([]);
-                  setWards([]);
-                }
-              }}
+              onChange={({ selectedItems }) => changeFacilities(selectedItems)}
             />
           </Column>
           <Column lg={4} md={4} sm={4}>
@@ -793,7 +805,7 @@ export default function ReportPrintQueue() {
               type="cool-gray"
               size="sm"
               text={item.text}
-              onClose={() => setFacilities(facilities.filter((f) => f.id !== item.id))}
+              onClose={() => changeFacilities(facilities.filter((f) => f.id !== item.id))}
             />
           ))}
           {wards.map((item) => (
@@ -826,26 +838,36 @@ export default function ReportPrintQueue() {
         </div>
 
         {notice && (
-          <InlineNotification
-            kind={notice.kind}
-            lowContrast
-            title={notice.title}
-            subtitle={notice.subtitle}
-            onCloseButtonClick={() => setNotice(null)}
-            style={{ maxWidth: "100%", marginBottom: "1rem" }}
-          />
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+            <InlineNotification
+              kind={notice.kind}
+              lowContrast
+              title={notice.title}
+              subtitle={notice.subtitle}
+              onCloseButtonClick={() => setNotice(null)}
+              style={{ maxWidth: "100%", margin: 0 }}
+            />
+            {notice.link && (
+              <Link href={notice.link} target="_blank" rel="noopener" data-testid="open-report">
+                <FormattedMessage id="reportQueue.print.open" />
+              </Link>
+            )}
+          </div>
         )}
 
         {loadError && (
-          <InlineNotification
-            kind="error"
-            lowContrast
-            hideCloseButton
-            title={intl.formatMessage({ id: "reportQueue.error.load" })}
-            actionButtonLabel={intl.formatMessage({ id: "common.retry", defaultMessage: "Retry" })}
-            onActionButtonClick={load}
-            style={{ maxWidth: "100%", marginBottom: "1rem" }}
-          />
+          <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", marginBottom: "1rem" }}>
+            <InlineNotification
+              kind="error"
+              lowContrast
+              hideCloseButton
+              title={intl.formatMessage({ id: "reportQueue.error.load" })}
+              style={{ maxWidth: "100%", margin: 0 }}
+            />
+            <Button kind="ghost" size="sm" onClick={load} data-testid="queue-retry">
+              <FormattedMessage id="common.retry" defaultMessage="Retry" />
+            </Button>
+          </div>
         )}
 
         {loading && !data ? (
@@ -886,7 +908,7 @@ export default function ReportPrintQueue() {
                             {...rowProps}
                             data-testid={`queue-row-${row.labNumber}`}
                             onExpand={(event) => {
-                              if (!tableRow.isExpanded && !detail) {
+                              if (!tableRow.isExpanded && (!detail || detail.error)) {
                                 loadDetail(row.sampleId);
                               }
                               rowProps.onExpand(event);
@@ -905,7 +927,7 @@ export default function ReportPrintQueue() {
                             </TableCell>
                             <TableCell>{row.nothingReleased ? "–" : formatDateTime(row.released)}</TableCell>
                             <TableCell>{row.nothingReleased ? "–" : stateTag(row)}</TableCell>
-                            <TableCell>{row.nothingReleased ? "–" : printStatusTag(row)}</TableCell>
+                            <TableCell>{row.nothingReleased && !row.version ? "–" : printStatusTag(row)}</TableCell>
                             <TableCell>
                               {row.version
                                 ? intl.formatMessage({ id: "reportQueue.version.value" }, { n: row.version })
@@ -932,11 +954,7 @@ export default function ReportPrintQueue() {
                           </TableExpandRow>
                           <TableExpandedRow colSpan={tableHeaders.length + 1}>
                             {tableRow.isExpanded && (
-                              <RowDetail
-                                detail={detail}
-                                nothingReleased={row.nothingReleased}
-                                onRetry={() => loadDetail(row.sampleId)}
-                              />
+                              <RowDetail detail={detail} onRetry={() => loadDetail(row.sampleId)} />
                             )}
                           </TableExpandedRow>
                         </React.Fragment>
@@ -982,21 +1000,25 @@ export default function ReportPrintQueue() {
   );
 }
 
-function RowDetail({ detail, nothingReleased, onRetry }) {
+function RowDetail({ detail, onRetry }) {
   const intl = useIntl();
   if (!detail || detail.loading) {
     return <InlineLoading description={intl.formatMessage({ id: "label.loading", defaultMessage: "Loading" })} />;
   }
   if (detail.error) {
     return (
-      <InlineNotification
-        kind="error"
-        lowContrast
-        hideCloseButton
-        title={intl.formatMessage({ id: "reportQueue.error.load" })}
-        actionButtonLabel={intl.formatMessage({ id: "common.retry", defaultMessage: "Retry" })}
-        onActionButtonClick={onRetry}
-      />
+      <div style={{ display: "flex", alignItems: "center", gap: "0.5rem" }}>
+        <InlineNotification
+          kind="error"
+          lowContrast
+          hideCloseButton
+          title={intl.formatMessage({ id: "reportQueue.error.load" })}
+          style={{ margin: 0 }}
+        />
+        <Button kind="ghost" size="sm" onClick={onRetry} data-testid="detail-retry">
+          <FormattedMessage id="common.retry" defaultMessage="Retry" />
+        </Button>
+      </div>
     );
   }
   const data = detail.detail;
@@ -1070,7 +1092,7 @@ function RowDetail({ detail, nothingReleased, onRetry }) {
         <h5 style={{ marginBottom: "0.5rem" }}>
           <FormattedMessage id="reportQueue.history.title" />
         </h5>
-        {nothingReleased || data.versions.length === 0 ? (
+        {data.versions.length === 0 ? (
           <p data-testid="history-none">
             <FormattedMessage id="reportQueue.history.none" />
           </p>

@@ -185,6 +185,59 @@ public class ReportQueueQueryDAOImpl implements ReportQueueQueryDAO {
         }
     }
 
+    private static final String PARTIES_SQL = """
+            SELECT (SELECT string_agg(o.name, ' / ' ORDER BY o.id) FROM clinlims.sample_requester sr
+                      JOIN clinlims.organization o ON o.id = sr.requester_id
+                      WHERE sr.sample_id = :sampleId AND sr.requester_type_id = :orgType
+                        AND NOT EXISTS (SELECT 1 FROM clinlims.sample_requester sr0
+                                        WHERE sr0.sample_id = :sampleId AND sr0.requester_type_id = :orgType
+                                          AND sr0.requester_id = o.org_id)) AS facility_name,
+                   (SELECT string_agg(o.name, ' / ' ORDER BY o.id) FROM clinlims.sample_requester sr
+                      JOIN clinlims.organization o ON o.id = sr.requester_id
+                      WHERE sr.sample_id = :sampleId AND sr.requester_type_id = :orgType
+                        AND EXISTS (SELECT 1 FROM clinlims.sample_requester sr0
+                                    WHERE sr0.sample_id = :sampleId AND sr0.requester_type_id = :orgType
+                                      AND sr0.requester_id = o.org_id)) AS ward_name,
+                   (SELECT string_agg(TRIM(BOTH ', ' FROM COALESCE(rp.last_name, '') || ', ' || COALESCE(rp.first_name, '')), ' / ' ORDER BY rp.id)
+                      FROM clinlims.sample_requester sr2
+                      JOIN clinlims.person rp ON rp.id = sr2.requester_id
+                      WHERE sr2.sample_id = :sampleId AND sr2.requester_type_id = :providerType) AS requester_name
+            """;
+
+    @Override
+    public Optional<ReportQueueRowRecord> findParties(Long sampleId, ReportQueueCriteria criteria) {
+        try {
+            Query query = entityManager.createNativeQuery(PARTIES_SQL);
+            query.setParameter("sampleId", sampleId);
+            query.setParameter("orgType", BigDecimal.valueOf(criteria.getOrganizationRequesterTypeId()));
+            query.setParameter("providerType", BigDecimal.valueOf(criteria.getProviderRequesterTypeId()));
+            Object[] raw = (Object[]) query.getSingleResult();
+            ReportQueueRowRecord record = new ReportQueueRowRecord();
+            record.setSampleId(sampleId);
+            record.setFacilityName((String) raw[0]);
+            record.setWardName((String) raw[1]);
+            record.setRequesterName((String) raw[2]);
+            return Optional.of(record);
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in ReportQueueQuery findParties()", e);
+        }
+    }
+
+    private static final int PRINT_LOCK_NAMESPACE = 431;
+
+    @Override
+    public void lockForPrint(Long sampleId) {
+        try {
+            entityManager.createNativeQuery("SELECT CAST(pg_advisory_xact_lock(:namespace, :sampleId) AS text)")
+                    .setParameter("namespace", PRINT_LOCK_NAMESPACE).setParameter("sampleId", sampleId.intValue())
+                    .getSingleResult();
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in ReportQueueQuery lockForPrint()", e);
+        }
+    }
+
     @Override
     public boolean isPrinted(Long sampleId, String finalizedStatusId, List<String> excludedStatusIds) {
         ReportQueueCriteria criteria = new ReportQueueCriteria();
