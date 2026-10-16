@@ -19,6 +19,7 @@ import org.openelisglobal.siteinformation.valueholder.SiteInformationDomain;
 import org.openelisglobal.typeoftestresult.service.TypeOfTestResultService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.test.util.AopTestUtils;
 
 public class ResultLimitServiceTest extends BaseWebContextSensitiveTest {
 
@@ -51,6 +52,16 @@ public class ResultLimitServiceTest extends BaseWebContextSensitiveTest {
     @Before
     public void init() throws Exception {
         executeDataSetWithStateManagement("testdata/result-limit.xml");
+        // OclInnitializerTest may have loaded type-of-testresult.xml which remaps
+        // type IDs (e.g. Numeric -> id=1 rather than the canonical id=4). The fixture
+        // row result_limits id=1 was written with test_result_type_id=4. Re-point
+        // that FK to the actual Numeric type ID in the DB, then sync the service
+        // cache. This mirrors the pattern used by AccessionValidationBulkReleaseTest.
+        String numericTypeId = typeOfTestResultService.getTypeOfTestResultByType("N").getId();
+        Assert.assertNotNull("Numeric result type must be seeded by database migrations", numericTypeId);
+        jdbcTemplate.update("UPDATE clinlims.result_limits SET test_result_type_id = ? WHERE id = 1",
+                Integer.valueOf(numericTypeId));
+        ((ResultLimitServiceImpl) AopTestUtils.getTargetObject(resultLimitService)).initializeGlobalVariables();
         ensureReferenceTables("result_limits", "test");
         snapshotAndEnsureAgeRanges();
     }
