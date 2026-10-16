@@ -305,6 +305,10 @@
               "childMenus": []
             },
             {
+              "elementId": "menu_reports_sentmessages",
+              "childMenus": []
+            },
+            {
               "elementId": "menu_reports_aggregate",
               "childMenus": [
                 {
