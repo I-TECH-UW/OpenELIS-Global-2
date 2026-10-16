@@ -25,6 +25,10 @@ export const RoutineReportsMenu = {
           link: "/RoutineReport?type=patient&report=patientCILNSP_vreduit",
           label: <FormattedMessage id="sidenav.label.statusreport" />,
         },
+        {
+          link: "/ReportPrintQueue",
+          label: <FormattedMessage id="sidenav.label.reports.printQueue" />,
+        },
       ],
     },
     {

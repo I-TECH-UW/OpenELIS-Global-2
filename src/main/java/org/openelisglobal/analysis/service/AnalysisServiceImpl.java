@@ -303,8 +303,18 @@ public class AnalysisServiceImpl extends AuditableBaseObjectServiceImpl<Analysis
         if (sample == null) {
             return false;
         }
-        return SpringContext.getBean(IReportTrackingService.class).getLastReportForSample(sample,
-                ReportTrackingService.ReportType.PATIENT) != null;
+        // The Report Print Queue's own definition of printed (OGC-431 FR-9.3): the
+        // last printed version matches what is released now.
+        org.openelisglobal.common.services.IStatusService statusService = SpringContext
+                .getBean(org.openelisglobal.common.services.IStatusService.class);
+        List<String> excluded = List.of(
+                statusService.getStatusID(org.openelisglobal.common.services.StatusService.AnalysisStatus.Canceled),
+                statusService
+                        .getStatusID(org.openelisglobal.common.services.StatusService.AnalysisStatus.SampleRejected));
+        return SpringContext.getBean(org.openelisglobal.reportqueue.dao.ReportQueueQueryDAO.class).isPrinted(
+                Long.valueOf(sample.getId()),
+                statusService.getStatusID(org.openelisglobal.common.services.StatusService.AnalysisStatus.Finalized),
+                excluded);
     }
 
     @Override

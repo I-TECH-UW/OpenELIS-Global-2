@@ -250,6 +250,10 @@
         <class>org.openelisglobal.compliance.valueholder.ComplianceThreshold</class>
         <class>org.openelisglobal.compliance.valueholder.ComplianceThresholdValueMap</class>
         <class>org.openelisglobal.compliance.valueholder.ComplianceReportArchive</class>
+        <class>org.openelisglobal.reportqueue.valueholder.ReportVersion</class>
+        <class>org.openelisglobal.reportqueue.valueholder.ReportVersionItem</class>
+        <class>org.openelisglobal.reportqueue.valueholder.ReportPrintEvent</class>
+        <class>org.openelisglobal.reportqueue.valueholder.ReportQueuePreference</class>
         <class>org.openelisglobal.sample.valueholder.SampleComplianceStandard</class>
         <!-- Vector Surveillance entities -->
         <class>org.openelisglobal.vector.valueholder.VectorOrganismGroup</class>
