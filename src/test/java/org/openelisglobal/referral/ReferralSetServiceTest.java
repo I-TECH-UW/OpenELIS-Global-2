@@ -25,8 +25,8 @@ import org.junit.Test;
 import org.mockito.Mockito;
 import org.openelisglobal.BaseWebContextSensitiveTest;
 import org.openelisglobal.analysis.service.AnalysisService;
-import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.SampleAddService;
 import org.openelisglobal.common.services.StatusService.OrderStatus;
 import org.openelisglobal.note.service.NoteService;
@@ -90,8 +90,6 @@ public class ReferralSetServiceTest extends BaseWebContextSensitiveTest {
     private SampleService sampleService;
     @Autowired
     private IStatusService statusService;
-    @Autowired
-    private SystemUserService systemUserService;
 
     @Before
     public void setUp() throws Exception {
@@ -104,9 +102,15 @@ public class ReferralSetServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @After
-    public void tearDown() {
+    public void tearDown() throws Exception {
         ReflectionTestUtils.setField(referralSetService, "fhirReferralService",
                 originalFhirReferralServiceOnSetService);
+        // Reload the fixture to restore a clean state — this truncates and
+        // re-inserts referral, referral_result, result, note, referral_subcontract,
+        // and referral_status_history rows so that notes/results created by
+        // individual tests cannot leak into subsequent test methods and change
+        // which row a query matches first.
+        executeDataSetWithStateManagement("testdata/referral-set.xml");
     }
 
     @Test
@@ -722,13 +726,13 @@ public class ReferralSetServiceTest extends BaseWebContextSensitiveTest {
         org.openelisglobal.spring.util.SpringContext.getBean(org.openelisglobal.analysis.service.AnalysisService.class)
                 .update(analysis);
 
-        ReferralResult existingRR = referralResultService.getReferralResultById("901");
+        ReferralResult existingRR = referralResultService.getReferralResultById("904");
         Result newResult = new Result();
         newResult.setValue("Reported Value");
         newResult.setResultType("T");
         existingRR.setResult(newResult);
 
-        Referral referral = referralService.get("101");
+        Referral referral = referralService.get("103");
         ReferralSet referralSet = new ReferralSet();
         referralSet.setReferral(referral);
         referralSet.getUpdatableReferralResults().addAll(Arrays.asList(existingRR));

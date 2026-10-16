@@ -189,5 +189,6 @@
         createSave tests. -->
     <referral_subcontract />
     <referral_status_history />
+    <note />
 
 </dataset>
