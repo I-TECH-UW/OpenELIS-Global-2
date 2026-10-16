@@ -24,6 +24,7 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IReportTrackingService;
 import org.openelisglobal.common.services.ReportTrackingService.ReportType;
 import org.openelisglobal.reportqueue.service.ReportQueueService;
+import org.openelisglobal.reportqueue.service.ReportQueueService.NothingReleasedException;
 import org.openelisglobal.reports.action.implementation.IReportCreator;
 import org.openelisglobal.reports.action.implementation.IReportParameterSetter;
 import org.openelisglobal.reports.action.implementation.PatientCILNSPClinical_vreduit;
@@ -155,7 +156,9 @@ public class ReportController extends BaseController {
      * The patient report prints through the Report Print Queue pipeline (OGC-431
      * FR-6.8): the form only selects the orders, then each order is rendered,
      * versioned and archived on its own and the PDFs are joined. Returns false when
-     * the form selects no order, so the plain path prints its message.
+     * the form selects no order, or when none of them has a released result yet, so
+     * the plain path prints what it always printed: its message, or the preliminary
+     * report that is not worth archiving.
      */
     private boolean printThroughQueue(HttpServletRequest request, HttpServletResponse response, ReportForm form,
             IReportCreator reportCreator) {
@@ -166,9 +169,15 @@ public class ReportController extends BaseController {
         if (orders == null || orders.isEmpty()) {
             return false;
         }
+        byte[] bytes;
         try {
-            byte[] bytes = SpringContext.getBean(ReportQueueService.class).printPatientReports(orders,
-                    getSysUserId(request));
+            bytes = SpringContext.getBean(ReportQueueService.class).printPatientReports(orders, getSysUserId(request));
+        } catch (NothingReleasedException e) {
+            LogEvent.logInfo(getClass().getSimpleName(), "printThroughQueue",
+                    "nothing released on " + e.getMessage() + ", printing the preliminary report");
+            return false;
+        }
+        try {
             response.setContentType("application/pdf");
             response.setContentLength(bytes.length);
             ServletOutputStream servletOutputStream = response.getOutputStream();
