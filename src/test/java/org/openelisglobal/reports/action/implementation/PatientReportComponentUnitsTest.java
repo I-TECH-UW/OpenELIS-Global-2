@@ -11,6 +11,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.reports.action.implementation.reportBeans.ClinicalPatientData;
 import org.openelisglobal.result.service.ResultService;
+import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.testresultcomponent.service.TestResultComponentService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.util.ReflectionTestUtils;
@@ -54,5 +55,30 @@ public class PatientReportComponentUnitsTest extends BaseWebContextSensitiveTest
         List<String> parts = List.of(row.getResult().split("\n")).stream().map(line -> line.split(":")[0]).toList();
         assertEquals(List.of("Viral load", "Ct"), parts);
         assertEquals(List.of("cp/ml VCU", ""), List.of(row.getUom().split("\n", -1)));
+    }
+
+    /**
+     * A part the report carries but that has no result yet is printed as still in
+     * progress, not dropped as if it had never been ordered.
+     */
+    @Test
+    public void aPartWithoutAResultIsPrintedAsInProgress() {
+        PatientReport report = new PatientCILNSPClinical_vreduit();
+        Analysis analysis = analysisService.get("100");
+        ReflectionTestUtils.setField(report, "currentAnalysis", analysis);
+        ReflectionTestUtils.setField(report, "currentPatient", new Patient());
+        ClinicalPatientData row = new ClinicalPatientData();
+        List<Result> loadOnly = resultService.getResultsByAnalysis(analysis).stream()
+                .filter(result -> "vcu-load".equals(result.getTestResult().getComponentId())).toList();
+
+        ReflectionTestUtils.invokeMethod(report, "buildMultiComponentRow", loadOnly,
+                testResultComponentService.getActiveComponentsByTestId("1"), row);
+
+        List<String> lines = List.of(row.getResult().split("\n"));
+        assertEquals(2, lines.size());
+        assertEquals("Viral load", lines.get(0).split(":")[0]);
+        assertEquals("Ct: In progress", lines.get(1));
+        assertEquals(List.of("cp/ml VCU", ""), List.of(row.getUom().split("\n", -1)));
+        assertEquals("In progress", row.getComponents().get(1).value());
     }
 }

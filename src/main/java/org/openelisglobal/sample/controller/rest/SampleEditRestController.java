@@ -37,6 +37,7 @@ import org.openelisglobal.sample.controller.BaseSampleEntryController;
 import org.openelisglobal.sample.form.SampleEditForm;
 import org.openelisglobal.sample.form.SampleEditForm.SampleEdit;
 import org.openelisglobal.sample.service.SampleEditService;
+import org.openelisglobal.sample.service.SampleLabUnitScopeService;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.validator.SampleEditFormValidator;
 import org.openelisglobal.sample.valueholder.Sample;
@@ -119,6 +120,8 @@ public class SampleEditRestController extends BaseSampleEntryController {
     private UserService userService;
     @Autowired
     private StaleSaveGuard staleSaveGuard;
+    @Autowired
+    private SampleLabUnitScopeService sampleLabUnitScopeService;
 
     @GetMapping(value = "SampleEdit", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -146,7 +149,8 @@ public class SampleEditRestController extends BaseSampleEntryController {
 
             Sample sample = getSample(accessionNumber);
 
-            if (sample != null && !GenericValidator.isBlankOrNull(sample.getId())) {
+            if (sample != null && !GenericValidator.isBlankOrNull(sample.getId())
+                    && sampleLabUnitScopeService.isVisible(getSysUserId(request), sample)) {
 
                 List<SampleItem> sampleItemList = getSampleItems(sample);
                 setPatientInfo(form, sample);
@@ -205,7 +209,7 @@ public class SampleEditRestController extends BaseSampleEntryController {
         }
 
         Sample sample = getSample(accessionNumber);
-        if (sample == null) {
+        if (sample == null || !sampleLabUnitScopeService.isVisible(getSysUserId(request), sample)) {
             return ResponseEntity.notFound().build();
         }
 

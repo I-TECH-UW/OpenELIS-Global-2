@@ -1883,6 +1883,7 @@
   "label.validation.review.error.invalidResult": "The result is incomplete; check the qualified value.",
   "label.validation.review.error.generic": "The action could not be completed.",
   "label.validation.review.success.released": "Result validated and released.",
+  "label.validation.review.success.accepted": "Component validated. The test is released once its other components are validated.",
   "label.validation.review.success.modified": "Result modified. It stays in the validation queue.",
   "esig.context.validateSingle": "Validate and release {test} for accession {accession}",
   "label.validation.bulk.releaseAllClear": "Release all clear ({count})",

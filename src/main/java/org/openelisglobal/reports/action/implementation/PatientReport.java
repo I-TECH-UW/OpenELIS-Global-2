@@ -978,7 +978,9 @@ public abstract class PatientReport extends Report {
      * cell, and the matching line in the Unit and Reference-value cells. A
      * component carries its own unit, and its own range for the patient's age and
      * sex, this specimen and that component — resolved through the same selection
-     * Results Entry and Validation use, so all three agree.
+     * Results Entry and Validation use, so all three agree. A component the report
+     * carries that has no result yet prints as in progress, as a whole test without
+     * a result does, instead of being left out.
      */
     private void buildMultiComponentRow(List<Result> resultList, List<TestResultComponent> components,
             ClinicalPatientData data) {
@@ -1007,11 +1009,15 @@ public abstract class PatientReport extends Report {
                     componentResults.add(result);
                 }
             }
-            if (componentResults.isEmpty()) {
-                continue;
-            }
-            String componentValue = formatComponentResults(component, componentResults, resultResultService);
+            String componentValue = componentResults.isEmpty() ? null
+                    : formatComponentResults(component, componentResults, resultResultService);
             if (GenericValidator.isBlankOrNull(componentValue)) {
+                results.append(component.getLabel()).append(": ")
+                        .append(MessageUtil.getMessage("report.test.status.inProgress")).append("\n");
+                uoms.append("\n");
+                ranges.append("\n");
+                lines.add(new ReportComponentLine(component.getLabel(),
+                        MessageUtil.getMessage("report.test.status.inProgress"), "", "", ""));
                 continue;
             }
             Result first = componentResults.get(0);

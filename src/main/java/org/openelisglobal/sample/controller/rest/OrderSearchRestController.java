@@ -19,7 +19,6 @@ import jakarta.servlet.http.HttpSession;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -47,7 +46,6 @@ import org.openelisglobal.common.services.StatusService.AnalysisStatus;
 import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.DateUtil;
-import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.dataexchange.fhir.exception.FhirLocalPersistingException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.eqa.service.SampleEQAService;
@@ -87,6 +85,7 @@ import org.openelisglobal.sample.override.service.SampleOrderOverrideService;
 import org.openelisglobal.sample.override.valueholder.OverrideType;
 import org.openelisglobal.sample.service.OrderProgressService;
 import org.openelisglobal.sample.service.SampleComplianceStandardService;
+import org.openelisglobal.sample.service.SampleLabUnitScopeService;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.OrderProgressStatus;
 import org.openelisglobal.sample.valueholder.Sample;
@@ -103,7 +102,6 @@ import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.dto.TestSelectionDTO;
 import org.openelisglobal.test.service.TestSectionService;
-import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.testmethod.service.TestMethodService;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
 import org.openelisglobal.userrole.service.UserRoleService;
@@ -246,11 +244,14 @@ public class OrderSearchRestController extends BaseRestController {
 
     /**
      * Configuration property name (site_information or
-     * SystemConfiguration.properties) that opts a deployment in to scoping the
-     * recent-orders list by the user's test sections. Absent or anything other than
-     * "true" leaves the list unscoped.
+     * SystemConfiguration.properties) that opts a deployment out of scoping the
+     * orders dashboard by the user's lab units. The dashboard is scoped like the
+     * home dashboard unless the property is explicitly "false".
      */
     private static final String RESTRICT_RECENT_ORDERS_PROPERTY = "restrictRecentOrdersByTestSection";
+
+    @Autowired
+    private SampleLabUnitScopeService sampleLabUnitScopeService;
 
     @Autowired
     private TestMethodService testMethodService;
@@ -698,7 +699,8 @@ public class OrderSearchRestController extends BaseRestController {
     }
 
     @GetMapping(value = "/search", produces = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity<Map<String, Object>> searchOrder(@RequestParam(required = false) String labNumber) {
+    public ResponseEntity<Map<String, Object>> searchOrder(@RequestParam(required = false) String labNumber,
+            HttpServletRequest request) {
 
         if (labNumber == null || labNumber.trim().isEmpty()) {
             return ResponseEntity.badRequest().build();
@@ -708,7 +710,7 @@ public class OrderSearchRestController extends BaseRestController {
             // Find the sample by accession number
             Sample sample = sampleService.getSampleByAccessionNumber(labNumber.trim());
 
-            if (sample == null) {
+            if (sample == null || !sampleLabUnitScopeService.isVisible(getSysUserId(request), sample)) {
                 return ResponseEntity.notFound().build();
             }
 
@@ -1880,32 +1882,14 @@ public class OrderSearchRestController extends BaseRestController {
      * assigned to.
      */
     private Set<String> resolveAllowedSectionIds(String sysUserId) {
-        if (!recentOrderSectionScopingEnabled()) {
+        if (recentOrderSectionScopingDisabled()) {
             return Collections.emptySet();
         }
-        if (isGlobalScopeUser(sysUserId) || isLoginLabUnitConstrained()) {
-            return Collections.emptySet();
-        }
-        List<IdValuePair> userSections = userService.getUserTestSections(sysUserId, null);
-        if (userSections == null || userSections.isEmpty()) {
-            return Collections.emptySet();
-        }
-        Set<String> ids = new HashSet<>();
-        for (IdValuePair section : userSections) {
-            ids.add(section.getId());
-        }
-        List<TestSection> allSections = testSectionService.getAllActiveTestSections();
-        for (TestSection section : allSections) {
-            TestSection parent = section.getParentTestSection();
-            if (parent != null && ids.contains(parent.getId())) {
-                ids.add(section.getId());
-            }
-        }
-        return ids;
+        return sampleLabUnitScopeService.restrictedSectionIds(sysUserId);
     }
 
-    private boolean recentOrderSectionScopingEnabled() {
-        return "true".equalsIgnoreCase(
+    private boolean recentOrderSectionScopingDisabled() {
+        return "false".equalsIgnoreCase(
                 ConfigurationProperties.getInstance().getPropertyValue(RESTRICT_RECENT_ORDERS_PROPERTY));
     }
 
