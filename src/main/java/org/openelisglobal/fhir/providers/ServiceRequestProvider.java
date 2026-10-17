@@ -1,25 +1,31 @@
 package org.openelisglobal.fhir.providers;
 
 import ca.uhn.fhir.model.api.Include;
+import ca.uhn.fhir.rest.annotation.Count;
 import ca.uhn.fhir.rest.annotation.Create;
 import ca.uhn.fhir.rest.annotation.Delete;
 import ca.uhn.fhir.rest.annotation.IdParam;
 import ca.uhn.fhir.rest.annotation.IncludeParam;
+import ca.uhn.fhir.rest.annotation.Offset;
 import ca.uhn.fhir.rest.annotation.OptionalParam;
 import ca.uhn.fhir.rest.annotation.Read;
 import ca.uhn.fhir.rest.annotation.ResourceParam;
 import ca.uhn.fhir.rest.annotation.Search;
+import ca.uhn.fhir.rest.annotation.Sort;
 import ca.uhn.fhir.rest.annotation.Update;
 import ca.uhn.fhir.rest.api.MethodOutcome;
+import ca.uhn.fhir.rest.api.SortSpec;
+import ca.uhn.fhir.rest.api.server.IBundleProvider;
 import ca.uhn.fhir.rest.param.DateRangeParam;
 import ca.uhn.fhir.rest.param.ReferenceAndListParam;
 import ca.uhn.fhir.rest.param.TokenAndListParam;
 import ca.uhn.fhir.rest.server.IResourceProvider;
+import ca.uhn.fhir.rest.server.exceptions.BaseServerResponseException;
 import ca.uhn.fhir.rest.server.exceptions.InternalErrorException;
 import ca.uhn.fhir.rest.server.exceptions.InvalidRequestException;
 import ca.uhn.fhir.rest.server.exceptions.ResourceNotFoundException;
+import ca.uhn.fhir.rest.server.exceptions.UnprocessableEntityException;
 import jakarta.servlet.http.HttpServletRequest;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -27,12 +33,9 @@ import java.util.UUID;
 import java.util.stream.Collectors;
 import org.hibernate.StaleObjectStateException;
 import org.hl7.fhir.instance.model.api.IBaseResource;
-import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.IdType;
 import org.hl7.fhir.r4.model.Patient;
-import org.hl7.fhir.r4.model.Practitioner;
 import org.hl7.fhir.r4.model.ServiceRequest;
-import org.hl7.fhir.r4.model.Specimen;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.constants.Constants;
@@ -48,6 +51,9 @@ import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.common.util.validator.GenericValidator;
 import org.openelisglobal.dataexchange.fhir.FhirUtil;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
+import org.openelisglobal.fhir.FhirConstants;
+import org.openelisglobal.fhir.search.searchparams.ServiceRequestSearchParams;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.patient.action.IPatientUpdate.PatientUpdateStatus;
 import org.openelisglobal.patient.action.bean.PatientManagementInfo;
 import org.openelisglobal.patient.service.PatientService;
@@ -68,18 +74,27 @@ import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.samplehuman.valueholder.SampleHuman;
 import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.search.service.ServiceRequestSearchService;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.systemuser.service.UserService;
-import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import org.springframework.validation.BindException;
 import org.springframework.validation.Errors;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 
 @Component
 public class ServiceRequestProvider implements IResourceProvider {
+
+    /**
+     * The sample list of an update, which never adds a test. The edit form
+     * validator rejects a missing list as malformed XML, so without it every update
+     * that kept the requested test, including an unchanged round trip, answered
+     * 400.
+     */
+    private static final String NO_SAMPLES_ADDED_XML = "<?xml version=\"1.0\" encoding=\"utf-8\"?><samples></samples>";
 
     @Autowired
     private SamplePatientEntryService samplePatientService;
@@ -94,9 +109,6 @@ public class ServiceRequestProvider implements IResourceProvider {
     private SampleUtil sampleUtil;
 
     @Autowired
-    private IStatusService statusService;
-
-    @Autowired
     private SampleHumanService sampleHumanService;
 
     @Autowired
@@ -106,10 +118,10 @@ public class ServiceRequestProvider implements IResourceProvider {
     private FhirUtil util;
 
     @Autowired
-    public SampleEditFormValidator formValidator;
+    private ServiceRequestSearchService serviceRequestSearchService;
 
     @Autowired
-    private TestService testService;
+    public SampleEditFormValidator formValidator;
 
     @Autowired
     private UserService userService;
@@ -157,6 +169,9 @@ public class ServiceRequestProvider implements IResourceProvider {
         } catch (IllegalArgumentException e) {
             throw new InvalidRequestException("ServiceRequest ID must be a valid UUID");
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("ServiceRequest", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method,
                     "Unexpected error while Reading ServiceRequest: " + e.getMessage());
             throw new InternalErrorException("Unexpected server error while Reading ServiceRequest", e);
@@ -177,14 +192,16 @@ public class ServiceRequestProvider implements IResourceProvider {
 
             requireNonNull(serviceRequest, "ServiceRequest resource cannot be null");
             requireTrue(serviceRequest.hasSubject(), "ServiceRequest.subject is required");
+            requireTrue(FhirUtil.refersToPatient(serviceRequest.getSubject()),
+                    "ServiceRequest.subject must reference a Patient; orders without a patient are entered in OpenELIS");
             requireTrue(serviceRequest.hasCode(), "ServiceRequest.code is required");
 
             final String patientRefId = requireNonBlank(serviceRequest.getSubject().getReferenceElement().getIdPart(),
                     "ServiceRequest.subject reference is invalid");
 
-            final org.openelisglobal.patient.valueholder.Patient existingPatient = requireNonNull(
-                    fhirTransformService.getItemByFhirId(patientRefId, patientService),
-                    "Patient not found for given subject reference");
+            final org.openelisglobal.patient.valueholder.Patient existingPatient = fhirTransformService
+                    .getItemByFhirId(patientRefId, patientService);
+            requireTrue(existingPatient != null, "Patient not found for given subject reference");
 
             final String patientId = requireNonBlank(existingPatient.getId(), "Resolved patient has no ID");
 
@@ -204,7 +221,8 @@ public class ServiceRequestProvider implements IResourceProvider {
                     : " " + sampleOrder.getReceivedTime();
 
             final List<Test> tests = requireNonEmpty(
-                    fhirTransformService.resolveTestsFromServiceRequest(serviceRequest),
+
+                    fhirTransformService.resolveTestsFromCodeableConcept(serviceRequest.getCode()),
                     "No tests resolved from ServiceRequest");
 
             final List<SampleEditItem> editItems = requireNonEmpty(
@@ -288,7 +306,7 @@ public class ServiceRequestProvider implements IResourceProvider {
                 fhirTransformService.transformPersistOrderEntryFhirObjects(updateData, patientInfo, false, null);
             } catch (Exception fhirEx) {
                 LogEvent.logWarn(this.getClass().getSimpleName(), method,
-                        "FHIR sync failed during delete (non-blocking): " + safeMessage(fhirEx));
+                        "FHIR sync failed during delete (non-blocking): " + FhirProviderUtils.safeMessage(fhirEx));
             }
             final ServiceRequest created = requireNonNull(extractCreatedServiceRequest(updateData),
                     "Failed to transform created Analysis to ServiceRequest");
@@ -299,17 +317,20 @@ public class ServiceRequestProvider implements IResourceProvider {
             return outcome;
 
         } catch (InvalidRequestException | ResourceNotFoundException e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, safeMessage(e));
+            LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
             throw e;
 
         } catch (InternalErrorException e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, safeMessage(e));
+            LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
             throw e;
 
         } catch (Exception e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, safeMessage(e));
-            throw new InternalErrorException("Unexpected server error while creating ServiceRequest: " + safeMessage(e),
-                    e);
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("ServiceRequest", e);
+            }
+            LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
+            throw new InternalErrorException(
+                    "Unexpected server error while creating ServiceRequest: " + FhirProviderUtils.safeMessage(e), e);
         }
     }
 
@@ -326,8 +347,10 @@ public class ServiceRequestProvider implements IResourceProvider {
             requireNonNull(request, "HttpServletRequest cannot be null");
 
             requireNonNull(serviceRequest, "ServiceRequest resource cannot be null");
-            requireTrue(serviceRequest.hasCode() && serviceRequest.getCode().hasCoding(),
-                    "ServiceRequest.code.coding is required");
+            requireTrue(
+                    serviceRequest.hasCode()
+                            && (serviceRequest.getCode().hasCoding() || serviceRequest.getCode().hasText()),
+                    "ServiceRequest.code is required");
 
             final String sysUserId = requireNonBlank(FhirProviderUtils.getSysUserId(request),
                     "Missing or invalid system user ID");
@@ -351,7 +374,7 @@ public class ServiceRequestProvider implements IResourceProvider {
             form.setNoSampleFound(false);
 
             final SampleOrderItem orderItem = requireNonNull(
-                    fhirTransformService.buildSampleOrderItemFromServiceRequest(serviceRequest, sysUserId),
+                    fhirTransformService.buildSampleOrderItemForUpdate(serviceRequest, existingSample, sysUserId),
                     "Failed to build SampleOrderItem");
             form.setSampleOrderItems(orderItem);
 
@@ -365,26 +388,15 @@ public class ServiceRequestProvider implements IResourceProvider {
             final List<SampleEditItem> possibleTests = editItems.stream().filter(i -> i != null && i.isAdd())
                     .collect(Collectors.toList());
 
+            if (!possibleTests.isEmpty()) {
+                throw new UnprocessableEntityException(
+                        "ServiceRequest.code cannot change: a ServiceRequest is one analysis of one test. Revoke this"
+                                + " ServiceRequest and create a new one for the other test.");
+            }
+
             form.setExistingTests(existingTests);
             form.setPossibleTests(possibleTests);
-
-            if (!possibleTests.isEmpty()) {
-                final List<Test> allTests = new ArrayList<>();
-
-                existingAnalyses.stream()
-                        .filter(a -> a != null && a.getTest() != null
-                                && !statusService.matches(a.getStatusId(), AnalysisStatus.Canceled))
-                        .map(Analysis::getTest).forEach(allTests::add);
-
-                possibleTests.stream().map(SampleEditItem::getTestId).filter(Objects::nonNull).map(testService::get)
-                        .filter(Objects::nonNull).forEach(allTests::add);
-
-                final String sampleXml = requireNonBlank(
-                        SampleUtil.buildSampleXml(allTests, sampleItem, sampleItem.getId()),
-                        "Failed to build sample XML");
-
-                form.setSampleXML(sampleXml);
-            }
+            form.setSampleXML(NO_SAMPLES_ADDED_XML);
 
             final List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(existingSample.getId());
 
@@ -409,8 +421,11 @@ public class ServiceRequestProvider implements IResourceProvider {
 
             form.setRejectReasonList(DisplayListService.getInstance().getList(ListType.REJECTION_REASONS));
 
-            final Errors result = new BindException(form, "form");
-            formValidator.validate(form, result);
+            final Errors validation = new BindException(form, "form");
+            formValidator.validate(form, validation);
+            final BindException result = new BindException(form, "form");
+            validation.getAllErrors().stream().filter(error -> !isStoredAccessionFormatError(error))
+                    .forEach(result::addError);
 
             if (result.hasErrors()) {
                 throw new InvalidRequestException(formatErrors(result));
@@ -439,14 +454,14 @@ public class ServiceRequestProvider implements IResourceProvider {
                             "Optimistic locking failed - resource was modified by another user");
                 }
                 LogEvent.logDebug(e);
-                throw new InternalErrorException("Error updating sample: " + safeMessage(e), e);
+                throw new InternalErrorException("Error updating sample: " + FhirProviderUtils.safeMessage(e), e);
             }
 
             try {
                 fhirTransformService.transformAnalysisByIds(sampleEditService.getUpdatedAnalysisList());
             } catch (Exception fhirEx) {
                 LogEvent.logWarn(this.getClass().getSimpleName(), method,
-                        "FHIR sync failed during delete (non-blocking): " + safeMessage(fhirEx));
+                        "FHIR sync failed during delete (non-blocking): " + FhirProviderUtils.safeMessage(fhirEx));
             }
 
             final ServiceRequest updatedServiceRequest = requireNonNull(
@@ -460,14 +475,17 @@ public class ServiceRequestProvider implements IResourceProvider {
 
             return outcome;
 
-        } catch (InvalidRequestException | ResourceNotFoundException e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, safeMessage(e));
+        } catch (BaseServerResponseException e) {
+            LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
             throw e;
 
         } catch (Exception e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, safeMessage(e));
-            throw new InternalErrorException("Unexpected server error while updating ServiceRequest: " + safeMessage(e),
-                    e);
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("ServiceRequest", e);
+            }
+            LogEvent.logError(this.getClass().getSimpleName(), method, FhirProviderUtils.safeMessage(e));
+            throw new InternalErrorException(
+                    "Unexpected server error while updating ServiceRequest: " + FhirProviderUtils.safeMessage(e), e);
         }
     }
 
@@ -476,14 +494,12 @@ public class ServiceRequestProvider implements IResourceProvider {
         final String method = "deleteServiceRequest";
 
         try {
-            if (theId == null || theId.getIdPart() == null) {
-                throw new InvalidRequestException("Missing ServiceRequest ID in URL");
-            }
+            UUID analysisFhirUuid = FhirProviderUtils.requireUuidId(theId, "ServiceRequest");
 
             String sysUserId = FhirProviderUtils.getSysUserId(request);
             String analysisUuid = theId.getIdPart();
 
-            List<Analysis> existingAnalyses = analysisService.getAllMatching("fhirUuid", UUID.fromString(analysisUuid));
+            List<Analysis> existingAnalyses = analysisService.getAllMatching("fhirUuid", analysisFhirUuid);
             if (existingAnalyses.isEmpty()) {
                 throw new ResourceNotFoundException("Analysis not found with UUID: " + analysisUuid);
             }
@@ -502,7 +518,7 @@ public class ServiceRequestProvider implements IResourceProvider {
                 fhirTransformService.transformAnalysisByIds(List.of(updatedAnalysis.getId()));
             } catch (Exception fhirEx) {
                 LogEvent.logWarn(this.getClass().getSimpleName(), method,
-                        "FHIR sync failed during delete (non-blocking): " + safeMessage(fhirEx));
+                        "FHIR sync failed during delete (non-blocking): " + FhirProviderUtils.safeMessage(fhirEx));
             }
 
             MethodOutcome outcome = new MethodOutcome();
@@ -510,70 +526,61 @@ public class ServiceRequestProvider implements IResourceProvider {
             return outcome;
 
         } catch (InvalidRequestException | ResourceNotFoundException e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, "Client error: " + safeMessage(e));
+            LogEvent.logError(this.getClass().getSimpleName(), method,
+                    "Client error: " + FhirProviderUtils.safeMessage(e));
             throw e;
         } catch (InternalErrorException e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, "Internal error: " + safeMessage(e));
+            LogEvent.logError(this.getClass().getSimpleName(), method,
+                    "Internal error: " + FhirProviderUtils.safeMessage(e));
             throw e;
         } catch (Exception e) {
-            LogEvent.logError(this.getClass().getSimpleName(), method, "Unhandled exception: " + safeMessage(e));
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("ServiceRequest", e);
+            }
+            LogEvent.logError(this.getClass().getSimpleName(), method,
+                    "Unhandled exception: " + FhirProviderUtils.safeMessage(e));
             throw new InternalErrorException("Unexpected server error while deleting ServiceRequest: " + e.getMessage(),
                     e);
         }
     }
 
     @Search
-    public Bundle searchForServiceRequests(
-            @OptionalParam(name = ServiceRequest.SP_PATIENT, chainWhitelist = { "", Patient.SP_IDENTIFIER,
-                    Patient.SP_GIVEN, Patient.SP_FAMILY,
-                    Patient.SP_NAME }, targetTypes = Patient.class) ReferenceAndListParam patientReference,
-
-            @OptionalParam(name = ServiceRequest.SP_SUBJECT, chainWhitelist = { "", Patient.SP_IDENTIFIER,
-                    Patient.SP_GIVEN, Patient.SP_FAMILY,
-                    Patient.SP_NAME }, targetTypes = Patient.class) ReferenceAndListParam subjectReference,
-
+    public IBundleProvider searchServiceRequests(@OptionalParam(name = ServiceRequest.SP_RES_ID) TokenAndListParam id,
+            @OptionalParam(name = ServiceRequest.SP_IDENTIFIER) TokenAndListParam identifier,
+            @OptionalParam(name = ServiceRequest.SP_PATIENT) ReferenceAndListParam patient,
+            @OptionalParam(name = ServiceRequest.SP_SUBJECT) ReferenceAndListParam subject,
+            @OptionalParam(name = ServiceRequest.SP_REQUESTER) ReferenceAndListParam requester,
+            @OptionalParam(name = ServiceRequest.SP_SPECIMEN) ReferenceAndListParam specimen,
             @OptionalParam(name = ServiceRequest.SP_CODE) TokenAndListParam code,
-
-            @OptionalParam(name = ServiceRequest.SP_REQUESTER, chainWhitelist = { "", Practitioner.SP_IDENTIFIER,
-                    Practitioner.SP_GIVEN, Practitioner.SP_FAMILY,
-                    Practitioner.SP_NAME }, targetTypes = Practitioner.class) ReferenceAndListParam participantReference,
-
-            @OptionalParam(name = ServiceRequest.SP_OCCURRENCE) DateRangeParam occurrence,
-
-            @OptionalParam(name = ServiceRequest.SP_RES_ID) TokenAndListParam uuid,
-
-            @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated,
-
-            @OptionalParam(name = ServiceRequest.SP_SPECIMEN, chainWhitelist = { "",
-                    Specimen.SP_IDENTIFIER }, targetTypes = Specimen.class) ReferenceAndListParam specimenReference,
-
-            @IncludeParam(allow = { "ServiceRequest:" + ServiceRequest.SP_PATIENT,
-                    "ServiceRequest:" + ServiceRequest.SP_SUBJECT, "ServiceRequest:" + ServiceRequest.SP_REQUESTER,
-                    "ServiceRequest:" + ServiceRequest.SP_SPECIMEN }) HashSet<Include> includes,
-
-            @IncludeParam(reverse = true, allow = { "Observation:based-on" }) HashSet<Include> revIncludes,
-
+            @OptionalParam(name = ServiceRequest.SP_STATUS) TokenAndListParam status,
+            @OptionalParam(name = "_lastUpdated") DateRangeParam lastUpdated, @Sort SortSpec sort,
+            @Offset Integer offset, @Count Integer count,
+            @IncludeParam(allow = { FhirConstants.SERVICE_REQUEST_PATIENT_INCLUDE,
+                    FhirConstants.SERVICE_REQUEST_SUBJECT_INCLUDE, FhirConstants.SERVICE_REQUEST_REQUESTER_INCLUDE,
+                    FhirConstants.SERVICE_REQUEST_SPECIMEN_INCLUDE }) HashSet<Include> includes,
+            @IncludeParam(reverse = true, allow = { FhirConstants.OBSERVATION_BASED_ON_REV_INCLUDE,
+                    FhirConstants.DIAGNOSTIC_REPORT_BASED_ON_REV_INCLUDE }) HashSet<Include> revIncludes,
             HttpServletRequest request) {
 
-        String method = "search";
+        String method = "searchServiceRequests";
+        LogEvent.logDebug(this.getClass().getSimpleName(), method, "Searching for ServiceRequests");
 
         try {
-            Bundle resultBundle = util.forwardSearchToFhirStore(request);
-
-            if (resultBundle == null) {
-                resultBundle = new Bundle();
-            }
-
-            if (resultBundle.getType() == null) {
-                resultBundle.setType(Bundle.BundleType.SEARCHSET);
-            }
-
-            if (resultBundle.getEntry() == null) {
-                resultBundle.setEntry(new ArrayList<>());
-            }
-
-            return resultBundle;
+            ServiceRequestSearchParams params = new ServiceRequestSearchParams(id, identifier,
+                    FhirProviderUtils.merge(patient, subject), requester, specimen, code, status, lastUpdated, sort,
+                    includes, revIncludes);
+            return FhirProviderUtils.withPaging(serviceRequestSearchService.searchServiceRequests(params), offset,
+                    count);
+        } catch (InvalidRequestException e) {
+            throw e;
+        } catch (IllegalArgumentException e) {
+            LogEvent.logError(this.getClass().getSimpleName(), method,
+                    "Invalid ServiceRequest search parameter: " + e.getMessage());
+            throw new InvalidRequestException("Invalid ServiceRequest search parameter: " + e.getMessage(), e);
         } catch (Exception e) {
+            if (FhirProviderUtils.isDataError(e)) {
+                throw FhirProviderUtils.unprocessableData("ServiceRequest", e);
+            }
             LogEvent.logError(this.getClass().getSimpleName(), method,
                     "Error searching ServiceRequest: " + e.getMessage());
             throw new InternalErrorException("Unexpected server error searching ServiceRequest");
@@ -583,8 +590,16 @@ public class ServiceRequestProvider implements IResourceProvider {
     /**
      * Prevents NPE when logging exception messages
      */
-    private String safeMessage(Exception e) {
-        return (e == null || e.getMessage() == null) ? "No error message available" : e.getMessage();
+
+    /**
+     * The edit form validator checks {@code maxAccessionNumber}, built here from
+     * the order's stored accession number, against the accession format currently
+     * configured. An update cannot change that number, so an order accessioned
+     * under another format (imported, or entered before the format changed) could
+     * never be updated. Modify Order logs the same error and saves anyway.
+     */
+    private static boolean isStoredAccessionFormatError(ObjectError error) {
+        return error instanceof FieldError fieldError && "maxAccessionNumber".equals(fieldError.getField());
     }
 
     private String formatErrors(Errors errors) {
@@ -609,11 +624,13 @@ public class ServiceRequestProvider implements IResourceProvider {
 
         // Return formatted message for exception
         return errors.getAllErrors().stream().map(e -> {
+            String message = e.getDefaultMessage() != null ? e.getDefaultMessage()
+                    : MessageUtil.getMessage(e.getCode());
             if (e instanceof FieldError) {
                 FieldError fe = (FieldError) e;
-                return fe.getField() + ": " + fe.getDefaultMessage();
+                return fe.getField() + ": " + message;
             }
-            return e.getDefaultMessage();
+            return message;
         }).filter(Objects::nonNull).collect(Collectors.joining("; "));
     }
 

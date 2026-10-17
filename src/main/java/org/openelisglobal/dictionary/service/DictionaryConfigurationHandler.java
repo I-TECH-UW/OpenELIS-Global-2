@@ -2,18 +2,18 @@ package org.openelisglobal.dictionary.service;
 
 import java.io.BufferedReader;
 import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.DisplayListService;
+import org.openelisglobal.common.util.CsvParsingUtil;
 import org.openelisglobal.configuration.service.DomainConfigurationHandler;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
 import org.openelisglobal.dictionarycategory.service.DictionaryCategoryService;
 import org.openelisglobal.dictionarycategory.valueholder.DictionaryCategory;
+import org.openelisglobal.dictionaryterminology.service.DictionaryTerminologyMappingService;
 import org.openelisglobal.localization.service.LocalizationService;
 import org.openelisglobal.localization.service.LocalizationValueService;
 import org.openelisglobal.localization.service.SupportedLocaleService;
@@ -58,6 +58,9 @@ public class DictionaryConfigurationHandler implements DomainConfigurationHandle
     @Autowired
     private SupportedLocaleService supportedLocaleService;
 
+    @Autowired
+    private DictionaryTerminologyMappingService answerTerminology;
+
     @Override
     public String getDomainName() {
         return "dictionaries";
@@ -76,7 +79,7 @@ public class DictionaryConfigurationHandler implements DomainConfigurationHandle
     @Override
     @Transactional
     public void processConfiguration(InputStream inputStream, String fileName) throws Exception {
-        BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream, StandardCharsets.UTF_8));
+        BufferedReader reader = CsvParsingUtil.openCsvReader(inputStream);
 
         String headerLine = reader.readLine();
         if (headerLine == null) {
@@ -231,11 +234,12 @@ public class DictionaryConfigurationHandler implements DomainConfigurationHandle
         // description diverge (e.g. id=218: name="Marital Status Demographic
         // Information", description="Possible marriage status").
         Dictionary existingDict = dictionaryService.getDictionaryEntryByNameAndCategoryName(dictEntry, categoryName);
+        Dictionary saved;
         if (existingDict != null) {
             updateDictionaryFromCsv(existingDict, values, category, localAbbreviationIndex, isActiveIndex,
                     sortOrderIndex, loincCodeIndex, dictEntry, localizationColumns);
             dictionaryService.update(existingDict);
-            return existingDict;
+            saved = existingDict;
         } else {
             Dictionary newDict = new Dictionary();
             newDict.setDictEntry(dictEntry);
@@ -243,8 +247,15 @@ public class DictionaryConfigurationHandler implements DomainConfigurationHandle
                     loincCodeIndex, dictEntry, localizationColumns);
             String dictId = dictionaryService.insert(newDict);
             newDict.setId(dictId);
-            return newDict;
+            saved = newDict;
         }
+        // A row without a loincCode leaves the answer's LOINC mappings as they are,
+        // so they may come from the answer-terminology import instead.
+        String loincCode = getValueOrEmpty(values, loincCodeIndex);
+        if (!loincCode.isEmpty()) {
+            answerTerminology.syncLegacyLoinc(saved.getId(), loincCode, "1");
+        }
+        return saved;
     }
 
     private String getValueOrEmpty(String[] values, int index) {

@@ -28,10 +28,24 @@ import org.openelisglobal.systemuser.valueholder.SystemUser;
 @Table(name = "pathology_sample")
 public class PathologySample extends ProgramSample {
 
+    /**
+     * These are the histopathology bench stages a case passes through, in the order
+     * they happen (FR-2.1 of the pathology case view FRS).
+     *
+     * Declaration order is the bench order and is the single source for the
+     * Pathology Dashboard stage filter and the PATHOLOGY_STATUS display list
+     * (FR-2.6), so constants must stay in bench order.
+     *
+     * Hibernate stores the constant name, so a name must never be removed without a
+     * changeset that maps stored rows onto its replacement: CUTTING was absorbed
+     * into GROSSING, SLICING became MICROTOMY, and ADDITIONAL_REQUEST was retired
+     * because an outstanding request is a fact about pathology_request rows, not a
+     * stage.
+     */
     public enum PathologyStatus {
-        GROSSING("Grossing"), CUTTING("Cutting"), PROCESSING("Processing"), SLICING("Slicing for Slides"),
-        STAINING("Staining"), READY_PATHOLOGIST("Ready for Pathologist"),
-        ADDITIONAL_REQUEST("Additional Pathologist Request"), COMPLETED("Completed");
+        ACCESSIONED("Accessioned"), GROSSING("Grossing"), DECALCIFICATION("Decalcification"), PROCESSING("Processing"),
+        EMBEDDING("Embedding"), MICROTOMY("Microtomy"), STAINING("Staining"), COVERSLIPPING("Coverslipping & QC"),
+        READY_PATHOLOGIST("Ready for Pathologist"), UNDER_REVIEW("Under Pathologist Review"), COMPLETED("Completed");
 
         private String display;
 
@@ -56,17 +70,19 @@ public class PathologySample extends ProgramSample {
 
     @Enumerated(EnumType.STRING)
     @NotNull
-    private PathologyStatus status = PathologyStatus.GROSSING;
+    private PathologyStatus status = PathologyStatus.ACCESSIONED;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "pathology_sample_id")
     @LazyCollection(LazyCollectionOption.FALSE)
     private List<PathologyBlock> blocks;
 
-    @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL)
     @JoinColumn(name = "pathology_sample_id")
     private List<PathologySlide> slides;
 
+    // Rebuilt on every save; keeps orphan removal until these rows carry a
+    // lifecycle of their own.
     @OneToMany(cascade = CascadeType.ALL, orphanRemoval = true)
     @JoinColumn(name = "pathology_sample_id")
     private List<PathologyRequest> requests;
@@ -194,14 +210,16 @@ public class PathologySample extends ProgramSample {
         return blocks;
     }
 
+    /** Names each block by the identifier written on it. */
     public String getBlocks_Audit() {
         if (blocks == null) {
             return null;
         } else {
-            return StringUtils.join(
-                    blocks.stream().map(e -> "Block Number: " + e.getBlockNumber() + ", Location: " + e.getLocation())
-                            .collect(Collectors.toList()),
-                    "; ");
+            return StringUtils.join(blocks.stream()
+                    .map(e -> "Block: " + e.displayIdentifier() + ", Cassette State: "
+                            + (e.getCassetteState() == null ? "" : e.getCassetteState().name()) + ", Location: "
+                            + StringUtils.defaultString(e.getLocation()) + ", Active: " + e.isActive())
+                    .collect(Collectors.toList()), "; ");
         }
     }
 
@@ -213,13 +231,17 @@ public class PathologySample extends ProgramSample {
         return slides;
     }
 
+    /** Names each slide by the identifier written on it and by its parent block. */
     public String getSlides_Audit() {
         if (slides == null) {
             return null;
         } else {
-            return StringUtils
-                    .join(slides.stream().map(e -> "File Type: " + e.getFileType() + ", Location: " + e.getLocation())
-                            .collect(Collectors.toList()), "; ");
+            return StringUtils.join(slides.stream()
+                    .map(e -> "Slide: " + e.displayIdentifier() + ", Block: "
+                            + (e.getBlockId() == null ? "" : e.getBlockId()) + ", Location: "
+                            + StringUtils.defaultString(e.getLocation()) + ", Active: " + e.isActive() + ", File Type: "
+                            + StringUtils.defaultString(e.getFileType()))
+                    .collect(Collectors.toList()), "; ");
         }
     }
 

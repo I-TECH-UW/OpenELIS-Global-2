@@ -16,6 +16,7 @@
 
 package org.openelisglobal.common.services;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -134,9 +135,8 @@ public class ResultSaveService {
 
             if (TypeOfTestResultServiceImpl.ResultType.DICTIONARY.matches(serviceBean.getResultType())
                     || isQualifiedResult) {
-                setTestResultsForDictionaryResult(serviceBean.getTestId(), serviceBean.getResultValue(), result); // support
-                // qualified
-                // result
+                setTestResultsForDictionaryResult(serviceBean.getTestId(), serviceBean.getResultValue(),
+                        serviceBean.getTestResultComponentId(), result);
             } else {
                 List<TestResult> testResultList = testResultService.getActiveTestResultsByTest(serviceBean.getTestId());
                 // Multi-component tests post one bean per component; bind the result
@@ -224,11 +224,12 @@ public class ResultSaveService {
 
             Result result = new Result();
 
-            setTestResultsForDictionaryResult(serviceBean.getTestId(), resultAsString, result);
+            setTestResultsForDictionaryResult(serviceBean.getTestId(), resultAsString,
+                    serviceBean.getTestResultComponentId(), result);
             setNewResultValues(serviceBean, result);
             setAnalyteForResult(result);
             setStandardResultValues(resultAsString, result);
-            result.setSortOrder(getResultSortOrder(result.getValue()));
+            result.setSortOrder(getResultSortOrder(result.getValue(), serviceBean.getTestResultComponentId()));
             result.setGrouping(groupingKey);
 
             results.add(result);
@@ -271,9 +272,17 @@ public class ResultSaveService {
         }
     }
 
-    private TestResult setTestResultsForDictionaryResult(String testId, String dictValue, Result result) {
-        TestResult testResult;
-        testResult = testResultService.getTestResultsByTestAndDictonaryResult(testId, dictValue);
+    /**
+     * Binds the result to the option row of the component it was entered on. A
+     * multi-component test can offer the same dictionary entry on several
+     * components, and a lookup by test and value alone filed the value on whichever
+     * component's row came first (OGC-1186). Rows without a component are legacy
+     * rows and keep the test-wide match.
+     */
+    private TestResult setTestResultsForDictionaryResult(String testId, String dictValue, String componentId,
+            Result result) {
+        TestResult testResult = testResultService.getTestResultsByTestAndDictonaryResult(testId, dictValue,
+                componentId);
 
         if (testResult != null) {
             result.setTestResult(testResult);
@@ -300,8 +309,8 @@ public class ResultSaveService {
     }
 
     private void setStandardResultValues(String value, Result result) {
-        if (!(GenericValidator.isBlankOrNull(value) || GenericValidator.isBlankOrNull(result.getValue()))
-                && !StringUtil.blankIfNull(value).equals(result.getValue())) {
+        if (!(GenericValidator.isBlankOrNull(value) || GenericValidator.isBlankOrNull(result.getEnteredValue()))
+                && !isSameValue(value, result)) {
             updatedResult = true;
         }
         result.setValue(value);
@@ -309,9 +318,37 @@ public class ResultSaveService {
         result.setSortOrder("0");
     }
 
-    private String getResultSortOrder(String resultValue) {
+    private boolean isSameValue(String value, Result result) {
+        return isSameValue(value, result.getEnteredValue(), result.getResultType());
+    }
+
+    /**
+     * A numeric result rewritten in another scientific notation, or padded to its
+     * significant digits as Validation saves it back ("1.2" as "1.20"), is the same
+     * result, so it must not book a correction against a report that has already
+     * gone out.
+     */
+    static boolean isSameValue(String value, String enteredValue, String resultType) {
+        String entered = StringUtil.blankIfNull(enteredValue);
+        String incoming = StringUtil.blankIfNull(value);
+        if ("N".equals(resultType)) {
+            String normalizedIncoming = StringUtil.normalizeScientificNotation(incoming.trim());
+            String normalizedEntered = StringUtil.normalizeScientificNotation(entered.trim());
+            if (normalizedIncoming.equals(normalizedEntered)) {
+                return true;
+            }
+            try {
+                return new BigDecimal(normalizedIncoming).compareTo(new BigDecimal(normalizedEntered)) == 0;
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        return incoming.equals(entered);
+    }
+
+    private String getResultSortOrder(String resultValue, String componentId) {
         TestResult testResult = testResultService.getTestResultsByTestAndDictonaryResult(analysis.getTest().getId(),
-                resultValue);
+                resultValue, componentId);
         return testResult == null ? "0" : testResult.getSortOrder();
     }
 

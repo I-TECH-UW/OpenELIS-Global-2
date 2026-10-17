@@ -7,6 +7,9 @@ import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.qc.dao.QCControlLotDAO;
 import org.openelisglobal.qc.service.QCResultService;
 import org.openelisglobal.qc.valueholder.QCControlLot;
+import org.openelisglobal.qc.valueholder.QCQualitativeOutcome;
+import org.openelisglobal.testcatalog.service.TestQcTargetService;
+import org.openelisglobal.testcatalog.valueholder.TestQcTarget;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
@@ -45,6 +48,9 @@ public class QCResultProcessingServiceImpl implements QCResultProcessingService 
     @Autowired
     private QCControlLotDAO controlLotDAO;
 
+    @Autowired
+    private TestQcTargetService testQcTargetService;
+
     @Override
     @Transactional(propagation = Propagation.REQUIRED)
     public void processQCResult(String analyzerId, String testId, String accessionNumber, String lotNumber,
@@ -68,18 +74,36 @@ public class QCResultProcessingServiceImpl implements QCResultProcessingService 
             return;
         }
 
-        try {
-            qcResultService.createQCResult(analyzerId, testId, lot.getId(), lot.getControlLevel(), resultValue, unit,
-                    timestamp);
+        // Persistence failures must roll back the caller's result staging and delivery
+        // receipt too.
+        qcResultService.createQCResult(analyzerId, testId, lot.getId(), lot.getControlLevel(), resultValue, unit,
+                timestamp);
+        LogEvent.logInfo(CLASS_NAME, "processQCResult",
+                "QC result created for lot=" + lot.getLotNumber() + " test=" + testId + " instrument=" + analyzerId);
+    }
 
-            LogEvent.logInfo(CLASS_NAME, "processQCResult", "QC result created for lot=" + lot.getLotNumber() + " test="
-                    + testId + " instrument=" + analyzerId);
-        } catch (Exception e) {
-            LogEvent.logError(CLASS_NAME, "processQCResult", "Failed to create QC result for lot=" + lot.getLotNumber()
-                    + " test=" + testId + ": " + e.getMessage());
-            // Don't rethrow — the staging AnalyzerResult is still persisted,
-            // and QC processing failure should not block analyzer import.
+    @Override
+    @Transactional(propagation = Propagation.REQUIRED)
+    public Outcome processQualitativeQCResult(String analyzerId, String testId, String componentId,
+            String accessionNumber, String lotNumber, String controlLevel, String answerDictionaryId,
+            LocalDateTime timestamp) {
+        QCControlLot lot = findMatchingControlLot(accessionNumber, lotNumber, controlLevel, testId, analyzerId);
+        if (lot == null) {
+            LogEvent.logError(CLASS_NAME, "processQualitativeQCResult",
+                    "No matching QC control lot for accession=" + accessionNumber + " lotNumber=" + lotNumber
+                            + " controlLevel=" + controlLevel + " testId=" + testId + " instrumentId=" + analyzerId);
+            return Outcome.NO_LOT;
         }
+        TestQcTarget target = testQcTargetService.resolveEffectiveTarget(testId, componentId, lot.getControlLevel(),
+                lot.getId());
+        if (target == null || target.getExpectedDictResultId() == null) {
+            return Outcome.NO_TARGET;
+        }
+        QCQualitativeOutcome outcome = target.getExpectedDictResultId().equals(answerDictionaryId)
+                ? QCQualitativeOutcome.PASS
+                : QCQualitativeOutcome.FAIL;
+        qcResultService.createAnalyzerQualitativeQCResult(analyzerId, testId, lot.getId(), outcome, timestamp);
+        return Outcome.RECORDED;
     }
 
     /**

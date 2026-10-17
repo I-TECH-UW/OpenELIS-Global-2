@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Future;
 import org.hl7.fhir.r4.model.Bundle;
+import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.ContactPoint;
+import org.hl7.fhir.r4.model.Device;
 import org.hl7.fhir.r4.model.DiagnosticReport;
 import org.hl7.fhir.r4.model.HumanName;
 import org.hl7.fhir.r4.model.Identifier;
@@ -15,6 +17,7 @@ import org.hl7.fhir.r4.model.ResourceType;
 import org.hl7.fhir.r4.model.ServiceRequest;
 import org.hl7.fhir.r4.model.Specimen;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.common.provider.query.PatientSearchResults;
 import org.openelisglobal.common.service.BaseObjectService;
 import org.openelisglobal.common.valueholder.BaseObject;
@@ -94,6 +97,18 @@ public interface FhirTransformService {
 
     PatientManagementInfo createOePatientManagementInfo(org.hl7.fhir.r4.model.Patient fhirPatient);
 
+    SampleOrderItem buildSampleOrderItemForUpdate(ServiceRequest serviceRequest,
+            org.openelisglobal.sample.valueholder.Sample sample, String sysUserId) throws Exception;
+
+    void addPatientAddressToPerson(org.hl7.fhir.r4.model.Patient fhirPatient,
+            org.openelisglobal.person.valueholder.Person person);
+
+    void keepPatientDetailsFhirDoesNotCarry(PatientManagementInfo patientInfo,
+            org.openelisglobal.patient.valueholder.Patient storedPatient);
+
+    void keepUnchangedPatientContactDetails(org.openelisglobal.person.valueholder.Person stored,
+            org.openelisglobal.person.valueholder.Person working);
+
     org.hl7.fhir.r4.model.Observation transformResultToObservation(org.openelisglobal.result.valueholder.Result result)
             throws FhirTransformationException;
 
@@ -114,7 +129,11 @@ public interface FhirTransformService {
     List<SampleEditItem> buildSampleEditItemsListFromServiceRequest(ServiceRequest serviceRequest, String sysUserId)
             throws Exception;
 
-    List<Test> resolveTestsFromServiceRequest(ServiceRequest serviceRequest);
+    List<Test> resolveTestsFromCodeableConcept(CodeableConcept codeableConcept);
+
+    Device transformAnalyzerToDevice(Analyzer analyzer);
+
+    Analyzer transformDeviceToAnalyzer(Device device);
 
     Specimen transformToSpecimen(String sampleItemId);
 

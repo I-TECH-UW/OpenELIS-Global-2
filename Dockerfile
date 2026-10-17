@@ -41,23 +41,36 @@ RUN --mount=type=cache,target=/root/.m2,sharing=locked \
 ##
 # Build the Project
 #
-# NOTE: Each step restores dataexport artifacts into the cache mount if missing.
-# When BuildKit restores cached layers from GHA, the --mount=type=cache volume
-# starts empty (it is not part of the layer blob). Without this restore step,
-# the main project build cannot resolve org.itech:dataexport-* dependencies.
+# NOTE: Each step overlays dataexport artifacts into the cache mount. The
+# org/itech directory may already exist without the required dataexport
+# versions, so checking only for that parent directory is insufficient.
 #
 WORKDIR /build
 
 COPY ./pom.xml /build/pom.xml
 RUN --mount=type=cache,target=/root/.m2,sharing=locked \
-    [ -d /root/.m2/repository/org/itech ] || { mkdir -p /root/.m2/repository/org && cp -r /build/dataexport-m2/org/itech /root/.m2/repository/org/; } \
+    mkdir -p /root/.m2/repository/org/itech \
+    && cp -r /build/dataexport-m2/org/itech/. /root/.m2/repository/org/itech/ \
     && mvn dependency:go-offline
 
 ARG SKIP_SPOTLESS="false"
 COPY ./src /build/src
+# The interface's translation catalogue, packaged into the WAR for the reports
+# that print their labels from it (see the pom's ui-languages resource).
+COPY ./frontend/src/languages /build/frontend/src/languages
 RUN --mount=type=cache,target=/root/.m2,sharing=locked \
-    [ -d /root/.m2/repository/org/itech ] || { mkdir -p /root/.m2/repository/org && cp -r /build/dataexport-m2/org/itech /root/.m2/repository/org/; } \
+    mkdir -p /root/.m2/repository/org/itech \
+    && cp -r /build/dataexport-m2/org/itech/. /root/.m2/repository/org/itech/ \
     && mvn clean install -Dmaven.test.skip=true -DskipITs=true -Dspotless.check.skip=${SKIP_SPOTLESS}
+
+##
+# Tomcat's client certificate trust manager (see tomcat/oe_server.xml)
+#
+FROM maven:3-eclipse-temurin-21 AS tomcat-lib
+COPY ./tomcat/client-certificates /build/client-certificates
+RUN mkdir -p /build/classes \
+    && javac --release 21 -d /build/classes $(find /build/client-certificates -name '*.java') \
+    && jar cf /build/openelis-client-certificates.jar -C /build/classes .
 
 ##
 # Run Stage
@@ -65,6 +78,7 @@ RUN --mount=type=cache,target=/root/.m2,sharing=locked \
 FROM tomcat:10-jre21
 
 COPY install/createDefaultPassword.sh ./
+COPY --from=tomcat-lib /build/openelis-client-certificates.jar /usr/local/tomcat/lib/
 
 
 #Clean out unneccessary files from tomcat (especially pre-existing applications) 

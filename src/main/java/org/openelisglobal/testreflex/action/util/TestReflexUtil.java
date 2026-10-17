@@ -374,9 +374,8 @@ public class TestReflexUtil {
                     reflex.setActionScriptletId(splitActionId[1]);
                 }
 
-                Optional<Analysis> newAnalysis = addReflexTest(reflex, reflexBean.getResult(),
-                        reflexBean.getPatient().getId(), reflexBean.getSample(), true, true, addedActionId, false,
-                        sysUserId);
+                Optional<Analysis> newAnalysis = addReflexTest(reflex, reflexBean.getResult(), patientIdOf(reflexBean),
+                        reflexBean.getSample(), true, true, addedActionId, false, sysUserId);
                 if (newAnalysis.isPresent()) {
                     reflexAnalysises.add(newAnalysis.get());
                 }
@@ -424,8 +423,8 @@ public class TestReflexUtil {
                 boolean allSibAnalysisCausedReflex = doAllAnalysisHaveReflex(parentAnalysisList, reflexBean);
 
                 Optional<Analysis> newAnalysis = addReflexTest(reflexForResult, reflexBean.getResult(),
-                        reflexBean.getPatient().getId(), reflexBean.getSample(), true, true, null,
-                        allSibAnalysisCausedReflex, sysUserId);
+                        patientIdOf(reflexBean), reflexBean.getSample(), true, true, null, allSibAnalysisCausedReflex,
+                        sysUserId);
                 if (newAnalysis.isPresent()) {
                     reflexAnalysises.add(newAnalysis.get());
                 }
@@ -438,7 +437,7 @@ public class TestReflexUtil {
                     boolean handleAction = siblingReflex.getActionScriptletId() != null
                             && !siblingReflex.getActionScriptletId().equals(reflexForResult.getActionScriptletId());
 
-                    newAnalysis = addReflexTest(siblingReflex, reflexBean.getResult(), reflexBean.getPatient().getId(),
+                    newAnalysis = addReflexTest(siblingReflex, reflexBean.getResult(), patientIdOf(reflexBean),
                             reflexBean.getSample(), addTest, handleAction, null, allSibAnalysisCausedReflex, sysUserId);
                     if (newAnalysis.isPresent()) {
                         reflexAnalysises.add(newAnalysis.get());
@@ -556,6 +555,15 @@ public class TestReflexUtil {
         return handledReflexIdList;
     }
 
+    /**
+     * The patient id a reflex action is recorded against, or {@code null} for a
+     * sample without a patient (environmental and vector orders), which the
+     * observation history accepts (OGC-356).
+     */
+    public static String patientIdOf(TestReflexBean reflexBean) {
+        return reflexBean.getPatient() == null ? null : reflexBean.getPatient().getId();
+    }
+
     private Optional<Analysis> addReflexTest(TestReflex reflex, Result result, String patientId, Sample sample,
             boolean addTest, boolean handleAction, String actionSelectionId, boolean failOnDuplicateTest,
             String sysUserId) {
@@ -572,7 +580,7 @@ public class TestReflexUtil {
         if (addTest || handleAction) {
 
             ReflexAction reflexAction = reflexResolver.getReflexAction();
-            reflexAction.handleReflex(reflex, result, actionSelectionId);
+            reflexAction.handleReflex(reflex, result, actionSelectionId, sysUserId);
 
             ObservationHistory observation = reflexAction.getObservation();
 
@@ -585,6 +593,17 @@ public class TestReflexUtil {
 
             Analysis newAnalysis = reflexAction.getNewAnalysis();
             Result finalResult = reflexAction.getFinalResult();
+
+            ReflexAction.CaseWork caseWork = reflexAction.getCaseWork();
+            if (caseWork != null && addTest) {
+                SpringContext.getBean(org.openelisglobal.microbiology.service.MicroOrderRoutingService.class)
+                        .routeCaseTest(caseWork.order(), caseWork.sampleTypeId(), caseWork.sample(), caseWork.test(),
+                                sysUserId);
+                Analysis trigger = result.getAnalysis();
+                trigger.setSysUserId(sysUserId);
+                trigger.setTriggeredReflex(Boolean.TRUE);
+                analysisService.update(trigger);
+            }
 
             /*******
              * This is allowing duplicate tests to be added for CD4 absolute. If the
