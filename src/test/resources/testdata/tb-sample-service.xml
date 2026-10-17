@@ -11,23 +11,6 @@
     <address_part id="6" part_name="street" display_order="2"
         display_key="street_key" />
 
-    <!-- Observation History Types for TB -->
-    <observation_history_type id="100"
-        type_name="TbOrderReason" description="TbOrderReason" />
-    <observation_history_type id="101"
-        type_name="TbDiagnosticReason" description="TbDiagnosticReason" />
-    <observation_history_type id="102"
-        type_name="TbFollowupReason" description="TbFollowupReason" />
-    <observation_history_type id="103"
-        type_name="TbSampleAspects" description="TbSampleAspects" />
-    <observation_history_type id="104"
-        type_name="TbFollowupReasonPeriodLine1"
-        description="TbFollowupReasonPeriodLine1" />
-    <observation_history_type id="105"
-        type_name="TbFollowupReasonPeriodLine2"
-        description="TbFollowupReasonPeriodLine2" />
-    <observation_history_type id="106"
-        type_name="TbAnalysisMethod" description="TbAnalysisMethod" />
 
     <!-- Localizations -->
     <localization id="100" description="test name"
@@ -113,5 +96,6 @@
     <observation_history />
     <analysis />
     <provider />
+    <sample_organization />
 
 </dataset>
