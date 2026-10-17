@@ -454,6 +454,17 @@ const BasicInfoSection = ({ testId }) => {
               id: "error.testCatalog.basicInfo.invalidValue",
             }),
           });
+        } else if (res && res.status === 409 && res.conflict === "code") {
+          setCodeError(true);
+          addNotification({
+            kind: "error",
+            title: intl.formatMessage({
+              id: "label.testCatalog.section.basic-info",
+            }),
+            message: intl.formatMessage({
+              id: "error.testCatalog.codeExists",
+            }),
+          });
         } else if (
           res &&
           res.status === 409 &&
@@ -734,7 +745,14 @@ const BasicInfoSection = ({ testId }) => {
           id: "label.testCatalog.basicInfo.code",
         })}
         value={form.code || ""}
-        onChange={(e) => update({ code: e.target.value })}
+        invalid={codeError}
+        invalidText={intl.formatMessage({
+          id: "error.testCatalog.codeExists",
+        })}
+        onChange={(e) => {
+          setCodeError(false);
+          update({ code: e.target.value });
+        }}
       />
       <TextArea
         id="basic-info-description"

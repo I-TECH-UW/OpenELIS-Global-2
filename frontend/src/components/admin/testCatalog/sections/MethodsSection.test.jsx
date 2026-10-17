@@ -312,6 +312,27 @@ describe("MethodsSection", () => {
     ).toBeNull();
   });
 
+  /** OGC-1464: a taken method name is reported as the name, not the code. */
+  it("a duplicate method name (409, field name) says the name is taken", async () => {
+    postToOpenElisServerJsonResponse.mockImplementation((url, body, cb) =>
+      cb({ status: 409, field: "name", message: "taken" }),
+    );
+    const { container } = renderSection();
+    await openInlineCreate(container);
+    fireEvent.click(createAndLinkButton());
+
+    expect(
+      screen.getByText(
+        messages["admin.testCatalog.methods.error.duplicateName"],
+      ),
+    ).toBeInTheDocument();
+    expect(
+      screen.queryByText(
+        messages["admin.testCatalog.methods.error.duplicateCode"],
+      ),
+    ).toBeNull();
+  });
+
   it("a server failure on create shows the server error, not success", async () => {
     postToOpenElisServerJsonResponse.mockImplementation((url, body, cb) =>
       cb({ error: "Request failed (HTTP 500 )", status: 500 }),

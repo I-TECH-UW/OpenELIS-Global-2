@@ -186,9 +186,29 @@ public class LocalizationRestController extends BaseController {
     public ResponseEntity<?> updateTranslations(@PathVariable String id,
             @RequestBody Map<String, String> translations) {
         try {
-            Localization localization = localizationService.get(id);
+            Localization localization;
+            try {
+                localization = localizationService.get(id);
+            } catch (RuntimeException notFound) {
+                localization = null;
+            }
             if (localization == null) {
                 return ResponseEntity.notFound().build();
+            }
+            for (Map.Entry<String, String> entry : translations.entrySet()) {
+                if (entry.getKey() == null || entry.getKey().isBlank() || entry.getKey().length() > 10) {
+                    return ResponseEntity.badRequest().body(new ErrorResponse("Unknown locale: " + entry.getKey()));
+                }
+                if (entry.getValue() == null) {
+                    return ResponseEntity.badRequest().body(
+                            new ErrorResponse("The " + entry.getKey() + " value is missing; send \"\" to clear it"));
+                }
+            }
+            String fallbackLocale = supportedLocaleService.getFallbackLocaleCode();
+            if (fallbackLocale != null && translations.containsKey(fallbackLocale)
+                    && (translations.get(fallbackLocale) == null || translations.get(fallbackLocale).isBlank())) {
+                return ResponseEntity.badRequest().body(new ErrorResponse(
+                        "The " + fallbackLocale + " value is what every screen falls back to and cannot be blank"));
             }
 
             String sysUserId = getSysUserId(request);
@@ -230,6 +250,11 @@ public class LocalizationRestController extends BaseController {
             Localization localization = localizationService.get(id);
             if (localization == null) {
                 return ResponseEntity.notFound().build();
+            }
+            String fallbackLocale = supportedLocaleService.getFallbackLocaleCode();
+            if (locale.equals(fallbackLocale) && (request.getValue() == null || request.getValue().isBlank())) {
+                return ResponseEntity.badRequest().body(new ErrorResponse(
+                        "The " + fallbackLocale + " value is what every screen falls back to and cannot be blank"));
             }
 
             localizationValueService.setTranslation(id, locale, request.getValue(), getSysUserId(this.request));

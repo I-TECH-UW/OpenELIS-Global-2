@@ -285,6 +285,30 @@ public class TestCatalogQcTargetsIntegrationTest extends BaseWebContextSensitive
         assertFalse("a coded target on a numeric test is retired", targetActive("upgrade-coded"));
     }
 
+    /**
+     * OGC-1467: a value wider than numeric(15,5) and an expected answer that is not
+     * a dictionary entry are refused instead of failing the write with a 500.
+     */
+    @org.junit.Test
+    public void valuesTheColumnsCannotHold_andUnknownAnswers_are422() {
+        assertEquals(422,
+                controller.saveTargets(testId(), body(target("NORMAL", null, 12345678901d, 0.4d)), authedRequest())
+                        .getStatusCode().value());
+        assertEquals(422,
+                controller.saveTargets(testId(), body(target("NORMAL", null, 5.5d, 12345678901d)), authedRequest())
+                        .getStatusCode().value());
+        for (String answer : new String[] { "abc", "99999999" }) {
+            QcTargetDto coded = target("NORMAL", null, 5.5d, 0.4d);
+            coded.expectedDictResultId = answer;
+            assertEquals(answer, 422,
+                    controller.saveTargets(testId(), body(coded), authedRequest()).getStatusCode().value());
+        }
+        assertTrue(controller.getTargets(testId()).getBody().targets.isEmpty());
+
+        QcTargets widest = saved(target("NORMAL", null, 9999999999d, 0.4d));
+        assertEquals(0, new BigDecimal("9999999999").compareTo(widest.targets.get(0).expectedValue));
+    }
+
     /** Switches the primary component to a coded result with one answer. */
     private String makeCoded() {
         SampleResults current = editor.getSampleResults(testId()).getBody();

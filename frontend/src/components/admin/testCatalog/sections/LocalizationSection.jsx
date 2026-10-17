@@ -222,6 +222,20 @@ const LocalizationSection = ({
     if (unsaved.length === 0 || saving) {
       return;
     }
+    const blanksFallback = unsaved.some(
+      ({ translations }) =>
+        FALLBACK_LOCALE in translations &&
+        !String(translations[FALLBACK_LOCALE] || "").trim(),
+    );
+    if (blanksFallback) {
+      setNotification({
+        kind: "error",
+        text: intl.formatMessage({
+          id: "label.testCatalog.localization.fallbackRequired",
+        }),
+      });
+      return;
+    }
     setSaving(true);
     setNotification(null);
     let pending = unsaved.length;
