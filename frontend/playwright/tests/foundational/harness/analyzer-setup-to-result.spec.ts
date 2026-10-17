@@ -148,10 +148,15 @@ test.describe("A GeneXpert from setup to a clinical result", () => {
       );
       await demo.highlight(summary);
       await demo.caption(
-        "The parts are one analysis, so releasing the viral load releases every part with it.",
+        "Each part is validated on its own; the viral load is released with its last part.",
       );
-      await openFirstWaiting(page);
-      await releaseOpen(page);
+      await validateAndReleaseFirst(page);
+      await expect(summary).toContainText(
+        `Needs review: ${HIV_VL_VALUED_PARTS.length - 1}`,
+      );
+      for (let left = HIV_VL_VALUED_PARTS.length - 1; left > 0; left--) {
+        await validateAndReleaseFirst(page);
+      }
       await expect(
         page.getByTestId("release-all-clear-why-queueEmpty"),
       ).toBeVisible();
