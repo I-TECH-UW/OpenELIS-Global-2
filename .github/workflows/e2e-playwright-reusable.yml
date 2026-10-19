@@ -71,7 +71,9 @@ jobs:
   # the key this job saves.
   pre-warm-playwright:
     name: Pre-warm Playwright cache
-    runs-on: ubuntu-latest
+    # Pinned: the Playwright release in package.json ships no browser build
+    # for ubuntu-latest's Ubuntu 26.04 image, so the install step fails there.
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
     steps:
@@ -128,7 +130,9 @@ jobs:
   test-shards:
     name: ${{ inputs.artifact_prefix }} ${{ matrix.shard_index }}/${{ strategy.job-total }}
     needs: pre-warm-playwright
-    runs-on: ubuntu-latest
+    # Pinned: the Playwright release in package.json ships no browser build
+    # for ubuntu-latest's Ubuntu 26.04 image, so the install step fails there.
+    runs-on: ubuntu-24.04
     permissions:
       contents: read
       packages: read
