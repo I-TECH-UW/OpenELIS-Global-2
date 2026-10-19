@@ -31,5 +31,7 @@
   <include relativeToChangelogFile="true" file="017-report-print-queue.xml"/>
   <!-- OGC-439: Result Delivery foundation: channels, outbox on the notification log, delivery settings, Sent Messages -->
   <include relativeToChangelogFile="true" file="018-result-delivery-foundation.xml"/>
+  <!-- A component of a multi-component test is validated on its own -->
+  <include relativeToChangelogFile="true" file="019-result-component-validation.xml"/>
 
 </databaseChangeLog>
