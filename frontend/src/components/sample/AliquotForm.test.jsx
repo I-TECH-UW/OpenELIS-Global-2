@@ -196,4 +196,44 @@ describe("Aliquot completion state", () => {
       expect.objectContaining({ kind: "error" }),
     );
   });
+
+  it("shows the quantity allocated to aliquots when the tube has no quantity", async () => {
+    renderScreen(
+      <SampleItemsDisplay
+        sampleData={{
+          accessionNumber: "ACC-8",
+          sampleItems: [
+            {
+              externalId: "SPEC-8",
+              typeOfSample: "Respiratory Swab",
+              analysis: [],
+              aliquots: [
+                {
+                  id: "SPEC-8.1",
+                  externalId: "SPEC-8.1",
+                  quantity: 0,
+                  analyses: [{ id: "AN-8" }],
+                },
+              ],
+            },
+          ],
+        }}
+        setSampleData={vi.fn()}
+        onSaveSuccess={vi.fn()}
+      />,
+    );
+
+    await userEvent.click(
+      screen.getByRole("button", { name: /Show Aliquoting/ }),
+    );
+    if (!screen.queryByText(/Allocated to Aliquots/)) {
+      await userEvent.click(
+        document.querySelector("button.cds--table-expand__button"),
+      );
+    }
+
+    const allocated = screen.getByText(/Allocated to Aliquots/).parentElement;
+    expect(allocated.textContent).toContain("0.00");
+    expect(allocated.textContent).not.toContain("NaN");
+  });
 });

@@ -251,13 +251,14 @@ export function SampleItemsDisplay(props) {
     return sampleItem.externalId || "";
   };
 
-  const calculateRemainingQuantity = (sampleItem) => {
-    const totalAliquotQuantity = sampleItem.aliquots.reduce(
-      (total, aliquot) => {
-        return total + (parseFloat(aliquot.quantity) || 0);
-      },
+  const calculateAllocatedQuantity = (sampleItem) =>
+    sampleItem.aliquots.reduce(
+      (total, aliquot) => total + (parseFloat(aliquot.quantity) || 0),
       0,
     );
+
+  const calculateRemainingQuantity = (sampleItem) => {
+    const totalAliquotQuantity = calculateAllocatedQuantity(sampleItem);
 
     const remaining =
       (parseFloat(sampleItem.quantity) || 0) - totalAliquotQuantity;
@@ -639,6 +640,10 @@ export function SampleItemsDisplay(props) {
                   <React.Fragment key={index}>
                     <TableExpandRow
                       onClick={() => toggleRowExpansion(index)}
+                      onExpand={(event) => {
+                        event.stopPropagation();
+                        toggleRowExpansion(index);
+                      }}
                       isExpanded={expandedRows[index]}
                     >
                       <TableCell>
@@ -980,8 +985,8 @@ export function SampleItemsDisplay(props) {
                                       <FormattedMessage id="allocated.to.aliquots" />
                                       :
                                     </strong>{" "}
-                                    {(
-                                      sampleItem.quantity - remainingQuantity
+                                    {calculateAllocatedQuantity(
+                                      sampleItem,
                                     ).toFixed(2)}{" "}
                                     {uomDisplay}
                                   </Column>
