@@ -53,6 +53,19 @@ public class CatalogReferenceResolver {
      * local code, by a remembered alias, and finally, when the row names a
      * specimen, the legacy {@code Name(Specimen)} record for that specimen.
      */
+    /**
+     * The one active test whose catalogue name is {@code name}. A test created in
+     * the Test Catalogue Editor carries its name in {@code test.name} and the
+     * localisation while {@code test.description} holds a free-text description, so
+     * a file that names it the way the catalogue shows it must still find it.
+     * Several active tests sharing a name are legacy per-specimen variants, left to
+     * the specimen-aware lookup below.
+     */
+    private Test onlyActiveTestNamed(String name) {
+        List<Test> named = testService.getActiveTestByName(name);
+        return named != null && named.size() == 1 ? named.get(0) : null;
+    }
+
     public Test resolveTest(String name, String sampleTypeName, String context) {
         if (name == null || name.isBlank()) {
             return null;
@@ -63,6 +76,9 @@ public class CatalogReferenceResolver {
         }
         if (test == null) {
             test = testService.getTestByLocalCode(name);
+        }
+        if (test == null) {
+            test = onlyActiveTestNamed(name);
         }
         if (test == null) {
             String aliased = aliasService.resolve(UnresolvedReference.TYPE_TEST, name);
