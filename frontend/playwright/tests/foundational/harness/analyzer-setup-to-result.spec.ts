@@ -154,6 +154,23 @@ test.describe("A GeneXpert from setup to a clinical result", () => {
       await expect(summary).toContainText(
         `Needs review: ${HIV_VL_VALUED_PARTS.length - 1}`,
       );
+
+      await demo.caption(
+        "On the order, the validated part is final while the others still await validation.",
+      );
+      await page.goto(
+        `/Results?accessionNumber=${encodeURIComponent(order.accession)}`,
+        { waitUntil: "domcontentloaded" },
+      );
+      await expect(
+        page.getByRole("button", { name: "Results final (1)" }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("button", {
+          name: `Accepted by technician (${HIV_VL_VALUED_PARTS.length - 1})`,
+        }),
+      ).toBeVisible();
+      await openValidationQueue(page, order.accession);
       for (let left = HIV_VL_VALUED_PARTS.length - 1; left > 0; left--) {
         await validateAndReleaseFirst(page);
       }
