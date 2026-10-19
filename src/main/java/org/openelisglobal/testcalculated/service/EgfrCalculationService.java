@@ -1,6 +1,8 @@
 package org.openelisglobal.testcalculated.service;
 
+import java.sql.Timestamp;
 import java.util.Collection;
+import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.result.valueholder.Result;
 
 /**
@@ -28,4 +30,15 @@ public interface EgfrCalculationService {
      * from then on never overwritten.
      */
     void updateEgfrForSavedResults(Collection<Result> savedResults, String sysUserId);
+
+    /**
+     * Call after a patient is updated, in the same transaction, with the sex and
+     * birth date stored before the update. If either changed, every eGFR on the
+     * patient's orders that was calculated here, or is still empty, is calculated
+     * again (see {@link org.openelisglobal.testcalculated.egfr.EgfrDecision}). An
+     * eGFR entered by hand or by an analyzer is not touched, and a validated eGFR
+     * is not changed: it gets an internal note instead.
+     */
+    void updateEgfrForPatientChange(Patient patient, String previousGender, Timestamp previousBirthDate,
+            String sysUserId);
 }

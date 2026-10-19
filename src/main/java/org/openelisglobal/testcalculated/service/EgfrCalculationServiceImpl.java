@@ -7,15 +7,19 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.note.valueholder.Note;
+import org.openelisglobal.notifications.service.HeaderNotificationService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
@@ -23,13 +27,16 @@ import org.openelisglobal.resultlimit.service.ResultLimitService;
 import org.openelisglobal.resultlimits.valueholder.ResultLimit;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testcalculated.egfr.CkdEpi2021;
 import org.openelisglobal.testcalculated.egfr.EgfrDecision;
+import org.openelisglobal.testcalculated.egfr.EgfrDecision.Cause;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 import org.openelisglobal.testterminology.service.TestTerminologyMappingService;
 import org.openelisglobal.testterminology.valueholder.TestTerminologyMapping;
+import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -51,6 +58,11 @@ import org.springframework.transaction.annotation.Transactional;
  * {@link Analysis#getResultCalculated()} on the eGFR records whether the value
  * stored was written here. An eGFR saved by hand or by an analyzer clears it,
  * and from then on that eGFR is never overwritten.
+ *
+ * <p>
+ * A correction (a stored eGFR replaced or cleared, or a validated eGFR the
+ * equation no longer agrees with) is put in the header notifications of the
+ * users who can validate the eGFR's lab unit.
  */
 @Service
 public class EgfrCalculationServiceImpl implements EgfrCalculationService {
@@ -66,11 +78,16 @@ public class EgfrCalculationServiceImpl implements EgfrCalculationService {
     private final NoteService noteService;
     private final IStatusService statusService;
     private final TestTerminologyMappingService terminologyMappingService;
+    private final HeaderNotificationService headerNotificationService;
+    private final UserRoleService userRoleService;
+    private final UserService userService;
 
     public EgfrCalculationServiceImpl(AnalysisService analysisService, ResultService resultService,
             TestResultService testResultService, ResultLimitService resultLimitService,
             SampleHumanService sampleHumanService, NoteService noteService, IStatusService statusService,
-            TestTerminologyMappingService terminologyMappingService) {
+            TestTerminologyMappingService terminologyMappingService,
+            HeaderNotificationService headerNotificationService, UserRoleService userRoleService,
+            UserService userService) {
         this.analysisService = analysisService;
         this.resultService = resultService;
         this.testResultService = testResultService;
@@ -79,6 +96,9 @@ public class EgfrCalculationServiceImpl implements EgfrCalculationService {
         this.noteService = noteService;
         this.statusService = statusService;
         this.terminologyMappingService = terminologyMappingService;
+        this.headerNotificationService = headerNotificationService;
+        this.userRoleService = userRoleService;
+        this.userService = userService;
     }
 
     @Override
@@ -128,14 +148,68 @@ public class EgfrCalculationServiceImpl implements EgfrCalculationService {
             // no eGFR ordered, or it was entered in this same save
             return;
         }
-        Result egfrResult = firstResult(egfr);
         Patient patient = sampleHumanService.getPatientForSample(sample);
+        apply(Cause.CREATININE_SAVED, egfr, creatinine, creatinineResult, sample, patient, sysUserId);
+    }
+
+    @Override
+    @Transactional
+    public void updateEgfrForPatientChange(Patient patient, String previousGender, Timestamp previousBirthDate,
+            String sysUserId) {
+        if (patient == null || patient.getId() == null) {
+            return;
+        }
+        if (Objects.equals(trimmed(previousGender), trimmed(patient.getGender()))
+                && Objects.equals(toLocalDate(previousBirthDate), toLocalDate(patient.getBirthDate()))) {
+            return;
+        }
+        Map<String, Set<String>> loincsByTest = new HashMap<>();
+        for (Sample sample : sampleHumanService.getSamplesForPatient(patient.getId())) {
+            try {
+                updateEgfrsOnSample(sample, patient, loincsByTest, sysUserId);
+            } catch (RuntimeException e) {
+                // the eGFR is a convenience; it must not stop the patient being saved
+                LogEvent.logError(this.getClass().getSimpleName(), "updateEgfrForPatientChange",
+                        "eGFR for sample " + sample.getId() + " failed: " + e.getMessage());
+            }
+        }
+    }
+
+    /**
+     * Every eGFR on the sample that was calculated here, or is still empty, from
+     * the creatinine on the same order.
+     */
+    private void updateEgfrsOnSample(Sample sample, Patient patient, Map<String, Set<String>> loincsByTest,
+            String sysUserId) {
+        List<Analysis> analyses = analysisService.getAnalysesBySampleId(sample.getId());
+        for (Analysis egfr : analyses) {
+            if (!isEgfr(egfr, loincsByTest) || isCanceledOrRejected(egfr)) {
+                continue;
+            }
+            Result egfrResult = firstResult(egfr);
+            if (egfrResult != null && hasValue(egfrResult.getValue())
+                    && !Boolean.TRUE.equals(egfr.getResultCalculated())) {
+                // entered by hand or by an analyzer
+                continue;
+            }
+            Analysis creatinine = findCreatinine(analyses, egfr, loincsByTest);
+            Result creatinineResult = creatinine == null ? null : firstResult(creatinine);
+            if (creatinineResult == null) {
+                continue;
+            }
+            apply(Cause.PATIENT_CHANGED, egfr, creatinine, creatinineResult, sample, patient, sysUserId);
+        }
+    }
+
+    private void apply(Cause cause, Analysis egfr, Analysis creatinine, Result creatinineResult, Sample sample,
+            Patient patient, String sysUserId) {
+        Result egfrResult = firstResult(egfr);
         String unit = creatinine.getTest().getUnitOfMeasure() == null ? null
                 : creatinine.getTest().getUnitOfMeasure().getUnitOfMeasureName();
         CkdEpi2021.Outcome outcome = patient == null ? CkdEpi2021.Outcome.skipped(CkdEpi2021.SkipReason.NO_PATIENT)
                 : CkdEpi2021.calculate(creatinineResult.getValue(), unit, patient.getGender(),
                         toLocalDate(patient.getBirthDate()), collectionDay(sample));
-        EgfrDecision decision = EgfrDecision.decide(outcome, creatinineResult.getValue(), unit,
+        EgfrDecision decision = EgfrDecision.decide(cause, outcome, creatinineResult.getValue(), unit,
                 egfrResult == null ? null : egfrResult.getValue(), Boolean.TRUE.equals(egfr.getResultCalculated()),
                 statusService.matches(egfr.getStatusId(), AnalysisStatus.Finalized));
 
@@ -155,6 +229,44 @@ public class EgfrCalculationServiceImpl implements EgfrCalculationService {
             if (!noteService.duplicateNoteExists(note)) {
                 noteService.insert(note);
             }
+        }
+        if (decision.isCorrection()) {
+            notifyValidators(cause, egfr, sample, decision);
+        }
+    }
+
+    /**
+     * Header notification for the users who can validate the eGFR's lab unit, as
+     * for STAT results.
+     */
+    private void notifyValidators(Cause cause, Analysis egfr, Sample sample, EgfrDecision decision) {
+        try {
+            String message = correctionMessage(cause, sample.getAccessionNumber(), decision);
+            List<Analysis> egfrOnly = List.of(egfr);
+            for (String userId : userRoleService.getUserIdsForRole(Constants.ROLE_VALIDATION)) {
+                if (!userService.filterAnalysesByLabUnitRoles(userId, egfrOnly, Constants.ROLE_VALIDATION).isEmpty()) {
+                    headerNotificationService.notifyUser(userId, message);
+                }
+            }
+        } catch (RuntimeException e) {
+            LogEvent.logError(this.getClass().getSimpleName(), "notifyValidators",
+                    "eGFR notification for analysis " + egfr.getId() + " failed: " + e.getMessage());
+        }
+    }
+
+    static String correctionMessage(Cause cause, String accessionNumber, EgfrDecision decision) {
+        String causeText = MessageUtil.getMessage(cause == Cause.PATIENT_CHANGED ? "notification.egfr.cause.patient"
+                : "notification.egfr.cause.creatinine");
+        switch (decision.getAction()) {
+        case WRITE:
+            return MessageUtil.getMessage("notification.egfr.recalculated",
+                    new Object[] { accessionNumber, causeText, decision.getPreviousValue(), decision.getValue() });
+        case CLEAR:
+            return MessageUtil.getMessage("notification.egfr.cleared",
+                    new Object[] { accessionNumber, causeText, decision.getPreviousValue() });
+        default:
+            return MessageUtil.getMessage("notification.egfr.validated",
+                    new Object[] { accessionNumber, causeText, decision.getPreviousValue() });
         }
     }
 
@@ -219,9 +331,7 @@ public class EgfrCalculationServiceImpl implements EgfrCalculationService {
     private Analysis findOrderedEgfr(Sample sample, Analysis creatinine, Map<String, Set<String>> loincsByTest) {
         Analysis onOtherItem = null;
         for (Analysis analysis : analysisService.getAnalysesBySampleId(sample.getId())) {
-            if (!isEgfr(analysis, loincsByTest)
-                    || statusService.matches(analysis.getStatusId(), AnalysisStatus.Canceled)
-                    || statusService.matches(analysis.getStatusId(), AnalysisStatus.SampleRejected)) {
+            if (!isEgfr(analysis, loincsByTest) || isCanceledOrRejected(analysis)) {
                 continue;
             }
             if (analysis.getSampleItem() != null && creatinine.getSampleItem() != null
@@ -233,6 +343,29 @@ public class EgfrCalculationServiceImpl implements EgfrCalculationService {
             }
         }
         return onOtherItem;
+    }
+
+    /** The creatinine for an eGFR: on the same specimen if there is one. */
+    private Analysis findCreatinine(List<Analysis> analyses, Analysis egfr, Map<String, Set<String>> loincsByTest) {
+        Analysis onOtherItem = null;
+        for (Analysis analysis : analyses) {
+            if (!isCreatinine(analysis.getTest(), loincsByTest) || isCanceledOrRejected(analysis)) {
+                continue;
+            }
+            if (analysis.getSampleItem() != null && egfr.getSampleItem() != null
+                    && analysis.getSampleItem().getId().equals(egfr.getSampleItem().getId())) {
+                return analysis;
+            }
+            if (onOtherItem == null) {
+                onOtherItem = analysis;
+            }
+        }
+        return onOtherItem;
+    }
+
+    private boolean isCanceledOrRejected(Analysis analysis) {
+        return statusService.matches(analysis.getStatusId(), AnalysisStatus.Canceled)
+                || statusService.matches(analysis.getStatusId(), AnalysisStatus.SampleRejected);
     }
 
     private Result firstResult(Analysis analysis) {
@@ -275,6 +408,10 @@ public class EgfrCalculationServiceImpl implements EgfrCalculationService {
 
     private static LocalDate toLocalDate(Timestamp timestamp) {
         return timestamp == null ? null : timestamp.toLocalDateTime().toLocalDate();
+    }
+
+    private static String trimmed(String value) {
+        return value == null || value.isBlank() ? null : value.trim();
     }
 
     private static boolean hasValue(String value) {

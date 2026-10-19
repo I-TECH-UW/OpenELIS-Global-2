@@ -19,6 +19,8 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.Locale;
+import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -27,11 +29,14 @@ import org.mockito.Mock;
 import org.mockito.junit.MockitoJUnitRunner;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
+import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.internationalization.MessageUtil;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.note.valueholder.Note;
+import org.openelisglobal.notifications.service.HeaderNotificationService;
 import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
@@ -39,14 +44,19 @@ import org.openelisglobal.resultlimit.service.ResultLimitService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.samplehuman.service.SampleHumanService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
+import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testterminology.service.TestTerminologyMappingService;
 import org.openelisglobal.testterminology.valueholder.TestTerminologyMapping;
 import org.openelisglobal.unitofmeasure.valueholder.UnitOfMeasure;
+import org.openelisglobal.userrole.service.UserRoleService;
+import org.springframework.context.i18n.LocaleContextHolder;
+import org.springframework.context.support.ReloadableResourceBundleMessageSource;
 
 /**
- * How the eGFR on an order follows the creatinine saved on it, and that an eGFR
- * entered by hand is never overwritten.
+ * How the eGFR on an order follows the creatinine saved on it and the patient's
+ * sex and birth date, that an eGFR entered by hand is never overwritten, and
+ * who hears about a correction.
  */
 @RunWith(MockitoJUnitRunner.Silent.class)
 public class EgfrCalculationServiceImplTest {
@@ -72,6 +82,12 @@ public class EgfrCalculationServiceImplTest {
     private IStatusService statusService;
     @Mock
     private TestTerminologyMappingService terminologyMappingService;
+    @Mock
+    private HeaderNotificationService headerNotificationService;
+    @Mock
+    private UserRoleService userRoleService;
+    @Mock
+    private UserService userService;
 
     private EgfrCalculationServiceImpl service;
 
@@ -84,7 +100,21 @@ public class EgfrCalculationServiceImplTest {
     @Before
     public void setUp() {
         service = new EgfrCalculationServiceImpl(analysisService, resultService, testResultService, resultLimitService,
-                sampleHumanService, noteService, statusService, terminologyMappingService);
+                sampleHumanService, noteService, statusService, terminologyMappingService, headerNotificationService,
+                userRoleService, userService);
+
+        ReloadableResourceBundleMessageSource messages = new ReloadableResourceBundleMessageSource();
+        messages.setBasename("classpath:/languages/message");
+        messages.setDefaultEncoding("UTF-8");
+        messages.setUseCodeAsDefaultMessage(true);
+        MessageUtil.setMessageSource(messages);
+        LocaleContextHolder.setLocale(Locale.ENGLISH);
+        // validator "7" works in the eGFR's lab unit, validator "8" does not
+        when(userRoleService.getUserIdsForRole(Constants.ROLE_VALIDATION)).thenReturn(List.of("7", "8"));
+        when(userService.filterAnalysesByLabUnitRoles(eq("7"), any(), eq(Constants.ROLE_VALIDATION)))
+                .thenAnswer(invocation -> invocation.getArgument(1));
+        when(userService.filterAnalysesByLabUnitRoles(eq("8"), any(), eq(Constants.ROLE_VALIDATION)))
+                .thenReturn(Collections.emptyList());
 
         when(statusService.getStatusID(AnalysisStatus.NotStarted)).thenReturn(NOT_STARTED);
         when(statusService.getStatusID(AnalysisStatus.TechnicalAcceptance)).thenReturn(TECHNICAL_ACCEPTANCE);
@@ -116,13 +146,21 @@ public class EgfrCalculationServiceImplTest {
         patient = mock(Patient.class);
         when(patient.getGender()).thenReturn("F");
         when(patient.getBirthDate()).thenReturn(Timestamp.valueOf(LocalDateTime.of(1999, 3, 1, 0, 0)));
+        when(patient.getId()).thenReturn("900");
         when(sampleHumanService.getPatientForSample(sample)).thenReturn(patient);
+        when(sampleHumanService.getSamplesForPatient("900")).thenReturn(List.of(sample));
+        when(sample.getAccessionNumber()).thenReturn("DEV0126000001");
 
         creatinine = analysis("300", test("1", "2160-0", "mg/dL"), TECHNICAL_ACCEPTANCE);
         egfr = spy(analysis("301", test("2", "98979-8", "mL/min/1.73 m2"), NOT_STARTED));
         doNothing().when(egfr).setStartedDate(any(Timestamp.class));
         when(analysisService.getAnalysesBySampleId("100")).thenReturn(Arrays.asList(creatinine, egfr));
         when(resultService.getResultsByAnalysis(egfr)).thenReturn(new ArrayList<>());
+    }
+
+    @After
+    public void resetLocale() {
+        LocaleContextHolder.resetLocaleContext();
     }
 
     @Test
@@ -137,6 +175,7 @@ public class EgfrCalculationServiceImplTest {
         assertEquals(TECHNICAL_ACCEPTANCE, egfr.getStatusId());
         verify(analysisService).update(egfr);
         verify(noteService).createSavableNote(eq(egfr), eq(NoteType.INTERNAL), any(), any(), eq(USER));
+        verify(headerNotificationService, never()).notifyUser(anyString(), anyString());
     }
 
     @Test
@@ -151,6 +190,9 @@ public class EgfrCalculationServiceImplTest {
 
         verify(resultService).update(stored);
         assertEquals("64", stored.getValue());
+        verify(headerNotificationService).notifyUser("7", "eGFR on order DEV0126000001 recalculated after the"
+                + " creatinine was corrected: 125 \u2192 64 mL/min/1.73 m2. It awaits validation.");
+        verify(headerNotificationService, never()).notifyUser(eq("8"), anyString());
     }
 
     @Test
@@ -225,6 +267,109 @@ public class EgfrCalculationServiceImplTest {
         ArgumentCaptor<Result> written = ArgumentCaptor.forClass(Result.class);
         verify(resultService).insert(written.capture());
         assertEquals("125", written.getValue().getValue());
+    }
+
+    /** The patient was saved as female with this eGFR; now it reads male. */
+    private Result calculatedEgfr(String value, String statusId) {
+        Result stored = result(egfr, value);
+        stored.setId("500");
+        when(resultService.getResultsByAnalysis(egfr)).thenReturn(List.of(stored));
+        when(resultService.getResultsByAnalysis(creatinine)).thenReturn(List.of(result(creatinine, "0.62")));
+        egfr.setResultCalculated(true);
+        egfr.setStatusId(statusId);
+        when(patient.getGender()).thenReturn("M");
+        return stored;
+    }
+
+    private void patientWasFemale() {
+        service.updateEgfrForPatientChange(patient, "F", patient.getBirthDate(), USER);
+    }
+
+    @Test
+    public void recalculatesItsOwnEgfrWhenThePatientSexChanges() {
+        Result stored = calculatedEgfr("125", TECHNICAL_ACCEPTANCE);
+
+        patientWasFemale();
+
+        verify(resultService).update(stored);
+        assertEquals("134", stored.getValue());
+        assertEquals(TECHNICAL_ACCEPTANCE, egfr.getStatusId());
+        ArgumentCaptor<String> note = ArgumentCaptor.forClass(String.class);
+        verify(noteService).createSavableNote(eq(egfr), eq(NoteType.INTERNAL), note.capture(), any(), eq(USER));
+        assertTrue(note.getValue(), note.getValue()
+                .startsWith("Recalculated after patient sex/birth date changed: 125 \u2192 134 mL/min/1.73 m2."));
+        verify(headerNotificationService).notifyUser("7", "eGFR on order DEV0126000001 recalculated after the"
+                + " patient's sex or birth date changed: 125 \u2192 134 mL/min/1.73 m2. It awaits validation.");
+        verify(headerNotificationService, never()).notifyUser(eq("8"), anyString());
+    }
+
+    @Test
+    public void recalculatesWhenTheBirthDateChanges() {
+        Result stored = calculatedEgfr("125", TECHNICAL_ACCEPTANCE);
+        when(patient.getGender()).thenReturn("F");
+        when(patient.getBirthDate()).thenReturn(Timestamp.valueOf(LocalDateTime.of(1959, 3, 1, 0, 0)));
+
+        service.updateEgfrForPatientChange(patient, "F", Timestamp.valueOf(LocalDateTime.of(1999, 3, 1, 0, 0)), USER);
+
+        verify(resultService).update(stored);
+        assertFalse(stored.getValue(), "125".equals(stored.getValue()));
+    }
+
+    @Test
+    public void doesNothingWhenNeitherSexNorBirthDateChanged() {
+        calculatedEgfr("125", TECHNICAL_ACCEPTANCE);
+
+        service.updateEgfrForPatientChange(patient, " M ", patient.getBirthDate(), USER);
+
+        verify(sampleHumanService, never()).getSamplesForPatient(anyString());
+        verify(resultService, never()).update(any(Result.class));
+        verify(headerNotificationService, never()).notifyUser(anyString(), anyString());
+    }
+
+    @Test
+    public void aPatientChangeNeverTouchesAnEgfrEnteredByHand() {
+        Result stored = calculatedEgfr("118", TECHNICAL_ACCEPTANCE);
+        egfr.setResultCalculated(false);
+
+        patientWasFemale();
+
+        assertEquals("118", stored.getValue());
+        verify(resultService, never()).update(any(Result.class));
+        verify(noteService, never()).createSavableNote(any(), any(), anyString(), anyString(), anyString());
+        verify(headerNotificationService, never()).notifyUser(anyString(), anyString());
+    }
+
+    @Test
+    public void aPatientChangeLeavesAValidatedEgfrAndTellsTheValidators() {
+        Result stored = calculatedEgfr("125", FINALIZED);
+
+        patientWasFemale();
+
+        assertEquals("125", stored.getValue());
+        assertEquals(FINALIZED, egfr.getStatusId());
+        verify(resultService, never()).update(any(Result.class));
+        verify(analysisService, never()).update(any(Analysis.class));
+        verify(noteService)
+                .createSavableNote(eq(egfr), eq(NoteType.INTERNAL),
+                        eq("eGFR is already validated and was not recalculated after patient sex/birth date changed."
+                                + " CKD-EPI 2021 (race-free) now gives 134 mL/min/1.73 m2 instead of 125."),
+                        any(), eq(USER));
+        verify(headerNotificationService).notifyUser("7",
+                "eGFR 125 on order DEV0126000001 is validated but no"
+                        + " longer matches the calculation after the patient's sex or birth date changed. Review it in"
+                        + " result entry.");
+    }
+
+    @Test
+    public void fillsAnEmptyEgfrOnceTheSexIsKnownWithoutNotifying() {
+        when(resultService.getResultsByAnalysis(creatinine)).thenReturn(List.of(result(creatinine, "0.62")));
+
+        service.updateEgfrForPatientChange(patient, null, patient.getBirthDate(), USER);
+
+        ArgumentCaptor<Result> written = ArgumentCaptor.forClass(Result.class);
+        verify(resultService).insert(written.capture());
+        assertEquals("125", written.getValue().getValue());
+        verify(headerNotificationService, never()).notifyUser(anyString(), anyString());
     }
 
     private Analysis analysis(String id, org.openelisglobal.test.valueholder.Test test, String statusId) {

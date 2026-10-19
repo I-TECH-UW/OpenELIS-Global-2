@@ -1,6 +1,7 @@
 package org.openelisglobal.testcalculated.egfr;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
@@ -9,6 +10,7 @@ import org.junit.Test;
 import org.openelisglobal.testcalculated.egfr.CkdEpi2021.Outcome;
 import org.openelisglobal.testcalculated.egfr.CkdEpi2021.SkipReason;
 import org.openelisglobal.testcalculated.egfr.EgfrDecision.Action;
+import org.openelisglobal.testcalculated.egfr.EgfrDecision.Cause;
 
 /**
  * What happens to an ordered eGFR when its creatinine is saved: calculated
@@ -122,5 +124,99 @@ public class EgfrDecisionTest {
         Outcome outcome = CkdEpi2021.calculate("54.8", "µmol/L", "F", COLLECTED.minusYears(27), COLLECTED);
         EgfrDecision decision = EgfrDecision.decide(outcome, "54.8", "µmol/L", null, false, false);
         assertTrue(decision.getNote(), decision.getNote().contains("creatinine 54.8 µmol/L (0.62 mg/dL)"));
+    }
+
+    private static EgfrDecision afterPatientChange(Outcome outcome, String currentEgfr, boolean calculatedEgfr,
+            boolean finalized) {
+        return EgfrDecision.decide(Cause.PATIENT_CHANGED, outcome, "0.62", "mg/dL", currentEgfr, calculatedEgfr,
+                finalized);
+    }
+
+    /** Male, 27 at collection, same creatinine: what a sex correction gives. */
+    private static Outcome male27(String creatinine) {
+        return CkdEpi2021.calculate(creatinine, "mg/dL", "M", COLLECTED.minusYears(27), COLLECTED);
+    }
+
+    @Test
+    public void theFirstCalculationIsNotACorrection() {
+        EgfrDecision decision = decide(female27("0.62"), null, false, false);
+        assertFalse(decision.isCorrection());
+        assertNull(decision.getPreviousValue());
+
+        EgfrDecision afterSexAdded = afterPatientChange(female27("0.62"), null, false, false);
+        assertEquals(Action.WRITE, afterSexAdded.getAction());
+        assertFalse("filling an empty eGFR once the sex is known is a first calculation", afterSexAdded.isCorrection());
+    }
+
+    @Test
+    public void aCreatinineCorrectionThatChangesTheEgfrIsACorrection() {
+        String recalculated = String.valueOf(female27("1.20").getEgfr());
+        EgfrDecision decision = decide(female27("1.20"), "125", true, false);
+        assertTrue(decision.isCorrection());
+        assertEquals("125", decision.getPreviousValue());
+        assertTrue(decision.getNote(), decision.getNote().startsWith(
+                "Recalculated after the creatinine was corrected: 125 \u2192 " + recalculated + " mL/min/1.73 m2."));
+
+        assertFalse("unchanged value", decide(female27("0.62"), "125", true, false).isCorrection());
+        assertTrue("cleared value", decide(female27("<0.20"), "125", true, false).isCorrection());
+        assertFalse("hand-entered value", decide(female27("1.20"), "118", false, false).isCorrection());
+    }
+
+    @Test
+    public void recalculatesItsOwnValueWhenThePatientSexChanges() {
+        String male = String.valueOf(male27("0.62").getEgfr());
+        EgfrDecision decision = afterPatientChange(male27("0.62"), "125", true, false);
+        assertEquals(Action.WRITE, decision.getAction());
+        assertEquals(male, decision.getValue());
+        assertTrue(decision.isCorrection());
+        assertEquals("125", decision.getPreviousValue());
+        assertTrue(decision.getNote(), decision.getNote().startsWith(
+                "Recalculated after patient sex/birth date changed: 125 \u2192 " + male + " mL/min/1.73 m2. "));
+        assertTrue(decision.getNote(), decision.getNote().contains("male, 27 years at collection"));
+    }
+
+    @Test
+    public void clearsItsOwnValueWhenThePatientBecomesUnder18() {
+        Outcome underAge = CkdEpi2021.calculate("0.62", "mg/dL", "F", COLLECTED.minusYears(16), COLLECTED);
+        EgfrDecision decision = afterPatientChange(underAge, "125", true, false);
+        assertEquals(Action.CLEAR, decision.getAction());
+        assertTrue(decision.isCorrection());
+        assertEquals("Calculated eGFR 125 removed after patient sex/birth date changed: the patient was under 18"
+                + " years old at collection.", decision.getNote());
+    }
+
+    @Test
+    public void aPatientChangeNeverTouchesAnEgfrEnteredByHand() {
+        EgfrDecision decision = afterPatientChange(male27("0.62"), "118", false, false);
+        assertEquals(Action.NONE, decision.getAction());
+        assertNull(decision.getNote());
+        assertFalse(decision.isCorrection());
+
+        EgfrDecision validated = afterPatientChange(male27("0.62"), "118", false, true);
+        assertEquals(Action.NONE, validated.getAction());
+        assertNull(validated.getNote());
+        assertFalse(validated.isCorrection());
+    }
+
+    @Test
+    public void aPatientChangeLeavesAValidatedEgfrButSaysSo() {
+        String male = String.valueOf(male27("0.62").getEgfr());
+        EgfrDecision decision = afterPatientChange(male27("0.62"), "125", true, true);
+        assertEquals(Action.NONE, decision.getAction());
+        assertTrue(decision.isCorrection());
+        assertEquals("125", decision.getPreviousValue());
+        assertEquals(
+                "eGFR is already validated and was not recalculated after patient sex/birth date changed."
+                        + " CKD-EPI 2021 (race-free) now gives " + male + " mL/min/1.73 m2 instead of 125.",
+                decision.getNote());
+
+        Outcome underAge = CkdEpi2021.calculate("0.62", "mg/dL", "F", COLLECTED.minusYears(16), COLLECTED);
+        EgfrDecision noLonger = afterPatientChange(underAge, "125", true, true);
+        assertEquals(Action.NONE, noLonger.getAction());
+        assertTrue(noLonger.isCorrection());
+        assertTrue(noLonger.getNote(), noLonger.getNote().contains("can no longer be calculated"));
+
+        assertFalse("the validated value still agrees",
+                afterPatientChange(female27("0.62"), "125", true, true).isCorrection());
     }
 }
