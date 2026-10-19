@@ -444,7 +444,7 @@ const CalculatedValue: React.FC<CalculatedValueProps> = () => {
       addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: "Succesfuly saved",
+        message: "Successfully saved",
       });
     } else {
       addNotification({
