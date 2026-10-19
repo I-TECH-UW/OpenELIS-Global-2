@@ -273,6 +273,30 @@ describe("OGC-1179 — unified Results worklist", () => {
     expect(resultField().value).toBe("34.2");
   });
 
+  /**
+   * A referral opened on a row rides its save only when it names the reference
+   * laboratory and the reason; an incomplete one is refused rather than
+   * silently dropped from the save.
+   */
+  it("refuses to save a row whose referral is missing its laboratory", async () => {
+    await renderPage();
+    fireEvent.click(screen.getAllByRole("button", { name: /Expand row/i })[0]);
+    fireEvent.click(screen.getAllByText("Refer this test")[0]);
+    fireEvent.change(
+      document.querySelector('[id^="referral-reason-"]') as HTMLSelectElement,
+      { target: { value: "1" } },
+    );
+
+    fireEvent.click(screen.getAllByTestId("save-button")[0]);
+
+    expect(
+      utilsMock.postToOpenElisServerJsonResponse.mock.calls.some(
+        (call: any[]) =>
+          String(call[0]).includes("/rest/results-entry/analysis/"),
+      ),
+    ).toBe(false);
+  });
+
   /** #6 — a stale save offers a refresh the user can actually press. */
   it("gives the stale-save notice a working Refresh action", async () => {
     await renderPage();

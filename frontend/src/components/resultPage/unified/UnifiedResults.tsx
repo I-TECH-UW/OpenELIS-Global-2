@@ -1051,6 +1051,25 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
       // as boolean — same normalization the legacy page applies before POST
       item.reportable = item.reportable !== "N";
       const key = worklistRowKey(row);
+      // A referral the user opened rides the save only when complete; one
+      // missing its laboratory or reason is refused rather than dropped, so a
+      // save never reads as having referred a test it did not.
+      const pendingReferral = referralDrafts[key];
+      if (
+        pendingReferral &&
+        (!pendingReferral.referredInstituteId ||
+          !pendingReferral.referralReasonId)
+      ) {
+        addNotification({
+          title: intl.formatMessage({ id: "notification.title" }),
+          message: intl.formatMessage({
+            id: "label.results.referral.incomplete",
+          }),
+          kind: NotificationKinds.error,
+        });
+        setNotificationVisible(true);
+        return;
+      }
       // R2 (FR-J1/J2): the dual-axis note — visibility chosen, context auto-set
       // from the edit-state machine (Modification when editing a saved result)
       const noteDraft = noteDrafts[key];
@@ -1170,6 +1189,9 @@ const UnifiedResults: React.FC<UnifiedResultsProps> = ({
       rejectDrafts,
       interpretationDrafts,
       rowStates,
+      addNotification,
+      setNotificationVisible,
+      intl,
     ],
   );
 

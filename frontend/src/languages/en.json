@@ -4232,6 +4232,7 @@
   "label.results.referral.reportDate": "Reference lab report date",
   "label.results.referral.hint": "The referral is recorded when you Save this row and hands off to the Referrals dashboard.",
   "label.results.referral.cancel": "Discard",
+  "label.results.referral.incomplete": "Choose the reference laboratory and the referral reason, or discard the referral, before saving this row.",
   "label.results.section.aliquots": "Aliquots",
   "label.results.aliquots.summary": "{0} aliquots",
   "label.results.aliquots.summary.unloaded": "list · create",
