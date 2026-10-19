@@ -344,7 +344,7 @@ public class OrderSearchRestController extends BaseRestController {
      * @param workflowType clinical, environmental or vector
      * @return the page's orders, the page announcement and the total matched
      * @see #resolveAllowedSectionIds(String) for when the list is narrowed to the
-     *      user's test sections (opt-in, off by default)
+     *      user's lab units (on by default)
      */
     @GetMapping(value = "/dashboard", produces = MediaType.APPLICATION_JSON_VALUE)
     public ResponseEntity<Map<String, Object>> getDashboard(@RequestParam(required = false) Integer page,
@@ -1856,30 +1856,17 @@ public class OrderSearchRestController extends BaseRestController {
     }
 
     /**
-     * The test section IDs the recent-orders list may be narrowed to, or an empty
-     * set meaning "show everything" (the pre-existing behaviour).
+     * The test section IDs the orders dashboard is narrowed to, or an empty set
+     * meaning the whole lab.
      *
      * <p>
-     * Scoping recent orders by test section is opt-in through the
-     * {@value #RESTRICT_RECENT_ORDERS_PROPERTY} configuration property (a
-     * site_information row or a SystemConfiguration.properties entry), which is
-     * absent by default. Without the opt-in this endpoint keeps returning every
-     * recent order, as it did before section scoping was introduced: with
-     * {@code REQUIRE_LAB_UNIT_AT_LOGIN=true},
-     * {@link UserService#getUserTestSections(String, String)} returns only the
-     * single lab unit chosen at login for non-admins, which would silently collapse
-     * "Recent Orders" to one section for existing clinical deployments.
-     *
-     * <p>
-     * Even when enabled, global administrators and {@code AllLabUnits} users are
-     * never scoped, and neither is a user whose section list came from the login
-     * lab-unit constraint rather than from their own assignments.
-     *
-     * <p>
-     * The returned set is expanded to include child sections of every assigned
-     * section, because analyses are filed under child sections (e.g. "Entomology")
-     * rather than the domain-level parent (e.g. "Vector Surveillance") a user is
-     * assigned to.
+     * The dashboard reads with the same lab-unit scope as the home dashboard and
+     * the order lookups ({@link SampleLabUnitScopeService}). A site can switch the
+     * dashboard back to the whole lab by setting the
+     * {@value #RESTRICT_RECENT_ORDERS_PROPERTY} configuration property to
+     * {@code false}. Global administrators, {@code AllLabUnits} users and users
+     * whose section comes from the login lab-unit constraint read the whole lab;
+     * assigned sections are expanded to their child sections.
      */
     private Set<String> resolveAllowedSectionIds(String sysUserId) {
         if (recentOrderSectionScopingDisabled()) {

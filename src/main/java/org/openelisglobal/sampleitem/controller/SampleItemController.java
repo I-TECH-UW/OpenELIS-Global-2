@@ -6,6 +6,7 @@ import org.apache.commons.beanutils.BeanUtils;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.controller.BaseController;
+import org.openelisglobal.sample.service.SampleLabUnitScopeService;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.sampleitem.form.SampleItemAliquotForm;
@@ -39,6 +40,8 @@ public class SampleItemController extends BaseController {
     @Autowired
     private SampleService sampleService;
     @Autowired
+    private SampleLabUnitScopeService sampleLabUnitScopeService;
+    @Autowired
     private SampleItemService sampleItemService;
     @Autowired
     private AnalysisService analysisService;
@@ -56,7 +59,8 @@ public class SampleItemController extends BaseController {
         SampleItemForm form = new SampleItemForm();
         Sample sample = sampleService.getSampleByAccessionNumber(accessionNumber);
 
-        if (sample != null && !org.apache.commons.validator.GenericValidator.isBlankOrNull(sample.getId())) {
+        if (sample != null && !org.apache.commons.validator.GenericValidator.isBlankOrNull(sample.getId())
+                && sampleLabUnitScopeService.isVisible(getSysUserId(request), sample)) {
             form.setAccessionNumber(sample.getAccessionNumber());
             List<SampleItem> sampleItems = sampleItemService.getSampleItemsBySampleId(sample.getId());
 
@@ -100,6 +104,11 @@ public class SampleItemController extends BaseController {
             }
 
             String accessionNumber = form.getAccessionNumber();
+            Sample order = sampleService.getSampleByAccessionNumber(accessionNumber);
+            if (order != null && !sampleLabUnitScopeService.isVisible(getSysUserId(request), order)) {
+                response.put("errors", List.of("Sample not found"));
+                return response;
+            }
             List<SampleItemAliquotForm.SampleItem> sampleItems = form.getSampleItems();
 
             for (SampleItemAliquotForm.SampleItem sampleItem : sampleItems) {

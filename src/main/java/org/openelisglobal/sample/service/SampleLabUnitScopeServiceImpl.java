@@ -11,13 +11,18 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.sample.valueholder.Sample;
+import org.openelisglobal.sampleitem.service.SampleItemService;
+import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.systemuser.controller.UnifiedSystemUserController;
 import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
+import org.openelisglobal.vector.service.VectorPoolService;
+import org.openelisglobal.vector.valueholder.VectorPool;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -32,6 +37,11 @@ public class SampleLabUnitScopeServiceImpl implements SampleLabUnitScopeService 
     private TestSectionService testSectionService;
     @Autowired
     private AnalysisService analysisService;
+    @Autowired
+    private SampleItemService sampleItemService;
+    @Autowired
+    @Lazy
+    private VectorPoolService vectorPoolService;
 
     @Override
     @Transactional(readOnly = true)
@@ -69,9 +79,26 @@ public class SampleLabUnitScopeServiceImpl implements SampleLabUnitScopeService 
 
     @Override
     @Transactional(readOnly = true)
+    public boolean isSampleItemVisible(String sysUserId, String sampleItemId) {
+        if (sampleItemId == null || sampleItemId.isBlank()) {
+            return false;
+        }
+        SampleItem item = sampleItemService.getMatch("id", sampleItemId).orElse(null);
+        return item != null && item.getSample() != null && isVisible(sysUserId, item.getSample());
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public boolean belongsToSections(Sample sample, Set<String> sectionIds) {
-        List<Analysis> analyses = analysisService.getAnalysesBySampleId(sample.getId());
-        if (analyses == null || analyses.isEmpty()) {
+        List<Analysis> analyses = new java.util.ArrayList<>();
+        List<Analysis> bySampleItem = analysisService.getAnalysesBySampleId(sample.getId());
+        if (bySampleItem != null) {
+            analyses.addAll(bySampleItem);
+        }
+        for (VectorPool pool : vectorPoolService.getBySampleId(sample.getId())) {
+            analyses.addAll(analysisService.getAnalysesByVectorPoolId(String.valueOf(pool.getId())));
+        }
+        if (analyses.isEmpty()) {
             return true;
         }
         for (Analysis analysis : analyses) {

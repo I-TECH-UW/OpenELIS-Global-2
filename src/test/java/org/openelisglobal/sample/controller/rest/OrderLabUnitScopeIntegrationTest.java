@@ -10,6 +10,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -22,6 +23,7 @@ import org.junit.Test;
 import org.openelisglobal.BaseWebContextSensitiveTest;
 import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.services.IStatusService;
+import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.openelisglobal.sample.form.SampleEditForm;
@@ -31,6 +33,7 @@ import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.userrole.service.UserRoleService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -172,6 +175,37 @@ public class OrderLabUnitScopeIntegrationTest extends BaseWebContextSensitiveTes
                 .andExpect(jsonPath("$.totalCount").value(1))
                 .andExpect(jsonPath("$.orders[*].labNumber").value(hasItem(TB_LAB_NUMBER)))
                 .andExpect(jsonPath("$.orders[*].labNumber").value(not(hasItem(OTHER_LAB_NUMBER))));
+    }
+
+    @Test
+    public void aSiteCanSwitchTheOrdersDashboardBackToTheWholeLab() throws Exception {
+        userHoldsSections(TB_SECTION);
+        Object properties = ReflectionTestUtils.getField(
+                (Object) AopTestUtils.getUltimateTargetObject(ConfigurationProperties.getInstance()),
+                "finalProperties");
+        ReflectionTestUtils.invokeMethod(properties, "setPropertyValue", "restrictRecentOrdersByTestSection", "false");
+        try {
+            mockMvc.perform(asUser(get("/rest/order/dashboard"))).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.totalCount").value(2));
+        } finally {
+            ReflectionTestUtils.invokeMethod(properties, "setPropertyValue", "restrictRecentOrdersByTestSection", "");
+        }
+    }
+
+    @Test
+    public void writesOnAnOrderOutsideTheUsersUnitsAreRefused() throws Exception {
+        userHoldsSections(TB_SECTION);
+
+        mockMvc.perform(asUser(post("/rest/sample-management/add-tests")).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"sampleItemIds\":[\"602\"],\"testIds\":[\"2\"]}")).andExpect(status().isNotFound());
+        mockMvc.perform(asUser(post("/rest/sample-management/cancel-test")).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"analysisId\":\"2\",\"sampleItemId\":\"602\"}")).andExpect(status().isNotFound());
+        mockMvc.perform(asUser(post("/rest/sample-management/aliquot")).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"parentSampleItemId\":\"602\",\"quantityToTransfer\":1,\"numberOfAliquots\":1}"))
+                .andExpect(status().isNotFound());
+        assertTrue(scopeService.isSampleItemVisible(USER_ID, "601"));
+        assertFalse(scopeService.isSampleItemVisible(USER_ID, "602"));
+        assertFalse("an unknown item is not visible", scopeService.isSampleItemVisible(USER_ID, "999999"));
     }
 
     /**

@@ -122,6 +122,48 @@ public class AccessionValidationComponentReleaseTest extends BaseWebContextSensi
     }
 
     @Test
+    public void releasingTheTestClearsEveryPartsMarkSoACorrectionReopensThemAll() throws Exception {
+        mockMvc.perform(post("/rest/AccessionValidation/analysis/100/release").session(session)
+                .contentType(MediaType.APPLICATION_JSON).content(row("100", "1010"))).andExpect(status().isOk());
+        entityManager.flush();
+        entityManager.clear();
+        mockMvc.perform(post("/rest/AccessionValidation/analysis/100/release").session(session)
+                .contentType(MediaType.APPLICATION_JSON).content(row("101", "33.0"))).andExpect(status().isOk());
+        entityManager.flush();
+        entityManager.clear();
+
+        assertNull("the part validated first is no longer marked", resultService.get("100").getValidatedDate());
+        assertNull(resultService.get("101").getValidatedDate());
+
+        jdbcTemplate.update("UPDATE clinlims.analysis SET status_id = ? WHERE id = 100",
+                Integer.valueOf(statusService.getStatusID(AnalysisStatus.TechnicalAcceptance)));
+        assertEquals("a correction re-opens both parts", List.of("100", "101"), queueResultIds());
+    }
+
+    @Test
+    public void bothPartsAcceptedInOneSaveReleaseTheTest() throws Exception {
+        String queue = mockMvc
+                .perform(get("/rest/AccessionValidation").param("accessionNumber", ACCESSION).session(session))
+                .andExpect(status().isOk()).andReturn().getResponse().getContentAsString();
+        ObjectMapper mapper = new ObjectMapper();
+        com.fasterxml.jackson.databind.node.ArrayNode rows = (com.fasterxml.jackson.databind.node.ArrayNode) mapper
+                .readTree(queue).path("resultList");
+        for (JsonNode row : rows) {
+            ((com.fasterxml.jackson.databind.node.ObjectNode) row).put("isAccepted", true);
+        }
+
+        mockMvc.perform(post("/rest/AccessionValidation").session(session).contentType(MediaType.APPLICATION_JSON)
+                .content("{\"resultList\":" + rows + ",\"paging\":{\"currentPage\":\"1\"}}"))
+                .andExpect(status().isOk());
+        entityManager.flush();
+        entityManager.clear();
+
+        assertEquals(statusService.getStatusID(AnalysisStatus.Finalized), analysisService.get("100").getStatusId());
+        assertNull(resultService.get("100").getValidatedDate());
+        assertNull(resultService.get("101").getValidatedDate());
+    }
+
+    @Test
     public void reEnteringAValidatedPartSendsItBackToTheQueue() throws Exception {
         mockMvc.perform(post("/rest/AccessionValidation/analysis/100/release").session(session)
                 .contentType(MediaType.APPLICATION_JSON).content(row("100", "1010"))).andExpect(status().isOk());

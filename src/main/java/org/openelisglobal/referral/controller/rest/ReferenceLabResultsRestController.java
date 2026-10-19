@@ -48,7 +48,7 @@ public class ReferenceLabResultsRestController extends BaseRestController {
 
     @GetMapping("/referrals")
     public ResponseEntity<List<ReferenceLabReferralDTO>> listReferrals(
-            @RequestParam(name = "view", defaultValue = "outstanding") String view) {
+            @RequestParam(name = "view", defaultValue = "outstanding") String view, HttpServletRequest request) {
         DashboardView parsed;
         try {
             parsed = parseView(view);
@@ -56,7 +56,7 @@ public class ReferenceLabResultsRestController extends BaseRestController {
             return ResponseEntity.badRequest().build();
         }
         try {
-            return ResponseEntity.ok(referenceLabResultsService.getDashboardReferrals(parsed));
+            return ResponseEntity.ok(referenceLabResultsService.getDashboardReferrals(parsed, getSysUserId(request)));
         } catch (Exception e) {
             LogEvent.logError(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
@@ -64,9 +64,9 @@ public class ReferenceLabResultsRestController extends BaseRestController {
     }
 
     @GetMapping("/metrics")
-    public ResponseEntity<ReferenceLabMetricsDTO> metrics() {
+    public ResponseEntity<ReferenceLabMetricsDTO> metrics(HttpServletRequest request) {
         try {
-            return ResponseEntity.ok(referenceLabResultsService.getDashboardMetrics());
+            return ResponseEntity.ok(referenceLabResultsService.getDashboardMetrics(getSysUserId(request)));
         } catch (Exception e) {
             LogEvent.logError(e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();

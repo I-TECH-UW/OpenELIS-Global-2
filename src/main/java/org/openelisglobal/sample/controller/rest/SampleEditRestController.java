@@ -227,6 +227,9 @@ public class SampleEditRestController extends BaseSampleEntryController {
             @Validated(SampleEdit.class) @RequestBody SampleEditForm form, BindingResult result)
             throws InvocationTargetException, NoSuchMethodException, IllegalAccessException {
         Sample stored = getSample(form.getAccessionNumber());
+        if (stored != null && !sampleLabUnitScopeService.isVisible(getSysUserId(request), stored)) {
+            return ResponseEntity.notFound().build();
+        }
         if (stored != null && StaleSaveGuard.isStale(form.getSampleLastupdated(), stored.getLastupdated())) {
             return staleSaveGuard.conflict("error.order.staleSave", "SAMPLE", stored.getId(), stored.getLastupdated());
         }

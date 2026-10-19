@@ -144,6 +144,9 @@ public class SampleManagementRestController extends BaseRestController {
             LogEvent.logInfo(this.getClass().getName(), "createAliquot", "Creating aliquot from parent: "
                     + form.getParentSampleItemId() + ", quantity: " + form.getQuantityToTransfer());
 
+            if (!sampleLabUnitScopeService.isSampleItemVisible(sysUserId, form.getParentSampleItemId())) {
+                return ResponseEntity.notFound().build();
+            }
             CreateAliquotResponse response = sampleManagementService.createAliquot(form, sysUserId);
 
             LogEvent.logInfo(this.getClass().getName(), "createAliquot",
@@ -195,6 +198,10 @@ public class SampleManagementRestController extends BaseRestController {
                     String.format("Adding %d test(s) to %d sample item(s)", form.getTestIds().size(),
                             form.getSampleItemIds().size()));
 
+            if (!form.getSampleItemIds().stream()
+                    .allMatch(itemId -> sampleLabUnitScopeService.isSampleItemVisible(sysUserId, itemId))) {
+                return ResponseEntity.notFound().build();
+            }
             AddTestsResponse response = sampleManagementService.addTestsToSamples(form, sysUserId);
 
             LogEvent.logInfo(this.getClass().getName(), "addTestsToSamples",
@@ -248,6 +255,9 @@ public class SampleManagementRestController extends BaseRestController {
                     String.format("Cancelling test - analysisId: %s, sampleItemId: %s", form.getAnalysisId(),
                             form.getSampleItemId()));
 
+            if (!sampleLabUnitScopeService.isSampleItemVisible(sysUserId, form.getSampleItemId())) {
+                return ResponseEntity.notFound().build();
+            }
             CancelTestResponse response = sampleManagementService.cancelTest(form, sysUserId);
 
             LogEvent.logInfo(this.getClass().getName(), "cancelTest",

@@ -634,7 +634,33 @@ public class AccessionValidationRestController extends BaseResultValidationContr
                 }
             }
         }
+        clearComponentMarks(analysisIdList, resultUpdateList);
         return new ArrayList<>(withheldAccessions);
+    }
+
+    /**
+     * A test that is released or sent back no longer has components validated on
+     * their own: every mark is cleared, so a later correction re-opens all of its
+     * components alike, whichever order they were first validated in.
+     */
+    private void clearComponentMarks(List<String> settledAnalysisIds, List<Result> resultUpdateList) {
+        ResultService resultService = SpringContext.getBean(ResultService.class);
+        for (String analysisId : settledAnalysisIds) {
+            for (Result stored : resultService.getResultsByAnalysis(analysisService.get(analysisId))) {
+                if (stored.getValidatedDate() == null) {
+                    continue;
+                }
+                Result pending = resultUpdateList.stream().filter(r -> stored.getId().equals(r.getId())).findFirst()
+                        .orElse(null);
+                if (pending != null) {
+                    pending.setValidatedDate(null);
+                } else {
+                    stored.setValidatedDate(null);
+                    stored.setSysUserId(getSysUserId(request));
+                    resultUpdateList.add(stored);
+                }
+            }
+        }
     }
 
     /**

@@ -23,7 +23,14 @@ public interface SampleLabUnitScopeService {
     boolean isVisible(String sysUserId, Sample sample);
 
     /**
-     * True when the order holds an analysis in one of the sections, or none at all.
+     * True when the user may read the order this sample item belongs to; an unknown
+     * item is treated as not visible.
+     */
+    boolean isSampleItemVisible(String sysUserId, String sampleItemId);
+
+    /**
+     * True when the order holds an analysis, on one of its sample items or vector
+     * pools, in one of the sections, or holds no analysis at all.
      */
     boolean belongsToSections(Sample sample, Set<String> sectionIds);
 }
