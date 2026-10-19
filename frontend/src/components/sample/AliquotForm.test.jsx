@@ -236,4 +236,56 @@ describe("Aliquot completion state", () => {
     expect(allocated.textContent).toContain("0.00");
     expect(allocated.textContent).not.toContain("NaN");
   });
+
+  it("saves the quantity typed for an aliquot of a tube with no quantity", async () => {
+    postToOpenElisServer.mockImplementation((url, body, callback) =>
+      callback(200),
+    );
+    const Harness = () => {
+      const [sampleData, setSampleData] = useState({
+        accessionNumber: "ACC-9",
+        sampleItems: [
+          {
+            externalId: "SPEC-9",
+            typeOfSample: "Whole Blood",
+            analysis: [],
+            aliquots: [
+              {
+                id: "SPEC-9.1",
+                externalId: "SPEC-9.1",
+                quantity: 0,
+                analyses: [{ id: "AN-9" }],
+              },
+            ],
+          },
+        ],
+      });
+      return (
+        <SampleItemsDisplay
+          sampleData={sampleData}
+          setSampleData={setSampleData}
+          onSaveSuccess={vi.fn()}
+        />
+      );
+    };
+    renderScreen(<Harness />);
+    await userEvent.click(
+      screen.getByRole("button", { name: /Show Aliquoting/ }),
+    );
+    if (!document.getElementById("aliquot-quantity-0-0")) {
+      await userEvent.click(
+        document.querySelector("button.cds--table-expand__button"),
+      );
+    }
+
+    const quantity = document.getElementById("aliquot-quantity-0-0");
+    await userEvent.clear(quantity);
+    await userEvent.type(quantity, "2");
+    await userEvent.click(
+      screen.getByRole("button", { name: "Save Aliquot Changes" }),
+    );
+
+    const body = JSON.parse(postToOpenElisServer.mock.calls[0][1]);
+    expect(body.sampleItems[0].aliquots[0].quantity).toBe(2);
+  });
 });

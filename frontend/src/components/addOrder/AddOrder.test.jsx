@@ -238,6 +238,11 @@ describe("AddOrder — order-level label aggregation (OGC-285 M5b)", () => {
     expect(
       within(tables[1]).getByRole("rowheader", { name: "Sample 2: Urine" }),
     ).toBeInTheDocument();
+    expect(
+      within(tables[1]).getByRole("spinbutton", {
+        name: /^Sample 2: Urine Specimen Label quantity$/,
+      }),
+    ).toBeInTheDocument();
   });
 
   test("does not render the section when no sample carries tests", () => {
@@ -271,7 +276,7 @@ describe("AddOrder — order-level label aggregation (OGC-285 M5b)", () => {
     // Edit a sample-label quantity (Sample 1 / Specimen Label) to 4.
     const tables = screen.getAllByRole("table");
     const sampleInput = within(tables[1]).getByRole("spinbutton", {
-      name: /Sample 1 Specimen Label quantity/i,
+      name: /Sample 1: Blood Specimen Label quantity/i,
     });
     fireEvent.change(sampleInput, { target: { value: "4" } });
 

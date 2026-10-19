@@ -9599,6 +9599,7 @@
   "orderEntry.labels.orderRow.header": "Order",
   "orderEntry.labels.sampleRow.header": "Sample {number}",
   "orderEntry.labels.input.sample": "Sample {number} {column} quantity",
+  "orderEntry.labels.input.sampleNamed": "{sample} {column} quantity",
   "orderEntry.labels.source.test": "From test",
   "orderEntry.labels.source.presetDefault": "Preset default",
   "orderEntry.labels.source.saved": "Saved",
