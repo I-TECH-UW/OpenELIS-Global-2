@@ -192,6 +192,30 @@ public class OrderLabUnitScopeIntegrationTest extends BaseWebContextSensitiveTes
         }
     }
 
+    /**
+     * A vector order's analyses hang off its pools rather than a sample item; they
+     * still decide which lab units read the order.
+     */
+    @Test
+    public void aVectorOrderIsScopedByTheAnalysesOnItsPools() {
+        JdbcTemplate jdbc = new JdbcTemplate(dataSource);
+        jdbc.update(
+                "INSERT INTO clinlims.vector_pool (id, sample_id, active, lastupdated) VALUES (98701, 2, true, NOW())");
+        jdbc.update("UPDATE clinlims.analysis SET sampitem_id = NULL, vector_pool_id = 98701, test_sect_id = 1"
+                + " WHERE id = 2");
+        try {
+            userHoldsSections(TB_SECTION);
+            assertTrue("the pool's analysis is in the user's unit",
+                    scopeService.isVisible(USER_ID, sample(OTHER_LAB_NUMBER)));
+            userHoldsSections("2");
+            assertFalse(scopeService.isVisible(USER_ID, sample(OTHER_LAB_NUMBER)));
+        } finally {
+            jdbc.update("UPDATE clinlims.analysis SET sampitem_id = 602, vector_pool_id = NULL, test_sect_id = 2"
+                    + " WHERE id = 2");
+            jdbc.update("DELETE FROM clinlims.vector_pool WHERE id = 98701");
+        }
+    }
+
     @Test
     public void writesOnAnOrderOutsideTheUsersUnitsAreRefused() throws Exception {
         userHoldsSections(TB_SECTION);

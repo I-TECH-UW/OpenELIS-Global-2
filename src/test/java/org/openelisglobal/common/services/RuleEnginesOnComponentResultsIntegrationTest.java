@@ -103,6 +103,17 @@ public class RuleEnginesOnComponentResultsIntegrationTest extends BaseWebContext
     }
 
     @Test
+    public void aCtThatLeavesAndReentersTheRangeOrdersTheReflexTestOnce() {
+        newOrder("20");
+        assertEquals(1, runReflexes().size());
+        jdbc.update("UPDATE clinlims.result SET value = '30' WHERE id = ?", ctResult);
+        assertTrue(runReflexes().isEmpty());
+        jdbc.update("UPDATE clinlims.result SET value = '20' WHERE id = ?", ctResult);
+        assertTrue("the reflex test is already on the order", runReflexes().isEmpty());
+        assertEquals(1, rsvAnalyses());
+    }
+
+    @Test
     public void aCalculationReadingACtComponentComputesFromItsValue() {
         newOrder("20");
         List<Analysis> added = inTransaction(() -> new TestCalculatedUtil()
