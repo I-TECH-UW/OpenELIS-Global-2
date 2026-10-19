@@ -33,7 +33,6 @@ import org.openelisglobal.address.valueholder.AddressPart;
 import org.openelisglobal.address.valueholder.PersonAddress;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
-import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.common.rest.provider.bean.PatientInfoBean;
@@ -96,16 +95,12 @@ import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.storage.dao.SampleStorageAssignmentDAO;
 import org.openelisglobal.storage.service.SampleStorageService;
 import org.openelisglobal.storage.valueholder.SampleStorageAssignment;
-import org.openelisglobal.systemuser.controller.UnifiedSystemUserController;
 import org.openelisglobal.systemuser.service.SystemUserService;
-import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.dto.TestSelectionDTO;
 import org.openelisglobal.test.service.TestSectionService;
 import org.openelisglobal.testmethod.service.TestMethodService;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
-import org.openelisglobal.userrole.service.UserRoleService;
-import org.openelisglobal.userrole.valueholder.UserLabUnitRoles;
 import org.openelisglobal.vector.service.VectorPoolService;
 import org.openelisglobal.vector.service.VectorSamplingSiteService;
 import org.openelisglobal.vector.valueholder.VectorPool;
@@ -229,13 +224,7 @@ public class OrderSearchRestController extends BaseRestController {
     private PanelService panelService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private TestSectionService testSectionService;
-
-    @Autowired
-    private UserRoleService userRoleService;
 
     @Autowired
     private VectorSamplingSiteService vectorSamplingSiteService;
@@ -418,7 +407,7 @@ public class OrderSearchRestController extends BaseRestController {
             }
             boolean createdByCurrentUser = currentSysUserId != null && currentSysUserId.equals(sample.getSysUserId());
             if (!allowedSectionIds.isEmpty() && !createdByCurrentUser
-                    && !sampleBelongsToSections(sample, allowedSectionIds)) {
+                    && !sampleLabUnitScopeService.belongsToSections(sample, allowedSectionIds)) {
                 continue;
             }
             if (!searchLower.isEmpty() && !matchesSearch(sample, searchLower)) {
@@ -1878,54 +1867,6 @@ public class OrderSearchRestController extends BaseRestController {
     private boolean recentOrderSectionScopingDisabled() {
         return "false".equalsIgnoreCase(
                 ConfigurationProperties.getInstance().getPropertyValue(RESTRICT_RECENT_ORDERS_PROPERTY));
-    }
-
-    /**
-     * True when lab unit selection is required at login, in which case a
-     * non-admin's resolved section list is the single unit chosen at login rather
-     * than the set of sections they are actually assigned to.
-     */
-    private boolean isLoginLabUnitConstrained() {
-        return ConfigurationProperties.getInstance().isPropertyValueEqual(Property.REQUIRE_LAB_UNIT_AT_LOGIN, "true");
-    }
-
-    /**
-     * True when the user's lab-unit assignments already cover every test section —
-     * a global administrator or a user mapped to {@code AllLabUnits}.
-     */
-    private boolean isGlobalScopeUser(String sysUserId) {
-        if (sysUserId == null) {
-            return false;
-        }
-        if (userRoleService.userInRole(sysUserId, Constants.ROLE_GLOBAL_ADMIN)) {
-            return true;
-        }
-        UserLabUnitRoles labUnitRoles = userService.getUserLabUnitRoles(sysUserId);
-        if (labUnitRoles == null || labUnitRoles.getLabUnitRoleMap() == null) {
-            return false;
-        }
-        return labUnitRoles.getLabUnitRoleMap().stream()
-                .anyMatch(roleMap -> UnifiedSystemUserController.ALL_LAB_UNITS.equals(roleMap.getLabUnit()));
-    }
-
-    /**
-     * Whether any analysis on the sample belongs to one of the allowed sections.
-     * Samples with no analyses yet are treated as belonging everywhere — there is
-     * no section to match against, and hiding them would hide freshly entered
-     * orders.
-     */
-    private boolean sampleBelongsToSections(Sample sample, Set<String> allowedSectionIds) {
-        List<Analysis> analyses = analysisService.getAnalysesBySampleId(sample.getId());
-        if (analyses == null || analyses.isEmpty()) {
-            return true;
-        }
-        for (Analysis analysis : analyses) {
-            String sectionId = analysis.getTestSection() != null ? analysis.getTestSection().getId() : null;
-            if (sectionId != null && allowedSectionIds.contains(sectionId)) {
-                return true;
-            }
-        }
-        return false;
     }
 
     /**

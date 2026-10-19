@@ -135,6 +135,13 @@ public class ReferenceLabResultsServiceImpl implements ReferenceLabResultsServic
 
     @Override
     @Transactional(readOnly = true)
+    public boolean isReferralVisible(String referralId, String sysUserId) {
+        Referral referral = referralDAO.getReferralById(referralId);
+        return referral == null || visibleTo(sysUserId, referral);
+    }
+
+    @Override
+    @Transactional(readOnly = true)
     public ReferenceLabMetricsDTO getDashboardMetrics(String sysUserId) {
         long outstanding = referralDAO.getReferralsByStatus(OUTSTANDING_STATUSES).stream()
                 .filter(r -> visibleTo(sysUserId, r)).count();

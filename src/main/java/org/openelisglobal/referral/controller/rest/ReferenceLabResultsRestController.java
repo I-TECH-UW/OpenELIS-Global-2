@@ -80,6 +80,9 @@ public class ReferenceLabResultsRestController extends BaseRestController {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
+        if (!referenceLabResultsService.isReferralVisible(referralId, getSysUserId(request))) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Referral not found");
+        }
         try {
             referralService.markReferralAsLost(referralId, body.getReason(), getSysUserId(request));
             return ResponseEntity.noContent().build();
@@ -94,6 +97,9 @@ public class ReferenceLabResultsRestController extends BaseRestController {
     @PutMapping("/referrals/{referralId}/accept")
     @PreAuthorize("hasAnyRole('RESULTS', 'VALIDATION', 'ADMIN')")
     public ResponseEntity<?> acceptReferral(@PathVariable String referralId, HttpServletRequest request) {
+        if (!referenceLabResultsService.isReferralVisible(referralId, getSysUserId(request))) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Referral not found");
+        }
         try {
             referenceLabResultsService.acceptReferral(referralId, getSysUserId(request));
             return ResponseEntity.noContent().build();
@@ -114,6 +120,9 @@ public class ReferenceLabResultsRestController extends BaseRestController {
         if (result.hasErrors()) {
             return ResponseEntity.badRequest().body(result.getAllErrors());
         }
+        if (!referenceLabResultsService.isReferralVisible(referralId, getSysUserId(request))) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Referral not found");
+        }
         try {
             referralService.markReferralRejected(referralId, body.getReasonCode(), body.getReasonText(),
                     getSysUserId(request));
@@ -132,6 +141,9 @@ public class ReferenceLabResultsRestController extends BaseRestController {
     @PreAuthorize("hasAnyRole('RESULTS', 'VALIDATION', 'ADMIN')")
     public ResponseEntity<?> notifyReferenceLab(@PathVariable String referralId,
             @RequestBody(required = false) NotifyRequest body, HttpServletRequest request) {
+        if (!referenceLabResultsService.isReferralVisible(referralId, getSysUserId(request))) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Referral not found");
+        }
         try {
             String message = body == null ? null : body.getMessage();
             referralService.nudgeReferenceLab(referralId, message, getSysUserId(request));

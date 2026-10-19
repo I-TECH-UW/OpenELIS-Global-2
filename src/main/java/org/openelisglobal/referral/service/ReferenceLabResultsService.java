@@ -21,6 +21,12 @@ public interface ReferenceLabResultsService {
     ReferenceLabMetricsDTO getDashboardMetrics(String sysUserId);
 
     /**
+     * Whether the user may act on the referral, by the lab units of its order. An
+     * unknown referral answers true, so the action itself reports it missing.
+     */
+    boolean isReferralVisible(String referralId, String sysUserId);
+
+    /**
      * Accept a returned referral (OGC-803): live-read the results from the remote
      * FHIR store, post them to the originating Analysis, then mark the referral
      * reconciled. This is the reception gate — nothing reaches the patient record

@@ -3,6 +3,7 @@ package org.openelisglobal.sample.controller.rest;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.hamcrest.CoreMatchers.hasItems;
 import static org.hamcrest.CoreMatchers.not;
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -197,7 +198,7 @@ public class OrderLabUnitScopeIntegrationTest extends BaseWebContextSensitiveTes
      * still decide which lab units read the order.
      */
     @Test
-    public void aVectorOrderIsScopedByTheAnalysesOnItsPools() {
+    public void aVectorOrderIsScopedByTheAnalysesOnItsPools() throws Exception {
         JdbcTemplate jdbc = new JdbcTemplate(dataSource);
         jdbc.update(
                 "INSERT INTO clinlims.vector_pool (id, sample_id, active, lastupdated) VALUES (98701, 2, true, NOW())");
@@ -207,8 +208,12 @@ public class OrderLabUnitScopeIntegrationTest extends BaseWebContextSensitiveTes
             userHoldsSections(TB_SECTION);
             assertTrue("the pool's analysis is in the user's unit",
                     scopeService.isVisible(USER_ID, sample(OTHER_LAB_NUMBER)));
+            mockMvc.perform(asUser(get("/rest/order/dashboard"))).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.orders[*].labNumber").value(hasItem(OTHER_LAB_NUMBER)));
             userHoldsSections("2");
             assertFalse(scopeService.isVisible(USER_ID, sample(OTHER_LAB_NUMBER)));
+            mockMvc.perform(asUser(get("/rest/order/dashboard"))).andExpect(status().isOk())
+                    .andExpect(jsonPath("$.orders[*].labNumber").value(not(hasItem(OTHER_LAB_NUMBER))));
         } finally {
             jdbc.update("UPDATE clinlims.analysis SET sampitem_id = 602, vector_pool_id = NULL, test_sect_id = 2"
                     + " WHERE id = 2");
@@ -230,6 +235,31 @@ public class OrderLabUnitScopeIntegrationTest extends BaseWebContextSensitiveTes
         assertTrue(scopeService.isSampleItemVisible(USER_ID, "601"));
         assertFalse(scopeService.isSampleItemVisible(USER_ID, "602"));
         assertFalse("an unknown item is not visible", scopeService.isSampleItemVisible(USER_ID, "999999"));
+    }
+
+    /**
+     * The Aliquot screen names an order and the tubes to split. A tube of another
+     * order, named under an unknown order or under the user's own one, is refused
+     * and left as it was.
+     */
+    @Test
+    public void anAliquotOfATubeOutsideTheNamedOrderIsRefused() throws Exception {
+        JdbcTemplate jdbc = new JdbcTemplate(dataSource);
+        jdbc.update("UPDATE clinlims.sample_item SET external_id = 'SCOPE-TUBE-602' WHERE id = 602");
+        userHoldsSections(TB_SECTION);
+
+        for (String accessionNumber : new String[] { "NO-SUCH-ORDER-4757", TB_LAB_NUMBER }) {
+            mockMvc.perform(asUser(post("/rest/Aliquot")).contentType(MediaType.APPLICATION_JSON)
+                    .content("{\"accessionNumber\":\"" + accessionNumber + "\",\"sampleItems\":[{\"externalId\":"
+                            + "\"SCOPE-TUBE-602\",\"aliquots\":[{\"externalId\":\"SCOPE-TUBE-602.1\",\"quantity\":1,"
+                            + "\"analyses\":[\"2\"]}]}]}"))
+                    .andExpect(status().isOk()).andExpect(jsonPath("$.errors").exists())
+                    .andExpect(jsonPath("$.success").doesNotExist());
+        }
+        assertEquals("the tube is not voided", Boolean.FALSE, jdbc.queryForObject(
+                "SELECT COALESCE(voided, false) FROM clinlims.sample_item WHERE id = 602", Boolean.class));
+        assertEquals("no aliquot is created", Integer.valueOf(0), jdbc.queryForObject(
+                "SELECT COUNT(*) FROM clinlims.sample_item WHERE external_id = 'SCOPE-TUBE-602.1'", Integer.class));
     }
 
     /**

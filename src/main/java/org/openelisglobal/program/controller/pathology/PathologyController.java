@@ -25,6 +25,7 @@ import org.openelisglobal.program.valueholder.pathology.PathologyBlock;
 import org.openelisglobal.program.valueholder.pathology.PathologyCaseViewDisplayItem;
 import org.openelisglobal.program.valueholder.pathology.PathologyDisplayItem;
 import org.openelisglobal.program.valueholder.pathology.PathologyRequest;
+import org.openelisglobal.program.valueholder.pathology.PathologySample;
 import org.openelisglobal.program.valueholder.pathology.PathologySample.PathologyStatus;
 import org.openelisglobal.program.valueholder.pathology.PathologySlide;
 import org.openelisglobal.systemuser.service.SystemUserService;
@@ -210,6 +211,10 @@ public class PathologyController extends BaseRestController {
     @ResponseBody
     public ResponseEntity<?> deactivateBlock(@PathVariable("blockId") Integer blockId,
             @RequestBody(required = false) DeactivationRequest body, HttpServletRequest request) {
+        PathologySample owner = pathologySampleService.getCaseOfBlock(blockId);
+        if (owner != null) {
+            programSampleLabUnitScope.requireVisible(getSysUserId(request), owner);
+        }
         return pathologySampleService.deactivateBlock(blockId, reasonFrom(body), getSysUserId(request))
                 .<ResponseEntity<?>>map(block -> ResponseEntity.ok(toMap(block))).orElseGet(() -> ResponseEntity
                         .status(HttpStatus.NOT_FOUND).body(Map.of("error", "No pathology block with id " + blockId)));
@@ -219,6 +224,10 @@ public class PathologyController extends BaseRestController {
     @ResponseBody
     public ResponseEntity<?> deactivateSlide(@PathVariable("slideId") Integer slideId,
             @RequestBody(required = false) DeactivationRequest body, HttpServletRequest request) {
+        PathologySample owner = pathologySampleService.getCaseOfSlide(slideId);
+        if (owner != null) {
+            programSampleLabUnitScope.requireVisible(getSysUserId(request), owner);
+        }
         return pathologySampleService.deactivateSlide(slideId, reasonFrom(body), getSysUserId(request))
                 .<ResponseEntity<?>>map(slide -> ResponseEntity.ok(toMap(slide))).orElseGet(() -> ResponseEntity
                         .status(HttpStatus.NOT_FOUND).body(Map.of("error", "No pathology slide with id " + slideId)));

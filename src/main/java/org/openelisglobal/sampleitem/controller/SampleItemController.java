@@ -3,6 +3,7 @@ package org.openelisglobal.sampleitem.controller;
 import jakarta.servlet.http.HttpServletRequest;
 import java.util.*;
 import org.apache.commons.beanutils.BeanUtils;
+import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisService;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.controller.BaseController;
@@ -105,21 +106,28 @@ public class SampleItemController extends BaseController {
 
             String accessionNumber = form.getAccessionNumber();
             Sample order = sampleService.getSampleByAccessionNumber(accessionNumber);
-            if (order != null && !sampleLabUnitScopeService.isVisible(getSysUserId(request), order)) {
+            if (order == null || GenericValidator.isBlankOrNull(order.getId())
+                    || !sampleLabUnitScopeService.isVisible(getSysUserId(request), order)) {
                 response.put("errors", List.of("Sample not found"));
                 return response;
             }
             List<SampleItemAliquotForm.SampleItem> sampleItems = form.getSampleItems();
-
+            List<SampleItem> tubes = new ArrayList<>();
             for (SampleItemAliquotForm.SampleItem sampleItem : sampleItems) {
                 String sampleItemExternalId = sampleItem.getExternalId();
                 List<SampleItem> dbSampleItems = sampleItemService.getSampleItemsByExternalID(sampleItemExternalId);
                 SampleItem lastSampleItem = dbSampleItems.isEmpty() ? null : dbSampleItems.getLast();
-
-                if (lastSampleItem == null) {
+                if (lastSampleItem == null || lastSampleItem.getSample() == null
+                        || !order.getId().equals(lastSampleItem.getSample().getId())) {
                     response.put("errors", List.of("Sample item not found for external ID: " + sampleItemExternalId));
                     return response;
                 }
+                tubes.add(lastSampleItem);
+            }
+
+            for (int index = 0; index < sampleItems.size(); index++) {
+                SampleItemAliquotForm.SampleItem sampleItem = sampleItems.get(index);
+                SampleItem lastSampleItem = tubes.get(index);
                 List<SampleItem> sampleItemsToInsert = new ArrayList<>();
                 List<List<String>> analysisGroups = new ArrayList<>();
 
