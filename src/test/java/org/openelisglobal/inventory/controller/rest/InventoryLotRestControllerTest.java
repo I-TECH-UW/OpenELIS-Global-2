@@ -4,7 +4,6 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.times;
@@ -204,12 +203,12 @@ public class InventoryLotRestControllerTest {
 
         assertEquals(400, response.getStatusCode().value());
         assertEquals("Lot LOT-6 cannot be set to DISPOSED here; use dispose or adjust", body(response).get("error"));
-        verify(inventoryLotService, never()).editLot(any(), any());
+        verify(inventoryLotService, never()).update(any());
     }
 
     private InventoryLot updatedLot() {
         ArgumentCaptor<InventoryLot> captor = ArgumentCaptor.forClass(InventoryLot.class);
-        verify(inventoryLotService).editLot(captor.capture(), eq("7"));
+        verify(inventoryLotService).update(captor.capture());
         return captor.getValue();
     }
 

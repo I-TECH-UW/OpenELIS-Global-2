@@ -299,7 +299,7 @@ public class InventoryLotRestController extends BaseRestController {
                 lot.setInventoryItem(managedItem);
             }
 
-            InventoryLot updatedLot = inventoryLotService.editLot(lot, sysUserId);
+            InventoryLot updatedLot = inventoryLotService.update(lot);
             return ResponseEntity.ok(updatedLot);
         } catch (LocalizedValidationException e) {
             return ResponseEntity.badRequest().body(InventoryErrorBody.localized(e));
