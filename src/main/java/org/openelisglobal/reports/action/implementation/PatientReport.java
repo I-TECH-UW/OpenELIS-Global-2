@@ -635,7 +635,14 @@ public abstract class PatientReport extends Report {
             if (sampleCompleteMap != null) {
                 sampleCompleteMap.put(convertToAlphaNumericDisplay(currentSample), Boolean.FALSE);
             }
-            setEmptyResult(data);
+            List<TestResultComponent> activeComponents = SpringContext.getBean(TestResultComponentService.class)
+                    .getActiveComponentsByTestId(test.getId());
+            if (activeComponents.size() > 1 && SpringContext.getBean(IStatusService.class)
+                    .matches(analysisService.getStatusId(currentAnalysis), AnalysisStatus.TechnicalAcceptance)) {
+                buildMultiComponentRow(resultList, activeComponents, data, true);
+            } else {
+                setEmptyResult(data);
+            }
         } else {
             if (resultList.isEmpty()) {
                 setEmptyResult(data);
@@ -984,6 +991,18 @@ public abstract class PatientReport extends Report {
      */
     private void buildMultiComponentRow(List<Result> resultList, List<TestResultComponent> components,
             ClinicalPatientData data) {
+        buildMultiComponentRow(resultList, components, data, false);
+    }
+
+    /**
+     * @param validatedOnly the analysis is not released yet: its components are
+     *                      validated one by one, so a component prints its value
+     *                      only once it was validated on its own and otherwise
+     *                      prints its own status, awaiting validation with a value
+     *                      and in progress without one
+     */
+    private void buildMultiComponentRow(List<Result> resultList, List<TestResultComponent> components,
+            ClinicalPatientData data, boolean validatedOnly) {
         ResultService resultResultService = SpringContext.getBean(ResultService.class);
         ResultLimitService resultLimitService = SpringContext.getBean(ResultLimitService.class);
         UnitOfMeasureService unitOfMeasureService = SpringContext.getBean(UnitOfMeasureService.class);
@@ -1011,13 +1030,18 @@ public abstract class PatientReport extends Report {
             }
             String componentValue = componentResults.isEmpty() ? null
                     : formatComponentResults(component, componentResults, resultResultService);
+            String status = null;
             if (GenericValidator.isBlankOrNull(componentValue)) {
-                results.append(component.getLabel()).append(": ")
-                        .append(MessageUtil.getMessage("report.test.status.inProgress")).append("\n");
+                status = componentInProgressText();
+            } else if (validatedOnly
+                    && componentResults.stream().noneMatch(result -> result.getValidatedDate() != null)) {
+                status = componentAwaitingValidationText();
+            }
+            if (status != null) {
+                results.append(component.getLabel()).append(": ").append(status).append("\n");
                 uoms.append("\n");
                 ranges.append("\n");
-                lines.add(new ReportComponentLine(component.getLabel(),
-                        MessageUtil.getMessage("report.test.status.inProgress"), "", "", ""));
+                lines.add(new ReportComponentLine(component.getLabel(), status, "", "", ""));
                 continue;
             }
             Result first = componentResults.get(0);
@@ -1055,6 +1079,19 @@ public abstract class PatientReport extends Report {
             data.setAbnormalResult(Boolean.TRUE);
             data.setAlerts(" <b>" + ResultAlertFlags.ABNORMAL + "</b>");
         }
+    }
+
+    /** What a component without a result prints in place of its value. */
+    protected String componentInProgressText() {
+        return MessageUtil.getMessage("report.test.status.inProgress");
+    }
+
+    /**
+     * What a component whose value is entered but not validated prints in place of
+     * its value.
+     */
+    protected String componentAwaitingValidationText() {
+        return MessageUtil.getMessage("report.test.status.waitingValidation");
     }
 
     private static void trimTrailingNewline(StringBuilder builder) {

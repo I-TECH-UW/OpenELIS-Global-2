@@ -507,6 +507,18 @@ public class PatientCILNSPClinical_vreduit extends PatientReport implements IRep
         return messages.get("dashboard.in.progress.label");
     }
 
+    /** A component without a result reads as an unreleased test row does. */
+    @Override
+    protected String componentInProgressText() {
+        return messages.get("dashboard.in.progress.label");
+    }
+
+    /** A component awaiting validation reads as an unreleased test row does. */
+    @Override
+    protected String componentAwaitingValidationText() {
+        return messages.get("report.patient.awaitingValidation");
+    }
+
     @Override
     protected void setReferredOutResult(ClinicalPatientData data) {
         data.setAlerts("R");
