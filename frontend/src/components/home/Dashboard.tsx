@@ -554,7 +554,11 @@ const HomeDashBoard: React.FC<DashBoardProps> = () => {
               <ClickableTile
                 key={index}
                 className="dashboard-tile"
-                onClick={() => handleMaximizeClick(tile)}
+                onClick={() =>
+                  tile.type === "UN_PRINTED_RESULTS"
+                    ? navigate("/ReportPrintQueue?type=patient")()
+                    : handleMaximizeClick(tile)
+                }
               >
                 {TileIcon && (
                   <div className="tile-leading-icon">
