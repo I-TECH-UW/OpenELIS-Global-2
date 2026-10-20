@@ -136,6 +136,64 @@ test("a pull request run on the same commit cannot block or authorize publicatio
     /Timed out/,
   );
 });
+test("a GitHub API timeout is retried, a refused request is not", async () => {
+  // Run 39466371613 ended with "We couldn't respond to your request in time".
+  const flaky = (status) => {
+    let calls = 0;
+    return {
+      async listWorkflowRunsForRepo(request) {
+        calls++;
+        if (calls === 1) {
+          throw Object.assign(new Error("We couldn't respond in time"), {
+            status,
+          });
+        }
+        return workflowRuns.listWorkflowRunsForRepo(request);
+      },
+    };
+  };
+  const attempt = (actions) => {
+    let clock = 0;
+    return wait({
+      owner: "test",
+      repo: "test",
+      sha,
+      buildRunId: 123,
+      buildRunAttempt: 2,
+      core: { info() {} },
+      github: {
+        rest: {
+          actions,
+          repos: {
+            async listCommitStatusesForRef() {
+              return { data: [{ context: buildContext, state: "success" }] };
+            },
+          },
+          checks: {
+            async listForRef(request) {
+              return {
+                data: {
+                  check_runs: [
+                    { ...backend("success"), name: request.check_name },
+                  ],
+                },
+              };
+            },
+          },
+        },
+      },
+      timeoutMs: 5,
+      pollMs: 1,
+      now: () => clock,
+      sleep: async () => {
+        clock++;
+      },
+    });
+  };
+  await attempt(flaky(504));
+  await attempt(flaky(undefined));
+  await assert.rejects(attempt(flaky(403)), /couldn't respond/);
+});
 test("a missing source build identity fails closed", async () => {
   await assert.rejects(wait({ sha }), /requires the source build/);
 });
