@@ -453,6 +453,21 @@ public class AnalyzerMappingConfirmationServiceTest {
                 service.getStatus(candidate, RECOGNITION_FINGERPRINT).state());
     }
 
+    @Test
+    public void aConfirmationTakenWhileTheBridgeCannotServeTheProfileIsSavedWithoutReadings() {
+        when(profileCatalogService.getProfile("site.mock-analyzer", 2))
+                .thenThrow(new BridgeProfileCatalogException("Bridge catalog unreachable"));
+
+        AnalyzerMappingConfirmationView confirmed = service.confirm(completeCandidate("61", BINDING_FINGERPRINT),
+                RECOGNITION_FINGERPRINT, exactRequest(), "17");
+
+        ArgumentCaptor<AnalyzerMappingConfirmation> saved = ArgumentCaptor.forClass(AnalyzerMappingConfirmation.class);
+        verify(confirmationDAO).insert(saved.capture());
+        assertEquals(AnalyzerMappingConfirmationView.State.CURRENT, confirmed.state());
+        assertNull(saved.getValue().getReadingsFingerprint());
+        assertNull(saved.getValue().getRowReadingsJson());
+    }
+
     /** A first confirmation of the complete candidate, as saved. */
     private AnalyzerMappingConfirmation confirmed() {
         service.confirm(completeCandidate("61", BINDING_FINGERPRINT), RECOGNITION_FINGERPRINT, exactRequest(), "17");
