@@ -84,14 +84,17 @@ public class AnalyzerMappingConfirmationServiceImpl implements AnalyzerMappingCo
                     "Confirmation rows must exactly match the current mapping decisions");
         }
 
-        ServedReading served = served(context.profile);
+        Optional<ServedReading> served = servedIfReadable(context.profile);
         Optional<AnalyzerMappingConfirmation> existing = confirmationDAO.findByMappingId(candidate.mapping().getId());
         if (existing.isPresent()) {
-            return confirmAgain(existing.get(), context, served, effectiveActor);
+            return served.map(reading -> confirmAgain(existing.get(), context, reading, effectiveActor))
+                    .orElseGet(() -> toView(existing.get(), AnalyzerMappingConfirmationView.State.CURRENT));
         }
 
         AnalyzerMappingConfirmation confirmation = new AnalyzerMappingConfirmation();
-        keep(confirmation, served);
+        // Without the served profile the confirmation takes its readings later, from
+        // the file it confirmed.
+        served.ifPresent(reading -> keep(confirmation, reading));
         confirmation.setMapping(candidate.mapping());
         confirmation.setProfileId(context.profile.getProfileId());
         confirmation.setProfileRevision(context.profile.getProfileRevision());
@@ -258,6 +261,16 @@ public class AnalyzerMappingConfirmationServiceImpl implements AnalyzerMappingCo
                 .map(AnalyzerMappingConfirmationServiceImpl::key)
                 .filter(row -> !Objects.equals(stored.get(row), served.rows().get(row))).collect(Collectors.toSet());
         return new AnalyzerConfirmationReading(typeChanged, changed);
+    }
+
+    private Optional<ServedReading> servedIfReadable(AnalyzerProfilePin pin) {
+        try {
+            return Optional.of(served(pin));
+        } catch (BridgeProfileCatalogException | IllegalArgumentException exception) {
+            LogEvent.logWarn(getClass().getSimpleName(), "servedIfReadable",
+                    "The served profile could not be read: " + exception.getMessage());
+            return Optional.empty();
+        }
     }
 
     private ServedReading served(AnalyzerProfilePin pin) {
