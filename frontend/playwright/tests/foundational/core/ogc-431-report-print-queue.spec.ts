@@ -124,7 +124,12 @@ test("a released order is queued, printed as version 1, archived and reprinted",
 
   await test.step("before release the lookup finds it with nothing to print", async () => {
     const row = await queueRow(page, accession);
-    await expect(row).toContainText("Not printed");
+    // "Not issued" in en.json; a regional overlay keeps "Not printed" until Transifex syncs.
+    await expect(row).toContainText(/Not (issued|printed)/);
+    // The tag repeats its text in a hidden definition tooltip.
+    await expect(
+      row.getByTestId(`nothing-released-${accession}`),
+    ).toContainText("Nothing released yet on this order");
     await expect(
       row.getByRole("button", { name: "Print", exact: true }),
     ).toBeDisabled();
@@ -136,7 +141,7 @@ test("a released order is queued, printed as version 1, archived and reprinted",
     const released = await queueRow(page, accession);
     await expect(released).toContainText("Final");
     await expect(released).toContainText("Unprinted");
-    await expect(released).toContainText("Not printed");
+    await expect(released).toContainText(/Not (issued|printed)/);
     return released;
   });
 
@@ -198,13 +203,57 @@ test("the home dashboard's unprinted results tile opens the queue", async ({
   await page.goto("/", { waitUntil: "domcontentloaded", timeout: NAV_TIMEOUT });
   const tile = page.getByText("UnPrinted Results Today");
   await expect(tile).toBeVisible({ timeout: UI_TIMEOUT });
+  // The queue lists as soon as it mounts, so listen before the click.
+  const listed = page.waitForResponse(
+    (response) =>
+      response.url().includes("/rest/reportQueue?") &&
+      response.url().includes("printStatus=UNPRINTED"),
+  );
   await tile.click();
-  await expect(page).toHaveURL(/\/ReportPrintQueue\?type=patient/, {
-    timeout: UI_TIMEOUT,
+  await expect(page).toHaveURL(
+    /\/ReportPrintQueue\?type=patient&printStatus=unprinted/,
+    { timeout: UI_TIMEOUT },
+  );
+  await expect(
+    page.getByRole("heading", { name: "Report Print Queue" }),
+  ).toBeVisible({ timeout: UI_TIMEOUT });
+  await listed;
+  // "Print status" is also a column header; the filter is the combobox,
+  // whose title is the selected item (its text adds the icon's label).
+  await expect(
+    page.getByRole("combobox", { name: "Print status" }),
+  ).toHaveAttribute("title", "Unprinted", { timeout: UI_TIMEOUT });
+});
+
+test("a lab number range whose end comes first is refused on the page", async ({
+  page,
+}) => {
+  await page.goto("/ReportPrintQueue", {
+    waitUntil: "domcontentloaded",
+    timeout: NAV_TIMEOUT,
   });
   await expect(
     page.getByRole("heading", { name: "Report Print Queue" }),
   ).toBeVisible({ timeout: UI_TIMEOUT });
+  // The toggle's label sits over the switch and takes the click.
+  await page.locator('label[for="queue-lab-range"]').click();
+  await expect(page.getByRole("switch", { name: "Range" })).toBeChecked();
+  const from = page.getByRole("textbox", { name: "Lab Number", exact: true });
+  const to = page.getByRole("textbox", { name: "To lab number" });
+  await from.fill("DEV01260000000000900");
+  await to.fill("DEV01260000000000100");
+  await to.press("Enter");
+
+  await expect(
+    page.getByText("The To lab number is before the From lab number"),
+  ).toBeVisible({ timeout: UI_TIMEOUT });
+  await expect(page.getByTestId("active-search")).toHaveCount(0);
+
+  const refused = await page.request.get(
+    `${API_PREFIX}/rest/reportQueue?labNo=DEV01260000000000900&labNoTo=DEV01260000000000100`,
+  );
+  expect(refused.status()).toBe(400);
+  expect((await refused.json()).code).toBe("labRangeReversed");
 });
 
 test.describe("as a user without the Reports role", () => {
