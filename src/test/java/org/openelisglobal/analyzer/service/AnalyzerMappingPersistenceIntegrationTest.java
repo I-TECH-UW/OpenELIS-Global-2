@@ -159,8 +159,11 @@ public class AnalyzerMappingPersistenceIntegrationTest extends BaseWebContextSen
             String profileId = "site.persistence." + UUID.randomUUID();
             AnalyzerMappingService mappingService = mappingService(testService, testResultService,
                     mappingCatalogService, auditTrailService, profileId);
+            BridgeProfileCatalogService servedProfiles = mock(BridgeProfileCatalogService.class);
+            when(servedProfiles.getProfile(profileId, 1)).thenReturn(new BridgeProfileCatalog.ProfileRevision(
+                    profile(profileId), new ObjectMapper().createObjectNode()));
             AnalyzerMappingConfirmationService confirmationService = new AnalyzerMappingConfirmationServiceImpl(
-                    confirmationDAO, auditTrailService, systemUserService, mappingCatalogService);
+                    confirmationDAO, auditTrailService, systemUserService, mappingCatalogService, servedProfiles);
 
             Analyzer analyzer = insertAnalyzer("Persistence analyzer", Analyzer.AnalyzerStatus.VALIDATION);
             AnalyzerMappingSnapshot initial = mappingService.assignProfile(analyzer, profileId, 1, TEST_SYS_USER_ID);

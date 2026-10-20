@@ -20,4 +20,12 @@ public interface AnalyzerMappingConfirmationService {
             String recognitionFingerprint);
 
     Optional<AnalyzerMappingConfirmation> findForMapping(String mappingId);
+
+    /**
+     * How the served profile reads compared with the analyzer's confirmation, for a
+     * delivery read with the given profile content (null when the Bridge did not
+     * say). Asks the Bridge only when that content is not the one the readings were
+     * taken from; an edit that reads every row alike is remembered.
+     */
+    AnalyzerConfirmationReading readingOnDelivery(AnalyzerMappingSnapshot binding, String deliveredProfileFingerprint);
 }
