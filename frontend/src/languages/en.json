@@ -1389,6 +1389,7 @@
   "audittrail.table.heading.user": "User",
   "audittrail.table.title.patientResults": "Patient Results",
   "availabletests.title": "Available Tests",
+  "availabletests.none": "Every orderable test of the existing samples is already on this order.",
   "back.action.button": "Back",
   "banner.menu.administration": "Admin",
   "banner.menu.alerts": "Alerts",
