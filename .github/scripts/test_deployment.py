@@ -316,6 +316,54 @@ class DeploymentTest(unittest.TestCase):
         self.assertEqual({self.sha, "previous"}, {path.name for path in releases.iterdir()})
         self.assertIn(["docker", "image", "prune", "--all", "--force"], self.commands)
 
+    def test_a_release_the_deploy_user_cannot_delete_is_removed_through_docker_and_never_fails_the_deploy(self):
+        """Run 39466371613 attempt 4 passed readiness and the analyzer smoke, then failed
+        with "[Errno 13] Permission denied: 'backend'" while pruning an old release."""
+        releases = self.root / "releases"
+        (releases / "old").mkdir(parents=True)
+        (releases / "previous").mkdir()
+        (self.target.parent / "target.json").write_text(json.dumps({"release": str(releases / "previous")}))
+        real_rmtree = deployment.shutil.rmtree
+
+        def refuse_old(path, *args, **kwargs):
+            if Path(path).name == "old":
+                raise PermissionError(13, "Permission denied", "backend")
+            return real_rmtree(path, *args, **kwargs)
+
+        self.ready_health()
+        with patch.object(deployment.shutil, "rmtree", side_effect=refuse_old):
+            self.deploy()
+
+        removal = [args for args in self.commands if args[:3] == ["docker", "run", "--rm"]]
+        self.assertEqual(1, len(removal))
+        self.assertIn(f"{releases}:/releases", removal[0])
+        self.assertEqual(["rm", "-rf", "/releases/old"], removal[0][-3:])
+        self.assertTrue((self.target.parent / "target.json").is_file())
+        self.assertIn(["docker", "image", "prune", "--all", "--force"], self.commands)
+
+    def test_a_release_docker_cannot_delete_either_is_left_with_a_warning(self):
+        releases = self.root / "releases"
+        (releases / "old").mkdir(parents=True)
+        self.ready_health()
+
+        def refuse_docker_removal(args, cwd, capture=False, **kwargs):
+            if args[:3] == ["docker", "run", "--rm"]:
+                raise deployment.subprocess.CalledProcessError(1, args)
+            return self.command(args, cwd, capture, **kwargs)
+
+        real_rmtree = deployment.shutil.rmtree
+
+        def refuse_old(path, *args, **kwargs):
+            if Path(path).name == "old":
+                raise PermissionError(13, "Permission denied", "backend")
+            return real_rmtree(path, *args, **kwargs)
+
+        with patch.object(deployment.shutil, "rmtree", side_effect=refuse_old):
+            self.deploy(run=refuse_docker_removal)
+
+        self.assertTrue((self.target.parent / "target.json").is_file())
+        self.assertIn("could not remove old release", (self.diagnostics / "prune-warnings.txt").read_text())
+
     def test_site_settings_read_the_env_file_when_compose_cannot_list_it(self):
         (self.root / ".env").write_text(
             "# site settings\nexport TEST_USER=qa-admin\nTEST_PASS='qa pass'\nASTM_SIMULATOR_HTTP_PORT=\"9085\"\n")
