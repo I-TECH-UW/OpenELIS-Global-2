@@ -105,12 +105,14 @@ is listed in [roadmap.md](roadmap.md).
     about a profile change stops an analyzer.** What protects a result is how
     the profile reads it, checked where the mapping lives, not a hash of the
     profile file (decided 20 October, the user: "no whole-file fingerprint as
-    a gate, Bridge never refuses on content"). A profile reads a code by its
-    unit, result type, parts and their sub-identities, call component,
-    declared values and translations, run-failure values included. It reads
-    every result of the type by its specimen identifier pattern, file column
-    mapping, sheet detection, result value order, record selection, control
-    recognition and sample flags. When an analyzer's mapping is confirmed,
+    a gate, Bridge never refuses on content"). A profile reads a code by the
+    other codes it is sent under (aliases), its unit, result type, parts and
+    their sub-identities, call component, declared values and translations,
+    run-failure values included. It reads every result of the type by how a
+    message is matched to it (identifier and MSH-3 patterns), its file column
+    mapping, sheet detection and result value order, its record declarations
+    (`test_code_values`), control recognition and sample flags. When an
+    analyzer's mapping is confirmed,
     OpenELIS keeps the reading each mapped row was confirmed against and the
     type's reading. When the profile the Bridge serves reads differently:
     - a mapped row whose reading changed, or whose code is gone, holds its
