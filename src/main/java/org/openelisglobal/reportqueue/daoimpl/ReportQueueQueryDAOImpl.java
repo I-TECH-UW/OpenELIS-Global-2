@@ -15,6 +15,7 @@ import java.util.Map;
 import java.util.Optional;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.log.LogEvent;
+import org.openelisglobal.reportqueue.dao.ReleasedNumericResultRecord;
 import org.openelisglobal.reportqueue.dao.ReportQueueCriteria;
 import org.openelisglobal.reportqueue.dao.ReportQueueQueryDAO;
 import org.openelisglobal.reportqueue.dao.ReportQueueRowRecord;
@@ -255,6 +256,83 @@ public class ReportQueueQueryDAOImpl implements ReportQueueQueryDAO {
             LogEvent.logError(e);
             throw new LIMSRuntimeException("Error in ReportQueueQuery isPrinted()", e);
         }
+    }
+
+    @Override
+    public boolean isInScope(Long sampleId, ReportQueueCriteria criteria) {
+        if (criteria.getSectionIds() == null) {
+            return true;
+        }
+        if (criteria.getSectionIds().isEmpty()) {
+            return false;
+        }
+        try {
+            Object count = entityManager
+                    .createNativeQuery("SELECT COUNT(*) FROM clinlims.analysis ax"
+                            + " JOIN clinlims.sample_item six ON six.id = ax.sampitem_id"
+                            + " WHERE six.samp_id = :sampleId AND ax.test_sect_id IN (:sections)")
+                    .setParameter("sampleId", sampleId).setParameter("sections", toLongs(criteria.getSectionIds()))
+                    .getSingleResult();
+            return toLong(count) > 0;
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in ReportQueueQuery isInScope()", e);
+        }
+    }
+
+    private static final String FIRST_RESULTS_SQL = """
+            SELECT * FROM (
+              SELECT DISTINCT ON (a.id) si.samp_id, a.id AS analysis_id, a.test_id, si.typeosamp_id,
+                     (SELECT sh.patient_id FROM clinlims.sample_human sh WHERE sh.samp_id = si.samp_id
+                        ORDER BY sh.id LIMIT 1) AS patient_id,
+                     tr.component_id, r.value, r.result_type
+              FROM clinlims.result r
+              JOIN clinlims.analysis a ON a.id = r.analysis_id
+              JOIN clinlims.sample_item si ON si.id = a.sampitem_id
+              LEFT JOIN clinlims.test_result tr ON tr.id = r.test_result_id
+              WHERE si.samp_id IN (:sampleIds) AND a.status_id = :finalized
+              ORDER BY a.id, r.id
+            ) first
+            WHERE first.result_type = 'N' AND first.value IS NOT NULL AND first.value <> ''
+            ORDER BY first.analysis_id
+            """;
+
+    @Override
+    public List<ReleasedNumericResultRecord> releasedNumericResults(List<Long> sampleIds, String finalizedStatusId) {
+        if (sampleIds == null || sampleIds.isEmpty()) {
+            return new ArrayList<>();
+        }
+        try {
+            @SuppressWarnings("unchecked")
+            List<Object[]> raw = entityManager.createNativeQuery(FIRST_RESULTS_SQL).setParameter("sampleIds", sampleIds)
+                    .setParameter("finalized", new BigDecimal(finalizedStatusId)).getResultList();
+            List<ReleasedNumericResultRecord> records = new ArrayList<>();
+            for (Object[] c : raw) {
+                ReleasedNumericResultRecord record = new ReleasedNumericResultRecord();
+                record.setSampleId(toLong(c[0]));
+                record.setAnalysisId(toLong(c[1]));
+                record.setTestId(idOrNull(c[2]));
+                record.setSampleTypeId(idOrNull(c[3]));
+                record.setPatientId(idOrNull(c[4]));
+                record.setComponentId(idOrNull(c[5]));
+                record.setValue((String) c[6]);
+                records.add(record);
+            }
+            return records;
+        } catch (RuntimeException e) {
+            LogEvent.logError(e);
+            throw new LIMSRuntimeException("Error in ReportQueueQuery releasedNumericResults()", e);
+        }
+    }
+
+    /**
+     * Numeric ids without a scale; a component id is a UUID and comes back as text.
+     */
+    private static String idOrNull(Object value) {
+        if (value == null) {
+            return null;
+        }
+        return value instanceof Number ? String.valueOf(((Number) value).longValue()) : value.toString();
     }
 
     private String sectionScope(ReportQueueCriteria criteria, Map<String, Object> params) {

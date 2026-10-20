@@ -143,7 +143,7 @@ public class ReportQueueServiceTest extends BaseWebContextSensitiveTest {
     }
 
     @Test
-    public void printingCreatesVersionOneArchivedWithItsHashAndTheRowTurnsPrinted() {
+    public void printingCreatesVersionOneArchivedWithItsHashAndTheRowTurnsPrinted() throws Exception {
         PrintOutcome print = reportQueueService.print(SAMPLE, ADMIN).orElseThrow();
 
         assertEquals(1, print.getVersion());
@@ -398,6 +398,74 @@ public class ReportQueueServiceTest extends BaseWebContextSensitiveTest {
         assertEquals(0, page.getRows().size());
         assertEquals(0, page.getTotal());
         assertEquals(0, page.getToPrint());
+    }
+
+    /**
+     * BR-9: the scope that hides a row also closes its detail, its print and its
+     * archived file, whose ids are sequential and easy to guess.
+     */
+    @Test
+    public void aUserWithoutLabUnitsCannotOpenPrintOrDownloadAnOrder() {
+        reportQueueService.print(SAMPLE, ADMIN).orElseThrow();
+        long versionId = jdbcTemplate.queryForObject("SELECT id FROM clinlims.report_version WHERE sample_id = ?",
+                Long.class, SAMPLE);
+        assertTrue(reportQueueService.version(versionId, ADMIN).isPresent());
+        assertTrue(reportQueueService.detail(SAMPLE, ADMIN).isPresent());
+
+        assertTrue(reportQueueService.detail(SAMPLE, USER_WITHOUT_LAB_UNITS).isEmpty());
+        assertTrue(reportQueueService.print(SAMPLE, USER_WITHOUT_LAB_UNITS).isEmpty());
+        assertTrue(reportQueueService.version(versionId, USER_WITHOUT_LAB_UNITS).isEmpty());
+        ReportQueueRequest lookup = new ReportQueueRequest();
+        lookup.setLabNo(LAB_NO);
+        assertEquals("a lab number lookup does not reach outside the user's units either", 0,
+                reportQueueService.list(lookup, USER_WITHOUT_LAB_UNITS).getRows().size());
+        assertEquals("the refused print issued nothing", Integer.valueOf(1), jdbcTemplate.queryForObject(
+                "SELECT count(*) FROM clinlims.report_version WHERE sample_id = ?", Integer.class, SAMPLE));
+    }
+
+    @Test
+    public void anOrderIsInScopeOnlyThroughOneOfItsSections() {
+        ReportQueueCriteria criteria = new ReportQueueCriteria();
+        criteria.setSectionIds(null);
+        assertTrue("no scope means the whole lab", queryDAO.isInScope(SAMPLE, criteria));
+        criteria.setSectionIds(List.of("9301"));
+        assertTrue("the order's own section", queryDAO.isInScope(SAMPLE, criteria));
+        criteria.setSectionIds(List.of("9302"));
+        assertFalse("another section", queryDAO.isInScope(SAMPLE, criteria));
+        criteria.setSectionIds(List.of());
+        assertFalse("no sections at all", queryDAO.isInScope(SAMPLE, criteria));
+    }
+
+    /**
+     * The Critical tag comes from the same BB / EE rule as the report, now from one
+     * query per page instead of a report snapshot per row (NFR-1).
+     */
+    @Test
+    public void aReleasedResultBeyondItsCriticalBoundMarksTheRowCritical() {
+        assertFalse("6.3 is only above normal", row(list("all")).isCritical());
+        jdbcTemplate.update("INSERT INTO clinlims.test_result_component (id, test_id, code, label, display_order,"
+                + " allow_multiple_readings, is_active, lastupdated, is_primary, show_on_report)"
+                + " VALUES ('cba2e26b-537a-417d-ab03-b375e4246daf', 9301, 'GLU', 'Glucose', 1, false, 'Y', now(),"
+                + " true, true)");
+        jdbcTemplate.update("INSERT INTO clinlims.test_result (id, test_id, tst_rslt_type, component_id, lastupdated)"
+                + " VALUES (99301, 9301, 'N', 'cba2e26b-537a-417d-ab03-b375e4246daf', now())");
+        jdbcTemplate.update("UPDATE clinlims.result SET test_result_id = 99301 WHERE id = 9301");
+        assertFalse("a result answering a component (UUID id) is read like any other", row(list("all")).isCritical());
+        jdbcTemplate.update("INSERT INTO clinlims.result_limits (id, test_id, test_result_type_id, min_age, max_age,"
+                + " low_normal, high_normal, low_valid, high_valid, low_reporting_range, high_reporting_range,"
+                + " low_critical, high_critical, always_validate, lastupdated) VALUES (99301, 9301, 4, 0, 'Infinity',"
+                + " 3.5, 5.5, '-Infinity', 'Infinity', '-Infinity', 'Infinity', 2.0, 6.0, false, NOW())");
+
+        assertTrue("6.3 is beyond the critical bound of 6.0", row(list("all")).isCritical());
+    }
+
+    @After
+    public void removeCriticalLimit() {
+        jdbcTemplate.update("DELETE FROM clinlims.result_limits WHERE id = 99301");
+        jdbcTemplate.update("UPDATE clinlims.result SET test_result_id = NULL WHERE test_result_id = 99301");
+        jdbcTemplate.update("DELETE FROM clinlims.test_result WHERE id = 99301");
+        jdbcTemplate
+                .update("DELETE FROM clinlims.test_result_component WHERE id = 'cba2e26b-537a-417d-ab03-b375e4246daf'");
     }
 
     /**

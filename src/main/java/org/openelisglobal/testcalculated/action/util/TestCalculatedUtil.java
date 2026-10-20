@@ -362,7 +362,7 @@ public class TestCalculatedUtil {
             String systemUserId, String externalNote) {
         List<Note> notes = new ArrayList<>();
         Note note = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
-                "Result Succesfully Calculated From Calculation Rule :" + calculatioName, CALCULATION_SUBJECT,
+                "Result Successfully Calculated From Calculation Rule :" + calculatioName, CALCULATION_SUBJECT,
                 systemUserId);
         if (!noteService.duplicateNoteExists(note)) {
             notes.add(note);
