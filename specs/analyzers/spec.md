@@ -87,6 +87,21 @@ is listed in [roadmap.md](roadmap.md).
     test for is held until the lab maps it or marks it Do not receive. The
     profile decides which kind each record is and its evidence page says so;
     OpenELIS never guesses.
+12. **A Bridge reads one shipped set, and a revision is known by its
+    content.** Core ships the baseline profiles and the templates. A Bridge's
+    shipped set is the one in its image or the complete folder a distro points
+    it at (`BRIDGE_PROFILE_CATALOG_SHIPPED_PATTERN`), and then the image's
+    profiles are not read. A distro that keeps its own set copies the core
+    profiles it uses unchanged, under core's ids, and adds its own under its
+    own ids; sets are never merged and a profile is never overridden. A
+    revision is `(profileId, revision, fingerprint)`, the fingerprint a hash of
+    the file's content that the Bridge computes when it publishes or loads a
+    revision; nobody writes it by hand. A copied file is therefore the same
+    revision as its source, and a connection pinned to a revision does not
+    restore on a file whose content changed under the same name. Profiles a
+    lab authors in the UI are the site's own, under `site.` ids, in the
+    Bridge's revision store, and enter a shipped set only when a distro takes
+    them in under an id of its own.
 
 ## Who owns what
 
@@ -95,6 +110,7 @@ is listed in [roadmap.md](roadmap.md).
 | Bridge        | Analyzer profiles (immutable revisions), connections and secrets, protocols and transports (including watching result folders), parsing, control-result recognition, the raw message audit copy, the FHIR bundle it builds, and its own key pair and pairing record. |
 | OpenELIS      | The analyzer record (name, lab units, Bridge connection ID), each analyzer's mapping to the local catalog, placement and review of results, held results, quality control, activation, the bundle copy, and its own key pair and the paired Bridge's fingerprint.    |
 | Analyzer mock | Deterministic instrument behaviour and real ASTM, HL7 and FILE traffic, replayed from vendor-documented messages.                                                                                                                                                    |
+| Distro        | Its complete shipped profile set, kept in its repository with its history: core's profiles copied unchanged under core's ids, its own profiles under its own ids.                                                                                                    |
 
 Production code never branches on a manufacturer, model, profile ID or
 analyzer code. OpenELIS has no file poller and never opens a result file.

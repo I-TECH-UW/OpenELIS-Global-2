@@ -34,10 +34,17 @@ A change that breaks a rule is wrong even if its step's Done-when passes.
    distro's profile may also cite the distro catalog's own system, the
    vocabulary its tests are named in. No OE2 test IDs, answer labels, specimen
    names or lab units. No `result_value_hints`, no `specimen_type_hint`.
-2. One profile contract, one shipped set. Core ships the full default profile
-   set under one documented contract with templates. A distro points the
-   Bridge at its own complete folder (`BRIDGE_PROFILE_CATALOG_SHIPPED_PATTERN`)
-   or uses core. No merging.
+2. One profile contract, one shipped set. Core ships the baseline profiles
+   and the templates under one documented contract. A Bridge reads one
+   shipped set: its image's, or the complete folder
+   `BRIDGE_PROFILE_CATALOG_SHIPPED_PATTERN` names, and then not the image's.
+   A distro that keeps its own set copies the core profiles it uses byte for
+   byte under core's ids, so each is the same revision as core's and a pin
+   holds whichever set a Bridge reads, and adds its own under its own ids,
+   never `site.`. No merging, no override. A shipped file is authored without
+   fingerprints: the Bridge derives them as it loads the file and verifies
+   any it finds. A profile written for one distro lives in that distro, not
+   in core.
 3. Mappings belong to the analyzer. Each analyzer has its own mapping:
    defaults resolved at setup by exact match against the catalog at that
    moment, plus the operator's overrides. Each row is flagged `DEFAULT` or
