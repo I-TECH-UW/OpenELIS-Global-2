@@ -22,6 +22,20 @@ module.exports = async function waitForPublishCheckpoints({
   const E2E = `03 Checkpoint - E2E / build-${buildRunId}-${buildRunAttempt}`;
   const started = now();
   while (now() - started < timeoutMs) {
+    // A pull request whose head is this commit (develop -> main) runs the same
+    // checkpoints on the same sha; only the candidate's own push or release
+    // runs decide whether it is published.
+    const runs = await github.rest.actions.listWorkflowRunsForRepo({
+      owner,
+      repo,
+      head_sha: sha,
+      per_page: 100,
+    });
+    const candidateSuites = new Set(
+      runs.data.workflow_runs
+        .filter((run) => !String(run.event).startsWith("pull_request"))
+        .map((run) => run.check_suite_id),
+    );
     const [statuses, ...checks] = await Promise.all([
       github.rest.repos.listCommitStatusesForRef({
         owner,
@@ -44,7 +58,12 @@ module.exports = async function waitForPublishCheckpoints({
     const required = REQUIRED_CHECKS.map((name, index) => ({
       name,
       check: checks[index].data.check_runs
-        .filter((entry) => entry.name === name && entry.head_sha === sha)
+        .filter(
+          (entry) =>
+            entry.name === name &&
+            entry.head_sha === sha &&
+            candidateSuites.has(entry.check_suite?.id),
+        )
         .sort((left, right) => right.id - left.id)[0],
     }));
 
