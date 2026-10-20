@@ -1,4 +1,4 @@
-import React, { useContext, useEffect, useState } from "react";
+import React, { useContext, useEffect, useRef, useState } from "react";
 import {
   Stack,
   Accordion,
@@ -28,9 +28,12 @@ import { FormattedMessage, useIntl } from "react-intl";
 import {
   getFromOpenElisServer,
   postToOpenElisServerJsonResponse,
-  putToOpenElisServer,
+  putToOpenElisServerFullResponse,
 } from "../../../utils/Utils";
 import { NotificationContext } from "../../../layout/Layout";
+import StaleSaveNotice, {
+  isStaleConflict,
+} from "../../../common/StaleSaveNotice";
 
 /**
  * OGC-1234: the source test's components as unsaved rows of this test. Copy
@@ -169,6 +172,25 @@ const ResultEntryPreview = ({ component, uoms, intl }) => {
   );
 };
 
+// OGC-1458 — the rule a refused (422) save names, and what to tell the admin.
+const SAVE_REFUSALS = {
+  "components.activeNeedsComponent":
+    "error.testCatalog.sampleResults.activeNeedsComponent",
+  "resultType.unknown": "label.testCatalog.sampleResults.resultTypeRequired",
+  "value.tooLong": "error.testCatalog.sampleResults.valueTooLong",
+  "unit.unknown": "error.testCatalog.sampleResults.unitUnknown",
+};
+
+/** Column widths the server enforces (OGC-1467); the inputs stop there. */
+const COLUMN_MAX = {
+  code: 50,
+  label: 255,
+  defaultResult: 80,
+  optionValue: 80,
+  valueMatch: 80,
+  interpretationText: 255,
+};
+
 const SampleResultsSection = ({ testId }) => {
   const intl = useIntl();
   const { addNotification, setNotificationVisible } =
@@ -202,6 +224,12 @@ const SampleResultsSection = ({ testId }) => {
   // { ci, name, code, ucumCode, description } for the component at index ci.
   const [unitForm, setUnitForm] = useState(null);
 
+  // Aborted when the section unmounts, so a late response never updates a
+  // screen that is gone.
+  const loadAbort = useRef(null);
+  const [version, setVersion] = useState(null);
+  const [stale, setStale] = useState(false);
+
   const load = () => {
     setLoading(true);
     setError(false);
@@ -214,26 +242,40 @@ const SampleResultsSection = ({ testId }) => {
           return;
         }
         setComponents(res.components);
+        setVersion(res.version || null);
+        setStale(false);
         setCopiedFrom(null);
       },
+      loadAbort.current ? loadAbort.current.signal : null,
     );
   };
 
   useEffect(() => {
     if (!testId) {
-      return;
+      return undefined;
     }
+    const controller = new AbortController();
+    loadAbort.current = controller;
     load();
-    getFromOpenElisServer("/rest/test-list", (res) => {
-      if (Array.isArray(res)) {
-        setOtherTests(res.filter((t) => t.id !== testId));
-      }
-    });
-    getFromOpenElisServer("/rest/uom", (res) => {
-      if (Array.isArray(res)) {
-        setUoms(res);
-      }
-    });
+    getFromOpenElisServer(
+      "/rest/test-list",
+      (res) => {
+        if (Array.isArray(res)) {
+          setOtherTests(res.filter((t) => t.id !== testId));
+        }
+      },
+      controller.signal,
+    );
+    getFromOpenElisServer(
+      "/rest/uom",
+      (res) => {
+        if (Array.isArray(res)) {
+          setUoms(res);
+        }
+      },
+      controller.signal,
+    );
+    return () => controller.abort();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [testId]);
 
@@ -470,6 +512,23 @@ const SampleResultsSection = ({ testId }) => {
       ),
     );
 
+  // A select list has one reference value, so marking an option Normal unmarks
+  // the others in that component.
+  const markNormal = (ci, oi, checked) =>
+    setComponents((prev) =>
+      prev.map((c, i) =>
+        i === ci
+          ? {
+              ...c,
+              options: c.options.map((row, j) => ({
+                ...row,
+                normal: j === oi ? checked : checked ? false : row.normal,
+              })),
+            }
+          : c,
+      ),
+    );
+
   // Live dictionary search for the "add option" typeahead, scoped per component.
   const searchDictionary = (ci, query) => {
     if (!query || !query.trim()) {
@@ -501,6 +560,7 @@ const SampleResultsSection = ({ testId }) => {
                   resultType: c.resultType,
                   sortOrder: c.options.length + 1,
                   normal: false,
+                  qualifiable: false,
                 },
               ],
             }
@@ -524,9 +584,13 @@ const SampleResultsSection = ({ testId }) => {
                 {
                   value: "",
                   valueName: null,
+                  // Typed text, never a dictionary id even when it is a number
+                  // (OGC-1458: a typed "1" is the grade 1).
+                  freeText: true,
                   resultType: c.resultType,
                   sortOrder: c.options.length + 1,
                   normal: false,
+                  qualifiable: false,
                 },
               ],
             }
@@ -580,6 +644,32 @@ const SampleResultsSection = ({ testId }) => {
   const detectionLimitsInvalid = (c) =>
     detectionLimitProblem(c) === "error.testCatalog.sampleResults.lodGtLoq";
 
+  // Result entry lists every option row, so the same stored value twice shows
+  // twice; this is the check the server applies.
+  const duplicateOptionNames = (c) => {
+    const seen = new Set();
+    const duplicates = new Set();
+    (c.options || []).forEach((o) => {
+      const value = String(o.value || "").trim();
+      if (!value) {
+        return;
+      }
+      if (seen.has(value)) {
+        duplicates.add(o.valueName || value);
+      }
+      seen.add(value);
+    });
+    return [...duplicates];
+  };
+
+  // A select list's default must be one of its options; one it no longer offers
+  // is shown as "No default" and cleared on save.
+  const offeredDefault = (c) =>
+    !["D", "M", "C"].includes(c.resultType) ||
+    (c.options || []).some((o) => o.value && o.value === c.defaultResult)
+      ? c.defaultResult
+      : "";
+
   const handleSave = () => {
     // Every component needs a label (FR-29); the code isn't a separate user field,
     // so default it to the label when left blank. Guide the user with a clear
@@ -632,11 +722,35 @@ const SampleResultsSection = ({ testId }) => {
       });
       return;
     }
+    const repeated = normalized.find(
+      (c) =>
+        ["D", "M", "C"].includes(c.resultType) &&
+        duplicateOptionNames(c).length > 0,
+    );
+    if (repeated) {
+      setNotificationVisible(true);
+      addNotification({
+        kind: "error",
+        title: intl.formatMessage({
+          id: "label.testCatalog.section.sample-results",
+        }),
+        message: intl.formatMessage(
+          { id: "error.testCatalog.sampleResults.duplicateOption" },
+          {
+            component: repeated.label || repeated.code,
+            options: duplicateOptionNames(repeated).join(", "),
+          },
+        ),
+      });
+      return;
+    }
     setSaving(true);
     const payload = {
       testId,
+      version,
       components: normalized.map((c) => ({
         ...c,
+        defaultResult: offeredDefault(c),
         displayOrder: toInt(c.displayOrder),
         significantDigits: toInt(c.significantDigits),
         lod: toInt(c.lod),
@@ -651,13 +765,45 @@ const SampleResultsSection = ({ testId }) => {
         })),
       })),
     };
-    putToOpenElisServer(
+    putToOpenElisServerFullResponse(
       `/rest/test-catalog/tests/${testId}/sample-results`,
       JSON.stringify(payload),
-      (status) => {
+      async (response) => {
         setSaving(false);
+        if (response && response.status === 409) {
+          const conflict = await response.json().catch(() => null);
+          if (isStaleConflict(409, conflict)) {
+            setStale(true);
+            return;
+          }
+        }
         setNotificationVisible(true);
-        if (status === 200) {
+        if (response && response.status === 422) {
+          let body = null;
+          try {
+            body = await response.json();
+          } catch (e) {
+            body = null;
+          }
+          const refusal = body && SAVE_REFUSALS[body.refusal];
+          if (body && body.refusal === "components.activeNeedsComponent") {
+            load();
+          }
+          if (refusal) {
+            addNotification({
+              kind: "error",
+              title: intl.formatMessage({
+                id: "label.testCatalog.section.sample-results",
+              }),
+              message: intl.formatMessage(
+                { id: refusal },
+                { component: body.refusedComponent || "" },
+              ),
+            });
+            return;
+          }
+        }
+        if (response && response.status === 200) {
           addNotification({
             kind: "success",
             title: intl.formatMessage({
@@ -756,7 +902,7 @@ const SampleResultsSection = ({ testId }) => {
   // One component → flat; several → accordion panels (FR-34).
 
   return (
-    <Stack gap={6}>
+    <Stack gap={6} style={{ overflowWrap: "anywhere", minWidth: 0 }}>
       <p>
         <FormattedMessage id="label.testCatalog.sampleResults.purpose" />
       </p>
@@ -826,6 +972,7 @@ const SampleResultsSection = ({ testId }) => {
                 />
                 <TextInput
                   id={`comp-code-${ci}`}
+                  maxLength={COLUMN_MAX.code}
                   labelText={intl.formatMessage({
                     id: "label.testCatalog.sampleResults.code",
                   })}
@@ -835,6 +982,7 @@ const SampleResultsSection = ({ testId }) => {
                 />
                 <TextInput
                   id={`comp-label-${ci}`}
+                  maxLength={COLUMN_MAX.label}
                   labelText={intl.formatMessage({
                     id: "label.testCatalog.sampleResults.label",
                   })}
@@ -1034,16 +1182,52 @@ const SampleResultsSection = ({ testId }) => {
                     </div>
                   </>
                 )}
-                <TextInput
-                  id={`comp-default-${ci}`}
-                  labelText={intl.formatMessage({
-                    id: "label.testCatalog.sampleResults.defaultResult",
-                  })}
-                  value={c.defaultResult || ""}
-                  onChange={(e) =>
-                    patchComponent(ci, { defaultResult: e.target.value })
-                  }
-                />
+                {["D", "M", "C"].includes(c.resultType) ? (
+                  <Select
+                    id={`comp-default-${ci}`}
+                    labelText={intl.formatMessage({
+                      id: "label.testCatalog.sampleResults.defaultResult",
+                    })}
+                    value={
+                      (c.options || []).some(
+                        (o) => o.value && o.value === c.defaultResult,
+                      )
+                        ? c.defaultResult
+                        : ""
+                    }
+                    onChange={(e) =>
+                      patchComponent(ci, { defaultResult: e.target.value })
+                    }
+                  >
+                    <SelectItem
+                      value=""
+                      text={intl.formatMessage({
+                        id: "label.testCatalog.sampleResults.defaultResult.none",
+                      })}
+                    />
+                    {(c.options || [])
+                      .filter((o) => o.value)
+                      .map((o) => (
+                        <SelectItem
+                          key={o.id || `default-${o.value}`}
+                          value={o.value}
+                          text={o.valueName || o.value}
+                        />
+                      ))}
+                  </Select>
+                ) : (
+                  <TextInput
+                    id={`comp-default-${ci}`}
+                    maxLength={COLUMN_MAX.defaultResult}
+                    labelText={intl.formatMessage({
+                      id: "label.testCatalog.sampleResults.defaultResult",
+                    })}
+                    value={c.defaultResult || ""}
+                    onChange={(e) =>
+                      patchComponent(ci, { defaultResult: e.target.value })
+                    }
+                  />
+                )}
                 <TextInput
                   id={`comp-order-${ci}`}
                   type="number"
@@ -1114,6 +1298,9 @@ const SampleResultsSection = ({ testId }) => {
                               <FormattedMessage id="label.testCatalog.sampleResults.option.normal" />
                             </TableHeader>
                             <TableHeader>
+                              <FormattedMessage id="label.testCatalog.sampleResults.option.qualifiable" />
+                            </TableHeader>
+                            <TableHeader>
                               <FormattedMessage id="label.testCatalog.sampleResults.actions" />
                             </TableHeader>
                           </TableRow>
@@ -1129,6 +1316,7 @@ const SampleResultsSection = ({ testId }) => {
                                 ) : (
                                   <TextInput
                                     id={`opt-value-${ci}-${oi}`}
+                                    maxLength={COLUMN_MAX.optionValue}
                                     labelText=""
                                     value={o.value || ""}
                                     onChange={(e) =>
@@ -1158,8 +1346,18 @@ const SampleResultsSection = ({ testId }) => {
                                   labelText=""
                                   checked={!!o.normal}
                                   onChange={(_e, { checked }) =>
+                                    markNormal(ci, oi, checked)
+                                  }
+                                />
+                              </TableCell>
+                              <TableCell>
+                                <Checkbox
+                                  id={`opt-qualifiable-${ci}-${oi}`}
+                                  labelText=""
+                                  checked={!!o.qualifiable}
+                                  onChange={(_e, { checked }) =>
                                     patchChild(ci, "options", oi, {
-                                      normal: checked,
+                                      qualifiable: checked,
                                     })
                                   }
                                 />
@@ -1180,6 +1378,23 @@ const SampleResultsSection = ({ testId }) => {
                           ))}
                         </TableBody>
                       </Table>
+                    )}
+                    {duplicateOptionNames(c).length > 0 && (
+                      <InlineNotification
+                        kind="error"
+                        lowContrast
+                        hideCloseButton
+                        data-testid={`duplicate-options-${ci}`}
+                        title={intl.formatMessage(
+                          {
+                            id: "error.testCatalog.sampleResults.duplicateOption",
+                          },
+                          {
+                            component: c.label || c.code,
+                            options: duplicateOptionNames(c).join(", "),
+                          },
+                        )}
+                      />
                     )}
                     <ComboBox
                       key={`opt-add-${ci}-${optionComboReset[ci] || 0}`}
@@ -1279,6 +1494,7 @@ const SampleResultsSection = ({ testId }) => {
                                 ) : (
                                   <TextInput
                                     id={`int-match-${ci}-${ii}`}
+                                    maxLength={COLUMN_MAX.valueMatch}
                                     labelText=""
                                     placeholder={intl.formatMessage({
                                       id: "label.testCatalog.sampleResults.interp.numericHint",
@@ -1295,6 +1511,7 @@ const SampleResultsSection = ({ testId }) => {
                               <TableCell>
                                 <TextInput
                                   id={`int-text-${ci}-${ii}`}
+                                  maxLength={COLUMN_MAX.interpretationText}
                                   labelText=""
                                   value={it.text || ""}
                                   onChange={(e) =>
@@ -1448,6 +1665,9 @@ const SampleResultsSection = ({ testId }) => {
         </p>
       </Modal>
 
+      {stale && (
+        <StaleSaveNotice testId="sample-results-stale-save" onRefresh={load} />
+      )}
       <div style={{ display: "flex", gap: "0.5rem" }}>
         <Button
           kind="tertiary"
@@ -1457,7 +1677,7 @@ const SampleResultsSection = ({ testId }) => {
         >
           <FormattedMessage id="label.testCatalog.sampleResults.addComponent" />
         </Button>
-        <Button kind="primary" disabled={saving} onClick={handleSave}>
+        <Button kind="primary" disabled={saving || stale} onClick={handleSave}>
           <FormattedMessage id="label.button.save" />
         </Button>
       </div>

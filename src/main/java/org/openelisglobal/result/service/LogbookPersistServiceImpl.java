@@ -29,6 +29,7 @@ import org.openelisglobal.referral.valueholder.ReferralResult;
 import org.openelisglobal.referral.valueholder.ReferralSet;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
+import org.openelisglobal.resultvalidation.event.ResultsValidatedEvent;
 import org.openelisglobal.sample.service.SampleService;
 import org.openelisglobal.sample.valueholder.Sample;
 import org.openelisglobal.spring.util.SpringContext;
@@ -38,6 +39,7 @@ import org.openelisglobal.testreflex.action.util.TestReflexBean;
 import org.openelisglobal.testreflex.action.util.TestReflexUtil;
 import org.openelisglobal.vector.deconvolution.service.VectorDeconvolutionService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -68,6 +70,8 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
     private QcEvaluationService qcEvaluationService;
     @Autowired
     private VectorDeconvolutionService vectorDeconvolutionService;
+    @Autowired
+    private ApplicationEventPublisher eventPublisher;
 
     @Override
     @Transactional
@@ -168,6 +172,10 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
         for (IResultUpdate updater : updaters) {
             updater.transactionalUpdate(actionDataSet);
         }
+
+        // Results finalized at entry skip validation, so announce them here too.
+        eventPublisher.publishEvent(
+                new ResultsValidatedEvent(ResultsValidatedEvent.finalizedSamples(actionDataSet.getModifiedAnalysis())));
         return reflexAnalysises;
     }
 
@@ -315,6 +323,10 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
         }
     }
 
+    /**
+     * The tests reflex and calculation rules generated. A calculation may fill the
+     * analysis a reflex has just added; that generated test is listed once.
+     */
     protected List<Analysis> setTestReflexes(ResultsUpdateDataSet actionDataSet, String sysUserId) {
         TestReflexUtil testReflexUtil = new TestReflexUtil();
         TestCalculatedUtil testCaliculatedUtil = new TestCalculatedUtil();
@@ -332,7 +344,13 @@ public class LogbookPersistServiceImpl implements LogbookResultsPersistService {
                 sysUserId);
         List<Analysis> caclculatedAnalyses = testCaliculatedUtil.addNewTestsToDBForCalculatedTests(allResults,
                 sysUserId);
-        reflexAnalysises.addAll(caclculatedAnalyses);
+        actionDataSet.getCalculatedResults().addAll(testCaliculatedUtil.getCalculatedResults());
+        for (Analysis calculated : caclculatedAnalyses) {
+            if (reflexAnalysises.stream()
+                    .noneMatch(added -> added.getId() != null && added.getId().equals(calculated.getId()))) {
+                reflexAnalysises.add(calculated);
+            }
+        }
         return reflexAnalysises;
     }
 

@@ -1,174 +1,190 @@
-## Developer Setup
+# Development, CI validation, and deployment
 
-## Install and Update Ubuntu Desktop (cur ver 20.04)
+For everyday development, use `scripts/dev-stack`. Run commands from the
+repository root of the clone or worktree you are editing.
 
-1. Boot to a live version of Ubuntu Desktop on a cd or a usb key
-2. Install Ubuntu on the target hard drive
-3. Update ubuntu once it is finished installing
-   1. `sudo apt update`
-   2. `sudo apt upgrade`
-   3. `sudo apt full-upgrade`
-   4. `sudo apt autoremove`
+A normal clone is fully supported. Separate checkout directories get separate
+containers, ports and data; creating a Git worktree is not required.
 
-## Install Java (cur ver11)
+| Purpose                              | Entry point                                   | What runs                                                                |
+| ------------------------------------ | --------------------------------------------- | ------------------------------------------------------------------------ |
+| Edit and try the application locally | `scripts/dev-stack up`                        | Current source, frontend hot reload, persistent worktree data            |
+| Check a committed change against CI  | `scripts/run-ci-checks.sh`                    | Committed source and recorded submodule pins, isolated test environments |
+| Run a released application           | [Published deployment](#run-published-images) | Published application images                                             |
 
-Detailed instructions found
-[here](https://www.digitalocean.com/community/tutorials/how-to-install-java-with-apt-on-ubuntu-18-04)
+The development stack retains HTTPS, secure session cookies and reverse-proxy
+routing, but it is not a production deployment or proof that CI passes.
 
-1. `sudo apt install default-jdk`
-2. `java -version`
-3. `javac -version`
+## Work on source
 
-## Install Docker
+Install Git, Python, a working Docker CLI with Compose, Java 21, Maven, curl,
+gettext (`envsubst`), and [mkcert](https://github.com/FiloSottile/mkcert). On
+macOS, install mkcert with `brew install mkcert`; other platforms should follow
+its installation instructions. Frontend build tools run inside Docker; install a
+supported Node version when running browser tests or frontend tools on the host.
+The package lockfiles and Dockerfiles own dependency versions.
 
-Detailed instructions found
-[here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04)
+Once per clone or worktree:
 
-1. `curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -`
-2. `sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"`
-3. `sudo apt-get update`
-4. `apt-cache policy docker-ce`
-5. `sudo apt-get install -y docker-ce`
-6. `sudo systemctl status docker`
+```bash
+bash scripts/setup-workspace.sh
+```
 
-## Setup Docker (Optional)
+Start development:
 
-Detailed instructions found
-[here](https://www.digitalocean.com/community/tutorials/how-to-install-and-use-docker-on-ubuntu-16-04).
-This will enable you to call docker without calling sudo.
+```bash
+scripts/dev-stack up
+```
 
-1. `sudo usermod -aG docker ${USER} `
-2. `su - ${USER}`
-3. `id -nG`
+Use the URL printed by `up`. Retrieve it later with `scripts/dev-stack url`.
+Localhost works with the generated `.env`; no domain or port settings are
+needed. `scripts/dev-stack doctor` is an optional prerequisite diagnostic; `up`
+already performs those checks.
 
-## Install Docker-Compose
+On the first start on a machine, `up` explains and runs the local certificate
+trust setup before building. Complete the administrator prompt in your terminal
+if requested. This trusts this machine's development certificate authority in
+the operating-system trust store. Later starts and other worktrees reuse that
+trust. If authentication is canceled or unavailable, startup stops before the
+build and explains how to retry.
 
-Detailed instructions found
-[here](https://www.digitalocean.com/community/tutorials/how-to-install-docker-compose-on-ubuntu-18-04)
+`up` never builds container images unless asked. It builds the OpenELIS WAR from
+the checkout and runs it, together with the frontend `src` and `public`
+directories, in the published development images named in
+`projects/analyzer-harness/docker-compose.dev.yml` and
+`docker-compose.worktree.yml` (`itechuw/openelis-global-2-dev`, `-frontend-dev`,
+`-analyzer-bridge` and `-analyzer-mock`, tag `develop`), which it pulls on each
+start. `DEV_STACK_IMAGE_NAMESPACE` and `DEV_STACK_IMAGE_TAG` select other
+published images.
 
-1. `` sudo curl -L https://github.com/docker/compose/releases/download/1.21.2/docker-compose-`uname -s`-`uname -m` -o /usr/local/bin/docker-compose ``
-2. `sudo chmod +x /usr/local/bin/docker-compose`
-3. `docker-compose --version`
+Run `up --build` to build those images from the checkout instead. That is only
+needed when a change lives inside an image rather than in the mounted WAR or
+frontend source: `Dockerfile.dev`, the frontend `Dockerfile`, frontend
+dependencies (`package.json`, `package-lock.json`) or build configuration
+(`vite.config.ts`, `index.html`, `tsconfig.json`), or Bridge and mock changes in
+`tools/<submodule>`. Without `--build`, `up` prints a warning when the frontend
+files, a Bridge or mock checkout, or `Dockerfile.dev`, `install/` or
+`tomcat/client-certificates` differ from what the published images were built
+from, and keeps running the published images. Application containers, networks,
+ports, and data volumes belong to this worktree. Docker and Maven caches are
+reused.
 
-## Install Chrome
+`up` initializes an empty submodule at the commit the parent repository records.
+It never moves, resets or refuses a populated one. For each submodule at another
+commit or with uncommitted changes, `up` prints a line such as
+`tools/openelis-analyzer-bridge: checked out a4a22a4 (recorded pin b20f5db), with uncommitted changes`.
+`dataexport` changes are always built into the WAR; Bridge and mock changes run
+with `up --build`. `scripts/run-ci-checks.sh` builds the recorded submodule
+commits instead.
 
-1. Download Chrome
-2. Run Chrome installer
-3. Make chrome your default browser
+Frontend edits hot reload. Re-run `up` after changing backend source. Re-run
+`up --build` after changing frontend dependencies, image build configuration or
+Bridge and mock source. `--skip-build` reuses this checkout's WAR and the images
+the last `up` ran (published or built); it neither pulls nor builds.
 
-## Download OpenELIS-Global-2
+```bash
+scripts/dev-stack status
+scripts/dev-stack logs -f oe.openelis.org
+eval "$(scripts/dev-stack env)"
+(cd frontend && npm run pw:test -- --project=core-app <spec-path>)
+scripts/dev-stack down
+scripts/dev-stack down --volumes --yes  # explicit reset of this worktree's data
+```
 
-1. Fork the repo at
-   [https://github.com/DIGI-UW/OpenELIS-Global-2](https://github.com/DIGI-UW/OpenELIS-Global-2)
-2. `cd /path/to/eclipse/workspace`
-3. `git clone [git@github.com](mailto:git@github.com):{Your_Github_Account}/OpenELIS-Global-2.git --recurse-submodules`
+Localhost uses random loopback ports and a locally trusted certificate. Keep the
+development authority's private key local; never share or commit it. Restart a
+browser that was already open if it caches the old trust. Use a browser that
+reads the operating-system trust store; separate browser-specific certificate
+stores are not configured by the launcher.
 
-## Test If OpenELIS-Global-2 Deploys
+`up` generates a certificate covering `localhost`, `127.0.0.1`, and `::1`,
+stores its leaf key under ignored `.dev-stack/tls/`, and installs only that leaf
+certificate/key in this worktree's proxy. It verifies HTTPS without ignoring
+certificate errors. The trust setup announces its scope and delegates
+administrator authentication to mkcert. For an unattended first start, prepare
+trust interactively with `TRUST_STORES=system mkcert -install` first.
+`DEV_STACK_TLS=self-signed` remains an explicit option for headless fixtures; it
+is not the default for interactive development. Backend and FHIR direct ports
+retain their internal service certificates; use the proxy URL for browser
+access.
 
-1. Open terminal to the OpenELIS-Global-2 directory
-2. `docker compose up -d --build`
-3. Access the application at
-   [https://localhost:8443/OpenELIS-Global](https://localhost:8443/OpenELIS-Global)
-4. Might need to dismiss a security warning
+Use the printed URL, not an assumed port. For a public development server,
+follow [development HTTPS setup](LETSENCRYPT_SETUP.md).
 
-## Developing in Eclipse
+Configuration templates are copied during bootstrap. Existing local properties,
+database initialization files and passwords are preserved; nginx and menu
+configuration are refreshed. Review local overrides when upstream defaults
+change rather than deleting the data volume to refresh configuration.
 
-### Install Maven
+## Validate a committed candidate
 
-Detailed instructions
-[here](https://linuxize.com/post/how-to-install-apache-maven-on-ubuntu-18-04/)
+```bash
+scripts/run-ci-checks.sh --list-jobs
+scripts/run-ci-checks.sh --plan
+scripts/run-ci-checks.sh --artifact-dir /tmp/openelis-local-ci
+```
 
-1. `sudo apt install maven`
-2. `mvn -version`
+Run this after each push while GitHub CI runs. The runner validates one
+committed revision in isolated checkouts, starts backend, frontend and E2E lanes
+in parallel, and retains logs and browser reports. Each E2E job gets a fresh
+isolated database and reuses the candidate images. Use `--base REF` when the PR
+base is not `develop`.
 
-### Install Eclipse
+A failed job stops its dependent steps, while independent jobs still run. Each
+job keeps its own log and result; the overall command fails if any required job
+fails or does not run.
 
-1. Navigate to Eclipse download website (https://www.eclipse.org/downloads/)
-2. Download the installer
-3. Run the installer, choosing the Java ee version of eclipse
+The runner selects the CI Node versions with `fnm`, or accepts an explicitly
+configured Node installation. It uses the selected Docker context for the Java
+test database too. Docker runtime names do not change the test commands.
 
-### Optionally Install Eclipse Plugins
+Select one or more jobs with repeatable `--job NAME` arguments; each job
+includes its necessary setup. A selected-job result is partial validation. The
+default runs all listed code checks, including existing agent-asset validation;
+it does not publish images or manage GitHub checkpoints. GitHub-only
+publication, artifact uploads and checkpoint reporting still require their
+GitHub results. Neither a failed lane nor a check that did not run is a pass.
 
-1. Jaspersoft Reports
-2. eGit
+## Native builds
 
-### Install Lombok in Eclipse
+Java, Maven and Node can also run directly on the host. The development launcher
+does not replace the native build tools or the deployable WAR:
 
-Instructions are here https://projectlombok.org/setup/eclipse
+```bash
+scripts/run-java21 mvn -f dataexport/pom.xml install -DskipTests -Dmaven.test.skip=true
+scripts/run-java21 mvn package -DskipTests -Dmaven.test.skip=true
+cd frontend
+npm ci --legacy-peer-deps
+npm run build
+```
 
-### Setup Project in Eclipse
+The backend artifact is `target/OpenELIS-Global.war`; frontend output is
+`frontend/dist`. Native runtime installation still needs the application's
+database, servlet-container, FHIR, certificate and property configuration. The
+Docker launcher is the supported automated full-stack setup; choosing a native
+installation does not change application ownership or configuration.
 
-1. File > Import > Projects from Folder or Archive
-2. ensure OpenELIS-Global-2 is selected (and dataexport-core and dataexport-api
-   which are under eclipse)
-3. ensure detect and configure project natures is selected
-4. finish
-5. right click OpenELIS-Global-2 project > properties > Java Build Path >
-   Projects > classpath > add
-6. add dataexport-core and dataexport-api
+## Run published images
 
-### Setup Tomcat Server
+Follow
+[the installation instructions](../README.md#for-offline-installation-using-the-openelis-global2-installer)
+and [release guidance](../RELEASES.md) to prepare the deployment configuration.
+The deployment files are `docker-compose.yml` and, when analyzers are needed,
+`docker-compose.analyzers.yml`. Use coherent version or digest pins.
 
-1. [Download tomcat](https://tomcat.apache.org/download-90.cgi) as tar.gz (cur
-   ver 9)
-2. Extract into to your eclipse workspace directory (or wherever you want, but
-   remember the location)
-3. Select servers tab in eclipse
-4. Right click in the servers tab, and select new > server
-5. Find tomcat 9 in the list, click it, and select next
-6. Select your tomcat installation directory (wherever you extracted it in
-   step 2)
-7. Click next
-8. Add Open-Elis-Global-2 to the server and click finish
+```bash
+docker compose -f docker-compose.yml -f docker-compose.analyzers.yml pull
+docker compose -f docker-compose.yml -f docker-compose.analyzers.yml up -d --no-build
+```
 
-### Configure Tomcat server
+This mode does not compile application source or mount a locally built WAR. An
+unavailable image must fail visibly. Mutable `develop` images are for explicit
+development/demo deployments; release verification uses fixed images.
 
-1. Double click on the tomcat 9.0 server in the servers tab
-2. Click ‘Open launch configuration’
-3. Navigate to the Arguments tab
-4. Add the following 3 arguments to the VM arguments section, substituting
-   whatever your local arguments are for your database
-   1. -Ddatasource.password=clinlims -Ddatasource.username=clinlims
-      -Ddatasource.url=jdbc:postgresql://localhost:15432/clinlims?currentSchema=clinlims
-5. click OK to finish
-6. optionally, extend the server timeout to 200 seconds
+## Diagnose a source build failure
 
-### Configure Tomcat to Support ssl
-
-1. Expand the Servers folder in the projects tab
-2. Expand the server that runs OE
-3. Copy the contents of OpenELIS-Global-2/dev/tomcat/oe_server.xml into Tomcat
-   v9.0 Server at localhost-config/server.xml
-4. Edit Tomcat v9.0 Server at localhost-config/server.xml, substituting your
-   paths
-   1. replace &lt;Server port="-1" shutdown="SHUTDOWN"> with &lt;Server
-      port="8005" shutdown="SHUTDOWN">
-   2. replace keystoreFile=”/run/secrets/keystore” with
-      keystoreFile=”/path/to/openelis_global_2/dev/https/oe_selfsigned.keystore”
-   3. replace truststoreFile="/run/secrets/truststore" with
-      truststoreFile="/path/to/openelis_global_2/dev/https/oe_selfsigned.truststore"
-   4. save
-
-### Point to your dev common.properties
-
-1. `sudo mkdir /run/secrets`
-2. `sudo ln -s /path/to/project/dev/eclipse_common.properties /run/secrets/common.properties`
-3. this is the file that will allow you to configure OE while running in
-   eclipse. Ensure values filled out work for your dev environment. do not
-   commit changes made for your deve environement.
-
-### create directory for logs
-
-1. `sudo mkdir /var/lib/openelis-global/logs/`
-2. `sudo chmod 777 /var/lib/openelis-global/logs/`
-
-### Run Everything but OE in docker
-
-1. Comment out the oe.openelisci.org service in docker-compose.yml
-2. `docker compose up -d`
-3. if oe is already running in docker, kill the container
-
-### Start Tomcat in Eclipse
-
-1. Make sure your project builds (project clean will normally trigger this)
-2. Click start server in normal, or debug mode
+Read the first actual compiler or dependency error. A successful cached download
+can report zero transferred bytes; that alone does not prove an empty archive.
+If Maven explicitly reports an empty or damaged JAR, identify that artifact and
+recover only the affected cache entry. Do not prune all Docker or Maven caches
+as routine setup. Automatic Bridge cache repair is separate follow-up work.

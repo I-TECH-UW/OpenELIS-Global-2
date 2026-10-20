@@ -18,6 +18,7 @@ package org.openelisglobal.result.action.util;
 import jakarta.annotation.PostConstruct;
 import java.sql.Timestamp;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
@@ -26,6 +27,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 import java.util.Set;
+import java.util.stream.Collectors;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.analysis.service.AnalysisAnchor;
 import org.openelisglobal.analysis.service.AnalysisAnchorService;
@@ -51,6 +53,7 @@ import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
 import org.openelisglobal.dictionary.service.DictionaryService;
 import org.openelisglobal.dictionary.valueholder.Dictionary;
+import org.openelisglobal.eqa.service.EQAParticipantResultService;
 import org.openelisglobal.eqa.service.SampleEQAService;
 import org.openelisglobal.eqa.valueholder.SampleEQA;
 import org.openelisglobal.internationalization.MessageUtil;
@@ -78,6 +81,7 @@ import org.openelisglobal.result.valueholder.Result;
 import org.openelisglobal.result.valueholder.ResultInventory;
 import org.openelisglobal.result.valueholder.ResultSignature;
 import org.openelisglobal.resultlimit.service.ResultLimitService;
+import org.openelisglobal.resultlimit.valueholder.ResultLimitSelection;
 import org.openelisglobal.resultlimits.valueholder.ResultLimit;
 import org.openelisglobal.resultvalidation.util.ValidationSignals;
 import org.openelisglobal.sample.service.SampleService;
@@ -165,6 +169,8 @@ public class ResultsLoadUtility {
     private TestResultService testResultService;
     @Autowired
     private SampleEQAService sampleEQAService;
+    @Autowired
+    private EQAParticipantResultService eqaParticipantResultService;
     @Autowired
     private org.openelisglobal.qc.dao.SampleItemQcProfileDAO sampleItemQcProfileDAO;
     @Autowired
@@ -334,15 +340,20 @@ public class ResultsLoadUtility {
             currentPatient = sampleService.getPatient(sample);
 
             String patientName = "";
-            String patientInfo;
-            String nationalId = patientService.getNationalId(currentPatient);
-            if (depersonalize) {
+            String patientInfo = "";
+            // A blinded EQA order has no patient at all. Reading identity off a null
+            // one used to render the literal words "null" into the Sample Info cell
+            // — "nullnull, null, N" — which reads like corrupt data.
+            String nationalId = currentPatient == null ? null : patientService.getNationalId(currentPatient);
+            if (currentPatient == null) {
+                patientInfo = "";
+            } else if (depersonalize) {
                 patientInfo = GenericValidator.isBlankOrNull(nationalId) ? patientService.getExternalId(currentPatient)
                         : nationalId;
             } else {
                 patientName = patientService.getLastFirstName(currentPatient);
-                patientInfo = nationalId + ", " + patientService.getGender(currentPatient) + ", "
-                        + patientService.getBirthdayForDisplay(currentPatient);
+                patientInfo = patientInfo(nationalId, patientService.getGender(currentPatient),
+                        patientService.getBirthdayForDisplay(currentPatient));
             }
 
             currSample = sample;
@@ -550,6 +561,16 @@ public class ResultsLoadUtility {
         return getTestResultItemFromAnalysis(analysis, null, patientName, patientInfo, nationalId);
     }
 
+    /**
+     * The patient's identifier, sex and birth date as one line, leaving out what
+     * the order does not have: an environmental or vector order has no patient, and
+     * showed a row of bare commas.
+     */
+    static String patientInfo(String... parts) {
+        return Arrays.stream(parts).filter(part -> !GenericValidator.isBlankOrNull(part))
+                .collect(Collectors.joining(", "));
+    }
+
     private List<TestResultItem> getTestResultItemFromAnalysis(Analysis analysis, AnalysisAnchor anchor,
             String patientName, String patientInfo, String nationalId) throws LIMSRuntimeException {
         List<TestResultItem> testResultList = new ArrayList<>();
@@ -714,6 +735,30 @@ public class ResultsLoadUtility {
             resultItem.setQcStatus(result.getQcEvaluation().name());
             resultItem.setQcDetail(result.getQcEvaluationDetail());
         }
+    }
+
+    /**
+     * The status a component row of a multi-component analysis shows. The parts are
+     * entered and validated one by one while the analysis stays in technical
+     * acceptance, so each row reports its own part: not tested while it has no
+     * value, finalized once it was validated on its own, technical acceptance while
+     * its value awaits validation. Any other analysis status (not started,
+     * finalized, rejected, cancelled) applies to every part alike.
+     *
+     * @param result the part's top-level result, null when it has none
+     */
+    public static String componentStatusId(String analysisStatusId, Result result) {
+        IStatusService statusService = SpringContext.getBean(IStatusService.class);
+        if (!statusService.matches(analysisStatusId, AnalysisStatus.TechnicalAcceptance)) {
+            return analysisStatusId;
+        }
+        if (result == null || GenericValidator.isBlankOrNull(result.getValue())) {
+            return statusService.getStatusID(AnalysisStatus.NotStarted);
+        }
+        if (result.getValidatedDate() != null) {
+            return statusService.getStatusID(AnalysisStatus.Finalized);
+        }
+        return analysisStatusId;
     }
 
     /**
@@ -925,8 +970,9 @@ public class ResultsLoadUtility {
         // limits (chosen for the patient's age/gender); other rows use the test-level
         // limits. Either way the selection is patient-conditional (OGC-1127/OGC-949).
         ResultLimitService resultLimitService = SpringContext.getBean(ResultLimitService.class);
-        ResultLimit resultLimit = resultLimitService.getResultLimitForResult(analysis, result, currentPatient,
-                component == null ? null : component.getId());
+        ResultLimitSelection rangeSelection = resultLimitService.selectResultLimitForResult(analysis, result,
+                currentPatient, component == null ? null : component.getId());
+        ResultLimit resultLimit = rangeSelection.getResultLimit();
 
         String receivedDate = currSample == null ? getCurrentDate() : currSample.getReceivedDateForDisplay();
         String testMethodName = testService.getTestMethodName(test);
@@ -1048,6 +1094,8 @@ public class ResultsLoadUtility {
         }
         testItem.setResultValue(getFormattedResultValue(result));
         setResultLimitDependencies(resultLimit, testItem, testResults, analysis);
+        testItem.setRangeNotAppliedReason(
+                rangeSelection.isRangeNotApplied() ? rangeSelection.getReason().getMessageKey() : null);
         testItem.setPatientName(patientName);
         testItem.setPatientInfo(patientInfo);
         testItem.setReportable(testService.isReportable(test));
@@ -1076,7 +1124,8 @@ public class ResultsLoadUtility {
         testItem.setResultValue(getFormattedResultValue(result));
         testItem.setRawResultValue(result == null ? "" : StringUtil.blankIfNull(result.getEnteredValue()));
         testItem.setMultiSelectResultValues(analysisService.getJSONMultiSelectResults(analysis));
-        testItem.setAnalysisStatusId(analysisService.getStatusId(analysis));
+        testItem.setAnalysisStatusId(component == null ? analysisService.getStatusId(analysis)
+                : componentStatusId(analysisService.getStatusId(analysis), result));
         // Display type selection:
         // - For existing results with a stored non-blank value whose type differs
         // from the test's configured type, prefer the STORED type for display.
@@ -1153,10 +1202,20 @@ public class ResultsLoadUtility {
                 SampleEQA sampleEQA = sampleEQAService.findBySampleId(sampleId).orElse(null);
                 if (sampleEQA != null && Boolean.TRUE.equals(sampleEQA.getIsEqaSample())) {
                     testItem.setEqaSample(true);
+                    testItem.setEqaInHouse(sampleEQAService.isInHouse(sampleId));
                     if (sampleEQA.getEqaPriority() != null) {
                         testItem.setEqaPriority(sampleEQA.getEqaPriority().name());
                     }
                 }
+                // Only schemes that opted in show the Analyst column,
+                // and the scheme id is what its picker reads its eligible list from.
+                sampleEQAService.findPerAnalystSchemeId(sampleId).ifPresent(schemeId -> {
+                    testItem.setEqaPerAnalyst(true);
+                    testItem.setEqaSchemeId(String.valueOf(schemeId));
+                    // Preselect who the sample was sealed for; the bench can change it.
+                    eqaParticipantResultService.findAssignedAnalystId(Long.valueOf(analysis.getId()))
+                            .ifPresent(analystId -> testItem.setEqaAnalystId(String.valueOf(analystId)));
+                });
             }
         } catch (RuntimeException e) {
             String sampleIdStr = eqaSample != null ? eqaSample.getId() : "null";

@@ -18,7 +18,6 @@ public class MicroWorklistQueryForm {
     public List<String> organism = new ArrayList<>();
     public List<String> origin = new ArrayList<>();
     public List<String> significance = new ArrayList<>();
-    public String workflow = "";
     public String stage = "";
     public String urgency = "";
     public String due = "";
@@ -26,4 +25,11 @@ public class MicroWorklistQueryForm {
     public String sort = "priority";
     public int page = 1;
     public int pageSize = 20;
+
+    /**
+     * Which sample items the caller may read, by their lab units; null when the
+     * caller reads every case. Set by the controller, never bound from the request.
+     */
+    @com.fasterxml.jackson.annotation.JsonIgnore
+    public java.util.function.Predicate<String> sampleItemVisible;
 }

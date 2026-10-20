@@ -332,7 +332,7 @@ public class TestReflexUtil {
         if (reflexBean.getResult().getTestResult() == null) {
             return new ArrayList<>();
         }
-        String resultType = testService.getResultType(reflexBean.getResult().getTestResult().getTest());
+        String resultType = resultTypeOf(reflexBean.getResult());
         List<TestReflex> reflexesForResult;
         if (resultType.equals("D")) {
             reflexesForResult = reflexResolver.getTestReflexsByAnalyteAndTest(reflexBean.getResult());
@@ -580,7 +580,7 @@ public class TestReflexUtil {
         if (addTest || handleAction) {
 
             ReflexAction reflexAction = reflexResolver.getReflexAction();
-            reflexAction.handleReflex(reflex, result, actionSelectionId);
+            reflexAction.handleReflex(reflex, result, actionSelectionId, sysUserId);
 
             ObservationHistory observation = reflexAction.getObservation();
 
@@ -593,6 +593,17 @@ public class TestReflexUtil {
 
             Analysis newAnalysis = reflexAction.getNewAnalysis();
             Result finalResult = reflexAction.getFinalResult();
+
+            ReflexAction.CaseWork caseWork = reflexAction.getCaseWork();
+            if (caseWork != null && addTest) {
+                SpringContext.getBean(org.openelisglobal.microbiology.service.MicroOrderRoutingService.class)
+                        .routeCaseTest(caseWork.order(), caseWork.sampleTypeId(), caseWork.sample(), caseWork.test(),
+                                sysUserId);
+                Analysis trigger = result.getAnalysis();
+                trigger.setSysUserId(sysUserId);
+                trigger.setTriggeredReflex(Boolean.TRUE);
+                analysisService.update(trigger);
+            }
 
             /*******
              * This is allowing duplicate tests to be added for CD4 absolute. If the
@@ -818,8 +829,19 @@ public class TestReflexUtil {
                 && (CONCLUSION_ANAYLETE_ID.equals(analyte.getId()) || CD4_ANAYLETE.getId().equals(analyte.getId()));
     }
 
+    /**
+     * The type of the measurement a result records. On a multi-component test the
+     * component owns it: a numeric Ct beside a coded primary is numeric, whatever
+     * type the test lists first.
+     */
+    private String resultTypeOf(Result result) {
+        Test test = result.getTestResult().getTest();
+        return ruleResultScope.resultTypeForComponent(test.getId(), ruleResultScope.componentIdOf(result),
+                testService.getResultType(test));
+    }
+
     public boolean isTestTriggeredByResult(Test potentialReflexTest, Result potentialTriggerResult) {
-        String resultType = testService.getResultType(potentialTriggerResult.getTestResult().getTest());
+        String resultType = resultTypeOf(potentialTriggerResult);
         if (resultType.equals("D")) {
             return doesDictionaryRelationRulesForReflexApply(potentialReflexTest, potentialTriggerResult);
         } else if (!resultType.equals("D")) {

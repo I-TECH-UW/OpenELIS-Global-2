@@ -61,7 +61,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 @PropertySource(value = "classpath:SystemConfiguration.properties", ignoreResourceNotFound = true)
 @PropertySource(value = "file:/var/lib/openelis-global/properties/TotalSystemConfiguration.properties", ignoreResourceNotFound = true)
 @PropertySource(value = "file:/var/lib/openelis-global/properties/SystemConfiguration.properties", ignoreResourceNotFound = true)
-@ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech", "org.ozeki.sms", "oe.plugin" })
+@ComponentScan(basePackages = { "spring", "org.openelisglobal", "org.itech", "org.ozeki.sms" })
 public class AppConfig implements WebMvcConfigurer {
 
     @Autowired
@@ -100,10 +100,11 @@ public class AppConfig implements WebMvcConfigurer {
                 .excludePathPatterns(SecurityConfig.OPEN_PAGES) //
                 .excludePathPatterns(SecurityConfig.LOGIN_PAGES) //
                 .excludePathPatterns(SecurityConfig.RESOURCE_PAGES) //
-                .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES);
+                .excludePathPatterns(SecurityConfig.AUTH_OPEN_PAGES) //
+                // authorized by the Bridge certificate chain; no user modules apply
+                .excludePathPatterns(SecurityConfig.BRIDGE_INGRESS_PATHS);
         // TO DO ,we need to have a better way to handle user roles for rest controllers
         // .excludePathPatterns(SecurityConfig.REST_CONTROLLERS);
-        // .excludePathPatterns(SecurityConfig.CLIENT_CERTIFICATE_PAGES);
         registry.addInterceptor(urlLocatedErrorsInterceptor).addPathPatterns("/**");
         registry.addInterceptor(pageAttributesInterceptor).addPathPatterns("/**");
     }
