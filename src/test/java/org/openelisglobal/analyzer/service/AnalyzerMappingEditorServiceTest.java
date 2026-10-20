@@ -35,6 +35,7 @@ import org.openelisglobal.analyzer.valueholder.AnalyzerMappingTest;
 import org.openelisglobal.analyzer.valueholder.AnalyzerMappingTestPK;
 import org.openelisglobal.analyzerresults.service.AnalyzerResultsService;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
+import org.openelisglobal.terminology.Coding;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 
@@ -103,8 +104,7 @@ public class AnalyzerMappingEditorServiceTest {
         assertEquals(List.of("RAW-A1", "RAW-A2"), first.aliases());
         assertEquals("First result", first.testNameHint());
         assertEquals("94500-6", first.loinc());
-        assertEquals("https://loinc.org", first.normalizedCoding().system());
-        assertEquals("94500-6", first.normalizedCoding().code());
+        assertEquals(List.of(Coding.loinc("94500-6"), new Coding("CPHL", "SARS2", "SARS-CoV-2 RNA")), first.codings());
         assertEquals(AnalyzerMappingState.BOUND, first.mappingState());
         assertEquals(AnalyzerMappingOrigin.DEFAULT, first.origin());
         assertEquals("9701", first.testId());
@@ -222,7 +222,7 @@ public class AnalyzerMappingEditorServiceTest {
         assertEquals("VENDOR-NEW-42", observed.rawCode());
         assertEquals(AnalyzerMappingState.UNRESOLVED, observed.mappingState());
         assertEquals("INDETERMINATE", observed.results().get(0).rawValue());
-        assertNull(observed.normalizedCoding());
+        assertEquals(List.of(), observed.codings());
         verify(mappingService, never()).appendRevision(any(), any(), any());
     }
 
@@ -441,8 +441,9 @@ public class AnalyzerMappingEditorServiceTest {
     @Test
     public void doesNotSuggestATestThatOnlySharesTheRawCodeOrName() throws Exception {
         unresolvedMapping();
-        when(mappingCatalogService.searchActiveTests(null)).thenReturn(List.of(
-                new AnalyzerMappingCatalogService.TestOption("9801", "Second result", "RAW-B", List.of("12345-6"))));
+        when(mappingCatalogService.searchActiveTests(null))
+                .thenReturn(List.of(new AnalyzerMappingCatalogService.TestOption("9801", "Second result", "RAW-B",
+                        List.of(Coding.loinc("12345-6")))));
 
         AnalyzerMappingView view = service.getMapping("42");
 
@@ -576,7 +577,7 @@ public class AnalyzerMappingEditorServiceTest {
         when(bridgeProfileCatalogService.getProfile("site.viral-load", 1)).thenReturn(viralLoadRevision());
         when(mappingCatalogService.searchActiveTests(null)).thenReturn(
                 List.of(new AnalyzerMappingCatalogService.TestOption("9701", "HIV-1 viral load", null,
-                        List.of("20447-9"))));
+                        List.of(Coding.loinc("20447-9")))));
         when(testResultService.getActiveTestResultsByTest("9701")).thenReturn(List.of(numericResult()));
         when(mappingCatalogService.getActiveComponents("9701"))
                 .thenReturn(List.of(new AnalyzerMappingCatalogService.ComponentOption("comp-LOG", "LOG", "Log viral load")));
@@ -644,7 +645,7 @@ public class AnalyzerMappingEditorServiceTest {
     private void viralLoadCatalog() {
         when(mappingCatalogService.searchActiveTests(null)).thenReturn(
                 List.of(new AnalyzerMappingCatalogService.TestOption("9701", "HIV-1 viral load", null,
-                        List.of("20447-9"))));
+                        List.of(Coding.loinc("20447-9")))));
         when(testResultService.getActiveTestResultsByTest("9701")).thenReturn(List.of(numericResult()));
         when(mappingCatalogService.getActiveComponents("9701"))
                 .thenReturn(List.of(new AnalyzerMappingCatalogService.ComponentOption("comp-call", "call", "Call"),
@@ -791,11 +792,7 @@ public class AnalyzerMappingEditorServiceTest {
                         "POS":[{"system":"http://loinc.org","code":"LA6576-8"}],
                         "NEG":[{"system":"http://loinc.org","code":"LA6577-6"}]
                       },
-                      "normalized_coding":{
-                        "system":"https://loinc.org",
-                        "code":"94500-6",
-                        "display":"SARS-CoV-2 RNA"
-                      }
+                      "codings":[{"system":"CPHL","code":"SARS2","display":"SARS-CoV-2 RNA"}]
                     },
                     {
                       "test_code":"RAW-B",
@@ -893,12 +890,15 @@ public class AnalyzerMappingEditorServiceTest {
 
     private static List<AnalyzerMappingCatalogService.TestOption> activeTests() {
         return List.of(
-                new AnalyzerMappingCatalogService.TestOption("9701", "SARS-CoV-2 RNA", "COVID19", List.of("94500-6")),
-                new AnalyzerMappingCatalogService.TestOption("9702", "Ambiguous one", "AMB-1", List.of("77777-7")),
-                new AnalyzerMappingCatalogService.TestOption("9703", "Ambiguous two", "AMB-2", List.of("77777-7")));
+                new AnalyzerMappingCatalogService.TestOption("9701", "SARS-CoV-2 RNA", "COVID19",
+                        List.of(Coding.loinc("94500-6"))),
+                new AnalyzerMappingCatalogService.TestOption("9702", "Ambiguous one", "AMB-1",
+                        List.of(Coding.loinc("77777-7"))),
+                new AnalyzerMappingCatalogService.TestOption("9703", "Ambiguous two", "AMB-2",
+                        List.of(Coding.loinc("77777-7"))));
     }
 
-    private static List<AnalyzerMappingCatalogService.AnswerCoding> loinc(String code) {
-        return List.of(new AnalyzerMappingCatalogService.AnswerCoding("http://loinc.org", code));
+    private static List<Coding> loinc(String code) {
+        return List.of(new Coding("http://loinc.org", code));
     }
 }

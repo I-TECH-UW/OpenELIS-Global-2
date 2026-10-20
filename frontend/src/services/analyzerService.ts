@@ -152,19 +152,27 @@ export type AnalyzerUnresolvedReason =
   | "AMBIGUOUS"
   | "INCOMPATIBLE";
 
+/** A code in a code system: a canonical URI or a catalog's own identifier. */
+export interface Coding {
+  system: string;
+  code: string;
+  display?: string | null;
+}
+
 export interface AnalyzerMappingTestOption {
   id: string;
   name: string;
   code?: string | null;
-  loincCodes: string[];
+  /** Every code the test carries, in any system. */
+  codings: Coding[];
 }
 
 export interface AnalyzerMappingResultOption {
   id: string;
   value: string;
   label: string;
-  /** The answer's standard codes, each in its FHIR system URI. */
-  codings?: Array<{ system: string; code: string }>;
+  /** Every code the answer carries, in any system. */
+  codings?: Coding[];
   componentId?: string | null;
 }
 
@@ -196,11 +204,8 @@ export interface AnalyzerTypeMappingTestRow {
   loinc?: string | null;
   unit?: string | null;
   resultType?: string | null;
-  normalizedCoding?: {
-    system: string;
-    code: string;
-    display?: string | null;
-  } | null;
+  /** The codes the profile names the test by, its LOINC code first. */
+  codings?: Coding[];
   mappingState: AnalyzerMappingState;
   origin?: AnalyzerMappingOrigin;
   testId?: string | null;

@@ -49,6 +49,8 @@ import { includesComboBoxText } from "../comboBoxSearch";
 import { analyzerErrorText } from "../analyzerErrors";
 import "./AnalyzerTypeMappingEditor.scss";
 
+const LOINC_SYSTEM = "http://loinc.org";
+
 const hasApiError = (response) =>
   !response || Boolean(response.error) || Number(response.status || 0) >= 400;
 
@@ -107,7 +109,7 @@ const testItemText = (test) => {
   if (!test) {
     return "";
   }
-  const identity = [test.code, ...(test.loincCodes || [])]
+  const identity = [test.code, ...(test.codings || []).map((c) => c.code)]
     .filter(Boolean)
     .join(" · ");
   return identity ? `${test.name} · ${identity}` : test.name;
@@ -1133,16 +1135,16 @@ const AnalyzerTypeMappingEditor = ({
                 <strong>{test.loinc}</strong>
               </div>
             )}
-            {test.normalizedCoding && (
-              <div>
-                <span className="analyzer-type-mapping__label">
-                  <FormattedMessage id="analyzerType.mappingEditor.normalized" />
-                </span>
-                <strong>
-                  {test.normalizedCoding.display || test.normalizedCoding.code}
-                </strong>
-              </div>
-            )}
+            {(test.codings || [])
+              .filter((coding) => coding.system !== LOINC_SYSTEM)
+              .map((coding) => (
+                <div key={`${coding.system}|${coding.code}`}>
+                  <span className="analyzer-type-mapping__label">
+                    {coding.system}
+                  </span>
+                  <strong>{coding.display || coding.code}</strong>
+                </div>
+              ))}
             {(test.aliases || []).map((alias) => (
               <span className="analyzer-type-mapping__alias" key={alias}>
                 <FormattedMessage

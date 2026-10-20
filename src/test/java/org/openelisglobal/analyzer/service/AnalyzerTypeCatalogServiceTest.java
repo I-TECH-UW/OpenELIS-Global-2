@@ -18,6 +18,7 @@ import org.mockito.junit.MockitoJUnitRunner;
 import org.openelisglobal.analyzer.dao.AnalyzerMappingDAO;
 import org.openelisglobal.analyzer.valueholder.Analyzer;
 import org.openelisglobal.analyzer.valueholder.AnalyzerMapping;
+import org.openelisglobal.terminology.Coding;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.openelisglobal.testresult.valueholder.TestResult;
 
@@ -291,7 +292,8 @@ public class AnalyzerTypeCatalogServiceTest {
     }
 
     private static AnalyzerMappingCatalogService.TestOption activeTest(String id, String... loincCodes) {
-        return new AnalyzerMappingCatalogService.TestOption(id, "Mock active Test " + id, "MOCK", List.of(loincCodes));
+        return new AnalyzerMappingCatalogService.TestOption(id, "Mock active Test " + id, "MOCK",
+                java.util.Arrays.stream(loincCodes).map(Coding::loinc).toList());
     }
 
     private static List<AnalyzerMappingCatalogService.ResultOption> answers() {
@@ -384,7 +386,7 @@ public class AnalyzerTypeCatalogServiceTest {
         return new BridgeProfileCatalog.ProfileRevision(profile, publication);
     }
 
-    private static List<AnalyzerMappingCatalogService.AnswerCoding> loinc(String code) {
-        return List.of(new AnalyzerMappingCatalogService.AnswerCoding("http://loinc.org", code));
+    private static List<Coding> loinc(String code) {
+        return List.of(new Coding("http://loinc.org", code));
     }
 }

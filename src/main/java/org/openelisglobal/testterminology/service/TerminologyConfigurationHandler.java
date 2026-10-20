@@ -13,6 +13,7 @@ import org.openelisglobal.configuration.service.CsvLoadSummary;
 import org.openelisglobal.configuration.service.CsvRow;
 import org.openelisglobal.configuration.service.LoadedRow;
 import org.openelisglobal.configuration.service.RowTransactionRunner;
+import org.openelisglobal.terminology.TerminologySystems;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.testresultcomponent.valueholder.TestResultComponent;
@@ -22,9 +23,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
 /**
- * Loads the {@code terminology} catalog domain from CSV: the standard codes
- * (LOINC, SNOMED, CIEL, OCL) the Test Catalog editor's Terminology section
- * keeps for a test.
+ * Loads the {@code terminology} catalog domain from CSV: the standard codes in
+ * any system the Test Catalog editor's Terminology section keeps for a test.
  * <p>
  * Columns:
  * {@code testName,sampleType,componentCode,source,code,relationship,displayName}.
@@ -39,7 +39,6 @@ import org.springframework.stereotype.Component;
 @Component
 public class TerminologyConfigurationHandler extends AbstractCatalogCsvHandler {
 
-    private static final Set<String> SOURCES = Set.of("LOINC", "SNOMED", "CIEL", "OCL");
     private static final Set<String> RELATIONSHIPS = Set.of("SAME_AS", "BROADER_THAN", "NARROWER_THAN");
 
     @Autowired
@@ -116,10 +115,11 @@ public class TerminologyConfigurationHandler extends AbstractCatalogCsvHandler {
         }
         List<Boolean> createdFlags = new ArrayList<>();
         for (CsvRow row : group) {
-            String source = row.get("source").toUpperCase(Locale.ROOT);
+            String source = TerminologySystems.sourceOf(row.get("source"));
             String code = row.get("code");
-            if (!SOURCES.contains(source)) {
-                throw new IllegalArgumentException("source must be one of " + SOURCES);
+            if (source == null) {
+                throw new IllegalArgumentException("line " + row.lineNumber() + " needs a source of 1 to "
+                        + TerminologySystems.MAX_SOURCE_LENGTH + " characters");
             }
             if (code.isEmpty()) {
                 throw new IllegalArgumentException("line " + row.lineNumber() + " has no code");

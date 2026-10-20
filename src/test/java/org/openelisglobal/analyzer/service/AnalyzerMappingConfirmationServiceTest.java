@@ -35,6 +35,7 @@ import org.openelisglobal.analyzer.valueholder.AnalyzerMappingTestPK;
 import org.openelisglobal.audittrail.dao.AuditTrailService;
 import org.openelisglobal.systemuser.service.SystemUserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
+import org.openelisglobal.terminology.Coding;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AnalyzerMappingConfirmationServiceTest {
@@ -67,8 +68,9 @@ public class AnalyzerMappingConfirmationServiceTest {
         actor.setLastName("Lovelace");
         actor.setLoginName("ada");
         when(systemUserService.getUserById("17")).thenReturn(actor);
-        when(mappingCatalogService.searchActiveTests(null)).thenReturn(
-                List.of(new AnalyzerMappingCatalogService.TestOption("1", "Mock Test", "MOCK", List.of("1234-5"))));
+        when(mappingCatalogService.searchActiveTests(null))
+                .thenReturn(List.of(new AnalyzerMappingCatalogService.TestOption("1", "Mock Test", "MOCK",
+                        List.of(Coding.loinc("1234-5")))));
         when(mappingCatalogService.getActiveResultOptions("1")).thenReturn(
                 List.of(new AnalyzerMappingCatalogService.ResultOption("11", "DETECTED", "Detected", List.of())));
         when(confirmationDAO.insert(any(AnalyzerMappingConfirmation.class))).thenAnswer(invocation -> {
