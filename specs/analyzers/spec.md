@@ -11,13 +11,21 @@ is listed in [roadmap.md](roadmap.md).
 
 1. **A profile describes an instrument model.** The Bridge ships one profile
    per supported instrument, written from the vendor's own LIS document: the
-   codes and values the instrument sends, their standard codes (LOINC for
-   tests; LOINC, SNOMED or CIEL for values), units, where each part of a
-   result sits in the message, the vendor's language translations, and how
-   control results are recognised. A profile says nothing about a site.
+   codes and values the instrument sends, the codings that name each test and
+   each value, units, where each part of a result sits in the message, the
+   vendor's language translations, and how control results are recognised. A
+   coding is `{system, code}`. A core-shipped profile cites standard systems
+   (LOINC for tests; LOINC, SNOMED or CIEL for values); a distro's profile may
+   also cite the distro catalog's own system, the vocabulary its tests are
+   named in. A profile says nothing about a site.
 2. **Each analyzer owns its mapping.** When a lab adds an analyzer, OpenELIS
-   resolves the profile's standard codes against the local catalog by exact
-   match into that analyzer's own mapping; a row that does not resolve says why
+   resolves the profile's codings against the local catalog by exact match
+   into that analyzer's own mapping, with one rule for tests and values: a
+   profile coding names the local test or answer that carries the same
+   `(system, code)`. OpenELIS keeps a concept's codes as terminology rows whose
+   `source` is the system. LOINC, SNOMED, CIEL and OCL have canonical URIs for
+   FHIR; any other source is an identifier the catalog owner chose, and no list
+   of permitted systems exists anywhere. A row that does not resolve says why
    (no match, ambiguous, or incompatible). There is no shared mapping per
    analyzer type: the Analyzer Types page only previews a profile's defaults. In the setup wizard the operator
    enables the assays this instrument runs, as on the instrument's own host test

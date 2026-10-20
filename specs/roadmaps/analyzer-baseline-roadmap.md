@@ -27,11 +27,13 @@ A change that breaks a rule is wrong even if its step's Done-when passes.
 
 1. A profile describes the instrument model and nothing about a site: codes,
    declared values, result types, units, components, control-recognition
-   rules, connection defaults. Standard codes only: test LOINC; for each
-   categorical value, the standard codes the vendor or LIVD give it, each as
-   `{system, code}` (LOINC, SNOMED, CIEL). No OE2 test IDs, answer labels,
-   specimen names or lab units. No `result_value_hints`, no
-   `specimen_type_hint`.
+   rules, connection defaults. Codings only, each as `{system, code}`: for a
+   test, the codes that name it (`loinc` is shorthand for a LOINC coding); for
+   each categorical value, the standard codes the vendor or LIVD give it. A
+   core-shipped profile cites standard systems (LOINC, SNOMED, CIEL); a
+   distro's profile may also cite the distro catalog's own system, the
+   vocabulary its tests are named in. No OE2 test IDs, answer labels, specimen
+   names or lab units. No `result_value_hints`, no `specimen_type_hint`.
 2. One profile contract, one shipped set. Core ships the full default profile
    set under one documented contract with templates. A distro points the
    Bridge at its own complete folder (`BRIDGE_PROFILE_CATALOG_SHIPPED_PATTERN`)
@@ -49,11 +51,17 @@ A change that breaks a rule is wrong even if its step's Done-when passes.
    and an assay host test code belongs to one assay definition (302-7279 §2).
    It keeps the FRS gap analysis principle that the portable profile is
    catalog-independent and binding resolves when it is applied (§5).
-4. Defaults are exact matches only. Profile LOINC to a local test carrying
-   that LOINC; a value to a local answer sharing one of its `{system, code}`
-   codings (answers carry LOINC, SNOMED, CIEL and OCL codes from step 2c). A
-   value with no coding, or none an answer shares, stays `NO_MATCH`. A
-   candidate that cannot hold the result
+4. Defaults are exact matches only, by one rule for tests and values: a
+   profile test to the local test sharing one of its `{system, code}`
+   codings, a value to the local answer sharing one of its codings. A local
+   test's codings are its terminology rows in any system plus `test.loinc` as
+   a LOINC coding; an answer's are its terminology rows (step 2c) plus its
+   legacy LOINC. A coding and a row share a system when the profile's
+   `system` equals the row's `source` or that source's canonical URI
+   (`TerminologySystems`). No list of permitted sources exists: a source is
+   the identifier the catalog owner chose. A test or value with no coding, or
+   none a local concept shares, stays `NO_MATCH`. A candidate that cannot hold
+   the result
    (categorical test with no answers, or numeric test without a numeric
    result type) is dropped before uniqueness is checked. Two usable
    candidates stay unresolved. Every unresolved row records a reason:
