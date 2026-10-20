@@ -51,6 +51,8 @@ if [ "${DEV_STACK_TLS:-self-signed}" = "self-signed" ]; then
 fi
 
 GENEXPERT_PROFILE_ID="cepheid-genexpert-astm"
+# The analyzer the testing deployment's smoke test sends a GeneXpert result to.
+SMOKE_ANALYZER_NAME="Cepheid GeneXpert (ASTM Mode)"
 FLUOROCYCLER_PROFILE_ID="hain-fluorocycler-xt-madagascar"
 QUANTSTUDIO_PROFILE_ID="thermo-quantstudio"
 
@@ -169,8 +171,18 @@ PY
   local analyzer_id
   analyzer_id="$(find_analyzer_id "$name")"
   if [ "$ENSURE_CONNECTIONS" = true ] && [ -n "$analyzer_id" ]; then
-    echo "  Preserved existing connection: $name"
-    return 0
+    # A row from before profile-pinned analyzers (no profile, no Bridge connection) cannot receive
+    # anything, so it is set up like a new instance. A pinned one is the operator's and is kept.
+    if [ -n "$(analyzer_field "$name" profileId)" ]; then
+      if [ "$name" = "$SMOKE_ANALYZER_NAME" ] && [ "$(analyzer_field "$name" status)" != "ACTIVE" ]; then
+        echo "  $name is not active; the deployment smoke test sends to it"
+        set_up_like_an_operator "$analyzer_id" "$name"
+        return 0
+      fi
+      echo "  Preserved existing connection: $name"
+      return 0
+    fi
+    echo "  $name has no profile pin (from before profile-pinned analyzers); setting it up"
   fi
   local method="POST"
   local url="$ANALYZER_API"
@@ -193,9 +205,25 @@ PY
     return 1
   fi
   echo "  $action_label: $name ($profile_id@$profile_revision)"
-  if [ "$action" = "create" ]; then
+  if [ "$action" = "create" ] || [ "$ENSURE_CONNECTIONS" = true ]; then
     set_up_like_an_operator "$(find_analyzer_id "$name")" "$name"
   fi
+}
+
+# One field of the named analyzer from the last analyzer list read, empty when absent.
+analyzer_field() {
+  python3 - "$ANALYZERS_FILE" "$1" "$2" <<'PY'
+import json
+import sys
+
+with open(sys.argv[1], encoding="utf-8") as handle:
+    analyzers = json.load(handle).get("analyzers", [])
+for item in analyzers:
+    if item.get("name") == sys.argv[2]:
+        value = item.get(sys.argv[3])
+        print("" if value in (None, 0) else value)
+        break
+PY
 }
 
 api_send() {
