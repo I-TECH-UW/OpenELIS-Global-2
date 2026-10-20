@@ -28,6 +28,9 @@ const TerminologySourceInput = ({ id, titleText = "", value, onChange }) => {
       }
       allowCustomValue
       items={STANDARD_SOURCES}
+      shouldFilterItem={({ item, inputValue }) =>
+        !inputValue || item.toLowerCase().includes(inputValue.toLowerCase())
+      }
       selectedItem={value || null}
       invalid={sourceTooLong(value)}
       invalidText={intl.formatMessage(

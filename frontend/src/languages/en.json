@@ -1126,7 +1126,7 @@
   "analyzerType.mappingEditor.own.title": "This analyzer's own mapping",
   "analyzerType.mappingEditor.own.subtitle": "Changes here apply only to this analyzer. They take effect when you confirm the mapping and apply it.",
   "analyzerType.mappingEditor.defaults.title": "Defaults for new analyzers",
-  "analyzerType.mappingEditor.defaults.subtitle": "This is what a new analyzer of this type would start with, matched by standard codes against the current catalog. Nothing here is saved; each analyzer keeps its own mapping.",
+  "analyzerType.mappingEditor.defaults.subtitle": "This is what a new analyzer of this type would start with, matched by the codes the profile and the current catalog share. Nothing here is saved; each analyzer keeps its own mapping.",
   "analyzerType.mappingEditor.origin.override": "Edited",
   "analyzerType.mappingEditor.changes.heading": "Review changes before saving",
   "analyzerType.mappingEditor.changes.save": "Save changes",
