@@ -116,9 +116,11 @@ public class ReflexDictionaryConditionTest {
 
         lenient().when(testResultService.getActiveTestResultsByTest(TRIGGER_TEST)).thenReturn(new ArrayList<>(
                 Arrays.asList(option("716", INVALID_ID), option("714", POSITIVE_ID), option("715", NEGATIVE_ID))));
-        lenient().when(dictionaryService.get(INVALID_ID)).thenReturn(entry(INVALID_ID, "RT Invalid", "RTINV"));
-        lenient().when(dictionaryService.get(POSITIVE_ID)).thenReturn(entry(POSITIVE_ID, "RT Positive", "RTPOS"));
-        lenient().when(dictionaryService.get(NEGATIVE_ID)).thenReturn(entry(NEGATIVE_ID, "RT Negative", "RTNEG"));
+        lenient().when(dictionaryService.getDataForId(INVALID_ID)).thenReturn(entry(INVALID_ID, "RT Invalid", "RTINV"));
+        lenient().when(dictionaryService.getDataForId(POSITIVE_ID))
+                .thenReturn(entry(POSITIVE_ID, "RT Positive", "RTPOS"));
+        lenient().when(dictionaryService.getDataForId(NEGATIVE_ID))
+                .thenReturn(entry(NEGATIVE_ID, "RT Negative", "RTNEG"));
 
         lenient().when(testResultComponentService.getActiveComponentsByTestId(TRIGGER_TEST))
                 .thenReturn(Collections.emptyList());
@@ -165,6 +167,27 @@ public class ReflexDictionaryConditionTest {
         verify(reflexService, never()).save(any(TestReflex.class));
     }
 
+    @Test
+    public void aConditionNamingTheAnswerByItsEntryKeepsTheAnswersDictionaryId() {
+        save("RT Positive");
+
+        assertEquals(POSITIVE_ID, savedCondition.getValue());
+    }
+
+    @Test
+    public void anOptionWhoseDictionaryEntryIsGoneIsSkipped() {
+        lenient().when(testResultService.getActiveTestResultsByTest(TRIGGER_TEST))
+                .thenReturn(new ArrayList<>(Arrays.asList(option("717", "9999"), option("714", POSITIVE_ID))));
+        lenient().when(dictionaryService.get("9999")).thenThrow(new IllegalStateException("dictionary 9999 is gone"));
+        lenient().when(dictionaryService.getDataForId("9999")).thenReturn(null);
+
+        TestReflex saved = save("RT Positive");
+
+        assertEquals(POSITIVE_ID, saved.getTestResult().getValue());
+    }
+
+    private ReflexRuleCondition savedCondition;
+
     private TestReflex save(String conditionValue) {
         ReflexRule rule = new ReflexRule();
         rule.setRuleName("RT Malaria Positive Reflex");
@@ -176,6 +199,7 @@ public class ReflexDictionaryConditionTest {
         condition.setSampleId(SPECIMEN);
         condition.setRelation(NumericRelationOptions.EQUALS);
         condition.setValue(conditionValue);
+        savedCondition = condition;
         rule.setConditions(new LinkedHashSet<>(Collections.singletonList(condition)));
 
         ReflexRuleAction action = new ReflexRuleAction();

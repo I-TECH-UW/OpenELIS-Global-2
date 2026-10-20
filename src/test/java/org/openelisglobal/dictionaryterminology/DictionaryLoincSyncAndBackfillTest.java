@@ -94,6 +94,26 @@ public class DictionaryLoincSyncAndBackfillTest extends BaseWebContextSensitiveT
         assertEquals(1, mappingService.getActiveByDictionaryId(String.valueOf(LEGACY_ONLY)).size());
     }
 
+    /**
+     * 020 also lets the version column default on every mapping table, so a later
+     * SQL insert that omits it cannot recreate the gap the repair closes.
+     */
+    @Test
+    public void everyTerminologyMappingTableDefaultsItsVersionColumn() {
+        List<String> withoutDefault = new ArrayList<>();
+        for (String table : List.of("dictionary_terminology_mapping", "test_terminology_mapping",
+                "panel_terminology_mapping", "sample_type_terminology_mapping")) {
+            String columnDefault = jdbc.queryForObject(
+                    "SELECT column_default FROM information_schema.columns WHERE table_schema = 'clinlims'"
+                            + " AND table_name = ? AND column_name = 'last_updated'",
+                    String.class, table);
+            if (columnDefault == null || !columnDefault.contains("now()")) {
+                withoutDefault.add(table);
+            }
+        }
+        assertEquals("mapping tables whose last_updated has no default", List.of(), withoutDefault);
+    }
+
     @Test
     public void repairStampsTheVersionOfEveryBackfilledMapping() {
         insertMappingWithoutVersion(LEGACY_ONLY, "LA6576-8");

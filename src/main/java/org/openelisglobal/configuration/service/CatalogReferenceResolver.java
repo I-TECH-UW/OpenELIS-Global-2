@@ -49,23 +49,42 @@ public class CatalogReferenceResolver {
     private ReferenceAliasService aliasService;
 
     /**
-     * The test a file names: by plain description (exact, then normalized), by
-     * local code, by a remembered alias, and finally, when the row names a
-     * specimen, the legacy {@code Name(Specimen)} record for that specimen.
+     * The one active test whose catalogue name is {@code name}, on the row's
+     * specimen when the row names one. A test created in the Test Catalogue Editor
+     * carries its name in {@code test.name} and the localisation while
+     * {@code test.description} holds a free-text description, so a file that names
+     * it the way the catalogue shows it must still find it. Several active tests
+     * sharing a name are legacy per-specimen variants, left to the specimen-aware
+     * lookup in {@link #resolveTest}; so is a single namesake that is not offered
+     * on the row's specimen (an upgraded catalogue carries legacy
+     * {@code Name(Specimen)} tests whose localised name is the plain name, and
+     * "Glucose" on Serum must not bind {@code Glucose(Plasma)}).
      */
-    /**
-     * The one active test whose catalogue name is {@code name}. A test created in
-     * the Test Catalogue Editor carries its name in {@code test.name} and the
-     * localisation while {@code test.description} holds a free-text description, so
-     * a file that names it the way the catalogue shows it must still find it.
-     * Several active tests sharing a name are legacy per-specimen variants, left to
-     * the specimen-aware lookup below.
-     */
-    private Test onlyActiveTestNamed(String name) {
+    private Test onlyActiveTestNamed(String name, String sampleTypeName) {
         List<Test> named = testService.getActiveTestByName(name);
-        return named != null && named.size() == 1 ? named.get(0) : null;
+        if (named == null || named.size() != 1) {
+            return null;
+        }
+        Test test = named.get(0);
+        if (sampleTypeName == null || sampleTypeName.isBlank()) {
+            return test;
+        }
+        TypeOfSample specimen = findSampleType(sampleTypeName);
+        if (specimen == null) {
+            return null;
+        }
+        List<TypeOfSample> offeredOn = typeOfSampleService.getTypeOfSampleForTest(test.getId());
+        boolean linked = offeredOn != null
+                && offeredOn.stream().anyMatch(sampleType -> specimen.getId().equals(sampleType.getId()));
+        return linked ? test : null;
     }
 
+    /**
+     * The test a file names: by plain description (exact, then normalized), by
+     * local code, by a remembered alias, by its catalogue name when exactly one
+     * active test carries it on the row's specimen, and finally, when the row names
+     * a specimen, the legacy {@code Name(Specimen)} record for that specimen.
+     */
     public Test resolveTest(String name, String sampleTypeName, String context) {
         if (name == null || name.isBlank()) {
             return null;
@@ -78,13 +97,13 @@ public class CatalogReferenceResolver {
             test = testService.getTestByLocalCode(name);
         }
         if (test == null) {
-            test = onlyActiveTestNamed(name);
-        }
-        if (test == null) {
             String aliased = aliasService.resolve(UnresolvedReference.TYPE_TEST, name);
             if (aliased != null) {
                 test = testService.get(aliased);
             }
+        }
+        if (test == null) {
+            test = onlyActiveTestNamed(name, sampleTypeName);
         }
         if (test == null && sampleTypeName != null && !sampleTypeName.isBlank()) {
             TypeOfSample specimen = findSampleType(sampleTypeName);

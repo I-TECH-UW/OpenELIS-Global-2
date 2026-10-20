@@ -78,4 +78,20 @@
         <rollback/>
     </changeSet>
 
+    <changeSet id="020-panel-terminology-mapping-version-default" author="oe">
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="clinlims" tableName="panel_terminology_mapping" columnName="last_updated"/>
+        </preConditions>
+        <addDefaultValue schemaName="clinlims" tableName="panel_terminology_mapping" columnName="last_updated"
+            defaultValueComputed="now()"/>
+    </changeSet>
+
+    <changeSet id="020-sample-type-terminology-mapping-version-default" author="oe">
+        <preConditions onFail="MARK_RAN">
+            <columnExists schemaName="clinlims" tableName="sample_type_terminology_mapping" columnName="last_updated"/>
+        </preConditions>
+        <addDefaultValue schemaName="clinlims" tableName="sample_type_terminology_mapping" columnName="last_updated"
+            defaultValueComputed="now()"/>
+    </changeSet>
+
 </databaseChangeLog>

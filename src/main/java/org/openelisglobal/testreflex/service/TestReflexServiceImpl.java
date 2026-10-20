@@ -318,7 +318,9 @@ public class TestReflexServiceImpl extends AuditableBaseObjectServiceImpl<TestRe
         reflex.setComponentId(componentId);
         reflex.setSampleTypeId(blankToNull(condition.getSampleId()));
         if (resultType.equals("D")) {
-            reflex.setTestResult(codedAnswer(triggerTest, results, condition.getValue()));
+            TestResult answer = codedAnswer(triggerTest, results, condition.getValue());
+            condition.setValue(answer.getValue());
+            reflex.setTestResult(answer);
         } else {
             reflex.setTestResult(results.get(0));
             if (resultType.equals("N")) {
@@ -369,7 +371,10 @@ public class TestReflexServiceImpl extends AuditableBaseObjectServiceImpl<TestRe
      * answer by its dictionary id; a reflex-rules configuration file names it by
      * its dictionary entry or local abbreviation. A value that names no option is
      * refused: binding an arbitrary option instead saves a rule that looks
-     * configured and fires on the wrong answer.
+     * configured and fires on the wrong answer. The caller stores the answer's
+     * dictionary id on the condition, which is how the rule editor and the rules
+     * endpoint show it. An option whose dictionary entry is gone is skipped rather
+     * than failing every rule on the test.
      */
     private TestResult codedAnswer(Test triggerTest, List<TestResult> options, String conditionValue) {
         String wanted = conditionValue == null ? "" : conditionValue.trim();
@@ -382,7 +387,7 @@ public class TestReflexServiceImpl extends AuditableBaseObjectServiceImpl<TestRe
         }
         for (TestResult option : options) {
             Dictionary entry = GenericValidator.isBlankOrNull(option.getValue()) ? null
-                    : dictionaryService.get(option.getValue());
+                    : dictionaryService.getDataForId(option.getValue());
             if (entry != null && (wanted.equalsIgnoreCase(entry.getDictEntry())
                     || wanted.equalsIgnoreCase(entry.getLocalAbbreviation()))) {
                 return option;
