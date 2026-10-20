@@ -62,11 +62,11 @@ patient result readback. The smoke message uses the shared ASTM listener at port
 an existing test connection, set that instrument system name in its connection
 screen before retrying deployment. If testers have disabled the connection or
 changed that sender identity, the check fails before sending, naming the
-analyzer's status, profile and Bridge connection, and leaves their settings intact;
-restore that connection in OpenELIS when it is ready to receive the deployment
-check. The deploy refuses superseded commits and ports 80/443 owned by any other
-Compose project. After success it keeps the current and previous release and
-removes unused images.
+analyzer's status, profile and Bridge connection, and leaves their settings
+intact; restore that connection in OpenELIS when it is ready to receive the
+deployment check. The deploy refuses superseded commits and ports 80/443 owned
+by any other Compose project. After success it keeps the current and previous
+release and removes unused images.
 
 Configure access with `TESTING_VM_SSH_KEY`, `DEPLOY_HOST`, `TESTING_VM_USER`,
 `DEPLOY_PORT`, and `TESTING_SITE_PATH`. `DOCKERHUB_USERNAME` controls the image
