@@ -393,6 +393,27 @@ describe("AnalyserResults", () => {
     ).toHaveAttribute("href", expect.stringContaining("setup=assays"));
   });
 
+  it("explains a result held because its test now reads differently and links to confirming again", async () => {
+    renderResults([{ ...heldResult, importIssueReason: "reading_changed" }]);
+
+    expect(
+      await screen.findByText(/now reads this test or value differently/),
+    ).toBeInTheDocument();
+    expect(
+      screen.getByRole("link", { name: "Confirm the mapping again" }),
+    ).toHaveAttribute("href", expect.stringContaining("setup=verify"));
+  });
+
+  it("explains a result held because the whole type now reads differently", async () => {
+    renderResults([
+      { ...heldResult, importIssueReason: "type_reading_changed" },
+    ]);
+
+    expect(
+      await screen.findByText(/now reads every result differently/),
+    ).toBeInTheDocument();
+  });
+
   it("names the profile a result was sent under when it reads differently, and asks for a rerun", async () => {
     renderResults([
       {

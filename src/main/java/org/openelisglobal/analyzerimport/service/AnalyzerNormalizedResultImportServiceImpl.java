@@ -16,6 +16,7 @@ import java.util.function.Predicate;
 import java.util.stream.Collectors;
 import org.hl7.fhir.r4.model.Bundle;
 import org.hl7.fhir.r4.model.Observation;
+import org.openelisglobal.analyzer.service.AnalyzerConfirmationReading;
 import org.openelisglobal.analyzer.service.AnalyzerMappingCatalogService;
 import org.openelisglobal.analyzer.service.AnalyzerMappingCatalogState;
 import org.openelisglobal.analyzer.service.AnalyzerMappingConfirmationService;
@@ -230,7 +231,8 @@ public class AnalyzerNormalizedResultImportServiceImpl implements AnalyzerNormal
                         row -> new ResultKey(AnalyzerMappingRowKey.of(row), row.getId().getRawValue()), row -> row)),
                 binding.results().stream().map(AnalyzerMappingRowKey::of).collect(Collectors.toSet()),
                 AnalyzerMappingCatalogState.load(mappingCatalogService).validate(binding),
-                readsAlike(contract, binding.mapping().getProfilePin()));
+                readsAlike(contract, binding.mapping().getProfilePin()),
+                confirmationService.readingOnDelivery(binding, contract.profileFingerprint()));
         Map<String, Boolean> confirmedByRecognition = new HashMap<>();
         return contract.results().stream().flatMap(result -> {
             boolean confirmed = confirmedByRecognition.computeIfAbsent(result.recognitionFingerprint(),
@@ -260,6 +262,13 @@ public class AnalyzerNormalizedResultImportServiceImpl implements AnalyzerNormal
         }
         if (!mappingConfirmed) {
             return List.of(held(contract, result, analyzer, AnalyzerResults.IMPORT_ISSUE_TEST_MAPPING_NOT_READY));
+        }
+        if (mapping.reading().typeChanged()) {
+            return List.of(held(contract, result, analyzer, AnalyzerResults.IMPORT_ISSUE_TYPE_READING_CHANGED));
+        }
+        if (testMapping.getMappingState() == AnalyzerMappingState.BOUND
+                && mapping.reading().holdsRecord(record.sourceRowKey(), record.subIdentity())) {
+            return List.of(held(contract, result, analyzer, AnalyzerResults.IMPORT_ISSUE_READING_CHANGED));
         }
         if (testMapping.getMappingState() == AnalyzerMappingState.EXCLUDED) {
             return List.of();
@@ -291,7 +300,10 @@ public class AnalyzerNormalizedResultImportServiceImpl implements AnalyzerNormal
             // below.
             AnalyzerMappingResult answer = result.call() != null ? null
                     : mapping.results().get(new ResultKey(record, result.rawValue()));
-            if (answer == null || bindAnswer(number, answer, record, result.rawValue(), mapping)) {
+            if (answer != null && holdsValue(mapping, record, result.rawValue())) {
+                hold(number, AnalyzerResults.IMPORT_ISSUE_READING_CHANGED);
+                rows.add(number);
+            } else if (answer == null || bindAnswer(number, answer, record, result.rawValue(), mapping)) {
                 rows.add(number);
             }
         }
@@ -305,7 +317,9 @@ public class AnalyzerNormalizedResultImportServiceImpl implements AnalyzerNormal
             call.setComponentId(target);
             call.setResultType("A");
             AnalyzerMappingResult answer = mapping.results().get(new ResultKey(record, result.call()));
-            if (answer != null && !bindAnswer(call, answer, record, result.call(), mapping)) {
+            if (answer != null && holdsValue(mapping, record, result.call())) {
+                hold(call, AnalyzerResults.IMPORT_ISSUE_READING_CHANGED);
+            } else if (answer != null && !bindAnswer(call, answer, record, result.call(), mapping)) {
                 call = null;
             } else if (answer == null && mapping.recordsWithAnswers().contains(record)) {
                 hold(call, AnalyzerResults.IMPORT_ISSUE_UNKNOWN_RESULT_VALUE);
@@ -505,8 +519,13 @@ public class AnalyzerNormalizedResultImportServiceImpl implements AnalyzerNormal
     private record ResultKey(AnalyzerMappingRowKey record, String rawValue) {
     }
 
+    private static boolean holdsValue(Mapping mapping, AnalyzerMappingRowKey record, String rawValue) {
+        return mapping.reading().holdsValue(record.sourceRowKey(), record.subIdentity(), rawValue);
+    }
+
     private record Mapping(Map<AnalyzerMappingRowKey, AnalyzerMappingTest> tests,
             Map<ResultKey, AnalyzerMappingResult> results, Set<AnalyzerMappingRowKey> recordsWithAnswers,
-            AnalyzerMappingCatalogState.Validation catalog, Predicate<AnalyzerMappingRowKey> readsAlike) {
+            AnalyzerMappingCatalogState.Validation catalog, Predicate<AnalyzerMappingRowKey> readsAlike,
+            AnalyzerConfirmationReading reading) {
     }
 }
