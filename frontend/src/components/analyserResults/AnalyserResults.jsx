@@ -513,7 +513,10 @@ const AnalyserResults = (props) => {
           <div>
             <FormattedMessage
               id="analyzer.results.held.otherRevision"
-              values={{ revision: row.sourceProfileRevision }}
+              values={{
+                revision: row.sourceProfileRevision,
+                profile: row.sourceProfileId,
+              }}
             />
           </div>
         )}
