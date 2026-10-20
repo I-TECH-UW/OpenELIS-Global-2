@@ -201,13 +201,26 @@ def http_json(method, url, body=None, username=TEST_USER, password=TEST_PASS, au
         return json.load(response)
 
 
+def smoke_analyzer(analyzers):
+    """The smoke test's analyzer, refused with the reason when it cannot receive a result."""
+    matches = [item for item in analyzers if item.get("name") == SMOKE_ANALYZER]
+    if len(matches) != 1:
+        raise RuntimeError(f"expected one analyzer named {SMOKE_ANALYZER!r}; found {len(matches)}")
+    analyzer = matches[0]
+    if analyzer.get("status") != "ACTIVE" or not analyzer.get("bridgeConnectionId"):
+        raise RuntimeError(
+            f"{SMOKE_ANALYZER} cannot receive the smoke result: status {analyzer.get('status')}, "
+            f"profile {analyzer.get('profileId') or 'none'}, "
+            f"Bridge connection {analyzer.get('bridgeConnectionId') or 'none'}")
+    return analyzer
+
+
 def verify_analyzer_delivery(api_base, mock_url, accession, http=http_json, sleep=time.sleep, timeout=120):
+    analyzer_id = smoke_analyzer(http("GET", api_base + "/analyzer/analyzers").get("analyzers", []))["id"]
     pushed = http("POST", mock_url + "/simulate/fixture/genexpert_astm/hivvl/quantified",
                   {"destination": SMOKE_DESTINATION, "sample_id": accession, "sender_id": SMOKE_SENDER_ID})
     if pushed.get("pushed") != 1:
         raise RuntimeError(f"Mock did not deliver the smoke result: {pushed}")
-    analyzers = http("GET", api_base + "/analyzer/analyzers").get("analyzers", [])
-    analyzer_id = next(item["id"] for item in analyzers if item.get("name") == SMOKE_ANALYZER)
     deadline = time.monotonic() + timeout
     while True:
         response = http("GET", f"{api_base}/AnalyzerResults?id={analyzer_id}")
