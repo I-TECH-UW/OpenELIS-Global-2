@@ -353,15 +353,12 @@ public class AnalyzerActivationServiceImpl implements AnalyzerActivationService 
     }
 
     private static boolean matchesCatalogProfile(AnalyzerProfilePin profile, BridgeAnalyzerProfile catalogProfile) {
-        return Objects.equals(profile.getProfileId(), catalogProfile.profileId())
-                && profile.getProfileRevision() == catalogProfile.revision()
-                && Objects.equals(profile.getProfileFingerprint(), catalogProfile.revisionFingerprint());
+        return profile.names(catalogProfile.profileId(), catalogProfile.revision());
     }
 
     private static boolean matchesProfile(AnalyzerProfilePin profile, JsonNode profileRef) {
-        return profile != null && Objects.equals(profile.getProfileId(), profileRef.path("profileId").asText(null))
-                && profile.getProfileRevision() == profileRef.path("revision").asInt(0)
-                && Objects.equals(profile.getProfileFingerprint(), profileRef.path("fingerprint").asText(null));
+        return profile != null
+                && profile.names(profileRef.path("profileId").asText(null), profileRef.path("revision").asInt(0));
     }
 
     private boolean isActiveLabUnit(String id) {

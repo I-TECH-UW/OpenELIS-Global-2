@@ -145,6 +145,18 @@ public class AnalyzerActivationServiceTest {
     }
 
     @Test
+    public void aTypeFileEditedUnderItsRevisionDoesNotBlockActivation() {
+        BridgeProfileCatalog.ProfileRevision edited = profileRevision();
+        ((ObjectNode) edited.profile().path("catalog")).put("revisionFingerprint", "sha256:" + "9".repeat(64));
+        when(profileCatalogService.getProfile(PROFILE_ID, PROFILE_REVISION)).thenReturn(edited);
+        connection.withObject("profileRef").put("fingerprint", "sha256:" + "9".repeat(64));
+
+        AnalyzerActivationResult result = service.readiness(ANALYZER_ID);
+
+        assertTrue(result.blockers().toString(), result.ready());
+    }
+
+    @Test
     public void reportsEveryBridgeReadinessBlockerWithoutInterpretingProfileFields() {
         connection.with("readiness").put("ready", false);
         connection.with("readiness").putArray("blockers").addObject().put("key", "listener-port")
