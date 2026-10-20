@@ -1,9 +1,12 @@
 package org.openelisglobal.analyzer.service;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotEquals;
 import static org.junit.Assert.assertTrue;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.Map;
 import java.util.Set;
 import org.junit.Test;
 
@@ -55,6 +58,61 @@ public class AnalyzerRecordReadingTest {
         assertTrue(alike.contains(AnalyzerMappingRowKey.main("KEPT")));
         assertFalse(alike.contains(AnalyzerMappingRowKey.main("OLD")));
         assertFalse(alike.contains(AnalyzerMappingRowKey.main("NEW")));
+    }
+
+    @Test
+    public void anAliasOrARunFailureValueIsPartOfHowATestIsRead() throws Exception {
+        assertFalse(AnalyzerRecordReading
+                .readAlike(profile("{\"test_code\":\"GLU\",\"loinc\":\"2345-7\"}"),
+                        profile("{\"test_code\":\"GLU\",\"loinc\":\"2345-7\",\"aliases\":[\"GLUC\"]}"))
+                .contains(AnalyzerMappingRowKey.main("GLU")));
+        assertFalse(
+                AnalyzerRecordReading
+                        .readAlike(profile("{\"test_code\":\"MTB\",\"loinc\":\"38379-4\",\"values\":[\"DETECTED\"]}"),
+                                profile("{\"test_code\":\"MTB\",\"loinc\":\"38379-4\",\"values\":[\"DETECTED\"],"
+                                        + "\"run_failure_values\":[\"ERROR\"]}"))
+                        .contains(AnalyzerMappingRowKey.main("MTB")));
+    }
+
+    @Test
+    public void eachDeclaredValueIsARowReadByTheSpellingsTranslatedToIt() throws Exception {
+        Map<AnalyzerMappingSourceRow, Object> before = AnalyzerRecordReading
+                .rowReadings(profile("{\"test_code\":\"HBSAG\",\"loinc\":\"5196-1\",\"result_type\":\"qualitative\","
+                        + "\"values\":[\"POS\",\"NEG\"],\"translations\":{\"POS\":[\"POSITIF\"],"
+                        + "\"NEG\":[\"NEGATIF\"]}}"));
+        Map<AnalyzerMappingSourceRow, Object> after = AnalyzerRecordReading
+                .rowReadings(profile("{\"test_code\":\"HBSAG\",\"loinc\":\"5196-1\",\"result_type\":\"qualitative\","
+                        + "\"values\":[\"POS\",\"NEG\",\"IND\"],\"translations\":{\"POS\":[\"NEGATIF\"],"
+                        + "\"NEG\":[\"NEGATIF\"]}}"));
+        AnalyzerMappingSourceRow test = new AnalyzerMappingSourceRow("HBSAG", null, "");
+        AnalyzerMappingSourceRow positive = new AnalyzerMappingSourceRow("HBSAG", "POS", "");
+        AnalyzerMappingSourceRow negative = new AnalyzerMappingSourceRow("HBSAG", "NEG", "");
+
+        assertEquals("an added value does not change the test", before.get(test), after.get(test));
+        assertEquals(before.get(negative), after.get(negative));
+        assertNotEquals("a value translated from other spellings reads differently", before.get(positive),
+                after.get(positive));
+        assertTrue(after.containsKey(new AnalyzerMappingSourceRow("HBSAG", "IND", "")));
+    }
+
+    @Test
+    public void theTypeReadingIsItsRoutingParsingAndRecognitionNotItsNamesOrConnectionDefaults() throws Exception {
+        BridgeAnalyzerProfile base = typeProfile(
+                "\"identifier_pattern\":\"GENEXPERT\",\"configDefaults\":{\"port\":1}");
+        BridgeAnalyzerProfile renamed = typeProfile(
+                "\"identifier_pattern\":\"GENEXPERT\",\"configDefaults\":{\"port\":2},\"model\":\"GX-IV\"");
+        BridgeAnalyzerProfile rerouted = typeProfile(
+                "\"identifier_pattern\":\"CEPHEID\",\"configDefaults\":{\"port\":1}");
+
+        assertEquals(AnalyzerRecordReading.typeReading(base), AnalyzerRecordReading.typeReading(renamed));
+        assertNotEquals(AnalyzerRecordReading.typeReading(base), AnalyzerRecordReading.typeReading(rerouted));
+    }
+
+    private static BridgeAnalyzerProfile typeProfile(String fields) throws Exception {
+        return BridgeAnalyzerProfile.from(new ObjectMapper().readTree("{\"profileMeta\":{\"id\":\"fixture.reading\","
+                + "\"displayName\":\"Reading\"},\"catalog\":{\"revision\":1,\"revisionFingerprint\":\"sha256:"
+                + "a".repeat(64) + "\",\"source\":\"SHIPPED\",\"status\":\"ACTIVE\"},\"protocol\":{\"name\":\"ASTM\"},"
+                + fields + ",\"default_test_mappings\":[{\"test_code\":\"GLU\",\"loinc\":\"2345-7\"}]}"));
     }
 
     private static BridgeAnalyzerProfile profile(String... tests) throws Exception {
