@@ -200,7 +200,8 @@ public class LogbookResultsController extends LogbookResultsBaseController {
 
             // load testSections for drop down
             String resultsRoleId = roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
-            List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
+            List<IdValuePair> testSections = userService.getUserViewerTestSections(getSysUserId(request),
+                    resultsRoleId);
             newForm.setTestSections(testSections);
             newForm.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
             newForm.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
@@ -381,7 +382,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
         }
 
         String resultsRoleId = roleService.getRoleByName(Constants.ROLE_RESULTS).getId();
-        List<IdValuePair> testSections = userService.getUserTestSections(getSysUserId(request), resultsRoleId);
+        List<IdValuePair> testSections = userService.getUserViewerTestSections(getSysUserId(request), resultsRoleId);
         form.setTestSections(testSections);
         form.setTestSectionsByName(DisplayListService.getInstance().getList(ListType.TEST_SECTION_BY_NAME));
         form.setMethods(DisplayListService.getInstance().getList(ListType.METHODS));
@@ -566,7 +567,7 @@ public class LogbookResultsController extends LogbookResultsBaseController {
                     actionDataSet.getDeletableResults());
 
             boolean correctedSinceReport = resultSaveService.isUpdatedResult()
-                    && analysisService.patientReportHasBeenDone(analysis);
+                    && analysisService.releasedResultHasBeenReported(analysis);
             if (correctedFlagComputedIds.add(analysis.getId())) {
                 analysis.setCorrectedSincePatientReport(correctedSinceReport);
             } else if (correctedSinceReport) {

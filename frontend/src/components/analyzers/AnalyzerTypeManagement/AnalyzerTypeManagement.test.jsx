@@ -64,7 +64,6 @@ const catalog = {
       protocol: "ASTM",
       parentProfileId: null,
       parentRevision: null,
-      siteBindingId: "11",
       testMappings: { mapped: 3, excluded: 1, total: 4, state: "COMPLETE" },
       resultMappings: {
         mapped: 5,
@@ -94,7 +93,6 @@ const catalog = {
       protocol: "HL7",
       parentProfileId: "shipped.mindray",
       parentRevision: 3,
-      siteBindingId: "12",
       testMappings: { mapped: 13, excluded: 0, total: 13, state: "COMPLETE" },
       resultMappings: {
         mapped: 0,
@@ -124,7 +122,6 @@ const catalog = {
       protocol: "FILE",
       parentProfileId: null,
       parentRevision: null,
-      siteBindingId: null,
       testMappings: { mapped: 0, excluded: 0, total: 1, state: "INCOMPLETE" },
       resultMappings: { mapped: 0, excluded: 0, total: 3, state: "INCOMPLETE" },
       usedBy: 0,
@@ -376,6 +373,33 @@ describe("AnalyzerTypeManagement", () => {
     ).toBeVisible();
   });
 
+  it("keeps rendering when a refreshed catalog removes a displayed profile", async () => {
+    let deliverCatalog;
+    getAnalyzerTypeCatalog.mockImplementation((callback) => {
+      deliverCatalog = callback;
+      callback(catalog);
+    });
+
+    renderPage();
+    expect(await screen.findByText("Cepheid GeneXpert MTB/RIF")).toBeVisible();
+
+    await act(async () => {
+      deliverCatalog({
+        ...catalog,
+        types: catalog.types.filter(
+          (type) => type.profileId !== "shipped.genexpert",
+        ),
+      });
+    });
+
+    expect(
+      screen.getByRole("heading", { name: "Analyzer Types" }),
+    ).toBeVisible();
+    expect(
+      screen.queryByText("Cepheid GeneXpert MTB/RIF"),
+    ).not.toBeInTheDocument();
+  });
+
   it("shows a Carbon action when the catalog fails and retries visibly", async () => {
     getAnalyzerTypeCatalog
       .mockImplementationOnce((callback) => callback(undefined))
@@ -391,6 +415,31 @@ describe("AnalyzerTypeManagement", () => {
 
     expect(getAnalyzerTypeCatalog).toHaveBeenCalledTimes(2);
     expect(await screen.findByText("Cepheid GeneXpert MTB/RIF")).toBeVisible();
+  });
+
+  it("names each profile file the Bridge set aside and still lists the others", async () => {
+    getAnalyzerTypeCatalog.mockImplementation((callback) =>
+      callback({
+        ...catalog,
+        issues: [
+          {
+            source: "file [/app/analyzer-profiles/broken.json]",
+            reason: "Unexpected character",
+          },
+        ],
+      }),
+    );
+
+    renderPage();
+
+    expect(await screen.findByText("Cepheid GeneXpert MTB/RIF")).toBeVisible();
+    expect(
+      screen.getByText("Some analyzer profiles could not be loaded"),
+    ).toBeVisible();
+    expect(
+      screen.getByText(/file \[\/app\/analyzer-profiles\/broken\.json\]/),
+    ).toBeVisible();
+    expect(screen.getByText(/Unexpected character/)).toBeVisible();
   });
 
   it("restores filters from the URL and round-trips changes through browser history", async () => {
@@ -442,7 +491,7 @@ describe("AnalyzerTypeManagement", () => {
     expect(screen.getByText("Tecan Infinite F50")).toBeVisible();
   });
 
-  it("opens the sole shared mapping editor and preserves the filtered return URL", async () => {
+  it("opens the read-only defaults and preserves the filtered return URL", async () => {
     window.history.replaceState(
       {},
       "",
@@ -457,7 +506,7 @@ describe("AnalyzerTypeManagement", () => {
       }),
     );
     await userEvent.click(
-      screen.getByRole("menuitem", { name: "Edit mappings" }),
+      screen.getByRole("menuitem", { name: "View default mappings" }),
     );
 
     await waitFor(() =>

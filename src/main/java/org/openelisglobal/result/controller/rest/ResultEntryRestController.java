@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -16,6 +17,7 @@ import org.openelisglobal.analysis.service.AnalysisServiceImpl;
 import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.audittrail.dao.HistoryDAO;
 import org.openelisglobal.audittrail.valueholder.History;
+import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.exception.LIMSRuntimeException;
 import org.openelisglobal.common.formfields.FormFields;
@@ -27,18 +29,26 @@ import org.openelisglobal.common.util.ConfigurationProperties;
 import org.openelisglobal.common.util.ConfigurationProperties.Property;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
+import org.openelisglobal.common.util.validator.CustomDateValidator;
+import org.openelisglobal.common.util.validator.CustomDateValidator.DateRelation;
 import org.openelisglobal.dataexchange.fhir.exception.FhirPersistanceException;
 import org.openelisglobal.dataexchange.fhir.exception.FhirTransformationException;
 import org.openelisglobal.dataexchange.fhir.service.FhirTransformService;
 import org.openelisglobal.internationalization.MessageUtil;
+import org.openelisglobal.referral.action.beanitems.ReferralItem;
+import org.openelisglobal.result.action.util.ResultEntryAlert;
 import org.openelisglobal.result.action.util.ResultUtil;
+import org.openelisglobal.result.action.util.ResultsLoadUtility;
 import org.openelisglobal.result.action.util.ResultsUpdateDataSet;
 import org.openelisglobal.result.controller.LogbookResultsBaseController;
 import org.openelisglobal.result.form.LogbookResultsForm;
 import org.openelisglobal.result.form.SingleResultEntryForm;
 import org.openelisglobal.result.service.AnalysisTimelineService;
 import org.openelisglobal.result.service.LogbookResultsPersistService;
+import org.openelisglobal.result.service.ResultEntryAcknowledgementService;
 import org.openelisglobal.result.service.ResultEntryPresenceService;
+import org.openelisglobal.result.valueholder.Result;
+import org.openelisglobal.result.valueholder.ResultEntryAcknowledgement;
 import org.openelisglobal.role.service.RoleService;
 import org.openelisglobal.role.valueholder.Role;
 import org.openelisglobal.systemuser.service.SystemUserService;
@@ -46,6 +56,7 @@ import org.openelisglobal.systemuser.service.UserService;
 import org.openelisglobal.systemuser.valueholder.SystemUser;
 import org.openelisglobal.test.beanItems.TestResultItem;
 import org.openelisglobal.test.service.TestSectionService;
+import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.test.valueholder.TestSection;
 import org.openelisglobal.testalertrule.service.TestAlertEvaluationService;
 import org.openelisglobal.testreagentlink.service.TestReagentLinkService;
@@ -61,6 +72,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.validation.Errors;
+import org.springframework.validation.ObjectError;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -121,6 +133,8 @@ public class ResultEntryRestController extends LogbookResultsBaseController {
     @Autowired
     private AnalysisTimelineService analysisTimelineService;
     @Autowired
+    private ResultEntryAcknowledgementService acknowledgementService;
+    @Autowired
     private TestResultComponentService testResultComponentService;
     @Autowired
     private TestResultInterpretationService interpretationService;
@@ -134,6 +148,12 @@ public class ResultEntryRestController extends LogbookResultsBaseController {
     /**
      * Lab Units the user may enter results for, each carrying its domain so the
      * page can derive {@code currentDomain} (FR-M1).
+     *
+     * <p>
+     * OGC-189 (M2): a <em>viewer</em> control, so it lists {@code isActive OR
+     * hasContent}. A lab unit deactivated while analyses are still in flight stays
+     * here until they are finished — filtering it out would strand that work on a
+     * worklist nobody can reach.
      */
     @GetMapping(value = "lab-units", produces = MediaType.APPLICATION_JSON_VALUE)
     @ResponseBody
@@ -143,7 +163,7 @@ public class ResultEntryRestController extends LogbookResultsBaseController {
         if (resultsRole == null) {
             return Collections.emptyList();
         }
-        List<IdValuePair> sections = userService.getUserTestSections(getSysUserId(request), resultsRole.getId());
+        List<IdValuePair> sections = userService.getUserViewerTestSections(getSysUserId(request), resultsRole.getId());
         List<Map<String, String>> labUnits = new ArrayList<>();
         for (IdValuePair pair : sections) {
             Map<String, String> unit = new HashMap<>();
@@ -297,6 +317,11 @@ public class ResultEntryRestController extends LogbookResultsBaseController {
             body.put("error", MessageUtil.getMessage("referral.error.alreadyReferred"));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
         }
+        String referralDateError = referralDatesError(item);
+        if (referralDateError != null) {
+            body.put("error", referralDateError);
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        }
 
         item.setModified(true);
         reuseExistingResultForComponent(item, analysis);
@@ -313,16 +338,25 @@ public class ResultEntryRestController extends LogbookResultsBaseController {
 
         Errors errors = dataSet.validateModifiedItems();
         if (errors.hasErrors()) {
-            body.put("error", errors.getAllErrors().stream().map(e -> MessageUtil.getMessage(e.getCode()))
-                    .collect(Collectors.joining("; ")));
+            body.put("error", joinErrorMessages(errors));
             return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(body);
+        }
+
+        List<ResultEntryAlert> alerts = acknowledgementService.alertsForItems(Collections.singletonList(item));
+        List<ResultEntryAlert> owed = alerts.stream().filter(alert -> !alert.isAcknowledged())
+                .collect(Collectors.toList());
+        if (!owed.isEmpty()) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
+                    .body(acknowledgementService.refusalBody(owed));
         }
 
         ResultUtil.createResultsFromItems(dataSet, supportReferrals, alwaysValidate, useTechnicianName, statusRuleSet,
                 request);
         ResultUtil.createAnalysisOnlyUpdates(dataSet, request);
 
-        List<IResultUpdate> updaters = ResultUpdateRegister.getRegisteredUpdaters();
+        List<IResultUpdate> updaters = new ArrayList<>(ResultUpdateRegister.getRegisteredUpdaters());
+        updaters.add(acknowledgementService.acknowledgementRecorder(alerts,
+                ResultEntryAcknowledgement.SOURCE_RESULTS_ENTRY, getSysUserId(request)));
         try {
             List<Analysis> reflexAnalyses = logbookPersistService.persistDataSet(dataSet, updaters,
                     getSysUserId(request));
@@ -356,6 +390,13 @@ public class ResultEntryRestController extends LogbookResultsBaseController {
                         LogEvent.logError(ex);
                     }
                 });
+                dataSet.getCalculatedResults().forEach(calculated -> {
+                    try {
+                        testAlertEvaluationService.evaluateAndDispatch(calculated, currentUser);
+                    } catch (RuntimeException ex) {
+                        LogEvent.logError(ex);
+                    }
+                });
             }
         } catch (LIMSRuntimeException e) {
             if (e.getCause() instanceof StaleObjectStateException) {
@@ -385,6 +426,10 @@ public class ResultEntryRestController extends LogbookResultsBaseController {
         // resulted (OGC-1179).
         if (persisted != null) {
             body.put("analysisStatusId", analysisService.getStatusId(persisted));
+            Map<String, String> componentStatusIds = componentStatusIds(persisted);
+            if (!componentStatusIds.isEmpty()) {
+                body.put("componentStatusIds", componentStatusIds);
+            }
         }
         // The persisted result's id — the client's row must adopt it, or a row
         // saved from the blank placeholder state keeps a null resultId and every
@@ -401,6 +446,40 @@ public class ResultEntryRestController extends LogbookResultsBaseController {
                     body.put("resultValue", resultService.getResultValue(r, false));
                 });
         return ResponseEntity.ok(body);
+    }
+
+    /**
+     * Each part's status after a save, keyed by component id, for a test with more
+     * than one part; empty otherwise. Every part's row on Results Entry shows its
+     * own status and a save can move the test from one status to another, so the
+     * page is told every part's status, not only the saved part's. A result whose
+     * test_result row names no component belongs to the primary.
+     */
+    private Map<String, String> componentStatusIds(Analysis analysis) {
+        Map<String, String> statuses = new HashMap<>();
+        Test test = analysisService.getTest(analysis);
+        List<TestResultComponent> components = test == null ? List.of()
+                : testResultComponentService.getActiveComponentsByTestId(test.getId());
+        if (components.size() < 2) {
+            return statuses;
+        }
+        String primaryId = components.stream().filter(TestResultComponent::getIsPrimary).map(TestResultComponent::getId)
+                .findFirst().orElse(components.get(0).getId());
+        Map<String, Result> resultByComponent = new HashMap<>();
+        for (Result result : resultService.getResultsByAnalysis(analysis)) {
+            if (result.getParentResult() != null) {
+                continue;
+            }
+            String componentId = result.getTestResult() == null ? null : result.getTestResult().getComponentId();
+            resultByComponent.putIfAbsent(GenericValidator.isBlankOrNull(componentId) ? primaryId : componentId,
+                    result);
+        }
+        String analysisStatusId = analysisService.getStatusId(analysis);
+        for (TestResultComponent component : components) {
+            statuses.put(component.getId(),
+                    ResultsLoadUtility.componentStatusId(analysisStatusId, resultByComponent.get(component.getId())));
+        }
+        return statuses;
     }
 
     /**
@@ -500,6 +579,58 @@ public class ResultEntryRestController extends LogbookResultsBaseController {
         public void setVisibleAnalysisIds(List<String> visibleAnalysisIds) {
             this.visibleAnalysisIds = visibleAnalysisIds;
         }
+    }
+
+    /**
+     * The validation errors as one line for the bench, each resolved with its
+     * arguments so the accession and the refused value are named rather than left
+     * as "{0}" (OGC-1408). The per-accession header ends with a colon and
+     * introduces the errors after it, so those follow it with a space; errors are
+     * otherwise separated with a semicolon.
+     */
+    private static String joinErrorMessages(Errors errors) {
+        StringBuilder joined = new StringBuilder();
+        for (ObjectError error : errors.getAllErrors()) {
+            String text = MessageUtil.getMessage(error.getCode(), error.getArguments()).trim();
+            if (joined.length() > 0) {
+                joined.append(joined.charAt(joined.length() - 1) == ':' ? " " : "; ");
+            }
+            joined.append(text);
+        }
+        return joined.toString();
+    }
+
+    /**
+     * Why the referral dates on a save cannot be stored, or null when they can: the
+     * send date of a new referral and the reference laboratory's report date.
+     */
+    private static String referralDatesError(TestResultItem item) {
+        ReferralItem referral = item.getReferralItem();
+        if (referral == null) {
+            return null;
+        }
+        String error = item.isRefer() ? typedDateError(referral.getReferredSendDate()) : null;
+        return error != null ? error : typedDateError(referral.getReferredReportDate());
+    }
+
+    /**
+     * Why a typed date cannot be saved, or null when it can. It is read in the
+     * lab's date format and the save path parses it leniently, so a day and month
+     * in the wrong order would otherwise become a date months away.
+     */
+    private static String typedDateError(String typed) {
+        if (GenericValidator.isBlankOrNull(typed)) {
+            return null;
+        }
+        CustomDateValidator validator = CustomDateValidator.getInstance();
+        Date date = validator.getDate(typed.trim());
+        if (date == null) {
+            return MessageUtil.getMessage("errors.date", new String[] { typed });
+        }
+        if (IActionConstants.INVALID_TO_LARGE.equals(validator.validateDate(date, DateRelation.PAST))) {
+            return MessageUtil.getMessage("error.date.inFuture");
+        }
+        return null;
     }
 
     private ResponseEntity<Map<String, Object>> rejectIfStale(TestResultItem item, Analysis analysis,

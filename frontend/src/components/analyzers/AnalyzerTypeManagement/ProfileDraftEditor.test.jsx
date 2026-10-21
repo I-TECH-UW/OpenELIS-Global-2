@@ -27,6 +27,16 @@ vi.mock("../../../services/analyzerService", () => ({
   updateAnalyzerTypeControlRecognition: vi.fn(),
 }));
 const clone = (value) => JSON.parse(JSON.stringify(value));
+const compactAstmProfile = () => {
+  const profile = clone(astmProfile);
+  profile.default_test_mappings = [
+    {
+      ...profile.default_test_mappings[0],
+      values: profile.default_test_mappings[0].values.slice(0, 1),
+    },
+  ];
+  return profile;
+};
 let stored;
 const recognition = () => ({
   draftId: stored.draftId,
@@ -111,7 +121,7 @@ it.each(preservationCases)(
     const authored = clone(original);
     delete authored.catalog;
     const { onStateChange } = mount(authored);
-    changeText(screen.getByRole("textbox", { name: label }), value);
+    changeText(screen.getByLabelText(label), value);
     expect(onStateChange).toHaveBeenLastCalledWith(
       expect.objectContaining({ dirty: true, publishable: false }),
     );
@@ -137,7 +147,7 @@ it.each(preservationCases)(
     delete saved.catalog;
     saved[path[0]][path[1]] = value;
     mount(saved);
-    expect(screen.getByRole("textbox", { name: label })).toHaveValue(value);
+    expect(screen.getByLabelText(label)).toHaveValue(value);
   },
 );
 
@@ -310,7 +320,7 @@ it("creates, saves, reopens, recognizes controls and explicitly publishes a new 
     stored = {
       ...stored,
       profile: clone(profile),
-      validationIssues: ["Control recognition is required"],
+      validationIssues: ["Save control recognition before publishing."],
     };
     callback(clone(stored));
   });
@@ -451,8 +461,11 @@ it("creates, saves, reopens, recognizes controls and explicitly publishes a new 
     expect.any(Function),
   );
   expect(
-    await screen.findByText("Control recognition is required"),
+    await screen.findByText("Save control recognition before publishing."),
   ).toBeVisible();
+  expect(
+    screen.getAllByText("Save control recognition before publishing."),
+  ).toHaveLength(1);
   expect(publishAnalyzerTypeDraft).not.toHaveBeenCalled();
   view.unmount();
   render(editor());
@@ -482,10 +495,16 @@ it("creates, saves, reopens, recognizes controls and explicitly publishes a new 
     screen.getByRole("textbox", { name: "Specimen ID prefix" }),
     "QC-",
   );
+  expect(
+    screen.queryByText("Save control recognition before publishing."),
+  ).toBeNull();
   await userEvent.click(
     screen.getByRole("button", { name: "Save control recognition" }),
   );
   expect(stored.profile).toEqual(newFileProfile);
+  expect(
+    screen.queryByText("Save control recognition before publishing."),
+  ).toBeNull();
   const publish = screen.getByRole("button", { name: "Publish Profile" });
   await waitFor(() => expect(publish).toBeEnabled());
   await userEvent.click(publish);
@@ -497,19 +516,27 @@ it("creates, saves, reopens, recognizes controls and explicitly publishes a new 
 });
 
 it("edits test definitions without losing aliases, named results or unrelated profile behavior", async () => {
-  const authored = clone(astmProfile);
+  const authored = compactAstmProfile();
   delete authored.catalog;
   authored.default_test_mappings[0].aliases = ["MTB", "MTB_ALT"];
   mount(authored);
   const row = within(screen.getByRole("group", { name: "Analyzer test 1" }));
   const name = row.getByRole("textbox", { name: "Suggested test name" });
-  await userEvent.type(name, "Site tuberculosis assay");
+  changeText(name, "Site tuberculosis assay");
+  expect(
+    row.queryByRole("textbox", { name: "Suggested specimen type" }),
+  ).not.toBeInTheDocument();
   const namedValues = within(
     row.getByRole("group", { name: "Result values reported by this test" }),
   );
   await userEvent.click(namedValues.getByRole("button", { name: "Add value" }));
   const inputs = namedValues.getAllByRole("textbox");
-  await userEvent.type(inputs[inputs.length - 1], "SITE REVIEW REQUIRED");
+  changeText(inputs[inputs.length - 1], "SITE REVIEW REQUIRED");
+  expect(
+    row.queryByRole("textbox", {
+      name: "Suggested clinical answer for SITE REVIEW REQUIRED",
+    }),
+  ).not.toBeInTheDocument();
   await save();
   const expected = clone(authored);
   expected.default_test_mappings[0].test_name_hint = "Site tuberculosis assay";
@@ -522,7 +549,7 @@ it("edits test definitions without losing aliases, named results or unrelated pr
 });
 
 it("authors typed choices and visibility without changing other profile content", async () => {
-  mount(astmProfile);
+  mount(compactAstmProfile());
   const original = clone(stored.profile);
   const transportIndex = original.connectionFields.findIndex(
     (field) => field.key === "transport",

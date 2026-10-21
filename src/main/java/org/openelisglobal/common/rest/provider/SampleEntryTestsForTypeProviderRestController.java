@@ -8,17 +8,16 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.constants.Constants;
 import org.openelisglobal.common.domain.Domain;
 import org.openelisglobal.common.rest.BaseRestController;
 import org.openelisglobal.common.util.IdValuePair;
 import org.openelisglobal.common.util.StringUtil;
-import org.openelisglobal.microbiology.service.MicrobiologyReferenceService;
-import org.openelisglobal.microbiology.valueholder.MicroCultureSetup;
-import org.openelisglobal.microbiology.valueholder.MicroWorkflowType;
 import org.openelisglobal.panel.service.PanelService;
 import org.openelisglobal.panel.valueholder.Panel;
 import org.openelisglobal.panelitem.service.PanelItemService;
@@ -64,7 +63,6 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
     private final TestMethodService testMethodService;
     private final TestQcThresholdDAO testQcThresholdDAO;
     private final TestService testService;
-    private final MicrobiologyReferenceService microbiologyReferenceService;
     private final TypeOfSampleTestService typeOfSampleTestService;
 
     public SampleEntryTestsForTypeProviderRestController(PanelService panelService,
@@ -72,7 +70,6 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
             PanelItemService panelItemService, TypeOfSampleService typeOfSampleService, UserService userService,
             RoleService roleService, ProgramService programService, TestMethodService testMethodService,
             TestQcThresholdDAO testQcThresholdDAO, TestService testService,
-            MicrobiologyReferenceService microbiologyReferenceService,
             TypeOfSampleTestService typeOfSampleTestService) {
         this.panelService = panelService;
         this.testSectionService = testSectionService;
@@ -85,7 +82,6 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
         this.testMethodService = testMethodService;
         this.testQcThresholdDAO = testQcThresholdDAO;
         this.testService = testService;
-        this.microbiologyReferenceService = microbiologyReferenceService;
         this.typeOfSampleTestService = typeOfSampleTestService;
     }
 
@@ -247,27 +243,14 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
             boolean hasQc = testIdNum != null && testsWithQcThreshold.contains(testIdNum);
             String resultType = testService.getResultType(test);
             List<OrderEntryMethod> methods = testMethodService.getLinkedMethodDtos(test.getId()).stream()
-                    .map(method -> toOrderEntryMethod(method, test.getCultureWorkflowType())).toList();
+                    .map(OrderEntryMethod::new).toList();
             boolean userBenchChoice = userTestSectionId != null && test.getTestSection() != null
                     && userTestSectionId.equals(test.getTestSection().getId());
             testsMapList.add(new TestMap(test.getId(), localizedTestName(test), userBenchChoice, hasQc, resultType,
-                    test.getTimeHolding(), test.getCultureWorkflowType(), methods));
+                    test.getTimeHolding(), methods, test.isOpensMicrobiologyCase(), test.getMicrobiologyCaseRole(),
+                    test.isCollectedInSets()));
         }
         return testsMapList;
-    }
-
-    private OrderEntryMethod toOrderEntryMethod(TestMethodDto method, String workflowType) {
-        MicroWorkflowType workflow = null;
-        if (workflowType != null && !workflowType.isBlank()) {
-            try {
-                workflow = MicroWorkflowType.valueOf(workflowType.trim());
-            } catch (IllegalArgumentException ignored) {
-                // Legacy catalog values must not break the complete Add Order response.
-            }
-        }
-        MicroCultureSetup setup = workflow == null ? null
-                : microbiologyReferenceService.getActiveCultureSetupForMethod(method.methodId, workflow);
-        return new OrderEntryMethod(method, setup);
     }
 
     private ArrayList<PanelTestMap> addPanels(List<PanelTestMap> panelMap) {
@@ -306,15 +289,17 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
         List<PanelTestMap> selected = new ArrayList<>();
 
         Map<String, String> testIdsByName = new HashMap<>();
+        Set<String> sampleTypeTestIds = new HashSet<>();
 
         for (Test test : tests) {
             testIdsByName.put(localizedTestName(test), test.getId());
+            sampleTypeTestIds.add(test.getId());
         }
 
         for (TypeOfSamplePanel samplePanel : panelList) {
             Panel panel = panelService.getPanelById(samplePanel.getPanelId());
             if ("Y".equals(panel.getIsActive())) {
-                String matchTests = getTestIdsForPanel(samplePanel.getPanelId(), testIdsByName, panelItemService);
+                String matchTests = getTestIdsForPanel(samplePanel.getPanelId(), testIdsByName, sampleTypeTestIds);
                 if (!GenericValidator.isBlankOrNull(matchTests)) {
                     int panelOrder = panelService.getPanelById(samplePanel.getPanelId()).getSortOrderInt();
                     selected.add(new PanelTestMap(samplePanel.getPanelId(), panelOrder, panel.getLocalizedName(),
@@ -326,14 +311,19 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
         return selected;
     }
 
+    /**
+     * The panel's members that can be ordered on this sample type. Membership is
+     * checked by test id, so a member that shares its name with another test on the
+     * same sample type is still part of the panel.
+     */
     private String getTestIdsForPanel(String panelId, Map<String, String> testIdsByName,
-            PanelItemService panelItemService) {
+            Set<String> sampleTypeTestIds) {
         StringBuilder testIds = new StringBuilder();
         List<PanelItem> items = panelItemService.getPanelItemsForPanel(panelId);
 
         for (PanelItem item : items) {
             String testId = item.getTest() == null ? testIdsByName.get(item.getTestName()) : item.getTest().getId();
-            if (testId != null && testIdsByName.containsValue(testId)) {
+            if (testId != null && sampleTypeTestIds.contains(testId)) {
                 testIds.append(testId).append(",");
             }
         }
@@ -441,50 +431,45 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
 
         String timeHolding;
 
-        String cultureWorkflowType;
-
         List<OrderEntryMethod> methods;
+        boolean opensMicrobiologyCase;
+        String microbiologyCaseRole;
+        boolean collectedInSets;
 
         public TestMap(String id, String name, boolean userBenchChoice) {
-            this(id, name, userBenchChoice, false, null, null, null, List.of());
+            this(id, name, userBenchChoice, false, null, null, List.of());
         }
 
         public TestMap(String id, String name, boolean userBenchChoice, boolean hasQcThreshold) {
-            this(id, name, userBenchChoice, hasQcThreshold, null, null, null, List.of());
+            this(id, name, userBenchChoice, hasQcThreshold, null, null, List.of());
         }
 
         public TestMap(String id, String name, boolean userBenchChoice, boolean hasQcThreshold, String resultType) {
-            this(id, name, userBenchChoice, hasQcThreshold, resultType, null, null, List.of());
-        }
-
-        public TestMap(String id, String name, boolean userBenchChoice, String cultureWorkflowType) {
-            this(id, name, userBenchChoice, false, null, null, cultureWorkflowType, List.of());
+            this(id, name, userBenchChoice, hasQcThreshold, resultType, null, List.of());
         }
 
         public TestMap(String id, String name, boolean userBenchChoice, boolean hasQcThreshold, String resultType,
                 String timeHolding) {
-            this(id, name, userBenchChoice, hasQcThreshold, resultType, timeHolding, null, List.of());
+            this(id, name, userBenchChoice, hasQcThreshold, resultType, timeHolding, List.of());
         }
 
         public TestMap(String id, String name, boolean userBenchChoice, boolean hasQcThreshold, String resultType,
-                String timeHolding, String cultureWorkflowType) {
-            this(id, name, userBenchChoice, hasQcThreshold, resultType, timeHolding, cultureWorkflowType, List.of());
-        }
-
-        public TestMap(String id, String name, boolean userBenchChoice, String cultureWorkflowType,
-                List<OrderEntryMethod> methods) {
-            this(id, name, userBenchChoice, false, null, null, cultureWorkflowType, methods);
+                String timeHolding, List<OrderEntryMethod> methods) {
+            this(id, name, userBenchChoice, hasQcThreshold, resultType, timeHolding, methods, false, null, false);
         }
 
         public TestMap(String id, String name, boolean userBenchChoice, boolean hasQcThreshold, String resultType,
-                String timeHolding, String cultureWorkflowType, List<OrderEntryMethod> methods) {
+                String timeHolding, List<OrderEntryMethod> methods, boolean opensMicrobiologyCase,
+                String microbiologyCaseRole, boolean collectedInSets) {
+            this.opensMicrobiologyCase = opensMicrobiologyCase;
+            this.microbiologyCaseRole = microbiologyCaseRole;
+            this.collectedInSets = collectedInSets;
             this.id = id;
             this.name = name;
             this.userBenchChoice = userBenchChoice;
             this.hasQcThreshold = hasQcThreshold;
             this.resultType = resultType;
             this.timeHolding = timeHolding;
-            this.cultureWorkflowType = cultureWorkflowType;
             this.methods = methods == null ? List.of() : methods;
         }
 
@@ -536,12 +521,16 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
             this.timeHolding = timeHolding;
         }
 
-        public String getCultureWorkflowType() {
-            return cultureWorkflowType;
+        public boolean isOpensMicrobiologyCase() {
+            return opensMicrobiologyCase;
         }
 
-        public void setCultureWorkflowType(String cultureWorkflowType) {
-            this.cultureWorkflowType = cultureWorkflowType;
+        public String getMicrobiologyCaseRole() {
+            return microbiologyCaseRole;
+        }
+
+        public boolean isCollectedInSets() {
+            return collectedInSets;
         }
 
         public List<OrderEntryMethod> getMethods() {
@@ -556,22 +545,14 @@ public class SampleEntryTestsForTypeProviderRestController extends BaseRestContr
         public String methodCode;
         public boolean isDefault;
         public String effectiveDate;
-        public String mediaDefaults;
-        public String incubationDefaults;
-        public String atmosphereDefaults;
 
-        OrderEntryMethod(TestMethodDto method, MicroCultureSetup setup) {
+        OrderEntryMethod(TestMethodDto method) {
             id = method.id;
             methodId = method.methodId;
             methodName = method.methodName;
             methodCode = method.methodCode;
             isDefault = method.isDefault;
             effectiveDate = method.effectiveDate;
-            if (setup != null) {
-                mediaDefaults = setup.getMediaDefaults();
-                incubationDefaults = setup.getIncubationDefaults();
-                atmosphereDefaults = setup.getAtmosphereDefaults();
-            }
         }
     }
 

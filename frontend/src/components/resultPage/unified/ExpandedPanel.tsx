@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useContext } from "react";
 import {
   Button,
   InlineNotification,
@@ -11,6 +11,7 @@ import {
   TextInput,
 } from "@carbon/react";
 import { FormattedMessage, useIntl } from "react-intl";
+import { rangeNotAppliedKey } from "../../common/rangeNotApplied";
 import PolymorphicResultCell, {
   ResultCellRow,
   worklistRowKey,
@@ -23,12 +24,14 @@ import {
   useOrderContext,
 } from "./orderContextSections";
 import CriticalBanner from "./CriticalBanner";
+import CriticalCallbackAction from "./CriticalCallbackAction";
 import HistorySection from "./HistorySection";
 import InterpretationSection from "./InterpretationSection";
 import ReagentsQcSection from "./ReagentsQcSection";
 import AliquotsSection from "./AliquotsSection";
 import ReferralAction, {
   ReferralDraft,
+  datePlaceholderId,
   emptyReferralDraft,
 } from "./ReferralAction";
 // the shipped inline non-conformity form (FR-E1) — plain jsx, no types
@@ -48,6 +51,8 @@ import {
   rememberSectionChoice,
   resetSectionLayout,
 } from "./sectionLayout";
+import { labNow } from "../../utils/labClock";
+import { ConfigurationContext } from "../../layout/Layout";
 
 /**
  * OGC-1021 (R2 of OGC-811) — the expanded row panel.
@@ -75,6 +80,7 @@ export interface PanelRow extends ResultCellRow {
   patientInfo?: string;
   sampleType?: string;
   normalRange?: string;
+  rangeNotAppliedReason?: string | null;
   testDate?: string;
   receivedDate?: string;
   technician?: string;
@@ -105,12 +111,17 @@ export interface RejectDraft {
   rejectReasonId: string;
 }
 
-/** dd/MM/yyyy — the app's date format; FR-F2's "defaults to now". */
-export const todayForReferral = (): string => {
-  const now = new Date();
+/**
+ * Today in the lab's date format, which the server reads the referral date in:
+ * dd/MM/yyyy under fr-FR, MM/dd/yyyy otherwise. FR-F2's "defaults to now".
+ */
+export const todayForReferral = (dateLocale?: string): string => {
+  const now = labNow();
   const dd = String(now.getDate()).padStart(2, "0");
   const mm = String(now.getMonth() + 1).padStart(2, "0");
-  return `${dd}/${mm}/${now.getFullYear()}`;
+  return dateLocale === "fr-FR"
+    ? `${dd}/${mm}/${now.getFullYear()}`
+    : `${mm}/${dd}/${now.getFullYear()}`;
 };
 
 interface ExpandedPanelProps {
@@ -226,6 +237,8 @@ const ExpandedPanel: React.FC<ExpandedPanelProps> = ({
   onNceApplyDisposition,
 }) => {
   const intl = useIntl();
+  const { configurationProperties } = (useContext(ConfigurationContext) ||
+    {}) as { configurationProperties?: Record<string, string> };
   const rowKey = worklistRowKey(row);
 
   const methodName =
@@ -238,11 +251,16 @@ const ExpandedPanel: React.FC<ExpandedPanelProps> = ({
   const reported = computeReportedValue(
     dilutionDraft.measuredValue,
     dilutionDraft.factor,
+    row.significantDigits,
   );
 
   const applyDilution = (draft: DilutionDraft) => {
     onDilutionDraftChange(draft);
-    const computed = computeReportedValue(draft.measuredValue, draft.factor);
+    const computed = computeReportedValue(
+      draft.measuredValue,
+      draft.factor,
+      row.significantDigits,
+    );
     if (computed !== null) {
       onValueChange("resultValue", computed);
     }
@@ -313,6 +331,14 @@ const ExpandedPanel: React.FC<ExpandedPanelProps> = ({
               {row.unitsOfMeasure && <span>{row.unitsOfMeasure}</span>}
               <FlagChip flag={flag} />
             </div>
+            {rangeNotAppliedKey(row) && (
+              <div
+                className="unifiedWorkZoneRange"
+                data-testid="range-not-applied"
+              >
+                <FormattedMessage id={rangeNotAppliedKey(row) as string} />
+              </div>
+            )}
             {row.normalRange && (
               <div className="unifiedWorkZoneRange">
                 {formatDomainMessage(intl, "label.results.range", domain)}:{" "}
@@ -514,7 +540,13 @@ const ExpandedPanel: React.FC<ExpandedPanelProps> = ({
             disabled={row.referredOut}
             onClick={() =>
               onReferralDraftChange(
-                referralDraft ? null : emptyReferralDraft(todayForReferral()),
+                referralDraft
+                  ? null
+                  : emptyReferralDraft(
+                      todayForReferral(
+                        configurationProperties?.DEFAULT_DATE_LOCALE,
+                      ),
+                    ),
               )
             }
             data-testid={`referral-toggle-${rowKey}`}
@@ -588,7 +620,9 @@ const ExpandedPanel: React.FC<ExpandedPanelProps> = ({
                 id: "label.results.referral.reportDate",
               })}
               placeholder={intl.formatMessage({
-                id: "label.results.referral.reportDate.placeholder",
+                id: datePlaceholderId(
+                  configurationProperties?.DEFAULT_DATE_LOCALE,
+                ),
               })}
               value={referenceLabReportDate}
               onChange={(e: React.ChangeEvent<HTMLInputElement>) =>
@@ -679,11 +713,24 @@ const ExpandedPanel: React.FC<ExpandedPanelProps> = ({
         </div>
       )}
 
-      {/* Critical banner (FR-C2) — the one full-width banner; ack never gates Save (FR-A4) */}
+      {/* Critical banner (FR-C2) — the one full-width banner. The person
+          entering the value acknowledges it at Save (OGC-1417); the banner's
+          dashboard acknowledgement is the follow-up. */}
       {flag === "CRITICAL" && (
         <CriticalBanner
           analysisId={row.analysisId as string | undefined}
           criticalRange={row.criticalRange}
+        />
+      )}
+      {flag === "CRITICAL" && !editable && (
+        <CriticalCallbackAction
+          row={{
+            resultId: row.resultId as string | undefined,
+            testName: row.testName as string | undefined,
+            resultValue: row.resultValue as string | undefined,
+            unitsOfMeasure: row.unitsOfMeasure as string | undefined,
+            accessionNumber: row.accessionNumber as string | undefined,
+          }}
         />
       )}
 
@@ -785,6 +832,7 @@ const ExpandedPanel: React.FC<ExpandedPanelProps> = ({
             testId={row.testId as string | undefined}
             componentId={row.testResultComponentId as string | undefined}
             resultValue={row.resultValue as string | undefined}
+            dictionaryOptions={row.dictionaryResults}
             latestInterpretation={latestInterpretation}
             draft={interpretationDraft}
             onDraftChange={onInterpretationDraftChange}

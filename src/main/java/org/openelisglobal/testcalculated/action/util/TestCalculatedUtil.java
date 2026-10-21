@@ -18,10 +18,12 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.RuleResultScope;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.util.BoundedDecimal;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
 import org.openelisglobal.note.valueholder.Note;
+import org.openelisglobal.patient.valueholder.Patient;
 import org.openelisglobal.result.action.util.ResultSet;
 import org.openelisglobal.result.service.ResultService;
 import org.openelisglobal.result.valueholder.Result;
@@ -62,11 +64,21 @@ public class TestCalculatedUtil {
     private ResultLimitService resultLimitService = SpringContext.getBean(ResultLimitService.class);
 
     private RuleResultScope ruleResultScope = SpringContext.getBean(RuleResultScope.class);
+    private final List<Result> calculatedResults = new ArrayList<>();
+
+    /**
+     * The results this instance calculated and stored, so the caller can put them
+     * through the same alert rules as results a user entered.
+     */
+    public List<Result> getCalculatedResults() {
+        return calculatedResults;
+    }
 
     private String CALCULATION_SUBJECT = "Calculated Result Note";
 
     public List<Analysis> addNewTestsToDBForCalculatedTests(List<ResultSet> resultSetList, String sysUserId)
             throws IllegalStateException {
+        calculatedResults.clear();
         List<Analysis> analyses = new ArrayList<>();
         for (ResultSet resultSet : resultSetList) {
             if (resultSet.result == null) {
@@ -166,12 +178,15 @@ public class TestCalculatedUtil {
                         // value would otherwise reach the math expression and blow
                         // up the whole save with a NumberFormatException
                         Result paramResult = resultService.get(entry.getValue().toString());
-                        if (paramResult == null || StringUtils.isBlank(paramResult.getValue())) {
+                        if (paramResult == null || !isUsableOperandValue(paramResult.getValue())) {
                             isMissingParams = true;
                             break;
                         }
                     }
                     Calculation calculation = resultCalculation.getCalculation();
+                    if (!isMissingParams && usesAgeWithoutBirthDate(calculation, resultSet.patient)) {
+                        isMissingParams = true;
+                    }
                     if (!isMissingParams) {
                         StringBuffer function = new StringBuffer();
                         calculation.getOperations().forEach(operation -> {
@@ -251,7 +266,9 @@ public class TestCalculatedUtil {
     private Analysis createCalculatedResult(ResultCalculation resultCalculation, ResultSet resultSet,
             Calculation calculation, String value, String systemUserId) {
         Test test = testService.get(calculation.getTestId().toString());
-        String resultType = testService.getResultType(test);
+        String resultType = test == null ? null
+                : ruleResultScope.resultTypeForComponent(test.getId(), calculation.getComponentId(),
+                        testService.getResultType(test));
         Analysis analysis = null;
         if (test != null) {
             if (resultCalculation.getOperandResultMap().containsValue(null)) {
@@ -277,7 +294,7 @@ public class TestCalculatedUtil {
             if (testResult.getSignificantDigits() != null) {
                 result.setSignificantDigits(Integer.valueOf(testResult.getSignificantDigits()));
             }
-            result.setResultType(testService.getResultType(test));
+            result.setResultType(resultType);
             result.setSysUserId(systemUserId);
             Boolean resultCalculated = false;
             if (value != null) {
@@ -334,6 +351,9 @@ public class TestCalculatedUtil {
             }
             resultCalculation.setResult(result);
             resultcalculationService.update(resultCalculation);
+            if (resultCalculated) {
+                calculatedResults.add(result);
+            }
         }
         return analysis;
     }
@@ -342,7 +362,7 @@ public class TestCalculatedUtil {
             String systemUserId, String externalNote) {
         List<Note> notes = new ArrayList<>();
         Note note = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
-                "Result Succesfully Calculated From Calculation Rule :" + calculatioName, CALCULATION_SUBJECT,
+                "Result Successfully Calculated From Calculation Rule :" + calculatioName, CALCULATION_SUBJECT,
                 systemUserId);
         if (!noteService.duplicateNoteExists(note)) {
             notes.add(note);
@@ -491,6 +511,27 @@ public class TestCalculatedUtil {
 
     private boolean operandReads(Operation operation, Result result) {
         return operandReads(ruleResultScope, operation, result);
+    }
+
+    /**
+     * Whether a stored result can stand for a parameter. Its value is written into
+     * the script the calculation evaluates, so only a number qualifies.
+     */
+    static boolean isUsableOperandValue(String value) {
+        return BoundedDecimal.isBoundedDecimal(value);
+    }
+
+    /**
+     * A calculation reading the patient's age cannot run for a patient with no
+     * birth date; it is skipped like one with a missing operand.
+     */
+    static boolean usesAgeWithoutBirthDate(Calculation calculation, Patient patient) {
+        if (patient != null && patient.getBirthDate() != null) {
+            return false;
+        }
+        return calculation.getOperations().stream()
+                .anyMatch(oper -> oper.getType() == Operation.OperationType.PATIENT_ATTRIBUTE
+                        && Operation.PatientAttribute.AGE.toString().equals(oper.getValue()));
     }
 
     private void addNumericOperation(Operation operation, ResultCalculation resultCalculation, StringBuffer function,
@@ -660,6 +701,9 @@ public class TestCalculatedUtil {
         if (target.getStartedDate() == null) {
             target.setStartedDate(DateUtil.getNowAsTimestamp());
         }
+        if (resultCalculated) {
+            target.setEnteredDate(DateUtil.getNowAsTimestamp());
+        }
         target.setResultCalculated(resultCalculated);
         target.setSysUserId(systemUserId);
         try {
@@ -708,6 +752,7 @@ public class TestCalculatedUtil {
         if (resultCalculated) {
             generatedAnalysis.setStatusId(
                     SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.TechnicalAcceptance));
+            generatedAnalysis.setEnteredDate(DateUtil.getNowAsTimestamp());
         } else {
             generatedAnalysis
                     .setStatusId(SpringContext.getBean(IStatusService.class).getStatusID(AnalysisStatus.NotStarted));
