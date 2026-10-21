@@ -156,6 +156,10 @@ analyzer code. OpenELIS has no file poller and never opens a result file.
   `(connection_id, message_id)` in `analyzer_delivery_receipt`, independent of
   staging, mapping changes and profile revisions; receipts are never purged.
 - One bad mapping holds only its own results; unrelated results continue.
+- An analyzer that received a result or was ever activated is retired, never
+  deleted: it keeps its results and history and leaves the analyzer list
+  unless retired analyzers are shown, and it can be restored to inactive. Only
+  an analyzer with neither can be deleted, together with its mapping.
 - Quality control and connection probes never gate activation or invalidate a
   verification.
 - An instrument's warning about a sample is never a result and never gates a

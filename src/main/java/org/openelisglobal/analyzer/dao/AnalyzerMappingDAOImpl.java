@@ -44,4 +44,19 @@ public class AnalyzerMappingDAOImpl extends BaseDAOImpl<AnalyzerMapping, String>
         query.setParameter("profileId", profileId.trim());
         return query.getResultList();
     }
+
+    @Override
+    public void deleteAnalyzerWithItsMappings(String analyzerId) {
+        Session session = entityManager.unwrap(Session.class);
+        java.math.BigDecimal id = new java.math.BigDecimal(analyzerId.trim());
+        String mappings = "SELECT m.id FROM clinlims.analyzer_mapping m WHERE m.analyzer_id = :id";
+        for (String sql : List.of("UPDATE clinlims.analyzer SET mapping_id = NULL WHERE id = :id",
+                "DELETE FROM clinlims.analyzer_mapping_confirmation WHERE mapping_id IN (" + mappings + ")",
+                "DELETE FROM clinlims.analyzer_mapping_result WHERE mapping_id IN (" + mappings + ")",
+                "DELETE FROM clinlims.analyzer_mapping_test WHERE mapping_id IN (" + mappings + ")",
+                "DELETE FROM clinlims.analyzer_mapping WHERE analyzer_id = :id",
+                "DELETE FROM clinlims.analyzer WHERE id = :id")) {
+            session.createNativeQuery(sql).setParameter("id", id).executeUpdate();
+        }
+    }
 }
