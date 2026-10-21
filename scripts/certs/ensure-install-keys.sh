@@ -43,7 +43,7 @@ if [ ! -s "$KEY" ] || [ ! -s "$CERT" ]; then
   openssl req -x509 -nodes -newkey rsa:2048 -days "$DAYS" \
     -keyout "$KEY.tmp" -out "$CERT.tmp" \
     -subj "/O=OpenELIS Global/CN=localhost" \
-    -addext "subjectAltName=DNS:localhost,DNS:*.openelis.org,IP:127.0.0.1" 2>/dev/null
+    -addext "subjectAltName=DNS:localhost,DNS:*.openelis.org,DNS:*.openelis-global.org,IP:127.0.0.1" 2>/dev/null
   chmod 600 "$KEY.tmp"
   mv "$KEY.tmp" "$KEY"
   mv "$CERT.tmp" "$CERT"
