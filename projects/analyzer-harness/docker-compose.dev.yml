@@ -7,6 +7,10 @@ services:
     image: itechuw/certgen:main
     platform: linux/amd64
     restart: "no"
+    # Gives the install its own TLS key on first start and keeps the stores built from it.
+    entrypoint: ["/bin/sh", "/ensure-install-keys.sh"]
+    volumes:
+      - ../../scripts/certs/ensure-install-keys.sh:/ensure-install-keys.sh:ro
 
   db.openelis.org:
     networks:

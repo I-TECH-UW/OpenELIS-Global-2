@@ -21,8 +21,8 @@ services:
   certs:
     container_name: oe-certs
     restart: "no"
-    # Gives the install its own TLS key on first start and keeps the stores built from it.
-    entrypoint: ["/bin/sh", "/ensure-install-keys.sh"]
+    # The first compose file supplies the entrypoint and script mount: compose resolves
+    # relative paths from the first file's directory, which differs between stacks.
     environment:
       KEYSTORE_PW: ${SSL_KEYSTORE_PASSWORD:-kspass}
       TRUSTSTORE_PW: ${SSL_TRUSTSTORE_PASSWORD:-tspass}
@@ -30,7 +30,6 @@ services:
       - key_trust-store-volume:/etc/openelis-global
       - keys-vol:/etc/ssl/private/
       - certs-vol:/etc/ssl/certs/
-      - ../../scripts/certs/ensure-install-keys.sh:/ensure-install-keys.sh:ro
 
   db.openelis.org:
     container_name: openelisglobal-database
