@@ -589,7 +589,6 @@
   "analyzer.action.add": "Add Analyzer",
   "analyzer.action.configureConnection": "Configure connection",
   "analyzer.action.deactivate": "Deactivate",
-  "analyzer.action.delete": "Delete",
   "analyzer.action.editSetup": "Edit setup",
   "analyzer.action.qualityControl": "Quality Control",
   "analyzer.action.reactivate": "Reactivate",
