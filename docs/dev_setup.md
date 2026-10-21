@@ -181,6 +181,19 @@ This mode does not compile application source or mount a locally built WAR. An
 unavailable image must fail visibly. Mutable `develop` images are for explicit
 development/demo deployments; release verification uses fixed images.
 
+The `certs` service runs `scripts/certs/ensure-install-keys.sh` on every start.
+The first start gives the install its own TLS key and certificate in
+`/etc/openelis-global/install` on the `key_trust-store-volume` volume, replacing
+the key an earlier `certgen` image shipped to every install, and builds the
+keystore, truststore and proxy certificate from it. Later starts keep that key;
+changing `SSL_KEYSTORE_PASSWORD` or `SSL_TRUSTSTORE_PASSWORD` rebuilds the
+stores from it. A proxy certificate someone else installed, such as a Let's
+Encrypt one, is kept. Back the volume up with the database: removing it gives
+the install a new key. A paired Analyzer Bridge reads the truststore when it
+starts, so restart it once after the start that replaced the key
+(`docker compose restart openelis-analyzer-bridge`); it then trusts the new
+certificate through the truststore.
+
 ## Diagnose a source build failure
 
 Read the first actual compiler or dependency error. A successful cached download

@@ -5,15 +5,18 @@ services:
         image: itechuw/certgen:main
         platform: linux/amd64
         restart: "no"
+        # Gives the install its own TLS key on first start and keeps the stores built from it.
+        entrypoint: ["/bin/sh", "/ensure-install-keys.sh"]
         environment:
-            - KEYSTORE_PW="kspass"
-            - TRUSTSTORE_PW="tspass"
+            - KEYSTORE_PW=${SSL_KEYSTORE_PASSWORD:-kspass}
+            - TRUSTSTORE_PW=${SSL_TRUSTSTORE_PASSWORD:-tspass}
         networks:
             - default
         volumes:
             -  key_trust-store-volume:/etc/openelis-global
             -  keys-vol:/etc/ssl/private/
             -  certs-vol:/etc/ssl/certs/
+            -  ./scripts/certs/ensure-install-keys.sh:/ensure-install-keys.sh:ro
 
     db.openelis.org:
         container_name: openelisglobal-database 
@@ -43,8 +46,10 @@ services:
         image: itechuw/openelis-global-2:develop   
         platform: linux/amd64 
         depends_on:
-            - db.openelis.org
-            - certs
+            db.openelis.org:
+                condition: service_started
+            certs:
+                condition: service_completed_successfully
         ports:
             - "8080:8080"
             - "8443:8443"
@@ -75,8 +80,10 @@ services:
         image: itechuw/openelis-global-2-fhir:develop
         platform: linux/amd64
         depends_on:
-            - db.openelis.org
-            - certs
+            db.openelis.org:
+                condition: service_started
+            certs:
+                condition: service_completed_successfully
         ports:
             - "8081:8080"
             - "8444:8443"
@@ -125,7 +132,8 @@ services:
             - default
         restart: unless-stopped
         depends_on:
-        - certs        
+            certs:
+                condition: service_completed_successfully
             
 secrets:
   common.properties:

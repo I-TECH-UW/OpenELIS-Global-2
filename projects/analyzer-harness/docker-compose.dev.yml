@@ -32,7 +32,7 @@ services:
       db.openelis.org:
         condition: service_healthy
       certs:
-        condition: service_started
+        condition: service_completed_successfully
       fhir.openelis.org:
         condition: service_healthy
     restart: always
@@ -66,7 +66,7 @@ services:
       db.openelis.org:
         condition: service_started
       certs:
-        condition: service_started
+        condition: service_completed_successfully
     restart: always
     environment:
       SPRING_CONFIG_LOCATION: file:///run/secrets/hapi_application.yaml
@@ -129,7 +129,7 @@ services:
     restart: unless-stopped
     depends_on:
       certs:
-        condition: service_started
+        condition: service_completed_successfully
       oe.openelis.org:
         condition: service_started
 
