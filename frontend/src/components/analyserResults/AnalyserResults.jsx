@@ -414,21 +414,20 @@ const AnalyserResults = (props) => {
     return props.sampleGroup.some((item) => item.id === id);
   };
 
-  // The run produced no result: the reviewer records the failure on the order's
-  // waiting test, which stays open for the repeat.
-  const dismissFailedRun = (row) => {
+  // A reviewer's decision on a held row: a failed run is recorded on the order's
+  // waiting test, which stays open for the repeat; any held row can also be
+  // removed from review, which the audit trail records.
+  const decideHeldResult = (row, action, successKey, errorKey) => {
     setDismissingRunIds((ids) => [...ids, row.id]);
     postToOpenElisServerFullResponse(
-      `/rest/analyzer/results/${encodeURIComponent(row.id)}/failed-run`,
+      `/rest/analyzer/results/${encodeURIComponent(row.id)}/${action}`,
       JSON.stringify({}),
       // The response is undefined when the request never reached the server.
       async (response) => {
         setDismissingRunIds((ids) => ids.filter((id) => id !== row.id));
-        const succeeded = response?.status == 200;
+        const succeeded = response?.status == 200 || response?.status == 204;
         let message = intl.formatMessage({
-          id: succeeded
-            ? "analyzer.results.failedRun.dismissed"
-            : "analyzer.results.failedRun.error",
+          id: succeeded ? successKey : errorKey,
         });
         if (!succeeded) {
           const body = await response?.json?.().catch(() => null);
@@ -450,6 +449,22 @@ const AnalyserResults = (props) => {
       },
     );
   };
+
+  const dismissFailedRun = (row) =>
+    decideHeldResult(
+      row,
+      "failed-run",
+      "analyzer.results.failedRun.dismissed",
+      "analyzer.results.failedRun.error",
+    );
+
+  const removeHeldResult = (row) =>
+    decideHeldResult(
+      row,
+      "dismiss",
+      "analyzer.results.held.removed",
+      "analyzer.results.held.removeError",
+    );
 
   const renderHeldResult = (row) => {
     const resolutionUrl = buildHeldResultResolutionUrl(row, props.analyzerId);
@@ -484,6 +499,14 @@ const AnalyserResults = (props) => {
             />
           </div>
         )}
+        <Button
+          kind="ghost"
+          size="sm"
+          disabled={dismissingRunIds.includes(row.id)}
+          onClick={() => removeHeldResult(row)}
+        >
+          <FormattedMessage id="analyzer.results.held.remove" />
+        </Button>
         {row.importIssueReason === "run_failed" && !row.isControl && (
           <Button
             kind="tertiary"
