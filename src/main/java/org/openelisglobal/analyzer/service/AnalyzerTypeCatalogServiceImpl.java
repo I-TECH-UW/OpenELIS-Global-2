@@ -25,15 +25,18 @@ public class AnalyzerTypeCatalogServiceImpl implements AnalyzerTypeCatalogServic
     private final AnalyzerMappingDAO mappingDAO;
     private final AnalyzerMappingDefaults mappingDefaults;
     private final AnalyzerMappingCatalogService mappingCatalogService;
+    private final AnalyzerMappingConfirmationService confirmationService;
 
     @Autowired
     public AnalyzerTypeCatalogServiceImpl(BridgeProfileCatalogService bridgeCatalogService,
             AnalyzerMappingDAO mappingDAO, AnalyzerMappingDefaults mappingDefaults,
-            AnalyzerMappingCatalogService mappingCatalogService) {
+            AnalyzerMappingCatalogService mappingCatalogService,
+            AnalyzerMappingConfirmationService confirmationService) {
         this.bridgeCatalogService = bridgeCatalogService;
         this.mappingDAO = mappingDAO;
         this.mappingDefaults = mappingDefaults;
         this.mappingCatalogService = mappingCatalogService;
+        this.confirmationService = confirmationService;
     }
 
     @Override
@@ -82,9 +85,11 @@ public class AnalyzerTypeCatalogServiceImpl implements AnalyzerTypeCatalogServic
         // Both figures count rows of the defaults: a test and each of its parts, and
         // every answer they declare.
         AnalyzerTypeCatalogView.MappingSummary testMappings = mappingSummary(defaults.tests().size(),
-                defaults.tests().stream().filter(row -> row.mappingState() == AnalyzerMappingState.BOUND).count());
+                defaults.tests().stream().filter(row -> row.mappingState() == AnalyzerMappingState.BOUND).count(),
+                defaults.tests().stream().filter(row -> row.mappingState() == AnalyzerMappingState.EXCLUDED).count());
         AnalyzerTypeCatalogView.MappingSummary resultMappings = mappingSummary(defaults.results().size(),
-                defaults.results().stream().filter(row -> row.mappingState() == AnalyzerMappingState.BOUND).count());
+                defaults.results().stream().filter(row -> row.mappingState() == AnalyzerMappingState.BOUND).count(),
+                defaults.results().stream().filter(row -> row.mappingState() == AnalyzerMappingState.EXCLUDED).count());
         String readiness = readiness(status, testMappings, resultMappings);
         return new AnalyzerTypeCatalogView.TypeSummary(profile.profileId(), profile.revision(),
                 profile.revisionFingerprint(), profile.displayName(), profile.manufacturer(), profile.model(),
@@ -108,15 +113,22 @@ public class AnalyzerTypeCatalogServiceImpl implements AnalyzerTypeCatalogServic
         boolean newerProfileRevision = latest.getProfileRevision() < profile.revision();
         boolean newerMappingRevision = latest.getRevisionNumber() > inForce.getRevisionNumber();
         return new AnalyzerTypeCatalogView.AffectedAnalyzer(analyzer.getId(), analyzer.getName(), analyzer.isActive(),
-                inForce.getProfileRevision(), inForce.getRevisionNumber(), newerProfileRevision, newerMappingRevision);
+                inForce.getProfileRevision(), inForce.getRevisionNumber(), newerProfileRevision, newerMappingRevision,
+                confirmationService.standsAsServed(inForce.getId(), inForce.getProfilePin()));
     }
 
-    private static AnalyzerTypeCatalogView.MappingSummary mappingSummary(int total, long bound) {
+    /**
+     * A row is decided when it is mapped or deliberately excluded; a type is ready
+     * when every row is.
+     */
+    private static AnalyzerTypeCatalogView.MappingSummary mappingSummary(int total, long bound, long excluded) {
         if (total == 0) {
             return new AnalyzerTypeCatalogView.MappingSummary(0, 0, 0, "NOT_APPLICABLE");
         }
-        String state = bound == 0 ? "NOT_STARTED" : bound == total ? "COMPLETE" : "INCOMPLETE";
-        return new AnalyzerTypeCatalogView.MappingSummary(Math.toIntExact(bound), 0, total, state);
+        long decided = bound + excluded;
+        String state = decided == 0 ? "NOT_STARTED" : decided == total ? "COMPLETE" : "INCOMPLETE";
+        return new AnalyzerTypeCatalogView.MappingSummary(Math.toIntExact(bound), Math.toIntExact(excluded), total,
+                state);
     }
 
     private static String readiness(String status, AnalyzerTypeCatalogView.MappingSummary testMappings,

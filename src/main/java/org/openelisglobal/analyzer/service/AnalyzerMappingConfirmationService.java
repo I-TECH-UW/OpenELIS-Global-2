@@ -28,4 +28,10 @@ public interface AnalyzerMappingConfirmationService {
      * taken from; an edit that reads every row alike is remembered.
      */
     AnalyzerConfirmationReading readingOnDelivery(AnalyzerMappingSnapshot binding, String deliveredProfileFingerprint);
+
+    /**
+     * Whether the mapping has a confirmation that still stands against the profile
+     * the Bridge serves for the pin.
+     */
+    boolean standsAsServed(String mappingId, org.openelisglobal.analyzer.valueholder.AnalyzerProfilePin pin);
 }

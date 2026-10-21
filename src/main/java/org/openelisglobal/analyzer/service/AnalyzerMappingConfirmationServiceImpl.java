@@ -204,6 +204,13 @@ public class AnalyzerMappingConfirmationServiceImpl implements AnalyzerMappingCo
         return reading;
     }
 
+    @Override
+    @Transactional(readOnly = true)
+    public boolean standsAsServed(String mappingId, AnalyzerProfilePin pin) {
+        return confirmationDAO.findByMappingId(mappingId).filter(confirmation -> hasText(confirmation.getAuditEventId())
+                && currentReading(pin, confirmation).isUnchanged()).isPresent();
+    }
+
     /**
      * Confirms an analyzer's mapping again: the readings it stands on become the
      * served ones.
