@@ -18,6 +18,7 @@ import org.openelisglobal.analysis.valueholder.Analysis;
 import org.openelisglobal.common.services.IStatusService;
 import org.openelisglobal.common.services.RuleResultScope;
 import org.openelisglobal.common.services.StatusService.AnalysisStatus;
+import org.openelisglobal.common.util.BoundedDecimal;
 import org.openelisglobal.common.util.DateUtil;
 import org.openelisglobal.note.service.NoteService;
 import org.openelisglobal.note.service.NoteServiceImpl.NoteType;
@@ -177,7 +178,7 @@ public class TestCalculatedUtil {
                         // value would otherwise reach the math expression and blow
                         // up the whole save with a NumberFormatException
                         Result paramResult = resultService.get(entry.getValue().toString());
-                        if (paramResult == null || StringUtils.isBlank(paramResult.getValue())) {
+                        if (paramResult == null || !isUsableOperandValue(paramResult.getValue())) {
                             isMissingParams = true;
                             break;
                         }
@@ -265,7 +266,9 @@ public class TestCalculatedUtil {
     private Analysis createCalculatedResult(ResultCalculation resultCalculation, ResultSet resultSet,
             Calculation calculation, String value, String systemUserId) {
         Test test = testService.get(calculation.getTestId().toString());
-        String resultType = testService.getResultType(test);
+        String resultType = test == null ? null
+                : ruleResultScope.resultTypeForComponent(test.getId(), calculation.getComponentId(),
+                        testService.getResultType(test));
         Analysis analysis = null;
         if (test != null) {
             if (resultCalculation.getOperandResultMap().containsValue(null)) {
@@ -291,7 +294,7 @@ public class TestCalculatedUtil {
             if (testResult.getSignificantDigits() != null) {
                 result.setSignificantDigits(Integer.valueOf(testResult.getSignificantDigits()));
             }
-            result.setResultType(testService.getResultType(test));
+            result.setResultType(resultType);
             result.setSysUserId(systemUserId);
             Boolean resultCalculated = false;
             if (value != null) {
@@ -359,7 +362,7 @@ public class TestCalculatedUtil {
             String systemUserId, String externalNote) {
         List<Note> notes = new ArrayList<>();
         Note note = noteService.createSavableNote(newAnalysis, NoteType.INTERNAL,
-                "Result Succesfully Calculated From Calculation Rule :" + calculatioName, CALCULATION_SUBJECT,
+                "Result Successfully Calculated From Calculation Rule :" + calculatioName, CALCULATION_SUBJECT,
                 systemUserId);
         if (!noteService.duplicateNoteExists(note)) {
             notes.add(note);
@@ -508,6 +511,14 @@ public class TestCalculatedUtil {
 
     private boolean operandReads(Operation operation, Result result) {
         return operandReads(ruleResultScope, operation, result);
+    }
+
+    /**
+     * Whether a stored result can stand for a parameter. Its value is written into
+     * the script the calculation evaluates, so only a number qualifies.
+     */
+    static boolean isUsableOperandValue(String value) {
+        return BoundedDecimal.isBoundedDecimal(value);
     }
 
     /**

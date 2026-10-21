@@ -43,8 +43,7 @@ import LabelsSection, {
 } from "../barcodeWorkflow/LabelsSection";
 import { FormattedMessage, useIntl } from "react-intl";
 import { ConfigurationContext } from "../layout/Layout";
-import MicrobiologyOrderEntrySection from "../microbiology/MicrobiologyOrderEntrySection";
-import { isMicrobiologyOrder } from "../order/orderDataUtils";
+import { RequiredMarker, requiredProps } from "../common/RequiredMarker";
 const AddOrder = (props) => {
   const { setNotificationVisible, addNotification } =
     useContext(NotificationContext);
@@ -834,17 +833,21 @@ const AddOrder = (props) => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [orderLabelSignature, isModifyOrder]);
 
-  // Human-facing row label for the sample table: the sample type name, falling
-  // back to "Sample N" (the filtered position the backend correlates by).
+  // Human-facing row label for the sample table, as the Result Reporting
+  // headings read it: "Sample N: <sample type>", numbered by the sample's place
+  // on the form so both sections name a sample alike.
   const orderLabelSampleFormatter = (row) => {
     const sample = orderLabelSamples[Number(row.sampleIdLocal)];
-    if (sample && sample.name) {
-      return sample.name;
-    }
-    return intl.formatMessage(
+    const position = sample ? samples.indexOf(sample) : -1;
+    const heading = intl.formatMessage(
       { id: "orderEntry.labels.sampleRow.header" },
-      { number: row.sampleNumber, id: row.sampleIdLocal },
+      {
+        number: position >= 0 ? position + 1 : row.sampleNumber,
+        id: row.sampleIdLocal,
+      },
     );
+    const typeName = sampleTypeNameOf(sample);
+    return typeName ? `${heading}: ${typeName}` : heading;
   };
 
   // Capture the LabelsSection's chosen quantities (persistPayload, already shaped
@@ -880,12 +883,6 @@ const AddOrder = (props) => {
   return (
     <>
       <Stack gap={10}>
-        <MicrobiologyOrderEntrySection
-          samples={samples}
-          orderFormValues={orderFormValues}
-          setOrderFormValues={setOrderFormValues}
-          enabled={isMicrobiologyOrder(orderFormValues, samples)}
-        />
         <div className="orderLegendBody">
           <Grid>
             <Column lg={16} md={8} sm={4}>
@@ -1029,10 +1026,11 @@ const AddOrder = (props) => {
                     onKeyPress={handleKeyPress}
                     labelText={
                       <>
-                        <FormattedMessage id="sample.label.labnumber" />{" "}
-                        <span className="requiredlabel">*</span>
+                        <FormattedMessage id="sample.label.labnumber" />
+                        <RequiredMarker />
                       </>
                     }
+                    {...requiredProps()}
                     id="labNo"
                     invalid={
                       changed["sampleOrderItems.labNo"] &&
@@ -1162,8 +1160,8 @@ const AddOrder = (props) => {
                 onSelect={handleAutoCompleteSiteName}
                 label={
                   <>
-                    <FormattedMessage id="order.search.site.name" />{" "}
-                    <span className="requiredlabel">*</span>
+                    <FormattedMessage id="order.search.site.name" />
+                    <RequiredMarker />
                   </>
                 }
                 style={{ width: "!important 100%" }}
@@ -1212,10 +1210,12 @@ const AddOrder = (props) => {
                 onChange={clearProviderId}
                 label={
                   <>
-                    <FormattedMessage id="order.search.requester.label" />{" "}
-                    {configurationProperties.REQUESTER_REQUIRED === "true" && (
-                      <span className="requiredlabel">*</span>
-                    )}
+                    <FormattedMessage id="order.search.requester.label" />
+                    <RequiredMarker
+                      required={
+                        configurationProperties.REQUESTER_REQUIRED === "true"
+                      }
+                    />
                   </>
                 }
                 style={{ width: "!important 100%" }}
@@ -1259,12 +1259,17 @@ const AddOrder = (props) => {
                 })}
                 labelText={
                   <>
-                    <FormattedMessage id="order.requester.firstName.label" />{" "}
-                    {configurationProperties.REQUESTER_REQUIRED === "true" && (
-                      <span className="requiredlabel">*</span>
-                    )}
+                    <FormattedMessage id="order.requester.firstName.label" />
+                    <RequiredMarker
+                      required={
+                        configurationProperties.REQUESTER_REQUIRED === "true"
+                      }
+                    />
                   </>
                 }
+                {...requiredProps(
+                  configurationProperties.REQUESTER_REQUIRED === "true",
+                )}
                 disabled={
                   configurationProperties.restrictFreeTextProviderEntry ===
                   "true"
@@ -1297,12 +1302,17 @@ const AddOrder = (props) => {
                 })}
                 labelText={
                   <>
-                    <FormattedMessage id="order.requester.lastName.label" />{" "}
-                    {configurationProperties.REQUESTER_REQUIRED === "true" && (
-                      <span className="requiredlabel">*</span>
-                    )}
+                    <FormattedMessage id="order.requester.lastName.label" />
+                    <RequiredMarker
+                      required={
+                        configurationProperties.REQUESTER_REQUIRED === "true"
+                      }
+                    />
                   </>
                 }
+                {...requiredProps(
+                  configurationProperties.REQUESTER_REQUIRED === "true",
+                )}
                 disabled={
                   configurationProperties.restrictFreeTextProviderEntry ===
                   "true"

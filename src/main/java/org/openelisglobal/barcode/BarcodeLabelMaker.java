@@ -3,21 +3,6 @@ package org.openelisglobal.barcode;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.itextpdf.text.BadElementException;
-import com.itextpdf.text.Chunk;
-import com.itextpdf.text.Document;
-import com.itextpdf.text.DocumentException;
-import com.itextpdf.text.Image;
-import com.itextpdf.text.Paragraph;
-import com.itextpdf.text.Rectangle;
-import com.itextpdf.text.pdf.Barcode;
-import com.itextpdf.text.pdf.Barcode128;
-import com.itextpdf.text.pdf.PdfContentByte;
-import com.itextpdf.text.pdf.PdfPCell;
-import com.itextpdf.text.pdf.PdfPTable;
-import com.itextpdf.text.pdf.PdfTemplate;
-import com.itextpdf.text.pdf.PdfWriter;
-import com.itextpdf.text.pdf.draw.LineSeparator;
 import java.awt.Graphics2D;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
@@ -61,6 +46,21 @@ import org.openelisglobal.sampleitem.service.SampleItemService;
 import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.spring.util.SpringContext;
 import org.openelisglobal.test.valueholder.Test;
+import org.openpdf.text.BadElementException;
+import org.openpdf.text.Chunk;
+import org.openpdf.text.Document;
+import org.openpdf.text.DocumentException;
+import org.openpdf.text.Image;
+import org.openpdf.text.Paragraph;
+import org.openpdf.text.Rectangle;
+import org.openpdf.text.pdf.Barcode;
+import org.openpdf.text.pdf.Barcode128;
+import org.openpdf.text.pdf.PdfContentByte;
+import org.openpdf.text.pdf.PdfPCell;
+import org.openpdf.text.pdf.PdfPTable;
+import org.openpdf.text.pdf.PdfTemplate;
+import org.openpdf.text.pdf.PdfWriter;
+import org.openpdf.text.pdf.draw.LineSeparator;
 
 /**
  * Class for taking lists of Label objects and turning them into a printable
@@ -357,6 +357,9 @@ public class BarcodeLabelMaker {
             String specimenType = resolveSpecimenTypeContext(sampleItems);
             for (PathologySample pathologySample : pathologySamples) {
                 for (PathologyBlock block : pathologySample.getBlocks()) {
+                    if (!block.isActive()) {
+                        continue;
+                    }
                     BlockLabel label = new BlockLabel(sampleService.getPatient(sample), sample, pathologySample, block,
                             labNo, specimenType);
                     int requestedQuantity = BarcodeConfigUtil.parseIntSafe(quantity, 1);
@@ -374,9 +377,13 @@ public class BarcodeLabelMaker {
             Sample sample = sampleService.getSampleByAccessionNumber(labNo);
             List<PathologySample> pathologySamples = pathologySampleService.getAllMatching("sample.id", sample.getId());
             for (PathologySample pathologySample : pathologySamples) {
-                String blockId = resolveBlockIdContext(pathologySample);
                 String caseNumber = pathologySample.getId() != null ? String.valueOf(pathologySample.getId()) : "";
-                for (PathologySlide slide : pathologySample.getSlides()) {
+                // slides are lazy and this case was loaded in a transaction that has closed
+                for (PathologySlide slide : pathologySampleService.getSlides(pathologySample.getId())) {
+                    if (!slide.isActive()) {
+                        continue;
+                    }
+                    String blockId = blockContextFor(slide, pathologySample);
                     SlideLabel label = new SlideLabel(sampleService.getPatient(sample), sample, pathologySample, slide,
                             labNo, "", blockId, caseNumber);
                     int requestedQuantity = BarcodeConfigUtil.parseIntSafe(quantity, 1);
@@ -470,12 +477,28 @@ public class BarcodeLabelMaker {
         return new SpecimenLabel(sampleService.getPatient(sample), sample, sampleItem, labNo);
     }
 
-    private String resolveBlockIdContext(PathologySample pathologySample) {
-        if (pathologySample == null || pathologySample.getBlocks() == null || pathologySample.getBlocks().isEmpty()
-                || pathologySample.getBlocks().get(0) == null || pathologySample.getBlocks().get(0).getId() == null) {
+    /**
+     * Names the block a slide's label points to: the slide's own recorded block, or
+     * the case's first block in use for a slide that never recorded one.
+     */
+    private String blockContextFor(PathologySlide slide, PathologySample pathologySample) {
+        if (pathologySample == null || pathologySample.getBlocks() == null) {
             return "";
         }
-        return String.valueOf(pathologySample.getBlocks().get(0).getId());
+        Integer blockId = slide.getBlockId();
+        if (blockId != null) {
+            for (PathologyBlock block : pathologySample.getBlocks()) {
+                if (block != null && blockId.equals(block.getId())) {
+                    return block.displayIdentifier();
+                }
+            }
+        }
+        for (PathologyBlock block : pathologySample.getBlocks()) {
+            if (block != null && block.isActive()) {
+                return block.displayIdentifier();
+            }
+        }
+        return "";
     }
 
     private String resolvePatientIdentifier(Patient patient) {
@@ -684,7 +707,7 @@ public class BarcodeLabelMaker {
             }
 
             // convert table to image, scale image, and center it on document
-            document.add(scaleCentreTableAsImage(label, writer, table));
+            document.add(scaleCentreTableAsImage(label, writer, table, false));
         } else {
             // QR code layout with QR on left, fields on right
             PdfPTable mainTable = new PdfPTable(2); // 2 columns for QR and fields
@@ -706,9 +729,9 @@ public class BarcodeLabelMaker {
             fieldsTable.setWidthPercentage(100);
 
             // Add code text in larger font and bold
-            com.itextpdf.text.Font boldFont = new com.itextpdf.text.Font(label.getValueFont());
+            org.openpdf.text.Font boldFont = new org.openpdf.text.Font(label.getValueFont());
             boldFont.setSize(15); // Larger font size
-            boldFont.setStyle(com.lowagie.text.Font.BOLD);
+            boldFont.setStyle(org.openpdf.text.Font.BOLD);
 
             String codeForText = label.getCode();
             if (codeForText == null) {
@@ -742,25 +765,35 @@ public class BarcodeLabelMaker {
             fieldsCell.setPadding(5);
             mainTable.addCell(fieldsCell);
 
-            document.add(scaleCentreTableAsImage(label, writer, mainTable));
+            document.add(scaleCentreTableAsImage(label, writer, mainTable, true));
         }
     }
 
     /**
      * Converts table to a scaled, centered image
      *
-     * @param label  The label to specify the dimensions
-     * @param writer For the stream
-     * @param table  The table to convert and scale
+     * @param label           The label to specify the dimensions
+     * @param writer          For the stream
+     * @param table           The table to convert and scale
+     * @param keepProportions Scale width and height together instead of only
+     *                        stretching the height to the label
      * @return An image representation of the table
      * @throws BadElementException
      */
-    private Image scaleCentreTableAsImage(Label label, PdfWriter writer, PdfPTable table) throws BadElementException {
+    private Image scaleCentreTableAsImage(Label label, PdfWriter writer, PdfPTable table, boolean keepProportions)
+            throws BadElementException {
         PdfContentByte cb = writer.getDirectContent();
         PdfTemplate template = cb.createTemplate(table.getTotalWidth(), table.getTotalHeight());
         table.writeSelectedRows(0, -1, 0, table.getTotalHeight(), template);
         Image labelAsImage = Image.getInstance(template);
-        labelAsImage.scaleAbsoluteHeight(label.pdfHeight - (2 * label.getMargin()));
+        if (keepProportions) {
+            // Scaling only the height stretches the content; a QR code with
+            // non-square modules does not scan.
+            labelAsImage.scaleToFit(label.pdfWidth - (2 * label.getMargin()),
+                    label.pdfHeight - (2 * label.getMargin()));
+        } else {
+            labelAsImage.scaleAbsoluteHeight(label.pdfHeight - (2 * label.getMargin()));
+        }
         labelAsImage.setAbsolutePosition(((label.pdfWidth) - labelAsImage.getScaledWidth()) / 2,
                 ((label.pdfHeight) - labelAsImage.getScaledHeight()) / 2);
         return labelAsImage;

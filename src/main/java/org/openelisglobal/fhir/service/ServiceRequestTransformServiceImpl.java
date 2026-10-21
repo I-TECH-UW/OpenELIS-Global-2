@@ -12,6 +12,8 @@ import java.util.stream.Collectors;
 import org.hl7.fhir.r4.model.CodeableConcept;
 import org.hl7.fhir.r4.model.Coding;
 import org.hl7.fhir.r4.model.DateTimeType;
+import org.hl7.fhir.r4.model.Group;
+import org.hl7.fhir.r4.model.Group.GroupType;
 import org.hl7.fhir.r4.model.Identifier;
 import org.hl7.fhir.r4.model.Reference;
 import org.hl7.fhir.r4.model.ResourceType;
@@ -60,6 +62,7 @@ import org.openelisglobal.sampleitem.valueholder.SampleItem;
 import org.openelisglobal.test.service.TestService;
 import org.openelisglobal.test.valueholder.Test;
 import org.openelisglobal.typeofsample.service.TypeOfSampleService;
+import org.openelisglobal.vector.valueholder.VectorSamplingSite;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -102,6 +105,11 @@ public class ServiceRequestTransformServiceImpl implements ServiceRequestTransfo
     private FhirCommonTransformService common;
     @Autowired
     private TerminologyTransformService terminologyTransformService;
+
+    @Autowired
+    private SampleLocationService sampleLocationService;
+
+    private static final String PATIENTLESS_SUBJECT_ID = "subject";
 
     @Override
     public void updateReferringServiceRequestWithSampleInfo(Sample sample, ServiceRequest serviceRequest) {
@@ -213,7 +221,7 @@ public class ServiceRequestTransformServiceImpl implements ServiceRequestTransfo
         if (eOrders.size() <= 0) {
             serviceRequest.setIntent(ServiceRequestIntent.ORIGINALORDER);
         } else if (ElectronicOrderType.FHIR.equals(eOrders.get(eOrders.size() - 1).getType())) {
-            serviceRequest.addBasedOn(common.createReferenceFor(ResourceType.ServiceRequest, sample.getReferringId()));
+            serviceRequest.addBasedOn(basedOnFor(sample));
             serviceRequest.setIntent(ServiceRequestIntent.ORDER);
         } else if (ElectronicOrderType.HL7_V2.equals(eOrders.get(eOrders.size() - 1).getType())) {
             serviceRequest.setIntent(ServiceRequestIntent.ORDER);
@@ -263,9 +271,10 @@ public class ServiceRequestTransformServiceImpl implements ServiceRequestTransfo
             serviceRequest.addSpecimen(
                     common.createReferenceFor(ResourceType.Specimen, analysisSampleItem.getFhirUuidAsString()));
         }
-        // OGC-356: Environmental samples don't have a patient
         if (patient != null) {
             serviceRequest.setSubject(common.createReferenceFor(ResourceType.Patient, patient.getFhirUuidAsString()));
+        } else {
+            serviceRequest.setSubject(patientlessSubject(serviceRequest, sample, analysisSampleItem));
         }
         if (provider != null && provider.getFhirUuid() != null) {
             serviceRequest
@@ -273,6 +282,54 @@ public class ServiceRequestTransformServiceImpl implements ServiceRequestTransfo
         }
 
         return serviceRequest;
+    }
+
+    /**
+     * The subject of an order without a patient (environmental, vector, or a
+     * clinical order entered without one); R4 requires one. It is the sampling
+     * site's Location when the site stands for an organization, else a contained
+     * Group describing what was sampled.
+     */
+    private Reference patientlessSubject(ServiceRequest serviceRequest, Sample sample, SampleItem sampleItem) {
+        VectorSamplingSite site = sampleLocationService.getSamplingSite(sample, sampleItem);
+        Organization siteOrganization = sampleLocationService.getSamplingSiteOrganization(site);
+        if (siteOrganization != null) {
+            return common.createReferenceFor(ResourceType.Location, siteOrganization.getFhirUuidAsString());
+        }
+        Group sampled = new Group();
+        sampled.setId(PATIENTLESS_SUBJECT_ID);
+        sampled.setType("V".equals(sample.getDomain()) ? GroupType.ANIMAL
+                : "E".equals(sample.getDomain()) ? GroupType.SUBSTANCE : GroupType.PERSON);
+        sampled.setActual(false);
+        if (site != null && !GenericValidator.isBlankOrNull(site.getName())) {
+            sampled.setName(site.getName());
+        }
+        serviceRequest.addContained(sampled);
+        return new Reference("#" + PATIENTLESS_SUBJECT_ID);
+    }
+
+    /**
+     * The EMR ServiceRequest the order came from. The sample keeps that request's
+     * order number (its first identifier) as its referring id, not the request's
+     * id, so the request is found through its local copy, which keeps the EMR id.
+     * When that copy cannot be read the reference is logical, by the order number.
+     */
+    private Reference basedOnFor(Sample sample) {
+        try {
+            Optional<ServiceRequest> emrRequest = fhirPersistanceService
+                    .getServiceRequestByReferingId(sample.getReferringId());
+            if (emrRequest.isPresent()) {
+                return common.createReferenceFor(ResourceType.ServiceRequest,
+                        emrRequest.get().getIdElement().getIdPart());
+            }
+        } catch (RuntimeException e) {
+            LogEvent.logWarn(this.getClass().getSimpleName(), "basedOnFor", "could not look up the EMR ServiceRequest "
+                    + sample.getReferringId() + " for sample " + sample.getId() + ": " + e.getMessage());
+        }
+        Reference reference = new Reference();
+        reference.setType(ResourceType.ServiceRequest.name());
+        reference.setIdentifier(new Identifier().setValue(sample.getReferringId()));
+        return reference;
     }
 
     /**

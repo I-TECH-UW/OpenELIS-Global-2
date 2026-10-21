@@ -3,7 +3,10 @@
  * collector is optional: many tubes arrive with no name on them, so a sample
  * with a type and a collection date and time can move on without one.
  */
-import { prepareSamplesToContinue } from "./prepareSamplesChecklist";
+import {
+  prepareSamplesToContinue,
+  consentApplies,
+} from "./prepareSamplesChecklist";
 
 const intl = {
   formatMessage: ({ id }, values) =>
@@ -17,6 +20,7 @@ const serum = (fields = {}) => ({
   collectionTime: "09:30",
   collectorId: "",
   labPerformedSampling: false,
+  tests: [{ id: "7", name: "Glucose" }],
   ...fields,
 });
 
@@ -24,7 +28,6 @@ const itemsFor = (samples, options = {}) =>
   prepareSamplesToContinue({
     samples,
     labNumber: "DEV0126",
-    admissionDate: "",
     consentSatisfied: true,
     intl,
     ...options,
@@ -58,15 +61,10 @@ describe("prepareSamplesToContinue (OGC-1419)", () => {
     ]);
   });
 
-  it("skips rejected samples and flags a collection before admission", () => {
+  it("skips rejected samples", () => {
     expect(
       itemsFor([serum({ collectionTime: "", sampleRejected: true })]),
     ).toEqual([]);
-    expect(
-      itemsFor([serum({ collectionDate: "2026-10-01" })], {
-        admissionDate: "2026-10-02",
-      }).map((item) => item.id),
-    ).toEqual(["collectionConflict-0"]);
   });
 });
 
@@ -89,5 +87,46 @@ describe("prepareSamplesToContinue measured temperature (OGC-1424)", () => {
         serum({ arrivalTemperature: "4,5" }),
       ]),
     ).toEqual([]);
+  });
+});
+
+describe("prepareSamplesToContinue — a sample with no tests (OGC-1443)", () => {
+  it("names the sample that has no tests, since the server refuses to save it", () => {
+    expect(itemsFor([serum(), serum({ tests: [] })])).toEqual([
+      {
+        id: "noTests-1",
+        label:
+          'order.continue.item.noTestsOnSample:{"sample":"DEV0126-2 Serum"}',
+        targetId: "sampleType-1",
+      },
+    ]);
+  });
+
+  it("accepts a sample carrying a panel instead of single tests", () => {
+    expect(itemsFor([serum({ tests: [], panels: [{ id: "3" }] })])).toEqual([]);
+  });
+
+  it("leaves out a rejected sample", () => {
+    expect(
+      itemsFor([serum(), serum({ tests: [], sampleRejected: true })]),
+    ).toEqual([]);
+  });
+});
+
+describe("consentApplies (OGC-1483)", () => {
+  const required = { CONSENT_REQUIRED_FOR_COLLECTION: "true" };
+
+  it("holds a clinical order where the laboratory requires consent", () => {
+    expect(consentApplies(required, { sampleOrderItems: {} })).toBe(true);
+  });
+
+  it("never holds an EQA order, which has no person to consent", () => {
+    expect(
+      consentApplies(required, { sampleOrderItems: { isEQASample: true } }),
+    ).toBe(false);
+  });
+
+  it("holds nothing where consent is advisory", () => {
+    expect(consentApplies({}, { sampleOrderItems: {} })).toBe(false);
   });
 });

@@ -33,9 +33,11 @@ import CollectionConditionsSection from "./sections/CollectionConditionsSection"
 import ProgramSection from "./sections/ProgramSection";
 import RequesterSection from "./sections/RequesterSection";
 import SampleTestSection from "./sections/SampleTestSection";
+import MicroOrderPreview from "./sections/MicroOrderPreview";
 import ComplianceStandardsSection from "./sections/ComplianceStandardsSection";
 import { currentLocalTime, todayLocalIso } from "../dateUtils";
 import "../order-workflow.scss";
+import { orderSavedMessage } from "../orderSavedMessage";
 
 const WORKFLOW_TYPE = "environmental";
 const WORKFLOW_PREFIX = "/order/environmental";
@@ -187,7 +189,10 @@ const EnvironmentalOrderEnter = () => {
       addNotification({
         kind: NotificationKinds.success,
         title: intl.formatMessage({ id: "notification.title" }),
-        message: intl.formatMessage({ id: "save.order.success.msg" }),
+        message: orderSavedMessage(
+          intl,
+          labNumber || orderData?.sampleOrderItems?.labNo,
+        ),
       });
       setNotificationVisible(true);
     } catch (error) {
@@ -206,9 +211,11 @@ const EnvironmentalOrderEnter = () => {
     try {
       await saveOrder(false, false, stamped);
       markStepComplete("enter");
+      const savedLabNumber =
+        labNumber || orderData?.sampleOrderItems?.labNo || "";
       history.push(
-        labNumber
-          ? `/order/environmental/label?order=${encodeURIComponent(labNumber)}`
+        savedLabNumber
+          ? `/order/environmental/label?order=${encodeURIComponent(savedLabNumber)}`
           : "/order/environmental/label",
       );
     } catch (error) {
@@ -421,6 +428,14 @@ const EnvironmentalOrderEnter = () => {
           setOrderData={setOrderData}
           isReadOnly={isReadOnly && !isEditMode}
           workflowType={WORKFLOW_TYPE}
+        />
+
+        <MicroOrderPreview
+          samples={samples}
+          savedOrder={isReadOnly || isEditMode}
+          domain="ENVIRONMENTAL"
+          samplingSiteId={envFields.samplingSiteId}
+          samplingSiteName={envFields.samplingSiteName}
         />
 
         {showNceForm && labNumber && (

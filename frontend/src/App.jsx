@@ -1,5 +1,4 @@
-import React, { Suspense, useEffect, useState } from "react";
-import { confirmAlert } from "react-confirm-alert";
+import React, { Suspense, useEffect, useRef, useState } from "react";
 import { IntlProvider } from "react-intl";
 import {
   Route,
@@ -40,7 +39,11 @@ import CallbackReport from "./components/qa/qi/CallbackReport";
 import ESignatureLog from "./components/qa/qms/ESignatureLog";
 import CapaRegister from "./components/qa/qms/CapaRegister";
 import Accreditation from "./components/qa/qms/Accreditation";
-import InventoryManagement from "./components/inventory/InventoryManagement";
+import {
+  InventoryItemsPage,
+  InventoryReceivePage,
+  InventoryReportsPage,
+} from "./components/inventory/InventoryManagement";
 import ShipmentDashboard from "./components/shipment/ShipmentDashboard";
 import BoxCreation from "./components/shipment/BoxCreation";
 import BoxDetails from "./components/shipment/BoxDetails";
@@ -49,6 +52,14 @@ import ReferenceLabResults from "./components/referenceLabResults";
 import Login from "./components/Login";
 import LandingPage from "./components/home/LandingPage";
 import lazyWithRetry from "./components/common/lazyWithRetry";
+import ServerReconnectNotice from "./components/common/ServerReconnectNotice";
+import {
+  createServerRetrier,
+  requestSession,
+  retryServerNow,
+  serverRetryDelay,
+  subscribeServerWait,
+} from "./components/utils/serverConnection";
 
 const AnalyzersPage = lazyWithRetry(() => import("./pages/AnalyzersPage"));
 const AnalyzerTypesPage = lazyWithRetry(
@@ -135,6 +146,8 @@ import NonConformIndex from "./components/nonconform/index";
 import SampleBatchEntrySetup from "./components/batchOrderEntry/SampleBatchEntrySetup";
 import AuditTrailReportIndex from "./components/reports/auditTrailReport/Index";
 import LaporanHasilReport from "./components/reports/compliance/LaporanHasilReport";
+import ReportPrintQueue from "./components/reports/printQueue/ReportPrintQueue";
+import SentMessages from "./components/reports/sentMessages/SentMessages";
 import ManualEntryHelper from "./components/reports/vectorSurveillance/ManualEntryHelper";
 import { Roles } from "./components/utils/Utils";
 import NoteBookInstanceEntryForm from "./components/notebook/NoteBookInstanceEntryForm";
@@ -179,6 +192,7 @@ import {
   VectorIdentificationWorklist,
   VectorDeconvolutionWorklist,
 } from "./components/vectorIdentification";
+import { endServerSession } from "./components/utils/endServerSession";
 
 // QA-context breadcrumb for the TAT report mounted at /qa/qi/tat (OGC-696).
 // Labels are i18n keys resolved by PageBreadCrumb.
@@ -193,6 +207,8 @@ export const ANALYZER_RESULTS_ROLES = [
   Roles.GLOBAL_ADMIN,
   Roles.ANALYSER_IMPORT,
 ];
+
+export const ANALYZER_SETUP_ROLES = [Roles.GLOBAL_ADMIN];
 
 // The quality-indicator reports: same route shape, same roles, each gated on its
 // own indicator being enabled.
@@ -218,9 +234,23 @@ export default function App() {
   const [userSessionDetails, setUserSessionDetails] = useState({});
   const [errorLoadingSessionDetails, setErrorLoadingSessionDetails] =
     useState(false);
+  const [serverWait, setServerWait] = useState(null);
+  const sessionCheck = useRef({
+    generation: 0,
+    current: null,
+    retrier: null,
+    stopped: false,
+  });
 
   useEffect(() => {
+    const state = sessionCheck.current;
+    const unsubscribe = subscribeServerWait(setServerWait);
     getUserSessionDetails();
+    return () => {
+      unsubscribe();
+      state.stopped = true;
+      state.retrier?.wake();
+    };
   }, []);
 
   // Load and apply site branding (colors, favicon)
@@ -238,51 +268,66 @@ export default function App() {
     };
   }, []);
 
-  const getUserSessionDetails = async () => {
-    const maxRetries = 10;
-    for (let attempt = 0; attempt < maxRetries; attempt++) {
-      try {
-        const response = await fetch(config.serverBaseUrl + `/session`, {
-          credentials: "include",
-        });
-        if (response.status === 200) {
-          const jsonResp = await response.json();
+  /**
+   * Checks the session until the server answers (OGC-1442). An unreachable
+   * server is retried with growing gaps and no limit while a non-blocking
+   * notice counts down; the page stays on its URL and renders as soon as the
+   * server is back. A newer call takes over from an older one still retrying,
+   * and every caller receives the newest answer.
+   */
+  const getUserSessionDetails = () => {
+    const state = sessionCheck.current;
+    state.generation += 1;
+    const generation = state.generation;
+    state.retrier?.wake();
+    state.current = checkSessionUntilAnswered(generation);
+    return state.current;
+  };
+
+  const checkSessionUntilAnswered = async (generation) => {
+    const state = sessionCheck.current;
+    const superseded = () => state.stopped || generation !== state.generation;
+    const newerAnswer = () => (state.stopped ? undefined : state.current);
+    const retrier = createServerRetrier();
+    state.retrier = retrier;
+    try {
+      for (let failures = 0; ; ) {
+        try {
+          const jsonResp = await requestSession(
+            config.serverBaseUrl + `/session`,
+          );
+          if (superseded()) {
+            return newerAnswer();
+          }
           if (jsonResp.authenticated) {
             localStorage.setItem("CSRF", jsonResp.csrf);
             await loadLabClock();
           }
+          if (failures > 0) {
+            loadAndApplyBranding();
+          }
           setUserSessionDetails(jsonResp);
           setErrorLoadingSessionDetails(false);
           return jsonResp;
-        } else {
-          throw new Error(
-            "Did not receive a successful response from the backend while retrieving user session details",
-          );
-        }
-      } catch (error) {
-        console.error(error);
-        if (attempt < maxRetries - 1) {
-          await new Promise((resolve) => setTimeout(resolve, 1000));
-        } else {
-          const options = {
-            title: "System Error",
-            message: "Error : " + error.message,
-            buttons: [
-              {
-                label: "OK",
-                onClick: () => {
-                  window.location.href = window.location.origin;
-                },
-              },
-            ],
-            closeOnClickOutside: false,
-            closeOnEscape: false,
-          };
-          confirmAlert(options);
+        } catch (error) {
+          if (superseded()) {
+            return newerAnswer();
+          }
+          failures += 1;
+          console.error(error);
+          setErrorLoadingSessionDetails(true);
+          await retrier.wait(serverRetryDelay(failures));
+          if (superseded()) {
+            return newerAnswer();
+          }
         }
       }
+    } finally {
+      retrier.done();
+      if (state.retrier === retrier) {
+        state.retrier = null;
+      }
     }
-    setErrorLoadingSessionDetails(true);
   };
 
   const logout = () => {
@@ -319,7 +364,6 @@ export default function App() {
             form.submit();
           } else {
             // No SAML form in response — fall back to a direct redirect
-            getUserSessionDetails();
             window.location.href = config.loginRedirect;
           }
         })
@@ -327,22 +371,11 @@ export default function App() {
           console.error(error);
         });
     } else {
-      fetch(config.serverBaseUrl + "/Logout", {
-        //includes the browser sessionId in the Header for Authentication on the backend server
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-          "X-CSRF-Token": localStorage.getItem("CSRF"),
-        },
-      })
-        .then((response) => response.status)
-        .then(() => {
-          getUserSessionDetails();
+      endServerSession(config.serverBaseUrl, localStorage.getItem("CSRF")).then(
+        () => {
           window.location.href = config.loginRedirect;
-        })
-        .catch((error) => {
-          console.error(error);
-        });
+        },
+      );
     }
   };
 
@@ -1339,9 +1372,21 @@ export default function App() {
                   role={[Roles.RECEPTION, Roles.RESULTS, Roles.GLOBAL_ADMIN]}
                 />
                 <SecureRoute
+                  path="/inventory/receive"
+                  exact
+                  render={() => <InventoryReceivePage />}
+                  role={[Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                />
+                <SecureRoute
+                  path="/inventory/reports"
+                  exact
+                  render={() => <InventoryReportsPage />}
+                  role={[Roles.RESULTS, Roles.GLOBAL_ADMIN]}
+                />
+                <SecureRoute
                   path="/inventory"
                   exact
-                  render={() => <InventoryManagement />}
+                  render={() => <InventoryItemsPage />}
                   role={[Roles.RESULTS, Roles.GLOBAL_ADMIN]}
                 />
                 <SecureRoute
@@ -1411,7 +1456,7 @@ export default function App() {
                       </Suspense>
                     </RouteErrorBoundary>
                   )}
-                  role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
+                  role={ANALYZER_SETUP_ROLES}
                 />
                 <SecureRoute
                   path="/analyzers/types"
@@ -1423,7 +1468,7 @@ export default function App() {
                       </Suspense>
                     </RouteErrorBoundary>
                   )}
-                  role={[Roles.ANALYSER_IMPORT, Roles.GLOBAL_ADMIN]}
+                  role={ANALYZER_SETUP_ROLES}
                 />
                 <SecureRoute
                   path="/analyzers/types/:profileId/mapping"
@@ -1435,7 +1480,31 @@ export default function App() {
                       </Suspense>
                     </RouteErrorBoundary>
                   )}
-                  role={Roles.ANALYSER_IMPORT}
+                  role={ANALYZER_SETUP_ROLES}
+                />
+                <SecureRoute
+                  path="/analyzers/:analyzerId/mapping"
+                  exact
+                  component={() => (
+                    <RouteErrorBoundary {...routeErrorAnalyzers}>
+                      <Suspense fallback={null}>
+                        <AnalyzerTypeMappingPage />
+                      </Suspense>
+                    </RouteErrorBoundary>
+                  )}
+                  role={ANALYZER_SETUP_ROLES}
+                />
+                <SecureRoute
+                  path="/analyzers/:analyzerId/adoption"
+                  exact
+                  component={() => (
+                    <RouteErrorBoundary {...routeErrorAnalyzers}>
+                      <Suspense fallback={null}>
+                        <AnalyzerTypeMappingPage />
+                      </Suspense>
+                    </RouteErrorBoundary>
+                  )}
+                  role={ANALYZER_SETUP_ROLES}
                 />
                 <SecureRoute
                   path="/analyzers/qc/instruments/:instrumentId"
@@ -1668,6 +1737,18 @@ export default function App() {
                   role={Roles.REPORTS}
                 />
                 <SecureRoute
+                  path="/ReportPrintQueue"
+                  exact
+                  render={() => <ReportPrintQueue />}
+                  role={Roles.REPORTS}
+                />
+                <SecureRoute
+                  path="/SentMessages"
+                  exact
+                  render={() => <SentMessages />}
+                  role={[Roles.REPORTS, Roles.GLOBAL_ADMIN]}
+                />
+                <SecureRoute
                   path="/VectorManualEntry"
                   exact
                   render={() => <ManualEntryHelper />}
@@ -1730,6 +1811,12 @@ export default function App() {
               </Switch>
             </Layout>
           </Router>
+          {serverWait && (
+            <ServerReconnectNotice
+              retryAt={serverWait.retryAt}
+              onTryNow={retryServerNow}
+            />
+          )}
         </>
       </UserSessionDetailsContext.Provider>
     </IntlProvider>

@@ -282,6 +282,7 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         properties.setPropertyValue(Property.CONDENSE_NFS_PANEL, "false");
         properties.setPropertyValue(Property.PATIENT_DATA_ON_RESULTS_BY_ROLE, "false");
         properties.setPropertyValue(Property.USE_PAGE_NUMBERS_ON_REPORTS, "true");
+        properties.setPropertyValue(Property.REPORT_PAPER_SIZE, "A4");
         properties.setPropertyValue(Property.QA_SORT_EVENT_LIST, "true");
         properties.setPropertyValue(Property.ALWAYS_VALIDATE_RESULTS, "true");
         properties.setPropertyValue(Property.ADDITIONAL_SITE_INFO, "");
@@ -404,6 +405,14 @@ public class DefaultConfigurationProperties extends ConfigurationProperties {
         properties.setPropertyValue(Property.PATHOLOGY_STAGE_STAINING_ENABLED, "true");
         properties.setPropertyValue(Property.PATHOLOGY_STAGE_COVERSLIPPING_ENABLED, "true");
         properties.setPropertyValue(Property.PATHOLOGY_STAGE_UNDER_REVIEW_ENABLED, "true");
+
+        // The scheme a deployment falls back to when it has configured none: parts
+        // lettered A, B, C, a block named for its part and its number, a slide named
+        // for its number alone, and a dot between the segments of a barcode.
+        properties.setPropertyValue(Property.PATHOLOGY_IDENTIFIER_PART_SCHEME, "ALPHA");
+        properties.setPropertyValue(Property.PATHOLOGY_IDENTIFIER_BLOCK_FORMAT, "{part}{n}");
+        properties.setPropertyValue(Property.PATHOLOGY_IDENTIFIER_SLIDE_FORMAT, "{n}");
+        properties.setPropertyValue(Property.PATHOLOGY_IDENTIFIER_SEPARATOR, ".");
         return properties;
     }
 
