@@ -33,8 +33,13 @@ stored and read from the config directory at /var/lib/openelis-global/config/
 - server.ssl.trust-store-password - truststore password collected from the user
   and persisted in config directory as TRUSTSTORE_PASSWORD
 
-- encryption.general.password - encrytption key for storing encrypted values in
-  db and persisted in config directory as ENCRYPTION_KEY
+- encryption.general.password - encryption key for storing encrypted values in
+  db and persisted in config directory as ENCRYPTION_KEY. When
+  `OE_ENCRYPTION_PASSWORD` is set, that is the key instead, and this one is only
+  read for values written with it before, which are rewritten with
+  `OE_ENCRYPTION_PASSWORD` at startup. The Docker webapp takes
+  `OE_ENCRYPTION_PASSWORD` from the install key the `certs` service generates
+  (`/etc/openelis-global/install/encryption.key`) when it is not set.
 
 - spring.datasource.driver
 
