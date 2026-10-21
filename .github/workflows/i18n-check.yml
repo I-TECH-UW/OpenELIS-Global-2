@@ -36,7 +36,15 @@ jobs:
 
   check-translation-source:
     name: Translation source-of-truth check
-    if: github.head_ref != 'chore/update-transifex'
+    # Transifex syncs edit the other locales by design. So does promoting this
+    # repository's own develop to another branch: develop's locale files came in
+    # through those syncs and every other change passed this check on its way in
+    # (PR #4772 develop -> main failed on 40+ synced files). A fork's branch named
+    # develop is still checked.
+    if: >-
+      github.head_ref != 'chore/update-transifex' &&
+      !(github.head_ref == 'develop' &&
+        github.event.pull_request.head.repo.full_name == github.repository)
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v7
