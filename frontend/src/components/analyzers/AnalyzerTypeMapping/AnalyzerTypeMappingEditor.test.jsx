@@ -924,6 +924,45 @@ describe("AnalyzerTypeMappingEditor", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("names the confirmed rows the analyzer type now reads differently", async () => {
+    getAnalyzerMapping.mockImplementation((_id, callback) =>
+      callback({
+        ...mapping,
+        confirmation: {
+          ...unconfirmed,
+          state: "STALE",
+          rowsReadDifferently: [
+            { sourceRowKey: "MTB", rawValue: null, subIdentity: "" },
+            { sourceRowKey: "RIF", rawValue: "DETECTED", subIdentity: "" },
+          ],
+        },
+      }),
+    );
+    renderEditor();
+
+    expect(
+      await screen.findByText(/reads these differently.*MTB, RIF: DETECTED/),
+    ).toBeVisible();
+  });
+
+  it("says when the whole analyzer type now reads differently", async () => {
+    getAnalyzerMapping.mockImplementation((_id, callback) =>
+      callback({
+        ...mapping,
+        confirmation: {
+          ...unconfirmed,
+          state: "STALE",
+          typeReadingChanged: true,
+        },
+      }),
+    );
+    renderEditor();
+
+    expect(
+      await screen.findByText(/now reads every result differently/),
+    ).toBeVisible();
+  });
+
   it.each(["UNCONFIRMED", "STALE"])(
     "does not apply a %s mapping to held results",
     async (state) => {

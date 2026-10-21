@@ -1081,6 +1081,8 @@
   "analyzerType.mappingEditor.confirmation.by": "Confirmed by {actor} on {date}",
   "analyzerType.mappingEditor.confirmation.current": "Current confirmation",
   "analyzerType.mappingEditor.confirmation.stale": "Confirmation is stale",
+  "analyzerType.mappingEditor.confirmation.readingChanged.rows": "The analyzer type now reads these differently from how they were confirmed: {rows}. Check them, then confirm again.",
+  "analyzerType.mappingEditor.confirmation.readingChanged.type": "The analyzer type now reads every result differently from how it was confirmed, for example how messages reach it or which columns hold the values. Check it, then confirm again.",
   "analyzerType.mappingEditor.confirmation.summary.current": "Current",
   "analyzerType.mappingEditor.confirmation.summary.stale": "Stale",
   "analyzerType.mappingEditor.confirmation.summary.unconfirmed": "Not confirmed",
