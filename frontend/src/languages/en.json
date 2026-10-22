@@ -13126,6 +13126,9 @@
   "label.dashboard.last7days": "Last 7 Days",
   "label.dashboard.last30days": "Last 30 Days",
   "label.dashboard.last90days": "Last 90 Days",
+  "label.dashboard.quarter": "This Quarter",
+  "label.dashboard.ytd": "Year to Date",
+  "label.dashboard.year": "Last 12 Months",
   "label.dashboard.lastUpdated": "Last updated",
   "label.dashboard.refreshInterval": "Auto-refresh every (minutes)",
   "label.dashboard.testsToday": "Tests Today",
@@ -13139,6 +13142,8 @@
   "label.dashboard.vs": "vs prior period",
   "button.dashboard.refresh": "Refresh",
   "message.dashboard.refreshing": "Refreshing dashboard data…",
+  "message.dashboard.refreshingInline": "Refreshing…",
+  "message.dashboard.loadFailed": "Could not load dashboard data. The figures below are from the last successful refresh.",
   "placeholder.dashboard.section": "Select section",
   "placeholder.dashboard.dateRange": "Select date range",
   "error.dashboard.refreshInterval": "Refresh interval must be between 5 and 30 minutes."

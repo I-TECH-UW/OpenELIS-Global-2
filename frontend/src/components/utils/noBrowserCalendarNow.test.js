@@ -23,6 +23,9 @@ const INSTANTS = {
     "setLastUpdated(new Date().toISOString());",
   ],
   "components/coldStorage/HistoricalTrends.jsx": ["const end = new Date();"],
+  "components/dashboard/LabManagementDashboard.jsx": [
+    "setLastUpdated(new Date());",
+  ],
   "components/admin/DataExportStatus/DataExportStatus.jsx": [
     "setLastRefreshed(new Date());",
   ],

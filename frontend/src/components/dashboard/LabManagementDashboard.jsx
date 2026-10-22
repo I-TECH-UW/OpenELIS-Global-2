@@ -9,6 +9,8 @@ import {
   Button,
   Column,
   Grid,
+  InlineLoading,
+  InlineNotification,
   Loading,
   NumberInput,
   Section,
@@ -21,6 +23,7 @@ import { Renew } from "@carbon/react/icons";
 import { FormattedMessage, useIntl } from "react-intl";
 import PageBreadCrumb from "../common/PageBreadCrumb";
 import { getFromOpenElisServer } from "../utils/Utils";
+import "./LabManagementDashboard.css";
 
 const BREADCRUMBS = [
   { label: "home.label", link: "/" },
@@ -32,11 +35,14 @@ const DATE_RANGES = [
   { value: "7d", labelKey: "label.dashboard.last7days" },
   { value: "30d", labelKey: "label.dashboard.last30days" },
   { value: "90d", labelKey: "label.dashboard.last90days" },
+  { value: "quarter", labelKey: "label.dashboard.quarter" },
+  { value: "ytd", labelKey: "label.dashboard.ytd" },
+  { value: "year", labelKey: "label.dashboard.year" },
 ];
 
 const REFRESH_MIN_MINUTES = 5;
 const REFRESH_MAX_MINUTES = 30;
-const DEFAULT_REFRESH_MINUTES = 10;
+const DEFAULT_REFRESH_MINUTES = 5;
 
 // Thresholds from FR-2-003. A null KPI value always renders as the gray
 // "No target set" Tag — it is a signal, not a bad grade.
@@ -120,6 +126,7 @@ const LabManagementDashboard = () => {
   const [dateRange, setDateRange] = useState("today");
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(false);
+  const [loadFailed, setLoadFailed] = useState(false);
   const [lastUpdated, setLastUpdated] = useState(null);
   const [refreshMinutes, setRefreshMinutes] = useState(DEFAULT_REFRESH_MINUTES);
   const [intervalError, setIntervalError] = useState(false);
@@ -137,8 +144,13 @@ const LabManagementDashboard = () => {
       `/rest/dashboard/summary?${params}`,
       (resp) => {
         if (controller.signal.aborted) return;
-        setData(resp || null);
-        setLastUpdated(new Date());
+        if (resp) {
+          setData(resp);
+          setLastUpdated(new Date());
+          setLoadFailed(false);
+        } else {
+          setLoadFailed(true);
+        }
         setLoading(false);
       },
       controller.signal,
@@ -184,11 +196,11 @@ const LabManagementDashboard = () => {
     const stock = data.stockAlerts?.value;
     return {
       testsToday: {
-        value: data.testsToday?.value ?? 0,
+        value: data.testsToday?.value ?? null,
         deltaPct: data.testsToday?.deltaPct,
       },
       pending: {
-        value: data.pending?.value ?? 0,
+        value: data.pending?.value ?? null,
         deltaPct: data.pending?.deltaPct,
       },
       tat: {
@@ -209,15 +221,17 @@ const LabManagementDashboard = () => {
         tag: analyzersTag(analyzers.online ?? null, analyzers.total ?? null),
       },
       stock: {
-        value: stock ?? 0,
-        tag: stockAlertsTag(stock ?? 0),
+        value: stock ?? null,
+        tag: stockAlertsTag(stock ?? null),
       },
     };
   }, [data]);
 
+  const isInitialLoad = loading && !data;
+
   return (
     <>
-      {loading && (
+      {isInitialLoad && (
         <Loading
           description={intl.formatMessage({
             id: "message.dashboard.refreshing",
@@ -282,10 +296,20 @@ const LabManagementDashboard = () => {
           />
         </Column>
         <Column lg={4} md={4} sm={4} className="dashboard-last-updated">
-          <div data-testid="dashboard-last-updated">
+          <div
+            className="dashboard-last-updated-row"
+            data-testid="dashboard-last-updated"
+          >
             <FormattedMessage id="label.dashboard.lastUpdated" />
             {": "}
             {formatLastUpdated(lastUpdated, intl)}
+            {loading && data && (
+              <InlineLoading
+                description={intl.formatMessage({
+                  id: "message.dashboard.refreshingInline",
+                })}
+              />
+            )}
           </div>
           <Button
             kind="tertiary"
@@ -298,6 +322,21 @@ const LabManagementDashboard = () => {
           </Button>
         </Column>
       </Grid>
+      {loadFailed && (
+        <Grid fullWidth className="dashboard-error">
+          <Column lg={16} md={8} sm={4}>
+            <InlineNotification
+              kind="error"
+              lowContrast
+              hideCloseButton
+              title={intl.formatMessage({
+                id: "message.dashboard.loadFailed",
+              })}
+              data-testid="dashboard-load-error"
+            />
+          </Column>
+        </Grid>
+      )}
       <Grid fullWidth className="dashboard-kpi-row">
         <Column lg={16} md={8} sm={4}>
           <Section>
@@ -306,61 +345,49 @@ const LabManagementDashboard = () => {
             </h3>
           </Section>
         </Column>
-        {kpis && (
-          <>
-            <Column lg={4} md={4} sm={2}>
-              <KpiTile
-                titleKey="label.dashboard.testsToday"
-                value={kpis.testsToday.value}
-                deltaPct={kpis.testsToday.deltaPct}
-                intl={intl}
-              />
-            </Column>
-            <Column lg={4} md={4} sm={2}>
-              <KpiTile
-                titleKey="label.dashboard.pending"
-                value={kpis.pending.value}
-                deltaPct={kpis.pending.deltaPct}
-                intl={intl}
-              />
-            </Column>
-            <Column lg={4} md={4} sm={2}>
-              <KpiTile
-                titleKey="label.dashboard.tatCompliance"
-                value={kpis.tat.value}
-                deltaPct={kpis.tat.deltaPct}
-                tag={kpis.tat.tag}
-                intl={intl}
-              />
-            </Column>
-            <Column lg={4} md={4} sm={2}>
-              <KpiTile
-                titleKey="label.dashboard.qcPassRate"
-                value={kpis.qc.value}
-                deltaPct={kpis.qc.deltaPct}
-                tag={kpis.qc.tag}
-                intl={intl}
-              />
-            </Column>
-            <Column lg={4} md={4} sm={2}>
-              <KpiTile
-                titleKey="label.dashboard.analyzersOnline"
-                value={kpis.analyzers.value}
-                tag={kpis.analyzers.tag}
-                intl={intl}
-              />
-            </Column>
-            <Column lg={4} md={4} sm={2}>
-              <KpiTile
-                titleKey="label.dashboard.stockAlerts"
-                value={kpis.stock.value}
-                tag={kpis.stock.tag}
-                intl={intl}
-              />
-            </Column>
-          </>
-        )}
       </Grid>
+      {kpis && (
+        <div className="dashboard-kpi-tiles">
+          <KpiTile
+            titleKey="label.dashboard.testsToday"
+            value={kpis.testsToday.value}
+            deltaPct={kpis.testsToday.deltaPct}
+            intl={intl}
+          />
+          <KpiTile
+            titleKey="label.dashboard.pending"
+            value={kpis.pending.value}
+            deltaPct={kpis.pending.deltaPct}
+            intl={intl}
+          />
+          <KpiTile
+            titleKey="label.dashboard.tatCompliance"
+            value={kpis.tat.value}
+            deltaPct={kpis.tat.deltaPct}
+            tag={kpis.tat.tag}
+            intl={intl}
+          />
+          <KpiTile
+            titleKey="label.dashboard.qcPassRate"
+            value={kpis.qc.value}
+            deltaPct={kpis.qc.deltaPct}
+            tag={kpis.qc.tag}
+            intl={intl}
+          />
+          <KpiTile
+            titleKey="label.dashboard.analyzersOnline"
+            value={kpis.analyzers.value}
+            tag={kpis.analyzers.tag}
+            intl={intl}
+          />
+          <KpiTile
+            titleKey="label.dashboard.stockAlerts"
+            value={kpis.stock.value}
+            tag={kpis.stock.tag}
+            intl={intl}
+          />
+        </div>
+      )}
     </>
   );
 };
