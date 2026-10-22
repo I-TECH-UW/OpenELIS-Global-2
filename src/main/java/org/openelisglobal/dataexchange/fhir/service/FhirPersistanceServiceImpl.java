@@ -74,6 +74,13 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
         }
     }
 
+    private void requireLocalFhirClient() throws FhirLocalPersistingException {
+        if (localFhirClient == null) {
+            throw new FhirLocalPersistingException(
+                    "Local FHIR client is not configured (check org.openelisglobal.fhirstore.uri)");
+        }
+    }
+
     @Override
     public Bundle createFhirResourceInFhirStore(Resource resource) throws FhirLocalPersistingException {
         String id = resource.getIdElement().getIdPart() == null ? "" : resource.getIdElement().getIdPart();
@@ -87,9 +94,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Bundle createFhirResourcesInFhirStore(Map<String, Resource> resources) throws FhirLocalPersistingException {
-        if (localFhirClient == null) {
-            throw new FhirLocalPersistingException("Local FHIR client is not configured");
-        }
+        requireLocalFhirClient();
         Bundle transactionBundle = makeTransactionBundleForCreate(resources);
         Bundle transactionResponseBundle = new Bundle();
         try {
@@ -103,9 +108,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Bundle updateFhirResourcesInFhirStore(Map<String, Resource> resources) throws FhirLocalPersistingException {
-        if (localFhirClient == null) {
-            throw new FhirLocalPersistingException("Local FHIR client is not configured");
-        }
+        requireLocalFhirClient();
         Bundle transactionBundle = makeTransactionBundleForUpdate(resources);
         Bundle transactionResponseBundle = new Bundle();
         try {
@@ -120,9 +123,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
     @Override
     public Bundle createUpdateFhirResourcesInFhirStore(Map<String, Resource> createResources,
             Map<String, Resource> updateResources) throws FhirLocalPersistingException {
-        if (localFhirClient == null) {
-            throw new FhirLocalPersistingException("Local FHIR client is not configured");
-        }
+        requireLocalFhirClient();
         Bundle transactionBundle = new Bundle();
         transactionBundle.setType(BundleType.TRANSACTION);
         addUpdatesToTransactionBundle(updateResources, transactionBundle);
@@ -151,9 +152,7 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
     @Override
     public Bundle createUpdateFhirResourcesInFhirStore(List<FhirOperations> fhirOperationsList)
             throws FhirLocalPersistingException {
-        if (localFhirClient == null) {
-            throw new FhirLocalPersistingException("Local FHIR client is not configured");
-        }
+        requireLocalFhirClient();
         Bundle transactionBundle = new Bundle();
         transactionBundle.setType(BundleType.TRANSACTION);
         for (FhirOperations fhirOperations : fhirOperationsList) {
@@ -177,6 +176,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
     @Override
     public List<ServiceRequest> getAllServiceRequestByAccessionNumber(String accessionNumber) {
         List<ServiceRequest> serviceRequests = new ArrayList<>();
+        if (localFhirClient == null) {
+            return serviceRequests;
+        }
         Bundle searchBundle = localFhirClient.search().forResource(ServiceRequest.class) //
                 .returnBundle(Bundle.class) //
                 .where(ServiceRequest.IDENTIFIER.exactly()
@@ -196,6 +198,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Optional<Organization> getFhirOrganizationByName(String orgName) {
+        if (localFhirClient == null) {
+            return Optional.empty();
+        }
         Bundle bundle = localFhirClient.search() //
                 .forResource(Organization.class) //
                 .returnBundle(Bundle.class) //
@@ -252,6 +257,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Optional<ServiceRequest> getServiceRequestByAnalysisUuid(String uuid) {
+        if (localFhirClient == null) {
+            return Optional.empty();
+        }
         Bundle bundle = localFhirClient.search() //
                 .forResource(ServiceRequest.class) //
                 .returnBundle(Bundle.class) //
@@ -266,6 +274,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Optional<Specimen> getSpecimenBySampleItemUuid(String uuid) {
+        if (localFhirClient == null) {
+            return Optional.empty();
+        }
         Bundle bundle = localFhirClient.search() //
                 .forResource(Specimen.class) //
                 .returnBundle(Bundle.class) //
@@ -280,6 +291,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Optional<Specimen> getSpecimenByUuid(String uuid) {
+        if (localFhirClient == null) {
+            return Optional.empty();
+        }
         Bundle bundle = localFhirClient.search() //
                 .forResource(Specimen.class) //
                 .returnBundle(Bundle.class) //
@@ -293,6 +307,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Optional<ServiceRequest> getServiceRequestBySpecimenUuid(String specimenUuid) {
+        if (localFhirClient == null) {
+            return Optional.empty();
+        }
         Bundle bundle = localFhirClient.search() //
                 .forResource(ServiceRequest.class) //
                 .returnBundle(Bundle.class) //
@@ -306,6 +323,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Optional<org.hl7.fhir.r4.model.SupplyDelivery> getSupplyDeliveryByUuid(String uuid) {
+        if (localFhirClient == null) {
+            return Optional.empty();
+        }
         Bundle bundle = localFhirClient.search() //
                 .forResource(org.hl7.fhir.r4.model.SupplyDelivery.class) //
                 .returnBundle(Bundle.class) //
@@ -319,6 +339,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Optional<DiagnosticReport> getDiagnosticReportByAnalysisUuid(String uuid) {
+        if (localFhirClient == null) {
+            return Optional.empty();
+        }
         Bundle bundle = localFhirClient.search() //
                 .forResource(DiagnosticReport.class) //
                 .returnBundle(Bundle.class) //
@@ -389,6 +412,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Optional<Task> getTaskBasedOnServiceRequest(String referringId) {
+        if (localFhirClient == null) {
+            return Optional.empty();
+        }
 
         Bundle bundle = localFhirClient.search() //
                 .forResource(Task.class) //
@@ -451,6 +477,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Optional<ServiceRequest> getServiceRequestByReferingId(String referringId) {
+        if (localFhirClient == null) {
+            return Optional.empty();
+        }
         ServiceRequest serviceRequest = null;
         Bundle bundle = localFhirClient.search() //
                 .forResource(ServiceRequest.class) //
@@ -496,6 +525,9 @@ public class FhirPersistanceServiceImpl implements FhirPersistanceService {
 
     @Override
     public Optional<Task> getTaskBasedOnTask(String taskId) {
+        if (localFhirClient == null) {
+            return Optional.empty();
+        }
         Bundle bundle = localFhirClient.search() //
                 .forResource(Task.class) //
                 .returnBundle(Bundle.class) //
