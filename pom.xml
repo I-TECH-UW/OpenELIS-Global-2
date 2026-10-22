@@ -10,7 +10,7 @@
     <properties>
         <maven.java.release>21</maven.java.release>
         <!-- Semantic Versioning; see RELEASES.md -->
-        <revision>3.3.0-SNAPSHOT</revision>
+        <revision>3.4.0-SNAPSHOT</revision>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <liquibase.propertyFile>${project.basedir}/liquibase/liquibase.properties</liquibase.propertyFile>
         <castor.version>1.4.1</castor.version>
@@ -876,6 +876,16 @@
             </resource>
             <resource>
                 <directory>src/main/resources</directory>
+            </resource>
+            <!-- The interface's translation catalogue, which server-rendered reports
+                print their labels from (UiMessages), so a report reads in the screens' language
+                and wording. -->
+            <resource>
+                <directory>frontend/src/languages</directory>
+                <targetPath>ui-languages</targetPath>
+                <includes>
+                    <include>*.json</include>
+                </includes>
             </resource>
         </resources>
         <plugins>

@@ -158,6 +158,12 @@ public class CatalogAttributeCsvLoaderIntegrationTest extends BaseWebContextSens
         assertEquals(3.9d, ((Number) maleRange.get("low_normal")).doubleValue(), 0.0001d);
         assertNotNull("the range is scoped to the specimen the row names", maleRange.get("sample_type_id"));
         assertNotNull("and to the component it names", maleRange.get("component_id"));
+        // The file says 0 to 120 years; the limit holds days, the unit a patient's
+        // age is compared in, so a 30-year-old still falls inside the band.
+        Map<String, Object> ages = jdbc.queryForMap(
+                "SELECT min_age, max_age FROM clinlims.result_limits WHERE test_id = ? AND gender = 'M'", testId);
+        assertEquals(0d, ((Number) ages.get("min_age")).doubleValue(), 0.0001d);
+        assertEquals(120d * 365d, ((Number) ages.get("max_age")).doubleValue(), 0.0001d);
 
         // The file is the test's complete set of numeric ranges: dropping a row
         // drops its range.

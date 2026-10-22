@@ -75,6 +75,7 @@ jobs:
     if: needs.setup.outputs.head_sha != '' && (needs.setup.outputs.event_name == 'push' || needs.setup.outputs.event_name == 'release') && needs.setup.outputs.image_transfer != 'none' && github.event.workflow_run.conclusion != 'cancelled'
     runs-on: ubuntu-latest
     permissions:
+      actions: read
       contents: read
       statuses: read
       checks: read
