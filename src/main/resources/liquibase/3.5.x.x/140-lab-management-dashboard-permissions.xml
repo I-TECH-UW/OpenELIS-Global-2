@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+    xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog
+    http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.8.xsd">
+
+    <!-- OGC-485 Slice 1: Lab Management Dashboard — module, URL gates, role grants, top-level menu -->
+
+    <changeSet author="herbertyiga" id="140-lab-management-dashboard-add-module">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="system_module" schemaName="clinlims"/>
+            <sqlCheck expectedResult="0">SELECT count(*) FROM clinlims.system_module WHERE name = 'LabManagementDashboard'</sqlCheck>
+        </preConditions>
+        <comment>Module for the Lab Management Dashboard (read-only KPI overview)</comment>
+        <insert tableName="system_module" schemaName="clinlims">
+            <column name="id" valueSequenceNext="system_module_seq"/>
+            <column name="name" value="LabManagementDashboard"/>
+            <column name="description" value="View the Lab Management Dashboard"/>
+            <column name="has_select_flag" value="Y"/>
+            <column name="has_add_flag" value="N"/>
+            <column name="has_update_flag" value="N"/>
+            <column name="has_delete_flag" value="N"/>
+        </insert>
+        <rollback>
+            <delete tableName="system_module" schemaName="clinlims">
+                <where>name = 'LabManagementDashboard'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="herbertyiga" id="140-lab-management-dashboard-url-ui">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="system_module_url" schemaName="clinlims"/>
+            <sqlCheck expectedResult="1">SELECT count(*) FROM clinlims.system_module WHERE name = 'LabManagementDashboard'</sqlCheck>
+        </preConditions>
+        <comment>Gate the Lab Management Dashboard UI route</comment>
+        <insert tableName="system_module_url" schemaName="clinlims">
+            <column name="id" valueSequenceNext="system_module_url_seq"/>
+            <column name="url_path" value="/LabManagementDashboard"/>
+            <column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'LabManagementDashboard')"/>
+        </insert>
+        <rollback>
+            <delete tableName="system_module_url" schemaName="clinlims">
+                <where>url_path = '/LabManagementDashboard'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="herbertyiga" id="140-lab-management-dashboard-url-summary">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="system_module_url" schemaName="clinlims"/>
+            <sqlCheck expectedResult="1">SELECT count(*) FROM clinlims.system_module WHERE name = 'LabManagementDashboard'</sqlCheck>
+        </preConditions>
+        <comment>Gate the Lab Management Dashboard summary REST endpoint (Slice 1)</comment>
+        <insert tableName="system_module_url" schemaName="clinlims">
+            <column name="id" valueSequenceNext="system_module_url_seq"/>
+            <column name="url_path" value="/rest/dashboard/summary"/>
+            <column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'LabManagementDashboard')"/>
+        </insert>
+        <rollback>
+            <delete tableName="system_module_url" schemaName="clinlims">
+                <where>url_path = '/rest/dashboard/summary'</where>
+            </delete>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="herbertyiga" id="140-lab-management-dashboard-grant-global-admin">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="system_role_module" schemaName="clinlims"/>
+            <sqlCheck expectedResult="1">SELECT count(*) FROM clinlims.system_role WHERE name = 'Global Administrator'</sqlCheck>
+            <sqlCheck expectedResult="1">SELECT count(*) FROM clinlims.system_module WHERE name = 'LabManagementDashboard'</sqlCheck>
+        </preConditions>
+        <comment>Grant Lab Management Dashboard view to Global Administrator</comment>
+        <insert tableName="system_role_module" schemaName="clinlims">
+            <column name="id" valueSequenceNext="system_role_module_seq"/>
+            <column name="has_select" value="Y"/>
+            <column name="has_add" value="N"/>
+            <column name="has_update" value="N"/>
+            <column name="has_delete" value="N"/>
+            <column name="system_role_id" valueComputed="(SELECT id FROM clinlims.system_role WHERE name = 'Global Administrator')"/>
+            <column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'LabManagementDashboard')"/>
+        </insert>
+        <rollback>
+            <sql>
+                DELETE FROM clinlims.system_role_module
+                WHERE system_role_id = (SELECT id FROM clinlims.system_role WHERE name = 'Global Administrator')
+                  AND system_module_id = (SELECT id FROM clinlims.system_module WHERE name = 'LabManagementDashboard');
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="herbertyiga" id="140-lab-management-dashboard-grant-reports">
+        <preConditions onFail="MARK_RAN">
+            <tableExists tableName="system_role_module" schemaName="clinlims"/>
+            <sqlCheck expectedResult="1">SELECT count(*) FROM clinlims.system_role WHERE name = 'Reports'</sqlCheck>
+            <sqlCheck expectedResult="1">SELECT count(*) FROM clinlims.system_module WHERE name = 'LabManagementDashboard'</sqlCheck>
+        </preConditions>
+        <comment>Grant Lab Management Dashboard view to Reports role</comment>
+        <insert tableName="system_role_module" schemaName="clinlims">
+            <column name="id" valueSequenceNext="system_role_module_seq"/>
+            <column name="has_select" value="Y"/>
+            <column name="has_add" value="N"/>
+            <column name="has_update" value="N"/>
+            <column name="has_delete" value="N"/>
+            <column name="system_role_id" valueComputed="(SELECT id FROM clinlims.system_role WHERE name = 'Reports')"/>
+            <column name="system_module_id" valueComputed="(SELECT id FROM clinlims.system_module WHERE name = 'LabManagementDashboard')"/>
+        </insert>
+        <rollback>
+            <sql>
+                DELETE FROM clinlims.system_role_module
+                WHERE system_role_id = (SELECT id FROM clinlims.system_role WHERE name = 'Reports')
+                  AND system_module_id = (SELECT id FROM clinlims.system_module WHERE name = 'LabManagementDashboard');
+            </sql>
+        </rollback>
+    </changeSet>
+
+    <changeSet author="herbertyiga" id="140-lab-management-dashboard-add-menu">
+        <preConditions onFail="MARK_RAN">
+            <sqlCheck expectedResult="0">SELECT count(*) FROM clinlims.menu WHERE element_id = 'menu_lab_management_dashboard'</sqlCheck>
+        </preConditions>
+        <comment>Add Lab Management Dashboard as a top-level menu item after Home (presentation_order 5)</comment>
+        <sql>
+            INSERT INTO clinlims.menu (id, parent_id, presentation_order,
+                                       element_id, action_url, display_key, is_active)
+            VALUES (nextval('clinlims.menu_seq'), NULL, 5,
+                    'menu_lab_management_dashboard', '/LabManagementDashboard',
+                    'nav.dashboard.labManagement', true);
+        </sql>
+        <rollback>
+            <sql>DELETE FROM clinlims.menu WHERE element_id = 'menu_lab_management_dashboard';</sql>
+        </rollback>
+    </changeSet>
+
+</databaseChangeLog>

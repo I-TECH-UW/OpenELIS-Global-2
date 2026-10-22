@@ -121,6 +121,7 @@ import { clearReportingDraft } from "./components/reports/CustomDataExport/Custo
 import ReportingRoute from "./components/reports/CustomDataExport/ReportingRoute";
 import { REPORTING_ROUTE_PATHS } from "./components/reports/CustomDataExport/routes";
 import VectorSurveillanceReport from "./components/reports/vectorSurveillance/Index";
+import LabManagementDashboard from "./components/dashboard/LabManagementDashboard";
 import StudyValidation from "./components/validation/Index";
 const AnalyserResultIndex = lazyWithRetry(
   () => import("./components/analyserResults/Index"),
@@ -1729,6 +1730,12 @@ export default function App() {
                   exact
                   render={() => <VectorSurveillanceReport />}
                   role={Roles.REPORTS}
+                />
+                <SecureRoute
+                  path="/LabManagementDashboard"
+                  exact
+                  render={() => <LabManagementDashboard />}
+                  role={[Roles.REPORTS, Roles.GLOBAL_ADMIN]}
                 />
                 <SecureRoute
                   path="/LaporanHasil"

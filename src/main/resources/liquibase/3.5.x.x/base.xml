@@ -684,4 +684,7 @@
 
   <!-- Terminology codes are stored trimmed (OGC-1465). -->
   <include relativeToChangelogFile="true" file="138-terminology-codes-trimmed.xml"/>
+
+  <!-- OGC-485 Slice 1: Lab Management Dashboard module, URL gates, role grants, top-level menu. -->
+  <include relativeToChangelogFile="true" file="140-lab-management-dashboard-permissions.xml"/>
 </databaseChangeLog>
