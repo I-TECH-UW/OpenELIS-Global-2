@@ -148,10 +148,32 @@ test.describe("A GeneXpert from setup to a clinical result", () => {
       );
       await demo.highlight(summary);
       await demo.caption(
-        "The parts are one analysis, so releasing the viral load releases every part with it.",
+        "Each part is validated on its own; the viral load is released with its last part.",
       );
-      await openFirstWaiting(page);
-      await releaseOpen(page);
+      await validateAndReleaseFirst(page);
+      await expect(summary).toContainText(
+        `Needs review: ${HIV_VL_VALUED_PARTS.length - 1}`,
+      );
+
+      await demo.caption(
+        "On the order, the validated part is final while the others still await validation.",
+      );
+      await page.goto(
+        `/Results?accessionNumber=${encodeURIComponent(order.accession)}`,
+        { waitUntil: "domcontentloaded" },
+      );
+      await expect(
+        page.getByRole("button", { name: "Results final (1)" }),
+      ).toBeVisible();
+      await expect(
+        page.getByRole("button", {
+          name: `Accepted by technician (${HIV_VL_VALUED_PARTS.length - 1})`,
+        }),
+      ).toBeVisible();
+      await openValidationQueue(page, order.accession);
+      for (let left = HIV_VL_VALUED_PARTS.length - 1; left > 0; left--) {
+        await validateAndReleaseFirst(page);
+      }
       await expect(
         page.getByTestId("release-all-clear-why-queueEmpty"),
       ).toBeVisible();

@@ -10,6 +10,7 @@ import org.openelisglobal.common.action.IActionConstants;
 import org.openelisglobal.common.management.controller.rest.LabUnitManagementRestController;
 import org.openelisglobal.common.management.controller.rest.LabUnitManagementRestController.BulkTestAssignmentRequest;
 import org.openelisglobal.common.management.controller.rest.LabUnitManagementRestController.DeactivationRequest;
+import org.openelisglobal.common.management.controller.rest.LabUnitManagementRestController.LabUnitManagementDTO;
 import org.openelisglobal.login.valueholder.UserSessionData;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;
@@ -108,6 +109,7 @@ public class TestCatalogLabUnitStatusIntegrationTest extends BaseWebContextSensi
         jdbc.update("DELETE FROM clinlims.localization WHERE id = ?", SAMPLE_TYPE);
         for (long id : new long[] { INACTIVE_A, INACTIVE_B, ACTIVE_C }) {
             jdbc.update("DELETE FROM clinlims.test_section WHERE id = ?", id);
+            jdbc.update("DELETE FROM clinlims.localization_value WHERE localization_id = ?", id);
             jdbc.update("DELETE FROM clinlims.localization WHERE id = ?", id);
         }
     }
@@ -240,5 +242,53 @@ public class TestCatalogLabUnitStatusIntegrationTest extends BaseWebContextSensi
                 labUnits.reassignTests(request(), String.valueOf(ACTIVE_C), reassign).getStatusCode().value());
         assertEquals(Long.valueOf(INACTIVE_B), unitOfTest());
         assertEquals("N", status(INACTIVE_B));
+    }
+
+    /**
+     * OGC-1463: a save from a page loaded before another admin deactivated the unit
+     * is refused as stale, so the unit stays off; so is a deactivation asked from a
+     * page older than the unit's last change.
+     */
+    @org.junit.Test
+    public void aSaveFromAPageOlderThanTheDeactivationIsRefusedAsStale() throws Exception {
+        LabUnitManagementDTO pageA = labUnits.getLabUnit(String.valueOf(ACTIVE_C)).getBody().getData();
+        DeactivationRequest deactivation = new DeactivationRequest();
+        deactivation.confirmation = "DEACTIVATE";
+        deactivation.option = "keep";
+        deactivation.lastupdated = pageA.getLastupdated();
+        assertEquals(200,
+                labUnits.deactivateLabUnit(request(), String.valueOf(ACTIVE_C), deactivation).getStatusCode().value());
+
+        pageA.setDescription("Changed on an old page");
+        assertEquals(409, labUnits.updateLabUnit(request(), String.valueOf(ACTIVE_C), pageA).getStatusCode().value());
+        assertEquals("N", status(ACTIVE_C));
+
+        assertEquals("a second deactivation from the same old page is stale too", 409,
+                labUnits.deactivateLabUnit(request(), String.valueOf(ACTIVE_C), deactivation).getStatusCode().value());
+    }
+
+    /**
+     * OGC-1465: a rename onto another unit's name is refused, as a create is; a
+     * name the unit already holds is not a rename.
+     */
+    @org.junit.Test
+    public void aRenameOntoAnotherUnitsNameIsRefused() throws Exception {
+        long valueId = 95499L;
+        for (long id : new long[] { INACTIVE_A, ACTIVE_C }) {
+            jdbc.update(
+                    "INSERT INTO clinlims.localization_value (id, localization_id, locale, value, last_updated)"
+                            + " VALUES (?, ?, 'en', ?, NOW())",
+                    valueId--, id, id == ACTIVE_C ? "LabUnitStatusIT C" : "LabUnitStatusIT A");
+        }
+        LabUnitManagementDTO unitC = labUnits.getLabUnit(String.valueOf(ACTIVE_C)).getBody().getData();
+
+        unitC.setNames(java.util.Map.of("en", " labunitstatusit a "));
+        assertEquals(409, labUnits.updateLabUnit(request(), String.valueOf(ACTIVE_C), unitC).getStatusCode().value());
+
+        LabUnitManagementDTO unchanged = labUnits.getLabUnit(String.valueOf(ACTIVE_C)).getBody().getData();
+        unchanged.setNames(java.util.Map.of("en", "LabUnitStatusIT C"));
+        unchanged.setDescription("only the description changes");
+        assertEquals(200,
+                labUnits.updateLabUnit(request(), String.valueOf(ACTIVE_C), unchanged).getStatusCode().value());
     }
 }

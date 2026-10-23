@@ -466,6 +466,35 @@ describe("BasicInfoSection domain-switch modal", () => {
   });
 });
 
+// OGC-1460 review: the activation checklist reloads after a save, so a gap the
+// save closed (a sample type) no longer shows.
+describe("BasicInfoSection checklist after a save", () => {
+  it("drops a gap the save closed", async () => {
+    const gap = "The test has no sample type, so it cannot be ordered.";
+    let complete = false;
+    const loaded = getFromOpenElisServer.getMockImplementation();
+    getFromOpenElisServer.mockImplementation((url, cb, signal) => {
+      if (url.endsWith("/completeness")) {
+        cb(
+          complete ? { complete: true } : { complete: false, messages: [gap] },
+        );
+      } else {
+        loaded(url, (res) => cb({ ...res, active: false }), signal);
+      }
+    });
+    putToOpenElisServerJsonResponse.mockImplementation((url, payload, cb) => {
+      complete = true;
+      cb({ testId: "42" });
+    });
+    renderSection();
+    expect(await screen.findByText(gap)).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(screen.queryByText(gap)).toBeNull());
+  });
+});
+
 // OGC-1458 review: the section's loads stop when it unmounts, so a late answer
 // never updates a screen the admin has left.
 describe("BasicInfoSection unmount", () => {
@@ -593,6 +622,27 @@ describe("BasicInfoSection duplicate-description conflict (OGC-1180)", () => {
     expect(addNotification.mock.calls[0][0].kind).toBe("error");
     expect(addNotification.mock.calls[0][0].message).toBe(
       messages["error.testCatalog.description.inUse"],
+    );
+  });
+
+  /** OGC-1464: a code another test holds is refused on the code field. */
+  it("a 409 naming the code marks the code field", async () => {
+    putToOpenElisServerJsonResponse.mockImplementation((url, payload, cb) =>
+      cb({ status: 409, conflict: "code" }),
+    );
+    const addNotification = vi.fn();
+    renderWithNotificationSpy(addNotification);
+    await screen.findByLabelText("Clinical");
+
+    fireEvent.click(screen.getByRole("button", { name: "Save" }));
+
+    await waitFor(() => expect(addNotification).toHaveBeenCalled());
+    expect(addNotification.mock.calls[0][0].message).toBe(
+      messages["error.testCatalog.codeExists"],
+    );
+    expect(document.getElementById("basic-info-code")).toHaveAttribute(
+      "aria-invalid",
+      "true",
     );
   });
 
