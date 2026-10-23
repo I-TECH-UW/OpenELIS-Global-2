@@ -82,7 +82,8 @@
     "pw:bundle-report": "node scripts/pw-bundle-report.mjs",
     "pw:test:ui": "playwright test --ui",
     "pw:test:headed": "playwright test --headed",
-    "pw:test:video": "npm run pw:test:harness-demo-video"
+    "pw:test:video": "npm run pw:test:harness-demo-video",
+    "help:refresh": "node scripts/help-refresh.mjs"
   },
   "devDependencies": {
     "@axe-core/playwright": "4.12.1",
