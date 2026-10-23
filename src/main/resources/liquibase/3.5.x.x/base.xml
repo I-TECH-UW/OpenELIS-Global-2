@@ -684,4 +684,7 @@
 
   <!-- Terminology codes are stored trimmed (OGC-1465). -->
   <include relativeToChangelogFile="true" file="138-terminology-codes-trimmed.xml"/>
+
+  <!-- Issue #4414: Configure RetroCI DBS sample type via site setting -->
+  <include relativeToChangelogFile="true" file="139-retroci-dbs-sample-type-config.xml"/>
 </databaseChangeLog>
