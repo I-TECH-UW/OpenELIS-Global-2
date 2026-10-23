@@ -684,4 +684,7 @@
 
   <!-- Terminology codes are stored trimmed (OGC-1465). -->
   <include relativeToChangelogFile="true" file="138-terminology-codes-trimmed.xml"/>
+
+  <!-- Durable attribution for manual Retry/Dismiss on undelivered analyzer results. -->
+  <include relativeToChangelogFile="true" file="140-analyzer-delivery-action.xml"/>
 </databaseChangeLog>
