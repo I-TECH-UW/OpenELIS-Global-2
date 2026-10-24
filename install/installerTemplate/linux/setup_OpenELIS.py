@@ -320,6 +320,8 @@ def create_docker_compose_file():
             line = line.replace("[% db_host %]", DB_HOST_FOR_DOCKER_SERVICES) 
         if line.find("[% db_port %]")  >= 0:
             line = line.replace("[% db_port %]", DB_PORT) 
+        if line.find("[% config_dir %]") >= 0:
+            line = line.replace("[% config_dir %]", CONFIG_DIR)
         if line.find("[% secrets_dir %]")  >= 0:
             line = line.replace("[% secrets_dir %]", SECRETS_DIR)  
         if line.find("[% logs_dir %]")  >= 0:

@@ -5,6 +5,13 @@ all new secrets use the generated `install/encryption.key`. Back up that key
 with the database. Normal startup neither reads a previous key nor scans secret
 columns.
 
+The Linux installer already stores a site-specific key in
+`/var/lib/openelis-global/config/ENCRYPTION_KEY`. Its generated Compose file
+mounts that same file at the application key path. Existing installer
+deployments that retain this key do not need to rewrite their encrypted values.
+Regenerate the Compose file with the updated installer before starting the new
+image.
+
 This explicit upgrade is only for a database containing secrets encrypted with
 its previous `encryption.general.password` (historically the keystore password).
 It rewrites selected encrypted fields, not the entire database. The application

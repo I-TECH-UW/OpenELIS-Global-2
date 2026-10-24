@@ -86,6 +86,8 @@ services:
       - source: keystore
       - source: truststore
       - source: datasource.password
+      - source: encryption.key
+        target: /etc/openelis-global/install/encryption.key
       - source: common.properties
       - source: extra.properties
     logging: *local-logging
@@ -188,6 +190,8 @@ services:
 #    logging: *loki-logging
           
 secrets:
+  encryption.key:
+    file: [% config_dir %]ENCRYPTION_KEY
   datasource.password:
     file: [% secrets_dir %]datasource.password  
   common.properties:
