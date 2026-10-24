@@ -143,11 +143,11 @@ public class AnalyzerNormalizedResultImportServiceImpl implements AnalyzerNormal
                 .orElseThrow(() -> new IllegalArgumentException("Analyzer connection not found"));
         AnalyzerProfilePin pin = analyzer.getPinnedProfile();
         int recoveredCount = 0;
-        // A row held under another revision of this profile is retried like a new
-        // delivery from that revision: it maps only where both revisions read it alike.
+        // A row held under another revision, or under the type the analyzer was set up
+        // on before, is retried like a new delivery from that profile: it maps only
+        // where both profiles read it alike.
         for (AnalyzerResults held : analyzerResultsService.findHeldMappingResultsByAnalyzer(analyzerId)) {
-            if (pin == null || !pin.getProfileId().equals(held.getSourceProfileId())
-                    || held.getSourceProfileRevision() == null
+            if (pin == null || held.getSourceProfileId() == null || held.getSourceProfileRevision() == null
                     || !analyzer.getBridgeConnectionId().equals(held.getSourceConnectionId())
                     || held.getSourcePayload() == null) {
                 continue;
@@ -416,17 +416,18 @@ public class AnalyzerNormalizedResultImportServiceImpl implements AnalyzerNormal
     }
 
     /**
-     * The records a delivery stamped with another revision can map through the
-     * revision in force: those both revisions read alike. When either revision
-     * cannot be read, none can.
+     * The records a delivery stamped with another profile or revision can map
+     * through the one in force: those both read alike. When either cannot be read,
+     * none can.
      */
     private Predicate<AnalyzerMappingRowKey> readsAlike(AnalyzerNormalizedResultContract contract,
             AnalyzerProfilePin pinned) {
-        if (contract.profileRevision() == pinned.getProfileRevision()) {
+        if (contract.profileId().equals(pinned.getProfileId())
+                && contract.profileRevision() == pinned.getProfileRevision()) {
             return record -> true;
         }
         try {
-            BridgeProfileCatalog.ProfileRevision sent = profileCatalogService.getProfile(pinned.getProfileId(),
+            BridgeProfileCatalog.ProfileRevision sent = profileCatalogService.getProfile(contract.profileId(),
                     contract.profileRevision());
             BridgeProfileCatalog.ProfileRevision inForce = profileCatalogService.getProfile(pinned.getProfileId(),
                     pinned.getProfileRevision());
@@ -437,7 +438,7 @@ public class AnalyzerNormalizedResultImportServiceImpl implements AnalyzerNormal
                     BridgeAnalyzerProfile.from(inForce.profile()))::contains;
         } catch (BridgeProfileCatalogException | IllegalArgumentException exception) {
             LogEvent.logWarn(CLASS_NAME, "readsAlike", "Profile revision " + contract.profileRevision() + " of "
-                    + pinned.getProfileId() + " could not be read: " + exception.getMessage());
+                    + contract.profileId() + " could not be read: " + exception.getMessage());
             return record -> false;
         }
     }

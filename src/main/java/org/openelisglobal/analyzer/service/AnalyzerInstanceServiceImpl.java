@@ -170,8 +170,7 @@ public class AnalyzerInstanceServiceImpl implements AnalyzerInstanceService {
     private static boolean pinnedTo(AnalyzerInstanceState state, ObjectNode connection) {
         JsonNode profileRef = connection.path("profileRef");
         return Objects.equals(state.profileId(), profileRef.path("profileId").asText(null))
-                && state.profileRevision() == profileRef.path("revision").asInt(0)
-                && Objects.equals(state.profileFingerprint(), profileRef.path("fingerprint").asText(null));
+                && state.profileRevision() == profileRef.path("revision").asInt(0);
     }
 
     private AnalyzerInstanceView compose(AnalyzerInstanceState state) {
@@ -257,8 +256,7 @@ public class AnalyzerInstanceServiceImpl implements AnalyzerInstanceService {
         JsonNode profileRef = connection.path("profileRef");
         if (!Objects.equals(state.analyzerId(), connection.path("clientAnalyzerId").asText(null))
                 || !Objects.equals(state.profileId(), profileRef.path("profileId").asText(null))
-                || state.profileRevision() != profileRef.path("revision").asInt(0)
-                || !Objects.equals(state.profileFingerprint(), profileRef.path("fingerprint").asText(null))) {
+                || state.profileRevision() != profileRef.path("revision").asInt(0)) {
             throw new BridgeAnalyzerConnectionException("analyzer.bridge.connection.invalidEvidence");
         }
     }

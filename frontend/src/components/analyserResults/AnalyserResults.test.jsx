@@ -393,19 +393,18 @@ describe("AnalyserResults", () => {
     ).toHaveAttribute("href", expect.stringContaining("setup=assays"));
   });
 
-  it("explains a result sent under another profile revision and asks for a rerun", async () => {
+  it("names the profile a result was sent under when it reads differently, and asks for a rerun", async () => {
     renderResults([
       {
         ...heldResult,
+        sourceProfileId: "genexpert-astm",
         sourceProfileRevision: 3,
         importIssueReason: "arrived_under_other_revision",
       },
     ]);
 
     expect(
-      await screen.findByText(
-        /Sent under revision 3 of this analyzer's profile/,
-      ),
+      await screen.findByText(/Sent under revision 3 of genexpert-astm/),
     ).toBeInTheDocument();
     expect(
       screen.queryByRole("link", { name: "Review analyzer mapping" }),

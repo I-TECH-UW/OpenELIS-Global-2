@@ -513,6 +513,76 @@ public class AnalyzerNormalizedResultImportServiceTest {
     }
 
     @Test
+    public void aRowHeldUnderTheTypeTheAnalyzerLeftRecoversWhereBothTypesReadItAlike() throws IOException {
+        AnalyzerResults held = heldUnderTheTypeTheAnalyzerLeft();
+        when(profileCatalogService.getProfile("cepheid-genexpert-astm", 1))
+                .thenReturn(profile("cepheid-genexpert-astm", 1, "copies/mL"));
+
+        assertEquals(1, service.recoverHeldMappingResults("42", "7"));
+        ArgumentCaptor<AnalyzerResults> updated = ArgumentCaptor.forClass(AnalyzerResults.class);
+        verify(analyzerResultsService).update(updated.capture());
+        assertEquals(held.getId(), updated.getValue().getId());
+        assertEquals("501", updated.getValue().getTestId());
+        assertFalse(updated.getValue().isReadOnly());
+    }
+
+    @Test
+    public void aRowHeldUnderTheTypeTheAnalyzerLeftStaysHeldWhereTheTypesReadItDifferently() throws IOException {
+        AnalyzerResults held = heldUnderTheTypeTheAnalyzerLeft();
+        when(profileCatalogService.getProfile("cepheid-genexpert-astm", 1))
+                .thenReturn(profile("cepheid-genexpert-astm", 1, "IU/mL"));
+
+        assertEquals(0, service.recoverHeldMappingResults("42", "7"));
+        ArgumentCaptor<AnalyzerResults> updated = ArgumentCaptor.forClass(AnalyzerResults.class);
+        verify(analyzerResultsService).update(updated.capture());
+        assertEquals(held.getId(), updated.getValue().getId());
+        assertTrue(updated.getValue().isReadOnly());
+        assertEquals(AnalyzerResults.IMPORT_ISSUE_OTHER_REVISION, updated.getValue().getImportIssueReason());
+    }
+
+    /**
+     * A row held before the lab set the analyzer up again on another type: same
+     * connection, same code, sent under the type it left.
+     */
+    private AnalyzerResults heldUnderTheTypeTheAnalyzerLeft() throws IOException {
+        analyzer = analyzer("site.unknown-capable", 3);
+        when(analyzerService.findByBridgeConnectionIdForUpdate("bridge-connection-7f3c"))
+                .thenReturn(Optional.of(analyzer));
+        arrangeBinding(List.of(), List.of());
+        service.importBundle(fixture("normalized-unknown-test.fhir.json"), "7");
+        AnalyzerResults held = capturedRow();
+        held.setId("9001");
+        assertEquals("site.unknown-capable", held.getSourceProfileId());
+
+        analyzer = analyzer("cepheid-genexpert-astm", 1);
+        when(analyzerService.findByBridgeConnectionIdForUpdate("bridge-connection-7f3c"))
+                .thenReturn(Optional.of(analyzer));
+        when(analyzerService.getWithMapping("42")).thenReturn(Optional.of(analyzer));
+        arrangeBinding(List.of(boundTest("VENDOR-NEW-42", "501")), List.of());
+        when(analyzerResultsService.findHeldMappingResultsByAnalyzer("42")).thenReturn(List.of(held));
+        when(profileCatalogService.getProfile("site.unknown-capable", 3))
+                .thenReturn(profile("site.unknown-capable", 3, "copies/mL"));
+        return held;
+    }
+
+    /**
+     * A published profile declaring VENDOR-NEW-42 as a number in the given unit.
+     */
+    private static org.openelisglobal.analyzer.service.BridgeProfileCatalog.ProfileRevision profile(String id,
+            int revision, String unit) {
+        com.fasterxml.jackson.databind.ObjectMapper json = new com.fasterxml.jackson.databind.ObjectMapper();
+        com.fasterxml.jackson.databind.node.ObjectNode document = json.createObjectNode();
+        document.putObject("profileMeta").put("id", id).put("displayName", id);
+        document.putObject("catalog").put("revision", revision).put("revisionFingerprint", "sha256:" + "3".repeat(64))
+                .put("source", "SHIPPED").put("status", "ACTIVE");
+        document.putObject("protocol").put("name", "ASTM");
+        document.putArray("default_test_mappings").addObject().put("test_code", "VENDOR-NEW-42").put("loinc", "20447-9")
+                .put("unit", unit).put("result_type", "numeric");
+        return new org.openelisglobal.analyzer.service.BridgeProfileCatalog.ProfileRevision(document,
+                json.createObjectNode());
+    }
+
+    @Test
     public void mismatchedPinnedProfileIsRejectedBeforeMapping() throws IOException {
         analyzer = analyzer("different-profile", 1);
         when(analyzerService.findByBridgeConnectionIdForUpdate("bridge-connection-7f3c"))
