@@ -461,6 +461,32 @@ describe("AnalyserResults", () => {
     ).not.toBeInTheDocument();
   });
 
+  it("removes a held result from review", async () => {
+    postResults.mockImplementation((_endpoint, _body, callback) =>
+      callback({ status: 204 }),
+    );
+    const { addNotification } = renderResults([
+      { ...heldResult, importIssueReason: "reading_changed" },
+    ]);
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Remove from review" }),
+    );
+
+    expect(postResults.mock.calls[0][0]).toBe(
+      "/rest/analyzer/results/1004/dismiss",
+    );
+    await vi.waitFor(() =>
+      expect(addNotification).toHaveBeenCalledWith(
+        expect.objectContaining({
+          kind: "success",
+          message:
+            "The held result is removed from review. The audit trail keeps it.",
+        }),
+      ),
+    );
+  });
+
   it("reports a dismissal that never reached the server", async () => {
     postResults.mockImplementation((_endpoint, _body, callback) =>
       callback(undefined),
