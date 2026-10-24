@@ -31,6 +31,7 @@ type DataCallback<T> = (data: T) => void;
 export interface AnalyzerFilters {
   status?: string;
   search?: string;
+  includeRetired?: boolean;
   testUnit?: string;
   analyzerType?: string;
 }
@@ -427,6 +428,9 @@ export const getAnalyzers = (
     if (filters.search) {
       params.append("search", filters.search);
     }
+    if (filters.includeRetired) {
+      params.append("includeRetired", "true");
+    }
   }
 
   if (params.toString()) {
@@ -673,6 +677,44 @@ export const resetAnalyzerProfile = (
       callback({ ok: response.ok, messageKey: json?.messageKey });
     })
     .catch(() => callback({ ok: false }));
+};
+
+export interface AnalyzerUseChangeView {
+  changed: boolean;
+  error?: string;
+  messageKey?: string;
+  statusCode?: number;
+}
+
+/** Retires, restores or deletes an analyzer. */
+export const changeAnalyzerUse = (
+  id: string,
+  action: "retire" | "restore" | "delete",
+  callback: ApiCallback<AnalyzerUseChangeView>,
+) => {
+  const path =
+    action === "delete"
+      ? `/rest/analyzer/analyzers/${id}`
+      : `/rest/analyzer/analyzers/${id}/${action}`;
+  fetch(config.serverBaseUrl + path, {
+    credentials: "include",
+    method: action === "delete" ? "DELETE" : "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "X-CSRF-Token": localStorage.getItem("CSRF") || "",
+    },
+  })
+    .then(async (response) => {
+      const json = response.ok ? {} : await response.json().catch(() => ({}));
+      callback({
+        ...json,
+        changed: response.ok,
+        ...(!response.ok ? { statusCode: response.status } : {}),
+      });
+    })
+    .catch((error: Error) => {
+      callback({ changed: false, error: error.message || "Network error" });
+    });
 };
 
 const postAnalyzerLifecycle = <T extends object>(

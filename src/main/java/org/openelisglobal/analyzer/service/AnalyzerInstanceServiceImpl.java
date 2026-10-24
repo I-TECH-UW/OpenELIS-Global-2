@@ -189,6 +189,10 @@ public class AnalyzerInstanceServiceImpl implements AnalyzerInstanceService {
     @Override
     public AnalyzerInstanceView update(String analyzerId, AnalyzerInstanceRequest request, String actor) {
         AnalyzerInstanceState state = localStateService.update(analyzerId, request, actor);
+        if (state.profileId() == null || state.profileId().isBlank()) {
+            // Renamed before it has a type: its connection waits for the type.
+            return new AnalyzerInstanceView(state, null, null);
+        }
         if (state.bridgeConnectionId() == null) {
             return createMissingConnection(state, request, actor);
         }
