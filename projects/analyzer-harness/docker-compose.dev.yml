@@ -7,6 +7,10 @@ services:
     image: itechuw/certgen:main
     platform: linux/amd64
     restart: "no"
+    # Gives the install its own TLS key on first start and keeps the stores built from it.
+    entrypoint: ["/bin/sh", "/ensure-install-keys.sh"]
+    volumes:
+      - ../../scripts/certs/ensure-install-keys.sh:/ensure-install-keys.sh:ro
 
   db.openelis.org:
     networks:
@@ -32,7 +36,7 @@ services:
       db.openelis.org:
         condition: service_healthy
       certs:
-        condition: service_started
+        condition: service_completed_successfully
       fhir.openelis.org:
         condition: service_healthy
     restart: always
@@ -66,7 +70,7 @@ services:
       db.openelis.org:
         condition: service_started
       certs:
-        condition: service_started
+        condition: service_completed_successfully
     restart: always
     environment:
       SPRING_CONFIG_LOCATION: file:///run/secrets/hapi_application.yaml
@@ -129,7 +133,7 @@ services:
     restart: unless-stopped
     depends_on:
       certs:
-        condition: service_started
+        condition: service_completed_successfully
       oe.openelis.org:
         condition: service_started
 

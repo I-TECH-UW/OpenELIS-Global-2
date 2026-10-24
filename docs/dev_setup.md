@@ -181,6 +181,31 @@ This mode does not compile application source or mount a locally built WAR. An
 unavailable image must fail visibly. Mutable `develop` images are for explicit
 development/demo deployments; release verification uses fixed images.
 
+The `certs` service runs `scripts/certs/ensure-install-keys.sh` on every start.
+The first start gives the install its own TLS key and certificate in
+`/etc/openelis-global/install` on the `key_trust-store-volume` volume, replacing
+the key an earlier `certgen` image shipped to every install, and builds the
+keystore, truststore and proxy certificate from it. Later starts keep that key;
+changing `SSL_KEYSTORE_PASSWORD` or `SSL_TRUSTSTORE_PASSWORD` rebuilds the
+stores from it. A proxy certificate someone else installed, such as a Let's
+Encrypt one, is kept. Back the volume up with the database: removing it gives
+the install a new key.
+
+A paired Analyzer Bridge pinned the certificate OpenELIS served when they
+paired, so it stops delivering results when the key is replaced; undelivered
+results wait in its outbox. Once, after the first start on the new key:
+
+1. Restart the Bridge (`docker compose restart openelis-analyzer-bridge`). A
+   Bridge given the stack's truststore, as `docker-compose.analyzers.yml` does,
+   then trusts the new certificate through it and delivers the waiting results.
+2. If it still cannot reach OpenELIS (its health check stays down), it has no
+   truststore: [pair it again](analyzers/bridge-pairing.md#pairing-again) with a
+   new pairing code.
+
+A development or harness stack runs the Bridge with its `dev` profile, which
+serves the stack keystore itself, so OpenELIS's pin on the Bridge breaks too:
+pair it again with a new code.
+
 ## Diagnose a source build failure
 
 Read the first actual compiler or dependency error. A successful cached download
