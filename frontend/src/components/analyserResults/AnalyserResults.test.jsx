@@ -59,6 +59,7 @@ const mappedQualitativeResult = {
 const renderResults = (
   resultList = [heldResult],
   sampleGroup = [resultList[0]],
+  extraProps = {},
 ) => {
   const history = createMemoryHistory({
     initialEntries: ["/AnalyzerResults?id=2001"],
@@ -80,6 +81,7 @@ const renderResults = (
               results={{ resultList: resultList.map((row) => ({ ...row })) }}
               sampleGroup={sampleGroup}
               analyzerId="2001"
+              {...extraProps}
             />
           </NotificationContext.Provider>
         </ConfigurationContext.Provider>
@@ -393,44 +395,41 @@ describe("AnalyserResults", () => {
     ).toHaveAttribute("href", expect.stringContaining("setup=assays"));
   });
 
-  it("explains a result held because its test now reads differently and links to confirming again", async () => {
-    renderResults([{ ...heldResult, importIssueReason: "reading_changed" }]);
-
-    expect(
-      await screen.findByText(/now reads this test or value differently/),
-    ).toBeInTheDocument();
-    expect(
-      screen.getByRole("link", { name: "Confirm the mapping again" }),
-    ).toHaveAttribute("href", expect.stringContaining("setup=verify"));
-  });
-
-  it("explains a result held because the whole type now reads differently", async () => {
+  it("directs conflicting old spelling mappings to the local mapping editor", async () => {
     renderResults([
-      { ...heldResult, importIssueReason: "type_reading_changed" },
+      { ...heldResult, importIssueReason: "conflicting_answer_mapping" },
     ]);
-
     expect(
-      await screen.findByText(/now reads every result differently/),
-    ).toBeInTheDocument();
-  });
-
-  it("names the profile a result was sent under when it reads differently, and asks for a rerun", async () => {
-    renderResults([
-      {
-        ...heldResult,
-        sourceProfileId: "genexpert-astm",
-        sourceProfileRevision: 3,
-        importIssueReason: "arrived_under_other_revision",
-      },
-    ]);
-
-    expect(
-      await screen.findByText(/Sent under revision 3 of genexpert-astm/),
+      await screen.findByText(/conflicting local mappings/),
     ).toBeInTheDocument();
     expect(
-      screen.queryByRole("link", { name: "Review analyzer mapping" }),
-    ).not.toBeInTheDocument();
+      screen.getByRole("link", { name: "Review analyzer mapping" }),
+    ).toHaveAttribute(
+      "href",
+      expect.stringContaining("/analyzers/2001/mapping"),
+    );
   });
+
+  it.each([
+    "reading_changed",
+    "type_reading_changed",
+    "arrived_under_other_revision",
+  ])(
+    "keeps an older %s hold recoverable through local mapping without asking for re-interpretation",
+    async (reason) => {
+      renderResults([{ ...heldResult, importIssueReason: reason }]);
+      expect(await screen.findByText("Held")).toBeInTheDocument();
+      expect(
+        screen.getByRole("link", { name: "Review analyzer mapping" }),
+      ).toHaveAttribute(
+        "href",
+        expect.stringContaining("/analyzers/2001/mapping"),
+      );
+      expect(
+        screen.queryByText(/now reads.*differently/),
+      ).not.toBeInTheDocument();
+    },
+  );
 
   it("shows a failed run's instrument note and dismisses it as a failed run", async () => {
     postResults.mockImplementation((_endpoint, _body, callback) =>
@@ -484,6 +483,52 @@ describe("AnalyserResults", () => {
             "The held result is removed from review. The audit trail keeps it.",
         }),
       ),
+    );
+  });
+
+  it("preserves other rows' unsaved choices when removing a held result", async () => {
+    const refreshResults = vi.fn();
+    postResults.mockImplementation((_endpoint, _body, callback) =>
+      callback({ status: 204 }),
+    );
+    const mapped = matched("1005", 2);
+    renderResults([heldResult, mapped], [heldResult, mapped], {
+      refreshResults,
+    });
+    fireEvent.click(document.getElementById("resultList1005.isAccepted"));
+    fireEvent.change(document.getElementById("resultList1005.note"), {
+      target: { value: "Checked with the ward" },
+    });
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Remove from review" }),
+    );
+
+    await vi.waitFor(() =>
+      expect(refreshResults).toHaveBeenCalledWith(1, {
+        1005: { isAccepted: true, note: "Checked with the ward" },
+      }),
+    );
+  });
+
+  it("removes a result held for placement from review", async () => {
+    postResults.mockImplementation((_endpoint, _body, callback) =>
+      callback({ status: 204 }),
+    );
+    renderResults([
+      {
+        ...mappedQualitativeResult,
+        importIssueReason: "awaiting_placement",
+        readOnly: false,
+      },
+    ]);
+
+    fireEvent.click(
+      await screen.findByRole("button", { name: "Remove from review" }),
+    );
+
+    expect(postResults.mock.calls[0][0]).toBe(
+      `/rest/analyzer/results/${mappedQualitativeResult.id}/dismiss`,
     );
   });
 

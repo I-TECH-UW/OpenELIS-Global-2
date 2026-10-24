@@ -53,7 +53,8 @@ public class AnalyzerMappingCatalogServiceTest {
     @Before
     public void setUp() {
         service = new AnalyzerMappingCatalogServiceImpl(testService, testResultService, terminologyService,
-                dictionaryService, sampleTypes, sampleTypeTests, componentService, answerTerminology);
+                dictionaryService, sampleTypes, sampleTypeTests, componentService, answerTerminology,
+                org.mockito.Mockito.mock(org.openelisglobal.unitofmeasure.service.UnitOfMeasureService.class));
     }
 
     @Test
@@ -111,6 +112,18 @@ public class AnalyzerMappingCatalogServiceTest {
                         new Coding("https://lab.example.org/concepts", "hiv-vl")),
                 service.searchActiveTests(null).get(0).codings());
         assertEquals(List.of("1"), ids(service.searchActiveTests("vl-hiv")));
+    }
+
+    @Test
+    public void aCodeForOneComponentOfATestDoesNotNameTheTest() {
+        org.openelisglobal.test.valueholder.Test hiv = test("1", "HIV Viral Load", "HIVVL", "25836-8", true);
+        when(testService.getAllActiveTests(false)).thenReturn(List.of(hiv));
+        TestTerminologyMapping ct = code("1", "CPHL", "HIV-CT");
+        ct.setComponentId("77");
+        when(terminologyService.getAllActive()).thenReturn(List.of(code("1", "CPHL", "VL-HIV"), ct));
+
+        assertEquals(List.of(Coding.loinc("25836-8"), new Coding("CPHL", "VL-HIV")),
+                service.searchActiveTests(null).get(0).codings());
     }
 
     @Test

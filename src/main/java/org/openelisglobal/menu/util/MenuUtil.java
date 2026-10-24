@@ -23,6 +23,7 @@ import java.util.Set;
 import org.apache.commons.validator.GenericValidator;
 import org.openelisglobal.common.log.LogEvent;
 import org.openelisglobal.common.util.ConfigurationProperties;
+import org.openelisglobal.menu.service.MenuConfigurationSeeder;
 import org.openelisglobal.menu.service.MenuService;
 import org.openelisglobal.menu.valueholder.Menu;
 import org.openelisglobal.spring.util.SpringContext;
@@ -129,8 +130,29 @@ public class MenuUtil {
         }
 
         sortChildren(rootWrapper);
+        // The rows took the file's selection when the menu was seeded; entries added at
+        // runtime take it here.
+        dropLeftOut(rootWrapper, runtimeEntriesLeftOut(rootWrapper.getChildMenus()));
 
         root = rootWrapper.getChildMenus();
+    }
+
+    /** Empty in a context without the seeder, which has no selection to apply. */
+    private static Set<String> runtimeEntriesLeftOut(List<MenuItem> tree) {
+        try {
+            return SpringContext.getBean(MenuConfigurationSeeder.class).leftOut(tree);
+        } catch (org.springframework.beans.factory.NoSuchBeanDefinitionException e) {
+            return Set.of();
+        }
+    }
+
+    private static void dropLeftOut(MenuItem parent, Set<String> leftOut) {
+        if (leftOut.isEmpty()) {
+            return;
+        }
+        parent.getChildMenus().removeIf(child -> insertedMenus.stream().anyMatch(menu -> menu == child.getMenu())
+                && leftOut.contains(child.getMenu().getElementId()));
+        parent.getChildMenus().forEach(child -> dropLeftOut(child, leftOut));
     }
 
     private static void createMenuItems(Map<Menu, MenuItem> menuToMenuItemMap, Menu menu) {

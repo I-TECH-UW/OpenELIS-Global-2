@@ -182,19 +182,22 @@ unavailable image must fail visibly. Mutable `develop` images are for explicit
 development/demo deployments; release verification uses fixed images.
 
 The `certs` service runs `scripts/certs/ensure-install-keys.sh` on every start.
-The first start gives the install its own TLS key and certificate in
-`/etc/openelis-global/install` on the `key_trust-store-volume` volume, replacing
-the key an earlier `certgen` image shipped to every install, and builds the
-keystore, truststore and proxy certificate from it. Later starts keep that key;
-changing `SSL_KEYSTORE_PASSWORD` or `SSL_TRUSTSTORE_PASSWORD` rebuilds the
-stores from it. A proxy certificate someone else installed, such as a Let's
-Encrypt one, is kept. The first start also generates the install's key for
+It replaces only the certificate the public `certgen` image shipped to every
+install: the first start gives the install its own TLS key and certificate in
+`/etc/openelis-global/install` on the `key_trust-store-volume` volume and
+rebuilds the keystore, truststore and proxy certificate that still hold the
+image's. A keystore that already holds a certificate of the site's own is kept,
+and its key becomes the install's; a proxy certificate someone else installed,
+such as a Let's Encrypt one, is kept too. A store that does not open with the
+configured keystore/truststore passwords is left untouched and startup fails
+with an explanation; restore the correct passwords before retrying. Later starts
+keep the install's key. The first start also generates the install's key for
 database secrets (`install/encryption.key`), which the webapp uses unless
-`OE_ENCRYPTION_PASSWORD` is set; fresh installs use only this key. Existing
-databases require the explicit
+`OE_ENCRYPTION_PASSWORD` is set. Fresh installations use this key from the first
+write. Existing databases require the explicit
 [one-time encryption upgrade](upgrades/installation-encryption.md) before
 switching to it. Normal startup never scans or rewrites database secrets. Back
-the volume up with the database: removing it gives the install a new key.
+up the key volume with the database.
 
 A paired Analyzer Bridge pinned the certificate OpenELIS served when they
 paired, so it stops delivering results when the key is replaced; undelivered
@@ -218,3 +221,19 @@ can report zero transferred bytes; that alone does not prove an empty archive.
 If Maven explicitly reports an empty or damaged JAR, identify that artifact and
 recover only the affected cache entry. Do not prune all Docker or Maven caches
 as routine setup. Automatic Bridge cache repair is separate follow-up work.
+
+### Install-owned TLS stores
+
+The published Compose stack generates a private TLS key on first start and
+reuses it on later starts. The upgrade script replaces both historical shared
+certgen certificate subjects (DIGI-UW and I-TECH-UW), including a shared key
+previously exported into the install directory. Genuine site keys, separate
+proxy certificates, and extra truststore entries are preserved.
+
+Set `SSL_KEYSTORE_PASSWORD` and `SSL_TRUSTSTORE_PASSWORD` consistently in
+`.env`. Compose passes these to certificate generation, Tomcat, FHIR, Bridge,
+and the OpenELIS Spring properties. Defaults remain `kspass` and `tspass`;
+custom passwords are supported. Changing the variables does not re-encrypt
+existing stores: the script preserves an unreadable store and fails certificate
+setup before dependent services start. Keep the passwords that were used to
+create existing stores when upgrading.

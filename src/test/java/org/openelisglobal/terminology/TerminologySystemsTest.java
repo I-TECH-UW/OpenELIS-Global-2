@@ -31,6 +31,26 @@ public class TerminologySystemsTest {
     }
 
     @Test
+    public void canonicalUrisUseTheirStorageAliasesBeforeTheLengthLimit() {
+        for (String source : new String[] { "LOINC", "SNOMED", "CIEL", "OCL" }) {
+            assertEquals(source, TerminologySystems.sourceOf(TerminologySystems.urlOf(source)));
+        }
+        assertEquals("LOINC", TerminologySystems.sourceOf(" http://loinc.org "));
+    }
+
+    @Test
+    public void aKnownSourceIsRecognizedWhateverTheServersLocale() {
+        java.util.Locale before = java.util.Locale.getDefault();
+        try {
+            java.util.Locale.setDefault(java.util.Locale.forLanguageTag("tr-TR"));
+            assertEquals("LOINC", TerminologySystems.sourceOf("loinc"));
+            assertEquals("https://openconceptlab.org/orgs/CIEL/sources/CIEL", TerminologySystems.urlOf("ciel"));
+        } finally {
+            java.util.Locale.setDefault(before);
+        }
+    }
+
+    @Test
     public void aSourceMustBeNonBlankAndFitItsColumn() {
         assertNull(TerminologySystems.sourceOf(" "));
         assertNull(TerminologySystems.sourceOf(null));

@@ -1,5 +1,6 @@
 package org.openelisglobal.terminology;
 
+import java.util.Locale;
 import java.util.regex.Pattern;
 
 /**
@@ -29,7 +30,7 @@ public final class TerminologySystems {
             return null;
         }
         String trimmed = source.trim();
-        switch (trimmed.toUpperCase()) {
+        switch (trimmed.toUpperCase(Locale.ROOT)) {
         case "LOINC":
             return LOINC;
         case "SNOMED":
@@ -64,11 +65,18 @@ public final class TerminologySystems {
             return null;
         }
         String trimmed = raw.trim();
+        // Canonical URIs use the same persisted aliases as their short names.
+        // Normalize before the column limit because CIEL's URI is longer than it.
+        for (String known : new String[] { "LOINC", "SNOMED", "CIEL", "OCL" }) {
+            if (urlOf(known).equals(trimmed)) {
+                return known;
+            }
+        }
         if (trimmed.length() > MAX_SOURCE_LENGTH) {
             return null;
         }
-        return switch (trimmed.toUpperCase()) {
-        case "LOINC", "SNOMED", "CIEL", "OCL" -> trimmed.toUpperCase();
+        return switch (trimmed.toUpperCase(Locale.ROOT)) {
+        case "LOINC", "SNOMED", "CIEL", "OCL" -> trimmed.toUpperCase(Locale.ROOT);
         default -> trimmed;
         };
     }

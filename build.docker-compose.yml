@@ -66,6 +66,9 @@ services:
     environment:
         - DEFAULT_PW=adminADMIN!
         - TZ=${TZ:-UTC}
+        - OE_ENCRYPTION_PASSWORD=${OE_ENCRYPTION_PASSWORD:-}
+        - SSL_KEYSTORE_PASSWORD=${SSL_KEYSTORE_PASSWORD:-kspass}
+        - SSL_TRUSTSTORE_PASSWORD=${SSL_TRUSTSTORE_PASSWORD:-tspass}
         - SPRING_LIQUIBASE_CONTEXTS=test
         - ORG_OPENELISGLOBAL_UAT_SCENARIOS_ENABLED=${OE_UAT_SCENARIOS_ENABLED:-false}
         # The EQA scheduler sweep (deadline alerts, and the bridge that carries

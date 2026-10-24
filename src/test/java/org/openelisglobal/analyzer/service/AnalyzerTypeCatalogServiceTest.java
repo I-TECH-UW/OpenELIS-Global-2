@@ -42,6 +42,9 @@ public class AnalyzerTypeCatalogServiceTest {
     @Mock
     private TestResultService testResultService;
 
+    @Mock
+    private AnalyzerMappingService mappingService;
+
     private AnalyzerTypeCatalogService service;
 
     @Before
@@ -51,7 +54,7 @@ public class AnalyzerTypeCatalogServiceTest {
         when(testResultService.getActiveTestResultsByTest("100")).thenReturn(List.of(numericResult()));
         service = new AnalyzerTypeCatalogServiceImpl(bridgeCatalogService, mappingDAO,
                 new AnalyzerMappingDefaults(mappingCatalogService, testResultService), mappingCatalogService,
-                confirmationService);
+                confirmationService, mappingService);
     }
 
     @Test
@@ -288,13 +291,34 @@ public class AnalyzerTypeCatalogServiceTest {
         when(mappingDAO.findAnalyzersInForceOnProfile("site.mock-hematology")).thenReturn(List.of(confirmed, behind));
         when(mappingDAO.findAnalyzersInForceOnProfile("site.retired-file")).thenReturn(List.of());
         when(bridgeCatalogService.getCatalog()).thenReturn(catalog());
-        when(confirmationService.standsAsServed(org.mockito.ArgumentMatchers.eq("mapping-501"),
-                org.mockito.ArgumentMatchers.any())).thenReturn(true);
+        var current = new AnalyzerMappingSnapshot(confirmed.getMapping(), List.of(), List.of());
+        var stale = new AnalyzerMappingSnapshot(behind.getMapping(), List.of(), List.of());
+        when(mappingService.findById("mapping-501")).thenReturn(Optional.of(current));
+        when(mappingService.findById("mapping-502")).thenReturn(Optional.of(stale));
+        var approval = new org.openelisglobal.analyzer.valueholder.AnalyzerMappingConfirmation();
+        when(confirmationService.assessCurrent(current)).thenReturn(AnalyzerMappingVerificationAssessment.current(approval));
+        when(confirmationService.assessCurrent(stale)).thenReturn(new AnalyzerMappingVerificationAssessment(false, approval));
 
         AnalyzerTypeCatalogView.TypeSummary type = service.getCatalog().types().get(0);
 
         assertTrue(type.affectedAnalyzers().get(0).mappingConfirmed());
         assertFalse(type.affectedAnalyzers().get(1).mappingConfirmed());
+    }
+
+    @Test
+    public void localApprovalDoesNotFetchHistoricalBridgeProfiles() throws Exception {
+        when(mappingCatalogService.searchActiveTests(null)).thenReturn(List.of(activeTest("100")));
+        List<Analyzer> analyzers = List.of(analyzer("501", "Main", 3, 1), analyzer("502", "Annex", 3, 1),
+                analyzer("503", "Night", 2, 1), analyzer("504", "Outreach", 2, 1));
+        when(mappingDAO.findAnalyzersInForceOnProfile("site.mock-hematology")).thenReturn(analyzers);
+        when(mappingDAO.findAnalyzersInForceOnProfile("site.retired-file")).thenReturn(List.of());
+        when(bridgeCatalogService.getCatalog()).thenReturn(catalog());
+
+        service.getCatalog();
+
+        org.mockito.Mockito.verify(bridgeCatalogService, org.mockito.Mockito.never())
+                .getProfile("site.mock-hematology", 3);
+        org.mockito.Mockito.verify(bridgeCatalogService, org.mockito.Mockito.never()).getProfile("site.mock-hematology", 2);
     }
 
     @Test
