@@ -449,8 +449,24 @@ public class AnalyzerMappingConfirmationServiceTest {
         when(profileCatalogService.getProfile("site.mock-analyzer", 2))
                 .thenReturn(served(EDITED_FINGERPRINT, "IU/mL", "DETECTED", "MOCK"));
 
-        assertEquals(AnalyzerMappingConfirmationView.State.STALE,
-                service.getStatus(candidate, RECOGNITION_FINGERPRINT).state());
+        AnalyzerMappingConfirmationView status = service.getStatus(candidate, RECOGNITION_FINGERPRINT);
+        assertEquals(AnalyzerMappingConfirmationView.State.STALE, status.state());
+        assertFalse(status.typeReadingChanged());
+        assertEquals(List.of(new AnalyzerMappingSourceRow("RAW-A", null, "")), status.rowsReadDifferently());
+    }
+
+    @Test
+    public void verificationSaysWhenTheWholeTypeReadsDifferently() {
+        AnalyzerMappingSnapshot candidate = completeCandidate("61", BINDING_FINGERPRINT);
+        AnalyzerMappingConfirmation saved = confirmed();
+        when(confirmationDAO.findLatestByAnalyzerId("42")).thenReturn(Optional.of(saved));
+        when(profileCatalogService.getProfile("site.mock-analyzer", 2))
+                .thenReturn(served(EDITED_FINGERPRINT, "copies/mL", "DETECTED", "OTHER"));
+
+        AnalyzerMappingConfirmationView status = service.getStatus(candidate, RECOGNITION_FINGERPRINT);
+
+        assertEquals(AnalyzerMappingConfirmationView.State.STALE, status.state());
+        assertTrue(status.typeReadingChanged());
     }
 
     @Test

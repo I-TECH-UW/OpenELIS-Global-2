@@ -120,14 +120,13 @@ public class AnalyzerMappingConfirmationServiceImpl implements AnalyzerMappingCo
     @Transactional(readOnly = true)
     public AnalyzerMappingConfirmationView getStatus(AnalyzerMappingSnapshot candidate, String recognitionFingerprint) {
         CandidateContext context = requireCandidate(candidate, recognitionFingerprint);
-        return confirmationDAO.findLatestByAnalyzerId(candidate.mapping().getAnalyzer().getId())
-                .map(confirmation -> toView(confirmation,
-                        isCurrent(candidate, context, confirmation) && hasCurrentCatalogBindings(candidate)
-                                && hasExactSavedRows(candidate, confirmation)
-                                && currentReading(context.profile, confirmation).isUnchanged()
-                                        ? AnalyzerMappingConfirmationView.State.CURRENT
-                                        : AnalyzerMappingConfirmationView.State.STALE))
-                .orElseGet(AnalyzerMappingConfirmationView::unconfirmed);
+        return confirmationDAO.findLatestByAnalyzerId(candidate.mapping().getAnalyzer().getId()).map(confirmation -> {
+            AnalyzerConfirmationReading reading = currentReading(context.profile, confirmation);
+            boolean current = isCurrent(candidate, context, confirmation) && hasCurrentCatalogBindings(candidate)
+                    && hasExactSavedRows(candidate, confirmation) && reading.isUnchanged();
+            return withReading(toView(confirmation, current ? AnalyzerMappingConfirmationView.State.CURRENT
+                    : AnalyzerMappingConfirmationView.State.STALE), reading);
+        }).orElseGet(AnalyzerMappingConfirmationView::unconfirmed);
     }
 
     @Override
@@ -433,6 +432,19 @@ public class AnalyzerMappingConfirmationServiceImpl implements AnalyzerMappingCo
         } catch (IllegalArgumentException | IllegalStateException exception) {
             return false;
         }
+    }
+
+    /**
+     * The view with what the served profile now reads differently, rows in their
+     * saved order.
+     */
+    private static AnalyzerMappingConfirmationView withReading(AnalyzerMappingConfirmationView view,
+            AnalyzerConfirmationReading reading) {
+        List<AnalyzerMappingSourceRow> changed = reading.changedRows().stream().sorted(ROW_ORDER).toList();
+        return new AnalyzerMappingConfirmationView(view.state(), view.profileId(), view.profileRevision(),
+                view.mappingFingerprint(), view.recognitionFingerprint(), view.confirmedBy(),
+                view.confirmedByDisplayName(), view.confirmedAt(), view.confirmedRows(), view.excludedRows(),
+                reading.typeChanged(), changed);
     }
 
     private AnalyzerMappingConfirmationView toView(AnalyzerMappingConfirmation confirmation,

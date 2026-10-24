@@ -1749,6 +1749,7 @@ const AnalyzerTypeMappingEditor = ({
               title={intl.formatMessage({
                 id: "analyzerType.mappingEditor.confirmation.stale",
               })}
+              subtitle={readingChangeText(confirmation, intl)}
             />
           )}
 
@@ -1864,5 +1865,31 @@ const AnalyzerTypeMappingEditor = ({
     </>
   );
 };
+
+/**
+ * What the analyzer's type file now reads differently from how its mapping was
+ * confirmed: the whole type, or the confirmed rows by code, part and value.
+ */
+function readingChangeText(confirmation, intl) {
+  if (confirmation.typeReadingChanged) {
+    return intl.formatMessage({
+      id: "analyzerType.mappingEditor.confirmation.readingChanged.type",
+    });
+  }
+  const rows = confirmation.rowsReadDifferently || [];
+  if (rows.length === 0) {
+    return undefined;
+  }
+  const names = rows.map((row) => {
+    const record = row.subIdentity
+      ? `${row.sourceRowKey} (${row.subIdentity})`
+      : row.sourceRowKey;
+    return row.rawValue ? `${record}: ${row.rawValue}` : record;
+  });
+  return intl.formatMessage(
+    { id: "analyzerType.mappingEditor.confirmation.readingChanged.rows" },
+    { rows: names.join(", ") },
+  );
+}
 
 export default AnalyzerTypeMappingEditor;
