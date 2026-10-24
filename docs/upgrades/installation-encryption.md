@@ -43,12 +43,15 @@ this step.
    retain it only with the protected pre-upgrade backup.
 
 The standalone Liquibase changelog is deliberately excluded from application
-startup. It records completion once in `DATABASECHANGELOG`. Work is paged by
-primary key in batches of 250 and updates use primary keys. Completed batches
-survive interruption; rerunning verifies and skips their `OE1:` values. A wrong
-key or unreadable value fails the upgrade and rolls back its current batch; it
-is not silently discarded. Blank values remain unchanged. Optional columns
-absent from an older schema are skipped.
+startup. It records completion once in `DATABASECHANGELOG`. A shared schema
+change first widens the two size-limited encrypted fields to text, so adding the
+format marker cannot overflow existing values. Fresh installations apply that
+same schema change without running key conversion. Work is paged by primary key
+in batches of 250 and updates use primary keys. Completed batches survive
+interruption; rerunning verifies and skips their `OE1:` values. A wrong key or
+unreadable value fails the upgrade and rolls back its current batch; it is not
+silently discarded. Blank values remain unchanged. Optional columns absent from
+an older schema are skipped.
 
 Never run this against a live application or an already-upgraded database with a
 different destination key. An unmarked value must use the supplied previous key;

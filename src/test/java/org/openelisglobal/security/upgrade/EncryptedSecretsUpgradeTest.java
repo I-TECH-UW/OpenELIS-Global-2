@@ -98,6 +98,55 @@ public class EncryptedSecretsUpgradeTest {
         }
     }
 
+    @Test
+    public void ciphertextAtTheOldColumnLimitUpgradesAndRemainsWritable() throws Exception {
+        try (PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:14.4")) {
+            postgres.start();
+            Map<String, String> env = Map.of("OE_UPGRADE_DB_URL", postgres.getJdbcUrl(), "OE_UPGRADE_DB_USER",
+                    postgres.getUsername(), "OE_UPGRADE_DB_PASSWORD_FILE",
+                    secret("password", postgres.getPassword()).toString(), "OE_UPGRADE_PREVIOUS_KEY_FILE",
+                    secret("previous", "previous-key").toString(), "OE_UPGRADE_INSTALL_KEY_FILE",
+                    secret("current", "install-key").toString());
+            AES256TextEncryptor old = new AES256TextEncryptor();
+            old.setPassword("previous-key");
+            GeneralTextEncryptor normal = GeneralTextEncryptor.of("install-key", null);
+            try (Connection connection = DriverManager.getConnection(postgres.getJdbcUrl(), postgres.getUsername(),
+                    postgres.getPassword())) {
+                connection.createStatement().execute("CREATE SCHEMA clinlims");
+                connection.createStatement().execute(
+                        "CREATE TABLE clinlims.eqa_panel_sample (id bigint PRIMARY KEY, target_value varchar(512))");
+                connection.createStatement().execute(
+                        "CREATE TABLE clinlims.delivery_channel (id bigint PRIMARY KEY, secret varchar(2048))");
+                String target = "x".repeat(336);
+                String credential = "y".repeat(1488);
+                for (String[] row : new String[][] { { "eqa_panel_sample", "target_value", target, "512" },
+                        { "delivery_channel", "secret", credential, "2048" } }) {
+                    String ciphertext = old.encrypt(row[2]);
+                    assertEquals(Integer.parseInt(row[3]), ciphertext.length());
+                    try (PreparedStatement insert = connection
+                            .prepareStatement("INSERT INTO clinlims." + row[0] + " VALUES (1, ?)")) {
+                        insert.setString(1, ciphertext);
+                        insert.executeUpdate();
+                    }
+                }
+                EncryptedSecretsUpgrade.run(env);
+                for (String[] row : new String[][] { { "eqa_panel_sample", "target_value", target },
+                        { "delivery_channel", "secret", credential } }) {
+                    try (ResultSet saved = connection.createStatement()
+                            .executeQuery("SELECT " + row[1] + " FROM clinlims." + row[0])) {
+                        saved.next();
+                        assertEquals(row[2], normal.decrypt(saved.getString(1)));
+                    }
+                    try (PreparedStatement insert = connection
+                            .prepareStatement("INSERT INTO clinlims." + row[0] + " VALUES (2, ?)")) {
+                        insert.setString(1, normal.encrypt(row[2]));
+                        assertEquals(1, insert.executeUpdate());
+                    }
+                }
+            }
+        }
+    }
+
     private Path secret(String name, String value) throws Exception {
         Path file = files.newFile(name).toPath();
         Files.writeString(file, value);
