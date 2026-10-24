@@ -194,7 +194,14 @@ public class AnalyzerInstanceServiceImpl implements AnalyzerInstanceService {
         }
         try {
             ObjectNode current = bridgeClient.getConnection(state.bridgeConnectionId());
-            requireExactConnection(state, current);
+            // A migrated or reset analyzer is set up on its new type before anything is
+            // applied. It is not running, so its connection moves now, with the values
+            // just entered; a running analyzer moves only through Apply.
+            boolean moving = !pinnedTo(state, current) && state.status() != Analyzer.AnalyzerStatus.ACTIVE
+                    && Objects.equals(state.analyzerId(), current.path("clientAnalyzerId").asText(null));
+            if (!moving) {
+                requireExactConnection(state, current);
+            }
             ObjectNode updated = bridgeClient.updateConnection(state.bridgeConnectionId(),
                     updateConnectionRequest(state, pin(state), connectionValues(request), current));
             requireExactConnection(state, updated);
