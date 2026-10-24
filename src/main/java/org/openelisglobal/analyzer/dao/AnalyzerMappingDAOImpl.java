@@ -48,15 +48,14 @@ public class AnalyzerMappingDAOImpl extends BaseDAOImpl<AnalyzerMapping, String>
     @Override
     public void deleteAnalyzerWithItsMappings(String analyzerId) {
         Session session = entityManager.unwrap(Session.class);
-        java.math.BigDecimal id = new java.math.BigDecimal(analyzerId.trim());
-        String mappings = "SELECT m.id FROM clinlims.analyzer_mapping m WHERE m.analyzer_id = :id";
-        for (String sql : List.of("UPDATE clinlims.analyzer SET mapping_id = NULL WHERE id = :id",
-                "DELETE FROM clinlims.analyzer_mapping_confirmation WHERE mapping_id IN (" + mappings + ")",
-                "DELETE FROM clinlims.analyzer_mapping_result WHERE mapping_id IN (" + mappings + ")",
-                "DELETE FROM clinlims.analyzer_mapping_test WHERE mapping_id IN (" + mappings + ")",
-                "DELETE FROM clinlims.analyzer_mapping WHERE analyzer_id = :id",
-                "DELETE FROM clinlims.analyzer WHERE id = :id")) {
-            session.createNativeQuery(sql).setParameter("id", id).executeUpdate();
+        String id = analyzerId.trim();
+        String mappings = "SELECT m.id FROM AnalyzerMapping m WHERE m.analyzer.id = :id";
+        for (String hql : List.of("UPDATE Analyzer SET mapping = NULL WHERE id = :id",
+                "DELETE FROM AnalyzerMappingConfirmation WHERE mapping.id IN (" + mappings + ")",
+                "DELETE FROM AnalyzerMappingResult WHERE mapping.id IN (" + mappings + ")",
+                "DELETE FROM AnalyzerMappingTest WHERE mapping.id IN (" + mappings + ")",
+                "DELETE FROM AnalyzerMapping WHERE analyzer.id = :id", "DELETE FROM Analyzer WHERE id = :id")) {
+            session.createQuery(hql).setParameter("id", id).executeUpdate();
         }
     }
 }
