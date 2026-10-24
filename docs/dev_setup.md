@@ -188,8 +188,13 @@ the key an earlier `certgen` image shipped to every install, and builds the
 keystore, truststore and proxy certificate from it. Later starts keep that key;
 changing `SSL_KEYSTORE_PASSWORD` or `SSL_TRUSTSTORE_PASSWORD` rebuilds the
 stores from it. A proxy certificate someone else installed, such as a Let's
-Encrypt one, is kept. Back the volume up with the database: removing it gives
-the install a new key.
+Encrypt one, is kept. The first start also generates the install's key for
+database secrets (`install/encryption.key`), which the webapp uses unless
+`OE_ENCRYPTION_PASSWORD` is set; fresh installs use only this key. Existing
+databases require the explicit
+[one-time encryption upgrade](upgrades/installation-encryption.md) before
+switching to it. Normal startup never scans or rewrites database secrets. Back
+the volume up with the database: removing it gives the install a new key.
 
 A paired Analyzer Bridge pinned the certificate OpenELIS served when they
 paired, so it stops delivering results when the key is replaced; undelivered

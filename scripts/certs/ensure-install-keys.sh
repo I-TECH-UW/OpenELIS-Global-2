@@ -1,5 +1,6 @@
 #!/bin/sh
-# Gives this install its own TLS key and keeps the key and trust stores built from it.
+# Gives this install its own TLS key and keeps the key and trust stores built from it,
+# and its own key for database secrets (install/encryption.key).
 #
 # Run by the compose `certs` service on every start. The first start generates the
 # install's key and certificate under /etc/openelis-global/install, including on an
@@ -47,6 +48,13 @@ if [ ! -s "$KEY" ] || [ ! -s "$CERT" ]; then
   chmod 600 "$KEY.tmp"
   mv "$KEY.tmp" "$KEY"
   mv "$CERT.tmp" "$CERT"
+fi
+
+# The install's key for database secrets, read by the webapp's entrypoint.
+if [ ! -s "$INSTALL/encryption.key" ]; then
+  echo "Generating this install's encryption key for database secrets"
+  (umask 077 && openssl rand -hex 32 >"$INSTALL/encryption.key.tmp")
+  mv "$INSTALL/encryption.key.tmp" "$INSTALL/encryption.key"
 fi
 
 current=$(fingerprint <"$CERT")
