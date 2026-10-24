@@ -129,7 +129,7 @@ public class SecurityConfig {
             + " connect-src 'self'; img-src 'self' data:; style-src 'self' 'unsafe-inline';"
             + " frame-src *.openlmis.org 'self'; object-src 'self';";
 
-    @Value("${encryption.general.password:dev}")
+    @Value("${encryption.general.password:}")
     private String encryptionPassword;
 
     /**

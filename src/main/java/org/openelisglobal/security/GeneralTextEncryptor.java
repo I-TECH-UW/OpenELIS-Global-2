@@ -17,7 +17,9 @@ public final class GeneralTextEncryptor implements TextEncryptor {
         current = encryptor;
     }
 
-    /** Native installations may supply their key through the existing property. */
+    /**
+     * Property-based installations supply their key through the existing property.
+     */
     public static GeneralTextEncryptor of(String installKey, String configuredKey) {
         String key = installKey == null || installKey.isBlank() ? configuredKey : installKey;
         if (key == null || key.isBlank()) {
