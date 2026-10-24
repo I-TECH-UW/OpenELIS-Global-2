@@ -24,6 +24,10 @@ if [ -z "${OE_ENCRYPTION_PASSWORD:-}" ] && [ -s "$INSTALL_ENCRYPTION_KEY" ]; the
     OE_ENCRYPTION_PASSWORD=$(cat "$INSTALL_ENCRYPTION_KEY")
     export OE_ENCRYPTION_PASSWORD
 fi
+if [ -z "${OE_ENCRYPTION_PASSWORD:-}" ]; then
+    echo "Missing installation encryption key; run the certs service before starting OpenELIS" >&2
+    exit 1
+fi
 
 #############################################
 # Permission Fix Section
