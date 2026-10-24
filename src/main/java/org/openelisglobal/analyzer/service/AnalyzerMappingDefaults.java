@@ -1,9 +1,12 @@
 package org.openelisglobal.analyzer.service;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import org.openelisglobal.analyzer.valueholder.AnalyzerMappingState;
 import org.openelisglobal.terminology.Coding;
 import org.openelisglobal.testresult.service.TestResultService;
@@ -101,7 +104,57 @@ public class AnalyzerMappingDefaults {
                                         component.translations())));
             }
         }
+        return excludedByDefault(profile, new AnalyzerMappingDraft(tests, results));
+    }
+
+    /**
+     * Rows the profile says a new analyzer starts without: a test or part marked
+     * {@code "default": "EXCLUDED"}, and each value in its {@code value_defaults},
+     * with that value's translations.
+     */
+    private static AnalyzerMappingDraft excludedByDefault(BridgeAnalyzerProfile profile, AnalyzerMappingDraft draft) {
+        Set<AnalyzerMappingRowKey> records = new HashSet<>();
+        Set<List<String>> values = new HashSet<>();
+        for (JsonNode test : profile.document().path("default_test_mappings")) {
+            String code = test.path("test_code").asText();
+            collectExclusions(code, "", test, records, values);
+            for (JsonNode component : test.path("components")) {
+                if (component.hasNonNull("sub_identity")) {
+                    collectExclusions(code, component.path("sub_identity").asText(), component, records, values);
+                }
+            }
+        }
+        if (records.isEmpty() && values.isEmpty()) {
+            return draft;
+        }
+        List<AnalyzerMappingTestDraft> tests = draft.tests().stream()
+                .map(row -> records.contains(row.rowKey())
+                        ? new AnalyzerMappingTestDraft(row.sourceRowKey(), AnalyzerMappingState.EXCLUDED, null, null,
+                                null, row.origin(), row.subIdentity(), null, row.enabled())
+                        : row)
+                .toList();
+        List<AnalyzerMappingResultDraft> results = draft.results().stream()
+                .map(row -> records.contains(row.rowKey())
+                        || values.contains(List.of(row.sourceRowKey(), row.subIdentity(), row.rawValue()))
+                                ? new AnalyzerMappingResultDraft(row.sourceRowKey(), row.rawValue(),
+                                        AnalyzerMappingState.EXCLUDED, null, null, row.origin(), row.subIdentity())
+                                : row)
+                .toList();
         return new AnalyzerMappingDraft(tests, results);
+    }
+
+    private static void collectExclusions(String code, String subIdentity, JsonNode owner,
+            Set<AnalyzerMappingRowKey> records, Set<List<String>> values) {
+        if ("EXCLUDED".equals(owner.path("default").asText(null))) {
+            records.add(new AnalyzerMappingRowKey(code, subIdentity));
+        }
+        owner.path("value_defaults").fields().forEachRemaining(entry -> {
+            if ("EXCLUDED".equals(entry.getValue().asText())) {
+                values.add(List.of(code, subIdentity, entry.getKey()));
+                owner.path("translations").path(entry.getKey())
+                        .forEach(text -> values.add(List.of(code, subIdentity, text.asText())));
+            }
+        });
     }
 
     /** Resolves one profile test against the active catalog. */

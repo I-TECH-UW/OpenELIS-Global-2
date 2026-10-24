@@ -28,6 +28,9 @@ public class AnalyzerTypeCatalogServiceTest {
     private final ObjectMapper objectMapper = new ObjectMapper();
 
     @Mock
+    private AnalyzerMappingConfirmationService confirmationService;
+
+    @Mock
     private BridgeProfileCatalogService bridgeCatalogService;
 
     @Mock
@@ -47,7 +50,8 @@ public class AnalyzerTypeCatalogServiceTest {
         when(mappingCatalogService.getActiveResultOptions("100")).thenReturn(answers());
         when(testResultService.getActiveTestResultsByTest("100")).thenReturn(List.of(numericResult()));
         service = new AnalyzerTypeCatalogServiceImpl(bridgeCatalogService, mappingDAO,
-                new AnalyzerMappingDefaults(mappingCatalogService, testResultService), mappingCatalogService);
+                new AnalyzerMappingDefaults(mappingCatalogService, testResultService), mappingCatalogService,
+                confirmationService);
     }
 
     @Test
@@ -272,6 +276,60 @@ public class AnalyzerTypeCatalogServiceTest {
         assertTrue(result.testMappings().mapped() <= result.testMappings().total());
         assertEquals("the test's answers and its part's answers", 4, result.resultMappings().total());
         assertTrue(result.resultMappings().mapped() <= result.resultMappings().total());
+    }
+
+    @Test
+    public void eachAnalyzerOnTheTypeSaysWhetherItsMappingIsConfirmedAndCurrent() throws Exception {
+        when(mappingCatalogService.searchActiveTests(null)).thenReturn(List.of(activeTest("100")));
+        Analyzer confirmed = analyzer("501", "Hematology - Main Lab", 3, 1);
+        confirmed.getMapping().setId("mapping-501");
+        Analyzer behind = analyzer("502", "Hematology - Annex", 3, 1);
+        behind.getMapping().setId("mapping-502");
+        when(mappingDAO.findAnalyzersInForceOnProfile("site.mock-hematology")).thenReturn(List.of(confirmed, behind));
+        when(mappingDAO.findAnalyzersInForceOnProfile("site.retired-file")).thenReturn(List.of());
+        when(bridgeCatalogService.getCatalog()).thenReturn(catalog());
+        when(confirmationService.standsAsServed(org.mockito.ArgumentMatchers.eq("mapping-501"),
+                org.mockito.ArgumentMatchers.any())).thenReturn(true);
+
+        AnalyzerTypeCatalogView.TypeSummary type = service.getCatalog().types().get(0);
+
+        assertTrue(type.affectedAnalyzers().get(0).mappingConfirmed());
+        assertFalse(type.affectedAnalyzers().get(1).mappingConfirmed());
+    }
+
+    @Test
+    public void codesTheProfileExcludesByDefaultCountAsDecidedAndTheTypeIsReady() throws Exception {
+        when(mappingDAO.findAnalyzersInForceOnProfile("site.mock-epicenter")).thenReturn(List.of());
+        when(mappingCatalogService.searchActiveTests(null)).thenReturn(List.of(activeTest("100", "58410-2")));
+        when(mappingCatalogService.getActiveResultOptions("100")).thenReturn(answers());
+        JsonNode profile = objectMapper.readTree(
+                """
+                        {
+                          "schemaVersion":"1.0",
+                          "profileMeta":{"id":"site.mock-epicenter","version":"1.0.0","displayName":"Mock EpiCenter","confidence":"VALIDATED"},
+                          "protocol":{"name":"ASTM","version":"LIS2-A2"},
+                          "default_test_mappings":[
+                            {"test_code":"GROWTH","loinc":"58410-2","result_type":"qualitative","values":["POS","NEG","IN PROGRESS"],
+                             "value_codes":{"POS":[{"system":"http://loinc.org","code":"LA6576-8"}],"NEG":[{"system":"http://loinc.org","code":"LA6577-6"}]},
+                             "value_defaults":{"IN PROGRESS":"EXCLUDED"}},
+                            {"test_code":"AMK","loinc":"18860-7","result_type":"text","default":"EXCLUDED"}
+                          ],
+                          "catalog":{"revision":1,"revisionFingerprint":"sha256:5555555555555555555555555555555555555555555555555555555555555555","source":"SHIPPED","status":"ACTIVE"}
+                        }
+                        """);
+        when(bridgeCatalogService.getProfile("site.mock-epicenter", 1)).thenReturn(
+                new BridgeProfileCatalog.ProfileRevision(profile, objectMapper.createObjectNode().put("action", "CREATED")));
+
+        AnalyzerTypeCatalogView.TypeSummary result = service.getType("site.mock-epicenter", 1);
+
+        assertEquals(1, result.testMappings().mapped());
+        assertEquals(1, result.testMappings().excluded());
+        assertEquals(2, result.testMappings().total());
+        assertEquals("COMPLETE", result.testMappings().state());
+        assertEquals(2, result.resultMappings().mapped());
+        assertEquals(1, result.resultMappings().excluded());
+        assertEquals("COMPLETE", result.resultMappings().state());
+        assertEquals("READY", result.readiness());
     }
 
     private static AnalyzerMapping mapping(int revisionNumber, int profileRevision) {

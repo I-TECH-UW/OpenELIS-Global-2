@@ -27,7 +27,12 @@ is listed in [roadmap.md](roadmap.md).
    FHIR; any other source is an identifier the catalog owner chose, and no list
    of permitted systems exists anywhere. A row that does not resolve says why
    (no match, ambiguous, or incompatible). There is no shared mapping per
-   analyzer type: the Analyzer Types page only previews a profile's defaults. In the setup wizard the operator
+   analyzer type: the Analyzer Types page only previews a profile's defaults.
+   A profile may mark a test, part or value `"default": "EXCLUDED"`; a new
+   analyzer starts with it on Do not receive, and the page counts it as
+   decided, so a type is Ready when every row is mapped or excluded. For a type
+   in use the page also says, for each analyzer on it, whether its mapping is
+   confirmed and current or behind. In the setup wizard the operator
    enables the assays this instrument runs, as on the instrument's own host test
    code table, resolves every unresolved row among them, confirms, and activates.
    Language and number format can be overridden per analyzer on its Bridge
