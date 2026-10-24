@@ -79,7 +79,12 @@ public class EncryptedSecretsUpgrade implements CustomTaskChange {
     }
 
     private static String readSecret(Map<String, String> environment, String name) throws Exception {
-        String value = Files.readString(Path.of(required(environment, name))).strip();
+        String value = Files.readString(Path.of(required(environment, name)));
+        // Match entrypoint command substitution: trailing LF is a file terminator;
+        // spaces, tabs, CR and other key bytes remain significant.
+        while (value.endsWith("\n")) {
+            value = value.substring(0, value.length() - 1);
+        }
         if (value.isEmpty()) {
             throw new IllegalArgumentException("Empty secret file: " + name);
         }

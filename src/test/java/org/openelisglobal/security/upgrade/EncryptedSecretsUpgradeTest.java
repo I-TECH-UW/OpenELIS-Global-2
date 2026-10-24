@@ -22,17 +22,18 @@ public class EncryptedSecretsUpgradeTest {
 
     @Test
     public void interruptedUpgradeResumesByPrimaryKeyAndCompletesOnlyOnce() throws Exception {
-        try (PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:14.4")) {
+        try (PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:14.4")
+                .withPassword(" " + java.util.UUID.randomUUID() + " ")) {
             postgres.start();
-            Path previous = secret("previous", "previous-key");
-            Path current = secret("current", "install-key");
+            Path previous = secret("previous", " previous-key ");
+            Path current = secret("current", " install-key ");
             Path password = secret("password", postgres.getPassword());
             Map<String, String> env = Map.of("OE_UPGRADE_DB_URL", postgres.getJdbcUrl(), "OE_UPGRADE_DB_USER",
                     postgres.getUsername(), "OE_UPGRADE_DB_PASSWORD_FILE", password.toString(),
                     "OE_UPGRADE_PREVIOUS_KEY_FILE", previous.toString(), "OE_UPGRADE_INSTALL_KEY_FILE",
                     current.toString());
             AES256TextEncryptor old = new AES256TextEncryptor();
-            old.setPassword("previous-key");
+            old.setPassword(" previous-key ");
             try (Connection connection = DriverManager.getConnection(postgres.getJdbcUrl(), postgres.getUsername(),
                     postgres.getPassword())) {
                 connection.createStatement().execute("CREATE SCHEMA clinlims");
@@ -58,7 +59,7 @@ public class EncryptedSecretsUpgradeTest {
                 assertThrows(Exception.class, () -> EncryptedSecretsUpgrade.run(env));
                 assertEquals(250,
                         count(connection, "SELECT count(*) FROM clinlims.site_information WHERE value LIKE 'OE1:%'"));
-                Files.writeString(current, "install-key");
+                Files.writeString(current, " install-key ");
                 try (PreparedStatement fix = connection
                         .prepareStatement("UPDATE clinlims.site_information SET value = ? WHERE id = 251")) {
                     fix.setString(1, old.encrypt("secret-251"));
@@ -69,7 +70,7 @@ public class EncryptedSecretsUpgradeTest {
                         count(connection, "SELECT count(*) FROM clinlims.site_information WHERE value LIKE 'OE1:%'"));
                 assertEquals(1, count(connection,
                         "SELECT count(*) FROM databasechangelog WHERE id = 'installation-encryption-upgrade-v1'"));
-                GeneralTextEncryptor normal = GeneralTextEncryptor.of("install-key", null);
+                GeneralTextEncryptor normal = GeneralTextEncryptor.of(" install-key ", null);
                 try (ResultSet values = connection.createStatement()
                         .executeQuery("SELECT id, value FROM clinlims.site_information WHERE id <= 501 ORDER BY id")) {
                     while (values.next()) {
@@ -87,29 +88,31 @@ public class EncryptedSecretsUpgradeTest {
 
     @Test
     public void freshDatabaseHasNothingToConvert() throws Exception {
-        try (PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:14.4")) {
+        try (PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:14.4")
+                .withPassword(" " + java.util.UUID.randomUUID() + " ")) {
             postgres.start();
             Map<String, String> env = Map.of("OE_UPGRADE_DB_URL", postgres.getJdbcUrl(), "OE_UPGRADE_DB_USER",
                     postgres.getUsername(), "OE_UPGRADE_DB_PASSWORD_FILE",
                     secret("password", postgres.getPassword()).toString(), "OE_UPGRADE_PREVIOUS_KEY_FILE",
-                    secret("previous", "previous-key").toString(), "OE_UPGRADE_INSTALL_KEY_FILE",
-                    secret("current", "install-key").toString());
+                    secret("previous", " previous-key ").toString(), "OE_UPGRADE_INSTALL_KEY_FILE",
+                    secret("current", " install-key ").toString());
             EncryptedSecretsUpgrade.run(env);
         }
     }
 
     @Test
     public void ciphertextAtTheOldColumnLimitUpgradesAndRemainsWritable() throws Exception {
-        try (PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:14.4")) {
+        try (PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:14.4")
+                .withPassword(" " + java.util.UUID.randomUUID() + " ")) {
             postgres.start();
             Map<String, String> env = Map.of("OE_UPGRADE_DB_URL", postgres.getJdbcUrl(), "OE_UPGRADE_DB_USER",
                     postgres.getUsername(), "OE_UPGRADE_DB_PASSWORD_FILE",
                     secret("password", postgres.getPassword()).toString(), "OE_UPGRADE_PREVIOUS_KEY_FILE",
-                    secret("previous", "previous-key").toString(), "OE_UPGRADE_INSTALL_KEY_FILE",
-                    secret("current", "install-key").toString());
+                    secret("previous", " previous-key ").toString(), "OE_UPGRADE_INSTALL_KEY_FILE",
+                    secret("current", " install-key ").toString());
             AES256TextEncryptor old = new AES256TextEncryptor();
-            old.setPassword("previous-key");
-            GeneralTextEncryptor normal = GeneralTextEncryptor.of("install-key", null);
+            old.setPassword(" previous-key ");
+            GeneralTextEncryptor normal = GeneralTextEncryptor.of(" install-key ", null);
             try (Connection connection = DriverManager.getConnection(postgres.getJdbcUrl(), postgres.getUsername(),
                     postgres.getPassword())) {
                 connection.createStatement().execute("CREATE SCHEMA clinlims");
@@ -149,7 +152,7 @@ public class EncryptedSecretsUpgradeTest {
 
     private Path secret(String name, String value) throws Exception {
         Path file = files.newFile(name).toPath();
-        Files.writeString(file, value);
+        Files.writeString(file, value + "\n");
         return file;
     }
 

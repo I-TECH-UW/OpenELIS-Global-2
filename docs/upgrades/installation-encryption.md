@@ -22,7 +22,9 @@ this step.
    and a matching backup of the existing configuration and key volume.
 2. Generate or retain the destination installation key with `certs`. Keep the
    previous encryption password in a protected file. Do not put keys in command
-   arguments, logs, Git, or shell history.
+   arguments, logs, Git, or shell history. Key and password files preserve
+   spaces and other characters; only trailing LF line endings are removed,
+   matching container startup. Use LF files, not CRLF.
 3. Use the new release's WAR and Java 21 on a maintenance host/container with
    database access. Extract the WAR into a private working directory with
    `jar xf`. Set these environment variables to the deployment's actual
