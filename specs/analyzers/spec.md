@@ -53,8 +53,8 @@ is listed in [roadmap.md](roadmap.md).
    bundle, OpenELIS the bundle for the life of the result, viewable from the
    review row.
 7. **A newer profile revision is adopted explicitly.** One review screen shows
-   every row's fate; the analyzer keeps receiving on its current revision until
-   the operator confirms and applies. Apply switches OpenELIS and the Bridge
+   every row's fate by the reading comparison of point 13; the analyzer keeps
+   receiving on its current revision until the operator confirms and applies. Apply switches OpenELIS and the Bridge
    together; if the Bridge cannot switch, neither does.
 8. **The baseline profiles started fresh.** No profile from before the baseline
    is an earlier revision of a baseline profile or can be adopted into one. A
@@ -87,14 +87,59 @@ is listed in [roadmap.md](roadmap.md).
     test for is held until the lab maps it or marks it Do not receive. The
     profile decides which kind each record is and its evidence page says so;
     OpenELIS never guesses.
+12. **A Bridge reads one shipped set, and a revision is its id and
+    number.** Core ships the baseline profiles and the templates. A Bridge's
+    shipped set is the one in its image or the complete folder a distro points
+    it at (`BRIDGE_PROFILE_CATALOG_SHIPPED_PATTERN`), and then the image's
+    profiles are not read. A distro that keeps its own set copies the core
+    profiles it uses unchanged, under core's ids, and adds its own under its
+    own ids; sets are never merged and a profile is never overridden. A
+    revision is `(profileId, revision)`. The Bridge computes a fingerprint of
+    the file's content when it publishes or loads a revision, and reports it
+    so OpenELIS can tell cheaply that a file changed; nobody writes it by
+    hand, and nothing is refused because it changed. A copied file is the same
+    revision as its source. Profiles a lab authors in the UI are the site's
+    own, under `site.` ids, in the Bridge's revision store, and enter a shipped
+    set only when a distro takes them in under an id of its own.
+13. **A confirmed mapping never silently changes meaning, and nothing else
+    about a profile change stops an analyzer.** What protects a result is how
+    the profile reads it, checked where the mapping lives, not a hash of the
+    profile file (decided 20 October, the user: "no whole-file fingerprint as
+    a gate, Bridge never refuses on content"). A profile reads a code by the
+    other codes it is sent under (aliases), its unit, result type, parts and
+    their sub-identities, call component, declared values and translations,
+    run-failure values included. It reads every result of the type by how a
+    message is matched to it (identifier and MSH-3 patterns), its file column
+    mapping, sheet detection and result value order, its record declarations
+    (`test_code_values`), control recognition and sample flags. When an
+    analyzer's mapping is confirmed,
+    OpenELIS keeps the reading each mapped row was confirmed against and the
+    type's reading. When the profile the Bridge serves reads differently:
+    - a mapped row whose reading changed, or whose code is gone, holds its
+      results with that reason until a person confirms the row again;
+    - a change to the type's reading holds the analyzer's results until a
+      person confirms the type's reading again, once for the analyzer;
+    - a new code is an unmapped row, as any undeclared code is.
+
+    Everything else in a profile changes nothing: names, hints, codings and
+    LOINC, connection fields and defaults, capabilities, a new assay. The
+    confirmation stands, connections restore and keep running, and nothing
+    needs activating again. A held result recovers by analyzer, Bridge
+    connection and code against the row's current reading, whatever profile
+    or revision it arrived under. Adopting a newer revision (point 7) uses
+    the same comparison. The fingerprints that stay are about other things:
+    the mapping's own, which tells an editor the mapping changed since it was
+    loaded; the connection settings', which ties a probe to the settings it
+    tested; and the certificate pins of point 9.
 
 ## Who owns what
 
-| System        | Owns                                                                                                                                                                                                                                                                 |
-| ------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-| Bridge        | Analyzer profiles (immutable revisions), connections and secrets, protocols and transports (including watching result folders), parsing, control-result recognition, the raw message audit copy, the FHIR bundle it builds, and its own key pair and pairing record. |
-| OpenELIS      | The analyzer record (name, lab units, Bridge connection ID), each analyzer's mapping to the local catalog, placement and review of results, held results, quality control, activation, the bundle copy, and its own key pair and the paired Bridge's fingerprint.    |
-| Analyzer mock | Deterministic instrument behaviour and real ASTM, HL7 and FILE traffic, replayed from vendor-documented messages.                                                                                                                                                    |
+| System        | Owns                                                                                                                                                                                                                                                                                                                                 |
+| ------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+| Bridge        | Analyzer profiles and their revisions, connections and secrets, protocols and transports (including watching result folders), parsing, control-result recognition, the raw message audit copy, the FHIR bundle it builds, and its own key pair and pairing record.                                                                   |
+| OpenELIS      | The analyzer record (name, lab units, Bridge connection ID), each analyzer's mapping to the local catalog with the reading each confirmed row and type was confirmed against, placement and review of results, held results, quality control, activation, the bundle copy, and its own key pair and the paired Bridge's fingerprint. |
+| Analyzer mock | Deterministic instrument behaviour and real ASTM, HL7 and FILE traffic, replayed from vendor-documented messages.                                                                                                                                                                                                                    |
+| Distro        | Its complete shipped profile set, kept in its repository with its history: core's profiles copied unchanged under core's ids, its own profiles under its own ids.                                                                                                                                                                    |
 
 Production code never branches on a manufacturer, model, profile ID or
 analyzer code. OpenELIS has no file poller and never opens a result file.
@@ -110,6 +155,10 @@ analyzer code. OpenELIS has no file poller and never opens a result file.
   verification.
 - An instrument's warning about a sample is never a result and never gates a
   result: it is read by the reviewer and kept as a note.
+- A profile change holds only the results whose reading changed. A change
+  that does not affect how a result is read never stops an analyzer, voids a
+  confirmation or needs activating again, and the Bridge never refuses a
+  profile file, a connection or a result because a fingerprint changed.
 
 ## Where the detail is
 

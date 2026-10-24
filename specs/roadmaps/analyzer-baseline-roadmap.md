@@ -34,10 +34,17 @@ A change that breaks a rule is wrong even if its step's Done-when passes.
    distro's profile may also cite the distro catalog's own system, the
    vocabulary its tests are named in. No OE2 test IDs, answer labels, specimen
    names or lab units. No `result_value_hints`, no `specimen_type_hint`.
-2. One profile contract, one shipped set. Core ships the full default profile
-   set under one documented contract with templates. A distro points the
-   Bridge at its own complete folder (`BRIDGE_PROFILE_CATALOG_SHIPPED_PATTERN`)
-   or uses core. No merging.
+2. One profile contract, one shipped set. Core ships the baseline profiles
+   and the templates under one documented contract. A Bridge reads one
+   shipped set: its image's, or the complete folder
+   `BRIDGE_PROFILE_CATALOG_SHIPPED_PATTERN` names, and then not the image's.
+   A distro that keeps its own set copies the core profiles it uses byte for
+   byte under core's ids, so each is the same revision as core's and a pin
+   holds whichever set a Bridge reads, and adds its own under its own ids,
+   never `site.`. No merging, no override. A shipped file is authored without
+   fingerprints: the Bridge computes them as it loads the file and never
+   refuses a file, a connection or a result because one changed (spec point
+   13). A profile written for one distro lives in that distro, not in core.
 3. Mappings belong to the analyzer. Each analyzer has its own mapping:
    defaults resolved at setup by exact match against the catalog at that
    moment, plus the operator's overrides. Each row is flagged `DEFAULT` or
@@ -84,11 +91,12 @@ A change that breaks a rule is wrong even if its step's Done-when passes.
    code has held results. The existing confirm records actor and time. An
    active analyzer keeps receiving on the old revision until Apply, which
    switches OE2 and the Bridge together; if the Bridge cannot be reached,
-   neither switches. A result from another revision of the same profile is
-   never refused: it maps when the analyzer's revision reads its record the
-   same way (same parts, result type and unit), otherwise it is held with
-   the revision it arrived under for a person. Held results recover on
-   Apply by the same rule and keep the revision they arrived under.
+   neither switches. A result from another revision of the same profile, or
+   from the profile the analyzer was set up on before, is never refused: it
+   maps when the profile in force reads its record the same way (the reading
+   of spec point 13), otherwise it is held with the profile and revision it
+   arrived under for a person. Held results recover on Apply by the same rule
+   and keep the profile and revision they arrived under.
 8. Placement of a result is never silent and never blocked. A result is
    pre-ticked for one-click save only when its instrument ID resolves without
    inference: a tube ID (`SampleItem.externalId`, shape `<accession>-<n>`) to
@@ -228,9 +236,12 @@ A change that breaks a rule is wrong even if its step's Done-when passes.
 20. A bad item degrades, never stops. A profile, draft, connection or
     listener that cannot load or start is set aside with its reason, shown in
     health and in the views OE2 reads; everything else keeps running.
-    Integrity checks (pins, fingerprints, validation) stay; their failure
-    isolates the item. A result is never read against a profile that could
-    not be resolved: it is held, visibly. Clinical validity comes from
+    Integrity checks stay (a pin names a revision the Bridge has, a file
+    validates against the contract, a certificate matches its pin); their
+    failure isolates the item. A profile whose content changed under its
+    revision is not a failure: spec point 13 says which results it holds. A
+    result is never read against a profile that could not be resolved: it is
+    held, visibly. Clinical validity comes from
     transparency and management, never from a component refusing to run.
     (Decided 6 Oct: "issues need to degrade the system gracefully!")
 21. Readers at the OE2 and Bridge boundary ignore fields they do not know.
