@@ -509,6 +509,28 @@ const AnalyserResults = (props) => {
             )}
           </>
         )}
+        {(row.importIssueReason === "reading_changed" ||
+          row.importIssueReason === "type_reading_changed") && (
+          <>
+            <div>
+              <FormattedMessage
+                id={
+                  row.importIssueReason === "reading_changed"
+                    ? "analyzer.results.held.readingChanged"
+                    : "analyzer.results.held.typeReadingChanged"
+                }
+              />
+            </div>
+            {props.analyzerId && (
+              <CarbonLink
+                as={RouterLink}
+                to={`/analyzers?setup=verify&analyzerId=${encodeURIComponent(props.analyzerId)}`}
+              >
+                <FormattedMessage id="analyzer.results.held.confirmAgain" />
+              </CarbonLink>
+            )}
+          </>
+        )}
         {row.importIssueReason === "arrived_under_other_revision" && (
           <div>
             <FormattedMessage

@@ -24,7 +24,14 @@ import org.openelisglobal.common.util.BoundedDecimal;
  *                    results themselves
  */
 public record AnalyzerNormalizedResultContract(String messageId, String bridgeConnectionId, String profileId,
-        int profileRevision, String sourceProtocol, List<Result> results, List<String> sampleFlags) {
+        int profileRevision, String sourceProtocol, List<Result> results, List<String> sampleFlags,
+        String profileFingerprint) {
+
+    /** A delivery whose profile content the Bridge did not state. */
+    public AnalyzerNormalizedResultContract(String messageId, String bridgeConnectionId, String profileId,
+            int profileRevision, String sourceProtocol, List<Result> results, List<String> sampleFlags) {
+        this(messageId, bridgeConnectionId, profileId, profileRevision, sourceProtocol, results, sampleFlags, null);
+    }
 
     private static final String NORMALIZED_PROFILE = "https://openelis-global.org/fhir/StructureDefinition/analyzer-normalized-bundle-v1";
     private static final String MESSAGE_ID_SYSTEM = "https://openelis-global.org/fhir/analyzer-message-id";
@@ -33,6 +40,7 @@ public record AnalyzerNormalizedResultContract(String messageId, String bridgeCo
     private static final String EXTENSION_ROOT = "https://openelis-global.org/fhir/StructureDefinition/";
     private static final String PROFILE_ID = EXTENSION_ROOT + "analyzer-profile-id";
     private static final String PROFILE_REVISION = EXTENSION_ROOT + "analyzer-profile-revision";
+    private static final String PROFILE_FINGERPRINT = EXTENSION_ROOT + "analyzer-profile-fingerprint";
     private static final String SOURCE_PROTOCOL = EXTENSION_ROOT + "analyzer-source-protocol";
     private static final String CLASSIFICATION = EXTENSION_ROOT + "analyzer-result-classification";
     private static final String CONTROL_RECOGNITION = EXTENSION_ROOT + "analyzer-control-recognition";
@@ -123,7 +131,7 @@ public record AnalyzerNormalizedResultContract(String messageId, String bridgeCo
             throw new IllegalArgumentException("Normalized analyzer traffic requires at least one Observation");
         }
         return new AnalyzerNormalizedResultContract(messageId, connectionIds.get(0), profileId, profileRevision,
-                sourceProtocol, results, sampleFlags);
+                sourceProtocol, results, sampleFlags, optionalExtensionText(device, PROFILE_FINGERPRINT));
     }
 
     /**

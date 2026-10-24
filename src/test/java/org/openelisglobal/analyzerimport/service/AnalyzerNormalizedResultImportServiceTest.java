@@ -85,6 +85,8 @@ public class AnalyzerNormalizedResultImportServiceTest {
         when(placementService.accessionFor(any())).thenAnswer(call -> call.getArgument(0));
         when(receiptDAO.findByDelivery(any(), any())).thenReturn(Optional.empty());
         when(confirmationService.hasMatchingConfirmation(any(), any())).thenReturn(true);
+        when(confirmationService.readingOnDelivery(any(), any()))
+                .thenReturn(org.openelisglobal.analyzer.service.AnalyzerConfirmationReading.unchanged());
         when(mappingCatalogService.searchActiveTests(null)).thenReturn(
                 List.of(new AnalyzerMappingCatalogService.TestOption("501", "Numeric test", "NUM", List.of()),
                         new AnalyzerMappingCatalogService.TestOption("601", "Qualitative test", "QUAL", List.of())));
@@ -120,6 +122,51 @@ public class AnalyzerNormalizedResultImportServiceTest {
         assertEquals("7.5", row.getRawResultValue());
         assertEquals("PATIENT", row.getResultClassification());
         assertFalse(row.getSourcePayload().isBlank());
+    }
+
+    @Test
+    public void aConfirmedTestTheServedProfileNowReadsDifferentlyIsHeldUntilItIsConfirmedAgain() throws IOException {
+        arrangeBinding(List.of(boundTest("WBC", "501")), List.of());
+        when(confirmationService.readingOnDelivery(any(), any()))
+                .thenReturn(new org.openelisglobal.analyzer.service.AnalyzerConfirmationReading(false, java.util.Set
+                        .of(new org.openelisglobal.analyzer.service.AnalyzerMappingSourceRow("WBC", null, ""))));
+
+        AnalyzerNormalizedResultImportSummary summary = service.importBundle(fixture("normalized-known-test.fhir.json"),
+                "7");
+
+        assertEquals(1, summary.resultsHeld());
+        AnalyzerResults row = capturedRow();
+        assertTrue(row.isReadOnly());
+        assertEquals(AnalyzerResults.IMPORT_ISSUE_READING_CHANGED, row.getImportIssueReason());
+    }
+
+    @Test
+    public void aChangedTypeReadingHoldsEveryResultOfTheAnalyzer() throws IOException {
+        arrangeBinding(List.of(boundTest("WBC", "501")), List.of());
+        when(confirmationService.readingOnDelivery(any(), any())).thenReturn(
+                new org.openelisglobal.analyzer.service.AnalyzerConfirmationReading(true, java.util.Set.of()));
+
+        AnalyzerNormalizedResultImportSummary summary = service.importBundle(fixture("normalized-known-test.fhir.json"),
+                "7");
+
+        assertEquals(1, summary.resultsHeld());
+        assertEquals(AnalyzerResults.IMPORT_ISSUE_TYPE_READING_CHANGED, capturedRow().getImportIssueReason());
+    }
+
+    @Test
+    public void theFingerprintTheBundleWasReadWithIsWhatTheConfirmationIsCheckedAgainst() throws IOException {
+        arrangeBinding(List.of(boundTest("WBC", "501")), List.of());
+        Bundle bundle = fixture("normalized-known-test.fhir.json");
+        String fingerprint = "sha256:" + "f".repeat(64);
+        bundle.getEntry().stream().map(Bundle.BundleEntryComponent::getResource)
+                .filter(org.hl7.fhir.r4.model.Device.class::isInstance).map(org.hl7.fhir.r4.model.Device.class::cast)
+                .findFirst().orElseThrow()
+                .addExtension("https://openelis-global.org/fhir/StructureDefinition/analyzer-profile-fingerprint",
+                        new org.hl7.fhir.r4.model.StringType(fingerprint));
+
+        service.importBundle(bundle, "7");
+
+        verify(confirmationService).readingOnDelivery(any(), eq(fingerprint));
     }
 
     @Test
