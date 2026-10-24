@@ -60,6 +60,14 @@ chmod -R 770 "$REPORTING" || true
 chgrp -R tomcat "$CONFIGURATION" || true
 chmod -R g+rwX "$CONFIGURATION" || true
 
+# Certificate uploads update the public truststore as the application user.
+# Grant access to this file only; private keystores and install keys keep their modes.
+TRUSTSTORE="${SSL_TRUSTSTORE_PATH:-/etc/openelis-global/truststore}"
+if [ -f "$TRUSTSTORE" ]; then
+    chown 8443:tomcat "$TRUSTSTORE" || exit 1
+    chmod u+rw "$TRUSTSTORE" || exit 1
+fi
+
 echo "Volume permissions ready."
 
 
