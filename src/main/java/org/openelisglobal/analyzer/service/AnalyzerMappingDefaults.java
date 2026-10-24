@@ -5,14 +5,15 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import org.openelisglobal.analyzer.valueholder.AnalyzerMappingState;
+import org.openelisglobal.terminology.Coding;
 import org.openelisglobal.testresult.service.TestResultService;
 import org.springframework.stereotype.Service;
 
 /**
- * Resolves a profile's defaults against the local catalog by exact
- * standard-code match, and says why when a row cannot be resolved. Test LOINC
- * selects the test; the answer code selects the answer. Never chooses between
- * two usable candidates.
+ * Resolves a profile's defaults against the local catalog by exact code match,
+ * and says why when a row cannot be resolved. A test or answer is selected by a
+ * coding it shares with the profile, in any system. Never chooses between two
+ * usable candidates.
  */
 @Service
 public class AnalyzerMappingDefaults {
@@ -123,14 +124,13 @@ public class AnalyzerMappingDefaults {
      * it lands on.
      */
     public AnalyzerMappingResultDraft resolveAnswer(String code, String subIdentity,
-            Map<String, List<BridgeAnalyzerProfile.NormalizedCoding>> valueCodes, String rawValue,
+            Map<String, List<Coding>> valueCodes, String rawValue,
             List<AnalyzerMappingCatalogService.ResultOption> options) {
-        List<BridgeAnalyzerProfile.NormalizedCoding> codings = valueCodes.getOrDefault(rawValue, List.of());
+        List<Coding> codings = valueCodes.getOrDefault(rawValue, List.of());
         if (codings.isEmpty()) {
             return unresolvedAnswer(code, subIdentity, rawValue, AnalyzerUnresolvedReason.NO_MATCH);
         }
-        var matches = options.stream().filter(option -> option.codings().stream()
-                .anyMatch(answer -> codings.stream().anyMatch(value -> sameCoding(answer, value)))).toList();
+        var matches = options.stream().filter(option -> sharesACoding(option.codings(), codings)).toList();
         if (matches.size() > 1) {
             return unresolvedAnswer(code, subIdentity, rawValue, AnalyzerUnresolvedReason.AMBIGUOUS);
         }
@@ -189,9 +189,8 @@ public class AnalyzerMappingDefaults {
 
     private TestResolution resolve(BridgeAnalyzerProfile.TestDefinition definition,
             List<AnalyzerMappingCatalogService.TestOption> activeTests) {
-        String loinc = definition.loinc();
-        var candidates = loinc == null ? List.<AnalyzerMappingCatalogService.TestOption>of()
-                : activeTests.stream().filter(test -> test.loincCodes().contains(loinc)).toList();
+        var candidates = activeTests.stream().filter(test -> sharesACoding(test.codings(), definition.codings()))
+                .toList();
         if (candidates.isEmpty()) {
             return unresolvedTest(definition, AnalyzerUnresolvedReason.NO_MATCH);
         }
@@ -245,15 +244,8 @@ public class AnalyzerMappingDefaults {
                 subIdentity);
     }
 
-    /**
-     * An answer and a profile value share a coding when the system and the code
-     * agree; the code compares without case or surrounding space.
-     */
-    private static boolean sameCoding(AnalyzerMappingCatalogService.AnswerCoding answer,
-            BridgeAnalyzerProfile.NormalizedCoding value) {
-        return answer.system() != null && value.system() != null && answer.system().trim().equals(value.system().trim())
-                && answer.code() != null && value.code() != null && !answer.code().isBlank()
-                && answer.code().trim().equalsIgnoreCase(value.code().trim());
+    private static boolean sharesACoding(List<Coding> local, List<Coding> profile) {
+        return local.stream().anyMatch(coding -> profile.stream().anyMatch(coding::sameAs));
     }
 
     private record TestResolution(AnalyzerMappingTestDraft draft,

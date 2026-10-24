@@ -81,18 +81,20 @@ const mapping = {
       loinc: "46244-0",
       unit: null,
       resultType: "qualitative",
-      normalizedCoding: {
-        system: "urn:openelis:analyzer-test",
-        code: "SHARED",
-        display: "Shared normalized identity",
-      },
+      codings: [
+        {
+          system: "urn:openelis:analyzer-test",
+          code: "SHARED",
+          display: "Shared identity",
+        },
+      ],
       mappingState: "BOUND",
       testId: "9701",
       selectedTest: {
         id: "9701",
         name: "Rifampin Resistance",
         code: "RIF",
-        loincCodes: ["46244-0"],
+        codings: [{ system: "http://loinc.org", code: "46244-0" }],
       },
       suggestedTest: null,
       results: [
@@ -123,11 +125,13 @@ const mapping = {
       loinc: "94500-6",
       unit: null,
       resultType: "quantitative",
-      normalizedCoding: {
-        system: "urn:openelis:analyzer-test",
-        code: "SHARED",
-        display: "Shared normalized identity",
-      },
+      codings: [
+        {
+          system: "urn:openelis:analyzer-test",
+          code: "SHARED",
+          display: "Shared identity",
+        },
+      ],
       mappingState: "UNRESOLVED",
       testId: null,
       selectedTest: null,
@@ -135,7 +139,7 @@ const mapping = {
         id: "9702",
         name: "COVID-19 PCR",
         code: "COVID19",
-        loincCodes: ["94500-6"],
+        codings: [{ system: "http://loinc.org", code: "94500-6" }],
       },
       results: [],
     },
@@ -147,7 +151,6 @@ const mapping = {
       loinc: "94558-4",
       unit: null,
       resultType: "qualitative",
-      normalizedCoding: null,
       mappingState: "UNRESOLVED",
       unresolvedReason: "AMBIGUOUS",
       testId: null,
@@ -175,7 +178,7 @@ const catalogTests = [
     id: "9703",
     name: "Unconfigured qualitative test",
     code: "UNCONFIGURED",
-    loincCodes: ["94558-4"],
+    codings: [{ system: "http://loinc.org", code: "94558-4" }],
   },
 ];
 
@@ -299,13 +302,13 @@ describe("AnalyzerTypeMappingEditor", () => {
       id: "9801",
       name: "HIV-1 viral load",
       code: "HIVVL",
-      loincCodes: ["20447-9"],
+      codings: [{ system: "http://loinc.org", code: "20447-9" }],
     };
     const otherViralLoadTest = {
       id: "9802",
       name: "HIV-1 viral load (plasma)",
       code: "HIVVLP",
-      loincCodes: ["20447-9"],
+      codings: [{ system: "http://loinc.org", code: "20447-9" }],
     };
     const componentsByTestForRecords = {
       9801: [
@@ -327,7 +330,6 @@ describe("AnalyzerTypeMappingEditor", () => {
       loinc: "20447-9",
       unit: null,
       resultType: "quantitative",
-      normalizedCoding: null,
       mappingState: "BOUND",
       testId: "9801",
       selectedTest: viralLoadTest,
@@ -574,7 +576,7 @@ describe("AnalyzerTypeMappingEditor", () => {
         id: "9803",
         name: "HIV-1 qualitative",
         code: "HIVQL",
-        loincCodes: ["20447-9"],
+        codings: [{ system: "http://loinc.org", code: "20447-9" }],
       };
       getAnalyzerMappingTests.mockImplementation((callback) =>
         callback([viralLoadTest, otherViralLoadTest, qualitativeTest]),
@@ -973,7 +975,7 @@ describe("AnalyzerTypeMappingEditor", () => {
       }),
     ).toHaveTextContent("Resistant");
     expect(within(sourceRows[1]).getByText("RAW-B")).toBeVisible();
-    expect(screen.getAllByText("Shared normalized identity")).toHaveLength(2);
+    expect(screen.getAllByText("Shared identity")).toHaveLength(2);
     expect(screen.getByText("Alias: RAW A")).toBeVisible();
     expect(screen.getByText("Specimen ID starts with CPOS")).toBeVisible();
     expect(

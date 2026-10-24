@@ -14,6 +14,7 @@ import org.openelisglobal.analyzer.valueholder.AnalyzerMappingOrigin;
 import org.openelisglobal.analyzer.valueholder.AnalyzerMappingState;
 import org.openelisglobal.analyzerresults.service.AnalyzerResultsService;
 import org.openelisglobal.analyzerresults.valueholder.AnalyzerResults;
+import org.openelisglobal.terminology.Coding;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -139,7 +140,7 @@ public class AnalyzerMappingEditorServiceImpl implements AnalyzerMappingEditorSe
             if (row.getRawTestCode() != null && !row.getRawTestCode().isBlank()) {
                 records.putIfAbsent(recordOf(row),
                         ReportedRecord.main(new BridgeAnalyzerProfile.TestDefinition(row.getRawTestCode(), List.of(),
-                                null, null, row.getUnits(), row.getResultType(), List.of(), null, Map.of())));
+                                null, List.of(), row.getUnits(), row.getResultType(), List.of(), Map.of())));
             }
         }
         current.tests().keySet().forEach(key -> records.putIfAbsent(key, ReportedRecord.undeclared(key)));
@@ -308,8 +309,8 @@ public class AnalyzerMappingEditorServiceImpl implements AnalyzerMappingEditorSe
         }
         return new AnalyzerMappingView.TestRow(definition.analyzerCode(), definition.analyzerCode(),
                 definition.aliases(), definition.testNameHint(), definition.loinc(), record.unit(), record.resultType(),
-                definition.normalizedCoding(), state, origin, testId, componentId, selected, suggested, testReason,
-                results, key.subIdentity(), callComponentId, record.componentCode(),
+                definition.codings(), state, origin, testId, componentId, selected, suggested, testReason, results,
+                key.subIdentity(), callComponentId, record.componentCode(),
                 key.subIdentity().isEmpty() ? definition.callComponent() : null, current != null && current.enabled());
     }
 
@@ -338,8 +339,8 @@ public class AnalyzerMappingEditorServiceImpl implements AnalyzerMappingEditorSe
      * translations; a translation answers with its value's code.
      */
     private record ReportedRecord(BridgeAnalyzerProfile.TestDefinition test, String componentCode, String unit,
-            String resultType, List<String> values,
-            Map<String, List<BridgeAnalyzerProfile.NormalizedCoding>> valueCodes, Map<String, String> translationOf) {
+            String resultType, List<String> values, Map<String, List<Coding>> valueCodes,
+            Map<String, String> translationOf) {
 
         static ReportedRecord main(BridgeAnalyzerProfile.TestDefinition test) {
             return translated(test, null, test.unit(), test.resultType(), test.resultValues(), test.valueCodes(),
@@ -354,15 +355,14 @@ public class AnalyzerMappingEditorServiceImpl implements AnalyzerMappingEditorSe
 
         static ReportedRecord undeclared(AnalyzerMappingRowKey key) {
             return new ReportedRecord(new BridgeAnalyzerProfile.TestDefinition(key.sourceRowKey(), List.of(), null,
-                    null, null, null, List.of(), null, Map.of()), null, null, null, List.of(), Map.of(), Map.of());
+                    List.of(), null, null, List.of(), Map.of()), null, null, null, List.of(), Map.of(), Map.of());
         }
 
         private static ReportedRecord translated(BridgeAnalyzerProfile.TestDefinition test, String componentCode,
-                String unit, String resultType, List<String> declared,
-                Map<String, List<BridgeAnalyzerProfile.NormalizedCoding>> codes,
+                String unit, String resultType, List<String> declared, Map<String, List<Coding>> codes,
                 Map<String, List<String>> translations) {
             List<String> values = new ArrayList<>();
-            Map<String, List<BridgeAnalyzerProfile.NormalizedCoding>> valueCodes = new LinkedHashMap<>(codes);
+            Map<String, List<Coding>> valueCodes = new LinkedHashMap<>(codes);
             Map<String, String> translationOf = new LinkedHashMap<>();
             for (String value : declared) {
                 values.add(value);
